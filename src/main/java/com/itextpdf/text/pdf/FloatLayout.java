@@ -128,7 +128,7 @@ public class FloatLayout {
                     content.remove(0);
                 } else {
                     if (!floatingElements.isEmpty()) {
-                        status = floatingLayout(compositeColumn, floatingElements, simulate);
+                        status = floatingLayout(floatingElements, simulate);
                         if ((status & ColumnText.NO_MORE_TEXT) == 0) {
                             break;
                         }
@@ -159,7 +159,7 @@ public class FloatLayout {
         }
 
         if ((status & ColumnText.NO_MORE_TEXT) != 0 && !floatingElements.isEmpty()) {
-            status = floatingLayout(compositeColumn, floatingElements, simulate);
+            status = floatingLayout(floatingElements, simulate);
         }
 
         content.addAll(0, floatingElements);
@@ -167,16 +167,17 @@ public class FloatLayout {
         return status;
     }
 
-    private int floatingLayout(ColumnText compositeColumn, List<Element> floatingElements, boolean simulate) throws DocumentException {
+    private int floatingLayout(List<Element> floatingElements, boolean simulate) throws DocumentException {
         int status = ColumnText.NO_MORE_TEXT;
         float minYLine = yLine;
         float leftWidth = 0;
         float rightWidth = 0;
 
         while (!floatingElements.isEmpty()) {
-            if (floatingElements.get(0) instanceof PdfDiv) {
-                PdfDiv floatingElement = (PdfDiv) floatingElements.get(0);
-                floatingElements.remove(0);
+            Element nextElement = floatingElements.get(0);
+            floatingElements.remove(0);
+            if (nextElement instanceof PdfDiv) {
+                PdfDiv floatingElement = (PdfDiv) nextElement;
                 status = floatingElement.layout(compositeColumn, true, floatLeftX, minY, floatRightX, yLine);
                 if ((status & ColumnText.NO_MORE_TEXT) == 0) {
                     yLine = minYLine;
@@ -199,21 +200,28 @@ public class FloatLayout {
                 }
                 minYLine = Math.min(minYLine, yLine - floatingElement.getActualHeight());
             } else {
-                Element firstElement = floatingElements.get(0);
-                if (firstElement instanceof Spaceable) {
-                    yLine -= ((Spaceable) firstElement).getSpacingBefore();
+                if (nextElement instanceof Spaceable) {
+                    yLine -= ((Spaceable) nextElement).getSpacingBefore();
                 }
-                compositeColumn = simulate ? ColumnText.duplicate(compositeColumn) : compositeColumn;
-                compositeColumn.addElement(firstElement);
-                floatingElements.remove(0);
+                ColumnText currentCompositeColumn = compositeColumn;
+                if (simulate) {
+                    currentCompositeColumn = ColumnText.duplicate(compositeColumn);
+                    if (nextElement instanceof PdfPTable)
+                        currentCompositeColumn.addElement(new PdfPTable((PdfPTable)nextElement));
+                    else
+                        currentCompositeColumn.addElement(nextElement);
+                } else {
+                    currentCompositeColumn.addElement(nextElement);
+                }
+
                 if (yLine > minYLine)
-                    compositeColumn.setSimpleColumn(floatLeftX, yLine, floatRightX, minYLine);
+                    currentCompositeColumn.setSimpleColumn(floatLeftX, yLine, floatRightX, minYLine);
                 else
-                    compositeColumn.setSimpleColumn(floatLeftX, yLine, floatRightX, minY);
+                    currentCompositeColumn.setSimpleColumn(floatLeftX, yLine, floatRightX, minY);
 
-                compositeColumn.setFilledWidth(0);
+                currentCompositeColumn.setFilledWidth(0);
 
-                status = compositeColumn.go(simulate);
+                status = currentCompositeColumn.go(simulate);
                 if (yLine > minYLine && (floatLeftX > leftX || floatRightX < rightX) && (status & ColumnText.NO_MORE_TEXT) == 0) {
                     yLine = minYLine;
                     floatLeftX = leftX;
@@ -231,35 +239,39 @@ public class FloatLayout {
 
                     leftWidth = 0;
                     rightWidth = 0;
-                    compositeColumn.setSimpleColumn(floatLeftX, yLine, floatRightX, minY);
-                    status = compositeColumn.go(simulate);
-                    minYLine = compositeColumn.getYLine() + compositeColumn.getDescender();
+                    if (simulate && nextElement instanceof PdfPTable) {
+                        currentCompositeColumn = ColumnText.duplicate(compositeColumn);
+                        currentCompositeColumn.addElement(new PdfPTable((PdfPTable)nextElement));
+                    }
+                    currentCompositeColumn.setSimpleColumn(floatLeftX, yLine, floatRightX, minY);
+                    status = currentCompositeColumn.go(simulate);
+                    minYLine = currentCompositeColumn.getYLine() + currentCompositeColumn.getDescender();
                     yLine = minYLine;
-                    if (compositeColumn.getFilledWidth() > filledWidth) {
-                        filledWidth = compositeColumn.getFilledWidth();
+                    if (currentCompositeColumn.getFilledWidth() > filledWidth) {
+                        filledWidth = currentCompositeColumn.getFilledWidth();
                     }
                 } else {
                     if (rightWidth > 0) {
-                        rightWidth += compositeColumn.getFilledWidth();
+                        rightWidth += currentCompositeColumn.getFilledWidth();
                     } else if (leftWidth > 0) {
-                        leftWidth += compositeColumn.getFilledWidth();
-                    } else if (compositeColumn.getFilledWidth() > filledWidth) {
-                        filledWidth = compositeColumn.getFilledWidth();
+                        leftWidth += currentCompositeColumn.getFilledWidth();
+                    } else if (currentCompositeColumn.getFilledWidth() > filledWidth) {
+                        filledWidth = currentCompositeColumn.getFilledWidth();
                     }
-                    minYLine = Math.min(compositeColumn.getYLine() + compositeColumn.getDescender(), minYLine);
-                    yLine = compositeColumn.getYLine() + compositeColumn.getDescender();
+                    minYLine = Math.min(currentCompositeColumn.getYLine() + currentCompositeColumn.getDescender(), minYLine);
+                    yLine = currentCompositeColumn.getYLine() + currentCompositeColumn.getDescender();
                 }
 
                 if ((status & ColumnText.NO_MORE_TEXT) == 0) {
                     if (!simulate)
-                        floatingElements.addAll(0, compositeColumn.getCompositeElements());
+                        floatingElements.addAll(0, currentCompositeColumn.getCompositeElements());
                     else {
-                        floatingElements.add(0, firstElement);
+                        floatingElements.add(0, nextElement);
                     }
-                    compositeColumn.getCompositeElements().clear();
+                    currentCompositeColumn.getCompositeElements().clear();
                     break;
                 } else {
-                    compositeColumn.getCompositeElements().clear();
+                    currentCompositeColumn.getCompositeElements().clear();
                 }
             }
         }
