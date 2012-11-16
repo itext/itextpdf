@@ -44,11 +44,8 @@
 package com.itextpdf.text.pdf;
 
 import java.io.IOException;
-
-import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.exceptions.InvalidPdfException;
-import com.itextpdf.text.io.RandomAccessSource;
-import com.itextpdf.text.io.RandomAccessSourceFactory;
+import com.itextpdf.text.error_messages.MessageLocalization;
 /**
  *
  * @author  Paulo Soares
@@ -104,28 +101,24 @@ public class PRTokeniser {
     static final String EMPTY = "";
 
     
-    private final RandomAccessFileOrArray file;
-    
+    protected RandomAccessFileOrArray file;
     protected TokenType type;
     protected String stringValue;
     protected int reference;
     protected int generation;
     protected boolean hexString;
+       
+    public PRTokeniser(String filename) throws IOException {
+        file = new RandomAccessFileOrArray(filename);
+    }
 
-// TODO: get rid of this - it shouldn't be necessary    
-//    public PRTokeniser(String filename) throws IOException {
-//        file = new RandomAccessFileOrArray(filename);
-//    }
-
-    /**
-     * Creates a PRTokeniser for the specified {@link RandomAccessSource}.
-     * The beginning of the file is read to determine the location of the header, and the data source is adjusted
-     * as necessary to account for any junk that occurs in the byte source before the header
-     * @param byteSource the source
-     */
+    public PRTokeniser(byte pdfIn[]) {
+        file = new RandomAccessFileOrArray(pdfIn);
+    }
+    
     public PRTokeniser(RandomAccessFileOrArray file) {
-    	this.file = file;
-	}
+        this.file = file;
+    }
     
     public void seek(long pos) throws IOException {
         file.seek(pos);
@@ -151,16 +144,15 @@ public class PRTokeniser {
         return new RandomAccessFileOrArray(file);
     }
     
-    //TODO: is this really necessary?  Seems like exposing this detail opens us up to all sorts of potential problems
     public RandomAccessFileOrArray getFile() {
         return file;
     }
     
     public String readString(int size) throws IOException {
-    	StringBuilder buf = new StringBuilder();
+        StringBuilder buf = new StringBuilder();
         int ch;
         while ((size--) > 0) {
-            ch = read();
+            ch = file.read();
             if (ch == -1)
                 break;
             buf.append((char)ch);
@@ -205,33 +197,23 @@ public class PRTokeniser {
         throw new InvalidPdfException(MessageLocalization.getComposedMessage("1.at.file.pointer.2", error, String.valueOf(file.getFilePointer())));
     }
     
-    public int getHeaderOffset() throws IOException{
-    	String str = readString(1024);
-        int idx = str.indexOf("%PDF-");
-        if (idx < 0){
-        	idx = str.indexOf("%FDF-");
-        	if (idx < 0)
-        		throw new InvalidPdfException(MessageLocalization.getComposedMessage("pdf.header.not.found"));
-        }
-
-        return idx;
-    }
-    
     public char checkPdfHeader() throws IOException {
-        file.seek(0);
+        file.setStartOffset(0);
         String str = readString(1024);
         int idx = str.indexOf("%PDF-");
-        if (idx != 0)
+        if (idx < 0)
             throw new InvalidPdfException(MessageLocalization.getComposedMessage("pdf.header.not.found"));
-        return str.charAt(7);
+        file.setStartOffset(idx);
+        return str.charAt(idx + 7);
     }
     
     public void checkFdfHeader() throws IOException {
-        file.seek(0);
+        file.setStartOffset(0);
         String str = readString(1024);
         int idx = str.indexOf("%FDF-");
-        if (idx != 0)
+        if (idx < 0)
             throw new InvalidPdfException(MessageLocalization.getComposedMessage("fdf.header.not.found"));
+        file.setStartOffset(idx);
     }
 
     public long getStartxref() throws IOException {
@@ -613,7 +595,7 @@ public class PRTokeniser {
     
     public static long[] checkObjectStart(byte line[]) {
         try {
-            PRTokeniser tk = new PRTokeniser(new RandomAccessFileOrArray(new RandomAccessSourceFactory().createSource(line)));
+            PRTokeniser tk = new PRTokeniser(line);
             int num = 0;
             int gen = 0;
             if (!tk.nextToken() || tk.getTokenType() != TokenType.NUMBER)

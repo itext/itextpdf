@@ -80,27 +80,24 @@ public class PdfCopyTest {
      */
     public void testExtraXObjects() throws Exception {
         PdfReader sourceR = new PdfReader(createImagePdf());
-        try{
-		        int sourceXRefCount = sourceR.getXrefSize();
-		        
-		        final Document document = new Document();
-		        ByteArrayOutputStream out = new ByteArrayOutputStream();
-		        PdfCopy copy = new PdfCopy(document, out);
-		        document.open();
-		        PdfImportedPage importedPage = copy.getImportedPage(sourceR, 1);
-		        copy.addPage(importedPage);
-		        document.close();
-		        
-		        PdfReader targetR = new PdfReader(out.toByteArray());
-		        int destinationXRefCount = targetR.getXrefSize();
-		        
-		//        TestResourceUtils.saveBytesToFile(createImagePdf(), new File("./source.pdf"));
-		//        TestResourceUtils.saveBytesToFile(out.toByteArray(), new File("./result.pdf"));
-		        
-		        Assert.assertEquals(sourceXRefCount, destinationXRefCount);
-        } finally {
-        	sourceR.close();
-        }
+        int sourceXRefCount = sourceR.getXrefSize();
+        
+        final Document document = new Document();
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        PdfCopy copy = new PdfCopy(document, out);
+        document.open();
+        PdfImportedPage importedPage = copy.getImportedPage(sourceR, 1);
+        copy.addPage(importedPage);
+        document.close();
+        
+        PdfReader targetR = new PdfReader(out.toByteArray());
+        int destinationXRefCount = targetR.getXrefSize();
+        
+//        TestResourceUtils.saveBytesToFile(createImagePdf(), new File("./source.pdf"));
+//        TestResourceUtils.saveBytesToFile(out.toByteArray(), new File("./result.pdf"));
+        
+        Assert.assertEquals(sourceXRefCount, destinationXRefCount);
+        
     }
     
     private static byte[] createImagePdf() throws Exception {

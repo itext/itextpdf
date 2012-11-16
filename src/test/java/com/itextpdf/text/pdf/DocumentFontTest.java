@@ -66,12 +66,10 @@ public class DocumentFontTest {
     
     @Before
     public void setUp() throws Exception {
-    	TestResourceUtils.purgeTempFiles();
     }
 
     @After
     public void tearDown() throws Exception {
-    	TestResourceUtils.purgeTempFiles();
     }
 
     @Test
@@ -83,19 +81,15 @@ public class DocumentFontTest {
         RandomAccessFileOrArray f = new RandomAccessFileOrArray(testFile.getAbsolutePath());
         PdfReader reader = new PdfReader(f, null);
         
-        try{
-	        PdfDictionary fontsDic = reader.getPageN(pageNum).getAsDict(PdfName.RESOURCES).getAsDict(PdfName.FONT);
-	        PdfDictionary fontDicDirect = fontsDic.getAsDict(fontIdName);
-	        PRIndirectReference fontDicIndirect = (PRIndirectReference)fontsDic.get(fontIdName);
-	        
-	        Assert.assertEquals(PdfName.TYPE0, fontDicDirect.getAsName(PdfName.SUBTYPE));
-	        Assert.assertEquals("/Identity-H", fontDicDirect.getAsName(PdfName.ENCODING).toString());
-	        Assert.assertNull("This font should not have a ToUnicode map", fontDicDirect.get(PdfName.TOUNICODE));
-	        
-	        new DocumentFont(fontDicIndirect); // this used to throw an NPE
-        } finally {
-        	reader.close();
-        }
+        PdfDictionary fontsDic = reader.getPageN(pageNum).getAsDict(PdfName.RESOURCES).getAsDict(PdfName.FONT);
+        PdfDictionary fontDicDirect = fontsDic.getAsDict(fontIdName);
+        PRIndirectReference fontDicIndirect = (PRIndirectReference)fontsDic.get(fontIdName);
+        
+        Assert.assertEquals(PdfName.TYPE0, fontDicDirect.getAsName(PdfName.SUBTYPE));
+        Assert.assertEquals("/Identity-H", fontDicDirect.getAsName(PdfName.ENCODING).toString());
+        Assert.assertNull("This font should not have a ToUnicode map", fontDicDirect.get(PdfName.TOUNICODE));
+        
+        new DocumentFont(fontDicIndirect); // this used to throw an NPE
     }
     
 }

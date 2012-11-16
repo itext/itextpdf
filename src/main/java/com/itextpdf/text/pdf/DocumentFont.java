@@ -43,16 +43,15 @@
  */
 package com.itextpdf.text.pdf;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.ExceptionConverter;
-import com.itextpdf.text.io.RandomAccessSourceFactory;
 import com.itextpdf.text.pdf.fonts.cmaps.CMapParserEx;
 import com.itextpdf.text.pdf.fonts.cmaps.CMapToUnicode;
 import com.itextpdf.text.pdf.fonts.cmaps.CidLocationFromByte;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  *
@@ -203,7 +202,7 @@ public class DocumentFont extends BaseFont {
 
     private void fillMetrics(byte[] touni, IntHashtable widths, int dw) {
         try {
-            PdfContentParser ps = new PdfContentParser(new PRTokeniser(new RandomAccessFileOrArray(new RandomAccessSourceFactory().createSource(touni))));
+            PdfContentParser ps = new PdfContentParser(new PRTokeniser(touni));
             PdfObject ob = null;
             boolean notFound = true;
             int nestLevel = 0;

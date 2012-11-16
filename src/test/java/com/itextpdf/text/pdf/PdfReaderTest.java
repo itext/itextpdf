@@ -50,8 +50,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.util.List;
 
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -60,16 +58,6 @@ import com.itextpdf.text.Document;
 import com.itextpdf.text.PageSize;
 
 public class PdfReaderTest {
-
-    @Before
-    public void setUp() throws Exception {
-        TestResourceUtils.purgeTempFiles();
-    }
-
-    @After
-    public void tearDown() throws Exception {
-        TestResourceUtils.purgeTempFiles();
-    }
 
     @Test
     public void testPartialReadOpenFile() throws Exception {
@@ -80,11 +68,9 @@ public class PdfReaderTest {
         RandomAccessFileOrArray f = new RandomAccessFileOrArray(testFile.getAbsolutePath());
         
         // doesn't throw?
-        PdfReader r = new PdfReader(f, null);
+        new PdfReader(f, null);
 
         assertTrue("kept open", f.isOpen());
-        
-        r.close();
     }
 
     @Ignore("validity of test needs to be resolved")
@@ -101,8 +87,6 @@ public class PdfReaderTest {
         PdfAnnotation.PdfImportedLink link = links.get(0);
         writer.addAnnotation(link.createAnnotation(writer));
         document.close();
-        
-        currentReader.close();
     }
 
     @Test
@@ -113,8 +97,6 @@ public class PdfReaderTest {
         // this one works: PdfReader rdr = new PdfReader(filename);
         rdr.consolidateNamedDestinations(); // does not help
         rdr.getLinks(1);
-        
-        rdr.close();
     }
 
     @Test
@@ -130,7 +112,5 @@ public class PdfReaderTest {
 
         //iText-built resource dictionaries always have a "Procset" entry that is an array
         assertTrue( pageResFromNum.getAsArray(PdfName.PROCSET) != null);
-        
-        rdr.close();
     }
 }

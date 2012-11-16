@@ -404,8 +404,7 @@ class PdfCopyFieldsImp extends PdfWriter {
             finally {
                 try {
                     file.close();
-// TODO: Removed - the user should be responsible for closing all PdfReaders.  But, this could cause a lot of memory leaks in code out there that hasn't been properly closing things - maybe add a finalizer to PdfReader that calls PdfReader#close() ??            	
-//                    reader.close();
+                    reader.close();
                 }
                 catch (Exception e) {
                     // empty on purpose

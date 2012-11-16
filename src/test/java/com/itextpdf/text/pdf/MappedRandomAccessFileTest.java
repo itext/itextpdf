@@ -14,16 +14,17 @@ import org.junit.Test;
 
 import com.itextpdf.testutils.TestResourceUtils;
 
+/**
+ * @author Kevin
+ */
 public class MappedRandomAccessFileTest {
 
     @Before
     public void setUp() throws Exception {
-        TestResourceUtils.purgeTempFiles();
     }
 
     @After
     public void tearDown() throws Exception {
-        TestResourceUtils.purgeTempFiles();
     }
 
     @Test
@@ -31,7 +32,6 @@ public class MappedRandomAccessFileTest {
         File pdf = TestResourceUtils.getResourceAsTempFile(getClass(), "zerosizedfile.pdf");
         MappedRandomAccessFile f = new MappedRandomAccessFile(pdf.getCanonicalPath(), "rw");
         Assert.assertEquals(-1, f.read());
-        f.close();
     }
 
 }

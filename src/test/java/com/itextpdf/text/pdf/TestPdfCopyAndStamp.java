@@ -48,9 +48,7 @@ import static org.junit.Assert.assertNull;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.junit.After;
@@ -59,8 +57,6 @@ import org.junit.Test;
 
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Document;
-import com.itextpdf.text.io.OffsetRandomAccessSource;
-import com.itextpdf.text.io.RandomAccessSourceFactory;
 
 /**
  * @author kevin day, Trumpet, Inc.
@@ -120,63 +116,46 @@ public class TestPdfCopyAndStamp {
     }
 
     public void mergeAndStampPdf(boolean resetStampEachPage, String[] in, String out, String stamp) throws Exception {
-        PdfReader stampReader = new PdfReader(pdfContent.get(stamp));
-        List<PdfReader> readersToClose = new ArrayList<PdfReader>();
-        readersToClose.add(stampReader);
+        Document document = new Document();
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        PdfCopy writer = new PdfSmartCopy(document, baos);
 
-        try{
-	    	Document document = new Document();
-	
-	        PdfCopy writer = new PdfSmartCopy(document, baos);
-	        try{
-	
-		        document.open();
-		
-		        int stampPageNum = 1;
-	
-		        for (String element : in) {
-		            // create a reader for the input document
-		            PdfReader documentReader = new PdfReader(
-		            		new RandomAccessFileOrArray(
-           						new RandomAccessSourceFactory().createSource(pdfContent.get(element))
-		            		)
-		            	, null);
-		
-		            for (int pageNum = 1; pageNum <= documentReader.getNumberOfPages(); pageNum++){
-		
-		                // import a page from the main file
-		                PdfImportedPage mainPage = writer.getImportedPage(documentReader, pageNum);
-		
-		                // make a stamp from the page and get under content...
-		                PdfCopy.PageStamp pageStamp = writer.createPageStamp(mainPage);
-		
-		                // import a page from a file with the stamp...
-		                if (resetStampEachPage){
-		                    stampReader = new PdfReader(pdfContent.get(stamp));
-		                    readersToClose.add(stampReader);
-		                }
-		                PdfImportedPage stampPage = writer.getImportedPage(stampReader, stampPageNum++);
-		
-		                // add the stamp template, update stamp, and add the page
-		                pageStamp.getOverContent().addTemplate(stampPage, 0, 0);
-		                pageStamp.alterContents();
-		                writer.addPage(mainPage);
-		
-		                if (stampPageNum > stampReader.getNumberOfPages())
-		                    stampPageNum = 1;
-		            }
-		        }
-	        } finally {
-		        writer.close();
-		        document.close();
-	        }
-        } finally {
-        	for (PdfReader stampReaderToClose : readersToClose) {
-        		stampReaderToClose.close();	
-			}
+        document.open();
+
+        int stampPageNum = 1;
+
+        PdfReader stampReader = new PdfReader(pdfContent.get(stamp));
+        for (String element : in) {
+            // create a reader for the input document
+            PdfReader documentReader = new PdfReader(pdfContent.get(element));
+
+            for (int pageNum = 1; pageNum <= documentReader.getNumberOfPages(); pageNum++){
+
+                // import a page from the main file
+                PdfImportedPage mainPage = writer.getImportedPage(documentReader, pageNum);
+
+                // make a stamp from the page and get under content...
+                PdfCopy.PageStamp pageStamp = writer.createPageStamp(mainPage);
+
+                // import a page from a file with the stamp...
+                if (resetStampEachPage)
+                    stampReader = new PdfReader(pdfContent.get(stamp));
+                PdfImportedPage stampPage = writer.getImportedPage(stampReader, stampPageNum++);
+
+                // add the stamp template, update stamp, and add the page
+                pageStamp.getOverContent().addTemplate(stampPage, 0, 0);
+                pageStamp.alterContents();
+                writer.addPage(mainPage);
+
+                if (stampPageNum > stampReader.getNumberOfPages())
+                    stampPageNum = 1;
+            }
         }
+
+        writer.close();
+        document.close();
+
         pdfContent.put(out, baos.toByteArray());
     }
 
