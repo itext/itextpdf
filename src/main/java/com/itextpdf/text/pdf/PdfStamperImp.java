@@ -373,7 +373,12 @@ class PdfStamperImp extends PdfWriter {
                 encryption = reader.getCryptoRef();
             }
             else {
-                PdfIndirectObject encryptionObject = addToBody(crypto.getEncryptionDictionary(), false);
+            	PdfDictionary encDict = crypto.getEncryptionDictionary();
+            	PdfDictionary origEncDict = reader.getCatalog().getAsDict(PdfName.ENCRYPT);
+            	if (origEncDict != null && PdfReader.unethicalreading) {
+            		encDict.put(PdfName.O, origEncDict.get(PdfName.O));
+            	}
+                PdfIndirectObject encryptionObject = addToBody(encDict, false);
                 encryption = encryptionObject.getIndirectReference();
             }
             fileID = crypto.getFileID();
