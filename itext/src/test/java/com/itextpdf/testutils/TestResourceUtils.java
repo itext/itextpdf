@@ -112,6 +112,11 @@ public final class TestResourceUtils {
         return writeStreamToTempFile(resourceName, is);
     }
     
+    public static File getBytesAsTempFile(byte[] bytes) throws IOException {
+    	return writeStreamToTempFile("bytes", new ByteArrayInputStream(bytes));
+    }
+    		 
+    
     private static File writeStreamToTempFile(String id, InputStream is) throws IOException{
         if (is == null) throw new NullPointerException("Input stream is null");
         

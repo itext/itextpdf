@@ -14,6 +14,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.itextpdf.testutils.TestResourceUtils;
+
 public class FileChannelRandomAccessSourceTest {
 	byte[] data;
 	File f;
@@ -21,6 +23,8 @@ public class FileChannelRandomAccessSourceTest {
 	
 	@Before
 	public void setUp() throws Exception {
+		TestResourceUtils.purgeTempFiles();
+
 		Random r = new Random(42);
 		
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -31,21 +35,18 @@ public class FileChannelRandomAccessSourceTest {
 		}
 		
 		data = baos.toByteArray();
-		f = File.createTempFile("FileChannelRandomAccessSourceTest", ".pdf");
-		FileOutputStream fos = new FileOutputStream(f);
-		fos.write(data);
-		fos.close();
+		f = TestResourceUtils.getBytesAsTempFile(data);
 
 		FileInputStream is = new FileInputStream(f);
 		channel = is.getChannel();
-		
 	}
 
 	@After
 	public void tearDown() throws Exception {
 		if (channel != null)
 			channel.close();
-		f.delete();
+		
+		TestResourceUtils.purgeTempFiles();
 	}
 
 	@Test
@@ -86,6 +87,18 @@ public class FileChannelRandomAccessSourceTest {
 			}
 			
 			Assert.assertEquals(-1, s.get(pos, chunk, 0, chunk.length));
+		} finally {
+			s.close();
+		}
+	}
+	
+	@Test
+	public void testGetArrayPastEOF() throws Exception{
+		FileChannelRandomAccessSource s = new FileChannelRandomAccessSource(channel);
+		try{
+			byte[] chunk = new byte[(int)channel.size() * 2];
+			int len = s.get(0, chunk, 0, chunk.length);
+			Assert.assertEquals((int)channel.size(), len);
 		} finally {
 			s.close();
 		}
