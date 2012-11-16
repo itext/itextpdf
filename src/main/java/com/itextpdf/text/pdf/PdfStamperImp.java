@@ -113,11 +113,12 @@ class PdfStamperImp extends PdfWriter {
         this.reader = reader;
         file = reader.getSafeFile();
         this.append = append;
+        if (reader.isEncrypted()) {
+            crypto = new PdfEncryption(reader.getDecrypt());
+        }
         if (append) {
             if (reader.isRebuilt())
                 throw new DocumentException(MessageLocalization.getComposedMessage("append.mode.requires.a.document.without.errors.even.if.recovery.was.possible"));
-            if (reader.isEncrypted())
-                crypto = new PdfEncryption(reader.getDecrypt());
             pdf_version.setAppendmode(true);
             file.reOpen();
             byte buf[] = new byte[8192];
