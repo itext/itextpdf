@@ -139,7 +139,7 @@ public class MakeSignature {
 
         byte[] encodedSig = sgn.getEncodedPKCS7(hash, cal, tsaClient, ocsp, crlBytes, sigtype);
 
-        if (estimatedSize + 2 < encodedSig.length)
+        if (estimatedSize < encodedSig.length)
             throw new IOException("Not enough space");
 
         byte[] paddedSig = new byte[estimatedSize];
@@ -173,5 +173,42 @@ public class MakeSignature {
             return null;
         else
             return crlBytes;
+    }
+    
+    /**
+     * Sign the document using an external container, usually a PKCS7. The signature is fully composed
+     * externally, iText will just put the container inside the document.
+     * @param sap the PdfSignatureAppearance
+     * @param externalSignatureContainer the interface providing the actual signing
+     * @param estimatedSize the reserved size for the signature
+     * @throws GeneralSecurityException
+     * @throws IOException
+     * @throws DocumentException 
+     */
+    public static void signExtenalContainer(PdfSignatureAppearance sap, ExternalSignatureContainer externalSignatureContainer, int estimatedSize) throws GeneralSecurityException, IOException, DocumentException {
+        PdfSignature dic = new PdfSignature(null, null);
+        dic.setReason(sap.getReason());
+        dic.setLocation(sap.getLocation());
+        dic.setContact(sap.getContact());
+        dic.setDate(new PdfDate(sap.getSignDate())); // time-stamp will over-rule this
+        externalSignatureContainer.modifySigningDictionary(dic);
+        sap.setCryptoDictionary(dic);
+
+        HashMap<PdfName, Integer> exc = new HashMap<PdfName, Integer>();
+        exc.put(PdfName.CONTENTS, new Integer(estimatedSize * 2 + 2));
+        sap.preClose(exc);
+
+        InputStream data = sap.getRangeStream();
+        byte[] encodedSig = externalSignatureContainer.sign(data);
+
+        if (estimatedSize < encodedSig.length)
+            throw new IOException("Not enough space");
+
+        byte[] paddedSig = new byte[estimatedSize];
+        System.arraycopy(encodedSig, 0, paddedSig, 0, encodedSig.length);
+
+        PdfDictionary dic2 = new PdfDictionary();
+        dic2.put(PdfName.CONTENTS, new PdfString(paddedSig).setHexWriting(true));
+        sap.close(dic2);
     }
 }
