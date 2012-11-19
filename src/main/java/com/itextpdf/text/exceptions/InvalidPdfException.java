@@ -62,15 +62,6 @@ public class InvalidPdfException extends IOException {
 	public InvalidPdfException(String message) {
 		super(message);
 	}
-
-	/**
-	 * Creates an instance with a cause
-	 * @param message
-	 * @param cause
-	 */
-	public InvalidPdfException(String message, Throwable cause) {
-		super(message, cause);
-	}
 	
 	
 }
