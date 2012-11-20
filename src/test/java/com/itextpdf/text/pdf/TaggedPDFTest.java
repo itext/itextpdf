@@ -63,6 +63,65 @@ public class TaggedPDFTest {
         document.open();
     }
 
+
+
+    @Test
+    public void createTaggedPDF0() throws DocumentException, IOException, ParserConfigurationException, SAXException {
+        initializeDocument("./target/com/itextpdf/test/pdf/TaggedPDFTest/out0.pdf");
+        Paragraph paragraph = new Paragraph();
+        Chunk c = new Chunk(" Hello ");
+        paragraph.add(c);
+        c = new Chunk("  world\n\n");
+        paragraph.add(c);
+        paragraph.setFont(new Font(Font.FontFamily.HELVETICA,8,Font.NORMAL,BaseColor.RED));
+        ColumnText columnText = new ColumnText(writer.getDirectContent());
+        columnText.setSimpleColumn(36, 36, 250, 800);
+        columnText.addElement(paragraph);
+        columnText.go();
+        document.close();
+
+        initializeDocument("./target/com/itextpdf/test/pdf/TaggedPDFTest/out0.pdf");
+        paragraph = new Paragraph();
+        c = new Chunk("  ");
+        paragraph.add(c);
+        paragraph.setFont(new Font(Font.FontFamily.HELVETICA,8,Font.NORMAL,BaseColor.RED));
+        columnText = new ColumnText(writer.getDirectContent());
+        columnText.setSimpleColumn(36, 36, 250, 800);
+        columnText.addElement(paragraph);
+        columnText.go();
+        document.close();
+
+        initializeDocument("./target/com/itextpdf/test/pdf/TaggedPDFTest/out0.pdf");
+        paragraph = new Paragraph();
+        c = new Chunk("Hello World");
+        paragraph.add(c);
+        paragraph.setFont(new Font(Font.FontFamily.HELVETICA,8,Font.NORMAL,BaseColor.RED));
+        columnText = new ColumnText(writer.getDirectContent());
+        columnText.setSimpleColumn(36, 36, 250, 800);
+        columnText.addElement(paragraph);
+        columnText.go();
+        document.close();
+
+        initializeDocument("./target/com/itextpdf/test/pdf/TaggedPDFTest/out0.pdf");
+        paragraph = new Paragraph();
+        c = new Chunk("Hello World");
+        paragraph.add(c);
+        document.add(paragraph);
+        document.close();
+
+        initializeDocument("./target/com/itextpdf/test/pdf/TaggedPDFTest/out0.pdf");
+        paragraph = new Paragraph();
+        c = new Chunk(" Hello ");
+        paragraph.add(c);
+        c = new Chunk("  world\n");
+        paragraph.add(c);
+        paragraph.setFont(new Font(Font.FontFamily.HELVETICA,8,Font.NORMAL,BaseColor.RED));
+        document.add(paragraph);
+        document.close();
+
+    }
+
+
     @Test
     public void createTaggedPDF1() throws DocumentException, IOException, ParserConfigurationException, SAXException {
         initializeDocument("./target/com/itextpdf/test/pdf/TaggedPDFTest/out1.pdf");
@@ -222,6 +281,86 @@ public class TaggedPDFTest {
         new MyTaggedPdfReaderTool().convertToXml(reader, xmlOut);
         xmlOut.close();
         Assert.assertTrue(compareXmls("./src/test/resources/com/itextpdf/text/pdf/TaggedPdfTest/test6.xml", "./target/com/itextpdf/test/pdf/TaggedPDFTest/out6.xml"));
+    }
+
+    @Test
+    public void createTaggedPDF7() throws DocumentException, IOException, ParserConfigurationException, SAXException {
+        initializeDocument("./target/com/itextpdf/test/pdf/TaggedPDFTest/out7.pdf");
+        List list = new List(true);
+        try {
+            list = new List(true);
+            ListItem listItem = new ListItem(new Chunk("Quick brown fox jumped over a lazy dog. A very long line appears here because we need new line."));
+            list.add(listItem);
+            Image i = Image.getInstance("./src/test/resources/com/itextpdf/text/pdf/TaggedPdfTest/fox.bmp");
+            Chunk c = new Chunk(i, 0, 0);
+            c.setAccessibleProperty(PdfName.ALT, new PdfString("Fox image"));
+            listItem = new ListItem(c);
+            list.add(listItem);
+            listItem = new ListItem(new Chunk("jumped over a lazy"));
+            list.add(listItem);
+            i = Image.getInstance("./src/test/resources/com/itextpdf/text/pdf/TaggedPdfTest/dog.bmp");
+            c = new Chunk(i, 0, 0);
+            c.setAccessibleProperty(PdfName.ALT, new PdfString("Dog image"));
+            listItem = new ListItem(c);
+            list.add(listItem);
+            Paragraph p = new Paragraph(text);
+            listItem = new ListItem(new Paragraph(text));
+            list.add(listItem);
+        } catch (Exception e) {
+
+        }
+        document.add(list);
+        document.close();
+
+        PdfReader reader = new PdfReader("./target/com/itextpdf/test/pdf/TaggedPDFTest/out7.pdf");
+        FileOutputStream xmlOut = new FileOutputStream("./target/com/itextpdf/test/pdf/TaggedPDFTest/out7.xml");
+        new MyTaggedPdfReaderTool().convertToXml(reader, xmlOut);
+        xmlOut.close();
+        Assert.assertTrue(compareXmls("./src/test/resources/com/itextpdf/text/pdf/TaggedPdfTest/test7.xml", "./target/com/itextpdf/test/pdf/TaggedPDFTest/out7.xml"));
+    }
+
+    @Test
+    public void createTaggedPDF8() throws DocumentException, IOException, ParserConfigurationException, SAXException {
+        initializeDocument("./target/com/itextpdf/test/pdf/TaggedPDFTest/out8.pdf");
+
+        ColumnText columnText = new ColumnText(writer.getDirectContent());
+
+        List list = new List(true);
+        try {
+            list = new List(true);
+            ListItem listItem = new ListItem(new Chunk("Quick brown fox jumped over a lazy dog. A very long line appears here because we need new line."));
+            list.add(listItem);
+            Image i = Image.getInstance("./src/test/resources/com/itextpdf/text/pdf/TaggedPdfTest/fox.bmp");
+            Chunk c = new Chunk(i, 0, 0);
+            c.setAccessibleProperty(PdfName.ALT, new PdfString("Fox image"));
+            listItem = new ListItem(c);
+            list.add(listItem);
+            listItem = new ListItem(new Chunk("jumped over a lazy"));
+            list.add(listItem);
+            i = Image.getInstance("./src/test/resources/com/itextpdf/text/pdf/TaggedPdfTest/dog.bmp");
+            c = new Chunk(i, 0, 0);
+            c.setAccessibleProperty(PdfName.ALT, new PdfString("Dog image"));
+            listItem = new ListItem(c);
+            list.add(listItem);
+            Paragraph p = new Paragraph(text);
+            listItem = new ListItem(new Paragraph(text));
+            list.add(listItem);
+        } catch (Exception e) {
+
+        }
+        columnText.setSimpleColumn(36,36,400,800);
+        columnText.addElement(list);
+        columnText.go();
+        document.newPage();
+        columnText.setSimpleColumn(36,36,400,800);
+        columnText.go();
+        document.close();
+
+        PdfReader reader = new PdfReader("./target/com/itextpdf/test/pdf/TaggedPDFTest/out8.pdf");
+        FileOutputStream xmlOut = new FileOutputStream("./target/com/itextpdf/test/pdf/TaggedPDFTest/out8.xml");
+        new MyTaggedPdfReaderTool().convertToXml(reader, xmlOut);
+        xmlOut.close();
+        Assert.assertTrue(compareXmls("./src/test/resources/com/itextpdf/text/pdf/TaggedPdfTest/test8.xml", "./target/com/itextpdf/test/pdf/TaggedPDFTest/out8.xml"));
     }
 
     private boolean compareXmls(String xml1, String xml2) throws ParserConfigurationException, SAXException, IOException {

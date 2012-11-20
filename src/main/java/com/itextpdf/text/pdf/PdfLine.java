@@ -148,6 +148,12 @@ public class PdfLine {
 
         // we split the chunk to be added
         PdfChunk overflow = chunk.split(width);
+        if (overflow != null && overflow.length() > 0 && overflow instanceof PdfTagMarker && chunk instanceof PdfTagMarker) {
+            ((PdfTagMarker)chunk).clearCloseElements();
+            ((PdfTagMarker)overflow).clearOpenElements();
+        }
+
+
         newlineSplit = chunk.isNewlineSplit() || overflow == null;
         if (chunk.isTab()) {
         	Object[] tab = (Object[])chunk.getAttribute(Chunk.TAB);
@@ -475,8 +481,6 @@ public class PdfLine {
                     float height = img.getScaledHeight() + chunk.getImageOffsetY() + img.getSpacingBefore();
                     image_leading = Math.max(height, image_leading);
                 }
-            } else if (chunk.isAccessibleTag()) {
-                normal_leading = Math.max(0, normal_leading);
             } else {
                 if (chunk.changeLeading())
                     normal_leading = Math.max(chunk.getLeading(), normal_leading);
@@ -538,9 +542,7 @@ public class PdfLine {
            PdfChunk ck = line.get(k);
            if (ck.isImage())
                ascender = Math.max(ascender, ck.getImage().getScaledHeight() + ck.getImageOffsetY());
-           else if (ck.isAccessibleTag()) {
-                ascender = Math.max(ascender, 0);
-           } else {
+           else {
                PdfFont font = ck.font();
                float textRise = ck.getTextRise();
                ascender = Math.max(ascender, (textRise > 0 ? textRise : 0) + font.getFont().getFontDescriptor(BaseFont.ASCENT, font.size()));
@@ -560,9 +562,7 @@ public class PdfLine {
             PdfChunk ck = line.get(k);
             if (ck.isImage())
                 descender = Math.min(descender, ck.getImageOffsetY());
-            else if (ck.isAccessibleTag()) {
-                descender = Math.min(descender, 0);
-            } else {
+            else {
                 PdfFont font = ck.font();
                 float textRise = ck.getTextRise();
                 descender = Math.min(descender, (textRise < 0 ? textRise : 0) + font.getFont().getFontDescriptor(BaseFont.DESCENT, font.size()));
