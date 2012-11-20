@@ -269,6 +269,8 @@ public class ColumnText {
     private float listIndentation = 0;
 
     protected List<IAccessibleElement> mcBlocks = null;
+    protected Stack<IAccessibleElement> accessibleElements = new Stack<IAccessibleElement>();
+
 
 
     /**
@@ -365,41 +367,49 @@ public class ColumnText {
     private void addWaitingPhrase() {
         if (bidiLine == null && waitPhrase != null) {
             bidiLine = new BidiLine();
-            PdfListBody lBody = null;
-            if (isTagged(canvas)) {
-                if (waitPhrase instanceof ListItem) {
-                    com.itextpdf.text.List list = getListIfItemIsFirst((ListItem)waitPhrase);
-                    if (list != null && list.getRole() != null)
-                        bidiLine.addChunk(new PdfChunk(list, PdfChunk.TagRole.Open, null));
-                }
-                if (waitPhrase instanceof IAccessibleElement && ((IAccessibleElement)waitPhrase).getRole() != null) {
-                    bidiLine.addChunk(new PdfChunk((IAccessibleElement)waitPhrase, PdfChunk.TagRole.Open, null));
-                }
-                if (waitPhrase instanceof ListItem && ((ListItem)waitPhrase).getRole() != null) {
-                    lBody = new PdfListBody();
-                    bidiLine.addChunk(new PdfChunk(lBody, PdfChunk.TagRole.Open, null));
-                }
-            }
             for (Chunk c: waitPhrase.getChunks()) {
-                if (isTagged(canvas) && c.getRole() != null) {
-                    bidiLine.addChunk(new PdfChunk(c, PdfChunk.TagRole.Open, null));
-                }
-                bidiLine.addChunk(new PdfChunk(c, null));
-                if (isTagged(canvas) && c.getRole() != null) {
-                    bidiLine.addChunk(new PdfChunk(c, PdfChunk.TagRole.Close, null));
+                PdfChunk pdfChunk = new PdfChunk(c, null);
+                if (isTagged(canvas)) {
+                    ArrayList<PdfChunk> splitted = PdfTagMarker.splitChunk(pdfChunk, c);
+                    bidiLine.addChunks(splitted);
+                } else {
+                    bidiLine.addChunk(pdfChunk);
                 }
             }
-            if (isTagged(canvas)) {
-                if (lBody != null) {
-                    bidiLine.addChunk(new PdfChunk(lBody, PdfChunk.TagRole.Close, null));
+            if (isTagged(canvas) && waitPhrase instanceof IAccessibleElement) {
+                PdfListBody lBody = null;
+                for (int i = 0; i < bidiLine.chunks.size(); i++) {
+                    PdfChunk c = bidiLine.chunks.get(i);
+                    if (c instanceof PdfTagMarker) {
+                        if (waitPhrase instanceof ListItem) {
+                            lBody = new PdfListBody();
+                            ((PdfTagMarker)c).getOpenElements().add(0, lBody);
+                        }
+                        ((PdfTagMarker)c).getOpenElements().add(0, (IAccessibleElement)waitPhrase);
+                        if (waitPhrase instanceof ListItem) {
+                            com.itextpdf.text.List list = getListIfItemIsFirst((ListItem)waitPhrase);
+                            if (list != null) {
+                                ((PdfTagMarker)c).getOpenElements().add(0, list);
+                            }
+                        }
+                        break;
+                    }
                 }
-                if (waitPhrase instanceof IAccessibleElement && ((IAccessibleElement)waitPhrase).getRole() != null) {
-                    bidiLine.addChunk(new PdfChunk((IAccessibleElement)waitPhrase, PdfChunk.TagRole.Close, null));
-                }
-                if (waitPhrase instanceof ListItem) {
-                    com.itextpdf.text.List list = getListIfItemIsLast((ListItem)waitPhrase);
-                    if (list != null && list.getRole() != null)
-                        bidiLine.addChunk(new PdfChunk(list, PdfChunk.TagRole.Close, null));
+                for (int i = bidiLine.chunks.size() - 1; i >= 0; i--) {
+                    PdfChunk c = bidiLine.chunks.get(i);
+                    if (c instanceof PdfTagMarker) {
+                        if (lBody != null) {
+                            ((PdfTagMarker)c).getCloseElements().add(lBody);
+                        }
+                        ((PdfTagMarker)c).getCloseElements().add((IAccessibleElement)waitPhrase);
+                        if (waitPhrase instanceof ListItem) {
+                            com.itextpdf.text.List list = getListIfItemIsLast((ListItem)waitPhrase);
+                            if (list != null) {
+                                ((PdfTagMarker)c).getCloseElements().add(list);
+                            }
+                        }
+                        break;
+                    }
                 }
             }
             waitPhrase = null;
@@ -1020,12 +1030,12 @@ public class ColumnText {
                 }
             }
             PdfListLabel lbl = null;
-            if (isTagged(canvas) && pdf.accessibleElements.size() > 0 && pdf.accessibleElements.peek() instanceof ListItem) {
+            if (isTagged(canvas) && accessibleElements.size() > 0 && accessibleElements.peek() instanceof ListItem) {
                 if (!Float.isNaN(firstLineY) && !firstLineYDone) {
                     if (!simulate) {
                         lbl = new PdfListLabel();
                         lbl.canvas = canvas;
-                        lbl.listSymbol = ((ListItem)pdf.accessibleElements.peek()).getListSymbol();
+                        lbl.listSymbol = ((ListItem)accessibleElements.peek()).getListSymbol();
                         lbl.x = leftX + this.listIndentation;
                         lbl.y = firstLineY;
                     }
@@ -1388,10 +1398,16 @@ public class ColumnText {
                     compositeColumn.rectangularMode = rectangularMode;
                     compositeColumn.minY = minY;
                     compositeColumn.maxY = maxY;
-                    compositeColumn.mcBlocks = mcBlocks;
+                    if (isTagged(canvas)) {
+                        compositeColumn.mcBlocks = mcBlocks;
+                        compositeColumn.accessibleElements = accessibleElements;
+                    }
                     boolean keepCandidate = para.getKeepTogether() && createHere && !(firstPass && adjustFirstLine);
                     status = compositeColumn.go(simulate || keepCandidate && keep == 0);
-                    mcBlocks = compositeColumn.mcBlocks;
+                    if (isTagged(canvas)) {
+                        mcBlocks = compositeColumn.mcBlocks;
+                        accessibleElements = compositeColumn.accessibleElements;
+                    }
                     lastX = compositeColumn.getLastX();
                     updateFilledWidth(compositeColumn.filledWidth);
                     if ((status & NO_MORE_TEXT) == 0 && keepCandidate) {
@@ -1425,7 +1441,7 @@ public class ColumnText {
             else if (element.type() == Element.LIST) {
                 com.itextpdf.text.List list = (com.itextpdf.text.List)element;
                 if (isTagged(canvas)) {
-                    pdf.accessibleElements.push(list);
+                    accessibleElements.push(list);
                 }
                 ArrayList<Element> items = list.getItems();
                 ListItem item = null;
@@ -1467,8 +1483,8 @@ public class ColumnText {
                         if (item == null) {
                             listIdx = 0;
                             compositeElements.removeFirst();
-                            if (isTagged(canvas) && pdf.accessibleElements.size() > 0 && pdf.accessibleElements.peek() == list) {
-                                pdf.accessibleElements.pop();
+                            if (isTagged(canvas) && accessibleElements.size() > 0 && accessibleElements.peek() == list) {
+                                accessibleElements.pop();
                             }
                             continue main_loop;
                         }
@@ -1498,15 +1514,19 @@ public class ColumnText {
                     compositeColumn.maxY = maxY;
                     boolean keepCandidate = item.getKeepTogether() && createHere && !(firstPass && adjustFirstLine);
                     compositeColumn.listIndentation = listIndentation;
-                    compositeColumn.mcBlocks = mcBlocks;
                     if (isTagged(canvas)) {
-                        pdf.accessibleElements.push(item);
+                        compositeColumn.mcBlocks = mcBlocks;
+                        compositeColumn.accessibleElements = accessibleElements;
+                        accessibleElements.push(item);
                     }
                     status = compositeColumn.go(simulate || keepCandidate && keep == 0);
-                    if (isTagged(canvas) && pdf.accessibleElements.size() > 0) {
-                        pdf.accessibleElements.pop();
+                    if (isTagged(canvas) && accessibleElements.size() > 0) {
+                        accessibleElements.pop();
                     }
-                    mcBlocks = compositeColumn.mcBlocks;
+                    if (isTagged(canvas)) {
+                        mcBlocks = compositeColumn.mcBlocks;
+                        accessibleElements = compositeColumn.accessibleElements;
+                    }
                     compositeColumn.listIndentation = 0;
                     lastX = compositeColumn.getLastX();
                     updateFilledWidth(compositeColumn.filledWidth);
@@ -1974,8 +1994,8 @@ public class ColumnText {
 
     private com.itextpdf.text.List getListIfItemIsFirst(ListItem listItem) {
         if (isTagged(canvas)) {
-            if (canvas.pdf.accessibleElements.peek() == listItem) {
-                IAccessibleElement list = canvas.pdf.accessibleElements.get(canvas.pdf.accessibleElements.size() - 2);
+            if (accessibleElements.peek() == listItem) {
+                IAccessibleElement list = accessibleElements.get(accessibleElements.size() - 2);
                 if (list instanceof com.itextpdf.text.List && ((com.itextpdf.text.List) list).getFirstItem() == listItem) {
                     return (com.itextpdf.text.List)list;
                 } else {
@@ -1991,8 +2011,8 @@ public class ColumnText {
 
     private com.itextpdf.text.List getListIfItemIsLast(ListItem listItem) {
         if (isTagged(canvas)) {
-            if (canvas.pdf.accessibleElements.peek() == listItem) {
-                IAccessibleElement list = canvas.pdf.accessibleElements.get(canvas.pdf.accessibleElements.size() - 2);
+            if (accessibleElements.peek() == listItem) {
+                IAccessibleElement list = accessibleElements.get(accessibleElements.size() - 2);
                 if (list instanceof com.itextpdf.text.List && ((com.itextpdf.text.List) list).getLastItem() == listItem) {
                     return (com.itextpdf.text.List) list;
                 } else {

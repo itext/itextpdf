@@ -145,14 +145,6 @@ public class PdfChunk {
 /** The leading that can overrule the existing leading. */
     protected float leading = 0;
 
-    protected IAccessibleElement accessibleElement = null;
-    protected TagRole tagRole = PdfChunk.TagRole.Open;
-
-    enum TagRole {
-        Open,
-        Close
-    };
-
     // constructors
 
 /**
@@ -184,13 +176,6 @@ public class PdfChunk {
         splitCharacter = (SplitCharacter)noStroke.get(Chunk.SPLITCHARACTER);
         if (splitCharacter == null)
             splitCharacter = DefaultSplitCharacter.DEFAULT;
-    }
-
-    PdfChunk(final IAccessibleElement accessibleElement, final TagRole tagRole, final Chunk chunk) {
-        this(chunk == null ? new Chunk(Chunk.OBJECT_REPLACEMENT_CHARACTER, new Font()) : chunk, null);
-        value = Chunk.OBJECT_REPLACEMENT_CHARACTER;
-        this.accessibleElement = accessibleElement;
-        this.tagRole = tagRole;
     }
 
 /**
@@ -285,6 +270,10 @@ public class PdfChunk {
             splitCharacter = DefaultSplitCharacter.DEFAULT;
     }
 
+    protected PdfChunk getNewChunk(String string) {
+        return new PdfChunk(string, this);
+    }
+
     // methods
 
     /** Gets the Unicode equivalent to a CID.
@@ -320,7 +309,7 @@ public class PdfChunk {
         newlineSplit = false;
         if (image != null) {
             if (image.getScaledWidth() > width) {
-                PdfChunk pc = new PdfChunk(Chunk.OBJECT_REPLACEMENT_CHARACTER, this);
+                PdfChunk pc = getNewChunk(Chunk.OBJECT_REPLACEMENT_CHARACTER);
                 value = "";
                 attributes = new HashMap<String, Object>();
                 image = null;
@@ -357,7 +346,7 @@ public class PdfChunk {
                     if (value.length() < 1) {
                         value = "\u0001";
                     }
-                    PdfChunk pc = new PdfChunk(returnValue, this);
+                    PdfChunk pc = getNewChunk(returnValue);
                     return pc;
                 }
                 currentWidth += getCharWidth(cidChar);
@@ -388,7 +377,7 @@ public class PdfChunk {
                     if (value.length() < 1) {
                         value = " ";
                     }
-                    PdfChunk pc = new PdfChunk(returnValue, this);
+                    PdfChunk pc = getNewChunk(returnValue);
                     return pc;
                 }
                 surrogate = Utilities.isSurrogatePair(valueArray, currentPosition);
@@ -419,7 +408,7 @@ public class PdfChunk {
         if (splitPosition < 0) {
             String returnValue = value;
             value = "";
-            PdfChunk pc = new PdfChunk(returnValue, this);
+            PdfChunk pc = getNewChunk(returnValue);
             return pc;
         }
         if (lastSpace > splitPosition && splitCharacter.isSplitCharacter(0, 0, 1, singleSpace, null))
@@ -432,14 +421,14 @@ public class PdfChunk {
                 if (pre.length() > 0) {
                     String returnValue = post + value.substring(wordIdx);
                     value = trim(value.substring(0, lastSpace) + pre);
-                    PdfChunk pc = new PdfChunk(returnValue, this);
+                    PdfChunk pc = getNewChunk(returnValue);
                     return pc;
                 }
             }
         }
         String returnValue = value.substring(splitPosition);
         value = trim(value.substring(0, splitPosition));
-        PdfChunk pc = new PdfChunk(returnValue, this);
+        PdfChunk pc = getNewChunk(returnValue);
         return pc;
     }
 
@@ -460,7 +449,7 @@ public class PdfChunk {
             		image.scalePercent(scalePercent);
             		return null;
             	}
-                PdfChunk pc = new PdfChunk("", this);
+                PdfChunk pc = getNewChunk("");
                 value = "";
                 attributes.remove(Chunk.IMAGE);
                 image = null;
@@ -478,7 +467,7 @@ public class PdfChunk {
         if (width < font.width()) {
             String returnValue = value.substring(1);
             value = value.substring(0, 1);
-            PdfChunk pc = new PdfChunk(returnValue, this);
+            PdfChunk pc = getNewChunk(returnValue);
             return pc;
         }
 
@@ -515,7 +504,7 @@ public class PdfChunk {
         }
         String returnValue = value.substring(currentPosition);
         value = value.substring(0, currentPosition);
-        PdfChunk pc = new PdfChunk(returnValue, this);
+        PdfChunk pc = getNewChunk(returnValue);
         return pc;
     }
 
@@ -558,8 +547,6 @@ public class PdfChunk {
         if (isAttribute(Chunk.TABSPACE)) {
             return 0;
         }
-        if (isAccessibleTag())
-            return 0;
         return font.width(value);
     }
 
@@ -720,10 +707,6 @@ public class PdfChunk {
      */
     boolean isTabSpace() {
         return isAttribute(Chunk.TABSPACE);
-    }
-
-    boolean isAccessibleTag() {
-        return accessibleElement != null;
     }
 
     /**
@@ -899,12 +882,6 @@ public class PdfChunk {
         return c >= 0x200b && c <= 0x200f || c >= 0x202a && c <= 0x202e;
     }
 
-    public TagRole getTagRole() {
-        return tagRole;
-    }
 
-    public IAccessibleElement getAccessibleElement() {
-        return accessibleElement;
-    }
 
 }

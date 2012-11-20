@@ -52,6 +52,7 @@ import com.itextpdf.text.pdf.draw.DrawInterface;
 import com.itextpdf.text.pdf.interfaces.IAccessibleElement;
 import com.itextpdf.text.pdf.internal.PdfAnnotationsImp;
 import com.itextpdf.text.pdf.internal.PdfViewerPreferencesImp;
+import sun.awt.image.SurfaceManager;
 
 import java.io.IOException;
 import java.text.DecimalFormat;
@@ -299,8 +300,7 @@ public class PdfDocument extends Document {
     protected PdfWriter writer;
 
     protected HashMap<IAccessibleElement, PdfStructureElement> structElements = new HashMap<IAccessibleElement, PdfStructureElement>();
-
-    protected Stack<IAccessibleElement> accessibleElements = new Stack<IAccessibleElement>();
+    private ArrayList<IAccessibleElement> elementsToOpen = new ArrayList<IAccessibleElement>();
 
     /**
      * Adds a <CODE>PdfWriter</CODE> to the <CODE>PdfDocument</CODE>.
@@ -424,16 +424,17 @@ public class PdfDocument extends Document {
                     }
 
                     // we cast the element to a chunk
-                    PdfChunk chunk = new PdfChunk((Chunk) element, anchorAction);
-                    PdfListBody lBody = null;
-                    if (isTagged(writer)) {
-                        if (accessibleElements.size() > 0 && accessibleElements.peek() instanceof ListItem && accessibleElements.peek().getRole() != null) {
-                            lBody = new PdfListBody();
-                            line.add(new PdfChunk(lBody, PdfChunk.TagRole.Open, (Chunk)element));
+                    PdfChunk chunk = null;
+                    if (isTagged(writer) && element instanceof IAccessibleElement) {
+                        chunk = new PdfTagMarker((Chunk) element, anchorAction);
+                        int i = 0;
+                        while (elementsToOpen.size() > 0) {
+                            IAccessibleElement ae = elementsToOpen.get(elementsToOpen.size() - 1);
+                            ((PdfTagMarker)chunk).getOpenElements().add(0, ae);
+                            elementsToOpen.remove(ae);
                         }
-                        if (element instanceof IAccessibleElement && ((IAccessibleElement)element).getRole() != null) {
-                            line.add(new PdfChunk((IAccessibleElement)element, PdfChunk.TagRole.Open, (Chunk)element));
-                        }
+                    } else {
+                        chunk = new PdfChunk((Chunk) element, anchorAction);
                     }
                     // we try to add the chunk to the line, until we succeed
                     {
@@ -446,15 +447,7 @@ public class PdfDocument extends Document {
                             	chunk.trimFirstSpace();
                         }
                     }
-                    if (isTagged(writer)) {
-                        if (element instanceof IAccessibleElement && ((IAccessibleElement)element).getRole() != null) {
-                            line.add(new PdfChunk((IAccessibleElement)element, PdfChunk.TagRole.Close, (Chunk)element));
-                        }
-                        if (lBody != null) {
-                            line.add(new PdfChunk(lBody, PdfChunk.TagRole.Close, (Chunk)element));
-                        }
 
-                    }
                     pageEmpty = false;
                     if (chunk.isAttribute(Chunk.NEWPAGE)) {
                         newPage();
@@ -501,6 +494,9 @@ public class PdfDocument extends Document {
                     leadingCount++;
                     // we cast the element to a paragraph
                     Paragraph paragraph = (Paragraph) element;
+                    if (isTagged(writer)) {
+                        elementsToOpen.add(paragraph);
+                    }
                     addSpacing(paragraph.getSpacingBefore(), leading, paragraph.getFont());
 
                     // we adjust the parameters of the document
@@ -538,11 +534,7 @@ public class PdfDocument extends Document {
                     }
                     else {
                     	line.setExtraIndent(paragraph.getFirstLineIndent());
-                    	if (isTagged(writer) && paragraph.getRole() != null)
-                            line.add(new PdfChunk(paragraph, PdfChunk.TagRole.Open, null));
                         element.process(this);
-                        if (isTagged(writer) && paragraph.getRole() != null)
-                            line.add(new PdfChunk(paragraph, PdfChunk.TagRole.Close, null));
                         carriageReturn();
                         addSpacing(paragraph.getSpacingAfter(), paragraph.getTotalLeading(), paragraph.getFont());
                     }
@@ -555,6 +547,9 @@ public class PdfDocument extends Document {
                     indentation.indentRight -= paragraph.getIndentationRight();
                     carriageReturn();
                     leadingCount--;
+                    if (isTagged(writer)) {
+                        closeAccessibleElement(paragraph, text);
+                    }
                     break;
                 }
                 case Element.SECTION:
@@ -621,6 +616,9 @@ public class PdfDocument extends Document {
                 case Element.LIST: {
                     // we cast the element to a List
                     List list = (List) element;
+                    if (isTagged(writer)) {
+                        elementsToOpen.add(list);
+                    }
                     if (list.isAlignindent()) {
                     	list.normalizeIndentation();
                     }
@@ -628,21 +626,28 @@ public class PdfDocument extends Document {
                     indentation.listIndentLeft += list.getIndentationLeft();
                     indentation.indentRight += list.getIndentationRight();
                     // we process the items in the list
-                    if (isTagged(writer) && list.getRole() != null)
-                        line.add(new PdfChunk(list, PdfChunk.TagRole.Open, null));
                     element.process(this);
-                    if (isTagged(writer) && list.getRole() != null)
-                        line.add(new PdfChunk(list, PdfChunk.TagRole.Close, null));
+
                     // some parameters are set back to normal again
                     indentation.listIndentLeft -= list.getIndentationLeft();
                     indentation.indentRight -= list.getIndentationRight();
                     carriageReturn();
+                    if (isTagged(writer)) {
+                        closeAccessibleElement(list, text);
+                    }
                     break;
                 }
                 case Element.LISTITEM: {
                     leadingCount++;
                     // we cast the element to a ListItem
                     ListItem listItem = (ListItem) element;
+                    PdfListBody lBody = null;
+                    if (isTagged(writer)) {
+                        lBody = new PdfListBody();
+                        elementsToOpen.add(listItem);
+                        elementsToOpen.add(lBody);
+                    }
+
 
                     addSpacing(listItem.getSpacingBefore(), leading, listItem.getFont());
 
@@ -656,17 +661,7 @@ public class PdfDocument extends Document {
                     // we prepare the current line to be able to show us the listsymbol
                     line.setListItem(listItem);
                     // we process the item
-                    if (isTagged(writer) && listItem.getRole() != null) {
-                        line.add(new PdfChunk(listItem, PdfChunk.TagRole.Open, null));
-                        accessibleElements.push(listItem);
-                    }
                     element.process(this);
-                    if (isTagged(writer) && listItem.getRole() != null) {
-                        if (accessibleElements.size() > 0)
-                            accessibleElements.pop();
-                        line.add(new PdfChunk(listItem, PdfChunk.TagRole.Close, null));
-                    }
-
                     addSpacing(listItem.getSpacingAfter(), listItem.getTotalLeading(), listItem.getFont());
 
                     // if the last line is justified, it should be aligned to the left
@@ -678,6 +673,10 @@ public class PdfDocument extends Document {
                     indentation.listIndentLeft -= listItem.getIndentationLeft();
                     indentation.indentRight -= listItem.getIndentationRight();
                     leadingCount--;
+                    if (isTagged(writer)) {
+                        closeAccessibleElement(lBody, text);
+                        closeAccessibleElement(listItem, text);
+                    }
                     break;
                 }
                 case Element.RECTANGLE: {
@@ -1350,23 +1349,15 @@ public class PdfDocument extends Document {
         // looping over all the chunks in 1 line
         for (Iterator<PdfChunk> j = line.iterator(); j.hasNext(); ) {
             chunk = j.next();
-            if (isTagged(writer) && chunk.isAccessibleTag()) {
-                if (chunk.getTagRole() == PdfChunk.TagRole.Open) {
-                    text.openMCBlock(chunk.accessibleElement);
-                    if (chunk.isImage()) {
-                        int k = 0;
-                        k++;
-                    }
-                    if (chunk.accessibleElement instanceof ListItem && lbl != null) {
+            if (isTagged(writer) && chunk instanceof PdfTagMarker && ((PdfTagMarker)chunk).isOpen()) {
+                for (IAccessibleElement ae : ((PdfTagMarker)chunk).getOpenElements()) {
+                    text.openMCBlock(ae);
+                    if (ae instanceof ListItem && lbl != null) {
                         lbl.canvas.openMCBlock(lbl);
                         ColumnText.showTextAligned(lbl.canvas, Element.ALIGN_LEFT, new Phrase(lbl.listSymbol), lbl.x, lbl.y, 0);
                         lbl.canvas.closeMCBlock(lbl);
                     }
                 }
-                else {
-                    text.closeMCBlock(chunk.accessibleElement);
-                }
-                continue;
             }
             BaseColor color = chunk.color();
             float fontSize = chunk.font().size();
@@ -1647,6 +1638,12 @@ public class PdfDocument extends Document {
             if (chunk.isAttribute(Chunk.CHAR_SPACING)) {
 				text.setCharacterSpacing(baseCharacterSpacing);
             }
+            if (isTagged(writer) && chunk instanceof PdfTagMarker && ((PdfTagMarker)chunk).isClose()) {
+                for (IAccessibleElement ae : ((PdfTagMarker)chunk).getCloseElements()) {
+                    text.closeMCBlock(ae);
+                }
+            }
+
         }
         if (isJustified) {
             text.setWordSpacing(0);
@@ -2530,6 +2527,33 @@ public class PdfDocument extends Document {
     private static boolean isTagged(final PdfWriter writer) {
         return (writer != null) && writer.isTagged();
     }
+
+    private PdfLine getLastLine() {
+        if (lines.size() > 0)
+            return lines.get(lines.size() - 1);
+        else
+            return null;
+    }
+
+    private void closeAccessibleElement(final IAccessibleElement ae, final PdfContentByte canvas) {
+        if (!elementsToOpen.contains(ae)) {
+            PdfLine line = getLastLine();
+            PdfTagMarker marker = null;
+            if (line != null && line.size() > 0) {
+                PdfChunk c = line.getChunk(line.size() - 1);
+                if (c instanceof PdfTagMarker)
+                    marker = (PdfTagMarker)c;
+            }
+            if (marker == null) {
+                canvas.closeMCBlock(ae);
+            } else {
+                marker.getCloseElements().add(ae);
+            }
+        } else {
+            elementsToOpen.remove(ae);
+        }
+    }
+
 
     /**
      * @since 5.0.1
