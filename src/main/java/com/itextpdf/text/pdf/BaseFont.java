@@ -692,7 +692,7 @@ public abstract class BaseFont {
             fontBuilt = new Type1Font(name, encoding, embedded, ttfAfm, pfb, forceRead);
             fontBuilt.fastWinansi = encoding.equals(CP1252);
         }
-        else if (nameBase.toLowerCase().endsWith(".ttf") || nameBase.toLowerCase().endsWith(".otf") || nameBase.toLowerCase().indexOf(".ttc") > 0) {
+        else if (nameBase.toLowerCase().endsWith(".ttf") || nameBase.toLowerCase().endsWith(".otf") || nameBase.toLowerCase().indexOf(".ttc,") > 0) {
             if (encoding.equals(IDENTITY_H) || encoding.equals(IDENTITY_V))
                 fontBuilt = new TrueTypeFontUnicode(name, encoding, embedded, ttfAfm, forceRead);
             else {
