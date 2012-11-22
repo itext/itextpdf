@@ -205,7 +205,7 @@ public class Chunk implements Element, IAccessibleElement {
 		copyImage.setAbsolutePosition(Float.NaN, Float.NaN);
 		setAttribute(IMAGE, new Object[] { copyImage, new Float(offsetX),
 				new Float(offsetY), Boolean.FALSE });
-        this.role = PdfName.FIGURE;
+        this.role = null;
 	}
 
 	/**
@@ -288,7 +288,7 @@ public class Chunk implements Element, IAccessibleElement {
 		this(OBJECT_REPLACEMENT_CHARACTER, new Font());
 		setAttribute(IMAGE, new Object[] { image, new Float(offsetX),
 				new Float(offsetY), Boolean.valueOf(changeLeading) });
-        this.role = PdfName.FIGURE;
+        this.role = null;
 	}
 
 	// implementation of the Element-methods
@@ -967,32 +967,50 @@ public class Chunk implements Element, IAccessibleElement {
     }
 
     public PdfObject getAccessibleProperty(final PdfName key) {
-        if (accessibleProperties != null)
+        if (getImage() != null) {
+            return getImage().getAccessibleProperty(key);
+        } else if (accessibleProperties != null)
             return accessibleProperties.get(key);
         else
             return null;
     }
 
     public void setAccessibleProperty(final PdfName key, final PdfObject value) {
-        if (accessibleProperties == null)
-            accessibleProperties = new HashMap<PdfName, PdfObject>();
-        accessibleProperties.put(key, value);
+        if (getImage() != null) {
+            getImage().setAccessibleProperty(key, value);
+        } else {
+            if (accessibleProperties == null)
+                accessibleProperties = new HashMap<PdfName, PdfObject>();
+            accessibleProperties.put(key, value);
+        }
     }
 
     public HashMap<PdfName, PdfObject> getAccessibleProperties() {
-        return accessibleProperties;
+        if (getImage() != null)
+            return getImage().getAccessibleProperties();
+        else
+            return accessibleProperties;
     }
 
     public PdfName getRole() {
-        return role;
+        if (getImage() != null)
+            return getImage().getRole();
+        else
+            return role;
     }
 
     public void setRole(final PdfName role) {
-        this.role = role;
+        if (getImage() != null)
+            getImage().setRole(role);
+        else
+            this.role = role;
     }
 
     public void setAccessibleProperties(final HashMap<PdfName, PdfObject> accessibleProperties) {
-        this.accessibleProperties = accessibleProperties;
+        if (getImage() != null)
+            getImage().setAccessibleProperties(accessibleProperties);
+        else
+            this.accessibleProperties = accessibleProperties;
     }
 
 }

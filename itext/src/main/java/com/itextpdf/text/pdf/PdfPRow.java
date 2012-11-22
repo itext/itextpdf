@@ -51,13 +51,16 @@ import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.log.Logger;
 import com.itextpdf.text.log.LoggerFactory;
+import com.itextpdf.text.pdf.interfaces.IAccessibleElement;
+
+import java.util.HashMap;
 
 /**
  * A row in a PdfPTable.
  * 
  * @author Paulo Soares
  */
-public class PdfPRow {
+public class PdfPRow implements IAccessibleElement {
 	
 	private final Logger LOGGER = LoggerFactory.getLogger(PdfPRow.class);
 	
@@ -87,6 +90,10 @@ public class PdfPRow {
 	protected boolean calculated = false;
     
     private int[] canvasesPos;
+
+    protected PdfName role = PdfName.TR;
+    protected HashMap<PdfName, PdfObject> accessibleProperties = null;
+
     
 	/**
 	 * Constructs a new PdfPRow with the cells in the array that was passed
@@ -756,4 +763,33 @@ public class PdfPRow {
 		}
 		return false;
 	}
+
+    public PdfObject getAccessibleProperty(final PdfName key) {
+        if (accessibleProperties != null)
+            return accessibleProperties.get(key);
+        else
+            return null;
+    }
+
+    public void setAccessibleProperty(final PdfName key, final PdfObject value) {
+        if (accessibleProperties == null)
+            accessibleProperties = new HashMap<PdfName, PdfObject>();
+        accessibleProperties.put(key, value);
+    }
+
+    public HashMap<PdfName, PdfObject> getAccessibleProperties() {
+        return accessibleProperties;
+    }
+
+    public PdfName getRole() {
+        return role;
+    }
+
+    public void setRole(final PdfName role) {
+        this.role = role;
+    }
+
+    public void setAccessibleProperties(final HashMap<PdfName, PdfObject> accessibleProperties) {
+        this.accessibleProperties = accessibleProperties;
+    }
 }
