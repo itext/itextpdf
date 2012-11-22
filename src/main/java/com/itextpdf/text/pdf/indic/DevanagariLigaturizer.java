@@ -45,6 +45,9 @@ package com.itextpdf.text.pdf.indic;
 
 import java.util.HashMap;
 
+/**
+ * Implementation of the IndicLigaturizer for Devanagari.
+ */
 public class DevanagariLigaturizer extends IndicLigaturizer {
 
     // Devanagari characters
@@ -59,6 +62,9 @@ public class DevanagariLigaturizer extends IndicLigaturizer {
     public static final char DEVA_LETTER_HA = '\u0939';
     public static final char DEVA_HALANTA = '\u094D';
     
+    /**
+     * Constructor for the IndicLigaturizer for Devanagari.
+     */
     public DevanagariLigaturizer() {
     	langTable = new HashMap<Integer, Character>();
         langTable.put(MATRA_AA, DEVA_MATRA_AA);
