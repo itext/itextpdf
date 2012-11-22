@@ -1744,6 +1744,11 @@ public class PdfName extends PdfObject implements Comparable<PdfName> {
      * @since 2.1.6
      */
     public static final PdfName TD = new PdfName("TD");
+    /**
+     * A name
+     * @since 5.3.5
+     */
+    public static final PdfName TR = new PdfName("TR");
     /** A name */
     public static final PdfName TEXT = new PdfName("Text");
     /**

@@ -300,7 +300,8 @@ public class PdfDocument extends Document {
     protected PdfWriter writer;
 
     protected HashMap<IAccessibleElement, PdfStructureElement> structElements = new HashMap<IAccessibleElement, PdfStructureElement>();
-    private ArrayList<IAccessibleElement> elementsToOpen = new ArrayList<IAccessibleElement>();
+    protected ArrayList<IAccessibleElement> elementsToOpen = new ArrayList<IAccessibleElement>();
+
 
     /**
      * Adds a <CODE>PdfWriter</CODE> to the <CODE>PdfDocument</CODE>.

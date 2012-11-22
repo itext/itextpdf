@@ -72,7 +72,7 @@ import com.itextpdf.text.pdf.interfaces.IAccessibleElement;
  * @see Rectangle
  */
 
-public abstract class Image extends Rectangle implements Indentable, Spaceable {
+public abstract class Image extends Rectangle implements Indentable, Spaceable, IAccessibleElement {
 
 	// static final membervariables
 
@@ -200,6 +200,11 @@ public abstract class Image extends Rectangle implements Indentable, Spaceable {
 
 	/** an iText attributed unique id for this image. */
 	protected Long mySerialId = getSerialId();
+
+    protected PdfName role = PdfName.FIGURE;
+
+    protected HashMap<PdfName, PdfObject> accessibleProperties = null;
+
 
 	// image from file or URL
 
@@ -691,6 +696,8 @@ public abstract class Image extends Rectangle implements Indentable, Spaceable {
 		this.imageMask = image.imageMask;
 		this.smask = image.smask;
 		this.transparency = image.transparency;
+        this.role = image.role;
+        this.accessibleProperties = image.accessibleProperties;
 	}
 
 	/**
@@ -2051,6 +2058,35 @@ public abstract class Image extends Rectangle implements Indentable, Spaceable {
         g2d.drawImage(awtImage, 0, 0, null);
         g2d.dispose();
         return getInstance(tp);
+    }
+
+    public PdfObject getAccessibleProperty(final PdfName key) {
+        if (accessibleProperties != null)
+            return accessibleProperties.get(key);
+        else
+            return null;
+    }
+
+    public void setAccessibleProperty(final PdfName key, final PdfObject value) {
+        if (accessibleProperties == null)
+            accessibleProperties = new HashMap<PdfName, PdfObject>();
+        accessibleProperties.put(key, value);
+    }
+
+    public HashMap<PdfName, PdfObject> getAccessibleProperties() {
+        return accessibleProperties;
+    }
+
+    public PdfName getRole() {
+        return role;
+    }
+
+    public void setRole(final PdfName role) {
+        this.role = role;
+    }
+
+    public void setAccessibleProperties(final HashMap<PdfName, PdfObject> accessibleProperties) {
+        this.accessibleProperties = accessibleProperties;
     }
 
 }

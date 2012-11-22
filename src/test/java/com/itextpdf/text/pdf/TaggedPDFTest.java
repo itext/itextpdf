@@ -363,6 +363,36 @@ public class TaggedPDFTest {
         Assert.assertTrue(compareXmls("./src/test/resources/com/itextpdf/text/pdf/TaggedPdfTest/test8.xml", "./target/com/itextpdf/test/pdf/TaggedPDFTest/out8.xml"));
     }
 
+    @Test
+    @Ignore
+    public void createTaggedPDF9() throws DocumentException, IOException, ParserConfigurationException, SAXException {
+        initializeDocument("./target/com/itextpdf/test/pdf/TaggedPDFTest/out9.pdf");
+        PdfPTable table = new PdfPTable(2);
+        try {
+            table.addCell("Quick brown fox jumped over a lazy dog. A very long line appears here because we need new line.");
+            Image i = Image.getInstance("./src/test/resources/com/itextpdf/text/pdf/TaggedPdfTest/fox.bmp");
+            i.setAccessibleProperty(PdfName.ALT, new PdfString("Fox image"));
+            table.addCell(i);
+            table.addCell("jumped over a lazy");
+            i = Image.getInstance("./src/test/resources/com/itextpdf/text/pdf/TaggedPdfTest/dog.bmp");
+            i.setAccessibleProperty(PdfName.ALT, new PdfString("Dog image"));
+            table.addCell(i);
+            table.addCell("Hello World");
+            Paragraph p = new Paragraph(text);
+            table.addCell(p);
+        } catch (Exception e) {
+
+        }
+        document.add(table);
+        document.close();
+
+        PdfReader reader = new PdfReader("./target/com/itextpdf/test/pdf/TaggedPDFTest/out9.pdf");
+        FileOutputStream xmlOut = new FileOutputStream("./target/com/itextpdf/test/pdf/TaggedPDFTest/out9.xml");
+        new MyTaggedPdfReaderTool().convertToXml(reader, xmlOut);
+        xmlOut.close();
+        Assert.assertTrue(compareXmls("./src/test/resources/com/itextpdf/text/pdf/TaggedPdfTest/test9.xml", "./target/com/itextpdf/test/pdf/TaggedPDFTest/out9.xml"));
+    }
+
     private boolean compareXmls(String xml1, String xml2) throws ParserConfigurationException, SAXException, IOException {
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         dbf.setNamespaceAware(true);

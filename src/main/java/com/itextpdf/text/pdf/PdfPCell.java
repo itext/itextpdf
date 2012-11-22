@@ -43,6 +43,7 @@
  */
 package com.itextpdf.text.pdf;
 
+import java.util.HashMap;
 import java.util.List;
 
 import com.itextpdf.text.Chunk;
@@ -54,12 +55,13 @@ import com.itextpdf.text.Phrase;
 import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.pdf.events.PdfPCellEventForwarder;
+import com.itextpdf.text.pdf.interfaces.IAccessibleElement;
 
 /**
  * A cell in a PdfPTable.
  */
 
-public class PdfPCell extends Rectangle{
+public class PdfPCell extends Rectangle implements IAccessibleElement {
 
     private ColumnText column = new ColumnText(null);
 
@@ -119,6 +121,10 @@ public class PdfPCell extends Rectangle{
      * 0, 90, 180 and 270.
      */
     private int rotation;
+
+    protected PdfName role = PdfName.TD;
+
+    protected HashMap<PdfName, PdfObject> accessibleProperties = null;
 
     /**
      * Constructs an empty <CODE>PdfPCell</CODE>.
@@ -988,4 +994,34 @@ public class PdfPCell extends Rectangle{
 			height = getMinimumHeight();
 		return height;
 	}
+
+    public PdfObject getAccessibleProperty(final PdfName key) {
+        if (accessibleProperties != null)
+            return accessibleProperties.get(key);
+        else
+            return null;
+    }
+
+    public void setAccessibleProperty(final PdfName key, final PdfObject value) {
+        if (accessibleProperties == null)
+            accessibleProperties = new HashMap<PdfName, PdfObject>();
+        accessibleProperties.put(key, value);
+    }
+
+    public HashMap<PdfName, PdfObject> getAccessibleProperties() {
+        return accessibleProperties;
+    }
+
+    public PdfName getRole() {
+        return role;
+    }
+
+    public void setRole(final PdfName role) {
+        this.role = role;
+    }
+
+    public void setAccessibleProperties(final HashMap<PdfName, PdfObject> accessibleProperties) {
+        this.accessibleProperties = accessibleProperties;
+    }
+
 }
