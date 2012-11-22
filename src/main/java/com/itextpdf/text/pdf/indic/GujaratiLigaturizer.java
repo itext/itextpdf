@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2011 1T3XT BVBA
+ * Copyright (c) 1998-2012 1T3XT BVBA
  * Authors: Ram Narayan, Bruno Lowagie, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -43,8 +43,6 @@
  */
 package com.itextpdf.text.pdf.indic;
 
-import java.util.HashMap;
-
 /**
  * Implementation of the IndicLigaturizer for Gujarati.
  */
@@ -53,7 +51,8 @@ public class GujaratiLigaturizer extends IndicLigaturizer {
     // Gujrati constants
 	public static final char GUJR_MATRA_AA = '\u0ABE';
 	public static final char GUJR_MATRA_I = '\u0ABF';
-	public static final char GUJR_MATRA_AI = '\u0ACC';
+	public static final char GUJR_MATRA_E = '\u0AC7';
+	public static final char GUJR_MATRA_AI = '\u0AC8';
 	public static final char GUJR_MATRA_HLR = '\u0AE2';
 	public static final char GUJR_MATRA_HLRR = '\u0AE3';
 	public static final char GUJR_LETTER_A = '\u0A85';
@@ -66,16 +65,17 @@ public class GujaratiLigaturizer extends IndicLigaturizer {
      * Constructor for the IndicLigaturizer for Gujarati.
      */
 	public GujaratiLigaturizer() {
-		langTable = new HashMap<Integer, Character>();
-        langTable.put(MATRA_AA, GUJR_MATRA_AA);
-        langTable.put(MATRA_I, GUJR_MATRA_I);
-        langTable.put(MATRA_AI, GUJR_MATRA_AI);
-        langTable.put(MATRA_HLR, GUJR_MATRA_HLR);
-        langTable.put(MATRA_HLRR, GUJR_MATRA_HLRR);
-        langTable.put(LETTER_A, GUJR_LETTER_A);
-        langTable.put(LETTER_AU, GUJR_LETTER_AU);
-        langTable.put(LETTER_KA, GUJR_LETTER_KA);
-        langTable.put(LETTER_HA, GUJR_LETTER_HA);
-        langTable.put(HALANTA, GUJR_HALANTA);
+    	langTable = new char[11];
+        langTable[MATRA_AA] = GUJR_MATRA_AA;
+        langTable[MATRA_I] = GUJR_MATRA_I;
+        langTable[MATRA_E] = GUJR_MATRA_E;
+        langTable[MATRA_AI] = GUJR_MATRA_AI;
+        langTable[MATRA_HLR] = GUJR_MATRA_HLR;
+        langTable[MATRA_HLRR] = GUJR_MATRA_HLRR;
+        langTable[LETTER_A] = GUJR_LETTER_A;
+        langTable[LETTER_AU] = GUJR_LETTER_AU;
+        langTable[LETTER_KA] = GUJR_LETTER_KA;
+        langTable[LETTER_HA] = GUJR_LETTER_HA;
+        langTable[HALANTA] = GUJR_HALANTA;
 	}
 }

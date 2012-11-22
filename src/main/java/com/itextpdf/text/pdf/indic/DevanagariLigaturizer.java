@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2011 1T3XT BVBA
+ * Copyright (c) 1998-2012 1T3XT BVBA
  * Authors: Ram Narayan, Bruno Lowagie, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -43,8 +43,6 @@
  */
 package com.itextpdf.text.pdf.indic;
 
-import java.util.HashMap;
-
 /**
  * Implementation of the IndicLigaturizer for Devanagari.
  */
@@ -53,7 +51,8 @@ public class DevanagariLigaturizer extends IndicLigaturizer {
     // Devanagari characters
     public static final char DEVA_MATRA_AA = '\u093E';
     public static final char DEVA_MATRA_I = '\u093F';
-    public static final char DEVA_MATRA_AI = '\u094C';
+    public static final char DEVA_MATRA_E = '\u0947';
+    public static final char DEVA_MATRA_AI = '\u0948';
     public static final char DEVA_MATRA_HLR = '\u0962';
     public static final char DEVA_MATRA_HLRR = '\u0963';
     public static final char DEVA_LETTER_A = '\u0905';
@@ -66,16 +65,17 @@ public class DevanagariLigaturizer extends IndicLigaturizer {
      * Constructor for the IndicLigaturizer for Devanagari.
      */
     public DevanagariLigaturizer() {
-    	langTable = new HashMap<Integer, Character>();
-        langTable.put(MATRA_AA, DEVA_MATRA_AA);
-        langTable.put(MATRA_I, DEVA_MATRA_I);
-        langTable.put(MATRA_AI, DEVA_MATRA_AI);
-        langTable.put(MATRA_HLR, DEVA_MATRA_HLR);
-        langTable.put(MATRA_HLRR, DEVA_MATRA_HLRR);
-        langTable.put(LETTER_A, DEVA_LETTER_A);
-        langTable.put(LETTER_AU, DEVA_LETTER_AU);
-        langTable.put(LETTER_KA, DEVA_LETTER_KA);
-        langTable.put(LETTER_HA, DEVA_LETTER_HA);
-        langTable.put(HALANTA, DEVA_HALANTA);
+    	langTable = new char[11];
+        langTable[MATRA_AA] = DEVA_MATRA_AA;
+        langTable[MATRA_I] = DEVA_MATRA_I;
+        langTable[MATRA_E] = DEVA_MATRA_E;
+        langTable[MATRA_AI] = DEVA_MATRA_AI;
+        langTable[MATRA_HLR] = DEVA_MATRA_HLR;
+        langTable[MATRA_HLRR] = DEVA_MATRA_HLRR;
+        langTable[LETTER_A] = DEVA_LETTER_A;
+        langTable[LETTER_AU] = DEVA_LETTER_AU;
+        langTable[LETTER_KA] = DEVA_LETTER_KA;
+        langTable[LETTER_HA] = DEVA_LETTER_HA;
+        langTable[HALANTA] = DEVA_HALANTA;
     }
 }

@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2011 1T3XT BVBA
+ * Copyright (c) 1998-2012 1T3XT BVBA
  * Authors: Ram Narayan, Bruno Lowagie, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -43,8 +43,6 @@
  */
 package com.itextpdf.text.pdf.indic;
 
-import java.util.Map;
-
 /**
  * Superclass for processors that can convert a String of bytes in
  * an Indic language to a String in the same language of which the
@@ -56,20 +54,21 @@ public abstract class IndicLigaturizer {
 	// Hashtable Indexes
 	public static final int MATRA_AA = 0;
 	public static final int MATRA_I = 1;
-	public static final int MATRA_AI = 2;
-	public static final int MATRA_HLR = 3;
-	public static final int MATRA_HLRR = 4;
-	public static final int LETTER_A = 5;
-	public static final int LETTER_AU = 6;
-	public static final int LETTER_KA = 7;
-	public static final int LETTER_HA = 8;
-	public static final int HALANTA = 9;
+	public static final int MATRA_E = 2;
+	public static final int MATRA_AI = 3;
+	public static final int MATRA_HLR = 4;
+	public static final int MATRA_HLRR = 5;
+	public static final int LETTER_A = 6;
+	public static final int LETTER_AU = 7;
+	public static final int LETTER_KA = 8;
+	public static final int LETTER_HA = 9;
+	public static final int HALANTA = 10;
 
 	/**
 	 * The table mapping specific character indexes to the characters in a
 	 * specific language.
 	 */
-	protected Map<Integer, Character> langTable;
+	protected char[] langTable;
 
 	/**
 	 * Reorders the bytes in a String making Indic ligatures
@@ -91,15 +90,14 @@ public abstract class IndicLigaturizer {
 				boolean svaraAppended = false;
 				if (prevCharIndex >= 0) {
 					 // a Halanta followed by swara matra, causes it to lose its identity
-					if (res.charAt(prevCharIndex) == langTable.get(HALANTA)) {
+					if (res.charAt(prevCharIndex) == langTable[HALANTA]) {
 						res.deleteCharAt(prevCharIndex);
 						res.append(letter);
 						svaraAppended = true;
 					}
 					int prevPrevCharIndex = res.length() - 2;
 
-					if (letter == langTable.get(MATRA_I)
-							&& prevPrevCharIndex >= 0) {
+					if (letter == langTable[MATRA_I] && prevPrevCharIndex >= 0) {
 						swap(res, prevPrevCharIndex, res.length() - 1);
 					} else {
 						if (!svaraAppended)
@@ -117,32 +115,31 @@ public abstract class IndicLigaturizer {
 	}
 	
 	/**
-	 * Checks if a character is in a specific range.
+	 * Checks if a character is vowel  letter.
 	 * @param ch	the character that needs to be checked
-	 * @return	true if the characters falls within the range
+	 * @return	true if the characters is a vowel letter
 	 */
 	protected boolean IsSwaraLetter(char ch) {
-		return (ch >= langTable.get(LETTER_A) && ch <= langTable.get(LETTER_AU));
+		return (ch >= langTable[LETTER_A] && ch <= langTable[LETTER_AU]);
 	}
 
 	/**
-	 * Checks if a character is in a specific range.
+	 * Checks if a character is vowel sign.
 	 * @param ch	the character that needs to be checked
-	 * @return	true if the characters falls within the range
+	 * @return	true if the characters is a vowel sign
 	 */
 	protected boolean IsSwaraMatra(char ch) {
-		return ((ch >= langTable.get(MATRA_AA) && ch <= langTable.get(MATRA_AI))
-				|| ch == langTable.get(MATRA_HLR) || ch == langTable
-					.get(MATRA_HLRR));
+		return ((ch >= langTable[MATRA_AA] && ch <= langTable[MATRA_AI])
+				|| ch == langTable[MATRA_HLR] || ch == langTable[MATRA_HLRR]);
 	}
 
 	/**
-	 * Checks if a character is in a specific range.
+	 * Checks if a character is consonant letter.
 	 * @param ch	the character that needs to be checked
-	 * @return	true if the characters falls within the range
+	 * @return	true if the chracter is a consonant letter
 	 */
 	protected boolean IsVyanjana(char ch) {
-		return (ch >= langTable.get(LETTER_KA) && ch <= langTable.get(LETTER_HA));
+		return (ch >= langTable[LETTER_KA] && ch <= langTable[LETTER_HA]);
 	}
 
 	/**
