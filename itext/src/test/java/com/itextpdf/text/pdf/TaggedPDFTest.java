@@ -4,6 +4,8 @@ import com.itextpdf.text.*;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.pdf.parser.*;
 import com.itextpdf.text.xml.XMLUtil;
+
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -453,6 +455,11 @@ public class TaggedPDFTest {
             return renderInfo.hasMcid(mcid, true);
         }
 
+    }
+
+    @After
+    public void finalize() {
+    	Document.compress = true;
     }
 
 

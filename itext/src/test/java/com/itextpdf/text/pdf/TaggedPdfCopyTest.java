@@ -3,6 +3,8 @@ package com.itextpdf.text.pdf;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.error_messages.MessageLocalization;
+
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -172,4 +174,8 @@ public class TaggedPdfCopyTest {
             throw new BadPdfFormatException("RoleMap does not contain \"ParagraphSpan\"");
     }
 
+    @After
+    public void finalize() {
+    	Document.compress = true;
+    }
 }
