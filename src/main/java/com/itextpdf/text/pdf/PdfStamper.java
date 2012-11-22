@@ -84,6 +84,8 @@ public class PdfStamper
 
     /** Starts the process of adding extra content to an existing PDF
      * document.
+     * <p>
+     * The reader will be closed when this PdfStamper is closed
      * @param reader the original document. It cannot be reused
      * @param os the output stream
      * @throws DocumentException on error
@@ -96,6 +98,8 @@ public class PdfStamper
     /**
      * Starts the process of adding extra content to an existing PDF
      * document.
+     * <p>
+     * The reader will be closed when this PdfStamper is closed
      * @param reader the original document. It cannot be reused
      * @param os the output stream
      * @param pdfVersion the new pdf version or '\0' to keep the same version as the original
@@ -110,6 +114,8 @@ public class PdfStamper
     /**
      * Starts the process of adding extra content to an existing PDF
      * document, possibly as a new revision.
+     * <p>
+     * The reader will be closed when this PdfStamper is closed
      * @param reader the original document. It cannot be reused
      * @param os the output stream
      * @param pdfVersion the new pdf version or '\0' to keep the same version as the original
@@ -177,6 +183,8 @@ public class PdfStamper
     /**
      * Closes the document. No more content can be written after the
      * document is closed.
+     * <p>
+     * The reader passed into the constructor will also be closed.
      * <p>
      * If closing a signed document with an external signature the closing must be done
      * in the <CODE>PdfSignatureAppearance</CODE> instance.

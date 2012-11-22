@@ -198,13 +198,15 @@ public class PdfCopy extends PdfWriter {
     protected PdfImportedPage getImportedPageImpl(PdfReader reader, int pageNumber) {
         if (currentPdfReaderInstance != null) {
             if (currentPdfReaderInstance.getReader() != reader) {
-                try {
-                    currentPdfReaderInstance.getReader().close();
-                    currentPdfReaderInstance.getReaderFile().close();
-                }
-                catch (IOException ioe) {
-                    // empty on purpose
-                }
+
+// TODO: Removed - the user should be responsible for closing all PdfReaders.  But, this could cause a lot of memory leaks in code out there that hasn't been properly closing things - maybe add a finalizer to PdfReader that calls PdfReader#close() ??            	
+//             	  try {
+//                    currentPdfReaderInstance.getReader().close();
+//                    currentPdfReaderInstance.getReaderFile().close();
+//                }
+//                catch (IOException ioe) {
+//                    // empty on purpose
+//                }
                 currentPdfReaderInstance = super.getPdfReaderInstance(reader);
             }
         }
@@ -615,15 +617,16 @@ public class PdfCopy extends PdfWriter {
             PdfReaderInstance ri = currentPdfReaderInstance;
             pdf.close();
             super.close();
-            if (ri != null) {
-                try {
-                    ri.getReader().close();
-                    ri.getReaderFile().close();
-                }
-                catch (IOException ioe) {
-                    // empty on purpose
-                }
-            }
+// Users are responsible for closing PdfReaderw            
+//            if (ri != null) {
+//                try {
+//                    ri.getReader().close();
+//                    ri.getReaderFile().close();
+//                }
+//                catch (IOException ioe) {
+//                    // empty on purpose
+//                }
+//            }
         }
     }
     public PdfIndirectReference add(PdfOutline outline) { return null; }
@@ -635,18 +638,19 @@ public class PdfCopy extends PdfWriter {
     @Override
     public void freeReader(PdfReader reader) throws IOException {
         indirectMap.remove(reader);
-        if (currentPdfReaderInstance != null) {
-            if (currentPdfReaderInstance.getReader() == reader) {
-                try {
-                    currentPdfReaderInstance.getReader().close();
-                    currentPdfReaderInstance.getReaderFile().close();
-                }
-                catch (IOException ioe) {
-                    // empty on purpose
-                }
+// TODO: Removed - the user should be responsible for closing all PdfReaders.  But, this could cause a lot of memory leaks in code out there that hasn't been properly closing things - maybe add a finalizer to PdfReader that calls PdfReader#close() ??            	
+//        if (currentPdfReaderInstance != null) {
+//            if (currentPdfReaderInstance.getReader() == reader) {
+//                try {
+//                    currentPdfReaderInstance.getReader().close();
+//                    currentPdfReaderInstance.getReaderFile().close();
+//                }
+//                catch (IOException ioe) {
+//                    // empty on purpose
+//                }
                 currentPdfReaderInstance = null;
-            }
-        }
+//            }
+//        }
         super.freeReader(reader);
     }
 
