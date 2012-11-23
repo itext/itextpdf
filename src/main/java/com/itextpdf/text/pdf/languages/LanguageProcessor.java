@@ -1,9 +1,9 @@
 /*
- * $Id$
+ * $Id:  $
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2012 1T3XT BVBA
- * Authors: Ram Narayan, Bruno Lowagie, et al.
+ * Authors: Bruno Lowagie, et al.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License version 3
@@ -41,41 +41,19 @@
  * For more information, please contact iText Software Corp. at this
  * address: sales@itextpdf.com
  */
-package com.itextpdf.text.pdf.indic;
+package com.itextpdf.text.pdf.languages;
 
 /**
- * Implementation of the IndicLigaturizer for Gujarati.
+ * Interface that needs to be implemented by classes that process bytes
+ * representing text in specific languages. Processing involves changing
+ * order to Right to Left and/or applying ligatures.
  */
-public class GujaratiLigaturizer extends IndicLigaturizer {
-    
-    // Gujrati constants
-	public static final char GUJR_MATRA_AA = '\u0ABE';
-	public static final char GUJR_MATRA_I = '\u0ABF';
-	public static final char GUJR_MATRA_E = '\u0AC7';
-	public static final char GUJR_MATRA_AI = '\u0AC8';
-	public static final char GUJR_MATRA_HLR = '\u0AE2';
-	public static final char GUJR_MATRA_HLRR = '\u0AE3';
-	public static final char GUJR_LETTER_A = '\u0A85';
-	public static final char GUJR_LETTER_AU = '\u0A94';
-	public static final char GUJR_LETTER_KA = '\u0A95';
-	public static final char GUJR_LETTER_HA = '\u0AB9';
-	public static final char GUJR_HALANTA = '\u0ACD';
-    
-    /**
-     * Constructor for the IndicLigaturizer for Gujarati.
-     */
-	public GujaratiLigaturizer() {
-    	langTable = new char[11];
-        langTable[MATRA_AA] = GUJR_MATRA_AA;
-        langTable[MATRA_I] = GUJR_MATRA_I;
-        langTable[MATRA_E] = GUJR_MATRA_E;
-        langTable[MATRA_AI] = GUJR_MATRA_AI;
-        langTable[MATRA_HLR] = GUJR_MATRA_HLR;
-        langTable[MATRA_HLRR] = GUJR_MATRA_HLRR;
-        langTable[LETTER_A] = GUJR_LETTER_A;
-        langTable[LETTER_AU] = GUJR_LETTER_AU;
-        langTable[LETTER_KA] = GUJR_LETTER_KA;
-        langTable[LETTER_HA] = GUJR_LETTER_HA;
-        langTable[HALANTA] = GUJR_HALANTA;
-	}
+public interface LanguageProcessor {
+
+	/**
+	 * Processes a String
+	 * @param s	the original String
+	 * @return the processed String
+	 */
+	public String process(String s);
 }

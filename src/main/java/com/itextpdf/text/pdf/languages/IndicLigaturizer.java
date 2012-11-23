@@ -1,5 +1,5 @@
 /*
- * $Id$
+ * $Id: IndicLigaturizer.java 5561 2012-11-22 16:22:14Z blowagie $
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2012 1T3XT BVBA
@@ -41,7 +41,7 @@
  * For more information, please contact iText Software Corp. at this
  * address: sales@itextpdf.com
  */
-package com.itextpdf.text.pdf.indic;
+package com.itextpdf.text.pdf.languages;
 
 /**
  * Superclass for processors that can convert a String of bytes in
@@ -49,7 +49,7 @@ package com.itextpdf.text.pdf.indic;
  * bytes are reordered for rendering using a font that contains the
  * necessary glyphs.
  */
-public abstract class IndicLigaturizer {
+public abstract class IndicLigaturizer implements LanguageProcessor {
 
 	// Hashtable Indexes
 	public static final int MATRA_AA = 0;

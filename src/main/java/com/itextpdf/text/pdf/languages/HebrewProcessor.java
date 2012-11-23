@@ -1,9 +1,9 @@
 /*
- * $Id$
+ * $Id:  $
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2012 1T3XT BVBA
- * Authors: Ram Narayan, Bruno Lowagie, et al.
+ * Authors: Bruno Lowagie, et al.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License version 3
@@ -41,41 +41,23 @@
  * For more information, please contact iText Software Corp. at this
  * address: sales@itextpdf.com
  */
-package com.itextpdf.text.pdf.indic;
+package com.itextpdf.text.pdf.languages;
 
-/**
- * Implementation of the IndicLigaturizer for Devanagari.
- */
-public class DevanagariLigaturizer extends IndicLigaturizer {
+import com.itextpdf.text.pdf.BidiLine;
+import com.itextpdf.text.pdf.PdfWriter;
 
-    // Devanagari characters
-    public static final char DEVA_MATRA_AA = '\u093E';
-    public static final char DEVA_MATRA_I = '\u093F';
-    public static final char DEVA_MATRA_E = '\u0947';
-    public static final char DEVA_MATRA_AI = '\u0948';
-    public static final char DEVA_MATRA_HLR = '\u0962';
-    public static final char DEVA_MATRA_HLRR = '\u0963';
-    public static final char DEVA_LETTER_A = '\u0905';
-    public static final char DEVA_LETTER_AU = '\u0914';
-    public static final char DEVA_LETTER_KA = '\u0915';
-    public static final char DEVA_LETTER_HA = '\u0939';
-    public static final char DEVA_HALANTA = '\u094D';
-    
-    /**
-     * Constructor for the IndicLigaturizer for Devanagari.
-     */
-    public DevanagariLigaturizer() {
-    	langTable = new char[11];
-        langTable[MATRA_AA] = DEVA_MATRA_AA;
-        langTable[MATRA_I] = DEVA_MATRA_I;
-        langTable[MATRA_E] = DEVA_MATRA_E;
-        langTable[MATRA_AI] = DEVA_MATRA_AI;
-        langTable[MATRA_HLR] = DEVA_MATRA_HLR;
-        langTable[MATRA_HLRR] = DEVA_MATRA_HLRR;
-        langTable[LETTER_A] = DEVA_LETTER_A;
-        langTable[LETTER_AU] = DEVA_LETTER_AU;
-        langTable[LETTER_KA] = DEVA_LETTER_KA;
-        langTable[LETTER_HA] = DEVA_LETTER_HA;
-        langTable[HALANTA] = DEVA_HALANTA;
-    }
+public class HebrewProcessor implements LanguageProcessor {
+    protected int runDirection = PdfWriter.RUN_DIRECTION_RTL;
+
+	public HebrewProcessor() {
+	}
+
+	public HebrewProcessor(int runDirection) {
+		this.runDirection = runDirection;
+	}
+
+	public String process(String s) {
+		return BidiLine.processLTR(s, runDirection, 0);
+	}
+
 }
