@@ -49,6 +49,7 @@ import com.itextpdf.text.Utilities;
 import com.itextpdf.text.pdf.draw.DrawInterface;
 import com.itextpdf.text.pdf.draw.LineSeparator;
 import com.itextpdf.text.pdf.interfaces.IAccessibleElement;
+import com.itextpdf.text.pdf.languages.ArabicLigaturizer;
 
 import java.util.ArrayList;
 
@@ -993,5 +994,25 @@ public class BidiLine {
         mirrorChars.put(0xFF60, 0xFF5F); // FULLWIDTH RIGHT WHITE PARENTHESIS
         mirrorChars.put(0xFF62, 0xFF63); // [BEST FIT] HALFWIDTH LEFT CORNER BRACKET
         mirrorChars.put(0xFF63, 0xFF62); // [BEST FIT] HALFWIDTH RIGHT CORNER BRACKET
+    }
+    
+    /**
+     * Method that changes a String with Arabic characters into a String in which the ligatures are made.
+     * @param s	the original String
+     * @param runDirection
+     * @param arabicOptions
+     * @return the String with the ligatures
+     */
+    public static String processLTR(String s, int runDirection, int arabicOptions) {
+    	BidiLine bidi = new BidiLine();
+    	bidi.addChunk(new PdfChunk(new Chunk(s), null));
+    	bidi.arabicOptions = arabicOptions;
+    	bidi.getParagraph(runDirection);
+    	ArrayList<PdfChunk> arr = bidi.createArrayOfPdfChunks(0, bidi.totalTextLength - 1);
+    	StringBuilder sb = new StringBuilder();
+    	for (PdfChunk ck : arr) {
+    		sb.append(ck.toString());
+    	}
+    	return sb.toString();
     }
 }

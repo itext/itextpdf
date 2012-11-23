@@ -4,9 +4,9 @@ import junit.framework.Assert;
 
 import org.junit.Test;
 
-import com.itextpdf.text.pdf.indic.DevanagariLigaturizer;
-import com.itextpdf.text.pdf.indic.GujaratiLigaturizer;
-import com.itextpdf.text.pdf.indic.IndicLigaturizer;
+import com.itextpdf.text.pdf.languages.DevanagariLigaturizer;
+import com.itextpdf.text.pdf.languages.GujaratiLigaturizer;
+import com.itextpdf.text.pdf.languages.IndicLigaturizer;
 
 public class IndicLigatures {
 

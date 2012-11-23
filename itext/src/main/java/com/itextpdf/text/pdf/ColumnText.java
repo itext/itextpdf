@@ -54,6 +54,7 @@ import com.itextpdf.text.log.Logger;
 import com.itextpdf.text.log.LoggerFactory;
 import com.itextpdf.text.pdf.draw.DrawInterface;
 import com.itextpdf.text.pdf.interfaces.IAccessibleElement;
+import com.itextpdf.text.pdf.languages.ArabicLigaturizer;
 
 /**
  * Formats text in a columnwise form. The text is bound
