@@ -67,6 +67,8 @@ import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.Phrase;
 import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.error_messages.MessageLocalization;
+import com.itextpdf.text.io.RandomAccessSourceFactory;
+import com.itextpdf.text.io.RangeStream;
 import com.itextpdf.text.pdf.security.CertificateInfo;
 
 /**
@@ -216,75 +218,11 @@ public class PdfSignatureAppearance {
      * <p>
      * @return the document bytes that are hashable
      */
-    public InputStream getRangeStream() {
-        return new PdfSignatureAppearance.RangeStream(raf, bout, range);
+    public InputStream getRangeStream() throws IOException {
+        return new RangeStream(raf == null ? new RandomAccessSourceFactory().createSource(bout) :
+                new RandomAccessSourceFactory().createSource(raf), range, null);
     }
-    
-    /**
-     * An InputStream that allows you to read that part of a PDF
-     * document that needs to be hashed.
-     */
-    private static class RangeStream extends InputStream {
-        private byte b[] = new byte[1];
-        private RandomAccessFile raf;
-        private byte bout[];
-        private long range[];
-        private long rangePosition = 0;
-
-        private RangeStream(RandomAccessFile raf, byte bout[], long range[]) {
-            this.raf = raf;
-            this.bout = bout;
-            this.range = range;
-        }
-
-        /**
-         * @see java.io.InputStream#read()
-         */
-        @Override
-        public int read() throws IOException {
-            int n = read(b);
-            if (n != 1)
-                return -1;
-            return b[0] & 0xff;
-        }
-
-        /**
-         * @see java.io.InputStream#read(byte[], int, int)
-         */
-        @Override
-        public int read(byte[] b, int off, int len) throws IOException {
-            if (b == null) {
-                throw new NullPointerException();
-            } else if (off < 0 || off > b.length || len < 0 ||
-            off + len > b.length || off + len < 0) {
-                throw new IndexOutOfBoundsException();
-            } else if (len == 0) {
-                return 0;
-            }
-            if (rangePosition >= range[range.length - 2] + range[range.length - 1]) {
-                return -1;
-            }
-            for (int k = 0; k < range.length; k += 2) {
-                long start = range[k];
-                long end = start + range[k + 1];
-                if (rangePosition < start)
-                    rangePosition = start;
-                if (rangePosition >= start && rangePosition < end) {
-                    int lenf = (int)Math.min(len, (int)(end - rangePosition));
-                    if (raf == null)
-                        System.arraycopy(bout, (int)rangePosition, b, off, lenf);
-                    else {
-                        raf.seek(rangePosition);
-                        raf.readFully(b, off, lenf);
-                    }
-                    rangePosition += lenf;
-                    return lenf;
-                }
-            }
-            return -1;
-        }
-    }    
-    
+        
     /** The signing certificate */
     private Certificate signCertificate;
 

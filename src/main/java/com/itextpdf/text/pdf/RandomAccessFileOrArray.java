@@ -120,6 +120,10 @@ public class RandomAccessFileOrArray implements DataInput {
     	return new RandomAccessFileOrArray(new IndependentRandomAccessSource(byteSource));
     }
     
+    public RandomAccessSource createSourceView() {
+        return new IndependentRandomAccessSource(byteSource);
+    }
+    
     /**
      * Creates a RandomAccessFileOrArray that wraps the specified byte source.  The byte source will be closed when
      * this RandomAccessFileOrArray is closed.

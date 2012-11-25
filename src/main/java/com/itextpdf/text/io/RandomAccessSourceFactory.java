@@ -105,6 +105,10 @@ public final class RandomAccessSourceFactory {
 		return new ArrayRandomAccessSource(data); 
 	}
 	
+	public RandomAccessSource createSource(RandomAccessFile raf) throws IOException {
+		return new RAFRandomAccessSource(raf); 
+	}
+	
 	/**
 	 * Creates a {@link RandomAccessSource} based on a URL.  The data available at the URL is read into memory and used
 	 * as the source for the {@link RandomAccessSource}
