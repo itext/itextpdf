@@ -65,6 +65,7 @@ import com.itextpdf.text.Image;
 import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.io.RandomAccessSourceFactory;
+import com.itextpdf.text.io.RangeStream;
 import com.itextpdf.text.pdf.PRTokeniser.TokenType;
 import com.itextpdf.text.pdf.codec.Base64;
 import com.itextpdf.text.pdf.security.PdfPKCS7;
@@ -1353,7 +1354,7 @@ public class AcroFields {
     	if (ffNum != null) {
     		flagVal = ffNum.intValue();
     	}
-    	if ((flagVal | PdfFormField.FF_RICHTEXT) == 0) {
+    	if ((flagVal & PdfFormField.FF_RICHTEXT) == 0) {
     		// text field doesn't support rich text: fail
     		return false;
     	}
@@ -2336,26 +2337,15 @@ public class AcroFields {
         PdfArray b = v.getAsArray(PdfName.BYTERANGE);
         RandomAccessFileOrArray rf = reader.getSafeFile();
         try {
-            rf.reOpen();
+            RangeStream rg = new RangeStream(rf.createSourceView(), null, b);
             byte buf[] = new byte[8192];
-            for (int k = 0; k < b.size(); ++k) {
-                int start = b.getAsNumber(k).intValue();
-                int length = b.getAsNumber(++k).intValue();
-                rf.seek(start);
-                while (length > 0) {
-                    int rd = rf.read(buf, 0, Math.min(length, buf.length));
-                    if (rd <= 0)
-                        break;
-                    length -= rd;
-                    pkcs7.update(buf, 0, rd);
-                }
+            int rd;
+            while ((rd = rg.read(buf, 0, buf.length)) > 0) {
+                pkcs7.update(buf, 0, rd);
             }
         }
         catch (Exception e) {
             throw new ExceptionConverter(e);
-        }
-        finally {
-            try{rf.close();}catch(Exception e){}
         }
     }
 
@@ -2404,9 +2394,7 @@ public class AcroFields {
             return null;
         int length = sigNames.get(field)[0];
         RandomAccessFileOrArray raf = reader.getSafeFile();
-        raf.reOpen();
-        raf.seek(0);
-        return new RevisionStream(raf, length);
+        return new RangeStream(raf.createSourceView(),new long[]{0, length}, null);
     }
 
     /**
@@ -2508,55 +2496,6 @@ public class AcroFields {
         stdFieldFontNames.put("MHei", new String[]{"MHei-Medium", "UniCNS-UCS2-H"});
         stdFieldFontNames.put("MSun", new String[]{"MSung-Light", "UniCNS-UCS2-H"});
         stdFieldFontNames.put("STSo", new String[]{"STSong-Light", "UniGB-UCS2-H"});
-    }
-
-    private static class RevisionStream extends InputStream {
-        private byte b[] = new byte[1];
-        private RandomAccessFileOrArray raf;
-        private int length;
-        private int rangePosition = 0;
-        private boolean closed;
-
-        private RevisionStream(RandomAccessFileOrArray raf, int length) {
-            this.raf = raf;
-            this.length = length;
-        }
-
-        @Override
-        public int read() throws IOException {
-            int n = read(b);
-            if (n != 1)
-                return -1;
-            return b[0] & 0xff;
-        }
-
-        @Override
-        public int read(byte[] b, int off, int len) throws IOException {
-            if (b == null) {
-                throw new NullPointerException();
-            } else if (off < 0 || off > b.length || len < 0 ||
-            off + len > b.length || off + len < 0) {
-                throw new IndexOutOfBoundsException();
-            } else if (len == 0) {
-                return 0;
-            }
-            if (rangePosition >= length) {
-                close();
-                return -1;
-            }
-            int elen = Math.min(len, length - rangePosition);
-            raf.readFully(b, off, elen);
-            rangePosition += elen;
-            return elen;
-        }
-
-        @Override
-        public void close() throws IOException {
-            if (!closed) {
-                raf.close();
-                closed = true;
-            }
-        }
     }
 
     private static class SorterComparator implements Comparator<Object[]> {
