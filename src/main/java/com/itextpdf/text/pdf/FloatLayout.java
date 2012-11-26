@@ -173,6 +173,11 @@ public class FloatLayout {
         float leftWidth = 0;
         float rightWidth = 0;
 
+        ColumnText currentCompositeColumn = compositeColumn;
+        if (simulate) {
+            currentCompositeColumn = ColumnText.duplicate(compositeColumn);
+        }
+
         while (!floatingElements.isEmpty()) {
             Element nextElement = floatingElements.get(0);
             floatingElements.remove(0);
@@ -203,9 +208,7 @@ public class FloatLayout {
                 if (nextElement instanceof Spaceable) {
                     yLine -= ((Spaceable) nextElement).getSpacingBefore();
                 }
-                ColumnText currentCompositeColumn = compositeColumn;
                 if (simulate) {
-                    currentCompositeColumn = ColumnText.duplicate(compositeColumn);
                     if (nextElement instanceof PdfPTable)
                         currentCompositeColumn.addElement(new PdfPTable((PdfPTable)nextElement));
                     else
@@ -240,9 +243,9 @@ public class FloatLayout {
                     leftWidth = 0;
                     rightWidth = 0;
                     if (simulate && nextElement instanceof PdfPTable) {
-                        currentCompositeColumn = ColumnText.duplicate(compositeColumn);
                         currentCompositeColumn.addElement(new PdfPTable((PdfPTable)nextElement));
                     }
+
                     currentCompositeColumn.setSimpleColumn(floatLeftX, yLine, floatRightX, minY);
                     status = currentCompositeColumn.go(simulate);
                     minYLine = currentCompositeColumn.getYLine() + currentCompositeColumn.getDescender();
@@ -263,15 +266,16 @@ public class FloatLayout {
                 }
 
                 if ((status & ColumnText.NO_MORE_TEXT) == 0) {
-                    if (!simulate)
+                    if (!simulate) {
                         floatingElements.addAll(0, currentCompositeColumn.getCompositeElements());
-                    else {
+                        currentCompositeColumn.getCompositeElements().clear();
+                    } else {
                         floatingElements.add(0, nextElement);
+                        currentCompositeColumn.setText(null);
                     }
-                    currentCompositeColumn.getCompositeElements().clear();
                     break;
                 } else {
-                    currentCompositeColumn.getCompositeElements().clear();
+                    currentCompositeColumn.setText(null);
                 }
             }
         }
