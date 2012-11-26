@@ -56,4 +56,10 @@ public interface LanguageProcessor {
 	 * @return the processed String
 	 */
 	public String process(String s);
+	
+	/**
+	 * Indicates if the rundirection is right-to-left.
+	 * @return true if text needs to be rendered from right to left.
+	 */
+	public boolean isRTL();
 }

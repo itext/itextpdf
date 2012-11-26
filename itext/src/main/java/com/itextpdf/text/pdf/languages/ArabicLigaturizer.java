@@ -785,4 +785,13 @@ public class ArabicLigaturizer implements LanguageProcessor {
     	public String process(String s) {
     		return BidiLine.processLTR(s, runDirection, options);
     	}
+
+		/**
+		 * Arabic is written from right to left.
+		 * @return true
+		 * @see com.itextpdf.text.pdf.languages.LanguageProcessor#isRTL()
+		 */
+		public boolean isRTL() {
+			return true;
+		}
 }

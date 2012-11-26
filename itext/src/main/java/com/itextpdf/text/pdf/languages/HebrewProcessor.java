@@ -60,4 +60,13 @@ public class HebrewProcessor implements LanguageProcessor {
 		return BidiLine.processLTR(s, runDirection, 0);
 	}
 
+	/**
+	 * Hebrew is written from right to left.
+	 * @return true
+	 * @see com.itextpdf.text.pdf.languages.LanguageProcessor#isRTL()
+	 */
+	public boolean isRTL() {
+		return true;
+	}
+
 }

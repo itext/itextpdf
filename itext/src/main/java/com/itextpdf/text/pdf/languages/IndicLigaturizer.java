@@ -44,10 +44,9 @@
 package com.itextpdf.text.pdf.languages;
 
 /**
- * Superclass for processors that can convert a String of bytes in
- * an Indic language to a String in the same language of which the
- * bytes are reordered for rendering using a font that contains the
- * necessary glyphs.
+ * Superclass for processors that can convert a String of bytes in an Indic
+ * language to a String in the same language of which the bytes are reordered
+ * for rendering using a font that contains the necessary glyphs.
  */
 public abstract class IndicLigaturizer implements LanguageProcessor {
 
@@ -72,8 +71,10 @@ public abstract class IndicLigaturizer implements LanguageProcessor {
 
 	/**
 	 * Reorders the bytes in a String making Indic ligatures
-	 * @param s	the original String
-	 * @return	the ligaturized String
+	 * 
+	 * @param s
+	 *            the original String
+	 * @return the ligaturized String
 	 */
 	public String process(String s) {
 		if (s == null || s.length() == 0)
@@ -87,22 +88,18 @@ public abstract class IndicLigaturizer implements LanguageProcessor {
 				res.append(letter);
 			} else if (IsSwaraMatra(letter)) {
 				int prevCharIndex = res.length() - 1;
-				boolean svaraAppended = false;
+
 				if (prevCharIndex >= 0) {
-					 // a Halanta followed by swara matra, causes it to lose its identity
-					if (res.charAt(prevCharIndex) == langTable[HALANTA]) {
+					// a Halanta followed by swara matra, causes it to lose its
+					// identity
+					if (res.charAt(prevCharIndex) == langTable[HALANTA])
 						res.deleteCharAt(prevCharIndex);
-						res.append(letter);
-						svaraAppended = true;
-					}
+
+					res.append(letter);
 					int prevPrevCharIndex = res.length() - 2;
 
-					if (letter == langTable[MATRA_I] && prevPrevCharIndex >= 0) {
+					if (letter == langTable[MATRA_I] && prevPrevCharIndex >= 0)
 						swap(res, prevPrevCharIndex, res.length() - 1);
-					} else {
-						if (!svaraAppended)
-							res.append(letter);
-					}
 				} else {
 					res.append(letter);
 				}
@@ -113,11 +110,23 @@ public abstract class IndicLigaturizer implements LanguageProcessor {
 
 		return res.toString();
 	}
-	
+
 	/**
-	 * Checks if a character is vowel  letter.
-	 * @param ch	the character that needs to be checked
-	 * @return	true if the characters is a vowel letter
+	 * Indic languages are written from right to left.
+	 * 
+	 * @return false
+	 * @see com.itextpdf.text.pdf.languages.LanguageProcessor#isRTL()
+	 */
+	public boolean isRTL() {
+		return false;
+	}
+
+	/**
+	 * Checks if a character is vowel letter.
+	 * 
+	 * @param ch
+	 *            the character that needs to be checked
+	 * @return true if the characters is a vowel letter
 	 */
 	protected boolean IsSwaraLetter(char ch) {
 		return (ch >= langTable[LETTER_A] && ch <= langTable[LETTER_AU]);
@@ -125,8 +134,10 @@ public abstract class IndicLigaturizer implements LanguageProcessor {
 
 	/**
 	 * Checks if a character is vowel sign.
-	 * @param ch	the character that needs to be checked
-	 * @return	true if the characters is a vowel sign
+	 * 
+	 * @param ch
+	 *            the character that needs to be checked
+	 * @return true if the characters is a vowel sign
 	 */
 	protected boolean IsSwaraMatra(char ch) {
 		return ((ch >= langTable[MATRA_AA] && ch <= langTable[MATRA_AI])
@@ -135,8 +146,10 @@ public abstract class IndicLigaturizer implements LanguageProcessor {
 
 	/**
 	 * Checks if a character is consonant letter.
-	 * @param ch	the character that needs to be checked
-	 * @return	true if the chracter is a consonant letter
+	 * 
+	 * @param ch
+	 *            the character that needs to be checked
+	 * @return true if the chracter is a consonant letter
 	 */
 	protected boolean IsVyanjana(char ch) {
 		return (ch >= langTable[LETTER_KA] && ch <= langTable[LETTER_HA]);
@@ -144,9 +157,13 @@ public abstract class IndicLigaturizer implements LanguageProcessor {
 
 	/**
 	 * Swaps two characters in a StringBuilder object
-	 * @param s	the StringBuilder
-	 * @param i	the index of one character
-	 * @param j the index of the other character
+	 * 
+	 * @param s
+	 *            the StringBuilder
+	 * @param i
+	 *            the index of one character
+	 * @param j
+	 *            the index of the other character
 	 */
 	private static void swap(StringBuilder s, int i, int j) {
 		char temp = s.charAt(i);
