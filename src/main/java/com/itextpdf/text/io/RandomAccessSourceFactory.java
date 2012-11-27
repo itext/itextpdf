@@ -183,6 +183,14 @@ public final class RandomAccessSourceFactory {
 		
 	}
 	
+	public RandomAccessSource createRanged(RandomAccessSource source, long[] ranges){
+		RandomAccessSource[] sources = new RandomAccessSource[ranges.length/2];
+		for(int i = 0; i < ranges.length; i+=2){
+			sources[i] = new WindowRandomAccessSource(source, ranges[i], ranges[i+1]);
+		}
+		return new GroupedRandomAccessSource(sources);
+	}
+	
 	/**
 	 * Creates a new {@link RandomAccessSource} by reading the specified file/resource into memory
 	 * @param filename the name of the resource to read

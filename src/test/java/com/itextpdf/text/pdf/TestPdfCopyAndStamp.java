@@ -59,7 +59,7 @@ import org.junit.Test;
 
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Document;
-import com.itextpdf.text.io.OffsetRandomAccessSource;
+import com.itextpdf.text.io.WindowRandomAccessSource;
 import com.itextpdf.text.io.RandomAccessSourceFactory;
 
 /**

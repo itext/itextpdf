@@ -75,7 +75,7 @@ import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.exceptions.BadPasswordException;
 import com.itextpdf.text.exceptions.InvalidPdfException;
 import com.itextpdf.text.exceptions.UnsupportedPdfException;
-import com.itextpdf.text.io.OffsetRandomAccessSource;
+import com.itextpdf.text.io.WindowRandomAccessSource;
 import com.itextpdf.text.io.RandomAccessSource;
 import com.itextpdf.text.io.RandomAccessSourceFactory;
 import com.itextpdf.text.pdf.PRTokeniser.TokenType;
@@ -385,7 +385,7 @@ public class PdfReader implements PdfViewerPreferences {
     	PRTokeniser tok = new PRTokeniser(new RandomAccessFileOrArray(byteSource));
     	int offset = tok.getHeaderOffset();
     	if (offset != 0){
-    		RandomAccessSource offsetSource = new OffsetRandomAccessSource(byteSource, offset);
+    		RandomAccessSource offsetSource = new WindowRandomAccessSource(byteSource, offset);
     		tok = new PRTokeniser(new RandomAccessFileOrArray(offsetSource));
     	}
     	return tok;

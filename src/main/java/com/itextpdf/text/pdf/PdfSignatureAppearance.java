@@ -67,8 +67,9 @@ import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.Phrase;
 import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.error_messages.MessageLocalization;
+import com.itextpdf.text.io.RASInputStream;
+import com.itextpdf.text.io.RandomAccessSource;
 import com.itextpdf.text.io.RandomAccessSourceFactory;
-import com.itextpdf.text.io.RangeStream;
 import com.itextpdf.text.pdf.security.CertificateInfo;
 
 /**
@@ -219,10 +220,20 @@ public class PdfSignatureAppearance {
      * @return the document bytes that are hashable
      */
     public InputStream getRangeStream() throws IOException {
-        return new RangeStream(raf == null ? new RandomAccessSourceFactory().createSource(bout) :
-                new RandomAccessSourceFactory().createSource(raf), range, null);
+    	RandomAccessSourceFactory fac = new RandomAccessSourceFactory();
+        return new RASInputStream(fac.createRanged(getUnderlyingSource(), range));
     }
-        
+
+    /**
+     * @return the underlying source
+     * @throws IOException
+     */
+    private RandomAccessSource getUnderlyingSource() throws IOException {
+    	//TODO: get rid of separate byte[] and RandomAccessFile objects and just store a RandomAccessSource
+    	RandomAccessSourceFactory fac = new RandomAccessSourceFactory();
+    	return raf == null ? fac.createSource(bout) : fac.createSource(raf);
+    }
+    
     /** The signing certificate */
     private Certificate signCertificate;
 
