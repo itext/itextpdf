@@ -171,6 +171,8 @@ public class CompareTool {
                                         differentPagesFail =
                                                 "File " + outPdf + " differs.\nPlease, examine difference images for more details.";
                                     }
+                                } else {
+                                    differentPagesFail = differentPages.replace("<filename>", outPdf).replace("<pagenumber>", Integer.toString(i + 1));
                                 }
                             } else {
                                 differentPagesFail = differentPages.replace("<filename>", outPdf).replace("<pagenumber>", Integer.toString(i + 1));
