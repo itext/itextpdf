@@ -46,9 +46,11 @@ import java.nio.channels.FileChannel;
 
 /**
  * A RandomAccessSource that is based on an underlying {@link FileChannel}.  The channel will be mapped into memory for efficient reads.
+ * As an implementation detail, we use {@link GroupedRandomAccessSource} functionality, but override to make determination of the underlying
+ * mapped page more efficient - and to close each page as another is opened
  * @since 5.3.5
  */
-class FileChannelRandomAccessSource implements RandomAccessSource {
+class FileChannelRandomAccessSource extends GroupedRandomAccessSource implements RandomAccessSource {
     private static final int DEFAULT_BUFSIZE = 1 << 28; 
 
     /**
@@ -60,28 +62,6 @@ class FileChannelRandomAccessSource implements RandomAccessSource {
      * The channel this source is based on
      */
     private final FileChannel channel;
-
-    /**
-     * The total number of buffers in the underlying channel
-     */
-    private final int bufferCount;
-    
-    /**
-     * Cached memory mapped source (which represents the current buffer).  This implements a simple MRU with a length of 1.
-     * Future implementations may move to a more refined MRU allowing multiple areas of the channel to be buffered at the same time.
-     */
-    private ByteBufferRandomAccessSource currentSource;
-
-    /**
-     * The index of the current memory mapped source
-     */
-    private int currentSourceN = -1;
-    
-    
-    /**
-     * Cached size of the underlying channel
-     */
-    private final long size;
 
     /**
      * Constructs a new {@link FileChannelRandomAccessSource} based on the specified FileChannel, with a default buffer size
@@ -99,121 +79,66 @@ class FileChannelRandomAccessSource implements RandomAccessSource {
      * @throws IOException if the channel cannot be opened or mapped
      */
 	public FileChannelRandomAccessSource(final FileChannel channel, final int bufferSize) throws IOException {
-        this.channel = channel;
+        super(buildSources(channel, bufferSize));
+		this.channel = channel;
         this.bufferSize = bufferSize;
-        
-        size = channel.size();
-        bufferCount = (int)(size/bufferSize) + (size % bufferSize == 0 ? 0 : 1);
-        //System.out.println("This will require " + requiredBuffers + " buffers");
-
-        //force a read of the last block in the file (this isn't strictly necessary, but it will force an early IOException if there are any gross problems with the file.  Most PDFs will read the last page of the file first, so this doesn't introduce an extra map operation in most cases).
-        getBufferSourceForOffset(size-1);
 	}
 
 	/**
-	 * Returns the buffered source that contains bytes at the specified offset.  A single depth MRU is used for efficiency.
-	 * As buffered sources are evicted from the MRU, they are closed (releasing their underlying map)
-	 * @param offset the offset of the position that is contained by the buffer
-	 * @return the buffered source, or null if the offset isn't within the size of the FileChannel
-	 * @throws IOException if there are problems creating the memory map
+	 * Constructs a set of {@link MappedChannelRandomAccessSource}s for each page (of size bufferSize) of the underlying channel
+	 * @param channel the underlying channel
+	 * @param bufferSize the size of each page (the last page may be shorter)
+	 * @return a list of sources that represent the pages of the channel
+	 * @throws IOException if IO fails for any reason
 	 */
-	private RandomAccessSource getBufferSourceForOffset(long offset) throws IOException {
-        if (offset >= size)
-        	return null;
-        
-		int mapN = (int) (offset / bufferSize);
-        if (mapN > bufferCount)
-        	return null;
-        
-		if (mapN != currentSourceN){
-		
-			if (!channel.isOpen()){
-				throw new IllegalStateException("Channel is closed");
-			}
-			
-			if (currentSource != null){
-				currentSource.close();
-				currentSource = null;
-				currentSourceN = -1;
-			}
-			
-			long pageOffset = (long)mapN * bufferSize;
-			long size2 = Math.min(size - pageOffset, bufferSize);
-			
-			currentSource = new ByteBufferRandomAccessSource(channel.map(FileChannel.MapMode.READ_ONLY, pageOffset, size2));
-			currentSourceN = mapN;
-		}
-		
-		return currentSource;
-		
-	}
-	
-    /** 
-     * {@inheritDoc} 
-     */  
-	public int get(long position) throws IOException {
-    	RandomAccessSource source = getBufferSourceForOffset(position);
-        int offN = (int) (position % bufferSize);
+	private static RandomAccessSource[] buildSources(final FileChannel channel, final int bufferSize) throws IOException{
+		long size = channel.size();
+		int bufferCount = (int)(size/bufferSize) + (size % bufferSize == 0 ? 0 : 1);
 
-        if (source == null) // we have run out of data to read from
-        	return -1;
-        
-        if (offN >= source.length())
-            return -1;
-        
-        return source.get(offN);
-
-	}
-	
-    /** 
-     * {@inheritDoc} 
-     */  
-	public int get(long position, byte[] bytes, int off, int len) throws IOException {
-    	RandomAccessSource source = getBufferSourceForOffset(position);
-        int offN = (int) (position % bufferSize);
-        int remaining = len;
-        
-        while(remaining > 0){
-            if (source == null) // we have run out of data to read from
-                break;
-            if (offN > source.length())
-                break;
-            
-            int count = source.get(offN, bytes, off, remaining);
-            if (count == -1)
-            	break;
-            
-            off += count;
-            position += count;
-            remaining -= count;
-
-            offN = 0;
-            
-        	source = getBufferSourceForOffset(position);
+		MappedChannelRandomAccessSource[] sources = new MappedChannelRandomAccessSource[bufferCount];
+        for (int i = 0; i < bufferCount; i++){
+        	long pageOffset = (long)i*bufferSize;
+        	long pageLength = Math.min(size - pageOffset, bufferSize);
+        	sources[i] = new MappedChannelRandomAccessSource(channel, pageOffset, pageLength);
         }
-        return remaining == len ? -1 : len - remaining;	
-    }
-
+        return sources;
+		
+	}
 	
-    /** 
-     * {@inheritDoc} 
-     */  
-	public long length() {
-		return size;
+	@Override
+	/**
+	 * {@inheritDoc}
+	 */
+	protected int getStartingSourceIndex(long offset) {
+		return (int) (offset / bufferSize);
 	}
 
+	@Override
+	/**
+	 * {@inheritDoc}
+	 * For now, close the source that is no longer being used.  In the future, we may implement an MRU that allows multiple pages to be opened at a time
+	 */
+	protected void sourceReleased(RandomAccessSource source) throws IOException {
+		source.close();
+	}
+	
+	@Override
+	/**
+	 * {@inheritDoc}
+	 * Ensure that the source is mapped.  In the future, we may implement an MRU that allows multiple pages to be opened at a time
+	 */
+	protected void sourceInUse(RandomAccessSource source) throws IOException {
+		((MappedChannelRandomAccessSource)source).open();
+	}
+	
+	@Override
     /**
-     * @see java.io.RandomAccessFile#close()
+     * {@inheritDoc}
      * Cleans the mapped bytebuffers and closes the channel
      */
     public void close() throws IOException {
-        if (currentSource != null){
-        	currentSource.close();
-        	currentSourceN = -1;
-        }
-
+    	super.close();
         channel.close();
-        
     }
 
 }

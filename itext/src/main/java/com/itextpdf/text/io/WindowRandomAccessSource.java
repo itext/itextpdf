@@ -1,5 +1,5 @@
 /*
- * $Id: OffsetRandomAccessSource.java 5550 2012-11-21 13:26:06Z blowagie $
+ * $Id: WindowRandomAccessSource.java 5550 2012-11-21 13:26:06Z blowagie $
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2012 1T3XT
@@ -44,13 +44,11 @@ package com.itextpdf.text.io;
 import java.io.IOException;
 
 /**
- * A RandomAccessSource that is wraps another RandomAccessSouce but offsets the start by a specific amount.  This is useful
- * when a file might have junk bytes at the beginning (such as a properly constructed PDF that happens to have some number of bytes
- * pre-pended).  This has the effect of reducing the length of the source by the offset amount, and re-indexing all absolute
- * get methods by the offset amount.
+ * A RandomAccessSource that wraps another RandomAccessSouce and provides a window of it at a specific offset and over
+ * a specific length.  Position 0 becomes the offset position in the underlying source.
  * @since 5.3.5
  */
-public class OffsetRandomAccessSource implements RandomAccessSource {
+public class WindowRandomAccessSource implements RandomAccessSource {
 	/**
 	 * The source
 	 */
@@ -62,20 +60,37 @@ public class OffsetRandomAccessSource implements RandomAccessSource {
 	private final long offset;
 	
 	/**
-	 * Constructs a new OffsetRandomAccessSource
+	 * The length
+	 */
+	private final long length;
+	
+	/**
+	 * Constructs a new OffsetRandomAccessSource that extends to the end of the underlying source
 	 * @param source the source
 	 * @param offset the amount of the offset to use
 	 */
-	public OffsetRandomAccessSource(RandomAccessSource source, long offset) {
-		this.source = source;
-		this.offset = offset;
+	public WindowRandomAccessSource(RandomAccessSource source, long offset) {
+		this(source, offset, source.length() - offset);
 	}
 
+	/**
+	 * Constructs a new OffsetRandomAccessSource with an explicit length
+	 * @param source the source
+	 * @param offset the amount of the offset to use
+	 * @param length the number of bytes to be included in this RAS
+	 */
+	public WindowRandomAccessSource(RandomAccessSource source, long offset, long length) {
+		this.source = source;
+		this.offset = offset;
+		this.length = length;
+	}
+	
 	/**
 	 * {@inheritDoc}
 	 * Note that the position will be adjusted to read from the corrected location in the underlying source
 	 */
 	public int get(long position) throws IOException {
+		if (position >= length) return -1;
 		return source.get(offset + position);
 	}
 
@@ -84,7 +99,11 @@ public class OffsetRandomAccessSource implements RandomAccessSource {
 	 * Note that the position will be adjusted to read from the corrected location in the underlying source
 	 */
 	public int get(long position, byte[] bytes, int off, int len) throws IOException {
-		return source.get(offset + position, bytes, off, len);
+		if (position >= length) 
+			return -1;
+		
+		long toRead = Math.min(len, length - position);
+		return source.get(offset + position, bytes, off, (int)toRead);
 	}
 
 	/**
@@ -92,7 +111,7 @@ public class OffsetRandomAccessSource implements RandomAccessSource {
 	 * Note that the length will be adjusted to read from the corrected location in the underlying source
 	 */
 	public long length() {
-		return source.length() - offset;
+		return length;
 	}
 
 	/**

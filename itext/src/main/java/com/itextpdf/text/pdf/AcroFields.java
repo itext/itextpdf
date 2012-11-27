@@ -64,8 +64,9 @@ import com.itextpdf.text.ExceptionConverter;
 import com.itextpdf.text.Image;
 import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.error_messages.MessageLocalization;
+import com.itextpdf.text.io.RASInputStream;
 import com.itextpdf.text.io.RandomAccessSourceFactory;
-import com.itextpdf.text.io.RangeStream;
+import com.itextpdf.text.io.WindowRandomAccessSource;
 import com.itextpdf.text.pdf.PRTokeniser.TokenType;
 import com.itextpdf.text.pdf.codec.Base64;
 import com.itextpdf.text.pdf.security.PdfPKCS7;
@@ -2336,8 +2337,9 @@ public class AcroFields {
     private void updateByteRange(PdfPKCS7 pkcs7, PdfDictionary v) {
         PdfArray b = v.getAsArray(PdfName.BYTERANGE);
         RandomAccessFileOrArray rf = reader.getSafeFile();
+    	InputStream rg = null;
         try {
-            RangeStream rg = new RangeStream(rf.createSourceView(), null, b);
+        	rg = new RASInputStream(new RandomAccessSourceFactory().createRanged(rf.createSourceView(), b.asLongArray()));
             byte buf[] = new byte[8192];
             int rd;
             while ((rd = rg.read(buf, 0, buf.length)) > 0) {
@@ -2346,6 +2348,13 @@ public class AcroFields {
         }
         catch (Exception e) {
             throw new ExceptionConverter(e);
+        } finally {
+        	try {
+				if (rg != null) rg.close();
+			} catch (IOException e) {
+				// this really shouldn't ever happen - the source view we use is based on a Safe view, which is a no-op anyway
+				throw new ExceptionConverter(e);
+			}
         }
     }
 
@@ -2394,7 +2403,7 @@ public class AcroFields {
             return null;
         int length = sigNames.get(field)[0];
         RandomAccessFileOrArray raf = reader.getSafeFile();
-        return new RangeStream(raf.createSourceView(),new long[]{0, length}, null);
+        return new RASInputStream(new WindowRandomAccessSource(raf.createSourceView(), 0, length));
     }
 
     /**
