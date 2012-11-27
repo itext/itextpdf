@@ -2337,8 +2337,9 @@ public class AcroFields {
     private void updateByteRange(PdfPKCS7 pkcs7, PdfDictionary v) {
         PdfArray b = v.getAsArray(PdfName.BYTERANGE);
         RandomAccessFileOrArray rf = reader.getSafeFile();
-    	InputStream rg = new RASInputStream(new RandomAccessSourceFactory().createRanged(rf.createSourceView(), b.asLongArray()));
+    	InputStream rg = null;
         try {
+        	rg = new RASInputStream(new RandomAccessSourceFactory().createRanged(rf.createSourceView(), b.asLongArray()));
             byte buf[] = new byte[8192];
             int rd;
             while ((rd = rg.read(buf, 0, buf.length)) > 0) {
@@ -2349,7 +2350,7 @@ public class AcroFields {
             throw new ExceptionConverter(e);
         } finally {
         	try {
-				rg.close();
+				if (rg != null) rg.close();
 			} catch (IOException e) {
 				// this really shouldn't ever happen - the source view we use is based on a Safe view, which is a no-op anyway
 				throw new ExceptionConverter(e);

@@ -123,6 +123,15 @@ class FileChannelRandomAccessSource extends GroupedRandomAccessSource implements
 	}
 	
 	@Override
+	/**
+	 * {@inheritDoc}
+	 * Ensure that the source is mapped.  In the future, we may implement an MRU that allows multiple pages to be opened at a time
+	 */
+	protected void sourceInUse(RandomAccessSource source) throws IOException {
+		((MappedChannelRandomAccessSource)source).open();
+	}
+	
+	@Override
     /**
      * {@inheritDoc}
      * Cleans the mapped bytebuffers and closes the channel

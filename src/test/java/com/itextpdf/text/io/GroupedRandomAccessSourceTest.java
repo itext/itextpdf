@@ -97,4 +97,51 @@ public class GroupedRandomAccessSourceTest {
 		assertArrayEqual(rangeArray(0, 50), 0, out, 50, 50);
 	}
 	
+	@Test
+	public void testRelease() throws Exception{
+		
+		ArrayRandomAccessSource source1 = new ArrayRandomAccessSource(data); // 0 - 99
+		ArrayRandomAccessSource source2 = new ArrayRandomAccessSource(data); // 100 - 199
+		ArrayRandomAccessSource source3 = new ArrayRandomAccessSource(data); // 200 - 299
+		
+		RandomAccessSource[] sources = new RandomAccessSource[]{
+				source1, source2, source3
+		};
+		
+		final RandomAccessSource[] current = new RandomAccessSource[]{null};
+		final int[] openCount = new int[]{0};
+		GroupedRandomAccessSource grouped = new GroupedRandomAccessSource(sources){
+			protected void sourceReleased(RandomAccessSource source) throws java.io.IOException {
+				openCount[0]--;
+				if (current[0] != source)
+					throw new AssertionFailedError("Released source isn't the current source");
+				current[0] = null;
+			}
+			
+			protected void sourceInUse(RandomAccessSource source) throws java.io.IOException {
+				if (current[0] != null)
+					throw new AssertionFailedError("Current source wasn't released properly");
+				openCount[0]++;
+				current[0] = source;
+			}
+		};
+
+		grouped.get(250);
+		grouped.get(251);
+		Assert.assertEquals(1, openCount[0]);
+		grouped.get(150);
+		grouped.get(151);
+		Assert.assertEquals(1, openCount[0]);
+		grouped.get(50);
+		grouped.get(51);
+		Assert.assertEquals(1, openCount[0]);
+		grouped.get(150);
+		grouped.get(151);
+		Assert.assertEquals(1, openCount[0]);
+		grouped.get(250);
+		grouped.get(251);
+		Assert.assertEquals(1, openCount[0]);
+
+		grouped.close();
+	}
 }

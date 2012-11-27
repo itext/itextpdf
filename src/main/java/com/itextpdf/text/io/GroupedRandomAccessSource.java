@@ -67,7 +67,7 @@ class GroupedRandomAccessSource implements RandomAccessSource {
      * Constructs a new {@link GroupedRandomAccessSource} based on the specified set of sources
      * @param sources the sources used to build this group
      */
-	public GroupedRandomAccessSource(RandomAccessSource[] sources) {
+	public GroupedRandomAccessSource(RandomAccessSource[] sources) throws IOException {
         this.sources = new SourceEntry[sources.length];
         
         long totalSize = 0;
@@ -77,6 +77,7 @@ class GroupedRandomAccessSource implements RandomAccessSource {
         }
         size = totalSize;
         currentSourceEntry = this.sources[sources.length-1];
+        sourceInUse(currentSourceEntry.source);
 	}
 
 	/**
@@ -114,8 +115,11 @@ class GroupedRandomAccessSource implements RandomAccessSource {
         int startAt = getStartingSourceIndex(offset);
         
         for(int i = startAt; i < sources.length; i++){ 
-        	if (offset >= sources[i].firstByte && offset <= sources[i].lastByte)
-        		return sources[i];
+        	if (offset >= sources[i].firstByte && offset <= sources[i].lastByte){
+        		currentSourceEntry = sources[i];
+        		sourceInUse(currentSourceEntry.source);
+        		return currentSourceEntry;
+        	}
         }
         
         return null;
@@ -128,6 +132,15 @@ class GroupedRandomAccessSource implements RandomAccessSource {
 	 * @throws IOException if there are any problems
 	 */
 	protected void sourceReleased(RandomAccessSource source) throws IOException{
+		// by default, do nothing
+	}
+	
+	/**
+	 * Called when a given source is about to become the active source.  This gives subclasses the abilty to retrieve resources, if appropriate. 
+	 * @param source the source that is about to become the active source
+	 * @throws IOException if there are any problems
+	 */
+	protected void sourceInUse(RandomAccessSource source) throws IOException{
 		// by default, do nothing
 	}
 	

@@ -183,7 +183,7 @@ public final class RandomAccessSourceFactory {
 		
 	}
 	
-	public RandomAccessSource createRanged(RandomAccessSource source, long[] ranges){
+	public RandomAccessSource createRanged(RandomAccessSource source, long[] ranges) throws IOException{
 		RandomAccessSource[] sources = new RandomAccessSource[ranges.length/2];
 		for(int i = 0; i < ranges.length; i+=2){
 			sources[i] = new WindowRandomAccessSource(source, ranges[i], ranges[i+1]);

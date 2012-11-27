@@ -90,15 +90,15 @@ class MappedChannelRandomAccessSource implements RandomAccessSource {
 	}
 
 	/**
-	 * Make sure the map is active
+	 * Map the region of the channel
 	 * @throws IOException if there is a problem with creating the map
 	 */
-	private void ensureOpen() throws IOException {
-		if (source != null) return;
+	void open() throws IOException {
+		if (source != null)
+			throw new IllegalStateException("Source already opened");
 			
 		if (!channel.isOpen())
 			throw new IllegalStateException("Channel is closed");
-
 		source = new ByteBufferRandomAccessSource(channel.map(FileChannel.MapMode.READ_ONLY, offset, length));
 	}
 	
@@ -106,7 +106,6 @@ class MappedChannelRandomAccessSource implements RandomAccessSource {
 	 * {@inheritDoc}
 	 */
 	public int get(long position) throws IOException {
-		ensureOpen();
 		return source.get(position);
 	}
 
@@ -114,7 +113,6 @@ class MappedChannelRandomAccessSource implements RandomAccessSource {
 	 * {@inheritDoc}
 	 */
 	public int get(long position, byte[] bytes, int off, int len) throws IOException {
-		ensureOpen();
 		return source.get(position, bytes, off, len);
 	}
 
@@ -135,4 +133,8 @@ class MappedChannelRandomAccessSource implements RandomAccessSource {
 		source = null;
 	}
 
+	@Override
+	public String toString() {
+		return getClass().getName() + " (" + offset + ", " + length + ")";
+	}
 }
