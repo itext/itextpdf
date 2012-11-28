@@ -95,10 +95,11 @@ class MappedChannelRandomAccessSource implements RandomAccessSource {
 	 */
 	void open() throws IOException {
 		if (source != null)
-			throw new IllegalStateException("Source already opened");
+			return;
 			
 		if (!channel.isOpen())
 			throw new IllegalStateException("Channel is closed");
+
 		source = new ByteBufferRandomAccessSource(channel.map(FileChannel.MapMode.READ_ONLY, offset, length));
 	}
 	

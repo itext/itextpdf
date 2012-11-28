@@ -76,7 +76,26 @@ public class FileChannelRandomAccessSourceTest {
 	@Test
 	public void testGetArray() throws Exception {
 		byte[] chunk = new byte[257];
-		FileChannelRandomAccessSource s = new FileChannelRandomAccessSource(channel, data.length/10);
+		FileChannelRandomAccessSource s = new FileChannelRandomAccessSource(channel, data.length/10, 1);
+		try{
+			int pos = 0;
+			int count = s.get(pos, chunk, 0, chunk.length-1);
+			while (count != -1){
+				assertArrayEqual(data, pos, chunk, 0, count);
+				pos += count;
+				count = s.get(pos, chunk, 0, chunk.length-1);
+			}
+			
+			Assert.assertEquals(-1, s.get(pos, chunk, 0, chunk.length));
+		} finally {
+			s.close();
+		}
+	}
+	
+	@Test
+	public void testGetArrayMultiPages() throws Exception {
+		byte[] chunk = new byte[257];
+		FileChannelRandomAccessSource s = new FileChannelRandomAccessSource(channel, data.length/10, 7);
 		try{
 			int pos = 0;
 			int count = s.get(pos, chunk, 0, chunk.length-1);
