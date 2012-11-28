@@ -3606,7 +3606,8 @@ public class PdfContentByte {
             if (!getMcElements().contains(element)) {
                 PdfStructureElement structureElement = openMCBlockInt(element);
                 getMcElements().add(element);
-                pdf.structElements.put(element, structureElement);
+                if (structureElement != null)
+                    pdf.structElements.put(element.getId(), structureElement);
             }
         }
     }
@@ -3614,7 +3615,7 @@ public class PdfContentByte {
     private PdfDictionary getParentStructureElement() {
         PdfDictionary parent = null;
         if (getMcElements().size() > 0)
-            parent = pdf.structElements.get(getMcElements().get(getMcElements().size() - 1));
+            parent = pdf.structElements.get(getMcElements().get(getMcElements().size() - 1).getId());
         if (parent == null) {
             parent = writer.getStructureTreeRoot();
         }
@@ -3625,7 +3626,7 @@ public class PdfContentByte {
         PdfStructureElement structureElement = null;
         if (writer.isTagged()) {
             if (element instanceof IAccessibleElement) {
-                structureElement = pdf.structElements.get(element);
+                structureElement = pdf.structElements.get(element.getId());
                 if (structureElement == null) {
                     structureElement = new PdfStructureElement(getParentStructureElement(), element.getRole());
                     structureElement.writeAttributes(element);

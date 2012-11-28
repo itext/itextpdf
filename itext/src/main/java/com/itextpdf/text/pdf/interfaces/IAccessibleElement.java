@@ -5,6 +5,7 @@ import com.itextpdf.text.pdf.PdfObject;
 import com.itextpdf.text.pdf.PdfStructureElement;
 
 import java.util.HashMap;
+import java.util.UUID;
 
 /**
  * Describes accessible element.
@@ -43,5 +44,7 @@ public interface IAccessibleElement {
      * @param role
      */
     void setRole(final PdfName role);
+
+    UUID getId();
 
 }

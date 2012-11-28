@@ -45,6 +45,7 @@ package com.itextpdf.text.pdf;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.DocumentException;
@@ -125,6 +126,7 @@ public class PdfPCell extends Rectangle implements IAccessibleElement {
     protected PdfName role = PdfName.TD;
 
     protected HashMap<PdfName, PdfObject> accessibleProperties = null;
+    protected UUID id = UUID.randomUUID();
 
     /**
      * Constructs an empty <CODE>PdfPCell</CODE>.
@@ -236,6 +238,7 @@ public class PdfPCell extends Rectangle implements IAccessibleElement {
      */
     public PdfPCell(PdfPCell cell) {
         super(cell.llx, cell.lly, cell.urx, cell.ury);
+        id = cell.getId();
         cloneNonPositionParameters(cell);
         verticalAlignment = cell.verticalAlignment;
         paddingLeft = cell.paddingLeft;
@@ -1022,6 +1025,10 @@ public class PdfPCell extends Rectangle implements IAccessibleElement {
 
     public void setAccessibleProperties(final HashMap<PdfName, PdfObject> accessibleProperties) {
         this.accessibleProperties = accessibleProperties;
+    }
+
+    public UUID getId() {
+        return id;
     }
 
 }

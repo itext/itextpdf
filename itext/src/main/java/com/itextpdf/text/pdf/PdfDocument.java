@@ -299,8 +299,9 @@ public class PdfDocument extends Document {
     /** The <CODE>PdfWriter</CODE>. */
     protected PdfWriter writer;
 
-    protected HashMap<IAccessibleElement, PdfStructureElement> structElements = new HashMap<IAccessibleElement, PdfStructureElement>();
+    protected HashMap<UUID, PdfStructureElement> structElements = new HashMap<UUID, PdfStructureElement>();
     protected ArrayList<IAccessibleElement> elementsToOpen = new ArrayList<IAccessibleElement>();
+    protected ColumnTextContext ctContext = new ColumnTextContext();
 
 
     /**
@@ -1236,6 +1237,7 @@ public class PdfDocument extends Document {
         Float lastBaseFactor = new Float(0);
         currentValues[1] = lastBaseFactor;
         // looping over all the lines
+        ArrayList<Chunk> writtenListSymbols = null;
         for (PdfLine l: lines) {
             float moveTextX = l.indentLeft() - indentLeft() + indentation.indentLeft + indentation.listIndentLeft + indentation.sectionIndentLeft;
             text.moveText(moveTextX, -l.height());
@@ -1243,14 +1245,19 @@ public class PdfDocument extends Document {
 
             PdfListLabel lbl = null;
             if (l.listSymbol() != null) {
-                if (isTagged(writer)) {
-                    lbl = new PdfListLabel();
-                    lbl.canvas = graphics;
-                    lbl.listSymbol = l.listSymbol();
-                    lbl.x = text.getXTLM() - l.listIndent();
-                    lbl.y = text.getYTLM();
-                } else
-                    ColumnText.showTextAligned(graphics, Element.ALIGN_LEFT, new Phrase(l.listSymbol()), text.getXTLM() - l.listIndent(), text.getYTLM(), 0);
+                if (writtenListSymbols == null)
+                    writtenListSymbols = new ArrayList<Chunk>();
+                if (!writtenListSymbols.contains(l.listSymbol())) {
+                    writtenListSymbols.add(l.listSymbol());
+                    if (isTagged(writer)) {
+                        lbl = new PdfListLabel();
+                        lbl.canvas = graphics;
+                        lbl.listSymbol = l.listSymbol();
+                        lbl.x = text.getXTLM() - l.listIndent();
+                        lbl.y = text.getYTLM();
+                    } else
+                        ColumnText.showTextAligned(graphics, Element.ALIGN_LEFT, new Phrase(l.listSymbol()), text.getXTLM() - l.listIndent(), text.getYTLM(), 0);
+                }
             }
 
             currentValues[0] = currentFont;

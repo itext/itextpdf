@@ -7,10 +7,12 @@ import com.itextpdf.text.Phrase;
 import com.itextpdf.text.pdf.interfaces.IAccessibleElement;
 
 import java.util.HashMap;
+import java.util.UUID;
 
 public class PdfListLabel implements IAccessibleElement {
 
     protected PdfName role = PdfName.LBL;
+    protected UUID id = UUID.randomUUID();
 
     protected PdfContentByte canvas;
     protected float x;
@@ -35,6 +37,10 @@ public class PdfListLabel implements IAccessibleElement {
 
     public void setRole(final PdfName role) {
         this.role = role;
+    }
+
+    public UUID getId() {
+        return id;
     }
 
 }

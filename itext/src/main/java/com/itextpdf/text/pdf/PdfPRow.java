@@ -53,7 +53,9 @@ import com.itextpdf.text.log.Logger;
 import com.itextpdf.text.log.LoggerFactory;
 import com.itextpdf.text.pdf.interfaces.IAccessibleElement;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.UUID;
 
 /**
  * A row in a PdfPTable.
@@ -93,7 +95,7 @@ public class PdfPRow implements IAccessibleElement {
 
     protected PdfName role = PdfName.TR;
     protected HashMap<PdfName, PdfObject> accessibleProperties = null;
-
+    protected UUID id = UUID.randomUUID();
     
 	/**
 	 * Constructs a new PdfPRow with the cells in the array that was passed
@@ -102,10 +104,20 @@ public class PdfPRow implements IAccessibleElement {
 	 * @param cells
 	 */
 	public PdfPRow(PdfPCell cells[]) {
-		this.cells = cells;
-		widths = new float[cells.length];
-		initExtraHeights();
+		this(cells, null);
 	}
+
+    public PdfPRow(PdfPCell cells[], PdfPRow source) {
+        if (source != null) {
+            this.id = source.getId();
+            this.role = source.getRole();
+            if (source.getAccessibleProperties() != null)
+                this.accessibleProperties = new HashMap<PdfName, PdfObject>(source.getAccessibleProperties());
+        }
+        this.cells = cells;
+        widths = new float[cells.length];
+        initExtraHeights();
+    }
 
 	/**
 	 * Makes a copy of an existing row.
@@ -113,6 +125,10 @@ public class PdfPRow implements IAccessibleElement {
 	 * @param row
 	 */
 	public PdfPRow(PdfPRow row) {
+        this.id = row.getId();
+        this.role = row.getRole();
+        if (row.getAccessibleProperties() != null)
+            this.accessibleProperties = new HashMap<PdfName, PdfObject>(row.getAccessibleProperties());
 		mayNotBreak = row.mayNotBreak;
 		maxHeight = row.maxHeight;
 		calculated = row.calculated;
@@ -331,11 +347,17 @@ public class PdfPRow implements IAccessibleElement {
 			newStart = 0;
 		if (cells[newStart] != null)
 			xPos -= cells[newStart].getLeft();
-		
-		for (int k = newStart; k < colEnd; ++k) {
-			PdfPCell cell = cells[k];
+
+        if (isTagged(canvases[PdfPTable.TEXTCANVAS])) {
+            canvases[PdfPTable.TEXTCANVAS].openMCBlock(this);
+        }
+        for (int k = newStart; k < colEnd; ++k) {
+            PdfPCell cell = cells[k];
 			if (cell == null)
 				continue;
+            if (isTagged(canvases[PdfPTable.TEXTCANVAS])) {
+                canvases[PdfPTable.TEXTCANVAS].openMCBlock(cell);
+            }
 			float currentMaxHeight = maxHeight + extraHeights[k];
 			
 			writeBorderAndBackground(xPos, yPos, currentMaxHeight, cell, canvases);
@@ -397,7 +419,13 @@ public class PdfPRow implements IAccessibleElement {
 				}
 				img.setAbsolutePosition(left, tly - img.getScaledHeight());
 				try {
-					canvases[PdfPTable.TEXTCANVAS].addImage(img);
+                    if (isTagged(canvases[PdfPTable.TEXTCANVAS])) {
+                        canvases[PdfPTable.TEXTCANVAS].openMCBlock(img);
+                    }
+                    canvases[PdfPTable.TEXTCANVAS].addImage(img);
+                    if (isTagged(canvases[PdfPTable.TEXTCANVAS])) {
+                        canvases[PdfPTable.TEXTCANVAS].closeMCBlock(img);
+                    }
 				} catch (DocumentException e) {
 					throw new ExceptionConverter(e);
 				}
@@ -538,7 +566,13 @@ public class PdfPRow implements IAccessibleElement {
 						+ yPos);
 				evt.cellLayout(cell, rect, canvases);
 			}
+            if (isTagged(canvases[PdfPTable.TEXTCANVAS])) {
+                canvases[PdfPTable.TEXTCANVAS].closeMCBlock(cell);
+            }
 		}
+        if (isTagged(canvases[PdfPTable.TEXTCANVAS])) {
+            canvases[PdfPTable.TEXTCANVAS].closeMCBlock(this);
+        }
 	}
 	
 	/**
@@ -735,7 +769,7 @@ public class PdfPRow implements IAccessibleElement {
 			return null;
 		}
 		calculateHeights();
-		PdfPRow split = new PdfPRow(newCells);
+		PdfPRow split = new PdfPRow(newCells, this);
 		split.widths = (float[]) widths.clone();
 		return split;
 	}
@@ -792,4 +826,13 @@ public class PdfPRow implements IAccessibleElement {
     public void setAccessibleProperties(final HashMap<PdfName, PdfObject> accessibleProperties) {
         this.accessibleProperties = accessibleProperties;
     }
+
+    public UUID getId() {
+        return id;
+    }
+
+    static private boolean isTagged(PdfContentByte canvas) {
+        return canvas != null && canvas.writer != null && canvas.writer.isTagged();
+    }
+
 }
