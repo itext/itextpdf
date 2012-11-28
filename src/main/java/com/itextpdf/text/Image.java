@@ -50,6 +50,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Dictionary;
 import java.util.HashMap;
+import java.util.UUID;
 
 import com.itextpdf.awt.PdfGraphics2D;
 import com.itextpdf.text.api.Indentable;
@@ -204,6 +205,8 @@ public abstract class Image extends Rectangle implements Indentable, Spaceable, 
     protected PdfName role = PdfName.FIGURE;
 
     protected HashMap<PdfName, PdfObject> accessibleProperties = null;
+
+    protected UUID id = UUID.randomUUID();
 
 
 	// image from file or URL
@@ -697,7 +700,9 @@ public abstract class Image extends Rectangle implements Indentable, Spaceable, 
 		this.smask = image.smask;
 		this.transparency = image.transparency;
         this.role = image.role;
-        this.accessibleProperties = image.accessibleProperties;
+        if (image.accessibleProperties != null)
+            this.accessibleProperties = new HashMap<PdfName, PdfObject>(image.accessibleProperties);
+        this.id = image.id;
 	}
 
 	/**
@@ -2087,6 +2092,10 @@ public abstract class Image extends Rectangle implements Indentable, Spaceable, 
 
     public void setAccessibleProperties(final HashMap<PdfName, PdfObject> accessibleProperties) {
         this.accessibleProperties = accessibleProperties;
+    }
+
+    public UUID getId() {
+        return id;
     }
 
 }

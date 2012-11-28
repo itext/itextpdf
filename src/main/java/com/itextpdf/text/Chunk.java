@@ -52,6 +52,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * This is the smallest significant part of text that can be added to a
@@ -105,6 +106,7 @@ public class Chunk implements Element, IAccessibleElement {
     protected PdfName role = null;
 
     protected HashMap<PdfName, PdfObject> accessibleProperties = null;
+    protected UUID id = UUID.randomUUID();
 
 	// constructors
 
@@ -135,6 +137,7 @@ public class Chunk implements Element, IAccessibleElement {
         if (ck.accessibleProperties != null) {
             accessibleProperties = new HashMap<PdfName, PdfObject>(ck.accessibleProperties);
         }
+        id = ck.id;
     }
 
 	/**
@@ -1011,6 +1014,10 @@ public class Chunk implements Element, IAccessibleElement {
             getImage().setAccessibleProperties(accessibleProperties);
         else
             this.accessibleProperties = accessibleProperties;
+    }
+
+    public UUID getId() {
+        return id;
     }
 
 }

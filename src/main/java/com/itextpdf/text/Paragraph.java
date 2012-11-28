@@ -51,6 +51,7 @@ import com.itextpdf.text.pdf.interfaces.IPdfStructureElement;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.UUID;
 
 /**
  * A <CODE>Paragraph</CODE> is a series of <CODE>Chunk</CODE>s and/or <CODE>Phrases</CODE>.
@@ -108,6 +109,7 @@ public class Paragraph extends Phrase implements Indentable, Spaceable, IAccessi
     protected boolean keeptogether = false;
 
     protected PdfName role = PdfName.P;
+    protected UUID id = UUID.randomUUID();
 
     // constructors
 
@@ -207,6 +209,8 @@ public class Paragraph extends Phrase implements Indentable, Spaceable, IAccessi
         	setSpacingAfter(p.getSpacingAfter());
         	setSpacingBefore(p.getSpacingBefore());
         	setExtraParagraphSpace(p.getExtraParagraphSpace());
+            setRole(p.getRole());
+            id = p.getId();
         }
     }
 
@@ -227,6 +231,7 @@ public class Paragraph extends Phrase implements Indentable, Spaceable, IAccessi
     		copy.setSpacingBefore(getSpacingBefore());
     	copy.setExtraParagraphSpace(getExtraParagraphSpace());
         copy.setRole(getRole());
+        copy.id = getId();
     	return copy;
     }
     
@@ -564,6 +569,10 @@ public class Paragraph extends Phrase implements Indentable, Spaceable, IAccessi
 
     public void setRole(final PdfName role) {
         this.role = role;
+    }
+
+    public UUID getId() {
+        return id;
     }
 
 }

@@ -267,12 +267,6 @@ public class ColumnText {
 
     private boolean adjustFirstLine = true;
 
-    private float listIndentation = 0;
-
-    protected ArrayList<IAccessibleElement> mcBlocks = null;
-    protected ArrayList<IAccessibleElement> elementsToOpen = new ArrayList<IAccessibleElement>();
-    protected ArrayList<IAccessibleElement> elementsToClose = new ArrayList<IAccessibleElement>();
-
     /**
      * Creates a <CODE>ColumnText</CODE>.
      *
@@ -324,9 +318,6 @@ public class ColumnText {
         multipliedLeading = org.multipliedLeading;
         canvas = org.canvas;
         canvases = org.canvases;
-        mcBlocks = org.mcBlocks;
-        elementsToOpen = org.elementsToOpen;
-        elementsToClose = org.elementsToClose;
         lineStatus = org.lineStatus;
         indent = org.indent;
         followingIndent = org.followingIndent;
@@ -373,35 +364,9 @@ public class ColumnText {
             for (Chunk c: waitPhrase.getChunks()) {
                 PdfChunk pdfChunk = new PdfChunk(c, null);
                 if (isTagged(canvas)) {
-                    ArrayList<PdfChunk> splitted = PdfTagMarker.splitChunk(pdfChunk, c);
-                    bidiLine.addChunks(splitted);
+                    bidiLine.addChunk(PdfTagMarker.getPdfTagMarker(pdfChunk, c));
                 } else {
                     bidiLine.addChunk(pdfChunk);
-                }
-            }
-            if (isTagged(canvas)) {
-                for (int i = 0; i < bidiLine.chunks.size(); i++) {
-                    PdfChunk c = bidiLine.chunks.get(i);
-                    if (c instanceof PdfTagMarker) {
-                        PdfTagMarker m = (PdfTagMarker)c;
-                        int j = 0;
-                        for (IAccessibleElement ae : elementsToOpen) {
-                            m.getOpenElements().add(j++, ae);
-                        }
-                        elementsToOpen.clear();
-                        break;
-                    }
-                }
-                for (int i = bidiLine.chunks.size() - 1; i >= 0; i--) {
-                    PdfChunk c = bidiLine.chunks.get(i);
-                    if (c instanceof PdfTagMarker) {
-                        PdfTagMarker m = (PdfTagMarker)c;
-                        for (IAccessibleElement ae : elementsToClose) {
-                            m.getCloseElements().add(ae);
-                        }
-                        elementsToClose.clear();
-                        break;
-                    }
                 }
             }
             waitPhrase = null;
@@ -891,7 +856,7 @@ public class ColumnText {
         return go(false);
     }
 
-    public int go(final Element elementToGo) throws DocumentException {
+    public int go(final IAccessibleElement elementToGo) throws DocumentException {
         return go(false, elementToGo);
     }
 
@@ -906,15 +871,15 @@ public class ColumnText {
         return go(simulate, null);
     }
 
-    public int go(final boolean simulate, final Element elementToGo) throws DocumentException {
-        if (isTagged(canvas) && !simulate) {
-            if (mcBlocks != null) {
-                canvas.restoreMCBlocks(mcBlocks);
-            }
-            mcBlocks = null;
-        }
+    public int go(final boolean simulate, final IAccessibleElement elementToGo) throws DocumentException {
         if (composite)
             return goComposite(simulate);
+
+        PdfListBody lBody = null;
+        if (isTagged(canvas) && elementToGo instanceof ListItem) {
+            lBody = getContext(canvas).lBodies.get((ListItem)elementToGo);
+        }
+
         addWaitingPhrase();
         if (bidiLine == null)
             return NO_MORE_TEXT;
@@ -1029,23 +994,25 @@ public class ColumnText {
                     break;
                 }
             }
-            PdfListLabel lbl = null;
             if (isTagged(canvas) && elementToGo instanceof ListItem) {
                 if (!Float.isNaN(firstLineY) && !firstLineYDone) {
                     if (!simulate) {
-                        lbl = new PdfListLabel();
-                        lbl.canvas = canvas;
-                        lbl.listSymbol = ((ListItem)elementToGo).getListSymbol();
-                        lbl.x = leftX + this.listIndentation;
-                        lbl.y = firstLineY;
+                        PdfListLabel lbl = new PdfListLabel();
+                        canvas.openMCBlock(lbl);
+                        ColumnText.showTextAligned(canvas, Element.ALIGN_LEFT, new Phrase(((ListItem)elementToGo).getListSymbol()), leftX + (lBody != null ? lBody.indentation : 0), firstLineY, 0);
+                        canvas.closeMCBlock(lbl);
                     }
                     firstLineYDone = true;
                 }
             }
             if (!simulate) {
+                if (lBody != null) {
+                    canvas.openMCBlock(lBody);
+                    lBody = null;
+                }
                 currentValues[0] = currentFont;
                 text.setTextMatrix(x1 + (line.isRTL() ? rightIndent : firstIndent) + line.indentLeft(), yLine);
-                lastX = pdf.writeLineToContent(line, text, graphics, currentValues, ratio, lbl);
+                lastX = pdf.writeLineToContent(line, text, graphics, currentValues, ratio);
                 currentFont = (PdfFont)currentValues[0];
             }
             lastWasNewline = repeatFirstLineIndent && line.isNewlineSplit();
@@ -1057,9 +1024,6 @@ public class ColumnText {
             text.endText();
             if (canvas != text)
                 canvas.add(text);
-        }
-        if (isTagged(canvas) && (status & NO_MORE_COLUMN) != 0 && !simulate) {
-            mcBlocks = canvas.saveMCBlocks();
         }
         return status;
     }
@@ -1398,19 +1362,14 @@ public class ColumnText {
                     compositeColumn.rectangularMode = rectangularMode;
                     compositeColumn.minY = minY;
                     compositeColumn.maxY = maxY;
-                    if (isTagged(canvas)) {
-                        elementsToOpen.add(para);
-                        elementsToClose.add(para);
-                        compositeColumn.mcBlocks = mcBlocks;
-                        compositeColumn.elementsToOpen = elementsToOpen;
-                        compositeColumn.elementsToClose = elementsToClose;
-                    }
                     boolean keepCandidate = para.getKeepTogether() && createHere && !(firstPass && adjustFirstLine);
-                    status = compositeColumn.go(simulate || keepCandidate && keep == 0);
-                    if (isTagged(canvas)) {
-                        mcBlocks = compositeColumn.mcBlocks;
-                        elementsToOpen = compositeColumn.elementsToOpen;
-                        elementsToClose = compositeColumn.elementsToClose;
+                    boolean s = simulate || keepCandidate && keep == 0;
+                    if (isTagged(canvas) && !s) {
+                        canvas.openMCBlock(para);
+                    }
+                    status = compositeColumn.go(s);
+                    if (isTagged(canvas) && !s) {
+                        canvas.closeMCBlock(para);
                     }
                     lastX = compositeColumn.getLastX();
                     updateFilledWidth(compositeColumn.filledWidth);
@@ -1511,29 +1470,25 @@ public class ColumnText {
                     compositeColumn.minY = minY;
                     compositeColumn.maxY = maxY;
                     boolean keepCandidate = item.getKeepTogether() && createHere && !(firstPass && adjustFirstLine);
-                    compositeColumn.listIndentation = listIndentation;
                     PdfListBody lBody = null;
-                    if (isTagged(canvas)) {
-                        if (list.getFirstItem() == item)
-                            elementsToOpen.add(list);
-                        elementsToOpen.add(item);
-                        lBody = new PdfListBody();
-                        elementsToOpen.add(lBody);
-                        elementsToClose.add(lBody);
-                        elementsToClose.add(item);
-                        if (list.getLastItem() == item)
-                            elementsToClose.add(list);
-                        compositeColumn.mcBlocks = mcBlocks;
-                        compositeColumn.elementsToOpen = elementsToOpen;
-                        compositeColumn.elementsToClose = elementsToClose;
+                    boolean s = simulate || keepCandidate && keep == 0;
+                    if (isTagged(canvas) && !s) {
+                        lBody = getContext(canvas).lBodies.get(item);
+                        if (lBody == null) {
+                            lBody = new PdfListBody(item, listIndentation);
+                            getContext(canvas).lBodies.put(item, lBody);
+                        }
+                        if (list.getFirstItem() == item || (compositeColumn != null && compositeColumn.bidiLine != null))
+                            canvas.openMCBlock(list);
+                        canvas.openMCBlock(item);
                     }
 					status = compositeColumn.go(simulate || keepCandidate && keep == 0, item);
-                    if (isTagged(canvas)) {
-                        mcBlocks = compositeColumn.mcBlocks;
-                        elementsToOpen = compositeColumn.elementsToOpen;
-                        elementsToClose = compositeColumn.elementsToClose;
+                    if (isTagged(canvas) && !s) {
+                        canvas.closeMCBlock(lBody);
+                        canvas.closeMCBlock(item);
+                        if ((list.getLastItem() == item && (status & NO_MORE_TEXT) != 0) || (status & NO_MORE_COLUMN) != 0)
+                            canvas.closeMCBlock(list);
                     }
-                    compositeColumn.listIndentation = 0;
                     lastX = compositeColumn.getLastX();
                     updateFilledWidth(compositeColumn.filledWidth);
                     if ((status & NO_MORE_TEXT) == 0 && keepCandidate) {
@@ -1769,10 +1724,25 @@ public class ColumnText {
                     }
 
                     // now we render the rows of the new table
-                    if (canvases != null)
+                    if (canvases != null) {
+                        if (isTagged(canvases[PdfPTable.TEXTCANVAS])) {
+                            canvases[PdfPTable.TEXTCANVAS].openMCBlock(table);
+                        }
                         nt.writeSelectedRows(0, -1, 0, -1, x1, yLineWrite, canvases, false);
-                    else
+                        if (isTagged(canvases[PdfPTable.TEXTCANVAS])) {
+                            canvases[PdfPTable.TEXTCANVAS].closeMCBlock(table);
+                        }
+                    }
+                    else {
+                        if (isTagged(canvas)) {
+                            canvas.openMCBlock(table);
+                        }
                         nt.writeSelectedRows(0, -1, 0, -1, x1, yLineWrite, canvas, false);
+                        if (isTagged(canvas)) {
+                            canvas.closeMCBlock(table);
+                        }
+                    }
+
                     // if the row was split, we copy the content of the last row
                     // that was consumed into the first row shown on the next page
                     if (splittedRow == k && k < table.size()) {
@@ -2002,5 +1972,11 @@ public class ColumnText {
         return (canvas != null) && (canvas.pdf != null) && (canvas.writer != null) && canvas.writer.isTagged();
     }
 
+    protected ColumnTextContext getContext(final PdfContentByte canvas) {
+        if (canvas != null && canvas.pdf != null)
+            return canvas.pdf.ctContext;
+        else
+            return null;
+    }
 
 }

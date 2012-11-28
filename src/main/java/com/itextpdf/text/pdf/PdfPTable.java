@@ -49,9 +49,12 @@ import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.log.Logger;
 import com.itextpdf.text.log.LoggerFactory;
 import com.itextpdf.text.pdf.events.PdfPTableEventForwarder;
+import com.itextpdf.text.pdf.interfaces.IAccessibleElement;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * This is a table that can be put at an absolute position but can also
@@ -63,7 +66,7 @@ import java.util.List;
  * @author Paulo Soares
  */
 
-public class PdfPTable implements LargeElement, Spaceable {
+public class PdfPTable implements LargeElement, Spaceable, IAccessibleElement {
 
 	private final Logger LOGGER = LoggerFactory.getLogger(PdfPTable.class);
     /**
@@ -193,6 +196,11 @@ public class PdfPTable implements LargeElement, Spaceable {
 
     protected boolean loopCheck = true;
 
+    protected PdfName role = PdfName.TABLE;
+    protected HashMap<PdfName, PdfObject> accessibleProperties = null;
+    protected UUID id = UUID.randomUUID();
+
+
 	protected PdfPTable() {
     }
 
@@ -270,6 +278,10 @@ public class PdfPTable implements LargeElement, Spaceable {
      * @since 2.1.6 private is now protected
      */
     protected void copyFormat(final PdfPTable sourceTable) {
+        id = sourceTable.getId();
+        role = sourceTable.getRole();
+        if (sourceTable.getAccessibleProperties() != null)
+            accessibleProperties = new HashMap<PdfName, PdfObject>(sourceTable.getAccessibleProperties());
         relativeWidths = new float[sourceTable.getNumberOfColumns()];
         absoluteWidths = new float[sourceTable.getNumberOfColumns()];
         System.arraycopy(sourceTable.relativeWidths, 0, relativeWidths, 0, getNumberOfColumns());
@@ -453,7 +465,7 @@ public class PdfPTable implements LargeElement, Spaceable {
      *
      * @param cell the cell element
      */
-    public void addCell(final PdfPCell cell) {
+    public PdfPCell addCell(final PdfPCell cell) {
         rowCompleted = false;
         PdfPCell ncell = new PdfPCell(cell);
 
@@ -509,6 +521,7 @@ public class PdfPTable implements LargeElement, Spaceable {
             currentRow[currentColIdx] = ncell;
             currentColIdx += colspan;
         }
+        return ncell;
     }
 
     /**
@@ -600,7 +613,8 @@ public class PdfPTable implements LargeElement, Spaceable {
      */
     public void addCell(final PdfPTable table) {
         defaultCell.setTable(table);
-        addCell(defaultCell);
+        PdfPCell newCell = addCell(defaultCell);
+        newCell.id = UUID.randomUUID();
         defaultCell.setTable(null);
     }
 
@@ -612,7 +626,8 @@ public class PdfPTable implements LargeElement, Spaceable {
      */
     public void addCell(final Image image) {
         defaultCell.setImage(image);
-        addCell(defaultCell);
+        PdfPCell newCell = addCell(defaultCell);
+        newCell.id = UUID.randomUUID();
         defaultCell.setImage(null);
     }
 
@@ -623,7 +638,8 @@ public class PdfPTable implements LargeElement, Spaceable {
      */
     public void addCell(final Phrase phrase) {
         defaultCell.setPhrase(phrase);
-        addCell(defaultCell);
+        PdfPCell newCell = addCell(defaultCell);
+        newCell.id = UUID.randomUUID();
         defaultCell.setPhrase(null);
     }
 
@@ -1751,4 +1767,38 @@ public class PdfPTable implements LargeElement, Spaceable {
 	public void setLoopCheck(boolean loopCheck) {
 		this.loopCheck = loopCheck;
 	}
+
+    public PdfObject getAccessibleProperty(final PdfName key) {
+        if (accessibleProperties != null)
+            return accessibleProperties.get(key);
+        else
+            return null;
+    }
+
+    public void setAccessibleProperty(final PdfName key, final PdfObject value) {
+        if (accessibleProperties == null)
+            accessibleProperties = new HashMap<PdfName, PdfObject>();
+        accessibleProperties.put(key, value);
+    }
+
+    public HashMap<PdfName, PdfObject> getAccessibleProperties() {
+        return accessibleProperties;
+    }
+
+    public PdfName getRole() {
+        return role;
+    }
+
+    public void setRole(final PdfName role) {
+        this.role = role;
+    }
+
+    public void setAccessibleProperties(final HashMap<PdfName, PdfObject> accessibleProperties) {
+        this.accessibleProperties = accessibleProperties;
+    }
+
+    public UUID getId() {
+        return id;
+    }
+
 }

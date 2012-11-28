@@ -97,7 +97,7 @@ import java.util.HashMap;
  * @see	Paragraph
  */
 
-public class ListItem extends Paragraph implements IAccessibleElement {
+public class ListItem extends Paragraph {
 
     // constants
 	private static final long serialVersionUID = 1970670787169329006L;
@@ -110,8 +110,6 @@ public class ListItem extends Paragraph implements IAccessibleElement {
 	 */
     protected Chunk symbol;
 
-    protected PdfName role = PdfName.LI;
-
     // constructors
 
     /**
@@ -119,6 +117,7 @@ public class ListItem extends Paragraph implements IAccessibleElement {
      */
     public ListItem() {
         super();
+        setRole(PdfName.LI);
     }
 
     /**
@@ -128,6 +127,7 @@ public class ListItem extends Paragraph implements IAccessibleElement {
      */
     public ListItem(final float leading) {
         super(leading);
+        setRole(PdfName.LI);
     }
 
     /**
@@ -137,6 +137,7 @@ public class ListItem extends Paragraph implements IAccessibleElement {
      */
     public ListItem(final Chunk chunk) {
         super(chunk);
+        setRole(PdfName.LI);
     }
 
     /**
@@ -146,6 +147,7 @@ public class ListItem extends Paragraph implements IAccessibleElement {
      */
     public ListItem(final String string) {
         super(string);
+        setRole(PdfName.LI);
     }
 
     /**
@@ -157,6 +159,7 @@ public class ListItem extends Paragraph implements IAccessibleElement {
      */
     public ListItem(final String string, final Font font) {
         super(string, font);
+        setRole(PdfName.LI);
     }
 
     /**
@@ -168,6 +171,7 @@ public class ListItem extends Paragraph implements IAccessibleElement {
      */
     public ListItem(final float leading, final Chunk chunk) {
         super(leading, chunk);
+        setRole(PdfName.LI);
     }
 
     /**
@@ -179,6 +183,7 @@ public class ListItem extends Paragraph implements IAccessibleElement {
      */
     public ListItem(final float leading, final String string) {
         super(leading, string);
+        setRole(PdfName.LI);
     }
 
     /**
@@ -191,6 +196,7 @@ public class ListItem extends Paragraph implements IAccessibleElement {
      */
     public ListItem(final float leading, final String string, final Font font) {
         super(leading, string, font);
+        setRole(PdfName.LI);
     }
 
     /**
@@ -200,6 +206,7 @@ public class ListItem extends Paragraph implements IAccessibleElement {
      */
     public ListItem(final Phrase phrase) {
         super(phrase);
+        setRole(PdfName.LI);
     }
 
     // implementation of the Element-methods
@@ -265,26 +272,6 @@ public class ListItem extends Paragraph implements IAccessibleElement {
      */
     public Chunk getListSymbol() {
         return symbol;
-    }
-
-    public PdfObject getAccessibleProperty(final PdfName key) {
-        return null;
-    }
-
-    public void setAccessibleProperty(final PdfName key, final PdfObject value) {
-
-    }
-
-    public HashMap<PdfName, PdfObject> getAccessibleProperties() {
-        return null;
-    }
-
-    public PdfName getRole() {
-        return role;
-    }
-
-    public void setRole(final PdfName role) {
-        this.role = role;
     }
 
 }

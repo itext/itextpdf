@@ -29,6 +29,13 @@ public class PdfTagMarker extends PdfChunk {
         return new PdfTagMarker(string, this);
     }
 
+    static public PdfTagMarker getPdfTagMarker(PdfChunk chunk, IAccessibleElement accessibleElement) {
+        PdfTagMarker m = new PdfTagMarker(chunk.value, chunk);
+        m.getOpenElements().add(accessibleElement);
+        m.getCloseElements().add(accessibleElement);
+        return m;
+    }
+
     static public ArrayList<PdfChunk> splitChunk(PdfChunk chunk, IAccessibleElement accessibleElement) {
         ArrayList<PdfChunk> splitted = new ArrayList<PdfChunk>();
         int len = chunk.length();

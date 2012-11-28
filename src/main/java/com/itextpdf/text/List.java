@@ -52,6 +52,7 @@ import com.itextpdf.text.pdf.interfaces.IAccessibleElement;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.UUID;
 
 /**
  * A <CODE>List</CODE> contains several <CODE>ListItem</CODE>s.
@@ -154,6 +155,7 @@ public class List implements TextElementArray, Indentable, IAccessibleElement {
     protected float symbolIndent = 0;
 
     protected PdfName role = PdfName.L;
+    protected UUID id = UUID.randomUUID();
 
     // constructors
 
@@ -638,6 +640,10 @@ public class List implements TextElementArray, Indentable, IAccessibleElement {
 
     public void setRole(final PdfName role) {
         this.role = role;
+    }
+
+    public UUID getId() {
+        return id;
     }
 
 }
