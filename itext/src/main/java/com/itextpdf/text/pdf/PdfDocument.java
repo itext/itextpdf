@@ -301,7 +301,7 @@ public class PdfDocument extends Document {
 
     protected HashMap<UUID, PdfStructureElement> structElements = new HashMap<UUID, PdfStructureElement>();
     protected ArrayList<IAccessibleElement> elementsToOpen = new ArrayList<IAccessibleElement>();
-    protected ColumnTextContext ctContext = new ColumnTextContext();
+    protected TaggedPdfContext taggedPdfContext = new TaggedPdfContext();
 
 
     /**
@@ -426,18 +426,7 @@ public class PdfDocument extends Document {
                     }
 
                     // we cast the element to a chunk
-                    PdfChunk chunk = null;
-                    if (isTagged(writer) && element instanceof IAccessibleElement) {
-                        chunk = new PdfTagMarker((Chunk) element, anchorAction);
-                        int i = 0;
-                        while (elementsToOpen.size() > 0) {
-                            IAccessibleElement ae = elementsToOpen.get(elementsToOpen.size() - 1);
-                            ((PdfTagMarker)chunk).getOpenElements().add(0, ae);
-                            elementsToOpen.remove(ae);
-                        }
-                    } else {
-                        chunk = new PdfChunk((Chunk) element, anchorAction);
-                    }
+                    PdfChunk chunk = new PdfChunk((Chunk) element, anchorAction);
                     // we try to add the chunk to the line, until we succeed
                     {
                         PdfChunk overflow;
@@ -497,7 +486,7 @@ public class PdfDocument extends Document {
                     // we cast the element to a paragraph
                     Paragraph paragraph = (Paragraph) element;
                     if (isTagged(writer)) {
-                        elementsToOpen.add(paragraph);
+                        text.openMCBlock(paragraph);
                     }
                     addSpacing(paragraph.getSpacingBefore(), leading, paragraph.getFont());
 
@@ -550,7 +539,8 @@ public class PdfDocument extends Document {
                     carriageReturn();
                     leadingCount--;
                     if (isTagged(writer)) {
-                        closeAccessibleElement(paragraph, text);
+                        flushLines();
+                        text.closeMCBlock(paragraph);
                     }
                     break;
                 }
@@ -619,7 +609,7 @@ public class PdfDocument extends Document {
                     // we cast the element to a List
                     List list = (List) element;
                     if (isTagged(writer)) {
-                        elementsToOpen.add(list);
+                        text.openMCBlock(list);
                     }
                     if (list.isAlignindent()) {
                     	list.normalizeIndentation();
@@ -635,7 +625,8 @@ public class PdfDocument extends Document {
                     indentation.indentRight -= list.getIndentationRight();
                     carriageReturn();
                     if (isTagged(writer)) {
-                        closeAccessibleElement(list, text);
+                        flushLines();
+                        text.closeMCBlock(list);
                     }
                     break;
                 }
@@ -645,11 +636,10 @@ public class PdfDocument extends Document {
                     ListItem listItem = (ListItem) element;
                     PdfListBody lBody = null;
                     if (isTagged(writer)) {
-                        lBody = new PdfListBody();
-                        elementsToOpen.add(listItem);
-                        elementsToOpen.add(lBody);
+                        lBody = new PdfListBody(listItem);
+                        text.openMCBlock(listItem);
+                        taggedPdfContext.lBodies.put(listItem, lBody);
                     }
-
 
                     addSpacing(listItem.getSpacingBefore(), leading, listItem.getFont());
 
@@ -676,8 +666,9 @@ public class PdfDocument extends Document {
                     indentation.indentRight -= listItem.getIndentationRight();
                     leadingCount--;
                     if (isTagged(writer)) {
-                        closeAccessibleElement(lBody, text);
-                        closeAccessibleElement(listItem, text);
+                        flushLines();
+                        text.closeMCBlock(lBody);
+                        text.closeMCBlock(listItem);
                     }
                     break;
                 }
@@ -1237,32 +1228,33 @@ public class PdfDocument extends Document {
         Float lastBaseFactor = new Float(0);
         currentValues[1] = lastBaseFactor;
         // looping over all the lines
-        ArrayList<Chunk> writtenListSymbols = null;
         for (PdfLine l: lines) {
             float moveTextX = l.indentLeft() - indentLeft() + indentation.indentLeft + indentation.listIndentLeft + indentation.sectionIndentLeft;
             text.moveText(moveTextX, -l.height());
             // is the line preceded by a symbol?
 
-            PdfListLabel lbl = null;
+
             if (l.listSymbol() != null) {
-                if (writtenListSymbols == null)
-                    writtenListSymbols = new ArrayList<Chunk>();
-                if (!writtenListSymbols.contains(l.listSymbol())) {
-                    writtenListSymbols.add(l.listSymbol());
-                    if (isTagged(writer)) {
-                        lbl = new PdfListLabel();
-                        lbl.canvas = graphics;
-                        lbl.listSymbol = l.listSymbol();
-                        lbl.x = text.getXTLM() - l.listIndent();
-                        lbl.y = text.getYTLM();
-                    } else
-                        ColumnText.showTextAligned(graphics, Element.ALIGN_LEFT, new Phrase(l.listSymbol()), text.getXTLM() - l.listIndent(), text.getYTLM(), 0);
+                PdfListLabel lbl = null;
+                if (isTagged(writer)) {
+                    lbl = new PdfListLabel();
+                    graphics.openMCBlock(lbl);
+                }
+                ColumnText.showTextAligned(graphics, Element.ALIGN_LEFT, new Phrase(l.listSymbol()), text.getXTLM() - l.listIndent(), text.getYTLM(), 0);
+                if (lbl != null) {
+                    graphics.closeMCBlock(lbl);
                 }
             }
 
             currentValues[0] = currentFont;
 
-            writeLineToContent(l, text, graphics, currentValues, writer.getSpaceCharRatio(), lbl);
+            if (isTagged(writer) && l.listItem() != null) {
+                PdfListBody lBody = taggedPdfContext.lBodies.get(l.listItem());
+                if (lBody != null) {
+                    text.openMCBlock(lBody);
+                }
+            }
+            writeLineToContent(l, text, graphics, currentValues, writer.getSpaceCharRatio());
 
             currentFont = (PdfFont)currentValues[0];
             displacement += l.height();
@@ -1290,11 +1282,6 @@ public class PdfDocument extends Document {
      * @since 5.0.3 returns a float instead of void
      */
     float writeLineToContent(final PdfLine line, final PdfContentByte text, final PdfContentByte graphics, final Object currentValues[], final float ratio)  throws DocumentException {
-        return writeLineToContent(line, text, graphics, currentValues, ratio, null);
-    }
-
-
-    float writeLineToContent(final PdfLine line, final PdfContentByte text, final PdfContentByte graphics, final Object currentValues[], final float ratio, final PdfListLabel lbl)  throws DocumentException {
         PdfFont currentFont = (PdfFont)currentValues[0];
         float lastBaseFactor = ((Float)currentValues[1]).floatValue();
         PdfChunk chunk;
@@ -1357,15 +1344,8 @@ public class PdfDocument extends Document {
         // looping over all the chunks in 1 line
         for (Iterator<PdfChunk> j = line.iterator(); j.hasNext(); ) {
             chunk = j.next();
-            if (isTagged(writer) && chunk instanceof PdfTagMarker && ((PdfTagMarker)chunk).isOpen()) {
-                for (IAccessibleElement ae : ((PdfTagMarker)chunk).getOpenElements()) {
-                    text.openMCBlock(ae);
-                    if (ae instanceof ListItem && lbl != null) {
-                        lbl.canvas.openMCBlock(lbl);
-                        ColumnText.showTextAligned(lbl.canvas, Element.ALIGN_LEFT, new Phrase(lbl.listSymbol), lbl.x, lbl.y, 0);
-                        lbl.canvas.closeMCBlock(lbl);
-                    }
-                }
+            if (isTagged(writer) && chunk.accessibleElement != null) {
+                text.openMCBlock(chunk.accessibleElement);
             }
             BaseColor color = chunk.color();
             float fontSize = chunk.font().size();
@@ -1631,7 +1611,7 @@ public class PdfDocument extends Document {
 
             if (rise != 0)
                 text.setTextRise(0);
-            if (color != null)
+            if (color != null && !isTagged(writer))
                 text.resetRGBColorFill();
             if (tr != PdfContentByte.TEXT_RENDER_MODE_FILL)
                 text.setTextRenderingMode(PdfContentByte.TEXT_RENDER_MODE_FILL);
@@ -1646,10 +1626,8 @@ public class PdfDocument extends Document {
             if (chunk.isAttribute(Chunk.CHAR_SPACING)) {
 				text.setCharacterSpacing(baseCharacterSpacing);
             }
-            if (isTagged(writer) && chunk instanceof PdfTagMarker && ((PdfTagMarker)chunk).isClose()) {
-                for (IAccessibleElement ae : ((PdfTagMarker)chunk).getCloseElements()) {
-                    text.closeMCBlock(ae);
-                }
+            if (isTagged(writer) && chunk.accessibleElement != null) {
+                text.closeMCBlock(chunk.accessibleElement);
             }
 
         }
@@ -2542,26 +2520,6 @@ public class PdfDocument extends Document {
         else
             return null;
     }
-
-    private void closeAccessibleElement(final IAccessibleElement ae, final PdfContentByte canvas) {
-        if (!elementsToOpen.contains(ae)) {
-            PdfLine line = getLastLine();
-            PdfTagMarker marker = null;
-            if (line != null && line.size() > 0) {
-                PdfChunk c = line.getChunk(line.size() - 1);
-                if (c instanceof PdfTagMarker)
-                    marker = (PdfTagMarker)c;
-            }
-            if (marker == null) {
-                canvas.closeMCBlock(ae);
-            } else {
-                marker.getCloseElements().add(ae);
-            }
-        } else {
-            elementsToOpen.remove(ae);
-        }
-    }
-
 
     /**
      * @since 5.0.1

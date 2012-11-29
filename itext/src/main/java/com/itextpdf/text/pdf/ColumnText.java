@@ -362,12 +362,7 @@ public class ColumnText {
         if (bidiLine == null && waitPhrase != null) {
             bidiLine = new BidiLine();
             for (Chunk c: waitPhrase.getChunks()) {
-                PdfChunk pdfChunk = new PdfChunk(c, null);
-                if (isTagged(canvas)) {
-                    bidiLine.addChunk(PdfTagMarker.getPdfTagMarker(pdfChunk, c));
-                } else {
-                    bidiLine.addChunk(pdfChunk);
-                }
+                bidiLine.addChunk(new PdfChunk(c, null));
             }
             waitPhrase = null;
         }
@@ -856,10 +851,6 @@ public class ColumnText {
         return go(false);
     }
 
-    public int go(final IAccessibleElement elementToGo) throws DocumentException {
-        return go(false, elementToGo);
-    }
-
     /**
      * Outputs the lines to the document. The output can be simulated.
      * @param simulate <CODE>true</CODE> to simulate the writing to the document
@@ -877,7 +868,7 @@ public class ColumnText {
 
         PdfListBody lBody = null;
         if (isTagged(canvas) && elementToGo instanceof ListItem) {
-            lBody = getContext(canvas).lBodies.get((ListItem)elementToGo);
+            lBody = getTaggedPdfContext(canvas).lBodies.get(elementToGo);
         }
 
         addWaitingPhrase();
@@ -1473,10 +1464,10 @@ public class ColumnText {
                     PdfListBody lBody = null;
                     boolean s = simulate || keepCandidate && keep == 0;
                     if (isTagged(canvas) && !s) {
-                        lBody = getContext(canvas).lBodies.get(item);
+                        lBody = getTaggedPdfContext(canvas).lBodies.get(item);
                         if (lBody == null) {
                             lBody = new PdfListBody(item, listIndentation);
-                            getContext(canvas).lBodies.put(item, lBody);
+                            getTaggedPdfContext(canvas).lBodies.put(item, lBody);
                         }
                         if (list.getFirstItem() == item || (compositeColumn != null && compositeColumn.bidiLine != null))
                             canvas.openMCBlock(list);
@@ -1972,9 +1963,9 @@ public class ColumnText {
         return (canvas != null) && (canvas.pdf != null) && (canvas.writer != null) && canvas.writer.isTagged();
     }
 
-    protected ColumnTextContext getContext(final PdfContentByte canvas) {
+    protected TaggedPdfContext getTaggedPdfContext(final PdfContentByte canvas) {
         if (canvas != null && canvas.pdf != null)
-            return canvas.pdf.ctContext;
+            return canvas.pdf.taggedPdfContext;
         else
             return null;
     }

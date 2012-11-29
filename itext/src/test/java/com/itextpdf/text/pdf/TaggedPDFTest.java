@@ -366,7 +366,6 @@ public class TaggedPDFTest {
     }
 
     @Test
-    @Ignore
     public void createTaggedPDF9() throws DocumentException, IOException, ParserConfigurationException, SAXException {
         initializeDocument("./target/com/itextpdf/test/pdf/TaggedPDFTest/out9.pdf");
         PdfPTable table = new PdfPTable(2);
@@ -396,7 +395,6 @@ public class TaggedPDFTest {
     }
 
     @Test
-    @Ignore
     public void createTaggedPDF10() throws DocumentException, IOException, ParserConfigurationException, SAXException {
         initializeDocument("./target/com/itextpdf/test/pdf/TaggedPDFTest/out10.pdf");
         PdfPTable table = new PdfPTable(2);
@@ -419,7 +417,10 @@ public class TaggedPDFTest {
             i = Image.getInstance("./src/test/resources/com/itextpdf/text/pdf/TaggedPdfTest/dog.bmp");
             i.setAccessibleProperty(PdfName.ALT, new PdfString("Dog image"));
             t.addCell(i);
+            t.addCell(text);
+            t.addCell("Hello World");
             table.addCell(t);
+
 
             Paragraph p = new Paragraph(text);
             table.addCell(p);
