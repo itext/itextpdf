@@ -273,6 +273,12 @@ public class PdfPCell extends Rectangle implements IAccessibleElement {
         }
         if (element instanceof PdfPTable) {
             ((PdfPTable) element).setSplitLate(false);
+        } else if (element instanceof PdfDiv) {
+            for (Element divChildElement : ((PdfDiv)element).getContent()) {
+                if (divChildElement instanceof PdfPTable) {
+                    ((PdfPTable) divChildElement).setSplitLate(false);
+                }
+            }
         }
         column.addElement(element);
     }
