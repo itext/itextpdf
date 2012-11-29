@@ -266,6 +266,9 @@ public class PdfDiv implements Element, Spaceable {
     }
 
     public void addElement(Element element) {
+        if (element instanceof PdfPTable) {
+            ((PdfPTable)element).setSplitLate(false);
+        }
         content.add(element);
     }
 
@@ -373,7 +376,7 @@ public class PdfDiv implements Element, Spaceable {
         this.content = content;
     }
 
-    public int layout(final ColumnText compositeColumn, boolean simulate, final float llx, final float lly, final float urx, final float ury) throws DocumentException {
+    public int layout(final PdfContentByte canvas, boolean useAscender, boolean simulate, final float llx, final float lly, final float urx, final float ury) throws DocumentException {
 
         float leftX = Math.min(llx, urx);
         float maxY = Math.max(lly, ury);
@@ -426,8 +429,8 @@ public class PdfDiv implements Element, Spaceable {
             } else {
                 translationY = 0f;
             }
-            compositeColumn.getCanvas().saveState();
-            compositeColumn.getCanvas().transform(new AffineTransform(1f, 0, 0, 1f, translationX, translationY));
+            canvas.saveState();
+            canvas.transform(new AffineTransform(1f, 0, 0, 1f, translationX, translationY));
         }
 
         if (!simulate) {
@@ -444,7 +447,7 @@ public class PdfDiv implements Element, Spaceable {
                 if (backgroundWidth > 0 && backgroundHeight > 0) {
                     Rectangle background = new Rectangle(leftX, maxY - backgroundHeight, leftX + backgroundWidth, maxY);
                     background.setBackgroundColor(backgroundColor);
-                    compositeColumn.getCanvas().rectangle(background);
+                    canvas.rectangle(background);
                 }
             }
         }
@@ -470,22 +473,22 @@ public class PdfDiv implements Element, Spaceable {
                 ArrayList<Element> floatingElements = new ArrayList<Element>();
                 floatingElements.addAll(content);
                 if (simulate) {
-                    floatLayout = new FloatLayout(compositeColumn, floatingElements);
+                    floatLayout = new FloatLayout(floatingElements, useAscender);
                 } else {
-                    floatLayout = this.floatLayout = new FloatLayout(compositeColumn, floatingElements);
+                    floatLayout = this.floatLayout = new FloatLayout(floatingElements, useAscender);
                 }
             } else {
                 if (simulate) {
                     ArrayList<Element> floatingElements = new ArrayList<Element>();
                     floatingElements.addAll(this.floatLayout.content);
-                    floatLayout = new FloatLayout(this.floatLayout.compositeColumn, floatingElements);
+                    floatLayout = new FloatLayout(floatingElements, useAscender);
                 } else {
                     floatLayout = this.floatLayout;
                 }
             }
 
             floatLayout.setSimpleColumn(leftX, minY, rightX, yLine);
-            status = floatLayout.layout(simulate);
+            status = floatLayout.layout(canvas, simulate);
             yLine = floatLayout.getYLine();
             if (percentageWidth == null && contentWidth < floatLayout.getFilledWidth()) {
                 contentWidth = floatLayout.getFilledWidth();
@@ -494,7 +497,7 @@ public class PdfDiv implements Element, Spaceable {
 
 
         if (!simulate && position == PdfDiv.PositionType.RELATIVE) {
-            compositeColumn.getCanvas().restoreState();
+            canvas.restoreState();
         }
 
         yLine -= paddingBottom;

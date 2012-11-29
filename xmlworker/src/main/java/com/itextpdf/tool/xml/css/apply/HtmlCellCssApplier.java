@@ -143,7 +143,7 @@ public class HtmlCellCssApplier {
                 height = heightCalc.getHeight(row, psc.getPageSize().getHeight());
             }
             if (height != null) {
-                cell.setFixedHeight(height);
+                cell.setMinimumHeight(height);
             }
 
 	        String colspan = t.getAttributes().get(HTML.Attribute.COLSPAN);

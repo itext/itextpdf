@@ -2464,12 +2464,12 @@ public class PdfDocument extends Document {
         if (floatingElements != null && !floatingElements.isEmpty()) {
             ArrayList<Element> cashedFloatingElements = floatingElements;
             floatingElements = null;
-            FloatLayout fl = new FloatLayout(writer.getDirectContent(), cashedFloatingElements);
+            FloatLayout fl = new FloatLayout(cashedFloatingElements, false);
             int loop = 0;
             while (true) {
                 fl.setSimpleColumn(indentLeft(), indentBottom(), indentRight(), indentTop() - currentHeight);
                 try {
-                    int status = fl.layout(false);
+                    int status = fl.layout(writer.getDirectContent(), false);
                     if ((status & ColumnText.NO_MORE_TEXT) != 0) {
                         text.moveText(0, fl.getYLine() - indentTop() + currentHeight);
                         currentHeight = indentTop() - fl.getYLine();

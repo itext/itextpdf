@@ -1797,23 +1797,13 @@ public class ColumnText {
                     element = !compositeElements.isEmpty() ? compositeElements.getFirst() : null;
                 } while (element != null && element.type() == Element.DIV);
 
-                compositeColumn = new ColumnText(canvas);
-                compositeColumn.setUseAscender((firstPass || descender == 0) && adjustFirstLine ? useAscender : false);
-                //compositeColumn.setAlignment(div.getTextAlignment());
-                //compositeColumn.setIndent(para.getIndentationLeft() + para.getFirstLineIndent());
-                compositeColumn.setRunDirection(runDirection);
-                compositeColumn.setArabicOptions(arabicOptions);
-                compositeColumn.setSpaceCharRatio(spaceCharRatio);
-
-
-                FloatLayout fl = new FloatLayout(compositeColumn, floatingElements);
+                FloatLayout fl = new FloatLayout(floatingElements, useAscender);
                 fl.setSimpleColumn(leftX, minY, rightX, yLine);
-                int status = fl.layout(simulate);
+                int status = fl.layout(canvas, simulate);
 
                 //firstPass = false;
                 yLine = fl.getYLine();
                 descender = 0;
-                compositeColumn = null;
                 if ((status & NO_MORE_TEXT) == 0) {
                     compositeElements.addAll(floatingElements);
                     return status;
