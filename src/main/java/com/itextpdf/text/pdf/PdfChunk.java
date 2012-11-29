@@ -145,6 +145,8 @@ public class PdfChunk {
 /** The leading that can overrule the existing leading. */
     protected float leading = 0;
 
+    protected IAccessibleElement accessibleElement = null;
+
     // constructors
 
 /**
@@ -176,6 +178,7 @@ public class PdfChunk {
         splitCharacter = (SplitCharacter)noStroke.get(Chunk.SPLITCHARACTER);
         if (splitCharacter == null)
             splitCharacter = DefaultSplitCharacter.DEFAULT;
+        accessibleElement = other.accessibleElement;
     }
 
 /**
@@ -268,10 +271,7 @@ public class PdfChunk {
         splitCharacter = (SplitCharacter)noStroke.get(Chunk.SPLITCHARACTER);
         if (splitCharacter == null)
             splitCharacter = DefaultSplitCharacter.DEFAULT;
-    }
-
-    protected PdfChunk getNewChunk(String string) {
-        return new PdfChunk(string, this);
+        accessibleElement = chunk;
     }
 
     // methods
@@ -309,7 +309,7 @@ public class PdfChunk {
         newlineSplit = false;
         if (image != null) {
             if (image.getScaledWidth() > width) {
-                PdfChunk pc = getNewChunk(Chunk.OBJECT_REPLACEMENT_CHARACTER);
+                PdfChunk pc = new PdfChunk(Chunk.OBJECT_REPLACEMENT_CHARACTER, this);
                 value = "";
                 attributes = new HashMap<String, Object>();
                 image = null;
@@ -346,7 +346,7 @@ public class PdfChunk {
                     if (value.length() < 1) {
                         value = "\u0001";
                     }
-                    PdfChunk pc = getNewChunk(returnValue);
+                    PdfChunk pc = new PdfChunk(returnValue, this);
                     return pc;
                 }
                 currentWidth += getCharWidth(cidChar);
@@ -377,7 +377,7 @@ public class PdfChunk {
                     if (value.length() < 1) {
                         value = " ";
                     }
-                    PdfChunk pc = getNewChunk(returnValue);
+                    PdfChunk pc = new PdfChunk(returnValue, this);
                     return pc;
                 }
                 surrogate = Utilities.isSurrogatePair(valueArray, currentPosition);
@@ -408,7 +408,7 @@ public class PdfChunk {
         if (splitPosition < 0) {
             String returnValue = value;
             value = "";
-            PdfChunk pc = getNewChunk(returnValue);
+            PdfChunk pc = new PdfChunk(returnValue, this);
             return pc;
         }
         if (lastSpace > splitPosition && splitCharacter.isSplitCharacter(0, 0, 1, singleSpace, null))
@@ -421,14 +421,14 @@ public class PdfChunk {
                 if (pre.length() > 0) {
                     String returnValue = post + value.substring(wordIdx);
                     value = trim(value.substring(0, lastSpace) + pre);
-                    PdfChunk pc = getNewChunk(returnValue);
+                    PdfChunk pc = new PdfChunk(returnValue, this);
                     return pc;
                 }
             }
         }
         String returnValue = value.substring(splitPosition);
         value = trim(value.substring(0, splitPosition));
-        PdfChunk pc = getNewChunk(returnValue);
+        PdfChunk pc = new PdfChunk(returnValue, this);
         return pc;
     }
 
@@ -449,7 +449,7 @@ public class PdfChunk {
             		image.scalePercent(scalePercent);
             		return null;
             	}
-                PdfChunk pc = getNewChunk("");
+                PdfChunk pc = new PdfChunk("", this);
                 value = "";
                 attributes.remove(Chunk.IMAGE);
                 image = null;
@@ -467,7 +467,7 @@ public class PdfChunk {
         if (width < font.width()) {
             String returnValue = value.substring(1);
             value = value.substring(0, 1);
-            PdfChunk pc = getNewChunk(returnValue);
+            PdfChunk pc = new PdfChunk(returnValue, this);
             return pc;
         }
 
@@ -504,7 +504,7 @@ public class PdfChunk {
         }
         String returnValue = value.substring(currentPosition);
         value = value.substring(0, currentPosition);
-        PdfChunk pc = getNewChunk(returnValue);
+        PdfChunk pc = new PdfChunk(returnValue, this);
         return pc;
     }
 

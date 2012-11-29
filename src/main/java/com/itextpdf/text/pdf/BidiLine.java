@@ -335,7 +335,7 @@ public class BidiLine {
                 return null;
             if (totalTextLength == 0) {
                 ArrayList<PdfChunk> ar = new ArrayList<PdfChunk>();
-                PdfChunk ck = detailChunks[0].getNewChunk("");
+                PdfChunk ck = new PdfChunk("", detailChunks[0]);
                 ar.add(ck);
                 return new PdfLine(0, 0, 0, alignment, true, ar, isRTL);
             }
@@ -457,7 +457,7 @@ public class BidiLine {
                     String pre = he.getHyphenatedWordPre(new String(text, word[0], word[1] - word[0]), lastValidChunk.font().getFont(), lastValidChunk.font().size(), testWidth);
                     String post = he.getHyphenatedWordPost();
                     if (pre.length() > 0) {
-                        PdfChunk extra = lastValidChunk.getNewChunk(pre);
+                        PdfChunk extra = new PdfChunk(pre, lastValidChunk);
                         currentChar = word[1] - post.length();
                         return new PdfLine(0, originalWidth, testWidth - lastValidChunk.font().width(pre), alignment, false, createArrayOfPdfChunks(oldCurrentChar, word[0] - 1, extra), isRTL);
                     }
@@ -531,7 +531,7 @@ public class BidiLine {
                 continue;
             if (ck.isImage() || ck.isSeparator() || ck.isTab()) {
                 if (buf.length() > 0) {
-                    ar.add(refCk.getNewChunk(buf.toString()));
+                    ar.add(new PdfChunk(buf.toString(), refCk));
                     buf = new StringBuffer();
                 }
                 ar.add(ck);
@@ -541,7 +541,7 @@ public class BidiLine {
             }
             else {
                 if (buf.length() > 0) {
-                    ar.add(refCk.getNewChunk(buf.toString()));
+                    ar.add(new PdfChunk(buf.toString(), refCk));
                     buf = new StringBuffer();
                 }
                 if (!ck.isImage() && !ck.isSeparator() && !ck.isTab())
@@ -550,7 +550,7 @@ public class BidiLine {
             }
         }
         if (buf.length() > 0) {
-            ar.add(refCk.getNewChunk(buf.toString()));
+            ar.add(new PdfChunk(buf.toString(), refCk));
         }
         if (extraPdfChunk != null)
             ar.add(extraPdfChunk);

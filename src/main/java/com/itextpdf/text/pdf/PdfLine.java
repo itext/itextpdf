@@ -76,10 +76,10 @@ public class PdfLine {
     protected float height;
 
     /** The listsymbol (if necessary). */
-    protected Chunk listSymbol = null;
+//    protected Chunk listSymbol = null;
 
     /** The listsymbol (if necessary). */
-    protected float symbolIndent;
+//    protected float symbolIndent;
 
     /** <CODE>true</CODE> if the chunk splitting was caused by a newline. */
     protected boolean newlineSplit = false;
@@ -88,6 +88,8 @@ public class PdfLine {
     protected float originalWidth;
 
     protected boolean isRTL = false;
+
+    protected ListItem listItem = null;
 
     // constructors
 
@@ -148,12 +150,6 @@ public class PdfLine {
 
         // we split the chunk to be added
         PdfChunk overflow = chunk.split(width);
-        if (overflow != null && overflow.length() > 0 && overflow instanceof PdfTagMarker && chunk instanceof PdfTagMarker) {
-            ((PdfTagMarker)chunk).clearCloseElements();
-            ((PdfTagMarker)overflow).clearOpenElements();
-        }
-
-
         newlineSplit = chunk.isNewlineSplit() || overflow == null;
         if (chunk.isTab()) {
         	Object[] tab = (Object[])chunk.getAttribute(Chunk.TAB);
@@ -350,8 +346,9 @@ public class PdfLine {
      */
 
     public void setListItem(ListItem listItem) {
-        this.listSymbol = listItem.getListSymbol();
-        this.symbolIndent = listItem.getIndentationLeft();
+        this.listItem = listItem;
+//        this.listSymbol = listItem.getListSymbol();
+//        this.symbolIndent = listItem.getIndentationLeft();
     }
 
     /**
@@ -361,7 +358,7 @@ public class PdfLine {
      */
 
     public Chunk listSymbol() {
-        return listSymbol;
+        return listItem != null ? listItem.getListSymbol() : null;
     }
 
     /**
@@ -371,7 +368,11 @@ public class PdfLine {
      */
 
     public float listIndent() {
-        return symbolIndent;
+        return listItem != null ? listItem.getIndentationLeft() : 0;
+    }
+
+    public ListItem listItem() {
+        return listItem;
     }
 
     /**

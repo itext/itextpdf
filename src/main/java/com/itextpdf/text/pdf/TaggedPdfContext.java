@@ -6,7 +6,7 @@ import com.itextpdf.text.pdf.interfaces.IAccessibleElement;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class ColumnTextContext {
+public class TaggedPdfContext {
 
     protected HashMap<ListItem, PdfListBody> lBodies = new HashMap<ListItem, PdfListBody>();
 
