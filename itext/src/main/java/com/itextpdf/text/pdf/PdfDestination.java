@@ -199,13 +199,16 @@ public class PdfDestination extends PdfArray {
     		add(new PdfName(tokens.nextToken()));
     	}
     	while (tokens.hasMoreTokens()) {
-    		PdfObject obj = null;
-            try {
-                obj = new PdfNumber(tokens.nextToken());
-            } catch (RuntimeException e) {
-                obj = new PdfNull();
+            String token = tokens.nextToken();
+            if ("null".equals(token))
+                add(new PdfNull());
+            else {
+                try {
+                    add(new PdfNumber(token));
+                } catch (RuntimeException e) {
+                    add(new PdfNull());
+                }
             }
-            add(obj);
     	}
     }
     
