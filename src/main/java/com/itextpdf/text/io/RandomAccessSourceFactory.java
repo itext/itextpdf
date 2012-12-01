@@ -173,7 +173,12 @@ public final class RandomAccessSourceFactory {
         }
         
 		try{
-			return new FileChannelRandomAccessSource(new FileInputStream(file).getChannel());
+			FileChannel channel = new FileInputStream(file).getChannel(); // this will get closed by FileChannelRandomAccessSource or PagedFileChannelRandomAccessSource
+			if (channel.size() <= PagedChannelRandomAccessSource.DEFAULT_TOTAL_BUFSIZE){ // if less than the fully mapped usage of PagedFileChannelRandomAccessSource, just map the whole thing and be done with it
+				return new GetBufferedRandomAccessSource(new FileChannelRandomAccessSource(channel));
+			} else {
+				return new GetBufferedRandomAccessSource(new PagedChannelRandomAccessSource(channel));
+			}
 		} catch (IOException e){
 			if (exceptionIsMapFailureException(e)){
 				return new RAFRandomAccessSource(new RandomAccessFile(file, "r"));

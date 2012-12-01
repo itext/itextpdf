@@ -15,7 +15,7 @@ import org.junit.Test;
 
 import com.itextpdf.testutils.TestResourceUtils;
 
-public class FileChannelRandomAccessSourceTest {
+public class PagedChannelRandomAccessSourceTest {
 	byte[] data;
 	File f;
 	FileChannel channel;
@@ -50,7 +50,7 @@ public class FileChannelRandomAccessSourceTest {
 
 	@Test
 	public void testGet() throws Exception {
-		FileChannelRandomAccessSource s = new FileChannelRandomAccessSource(channel);
+		PagedChannelRandomAccessSource s = new PagedChannelRandomAccessSource(channel);
 		try{
 			for(int i = 0; i < data.length; i++){
 				int ch = s.get(i);
@@ -75,7 +75,26 @@ public class FileChannelRandomAccessSourceTest {
 	@Test
 	public void testGetArray() throws Exception {
 		byte[] chunk = new byte[257];
-		FileChannelRandomAccessSource s = new FileChannelRandomAccessSource(channel);
+		PagedChannelRandomAccessSource s = new PagedChannelRandomAccessSource(channel, data.length/10, 1);
+		try{
+			int pos = 0;
+			int count = s.get(pos, chunk, 0, chunk.length-1);
+			while (count != -1){
+				assertArrayEqual(data, pos, chunk, 0, count);
+				pos += count;
+				count = s.get(pos, chunk, 0, chunk.length-1);
+			}
+			
+			Assert.assertEquals(-1, s.get(pos, chunk, 0, chunk.length));
+		} finally {
+			s.close();
+		}
+	}
+	
+	@Test
+	public void testGetArrayMultiPages() throws Exception {
+		byte[] chunk = new byte[257];
+		PagedChannelRandomAccessSource s = new PagedChannelRandomAccessSource(channel, data.length/10, 7);
 		try{
 			int pos = 0;
 			int count = s.get(pos, chunk, 0, chunk.length-1);
@@ -93,7 +112,7 @@ public class FileChannelRandomAccessSourceTest {
 	
 	@Test
 	public void testGetArrayPastEOF() throws Exception{
-		FileChannelRandomAccessSource s = new FileChannelRandomAccessSource(channel);
+		PagedChannelRandomAccessSource s = new PagedChannelRandomAccessSource(channel);
 		try{
 			byte[] chunk = new byte[(int)channel.size() * 2];
 			int len = s.get(0, chunk, 0, chunk.length);
