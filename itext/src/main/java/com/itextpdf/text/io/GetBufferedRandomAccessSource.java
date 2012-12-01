@@ -1,5 +1,5 @@
 /*
- * $Id: FileChannelRandomAccessSource.java 5551 2012-11-21 18:47:14Z trumpetinc $
+ * $Id: IndependentRandomAccessSource.java 5550 2012-11-21 13:26:06Z blowagie $
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2012 1T3XT
@@ -42,67 +42,69 @@
 package com.itextpdf.text.io;
 
 import java.io.IOException;
-import java.nio.channels.FileChannel;
 
 /**
- * A RandomAccessSource that is based on an underlying {@link FileChannel}.  The entire channel will be mapped into memory for efficient reads.
  * @since 5.3.5
  */
-class FileChannelRandomAccessSource implements RandomAccessSource {
-
-    /**
-     * The channel this source is based on
-     */
-    private final FileChannel channel;
-    
-    /**
-     * Tracks the actual mapping
-     */
-    private final MappedChannelRandomAccessSource source;
-
-    /**
-     * Constructs a new {@link FileChannelRandomAccessSource} based on the specified FileChannel.  The entire source channel will be mapped into memory.
-     * @param channel the channel to use as the backing store
-     * @throws IOException if the channel cannot be opened or mapped
-     */
-    public FileChannelRandomAccessSource(FileChannel channel) throws IOException {
-		this.channel = channel;
-		source = new MappedChannelRandomAccessSource(channel, 0, channel.size());
-		source.open();
-	}
-    
+public class GetBufferedRandomAccessSource implements RandomAccessSource {
+	/**
+	 * The source
+	 */
+	private final RandomAccessSource source;
 	
-    /**
-     * {@inheritDoc}
-     * Cleans the mapped bytebuffers and closes the channel
-     */
-    public void close() throws IOException {
-		source.close();
-        channel.close();
-    }
+	private final byte[] getBuffer;
+	private long getBufferStart = -1;
+	private long getBufferEnd = -1;
+	
+	/**
+	 * Constructs a new OffsetRandomAccessSource
+	 * @param source the source
+	 */
+	public GetBufferedRandomAccessSource(RandomAccessSource source) {
+		this.source = source;
+		
+		this.getBuffer = new byte[(int)Math.min(source.length()/4, (long)4096)];
+		this.getBufferStart = -1;
+		this.getBufferEnd = -1;
 
-
-    /**
-     * {@inheritDoc}
-     */
-	public int get(long position) throws IOException {
-		return source.get(position);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	public int get(long position) throws IOException {
+		if (position < getBufferStart || position > getBufferEnd){
+			int count = source.get(position, getBuffer, 0, getBuffer.length);
+			if (count == -1)
+				return -1;
+			getBufferStart = position;
+			getBufferEnd = position + count - 1;
+		}
+		int bufPos = (int)(position-getBufferStart);
+		return 0xff & getBuffer[bufPos];
+	}
 
-    /**
-     * {@inheritDoc}
-     */
+	/**
+	 * {@inheritDoc}
+	 */
 	public int get(long position, byte[] bytes, int off, int len) throws IOException {
 		return source.get(position, bytes, off, len);
 	}
 
-
-    /**
-     * {@inheritDoc}
-     */
+	/**
+	 * {@inheritDoc}
+	 */
 	public long length() {
 		return source.length();
+	}
+
+	/**
+	 * Does nothing - the underlying source is not closed
+	 */
+	public void close() throws IOException {
+		source.close();
+		getBufferStart = -1;
+		getBufferEnd = -1;
 	}
 
 }

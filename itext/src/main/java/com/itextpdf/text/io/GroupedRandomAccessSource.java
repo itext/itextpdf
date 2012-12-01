@@ -63,6 +63,8 @@ class GroupedRandomAccessSource implements RandomAccessSource {
      */
     private final long size;
 
+
+
     /**
      * Constructs a new {@link GroupedRandomAccessSource} based on the specified set of sources
      * @param sources the sources used to build this group
