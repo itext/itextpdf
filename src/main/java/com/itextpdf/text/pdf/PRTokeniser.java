@@ -326,7 +326,7 @@ public class PRTokeniser {
         // Note:  We have to initialize stringValue here, after we've looked for the end of the stream,
         // to ensure that we don't lose the value of a token that might end exactly at the end
         // of the stream
-        StringBuffer outBuf = null;
+        final StringBuilder outBuf = new StringBuilder();
         stringValue = EMPTY;
 
         switch (ch) {
@@ -338,7 +338,7 @@ public class PRTokeniser {
                 break;
             case '/':
             {
-                outBuf = new StringBuffer();
+                outBuf.setLength(0);
                 type = TokenType.NAME;
                 while (true) {
                     ch = file.read();
@@ -365,7 +365,7 @@ public class PRTokeniser {
                     type = TokenType.START_DIC;
                     break;
                 }
-                outBuf = new StringBuffer();
+                outBuf.setLength(0);
                 type = TokenType.STRING;
                 hexString = true;
                 int v2 = 0;
@@ -404,7 +404,7 @@ public class PRTokeniser {
                 break;
             case '(':
             {
-                outBuf = new StringBuffer();
+                outBuf.setLength(0);
                 type = TokenType.STRING;
                 hexString = false;
                 int nesting = 0;
@@ -498,7 +498,7 @@ public class PRTokeniser {
             }
             default:
             {
-                outBuf = new StringBuffer();
+                outBuf.setLength(0);
                 if (ch == '-' || ch == '+' || ch == '.' || (ch >= '0' && ch <= '9')) {
                     type = TokenType.NUMBER;
                     if (ch == '-') {
