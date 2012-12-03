@@ -81,6 +81,7 @@ import com.itextpdf.text.io.RandomAccessSourceFactory;
 import com.itextpdf.text.pdf.PRTokeniser.TokenType;
 import com.itextpdf.text.pdf.interfaces.PdfViewerPreferences;
 import com.itextpdf.text.pdf.internal.PdfViewerPreferencesImp;
+import org.bouncycastle.cert.X509CertificateHolder;
 
 /** Reads a PDF document.
  * @author Paulo Soares
@@ -788,6 +789,7 @@ public class PdfReader implements PdfViewerPreferences {
                 recipients = (PdfArray)enc.get(PdfName.RECIPIENTS);
                 break;
             case 4:
+            case 5:
                 PdfDictionary dic = (PdfDictionary)enc.get(PdfName.CF);
                 if (dic == null)
                     throw new InvalidPdfException(MessageLocalization.getComposedMessage("cf.not.found.encryption"));
@@ -802,6 +804,10 @@ public class PdfReader implements PdfViewerPreferences {
                     cryptoMode = PdfWriter.ENCRYPTION_AES_128;
                     lengthValue = 128;
                 }
+                else if (PdfName.AESV3.equals(dic.get(PdfName.CFM))) {
+                    cryptoMode = PdfWriter.ENCRYPTION_AES_256;
+                    lengthValue = 256;
+                }
                 else
                     throw new UnsupportedPdfException(MessageLocalization.getComposedMessage("no.compatible.encryption.found"));
                 PdfObject em = dic.get(PdfName.ENCRYPTMETADATA);
@@ -812,6 +818,13 @@ public class PdfReader implements PdfViewerPreferences {
                 break;
             default:
             	throw new UnsupportedPdfException(MessageLocalization.getComposedMessage("unknown.encryption.type.v.eq.1", rValue));
+            }
+            X509CertificateHolder certHolder;
+            try {
+                certHolder = new X509CertificateHolder(certificate.getEncoded());
+            }
+            catch (Exception f) {
+                throw new ExceptionConverter(f);
             }
             for (int i = 0; i<recipients.size(); i++) {
                 PdfObject recipient = recipients.getPdfObject(i);
@@ -826,7 +839,7 @@ public class PdfReader implements PdfViewerPreferences {
                     while (recipientCertificatesIt.hasNext()) {
                         RecipientInformation recipientInfo = recipientCertificatesIt.next();
                         
-                        if (recipientInfo.getRID().match(certificate) && !foundRecipient) {
+                        if (recipientInfo.getRID().match(certHolder) && !foundRecipient) {
                         	envelopedData = PdfEncryptor.getContent(recipientInfo, (PrivateKey)certificateKey, certificateKeyProvider);
                         	foundRecipient = true;
                         } 
@@ -845,7 +858,10 @@ public class PdfReader implements PdfViewerPreferences {
             MessageDigest md = null;
 
             try {
-                md = MessageDigest.getInstance("SHA-1");
+                if ((cryptoMode & PdfWriter.ENCRYPTION_MASK)  == PdfWriter.ENCRYPTION_AES_256)
+                    md = MessageDigest.getInstance("SHA-256");
+                else
+                    md = MessageDigest.getInstance("SHA-1");
                 md.update(envelopedData, 0, 20);
                 for (int i = 0; i<recipients.size(); i++) {
                   byte[] encodedRecipient = recipients.getPdfObject(i).getBytes();
@@ -884,7 +900,10 @@ public class PdfReader implements PdfViewerPreferences {
             }
         }
         else if (filter.equals(PdfName.PUBSEC)) {
-            decrypt.setupByEncryptionKey(encryptionKey, lengthValue);
+            if ((cryptoMode & PdfWriter.ENCRYPTION_MASK) == PdfWriter.ENCRYPTION_AES_256)
+                decrypt.setKey(encryptionKey);
+            else
+                decrypt.setupByEncryptionKey(encryptionKey, lengthValue);
             ownerPasswordUsed = true;
         }
 

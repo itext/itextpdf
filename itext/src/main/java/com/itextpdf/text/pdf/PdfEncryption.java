@@ -523,7 +523,11 @@ public class PdfEncryption {
 		setupUserKey();
 	}
 
-	public void setupByEncryptionKey(byte[] key, int keylength) {
+	public void setKey(byte[] key) {
+        this.key = key;
+    }
+    
+    public void setupByEncryptionKey(byte[] key, int keylength) {
 		mkey = new byte[keylength / 8];
 		System.arraycopy(key, 0, mkey, 0, mkey.length);
 	}
