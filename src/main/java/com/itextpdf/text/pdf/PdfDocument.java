@@ -300,7 +300,6 @@ public class PdfDocument extends Document {
     protected PdfWriter writer;
 
     protected HashMap<UUID, PdfStructureElement> structElements = new HashMap<UUID, PdfStructureElement>();
-    protected ArrayList<IAccessibleElement> elementsToOpen = new ArrayList<IAccessibleElement>();
     protected TaggedPdfContext taggedPdfContext = new TaggedPdfContext();
 
 
@@ -409,6 +408,9 @@ public class PdfDocument extends Document {
                 case Element.CREATOR:
                     info.addCreator(((Meta)element).getContent());
                     break;
+                case Element.LANGUAGE:
+                    setLanguage(((Meta)element).getContent());
+                    break;
                 case Element.PRODUCER:
                     // you can not change the name of the producer
                     info.addProducer();
@@ -417,7 +419,6 @@ public class PdfDocument extends Document {
                     // you can not set the creation date, only reset it
                     info.addCreationDate();
                     break;
-
                 // content (text)
                 case Element.CHUNK: {
                     // if there isn't a current line available, we make one
@@ -486,6 +487,7 @@ public class PdfDocument extends Document {
                     // we cast the element to a paragraph
                     Paragraph paragraph = (Paragraph) element;
                     if (isTagged(writer)) {
+                        flushLines();
                         text.openMCBlock(paragraph);
                     }
                     addSpacing(paragraph.getSpacingBefore(), leading, paragraph.getFont());
@@ -609,6 +611,7 @@ public class PdfDocument extends Document {
                     // we cast the element to a List
                     List list = (List) element;
                     if (isTagged(writer)) {
+                        flushLines();
                         text.openMCBlock(list);
                     }
                     if (list.isAlignindent()) {
@@ -636,6 +639,7 @@ public class PdfDocument extends Document {
                     ListItem listItem = (ListItem) element;
                     PdfListBody lBody = null;
                     if (isTagged(writer)) {
+                        flushLines();
                         lBody = new PdfListBody(listItem);
                         text.openMCBlock(listItem);
                         taggedPdfContext.lBodies.put(listItem, lBody);
@@ -760,6 +764,9 @@ public class PdfDocument extends Document {
         }
         try {
             initPage();
+            if (isTagged(writer)) {
+                writer.getDirectContentUnder().openMCBlock(this);
+            }
         }
         catch(DocumentException de) {
             throw new ExceptionConverter(de);
@@ -780,7 +787,12 @@ public class PdfDocument extends Document {
             return;
         }
         try {
-        	boolean wasImage = imageWait != null;
+            if (isTagged(writer)) {
+                flushFloatingElements();
+                flushLines();
+                writer.getDirectContent().closeMCBlock(this);
+            }
+            boolean wasImage = imageWait != null;
             newPage();
             if (imageWait != null || wasImage) newPage();
             if (annotationsImp.hasUnusedAnnotations())
@@ -915,22 +927,19 @@ public class PdfDocument extends Document {
         		text.endText();
         	else
         		text = null;
-            ArrayList<ArrayList<IAccessibleElement>> mcBlocks = new ArrayList<ArrayList<IAccessibleElement>>() {{ add(null); add(null); add(null); add(null);}}; ;
-            mcBlocks.set(0, writer.getDirectContentUnder().saveMCBlocks());
-            if (graphics != null)
-                mcBlocks.set(1, graphics.saveMCBlocks());
-            if (!isTagged(writer) && text != null)
-                mcBlocks.set(2, text.saveMCBlocks());
-            mcBlocks.set(3, writer.getDirectContent().saveMCBlocks());
+
+            ArrayList<IAccessibleElement> mcBlocks = null;
+            if (isTagged(writer)) {
+                mcBlocks = writer.getDirectContent().saveMCBlocks();
+            }
         	writer.add(page, new PdfContents(writer.getDirectContentUnder(), graphics, !isTagged(writer) ? text : null, writer.getDirectContent(), pageSize));
         	// we initialize the new page
         	initPage();
-            writer.getDirectContentUnder().restoreMCBlocks(mcBlocks.get(0));
-            if (graphics != null)
-                graphics.restoreMCBlocks(mcBlocks.get(1));
-            if (!isTagged(writer) && text != null)
-                text.restoreMCBlocks(mcBlocks.get(2));
-            writer.getDirectContent().restoreMCBlocks(mcBlocks.get(3));
+
+            if (isTagged(writer)) {
+                writer.getDirectContentUnder().restoreMCBlocks(mcBlocks);
+            }
+
         }
         catch(DocumentException de) {
         	// maybe this never happens, but it's better to check.
@@ -1067,7 +1076,12 @@ public class PdfDocument extends Document {
         pageResources = new PageResources();
 
         writer.resetContent();
-        graphics = new PdfContentByte(writer);
+        if (isTagged(writer)) {
+            graphics = writer.getDirectContentUnder().getDuplicate();
+            writer.getDirectContent().duplicatedFrom = graphics;
+        } else {
+            graphics = new PdfContentByte(writer);
+        }
 
     	markPoint = 0;
         setNewPageSizeAndMargins();
@@ -1818,6 +1832,10 @@ public class PdfDocument extends Document {
             }
         }
 
+        if (language != null) {
+            catalog.put(PdfName.LANG, language);
+        }
+
         return catalog;
     }
 
@@ -2171,6 +2189,11 @@ public class PdfDocument extends Document {
     void addAnnotation(final PdfAnnotation annot) {
         pageEmpty = false;
         annotationsImp.addAnnotation(annot);
+    }
+
+    protected PdfString language;
+    void setLanguage(final String language) {
+        this.language = new PdfString(language);
     }
 
 //	[F12] tagged PDF

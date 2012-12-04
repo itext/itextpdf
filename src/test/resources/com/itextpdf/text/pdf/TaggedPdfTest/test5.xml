@@ -1,42 +1,30 @@
-<L>
-
+<Document><L>
 
 
 <LI startIndent="13.34">
-
-<Lbl>
-<Span>1.</Span>
+<Lbl><Span>1.</Span>
 </Lbl>
-<LBody>
-<Span>Quick brown fox jumped over a lazy dog. A very long line appears here because we need new
+<LBody><Span>Quick brown fox jumped over a lazy dog. A very long line appears here because we need new
 line.</Span>
 </LBody>
 </LI>
 <LI startIndent="13.34">
-
-<Lbl>
-<Span>2.</Span>
+<Lbl><Span>2.</Span>
 </Lbl>
-<LBody>
-<Figure></Figure>
+<LBody><Figure></Figure>
 </LBody>
 </LI>
 <LI startIndent="13.34">
-
-<Lbl>
-<Span>3.</Span>
+<Lbl><Span>3.</Span>
 </Lbl>
-<LBody>
-<Span>jumped over a lazy</Span>
+<LBody><Span>jumped over a lazy</Span>
 </LBody>
 </LI>
 <LI startIndent="13.34">
-
-<Lbl>
-<Span>4.</Span>
+<Lbl><Span>4.</Span>
 </Lbl>
-<LBody>
-<Figure></Figure>
+<LBody><Figure></Figure>
 </LBody>
 </LI>
 </L>
+</Document>

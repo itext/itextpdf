@@ -45,6 +45,7 @@ package com.itextpdf.text;
 
 import com.itextpdf.text.api.Indentable;
 import com.itextpdf.text.factories.RomanAlphabetFactory;
+import com.itextpdf.text.pdf.AccessibleUserProperty;
 import com.itextpdf.text.pdf.PdfName;
 import com.itextpdf.text.pdf.PdfObject;
 import com.itextpdf.text.pdf.PdfStructureElement;
@@ -155,6 +156,8 @@ public class List implements TextElementArray, Indentable, IAccessibleElement {
     protected float symbolIndent = 0;
 
     protected PdfName role = PdfName.L;
+    protected HashMap<PdfName, PdfObject> accessibleProperties = null;
+    protected HashMap<PdfName, AccessibleUserProperty> userProperties = null;
     protected UUID id = UUID.randomUUID();
 
     // constructors
@@ -623,15 +626,37 @@ public class List implements TextElementArray, Indentable, IAccessibleElement {
     }
 
     public PdfObject getAccessibleProperty(final PdfName key) {
-        return null;
+        if (accessibleProperties != null)
+            return accessibleProperties.get(key);
+        else
+            return null;
     }
 
     public void setAccessibleProperty(final PdfName key, final PdfObject value) {
-
+        if (accessibleProperties == null)
+            accessibleProperties = new HashMap<PdfName, PdfObject>();
+        accessibleProperties.put(key, value);
     }
 
     public HashMap<PdfName, PdfObject> getAccessibleProperties() {
-        return null;
+        return accessibleProperties;
+    }
+
+    public AccessibleUserProperty getUserProperty(final PdfName key) {
+        if (userProperties != null)
+            return userProperties.get(key);
+        else
+            return null;
+    }
+
+    public void setUserProperty(final PdfName key, final AccessibleUserProperty value) {
+        if (userProperties == null)
+            userProperties = new HashMap<PdfName, AccessibleUserProperty>();
+        userProperties.put(key, value);
+    }
+
+    public HashMap<PdfName, AccessibleUserProperty> getUserProperties() {
+        return userProperties;
     }
 
     public PdfName getRole() {

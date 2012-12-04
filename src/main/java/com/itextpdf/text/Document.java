@@ -46,8 +46,14 @@ package com.itextpdf.text;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.UUID;
 
 import com.itextpdf.text.error_messages.MessageLocalization;
+import com.itextpdf.text.pdf.AccessibleUserProperty;
+import com.itextpdf.text.pdf.PdfName;
+import com.itextpdf.text.pdf.PdfObject;
+import com.itextpdf.text.pdf.interfaces.IAccessibleElement;
 
 /**
  * A generic Document class.
@@ -91,7 +97,7 @@ import com.itextpdf.text.error_messages.MessageLocalization;
  * </BLOCKQUOTE>
  */
 
-public class Document implements DocListener {
+public class Document implements DocListener, IAccessibleElement {
 
     /**
 	 * Allows the pdf documents to be produced without compression for debugging
@@ -162,6 +168,11 @@ public class Document implements DocListener {
 
     /** This is a chapter number in case ChapterAutoNumber is used. */
     protected int chapternumber = 0;
+
+    protected PdfName role = PdfName.DOCUMENT;
+    protected HashMap<PdfName, PdfObject> accessibleProperties = null;
+    protected HashMap<PdfName, AccessibleUserProperty> userProperties = null;
+    protected UUID id = UUID.randomUUID();
 
     // constructor
 
@@ -513,6 +524,19 @@ public class Document implements DocListener {
         }
     }
 
+    /**
+     * Adds a language to th document. Required for PDF/UA compatible documents.
+     * @param language
+     * @return <code>true</code> if successfull, <code>false</code> otherwise
+     */
+    public boolean addLanguage(String language) {
+        try {
+            return add(new Meta(Element.LANGUAGE, language));
+        } catch (DocumentException de) {
+            throw new ExceptionConverter(de);
+        }
+    }
+
 	/**
  * Adds the current date and time to a Document.
  *
@@ -785,4 +809,51 @@ public class Document implements DocListener {
     public boolean isMarginMirroring() {
         return marginMirroring;
     }
+
+    public PdfObject getAccessibleProperty(final PdfName key) {
+        if (accessibleProperties != null)
+            return accessibleProperties.get(key);
+        else
+            return null;
+    }
+
+    public void setAccessibleProperty(final PdfName key, final PdfObject value) {
+        if (accessibleProperties == null)
+            accessibleProperties = new HashMap<PdfName, PdfObject>();
+        accessibleProperties.put(key, value);
+    }
+
+    public HashMap<PdfName, PdfObject> getAccessibleProperties() {
+        return accessibleProperties;
+    }
+
+    public AccessibleUserProperty getUserProperty(final PdfName key) {
+        if (userProperties != null)
+            return userProperties.get(key);
+        else
+            return null;
+    }
+
+    public void setUserProperty(final PdfName key, final AccessibleUserProperty value) {
+        if (userProperties == null)
+            userProperties = new HashMap<PdfName, AccessibleUserProperty>();
+        userProperties.put(key, value);
+    }
+
+    public HashMap<PdfName, AccessibleUserProperty> getUserProperties() {
+        return userProperties;
+    }
+
+    public PdfName getRole() {
+        return role;
+    }
+
+    public void setRole(final PdfName role) {
+        this.role = role;
+    }
+
+    public UUID getId() {
+        return id;
+    }
+
 }

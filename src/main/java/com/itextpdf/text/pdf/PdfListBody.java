@@ -39,6 +39,17 @@ public class PdfListBody implements IAccessibleElement {
         return null;
     }
 
+    public AccessibleUserProperty getUserProperty(final PdfName key) {
+        return null;
+    }
+
+    public void setUserProperty(final PdfName key, final AccessibleUserProperty value) {
+    }
+
+    public HashMap<PdfName, AccessibleUserProperty> getUserProperties() {
+        return null;
+    }
+
     public PdfName getRole() {
         return role;
     }

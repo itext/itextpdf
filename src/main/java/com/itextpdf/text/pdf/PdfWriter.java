@@ -591,8 +591,8 @@ public class PdfWriter extends DocWriter implements
     protected PdfWriter(final PdfDocument document, final OutputStream os) {
         super(document, os);
         pdf = document;
-        directContent = new PdfContentByte(this);
         directContentUnder = new PdfContentByte(this);
+        directContent = directContentUnder.getDuplicate();
     }
 
     /**
@@ -1737,6 +1737,10 @@ public class PdfWriter extends DocWriter implements
     /** @see com.itextpdf.text.pdf.interfaces.PdfAnnotations#setSigFlags(int) */
     public void setSigFlags(final int f) {
         pdf.setSigFlags(f);
+    }
+
+    public void setLanguage(final String language) {
+        pdf.setLanguage(language);
     }
 
 //  [C9] Metadata

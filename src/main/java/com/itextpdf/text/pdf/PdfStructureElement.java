@@ -43,9 +43,7 @@
  */
 package com.itextpdf.text.pdf;
 
-import com.itextpdf.text.BaseColor;
-import com.itextpdf.text.Element;
-import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.interfaces.IAccessibleElement;
 import com.itextpdf.text.pdf.interfaces.IPdfStructureElement;
 
@@ -124,6 +122,9 @@ public class PdfStructureElement extends PdfDictionary implements IPdfStructureE
             kids.add(kido);
             parent.put(PdfName.K, kids);
         }
+        if (kids.size() > 0 && kids.getAsNumber(0) != null) {
+            kids.remove(0);
+        }
         kids.add(this);
         put(PdfName.S, structureType);
         reference = top.getWriter().getPdfIndirectReference();
@@ -147,8 +148,7 @@ public class PdfStructureElement extends PdfDictionary implements IPdfStructureE
     void setPageMark(int page, int mark) {
         if (mark >= 0)
             put(PdfName.K, new PdfNumber(mark));
-//        if (parent == null)
-            top.setPageMark(page, reference);
+        top.setPageMark(page, reference);
     }
 
     /**
@@ -196,6 +196,57 @@ public class PdfStructureElement extends PdfDictionary implements IPdfStructureE
     public void writeAttributes(final IAccessibleElement element) {
         if (element instanceof Paragraph) {
             writeAttributes((Paragraph) element);
+        } else if (element instanceof Chunk) {
+            writeAttributes((Chunk)element);
+        } else if (element instanceof Image) {
+            writeAttributes((Image)element);
+        } else if (element instanceof List) {
+            writeAttributes((List)element);
+        } else if (element instanceof ListItem) {
+            writeAttributes((ListItem)element);
+        } else if (element instanceof PdfListBody) {
+            writeAttributes((PdfListBody)element);
+        } else if (element instanceof PdfListLabel) {
+            writeAttributes((PdfListLabel)element);
+        } else if (element instanceof PdfPTable) {
+            writeAttributes((PdfPTable)element);
+        } else if (element instanceof PdfPRow) {
+            writeAttributes((PdfPRow)element);
+        } else if (element instanceof PdfPCell) {
+            writeAttributes((PdfPCell)element);
+        }
+        if (element.getAccessibleProperties() != null) {
+            for (PdfName key : element.getAccessibleProperties().keySet()) {
+                if (key.equals(PdfName.LANG) || key.equals(PdfName.ALT) || key.equals(PdfName.ACTUALTEXT) || key.equals(PdfName.E)) {
+                    put(key, element.getAccessibleProperty(key));
+                } else {
+                    setAttribute(key, element.getAccessibleProperty(key));
+                }
+            }
+        }
+        if (element.getUserProperties() != null) {
+            setAttribute(PdfName.O, PdfName.USERPROPERTIES);
+            PdfArray userProps = new PdfArray();
+            for (PdfName key : element.getUserProperties().keySet()) {
+                userProps.add(element.getUserProperties().get(key));
+            }
+            setAttribute(PdfName.P, userProps);
+        }
+    }
+
+    private void writeAttributes(final Chunk chunk) {
+        if (chunk != null) {
+            if (chunk.getImage() != null) {
+                writeAttributes(chunk.getImage());
+            } else {
+
+            }
+        }
+    }
+
+    private void writeAttributes(final Image image) {
+        if (image != null) {
+
         }
     }
 
@@ -260,6 +311,48 @@ public class PdfStructureElement extends PdfDictionary implements IPdfStructureE
                 if (align != null && !PdfName.START.equals(align))
                     this.setAttribute(PdfName.TEXTALIGN, align);
             }
+        }
+    }
+
+    private void writeAttributes(final List list) {
+        if (list != null) {
+
+        }
+    }
+
+    private void writeAttributes(final ListItem listItem) {
+        if (listItem != null) {
+
+        }
+    }
+
+    private void writeAttributes(final PdfListBody listBody) {
+        if (listBody != null) {
+
+        }
+    }
+
+    private void writeAttributes(final PdfListLabel listLabel) {
+        if (listLabel != null) {
+
+        }
+    }
+
+    private void writeAttributes(final PdfPTable table) {
+        if (table != null) {
+
+        }
+    }
+
+    private void writeAttributes(final PdfPRow row) {
+        if (row != null) {
+
+        }
+    }
+
+    private void writeAttributes(final PdfPCell cell) {
+        if (cell != null) {
+
         }
     }
 

@@ -53,7 +53,6 @@ import com.itextpdf.text.log.Logger;
 import com.itextpdf.text.log.LoggerFactory;
 import com.itextpdf.text.pdf.interfaces.IAccessibleElement;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.UUID;
 
@@ -95,6 +94,7 @@ public class PdfPRow implements IAccessibleElement {
 
     protected PdfName role = PdfName.TR;
     protected HashMap<PdfName, PdfObject> accessibleProperties = null;
+    protected HashMap<PdfName, AccessibleUserProperty> userProperties = null;
     protected UUID id = UUID.randomUUID();
     
 	/**
@@ -108,15 +108,17 @@ public class PdfPRow implements IAccessibleElement {
 	}
 
     public PdfPRow(PdfPCell cells[], PdfPRow source) {
-        if (source != null) {
-            this.id = source.getId();
-            this.role = source.getRole();
-            if (source.getAccessibleProperties() != null)
-                this.accessibleProperties = new HashMap<PdfName, PdfObject>(source.getAccessibleProperties());
-        }
         this.cells = cells;
         widths = new float[cells.length];
         initExtraHeights();
+        if (source != null) {
+            this.id = source.id;
+            this.role = source.role;
+            if (source.accessibleProperties != null)
+                this.accessibleProperties = new HashMap<PdfName, PdfObject>(source.accessibleProperties);
+            if (source.userProperties != null)
+                this.userProperties = new HashMap<PdfName, AccessibleUserProperty>(source.userProperties);
+        }
     }
 
 	/**
@@ -125,10 +127,6 @@ public class PdfPRow implements IAccessibleElement {
 	 * @param row
 	 */
 	public PdfPRow(PdfPRow row) {
-        this.id = row.getId();
-        this.role = row.getRole();
-        if (row.getAccessibleProperties() != null)
-            this.accessibleProperties = new HashMap<PdfName, PdfObject>(row.getAccessibleProperties());
 		mayNotBreak = row.mayNotBreak;
 		maxHeight = row.maxHeight;
 		calculated = row.calculated;
@@ -140,6 +138,12 @@ public class PdfPRow implements IAccessibleElement {
 		widths = new float[cells.length];
 		System.arraycopy(row.widths, 0, widths, 0, cells.length);
 		initExtraHeights();
+        this.id = row.id;
+        this.role = row.role;
+        if (row.accessibleProperties != null)
+            this.accessibleProperties = new HashMap<PdfName, PdfObject>(row.accessibleProperties);
+        if (row.userProperties != null)
+            this.userProperties = new HashMap<PdfName, AccessibleUserProperty>(row.userProperties);
 	}
 
 	/**
@@ -815,16 +819,29 @@ public class PdfPRow implements IAccessibleElement {
         return accessibleProperties;
     }
 
+    public AccessibleUserProperty getUserProperty(final PdfName key) {
+        if (userProperties != null)
+            return userProperties.get(key);
+        else
+            return null;
+    }
+
+    public void setUserProperty(final PdfName key, final AccessibleUserProperty value) {
+        if (userProperties == null)
+            userProperties = new HashMap<PdfName, AccessibleUserProperty>();
+        userProperties.put(key, value);
+    }
+
+    public HashMap<PdfName, AccessibleUserProperty> getUserProperties() {
+        return userProperties;
+    }
+
     public PdfName getRole() {
         return role;
     }
 
     public void setRole(final PdfName role) {
         this.role = role;
-    }
-
-    public void setAccessibleProperties(final HashMap<PdfName, PdfObject> accessibleProperties) {
-        this.accessibleProperties = accessibleProperties;
     }
 
     public UUID getId() {

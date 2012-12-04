@@ -90,17 +90,20 @@ public interface Element {
 	/** This is a possible type of <CODE>Element</CODE>. */
 	public static final int KEYWORDS = 3;
 
-	/** This is a possible type of <CODE>Element </CIDE>. */
+	/** This is a possible type of <CODE>Element </CODE>. */
 	public static final int AUTHOR = 4;
 
-	/** This is a possible type of <CODE>Element </CIDE>. */
+	/** This is a possible type of <CODE>Element </CODE>. */
 	public static final int PRODUCER = 5;
 
-	/** This is a possible type of <CODE>Element </CIDE>. */
+	/** This is a possible type of <CODE>Element </CODE>. */
 	public static final int CREATIONDATE = 6;
 
-	/** This is a possible type of <CODE>Element </CIDE>. */
+	/** This is a possible type of <CODE>Element </CODE>. */
 	public static final int CREATOR = 7;
+
+    /** This is a possible type of <CODE>Element </CODE>. */
+    public static final int LANGUAGE = 8;
 
 	// static membervariables (content)
 

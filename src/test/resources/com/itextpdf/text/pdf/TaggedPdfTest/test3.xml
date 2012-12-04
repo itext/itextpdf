@@ -1,6 +1,4 @@
-<P>
-
-<Span>Lorem ipsum dolor sit amet,consectetur adipiscing elit.Pellentesque a lectus sit amet lectus
+<Document><P><Span>Lorem ipsum dolor sit amet,consectetur adipiscing elit.Pellentesque a lectus sit amet lectus
 accumsan aliquam.Quisque facilisis ullamcorper dolor, quis gravida leo faucibus in. Donec a dolor
 ligula, quis placerat nunc. Etiam enim velit, egestas in lacinia at, ultricies eu massa.Cras ornare
 felis id quam vehicula lobortis. Ut semper malesuada nulla, in vulputate dui eleifend at. Phasellus
@@ -45,3 +43,4 @@ blandit in convallis justo euismod. Curabitur velit nisi, adipiscing sed consequ
 dolor. Aenean malesuada quam id mivestibulum pulvinar. Nullam diam quam, lobortis sit amet
 semper vitae, tempus eget dolor.</Span>
 </P>
+</Document>

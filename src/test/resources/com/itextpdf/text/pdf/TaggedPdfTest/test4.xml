@@ -1,5 +1,4 @@
-<Paragraph>
-
+<Document><Paragraph>
 
 
 <TextBlock>Quick brown </TextBlock>
@@ -7,3 +6,4 @@
 <Span> jumped over a lazy </Span>
 <Figure></Figure>
 </Paragraph>
+</Document>

@@ -205,6 +205,7 @@ public abstract class Image extends Rectangle implements Indentable, Spaceable, 
     protected PdfName role = PdfName.FIGURE;
 
     protected HashMap<PdfName, PdfObject> accessibleProperties = null;
+    protected HashMap<PdfName, AccessibleUserProperty> userProperties = null;
 
     protected UUID id = UUID.randomUUID();
 
@@ -702,6 +703,8 @@ public abstract class Image extends Rectangle implements Indentable, Spaceable, 
         this.role = image.role;
         if (image.accessibleProperties != null)
             this.accessibleProperties = new HashMap<PdfName, PdfObject>(image.accessibleProperties);
+        if (image.userProperties != null)
+            this.userProperties = new HashMap<PdfName, AccessibleUserProperty>(image.userProperties);
         this.id = image.id;
 	}
 
@@ -2082,16 +2085,29 @@ public abstract class Image extends Rectangle implements Indentable, Spaceable, 
         return accessibleProperties;
     }
 
+    public AccessibleUserProperty getUserProperty(final PdfName key) {
+        if (userProperties != null)
+            return userProperties.get(key);
+        else
+            return null;
+    }
+
+    public void setUserProperty(final PdfName key, final AccessibleUserProperty value) {
+        if (userProperties == null)
+            userProperties = new HashMap<PdfName, AccessibleUserProperty>();
+        userProperties.put(key, value);
+    }
+
+    public HashMap<PdfName, AccessibleUserProperty> getUserProperties() {
+        return userProperties;
+    }
+
     public PdfName getRole() {
         return role;
     }
 
     public void setRole(final PdfName role) {
         this.role = role;
-    }
-
-    public void setAccessibleProperties(final HashMap<PdfName, PdfObject> accessibleProperties) {
-        this.accessibleProperties = accessibleProperties;
     }
 
     public UUID getId() {
