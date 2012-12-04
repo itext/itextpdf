@@ -207,7 +207,7 @@ public class PdfContentByte {
 
     private ArrayList<IAccessibleElement> mcElements = new ArrayList<IAccessibleElement>();
 
-    private PdfContentByte duplicatedFrom = null;
+    protected PdfContentByte duplicatedFrom = null;
 
     static {
         abrev.put(PdfName.BITSPERCOMPONENT, "/BPC ");
@@ -3250,17 +3250,6 @@ public class PdfContentByte {
      * @param struc the tagging structure
      */
     public void beginMarkedContentSequence(final PdfStructureElement struc) {
-        beginMarkedContentSequence(struc, null);
-    }
-
-    /**
-     * Begins a marked content sequence. This sequence will be tagged with the structure <CODE>struc</CODE>.
-     * The same structure can be used several times to connect text that belongs to the same logical segment
-     * but is in a different location, like the same paragraph crossing to another page, for example.
-     * @param struc the tagging structure
-     * @param accessibleProperties properties to be written into structure element (i.e. alternate text)
-     */
-    public void beginMarkedContentSequence(final PdfStructureElement struc, final HashMap<PdfName, PdfObject> accessibleProperties) {
         PdfObject obj = struc.get(PdfName.K);
         int mark = pdf.getMarkPoint();
         if (obj != null) {
@@ -3272,28 +3261,20 @@ public class PdfContentByte {
             }
             else if (obj.isArray()) {
                 ar = (PdfArray)obj;
-                if (!ar.getPdfObject(0).isNumber())
-                    throw new IllegalArgumentException(MessageLocalization.getComposedMessage("the.structure.has.kids"));
             }
             else
                 throw new IllegalArgumentException(MessageLocalization.getComposedMessage("unknown.object.at.k.1", obj.getClass().toString()));
-            PdfDictionary dic = new PdfDictionary(PdfName.MCR);
-            dic.put(PdfName.PG, writer.getCurrentPage());
-            dic.put(PdfName.MCID, new PdfNumber(mark));
-            ar.add(dic);
+            if (ar.getAsNumber(0) != null) {
+                PdfDictionary dic = new PdfDictionary(PdfName.MCR);
+                dic.put(PdfName.PG, writer.getCurrentPage());
+                dic.put(PdfName.MCID, new PdfNumber(mark));
+                ar.add(dic);
+            }
             struc.setPageMark(writer.getPageNumber() - 1, -1);
         }
         else {
             struc.setPageMark(writer.getPageNumber() - 1, mark);
             struc.put(PdfName.PG, writer.getCurrentPage());
-        }
-        if (accessibleProperties != null) {
-            for (PdfName key : accessibleProperties.keySet()) {
-                PdfObject value = accessibleProperties.get(key);
-                if (value != null) {
-                    struc.put(key, value);
-                }
-            }
         }
         pdf.incMarkPoint();
         setMcDepth(getMcDepth() + 1);
@@ -3634,7 +3615,7 @@ public class PdfContentByte {
                 if (inText && writer.isTagged()) {
                     endText();
                 }
-                beginMarkedContentSequence(structureElement, element.getAccessibleProperties());
+                beginMarkedContentSequence(structureElement);
             }
         }
         return structureElement;

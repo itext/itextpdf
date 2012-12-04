@@ -106,6 +106,7 @@ public class Chunk implements Element, IAccessibleElement {
     protected PdfName role = null;
 
     protected HashMap<PdfName, PdfObject> accessibleProperties = null;
+    protected HashMap<PdfName, AccessibleUserProperty> userProperties = null;
     protected UUID id = UUID.randomUUID();
 
 	// constructors
@@ -136,6 +137,9 @@ public class Chunk implements Element, IAccessibleElement {
         role = ck.role;
         if (ck.accessibleProperties != null) {
             accessibleProperties = new HashMap<PdfName, PdfObject>(ck.accessibleProperties);
+        }
+        if (ck.userProperties != null) {
+            userProperties = new HashMap<PdfName, AccessibleUserProperty>(ck.userProperties);
         }
         id = ck.id;
     }
@@ -995,6 +999,23 @@ public class Chunk implements Element, IAccessibleElement {
             return accessibleProperties;
     }
 
+    public AccessibleUserProperty getUserProperty(final PdfName key) {
+        if (userProperties != null)
+            return userProperties.get(key);
+        else
+            return null;
+    }
+
+    public void setUserProperty(final PdfName key, final AccessibleUserProperty value) {
+        if (userProperties == null)
+            userProperties = new HashMap<PdfName, AccessibleUserProperty>();
+        userProperties.put(key, value);
+    }
+
+    public HashMap<PdfName, AccessibleUserProperty> getUserProperties() {
+        return userProperties;
+    }
+
     public PdfName getRole() {
         if (getImage() != null)
             return getImage().getRole();
@@ -1007,13 +1028,6 @@ public class Chunk implements Element, IAccessibleElement {
             getImage().setRole(role);
         else
             this.role = role;
-    }
-
-    public void setAccessibleProperties(final HashMap<PdfName, PdfObject> accessibleProperties) {
-        if (getImage() != null)
-            getImage().setAccessibleProperties(accessibleProperties);
-        else
-            this.accessibleProperties = accessibleProperties;
     }
 
     public UUID getId() {

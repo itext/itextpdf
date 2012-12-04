@@ -7,17 +7,14 @@ import com.itextpdf.text.xml.XMLUtil;
 
 import org.junit.After;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
-import org.w3c.dom.*;
 import org.xml.sax.SAXException;
-import org.xml.sax.XMLReader;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.*;
-import java.util.Set;
+import java.util.HashMap;
 
 public class TaggedPDFTest {
     private Document document;
@@ -60,12 +57,15 @@ public class TaggedPDFTest {
         new File("./target/com/itextpdf/test/pdf/TaggedPDFTest/").mkdirs();
         Document.compress = false;
         document = new Document();
+        document.setRole(null);
         writer = PdfWriter.getInstance(document, new FileOutputStream(path));
         writer.setTagged();
         document.open();
+
+        //Required for PDF/UA
+        document.addLanguage("en-US");
+        document.addTitle("Some title");
     }
-
-
 
     @Test
     public void createTaggedPDF0() throws DocumentException, IOException, ParserConfigurationException, SAXException {
@@ -128,7 +128,6 @@ public class TaggedPDFTest {
     public void createTaggedPDF1() throws DocumentException, IOException, ParserConfigurationException, SAXException {
         initializeDocument("./target/com/itextpdf/test/pdf/TaggedPDFTest/out1.pdf");
         Paragraph paragraph = new Paragraph(text);
-
         paragraph.setFont(new Font(Font.FontFamily.HELVETICA,8,Font.NORMAL,BaseColor.RED));
         ColumnText columnText = new ColumnText(writer.getDirectContent());
         columnText.setSimpleColumn(36, 36, 250, 800);

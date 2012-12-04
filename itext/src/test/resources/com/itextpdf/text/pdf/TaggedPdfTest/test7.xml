@@ -1,55 +1,36 @@
-<L>
-
-
+<Document><L>
 
 
 
 <LI startIndent="13.34">
-
-<Lbl>
-<Span>1.</Span>
+<Lbl><Span>1.</Span>
 </Lbl>
-<LBody>
-<Span>Quick brown fox jumped over a lazy dog. A very long line appears here because we need new
+<LBody><Span>Quick brown fox jumped over a lazy dog. A very long line appears here because we need new
 line.</Span>
 </LBody>
 </LI>
 <LI startIndent="13.34">
-
-<Lbl>
-<Span>2.</Span>
+<Lbl><Span>2.</Span>
 </Lbl>
-<LBody>
-<Figure></Figure>
+<LBody><Figure></Figure>
 </LBody>
 </LI>
 <LI startIndent="13.34">
-
-<Lbl>
-<Span>3.</Span>
+<Lbl><Span>3.</Span>
 </Lbl>
-<LBody>
-<Span>jumped over a lazy</Span>
+<LBody><Span>jumped over a lazy</Span>
 </LBody>
 </LI>
 <LI startIndent="13.34">
-
-<Lbl>
-<Span>4.</Span>
+<Lbl><Span>4.</Span>
 </Lbl>
-<LBody>
-<Figure></Figure>
+<LBody><Figure></Figure>
 </LBody>
 </LI>
 <LI startIndent="13.34">
-
-
-<Lbl>
-<Span>5.</Span>
+<Lbl><Span>5.</Span>
 </Lbl>
-<LBody>
-
-<Span>Lorem ipsum dolor sit amet,consectetur adipiscing elit.Pellentesque a lectus sit amet lectus
+<LBody><Span>Lorem ipsum dolor sit amet,consectetur adipiscing elit.Pellentesque a lectus sit amet lectus
 accumsan aliquam.Quisque facilisis ullamcorper dolor, quis gravida leo faucibus in. Donec a
 dolor ligula, quis placerat nunc. Etiam enim velit, egestas in lacinia at, ultricies eu massa.Cras
 ornare felis id quam vehicula lobortis. Ut semper malesuada nulla, in vulputate dui eleifend at.
@@ -97,3 +78,4 @@ diam quam, lobortis sit amet semper vitae, tempus eget dolor.</Span>
 </LBody>
 </LI>
 </L>
+</Document>

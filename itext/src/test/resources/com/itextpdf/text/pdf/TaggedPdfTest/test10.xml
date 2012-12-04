@@ -1,89 +1,42 @@
-<Table>
-
-
-
-
-
-
-
+<Document><Table>
 
 <TR>
-
-<TD>
-<Span>Quick brown fox jumped over a lazy
+<TD><Span>Quick brown fox jumped over a lazy
 dog. A very long line appears here
 because we need new line.</Span>
 </TD>
-<TD>
-<Figure></Figure>
+<TD><Figure></Figure>
 </TD>
 </TR>
 <TR>
-
-<TD>
-<Span>jumped over a lazy</Span>
+<TD><Span>jumped over a lazy</Span>
 </TD>
-<TD>
-<Figure></Figure>
+<TD><Figure></Figure>
 </TD>
 </TR>
 <TR>
-
-
-
-
-
-
-<TD>
-
-
-
-
-
-<Table>
-
-
-
-
-
-
+<TD><Table>
 
 <TR>
-
-<TD>
-<Span>Quick brown fox
+<TD><Span>Quick brown fox
 jumped over a
 lazy dog. A very
 long line appears
 here because we
 need new line.</Span>
 </TD>
-<TD>
-<Figure></Figure>
+<TD><Figure></Figure>
 </TD>
 </TR>
 <TR>
-
-<TD>
-<Span>jumped over a
+<TD><Span>jumped over a
 lazy</Span>
 </TD>
-<TD>
-<Figure></Figure>
+<TD><Figure></Figure>
 </TD>
 </TR>
 <TR>
-
-
-
-
-
-<TD>
-
-
-
-
-<Span>Lorem ipsum
+<TD><Span>Lorem ipsum
 dolor sit
 amet,consectetur
 adipiscing
@@ -351,23 +304,12 @@ semper vitae,
 tempus eget
 dolor.</Span>
 </TD>
-<TD>
-
-
-
-
-<Span>Hello World</Span>
+<TD><Span>Hello World</Span>
 </TD>
 </TR>
 </Table>
 </TD>
-<TD>
-
-
-
-
-
-<Span>Lorem ipsum dolor sit
+<TD><Span>Lorem ipsum dolor sit
 amet,consectetur adipiscing
 elit.Pellentesque a lectus sit amet
 lectus accumsan aliquam.Quisque
@@ -486,3 +428,4 @@ tempus eget dolor.</Span>
 </TD>
 </TR>
 </Table>
+</Document>

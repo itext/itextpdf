@@ -1,8 +1,8 @@
 package com.itextpdf.text.pdf.interfaces;
 
+import com.itextpdf.text.pdf.AccessibleUserProperty;
 import com.itextpdf.text.pdf.PdfName;
 import com.itextpdf.text.pdf.PdfObject;
-import com.itextpdf.text.pdf.PdfStructureElement;
 
 import java.util.HashMap;
 import java.util.UUID;
@@ -13,14 +13,14 @@ import java.util.UUID;
 public interface IAccessibleElement {
 
     /**
-     * Get the proeprty of accessible element (i.e. alternate text).
+     * Get the attribute of accessible element (everything in <code>A</code> dictionary + <code>Lang</code>, <code>Alt</code>, <code>ActualText</code>, <code>E</code>).
      * @param key
      * @return
      */
     PdfObject getAccessibleProperty(final PdfName key);
 
     /**
-     * Sets the property of accessible element (i.e. alternate text).
+     * Set the attribute of accessible element (everything in <code>A</code> dictionary + <code>Lang</code>, <code>Alt</code>, <code>ActualText</code>, <code>E</code>).
      * @param key
      * @param value
      */
@@ -31,6 +31,12 @@ public interface IAccessibleElement {
      * @return
      */
     HashMap<PdfName, PdfObject> getAccessibleProperties();
+
+    AccessibleUserProperty getUserProperty(final PdfName key);
+
+    void setUserProperty(final PdfName key, final AccessibleUserProperty value);
+
+    HashMap<PdfName, AccessibleUserProperty> getUserProperties();
 
     /**
      * Gets the role of the accessible element.

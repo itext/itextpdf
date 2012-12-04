@@ -198,6 +198,7 @@ public class PdfPTable implements LargeElement, Spaceable, IAccessibleElement {
 
     protected PdfName role = PdfName.TABLE;
     protected HashMap<PdfName, PdfObject> accessibleProperties = null;
+    protected HashMap<PdfName, AccessibleUserProperty> userProperties = null;
     protected UUID id = UUID.randomUUID();
 
 
@@ -278,10 +279,6 @@ public class PdfPTable implements LargeElement, Spaceable, IAccessibleElement {
      * @since 2.1.6 private is now protected
      */
     protected void copyFormat(final PdfPTable sourceTable) {
-        id = sourceTable.getId();
-        role = sourceTable.getRole();
-        if (sourceTable.getAccessibleProperties() != null)
-            accessibleProperties = new HashMap<PdfName, PdfObject>(sourceTable.getAccessibleProperties());
         relativeWidths = new float[sourceTable.getNumberOfColumns()];
         absoluteWidths = new float[sourceTable.getNumberOfColumns()];
         System.arraycopy(sourceTable.relativeWidths, 0, relativeWidths, 0, getNumberOfColumns());
@@ -310,6 +307,12 @@ public class PdfPTable implements LargeElement, Spaceable, IAccessibleElement {
         keepTogether = sourceTable.keepTogether;
         complete = sourceTable.complete;
         loopCheck = sourceTable.loopCheck;
+        id = sourceTable.id;
+        role = sourceTable.role;
+        if (sourceTable.accessibleProperties != null)
+            accessibleProperties = new HashMap<PdfName, PdfObject>(sourceTable.accessibleProperties);
+        if (sourceTable.userProperties != null)
+            userProperties = new HashMap<PdfName, AccessibleUserProperty>(sourceTable.userProperties);
     }
 
     /**
@@ -1785,16 +1788,29 @@ public class PdfPTable implements LargeElement, Spaceable, IAccessibleElement {
         return accessibleProperties;
     }
 
+    public AccessibleUserProperty getUserProperty(final PdfName key) {
+        if (userProperties != null)
+            return userProperties.get(key);
+        else
+            return null;
+    }
+
+    public void setUserProperty(final PdfName key, final AccessibleUserProperty value) {
+        if (userProperties == null)
+            userProperties = new HashMap<PdfName, AccessibleUserProperty>();
+        userProperties.put(key, value);
+    }
+
+    public HashMap<PdfName, AccessibleUserProperty> getUserProperties() {
+        return userProperties;
+    }
+
     public PdfName getRole() {
         return role;
     }
 
     public void setRole(final PdfName role) {
         this.role = role;
-    }
-
-    public void setAccessibleProperties(final HashMap<PdfName, PdfObject> accessibleProperties) {
-        this.accessibleProperties = accessibleProperties;
     }
 
     public UUID getId() {
