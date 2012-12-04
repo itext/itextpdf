@@ -57,7 +57,6 @@ public class TaggedPDFTest {
         new File("./target/com/itextpdf/test/pdf/TaggedPDFTest/").mkdirs();
         Document.compress = false;
         document = new Document();
-        document.setRole(null);
         writer = PdfWriter.getInstance(document, new FileOutputStream(path));
         writer.setTagged();
         document.open();

@@ -53,4 +53,6 @@ public interface IAccessibleElement {
 
     UUID getId();
 
+    void setId(final UUID id);
+
 }

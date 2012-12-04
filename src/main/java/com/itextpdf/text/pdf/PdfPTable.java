@@ -1817,4 +1817,8 @@ public class PdfPTable implements LargeElement, Spaceable, IAccessibleElement {
         return id;
     }
 
+    public void setId(final UUID id) {
+        this.id = id;
+    }
+
 }

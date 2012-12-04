@@ -1034,4 +1034,8 @@ public class Chunk implements Element, IAccessibleElement {
         return id;
     }
 
+    public void setId(final UUID id) {
+        this.id = id;
+    }
+
 }

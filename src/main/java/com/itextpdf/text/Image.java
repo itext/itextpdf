@@ -2114,4 +2114,8 @@ public abstract class Image extends Rectangle implements Indentable, Spaceable, 
         return id;
     }
 
+    public void setId(final UUID id) {
+        this.id = id;
+    }
+
 }

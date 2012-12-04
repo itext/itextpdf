@@ -607,4 +607,8 @@ public class Paragraph extends Phrase implements Indentable, Spaceable, IAccessi
         return id;
     }
 
+    public void setId(final UUID id) {
+        this.id = id;
+    }
+
 }

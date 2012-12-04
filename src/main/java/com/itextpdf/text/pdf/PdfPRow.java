@@ -848,6 +848,10 @@ public class PdfPRow implements IAccessibleElement {
         return id;
     }
 
+    public void setId(final UUID id) {
+        this.id = id;
+    }
+
     static private boolean isTagged(PdfContentByte canvas) {
         return canvas != null && canvas.writer != null && canvas.writer.isTagged();
     }

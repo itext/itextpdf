@@ -230,6 +230,17 @@ public class Document implements DocListener, IAccessibleElement {
 
     public void addDocListener(DocListener listener) {
         listeners.add(listener);
+        if (listener instanceof IAccessibleElement) {
+            IAccessibleElement ae = (IAccessibleElement)listener;
+            ae.setRole(this.role);
+            ae.setId(this.id);
+            if (this.accessibleProperties != null) {
+                for (PdfName key : this.accessibleProperties.keySet())
+                    ae.setAccessibleProperty(key, this.accessibleProperties.get(key));
+                for (PdfName key : this.userProperties.keySet())
+                    ae.setUserProperty(key, this.userProperties.get(key));
+            }
+        }
     }
 
 	/**
@@ -854,6 +865,10 @@ public class Document implements DocListener, IAccessibleElement {
 
     public UUID getId() {
         return id;
+    }
+
+    public void setId(final UUID id) {
+        this.id = id;
     }
 
 }
