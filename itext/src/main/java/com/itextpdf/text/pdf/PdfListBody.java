@@ -62,4 +62,8 @@ public class PdfListBody implements IAccessibleElement {
         return id;
     }
 
+    public void setId(final UUID id) {
+        this.id = id;
+    }
+
 }

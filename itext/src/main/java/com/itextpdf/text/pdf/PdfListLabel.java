@@ -49,4 +49,8 @@ public class PdfListLabel implements IAccessibleElement {
         return id;
     }
 
+    public void setId(final UUID id) {
+        this.id = id;
+    }
+
 }

@@ -1055,4 +1055,8 @@ public class PdfPCell extends Rectangle implements IAccessibleElement {
         return id;
     }
 
+    public void setId(final UUID id) {
+        this.id = id;
+    }
+
 }
