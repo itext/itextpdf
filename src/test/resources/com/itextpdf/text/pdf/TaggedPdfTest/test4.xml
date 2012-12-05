@@ -1,4 +1,6 @@
-<Document><Paragraph>
+<Document>
+<H1 color="[0, 0, 1]">Document Header</H1>
+<Paragraph>
 
 
 <TextBlock>Quick brown </TextBlock>
