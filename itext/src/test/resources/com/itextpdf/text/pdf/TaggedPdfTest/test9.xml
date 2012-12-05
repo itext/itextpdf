@@ -1,4 +1,6 @@
-<Document><Table>
+<Document>
+<H1 color="[0, 0, 1]">Document Header</H1>
+<Table><TBody>
 
 <TR>
 <TD><Span>Quick brown fox jumped over a lazy
@@ -135,5 +137,6 @@ quam, lobortis sit amet semper vitae,
 tempus eget dolor.</Span>
 </TD>
 </TR>
+</TBody>
 </Table>
 </Document>
