@@ -1,6 +1,5 @@
 package com.itextpdf.text.pdf.interfaces;
 
-import com.itextpdf.text.pdf.AccessibleUserProperty;
 import com.itextpdf.text.pdf.PdfName;
 import com.itextpdf.text.pdf.PdfObject;
 
@@ -17,26 +16,20 @@ public interface IAccessibleElement {
      * @param key
      * @return
      */
-    PdfObject getAccessibleProperty(final PdfName key);
+    PdfObject getAccessibleAttribute(final PdfName key);
 
     /**
      * Set the attribute of accessible element (everything in <code>A</code> dictionary + <code>Lang</code>, <code>Alt</code>, <code>ActualText</code>, <code>E</code>).
      * @param key
      * @param value
      */
-    void setAccessibleProperty(final PdfName key, final PdfObject value);
+    void setAccessibleAttribute(final PdfName key, final PdfObject value);
 
     /**
      * Gets all the properties of accessible element.
      * @return
      */
-    HashMap<PdfName, PdfObject> getAccessibleProperties();
-
-    AccessibleUserProperty getUserProperty(final PdfName key);
-
-    void setUserProperty(final PdfName key, final AccessibleUserProperty value);
-
-    HashMap<PdfName, AccessibleUserProperty> getUserProperties();
+    HashMap<PdfName, PdfObject> getAccessibleAttribute();
 
     /**
      * Gets the role of the accessible element.

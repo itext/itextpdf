@@ -109,8 +109,7 @@ public class Paragraph extends Phrase implements Indentable, Spaceable, IAccessi
     protected boolean keeptogether = false;
 
     protected PdfName role = PdfName.P;
-    protected HashMap<PdfName, PdfObject> accessibleProperties = null;
-    protected HashMap<PdfName, AccessibleUserProperty> userProperties = null;
+    protected HashMap<PdfName, PdfObject> accessibleAttributes = null;
     protected UUID id = UUID.randomUUID();
 
     // constructors
@@ -213,10 +212,8 @@ public class Paragraph extends Phrase implements Indentable, Spaceable, IAccessi
         	setExtraParagraphSpace(p.getExtraParagraphSpace());
             setRole(p.role);
             id = p.id;
-            if (p.accessibleProperties != null)
-                accessibleProperties = new HashMap<PdfName, PdfObject>(p.accessibleProperties);
-            if (p.userProperties != null)
-                userProperties = new HashMap<PdfName, AccessibleUserProperty>(p.userProperties);
+            if (p.accessibleAttributes != null)
+                accessibleAttributes = new HashMap<PdfName, PdfObject>(p.accessibleAttributes);
         }
     }
 
@@ -238,10 +235,8 @@ public class Paragraph extends Phrase implements Indentable, Spaceable, IAccessi
     	copy.setExtraParagraphSpace(getExtraParagraphSpace());
         copy.setRole(role);
         copy.id = id;
-        if (accessibleProperties != null)
-            copy.accessibleProperties = new HashMap<PdfName, PdfObject>(accessibleProperties);
-        if (userProperties != null)
-            copy.userProperties = new HashMap<PdfName, AccessibleUserProperty>(userProperties);
+        if (accessibleAttributes != null)
+            copy.accessibleAttributes = new HashMap<PdfName, PdfObject>(accessibleAttributes);
     	return copy;
     }
     
@@ -561,38 +556,21 @@ public class Paragraph extends Phrase implements Indentable, Spaceable, IAccessi
         return spacingAfter;
     }
 
-    public PdfObject getAccessibleProperty(final PdfName key) {
-        if (accessibleProperties != null)
-            return accessibleProperties.get(key);
+    public PdfObject getAccessibleAttribute(final PdfName key) {
+        if (accessibleAttributes != null)
+            return accessibleAttributes.get(key);
         else
             return null;
     }
 
-    public void setAccessibleProperty(final PdfName key, final PdfObject value) {
-        if (accessibleProperties == null)
-            accessibleProperties = new HashMap<PdfName, PdfObject>();
-        accessibleProperties.put(key, value);
+    public void setAccessibleAttribute(final PdfName key, final PdfObject value) {
+        if (accessibleAttributes == null)
+            accessibleAttributes = new HashMap<PdfName, PdfObject>();
+        accessibleAttributes.put(key, value);
     }
 
-    public HashMap<PdfName, PdfObject> getAccessibleProperties() {
-        return accessibleProperties;
-    }
-
-    public AccessibleUserProperty getUserProperty(final PdfName key) {
-        if (userProperties != null)
-            return userProperties.get(key);
-        else
-            return null;
-    }
-
-    public void setUserProperty(final PdfName key, final AccessibleUserProperty value) {
-        if (userProperties == null)
-            userProperties = new HashMap<PdfName, AccessibleUserProperty>();
-        userProperties.put(key, value);
-    }
-
-    public HashMap<PdfName, AccessibleUserProperty> getUserProperties() {
-        return userProperties;
+    public HashMap<PdfName, PdfObject> getAccessibleAttribute() {
+        return accessibleAttributes;
     }
 
     public PdfName getRole() {

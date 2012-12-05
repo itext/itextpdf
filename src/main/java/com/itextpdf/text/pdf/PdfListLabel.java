@@ -14,26 +14,15 @@ public class PdfListLabel implements IAccessibleElement {
     protected PdfName role = PdfName.LBL;
     protected UUID id = UUID.randomUUID();
 
-    public PdfObject getAccessibleProperty(final PdfName key) {
+    public PdfObject getAccessibleAttribute(final PdfName key) {
         return null;
     }
 
-    public void setAccessibleProperty(final PdfName key, final PdfObject value) {
+    public void setAccessibleAttribute(final PdfName key, final PdfObject value) {
 
     }
 
-    public HashMap<PdfName, PdfObject> getAccessibleProperties() {
-        return null;
-    }
-
-    public AccessibleUserProperty getUserProperty(final PdfName key) {
-        return null;
-    }
-
-    public void setUserProperty(final PdfName key, final AccessibleUserProperty value) {
-    }
-
-    public HashMap<PdfName, AccessibleUserProperty> getUserProperties() {
+    public HashMap<PdfName, PdfObject> getAccessibleAttribute() {
         return null;
     }
 

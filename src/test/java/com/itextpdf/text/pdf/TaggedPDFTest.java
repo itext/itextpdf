@@ -14,11 +14,11 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.*;
-import java.util.HashMap;
 
 public class TaggedPDFTest {
     private Document document;
     private PdfWriter writer;
+    private Paragraph h1;
 
     private static final String text = new String("Lorem ipsum dolor sit amet," +
             "consectetur adipiscing elit." +
@@ -64,6 +64,11 @@ public class TaggedPDFTest {
         //Required for PDF/UA
         document.addLanguage("en-US");
         document.addTitle("Some title");
+        Chunk c = new Chunk("Document Header", new Font(Font.FontFamily.HELVETICA,14,Font.BOLD,BaseColor.BLUE));
+        c.setRole(null);
+        h1 = new Paragraph(c);
+        h1.setRole(PdfName.H1);
+
     }
 
     @Test
@@ -74,7 +79,6 @@ public class TaggedPDFTest {
         paragraph.add(c);
         c = new Chunk("  world\n\n");
         paragraph.add(c);
-        paragraph.setFont(new Font(Font.FontFamily.HELVETICA,8,Font.NORMAL,BaseColor.RED));
         ColumnText columnText = new ColumnText(writer.getDirectContent());
         columnText.setSimpleColumn(36, 36, 250, 800);
         columnText.addElement(paragraph);
@@ -85,7 +89,6 @@ public class TaggedPDFTest {
         paragraph = new Paragraph();
         c = new Chunk("  ");
         paragraph.add(c);
-        paragraph.setFont(new Font(Font.FontFamily.HELVETICA,8,Font.NORMAL,BaseColor.RED));
         columnText = new ColumnText(writer.getDirectContent());
         columnText.setSimpleColumn(36, 36, 250, 800);
         columnText.addElement(paragraph);
@@ -96,7 +99,6 @@ public class TaggedPDFTest {
         paragraph = new Paragraph();
         c = new Chunk("Hello World");
         paragraph.add(c);
-        paragraph.setFont(new Font(Font.FontFamily.HELVETICA,8,Font.NORMAL,BaseColor.RED));
         columnText = new ColumnText(writer.getDirectContent());
         columnText.setSimpleColumn(36, 36, 250, 800);
         columnText.addElement(paragraph);
@@ -130,6 +132,7 @@ public class TaggedPDFTest {
         paragraph.setFont(new Font(Font.FontFamily.HELVETICA,8,Font.NORMAL,BaseColor.RED));
         ColumnText columnText = new ColumnText(writer.getDirectContent());
         columnText.setSimpleColumn(36, 36, 250, 800);
+        columnText.addElement(h1);
         columnText.addElement(paragraph);
         columnText.go();
         columnText.setSimpleColumn(300, 36, 500, 800);
@@ -137,10 +140,10 @@ public class TaggedPDFTest {
         document.close();
 
         PdfReader reader = new PdfReader("./target/com/itextpdf/test/pdf/TaggedPDFTest/out1.pdf");
-        FileOutputStream xmlOut = new FileOutputStream("./target/com/itextpdf/test/pdf/TaggedPDFTest/out1.xml");
+        FileOutputStream xmlOut = new FileOutputStream("./target/com/itextpdf/test/pdf/TaggedPDFTest/test1.xml");
         new MyTaggedPdfReaderTool().convertToXml(reader, xmlOut);
         xmlOut.close();
-        Assert.assertTrue(compareXmls("./src/test/resources/com/itextpdf/text/pdf/TaggedPdfTest/test1.xml", "./target/com/itextpdf/test/pdf/TaggedPDFTest/out1.xml"));
+        Assert.assertTrue(compareXmls("./src/test/resources/com/itextpdf/text/pdf/TaggedPdfTest/test1.xml", "./target/com/itextpdf/test/pdf/TaggedPDFTest/test1.xml"));
     }
 
     @Test
@@ -150,6 +153,7 @@ public class TaggedPDFTest {
         ColumnText columnText = new ColumnText(writer.getDirectContent());
 
         columnText.setSimpleColumn(36,36,400,800);
+        columnText.addElement(h1);
         columnText.addElement(paragraph);
         columnText.go();
         document.newPage();
@@ -158,24 +162,25 @@ public class TaggedPDFTest {
         document.close();
 
         PdfReader reader = new PdfReader("./target/com/itextpdf/test/pdf/TaggedPDFTest/out2.pdf");
-        FileOutputStream xmlOut = new FileOutputStream("./target/com/itextpdf/test/pdf/TaggedPDFTest/out2.xml");
+        FileOutputStream xmlOut = new FileOutputStream("./target/com/itextpdf/test/pdf/TaggedPDFTest/test2.xml");
         new MyTaggedPdfReaderTool().convertToXml(reader, xmlOut);
         xmlOut.close();
-        Assert.assertTrue(compareXmls("./src/test/resources/com/itextpdf/text/pdf/TaggedPdfTest/test2.xml", "./target/com/itextpdf/test/pdf/TaggedPDFTest/out2.xml"));
+        Assert.assertTrue(compareXmls("./src/test/resources/com/itextpdf/text/pdf/TaggedPdfTest/test2.xml", "./target/com/itextpdf/test/pdf/TaggedPDFTest/test2.xml"));
     }
 
     @Test
     public void createTaggedPDF3() throws DocumentException, IOException, ParserConfigurationException, SAXException {
         initializeDocument("./target/com/itextpdf/test/pdf/TaggedPDFTest/out3.pdf");
         Paragraph paragraph = new Paragraph(text);
+        document.add(h1);
         document.add(paragraph);
         document.close();
 
         PdfReader reader = new PdfReader("./target/com/itextpdf/test/pdf/TaggedPDFTest/out3.pdf");
-        FileOutputStream xmlOut = new FileOutputStream("./target/com/itextpdf/test/pdf/TaggedPDFTest/out3.xml");
+        FileOutputStream xmlOut = new FileOutputStream("./target/com/itextpdf/test/pdf/TaggedPDFTest/test3.xml");
         new MyTaggedPdfReaderTool().convertToXml(reader, xmlOut);
         xmlOut.close();
-        Assert.assertTrue(compareXmls("./src/test/resources/com/itextpdf/text/pdf/TaggedPdfTest/test3.xml", "./target/com/itextpdf/test/pdf/TaggedPDFTest/out3.xml"));
+        Assert.assertTrue(compareXmls("./src/test/resources/com/itextpdf/text/pdf/TaggedPdfTest/test3.xml", "./target/com/itextpdf/test/pdf/TaggedPDFTest/test3.xml"));
     }
 
     @Test
@@ -191,25 +196,26 @@ public class TaggedPDFTest {
             Image i = Image.getInstance("./src/test/resources/com/itextpdf/text/pdf/TaggedPdfTest/fox.bmp");
             c = new Chunk(i, 0, 0);
             c.setRole(new PdfName("Image"));
-            c.setAccessibleProperty(PdfName.ALT, new PdfString("Fox image"));
+            c.setAccessibleAttribute(PdfName.ALT, new PdfString("Fox image"));
             p.add(c);
             p.add(new Chunk(" jumped over a lazy "));
             i = Image.getInstance("./src/test/resources/com/itextpdf/text/pdf/TaggedPdfTest/dog.bmp");
             c = new Chunk(i, 0, 0);
-            c.setAccessibleProperty(PdfName.ALT, new PdfString("Dog image"));
+            c.setAccessibleAttribute(PdfName.ALT, new PdfString("Dog image"));
             p.add(c);
 
         } catch (Exception e) {
 
         }
+        document.add(h1);
         document.add(p);
         document.close();
 
         PdfReader reader = new PdfReader("./target/com/itextpdf/test/pdf/TaggedPDFTest/out4.pdf");
-        FileOutputStream xmlOut = new FileOutputStream("./target/com/itextpdf/test/pdf/TaggedPDFTest/out4.xml");
+        FileOutputStream xmlOut = new FileOutputStream("./target/com/itextpdf/test/pdf/TaggedPDFTest/test4.xml");
         new MyTaggedPdfReaderTool().convertToXml(reader, xmlOut);
         xmlOut.close();
-        Assert.assertTrue(compareXmls("./src/test/resources/com/itextpdf/text/pdf/TaggedPdfTest/test4.xml", "./target/com/itextpdf/test/pdf/TaggedPDFTest/out4.xml"));
+        Assert.assertTrue(compareXmls("./src/test/resources/com/itextpdf/text/pdf/TaggedPdfTest/test4.xml", "./target/com/itextpdf/test/pdf/TaggedPDFTest/test4.xml"));
     }
 
     @Test
@@ -222,27 +228,28 @@ public class TaggedPDFTest {
             list.add(listItem);
             Image i = Image.getInstance("./src/test/resources/com/itextpdf/text/pdf/TaggedPdfTest/fox.bmp");
             Chunk c = new Chunk(i, 0, 0);
-            c.setAccessibleProperty(PdfName.ALT, new PdfString("Fox image"));
+            c.setAccessibleAttribute(PdfName.ALT, new PdfString("Fox image"));
             listItem = new ListItem(c);
             list.add(listItem);
             listItem = new ListItem(new Chunk("jumped over a lazy"));
             list.add(listItem);
             i = Image.getInstance("./src/test/resources/com/itextpdf/text/pdf/TaggedPdfTest/dog.bmp");
             c = new Chunk(i, 0, 0);
-            c.setAccessibleProperty(PdfName.ALT, new PdfString("Dog image"));
+            c.setAccessibleAttribute(PdfName.ALT, new PdfString("Dog image"));
             listItem = new ListItem(c);
             list.add(listItem);
         } catch (Exception e) {
 
         }
+        document.add(h1);
         document.add(list);
         document.close();
 
         PdfReader reader = new PdfReader("./target/com/itextpdf/test/pdf/TaggedPDFTest/out5.pdf");
-        FileOutputStream xmlOut = new FileOutputStream("./target/com/itextpdf/test/pdf/TaggedPDFTest/out5.xml");
+        FileOutputStream xmlOut = new FileOutputStream("./target/com/itextpdf/test/pdf/TaggedPDFTest/test5.xml");
         new MyTaggedPdfReaderTool().convertToXml(reader, xmlOut);
         xmlOut.close();
-        Assert.assertTrue(compareXmls("./src/test/resources/com/itextpdf/text/pdf/TaggedPdfTest/test5.xml", "./target/com/itextpdf/test/pdf/TaggedPDFTest/out5.xml"));
+        Assert.assertTrue(compareXmls("./src/test/resources/com/itextpdf/text/pdf/TaggedPdfTest/test5.xml", "./target/com/itextpdf/test/pdf/TaggedPDFTest/test5.xml"));
     }
 
     @Test
@@ -258,29 +265,30 @@ public class TaggedPDFTest {
             list.add(listItem);
             Image i = Image.getInstance("./src/test/resources/com/itextpdf/text/pdf/TaggedPdfTest/fox.bmp");
             Chunk c = new Chunk(i, 0, 0);
-            c.setAccessibleProperty(PdfName.ALT, new PdfString("Fox image"));
+            c.setAccessibleAttribute(PdfName.ALT, new PdfString("Fox image"));
             listItem = new ListItem(c);
             list.add(listItem);
             listItem = new ListItem(new Chunk("jumped over a lazy"));
             list.add(listItem);
             i = Image.getInstance("./src/test/resources/com/itextpdf/text/pdf/TaggedPdfTest/dog.bmp");
             c = new Chunk(i, 0, 0);
-            c.setAccessibleProperty(PdfName.ALT, new PdfString("Dog image"));
+            c.setAccessibleAttribute(PdfName.ALT, new PdfString("Dog image"));
             listItem = new ListItem(c);
             list.add(listItem);
         } catch (Exception e) {
 
         }
         columnText.setSimpleColumn(36,36,400,800);
+        columnText.addElement(h1);
         columnText.addElement(list);
         columnText.go();
         document.close();
 
         PdfReader reader = new PdfReader("./target/com/itextpdf/test/pdf/TaggedPDFTest/out6.pdf");
-        FileOutputStream xmlOut = new FileOutputStream("./target/com/itextpdf/test/pdf/TaggedPDFTest/out6.xml");
+        FileOutputStream xmlOut = new FileOutputStream("./target/com/itextpdf/test/pdf/TaggedPDFTest/test6.xml");
         new MyTaggedPdfReaderTool().convertToXml(reader, xmlOut);
         xmlOut.close();
-        Assert.assertTrue(compareXmls("./src/test/resources/com/itextpdf/text/pdf/TaggedPdfTest/test6.xml", "./target/com/itextpdf/test/pdf/TaggedPDFTest/out6.xml"));
+        Assert.assertTrue(compareXmls("./src/test/resources/com/itextpdf/text/pdf/TaggedPdfTest/test6.xml", "./target/com/itextpdf/test/pdf/TaggedPDFTest/test6.xml"));
     }
 
     @Test
@@ -293,14 +301,14 @@ public class TaggedPDFTest {
             list.add(listItem);
             Image i = Image.getInstance("./src/test/resources/com/itextpdf/text/pdf/TaggedPdfTest/fox.bmp");
             Chunk c = new Chunk(i, 0, 0);
-            c.setAccessibleProperty(PdfName.ALT, new PdfString("Fox image"));
+            c.setAccessibleAttribute(PdfName.ALT, new PdfString("Fox image"));
             listItem = new ListItem(c);
             list.add(listItem);
             listItem = new ListItem(new Chunk("jumped over a lazy"));
             list.add(listItem);
             i = Image.getInstance("./src/test/resources/com/itextpdf/text/pdf/TaggedPdfTest/dog.bmp");
             c = new Chunk(i, 0, 0);
-            c.setAccessibleProperty(PdfName.ALT, new PdfString("Dog image"));
+            c.setAccessibleAttribute(PdfName.ALT, new PdfString("Dog image"));
             listItem = new ListItem(c);
             list.add(listItem);
             Paragraph p = new Paragraph(text);
@@ -309,14 +317,15 @@ public class TaggedPDFTest {
         } catch (Exception e) {
 
         }
+        document.add(h1);
         document.add(list);
         document.close();
 
         PdfReader reader = new PdfReader("./target/com/itextpdf/test/pdf/TaggedPDFTest/out7.pdf");
-        FileOutputStream xmlOut = new FileOutputStream("./target/com/itextpdf/test/pdf/TaggedPDFTest/out7.xml");
+        FileOutputStream xmlOut = new FileOutputStream("./target/com/itextpdf/test/pdf/TaggedPDFTest/test7.xml");
         new MyTaggedPdfReaderTool().convertToXml(reader, xmlOut);
         xmlOut.close();
-        Assert.assertTrue(compareXmls("./src/test/resources/com/itextpdf/text/pdf/TaggedPdfTest/test7.xml", "./target/com/itextpdf/test/pdf/TaggedPDFTest/out7.xml"));
+        Assert.assertTrue(compareXmls("./src/test/resources/com/itextpdf/text/pdf/TaggedPdfTest/test7.xml", "./target/com/itextpdf/test/pdf/TaggedPDFTest/test7.xml"));
     }
 
     @Test
@@ -332,14 +341,14 @@ public class TaggedPDFTest {
             list.add(listItem);
             Image i = Image.getInstance("./src/test/resources/com/itextpdf/text/pdf/TaggedPdfTest/fox.bmp");
             Chunk c = new Chunk(i, 0, 0);
-            c.setAccessibleProperty(PdfName.ALT, new PdfString("Fox image"));
+            c.setAccessibleAttribute(PdfName.ALT, new PdfString("Fox image"));
             listItem = new ListItem(c);
             list.add(listItem);
             listItem = new ListItem(new Chunk("jumped over a lazy"));
             list.add(listItem);
             i = Image.getInstance("./src/test/resources/com/itextpdf/text/pdf/TaggedPdfTest/dog.bmp");
             c = new Chunk(i, 0, 0);
-            c.setAccessibleProperty(PdfName.ALT, new PdfString("Dog image"));
+            c.setAccessibleAttribute(PdfName.ALT, new PdfString("Dog image"));
             listItem = new ListItem(c);
             list.add(listItem);
             Paragraph p = new Paragraph(text);
@@ -349,6 +358,7 @@ public class TaggedPDFTest {
 
         }
         columnText.setSimpleColumn(36,36,400,800);
+        columnText.addElement(h1);
         columnText.addElement(list);
         columnText.go();
         document.newPage();
@@ -357,10 +367,10 @@ public class TaggedPDFTest {
         document.close();
 
         PdfReader reader = new PdfReader("./target/com/itextpdf/test/pdf/TaggedPDFTest/out8.pdf");
-        FileOutputStream xmlOut = new FileOutputStream("./target/com/itextpdf/test/pdf/TaggedPDFTest/out8.xml");
+        FileOutputStream xmlOut = new FileOutputStream("./target/com/itextpdf/test/pdf/TaggedPDFTest/test8.xml");
         new MyTaggedPdfReaderTool().convertToXml(reader, xmlOut);
         xmlOut.close();
-        Assert.assertTrue(compareXmls("./src/test/resources/com/itextpdf/text/pdf/TaggedPdfTest/test8.xml", "./target/com/itextpdf/test/pdf/TaggedPDFTest/out8.xml"));
+        Assert.assertTrue(compareXmls("./src/test/resources/com/itextpdf/text/pdf/TaggedPdfTest/test8.xml", "./target/com/itextpdf/test/pdf/TaggedPDFTest/test8.xml"));
     }
 
     @Test
@@ -370,11 +380,11 @@ public class TaggedPDFTest {
         try {
             table.addCell("Quick brown fox jumped over a lazy dog. A very long line appears here because we need new line.");
             Image i = Image.getInstance("./src/test/resources/com/itextpdf/text/pdf/TaggedPdfTest/fox.bmp");
-            i.setAccessibleProperty(PdfName.ALT, new PdfString("Fox image"));
+            i.setAccessibleAttribute(PdfName.ALT, new PdfString("Fox image"));
             table.addCell(i);
             table.addCell("jumped over a lazy");
             i = Image.getInstance("./src/test/resources/com/itextpdf/text/pdf/TaggedPdfTest/dog.bmp");
-            i.setAccessibleProperty(PdfName.ALT, new PdfString("Dog image"));
+            i.setAccessibleAttribute(PdfName.ALT, new PdfString("Dog image"));
             table.addCell(i);
             table.addCell("Hello World");
             Paragraph p = new Paragraph(text);
@@ -382,14 +392,15 @@ public class TaggedPDFTest {
         } catch (Exception e) {
 
         }
+        document.add(h1);
         document.add(table);
         document.close();
 
         PdfReader reader = new PdfReader("./target/com/itextpdf/test/pdf/TaggedPDFTest/out9.pdf");
-        FileOutputStream xmlOut = new FileOutputStream("./target/com/itextpdf/test/pdf/TaggedPDFTest/out9.xml");
+        FileOutputStream xmlOut = new FileOutputStream("./target/com/itextpdf/test/pdf/TaggedPDFTest/test9.xml");
         new MyTaggedPdfReaderTool().convertToXml(reader, xmlOut);
         xmlOut.close();
-        Assert.assertTrue(compareXmls("./src/test/resources/com/itextpdf/text/pdf/TaggedPdfTest/test9.xml", "./target/com/itextpdf/test/pdf/TaggedPDFTest/out9.xml"));
+        Assert.assertTrue(compareXmls("./src/test/resources/com/itextpdf/text/pdf/TaggedPdfTest/test9.xml", "./target/com/itextpdf/test/pdf/TaggedPDFTest/test9.xml"));
     }
 
     @Test
@@ -399,21 +410,21 @@ public class TaggedPDFTest {
         try {
             table.addCell("Quick brown fox jumped over a lazy dog. A very long line appears here because we need new line.");
             Image i = Image.getInstance("./src/test/resources/com/itextpdf/text/pdf/TaggedPdfTest/fox.bmp");
-            i.setAccessibleProperty(PdfName.ALT, new PdfString("Fox image"));
+            i.setAccessibleAttribute(PdfName.ALT, new PdfString("Fox image"));
             table.addCell(i);
             table.addCell("jumped over a lazy");
             i = Image.getInstance("./src/test/resources/com/itextpdf/text/pdf/TaggedPdfTest/dog.bmp");
-            i.setAccessibleProperty(PdfName.ALT, new PdfString("Dog image"));
+            i.setAccessibleAttribute(PdfName.ALT, new PdfString("Dog image"));
             table.addCell(i);
 
             PdfPTable t = new PdfPTable(2);
             t.addCell("Quick brown fox jumped over a lazy dog. A very long line appears here because we need new line.");
             i = Image.getInstance("./src/test/resources/com/itextpdf/text/pdf/TaggedPdfTest/fox.bmp");
-            i.setAccessibleProperty(PdfName.ALT, new PdfString("Fox image"));
+            i.setAccessibleAttribute(PdfName.ALT, new PdfString("Fox image"));
             t.addCell(i);
             t.addCell("jumped over a lazy");
             i = Image.getInstance("./src/test/resources/com/itextpdf/text/pdf/TaggedPdfTest/dog.bmp");
-            i.setAccessibleProperty(PdfName.ALT, new PdfString("Dog image"));
+            i.setAccessibleAttribute(PdfName.ALT, new PdfString("Dog image"));
             t.addCell(i);
             t.addCell(text);
             t.addCell("Hello World");
@@ -425,14 +436,15 @@ public class TaggedPDFTest {
         } catch (Exception e) {
 
         }
+        document.add(h1);
         document.add(table);
         document.close();
 
         PdfReader reader = new PdfReader("./target/com/itextpdf/test/pdf/TaggedPDFTest/out10.pdf");
-        FileOutputStream xmlOut = new FileOutputStream("./target/com/itextpdf/test/pdf/TaggedPDFTest/out10.xml");
+        FileOutputStream xmlOut = new FileOutputStream("./target/com/itextpdf/test/pdf/TaggedPDFTest/test10.xml");
         new MyTaggedPdfReaderTool().convertToXml(reader, xmlOut);
         xmlOut.close();
-        Assert.assertTrue(compareXmls("./src/test/resources/com/itextpdf/text/pdf/TaggedPdfTest/test10.xml", "./target/com/itextpdf/test/pdf/TaggedPDFTest/out10.xml"));
+        Assert.assertTrue(compareXmls("./src/test/resources/com/itextpdf/text/pdf/TaggedPdfTest/test10.xml", "./target/com/itextpdf/test/pdf/TaggedPDFTest/test10.xml"));
     }
 
     private boolean compareXmls(String xml1, String xml2) throws ParserConfigurationException, SAXException, IOException {

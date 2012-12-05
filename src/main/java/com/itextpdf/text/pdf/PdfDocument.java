@@ -900,7 +900,11 @@ public class PdfDocument extends Document {
         	// we create the page dictionary
 
         	PdfPage page = new PdfPage(new PdfRectangle(pageSize, rotation), thisBoxSize, resources, rotation);
-        	page.put(PdfName.TABS, writer.getTabs());
+        	if (isTagged(writer)) {
+                page.put(PdfName.TABS, PdfName.S);
+            } else {
+                page.put(PdfName.TABS, writer.getTabs());
+            }
         	page.putAll(writer.getPageDictEntries());
         	writer.resetPageDictEntries();
 
@@ -1630,7 +1634,7 @@ public class PdfDocument extends Document {
 
             if (rise != 0)
                 text.setTextRise(0);
-            if (color != null && !isTagged(writer))
+            if (color != null)
                 text.resetRGBColorFill();
             if (tr != PdfContentByte.TEXT_RENDER_MODE_FILL)
                 text.setTextRenderingMode(PdfContentByte.TEXT_RENDER_MODE_FILL);

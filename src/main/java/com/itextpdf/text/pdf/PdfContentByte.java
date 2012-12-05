@@ -3583,7 +3583,7 @@ public class PdfContentByte {
     }
 
     protected void openMCBlock(IAccessibleElement element) {
-        if (writer.isTagged() && element != null && element.getRole() != null) {
+        if (writer.isTagged() && element != null/* && element.getRole() != null*/) {
             if (!getMcElements().contains(element)) {
                 PdfStructureElement structureElement = openMCBlockInt(element);
                 getMcElements().add(element);
@@ -3606,23 +3606,30 @@ public class PdfContentByte {
     private PdfStructureElement openMCBlockInt(IAccessibleElement element) {
         PdfStructureElement structureElement = null;
         if (writer.isTagged()) {
-            if (element instanceof IAccessibleElement) {
+            IAccessibleElement parent = null;
+            if (getMcElements().size() > 0)
+                parent = getMcElements().get(getMcElements().size() - 1);
+            if (parent != null && parent.getRole() == null)
+                element.setRole(null);
+            if (element.getRole() != null) {
                 structureElement = pdf.structElements.get(element.getId());
                 if (structureElement == null) {
                     structureElement = new PdfStructureElement(getParentStructureElement(), element.getRole());
                     structureElement.writeAttributes(element);
                 }
-                if (inText && writer.isTagged()) {
+                boolean inTextLocal = inText;
+                if (inText)
                     endText();
-                }
                 beginMarkedContentSequence(structureElement);
+                if (inTextLocal)
+                    beginText(true);
             }
         }
         return structureElement;
     }
 
     protected void closeMCBlock(IAccessibleElement element) {
-        if (writer.isTagged() && element != null && element.getRole() != null) {
+        if (writer.isTagged() && element != null/* && element.getRole() != null*/) {
             if (getMcElements().contains(element)) {
                 closeMCBlockInt(element);
                 getMcElements().remove(element);
@@ -3631,12 +3638,13 @@ public class PdfContentByte {
     }
 
     private void closeMCBlockInt(IAccessibleElement element) {
-        if (writer.isTagged()) {
-            if (element instanceof IAccessibleElement) {
-                if (inText && writer.isTagged())
-                    endText();
-                endMarkedContentSequence();
-            }
+        if (writer.isTagged() && element.getRole() != null) {
+            boolean inTextLocal = inText;
+            if (inText)
+                endText();
+            endMarkedContentSequence();
+            if (inTextLocal)
+                beginText(true);
         }
     }
 

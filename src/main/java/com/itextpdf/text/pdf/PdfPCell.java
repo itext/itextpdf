@@ -124,8 +124,7 @@ public class PdfPCell extends Rectangle implements IAccessibleElement {
     private int rotation;
 
     protected PdfName role = PdfName.TD;
-    protected HashMap<PdfName, PdfObject> accessibleProperties = null;
-    protected HashMap<PdfName, AccessibleUserProperty> userProperties = null;
+    protected HashMap<PdfName, PdfObject> accessibleAttributes = null;
     protected UUID id = UUID.randomUUID();
 
     /**
@@ -260,10 +259,8 @@ public class PdfPCell extends Rectangle implements IAccessibleElement {
         rotation = cell.rotation;
         id = cell.id;
         role = cell.role;
-        if (cell.accessibleProperties != null)
-            accessibleProperties = new HashMap<PdfName, PdfObject>(cell.accessibleProperties);
-        if (cell.userProperties != null)
-            userProperties = new HashMap<PdfName, AccessibleUserProperty>(cell.userProperties);
+        if (cell.accessibleAttributes != null)
+            accessibleAttributes = new HashMap<PdfName, PdfObject>(cell.accessibleAttributes);
     }
 
     /**
@@ -1009,38 +1006,21 @@ public class PdfPCell extends Rectangle implements IAccessibleElement {
 		return height;
 	}
 
-    public PdfObject getAccessibleProperty(final PdfName key) {
-        if (accessibleProperties != null)
-            return accessibleProperties.get(key);
+    public PdfObject getAccessibleAttribute(final PdfName key) {
+        if (accessibleAttributes != null)
+            return accessibleAttributes.get(key);
         else
             return null;
     }
 
-    public void setAccessibleProperty(final PdfName key, final PdfObject value) {
-        if (accessibleProperties == null)
-            accessibleProperties = new HashMap<PdfName, PdfObject>();
-        accessibleProperties.put(key, value);
+    public void setAccessibleAttribute(final PdfName key, final PdfObject value) {
+        if (accessibleAttributes == null)
+            accessibleAttributes = new HashMap<PdfName, PdfObject>();
+        accessibleAttributes.put(key, value);
     }
 
-    public HashMap<PdfName, PdfObject> getAccessibleProperties() {
-        return accessibleProperties;
-    }
-
-    public AccessibleUserProperty getUserProperty(final PdfName key) {
-        if (userProperties != null)
-            return userProperties.get(key);
-        else
-            return null;
-    }
-
-    public void setUserProperty(final PdfName key, final AccessibleUserProperty value) {
-        if (userProperties == null)
-            userProperties = new HashMap<PdfName, AccessibleUserProperty>();
-        userProperties.put(key, value);
-    }
-
-    public HashMap<PdfName, AccessibleUserProperty> getUserProperties() {
-        return userProperties;
+    public HashMap<PdfName, PdfObject> getAccessibleAttribute() {
+        return accessibleAttributes;
     }
 
     public PdfName getRole() {
