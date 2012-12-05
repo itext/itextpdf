@@ -93,8 +93,7 @@ public class PdfPRow implements IAccessibleElement {
     private int[] canvasesPos;
 
     protected PdfName role = PdfName.TR;
-    protected HashMap<PdfName, PdfObject> accessibleProperties = null;
-    protected HashMap<PdfName, AccessibleUserProperty> userProperties = null;
+    protected HashMap<PdfName, PdfObject> accessibleAttributes = null;
     protected UUID id = UUID.randomUUID();
     
 	/**
@@ -114,10 +113,8 @@ public class PdfPRow implements IAccessibleElement {
         if (source != null) {
             this.id = source.id;
             this.role = source.role;
-            if (source.accessibleProperties != null)
-                this.accessibleProperties = new HashMap<PdfName, PdfObject>(source.accessibleProperties);
-            if (source.userProperties != null)
-                this.userProperties = new HashMap<PdfName, AccessibleUserProperty>(source.userProperties);
+            if (source.accessibleAttributes != null)
+                this.accessibleAttributes = new HashMap<PdfName, PdfObject>(source.accessibleAttributes);
         }
     }
 
@@ -140,10 +137,8 @@ public class PdfPRow implements IAccessibleElement {
 		initExtraHeights();
         this.id = row.id;
         this.role = row.role;
-        if (row.accessibleProperties != null)
-            this.accessibleProperties = new HashMap<PdfName, PdfObject>(row.accessibleProperties);
-        if (row.userProperties != null)
-            this.userProperties = new HashMap<PdfName, AccessibleUserProperty>(row.userProperties);
+        if (row.accessibleAttributes != null)
+            this.accessibleAttributes = new HashMap<PdfName, PdfObject>(row.accessibleAttributes);
 	}
 
 	/**
@@ -802,38 +797,21 @@ public class PdfPRow implements IAccessibleElement {
 		return false;
 	}
 
-    public PdfObject getAccessibleProperty(final PdfName key) {
-        if (accessibleProperties != null)
-            return accessibleProperties.get(key);
+    public PdfObject getAccessibleAttribute(final PdfName key) {
+        if (accessibleAttributes != null)
+            return accessibleAttributes.get(key);
         else
             return null;
     }
 
-    public void setAccessibleProperty(final PdfName key, final PdfObject value) {
-        if (accessibleProperties == null)
-            accessibleProperties = new HashMap<PdfName, PdfObject>();
-        accessibleProperties.put(key, value);
+    public void setAccessibleAttribute(final PdfName key, final PdfObject value) {
+        if (accessibleAttributes == null)
+            accessibleAttributes = new HashMap<PdfName, PdfObject>();
+        accessibleAttributes.put(key, value);
     }
 
-    public HashMap<PdfName, PdfObject> getAccessibleProperties() {
-        return accessibleProperties;
-    }
-
-    public AccessibleUserProperty getUserProperty(final PdfName key) {
-        if (userProperties != null)
-            return userProperties.get(key);
-        else
-            return null;
-    }
-
-    public void setUserProperty(final PdfName key, final AccessibleUserProperty value) {
-        if (userProperties == null)
-            userProperties = new HashMap<PdfName, AccessibleUserProperty>();
-        userProperties.put(key, value);
-    }
-
-    public HashMap<PdfName, AccessibleUserProperty> getUserProperties() {
-        return userProperties;
+    public HashMap<PdfName, PdfObject> getAccessibleAttribute() {
+        return accessibleAttributes;
     }
 
     public PdfName getRole() {

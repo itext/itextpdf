@@ -43,6 +43,8 @@
  */
 package com.itextpdf.text;
 
+import com.itextpdf.text.pdf.interfaces.IAccessibleElement;
+
 import java.util.ArrayList;
 
 /**

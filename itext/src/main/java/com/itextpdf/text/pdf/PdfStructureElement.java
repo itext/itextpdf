@@ -215,22 +215,14 @@ public class PdfStructureElement extends PdfDictionary implements IPdfStructureE
         } else if (element instanceof PdfPCell) {
             writeAttributes((PdfPCell)element);
         }
-        if (element.getAccessibleProperties() != null) {
-            for (PdfName key : element.getAccessibleProperties().keySet()) {
+        if (element.getAccessibleAttribute() != null) {
+            for (PdfName key : element.getAccessibleAttribute().keySet()) {
                 if (key.equals(PdfName.LANG) || key.equals(PdfName.ALT) || key.equals(PdfName.ACTUALTEXT) || key.equals(PdfName.E)) {
-                    put(key, element.getAccessibleProperty(key));
+                    put(key, element.getAccessibleAttribute(key));
                 } else {
-                    setAttribute(key, element.getAccessibleProperty(key));
+                    setAttribute(key, element.getAccessibleAttribute(key));
                 }
             }
-        }
-        if (element.getUserProperties() != null) {
-            setAttribute(PdfName.O, PdfName.USERPROPERTIES);
-            PdfArray userProps = new PdfArray();
-            for (PdfName key : element.getUserProperties().keySet()) {
-                userProps.add(element.getUserProperties().get(key));
-            }
-            setAttribute(PdfName.P, userProps);
         }
     }
 

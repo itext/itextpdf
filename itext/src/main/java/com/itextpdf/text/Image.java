@@ -203,10 +203,7 @@ public abstract class Image extends Rectangle implements Indentable, Spaceable, 
 	protected Long mySerialId = getSerialId();
 
     protected PdfName role = PdfName.FIGURE;
-
-    protected HashMap<PdfName, PdfObject> accessibleProperties = null;
-    protected HashMap<PdfName, AccessibleUserProperty> userProperties = null;
-
+    protected HashMap<PdfName, PdfObject> accessibleAttributes = null;
     protected UUID id = UUID.randomUUID();
 
 
@@ -701,10 +698,8 @@ public abstract class Image extends Rectangle implements Indentable, Spaceable, 
 		this.smask = image.smask;
 		this.transparency = image.transparency;
         this.role = image.role;
-        if (image.accessibleProperties != null)
-            this.accessibleProperties = new HashMap<PdfName, PdfObject>(image.accessibleProperties);
-        if (image.userProperties != null)
-            this.userProperties = new HashMap<PdfName, AccessibleUserProperty>(image.userProperties);
+        if (image.accessibleAttributes != null)
+            this.accessibleAttributes = new HashMap<PdfName, PdfObject>(image.accessibleAttributes);
         this.id = image.id;
 	}
 
@@ -2068,38 +2063,21 @@ public abstract class Image extends Rectangle implements Indentable, Spaceable, 
         return getInstance(tp);
     }
 
-    public PdfObject getAccessibleProperty(final PdfName key) {
-        if (accessibleProperties != null)
-            return accessibleProperties.get(key);
+    public PdfObject getAccessibleAttribute(final PdfName key) {
+        if (accessibleAttributes != null)
+            return accessibleAttributes.get(key);
         else
             return null;
     }
 
-    public void setAccessibleProperty(final PdfName key, final PdfObject value) {
-        if (accessibleProperties == null)
-            accessibleProperties = new HashMap<PdfName, PdfObject>();
-        accessibleProperties.put(key, value);
+    public void setAccessibleAttribute(final PdfName key, final PdfObject value) {
+        if (accessibleAttributes == null)
+            accessibleAttributes = new HashMap<PdfName, PdfObject>();
+        accessibleAttributes.put(key, value);
     }
 
-    public HashMap<PdfName, PdfObject> getAccessibleProperties() {
-        return accessibleProperties;
-    }
-
-    public AccessibleUserProperty getUserProperty(final PdfName key) {
-        if (userProperties != null)
-            return userProperties.get(key);
-        else
-            return null;
-    }
-
-    public void setUserProperty(final PdfName key, final AccessibleUserProperty value) {
-        if (userProperties == null)
-            userProperties = new HashMap<PdfName, AccessibleUserProperty>();
-        userProperties.put(key, value);
-    }
-
-    public HashMap<PdfName, AccessibleUserProperty> getUserProperties() {
-        return userProperties;
+    public HashMap<PdfName, PdfObject> getAccessibleAttribute() {
+        return accessibleAttributes;
     }
 
     public PdfName getRole() {

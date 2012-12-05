@@ -50,7 +50,6 @@ import java.util.HashMap;
 import java.util.UUID;
 
 import com.itextpdf.text.error_messages.MessageLocalization;
-import com.itextpdf.text.pdf.AccessibleUserProperty;
 import com.itextpdf.text.pdf.PdfName;
 import com.itextpdf.text.pdf.PdfObject;
 import com.itextpdf.text.pdf.interfaces.IAccessibleElement;
@@ -170,8 +169,7 @@ public class Document implements DocListener, IAccessibleElement {
     protected int chapternumber = 0;
 
     protected PdfName role = PdfName.DOCUMENT;
-    protected HashMap<PdfName, PdfObject> accessibleProperties = null;
-    protected HashMap<PdfName, AccessibleUserProperty> userProperties = null;
+    protected HashMap<PdfName, PdfObject> accessibleAttributes = null;
     protected UUID id = UUID.randomUUID();
 
     // constructor
@@ -234,11 +232,9 @@ public class Document implements DocListener, IAccessibleElement {
             IAccessibleElement ae = (IAccessibleElement)listener;
             ae.setRole(this.role);
             ae.setId(this.id);
-            if (this.accessibleProperties != null) {
-                for (PdfName key : this.accessibleProperties.keySet())
-                    ae.setAccessibleProperty(key, this.accessibleProperties.get(key));
-                for (PdfName key : this.userProperties.keySet())
-                    ae.setUserProperty(key, this.userProperties.get(key));
+            if (this.accessibleAttributes != null) {
+                for (PdfName key : this.accessibleAttributes.keySet())
+                    ae.setAccessibleAttribute(key, this.accessibleAttributes.get(key));
             }
         }
     }
@@ -304,7 +300,7 @@ public class Document implements DocListener, IAccessibleElement {
 		for (DocListener listener : listeners) {
             listener.setPageSize(pageSize);
 			listener.setMargins(marginLeft, marginRight, marginTop,
-					marginBottom);
+                    marginBottom);
             listener.open();
         }
     }
@@ -821,38 +817,21 @@ public class Document implements DocListener, IAccessibleElement {
         return marginMirroring;
     }
 
-    public PdfObject getAccessibleProperty(final PdfName key) {
-        if (accessibleProperties != null)
-            return accessibleProperties.get(key);
+    public PdfObject getAccessibleAttribute(final PdfName key) {
+        if (accessibleAttributes != null)
+            return accessibleAttributes.get(key);
         else
             return null;
     }
 
-    public void setAccessibleProperty(final PdfName key, final PdfObject value) {
-        if (accessibleProperties == null)
-            accessibleProperties = new HashMap<PdfName, PdfObject>();
-        accessibleProperties.put(key, value);
+    public void setAccessibleAttribute(final PdfName key, final PdfObject value) {
+        if (accessibleAttributes == null)
+            accessibleAttributes = new HashMap<PdfName, PdfObject>();
+        accessibleAttributes.put(key, value);
     }
 
-    public HashMap<PdfName, PdfObject> getAccessibleProperties() {
-        return accessibleProperties;
-    }
-
-    public AccessibleUserProperty getUserProperty(final PdfName key) {
-        if (userProperties != null)
-            return userProperties.get(key);
-        else
-            return null;
-    }
-
-    public void setUserProperty(final PdfName key, final AccessibleUserProperty value) {
-        if (userProperties == null)
-            userProperties = new HashMap<PdfName, AccessibleUserProperty>();
-        userProperties.put(key, value);
-    }
-
-    public HashMap<PdfName, AccessibleUserProperty> getUserProperties() {
-        return userProperties;
+    public HashMap<PdfName, PdfObject> getAccessibleAttribute() {
+        return accessibleAttributes;
     }
 
     public PdfName getRole() {

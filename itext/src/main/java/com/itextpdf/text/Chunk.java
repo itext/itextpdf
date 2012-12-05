@@ -104,9 +104,7 @@ public class Chunk implements Element, IAccessibleElement {
 	protected HashMap<String, Object> attributes = null;
 
     protected PdfName role = null;
-
-    protected HashMap<PdfName, PdfObject> accessibleProperties = null;
-    protected HashMap<PdfName, AccessibleUserProperty> userProperties = null;
+    protected HashMap<PdfName, PdfObject> accessibleAttributes = null;
     protected UUID id = UUID.randomUUID();
 
 	// constructors
@@ -135,11 +133,8 @@ public class Chunk implements Element, IAccessibleElement {
             attributes = new HashMap<String, Object>(ck.attributes);
         }
         role = ck.role;
-        if (ck.accessibleProperties != null) {
-            accessibleProperties = new HashMap<PdfName, PdfObject>(ck.accessibleProperties);
-        }
-        if (ck.userProperties != null) {
-            userProperties = new HashMap<PdfName, AccessibleUserProperty>(ck.userProperties);
+        if (ck.accessibleAttributes != null) {
+            accessibleAttributes = new HashMap<PdfName, PdfObject>(ck.accessibleAttributes);
         }
         id = ck.id;
     }
@@ -973,47 +968,30 @@ public class Chunk implements Element, IAccessibleElement {
         return attributes != null && attributes.containsKey(TABSPACE);
     }
 
-    public PdfObject getAccessibleProperty(final PdfName key) {
+    public PdfObject getAccessibleAttribute(final PdfName key) {
         if (getImage() != null) {
-            return getImage().getAccessibleProperty(key);
-        } else if (accessibleProperties != null)
-            return accessibleProperties.get(key);
+            return getImage().getAccessibleAttribute(key);
+        } else if (accessibleAttributes != null)
+            return accessibleAttributes.get(key);
         else
             return null;
     }
 
-    public void setAccessibleProperty(final PdfName key, final PdfObject value) {
+    public void setAccessibleAttribute(final PdfName key, final PdfObject value) {
         if (getImage() != null) {
-            getImage().setAccessibleProperty(key, value);
+            getImage().setAccessibleAttribute(key, value);
         } else {
-            if (accessibleProperties == null)
-                accessibleProperties = new HashMap<PdfName, PdfObject>();
-            accessibleProperties.put(key, value);
+            if (accessibleAttributes == null)
+                accessibleAttributes = new HashMap<PdfName, PdfObject>();
+            accessibleAttributes.put(key, value);
         }
     }
 
-    public HashMap<PdfName, PdfObject> getAccessibleProperties() {
+    public HashMap<PdfName, PdfObject> getAccessibleAttribute() {
         if (getImage() != null)
-            return getImage().getAccessibleProperties();
+            return getImage().getAccessibleAttribute();
         else
-            return accessibleProperties;
-    }
-
-    public AccessibleUserProperty getUserProperty(final PdfName key) {
-        if (userProperties != null)
-            return userProperties.get(key);
-        else
-            return null;
-    }
-
-    public void setUserProperty(final PdfName key, final AccessibleUserProperty value) {
-        if (userProperties == null)
-            userProperties = new HashMap<PdfName, AccessibleUserProperty>();
-        userProperties.put(key, value);
-    }
-
-    public HashMap<PdfName, AccessibleUserProperty> getUserProperties() {
-        return userProperties;
+            return accessibleAttributes;
     }
 
     public PdfName getRole() {
