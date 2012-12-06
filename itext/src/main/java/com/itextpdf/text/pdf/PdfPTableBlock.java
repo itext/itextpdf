@@ -1,18 +1,19 @@
 package com.itextpdf.text.pdf;
 
-import com.itextpdf.text.Chunk;
-import com.itextpdf.text.Element;
-import com.itextpdf.text.ListItem;
-import com.itextpdf.text.Phrase;
 import com.itextpdf.text.pdf.interfaces.IAccessibleElement;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.UUID;
 
-public class PdfListLabel implements IAccessibleElement {
+public class PdfPTableBlock implements IAccessibleElement {
 
-    protected PdfName role = PdfName.LBL;
     protected UUID id = UUID.randomUUID();
+    protected ArrayList<PdfPRow> rows = null;
+
+    public PdfPTableBlock() {
+
+    }
 
     public PdfObject getAccessibleAttribute(final PdfName key) {
         return null;
@@ -27,11 +28,10 @@ public class PdfListLabel implements IAccessibleElement {
     }
 
     public PdfName getRole() {
-        return role;
+        return null;
     }
 
     public void setRole(final PdfName role) {
-        this.role = role;
     }
 
     public UUID getId() {

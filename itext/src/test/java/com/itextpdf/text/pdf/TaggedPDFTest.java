@@ -447,6 +447,171 @@ public class TaggedPDFTest {
         Assert.assertTrue(compareXmls("./src/test/resources/com/itextpdf/text/pdf/TaggedPdfTest/test10.xml", "./target/com/itextpdf/test/pdf/TaggedPDFTest/test10.xml"));
     }
 
+    @Test
+    public void createTaggedPDF11() throws DocumentException, IOException, ParserConfigurationException, SAXException {
+        initializeDocument("./target/com/itextpdf/test/pdf/TaggedPDFTest/out11.pdf");
+
+        Chapter c = new Chapter(new Paragraph("First chapter", new Font(Font.FontFamily.HELVETICA,16,Font.BOLD,BaseColor.BLUE)), 1);
+        c.setTriggerNewPage(false);
+        c.setIndentation(40);
+        Section s1 = c.addSection(new Paragraph("First section of a first chapter", new Font(Font.FontFamily.HELVETICA,13,Font.BOLD,BaseColor.BLUE)));
+        s1.setIndentation(20);
+        Section s2 = s1.addSection(new Paragraph("First subsection of a first section of a first chapter", new Font(Font.FontFamily.HELVETICA,10,Font.BOLD,BaseColor.BLUE)));
+        s2.setIndentation(10);
+        s2.add(new Paragraph("Some text..."));
+        s2 = s1.addSection(new Paragraph("Second subsection of a first section of a first chapter", new Font(Font.FontFamily.HELVETICA,10,Font.BOLD,BaseColor.BLUE)));
+        s2.setIndentation(10);
+        s2.add(new Paragraph("Some text..."));
+        s2 = s1.addSection(new Paragraph("Third subsection of a first section of a first chapter", new Font(Font.FontFamily.HELVETICA,10,Font.BOLD,BaseColor.BLUE)));
+        s2.setIndentation(10);
+        s2.add(new Paragraph("Some text..."));
+        s1 = c.addSection(new Paragraph("Second section of a first chapter", new Font(Font.FontFamily.HELVETICA,13,Font.BOLD,BaseColor.BLUE)));
+        s1.setIndentation(20);
+        s2 = s1.addSection(new Paragraph("First subsection of a second section of a first chapter", new Font(Font.FontFamily.HELVETICA,10,Font.BOLD,BaseColor.BLUE)));
+        s2.setIndentation(10);
+        s2.add(new Paragraph("Some text..."));
+        s2 = s1.addSection(new Paragraph("Second subsection of a second section of a first chapter", new Font(Font.FontFamily.HELVETICA,10,Font.BOLD,BaseColor.BLUE)));
+        s2.setIndentation(10);
+        s2.add(new Paragraph("Some text..."));
+        s2 = s1.addSection(new Paragraph("Third subsection of a second section of a first chapter", new Font(Font.FontFamily.HELVETICA,10,Font.BOLD,BaseColor.BLUE)));
+        s2.setIndentation(10);
+        s2.add(new Paragraph("Some text..."));
+        s1 = c.addSection(new Paragraph("Third section of a first chapter", new Font(Font.FontFamily.HELVETICA,13,Font.BOLD,BaseColor.BLUE)));
+        s1.setIndentation(20);
+        s2 = s1.addSection(new Paragraph("First subsection of a third section of a first chapter", new Font(Font.FontFamily.HELVETICA,10,Font.BOLD,BaseColor.BLUE)));
+        s2.setIndentation(10);
+        s2.add(new Paragraph("Some text..."));
+        s2 = s1.addSection(new Paragraph("Second subsection of a third section of a first chapter", new Font(Font.FontFamily.HELVETICA,10,Font.BOLD,BaseColor.BLUE)));
+        s2.setIndentation(10);
+        s2.add(new Paragraph("Some text..."));
+        s2 = s1.addSection(new Paragraph("Third subsection of a third section of a first chapter", new Font(Font.FontFamily.HELVETICA,10,Font.BOLD,BaseColor.BLUE)));
+        s2.setIndentation(10);
+        s2.add(new Paragraph("Some text..."));
+        document.add(c);
+        
+        c = new Chapter(new Paragraph("Second chapter", new Font(Font.FontFamily.HELVETICA,16,Font.BOLD,BaseColor.BLUE)), 2);
+        c.setTriggerNewPage(false);
+        c.setIndentation(40);
+        s1 = c.addSection(new Paragraph("First section of a second chapter", new Font(Font.FontFamily.HELVETICA,13,Font.BOLD,BaseColor.BLUE)));
+        s1.setIndentation(20);
+        s2 = s1.addSection(new Paragraph("First subsection of a first section of a second chapter", new Font(Font.FontFamily.HELVETICA,10,Font.BOLD,BaseColor.BLUE)));
+        s2.setIndentation(10);
+        s2.add(new Paragraph("Some text..."));
+        s2 = s1.addSection(new Paragraph("Second subsection of a first section of a second chapter", new Font(Font.FontFamily.HELVETICA,10,Font.BOLD,BaseColor.BLUE)));
+        s2.setIndentation(10);
+        s2.add(new Paragraph("Some text..."));
+        s2 = s1.addSection(new Paragraph("Third subsection of a first section of a second chapter", new Font(Font.FontFamily.HELVETICA,10,Font.BOLD,BaseColor.BLUE)));
+        s2.setIndentation(10);
+        s2.add(new Paragraph("Some text..."));
+        s1 = c.addSection(new Paragraph("Second section of a second chapter", new Font(Font.FontFamily.HELVETICA,13,Font.BOLD,BaseColor.BLUE)));
+        s1.setIndentation(20);
+        s2 = s1.addSection(new Paragraph("First subsection of a second section of a second chapter", new Font(Font.FontFamily.HELVETICA,10,Font.BOLD,BaseColor.BLUE)));
+        s2.setIndentation(10);
+        s2.add(new Paragraph("Some text..."));
+        s2 = s1.addSection(new Paragraph("Second subsection of a second section of a second chapter", new Font(Font.FontFamily.HELVETICA,10,Font.BOLD,BaseColor.BLUE)));
+        s2.setIndentation(10);
+        s2.add(new Paragraph("Some text..."));
+        s2 = s1.addSection(new Paragraph("Third subsection of a second section of a second chapter", new Font(Font.FontFamily.HELVETICA,10,Font.BOLD,BaseColor.BLUE)));
+        s2.setIndentation(10);
+        s2.add(new Paragraph("Some text..."));
+        s1 = c.addSection(new Paragraph("Third section of a second chapter", new Font(Font.FontFamily.HELVETICA,13,Font.BOLD,BaseColor.BLUE)));
+        s1.setIndentation(20);
+        s2 = s1.addSection(new Paragraph("First subsection of a third section of a second chapter", new Font(Font.FontFamily.HELVETICA,10,Font.BOLD,BaseColor.BLUE)));
+        s2.setIndentation(10);
+        s2.add(new Paragraph("Some text..."));
+        s2 = s1.addSection(new Paragraph("Second subsection of a third section of a second chapter", new Font(Font.FontFamily.HELVETICA,10,Font.BOLD,BaseColor.BLUE)));
+        s2.setIndentation(10);
+        s2.add(new Paragraph("Some text..."));
+        s2 = s1.addSection(new Paragraph("Third subsection of a third section of a second chapter", new Font(Font.FontFamily.HELVETICA,10,Font.BOLD,BaseColor.BLUE)));
+        s2.setIndentation(10);
+        s2.add(new Paragraph("Some text..."));
+        document.add(c);
+        
+        c = new Chapter(new Paragraph("Third chapter", new Font(Font.FontFamily.HELVETICA,16,Font.BOLD,BaseColor.BLUE)), 3);
+        c.setTriggerNewPage(false);
+        c.setIndentation(40);
+        s1 = c.addSection(new Paragraph("First section of a third chapter", new Font(Font.FontFamily.HELVETICA,13,Font.BOLD,BaseColor.BLUE)));
+        s1.setIndentation(20);
+        s2 = s1.addSection(new Paragraph("First subsection of a first section of a third chapter", new Font(Font.FontFamily.HELVETICA,10,Font.BOLD,BaseColor.BLUE)));
+        s2.setIndentation(10);
+        s2.add(new Paragraph("Some text..."));
+        s2 = s1.addSection(new Paragraph("Second subsection of a first section of a third chapter", new Font(Font.FontFamily.HELVETICA,10,Font.BOLD,BaseColor.BLUE)));
+        s2.setIndentation(10);
+        s2.add(new Paragraph("Some text..."));
+        s2 = s1.addSection(new Paragraph("Third subsection of a first section of a third chapter", new Font(Font.FontFamily.HELVETICA,10,Font.BOLD,BaseColor.BLUE)));
+        s2.setIndentation(10);
+        s2.add(new Paragraph("Some text..."));
+        s1 = c.addSection(new Paragraph("Second section of a third chapter", new Font(Font.FontFamily.HELVETICA,13,Font.BOLD,BaseColor.BLUE)));
+        s1.setIndentation(20);
+        s2 = s1.addSection(new Paragraph("First subsection of a second section of a third chapter", new Font(Font.FontFamily.HELVETICA,10,Font.BOLD,BaseColor.BLUE)));
+        s2.setIndentation(10);
+        s2.add(new Paragraph("Some text..."));
+        s2 = s1.addSection(new Paragraph("Second subsection of a second section of a third chapter", new Font(Font.FontFamily.HELVETICA,10,Font.BOLD,BaseColor.BLUE)));
+        s2.setIndentation(10);
+        s2.add(new Paragraph("Some text..."));
+        s2 = s1.addSection(new Paragraph("Third subsection of a second section of a third chapter", new Font(Font.FontFamily.HELVETICA,10,Font.BOLD,BaseColor.BLUE)));
+        s2.setIndentation(10);
+        s2.add(new Paragraph("Some text..."));
+        s1 = c.addSection(new Paragraph("Third section of a third chapter", new Font(Font.FontFamily.HELVETICA,13,Font.BOLD,BaseColor.BLUE)));
+        s1.setIndentation(20);
+        s2 = s1.addSection(new Paragraph("First subsection of a third section of a third chapter", new Font(Font.FontFamily.HELVETICA,10,Font.BOLD,BaseColor.BLUE)));
+        s2.setIndentation(10);
+        s2.add(new Paragraph("Some text..."));
+        s2 = s1.addSection(new Paragraph("Second subsection of a third section of a third chapter", new Font(Font.FontFamily.HELVETICA,10,Font.BOLD,BaseColor.BLUE)));
+        s2.setIndentation(10);
+        s2.add(new Paragraph("Some text..."));
+        s2 = s1.addSection(new Paragraph("Third subsection of a third section of a third chapter", new Font(Font.FontFamily.HELVETICA,10,Font.BOLD,BaseColor.BLUE)));
+        s2.setIndentation(10);
+        s2.add(new Paragraph("Some text..."));
+        document.add(c);
+
+        document.close();
+
+        PdfReader reader = new PdfReader("./target/com/itextpdf/test/pdf/TaggedPDFTest/out11.pdf");
+        FileOutputStream xmlOut = new FileOutputStream("./target/com/itextpdf/test/pdf/TaggedPDFTest/test11.xml");
+        new MyTaggedPdfReaderTool().convertToXml(reader, xmlOut);
+        xmlOut.close();
+        Assert.assertTrue(compareXmls("./src/test/resources/com/itextpdf/text/pdf/TaggedPdfTest/test11.xml", "./target/com/itextpdf/test/pdf/TaggedPDFTest/test11.xml"));
+    }
+
+    @Test
+    public void createTaggedPDF12() throws DocumentException, IOException, ParserConfigurationException, SAXException {
+        initializeDocument("./target/com/itextpdf/test/pdf/TaggedPDFTest/out12.pdf");
+
+        PdfPTable table = new PdfPTable(2);
+        PdfPCell cell = new PdfPCell(new Paragraph("header 1"));
+        cell.setColspan(2);
+        table.addCell(cell);
+        cell = new PdfPCell(new Paragraph("header 2"));
+        cell.setColspan(2);
+        table.addCell(cell);
+        cell = new PdfPCell(new Paragraph("footer 1"));
+        cell.setColspan(2);
+        table.addCell(cell);
+        cell = new PdfPCell(new Paragraph("footer 2"));
+        cell.setColspan(2);
+        table.addCell(cell);
+        table.setHeaderRows(4);
+        table.setFooterRows(2);
+        try {
+            for (int i = 1; i <= 50; i++) {
+                table.addCell("row " + i + ", coumn 1");
+                table.addCell("row " + i + ", coumn 2");
+            }
+        } catch (Exception e) {
+
+        }
+        document.add(table);
+        document.close();
+
+        PdfReader reader = new PdfReader("./target/com/itextpdf/test/pdf/TaggedPDFTest/out12.pdf");
+        FileOutputStream xmlOut = new FileOutputStream("./target/com/itextpdf/test/pdf/TaggedPDFTest/test12.xml");
+        new MyTaggedPdfReaderTool().convertToXml(reader, xmlOut);
+        xmlOut.close();
+        Assert.assertTrue(compareXmls("./src/test/resources/com/itextpdf/text/pdf/TaggedPdfTest/test12.xml", "./target/com/itextpdf/test/pdf/TaggedPDFTest/test12.xml"));
+    }
+
+
     private boolean compareXmls(String xml1, String xml2) throws ParserConfigurationException, SAXException, IOException {
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         dbf.setNamespaceAware(true);

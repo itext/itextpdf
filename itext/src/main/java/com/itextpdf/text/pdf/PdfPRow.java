@@ -810,7 +810,7 @@ public class PdfPRow implements IAccessibleElement {
         accessibleAttributes.put(key, value);
     }
 
-    public HashMap<PdfName, PdfObject> getAccessibleAttribute() {
+    public HashMap<PdfName, PdfObject> getAccessibleAttributes() {
         return accessibleAttributes;
     }
 

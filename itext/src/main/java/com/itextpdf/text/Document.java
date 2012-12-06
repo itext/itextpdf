@@ -830,7 +830,7 @@ public class Document implements DocListener, IAccessibleElement {
         accessibleAttributes.put(key, value);
     }
 
-    public HashMap<PdfName, PdfObject> getAccessibleAttribute() {
+    public HashMap<PdfName, PdfObject> getAccessibleAttributes() {
         return accessibleAttributes;
     }
 

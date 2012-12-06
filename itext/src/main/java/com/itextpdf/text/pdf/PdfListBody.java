@@ -35,7 +35,7 @@ public class PdfListBody implements IAccessibleElement {
 
     }
 
-    public HashMap<PdfName, PdfObject> getAccessibleAttribute() {
+    public HashMap<PdfName, PdfObject> getAccessibleAttributes() {
         return null;
     }
 
