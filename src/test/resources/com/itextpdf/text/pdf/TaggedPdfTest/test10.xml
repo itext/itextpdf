@@ -1,6 +1,6 @@
 <Document>
 <H1 color="[0, 0, 1]">Document Header</H1>
-<Table>
+<Table><TBody>
 
 <TR>
 <TD><Span>Quick brown fox jumped over a lazy
@@ -17,7 +17,7 @@ because we need new line.</Span>
 </TD>
 </TR>
 <TR>
-<TD><Table>
+<TD><Table><TBody>
 
 <TR>
 <TD><Span>Quick brown fox
@@ -309,6 +309,7 @@ dolor.</Span>
 <TD><Span>Hello World</Span>
 </TD>
 </TR>
+</TBody>
 </Table>
 </TD>
 <TD><Span>Lorem ipsum dolor sit
@@ -429,5 +430,6 @@ quam, lobortis sit amet semper vitae,
 tempus eget dolor.</Span>
 </TD>
 </TR>
+</TBody>
 </Table>
 </Document>
