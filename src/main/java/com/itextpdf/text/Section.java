@@ -46,10 +46,15 @@ package com.itextpdf.text;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.UUID;
+import java.util.HashMap;
 import java.util.List;
 
 import com.itextpdf.text.api.Indentable;
 import com.itextpdf.text.error_messages.MessageLocalization;
+import com.itextpdf.text.pdf.PdfName;
+import com.itextpdf.text.pdf.PdfObject;
+import com.itextpdf.text.pdf.interfaces.IAccessibleElement;
 
 /**
  * A <CODE>Section</CODE> is a part of a <CODE>Document</CODE> containing
@@ -77,7 +82,7 @@ import com.itextpdf.text.error_messages.MessageLocalization;
  * </PRE></BLOCKQUOTE>
  */
 
-public class Section extends ArrayList<Element> implements TextElementArray, LargeElement, Indentable {
+public class Section extends ArrayList<Element> implements TextElementArray, LargeElement, Indentable, IAccessibleElement {
     // constant
 	/**
 	 * A possible number style. The default number style: "1.2.3."
@@ -157,6 +162,7 @@ public class Section extends ArrayList<Element> implements TextElementArray, Lar
     protected Section() {
         title = new Paragraph();
         numberDepth = 1;
+        title.setRole(new PdfName("H" + numberDepth));
     }
 
     /**
@@ -168,6 +174,7 @@ public class Section extends ArrayList<Element> implements TextElementArray, Lar
     protected Section(final Paragraph title, final int numberDepth) {
         this.numberDepth = numberDepth;
         this.title = title;
+        title.setRole(new PdfName("H" + numberDepth));
     }
 
     // implementation of the Element-methods
@@ -489,6 +496,7 @@ public class Section extends ArrayList<Element> implements TextElementArray, Lar
         	buf.deleteCharAt(buf.length() - 2);
         }
         Paragraph result = new Paragraph(title);
+
         result.add(0, new Chunk(buf.toString(), title.getFont()));
         return result;
     }
@@ -761,4 +769,33 @@ public class Section extends ArrayList<Element> implements TextElementArray, Lar
 	public void newPage() {
 		this.add(Chunk.NEXTPAGE);
 	}
+
+    public PdfObject getAccessibleAttribute(final PdfName key) {
+        return title.getAccessibleAttribute(key);
+    }
+
+    public void setAccessibleAttribute(final PdfName key, final PdfObject value) {
+        title.setAccessibleAttribute(key, value);
+    }
+
+    public HashMap<PdfName, PdfObject> getAccessibleAttributes() {
+        return title.getAccessibleAttributes();
+    }
+
+    public PdfName getRole() {
+        return title.getRole();
+    }
+
+    public void setRole(final PdfName role) {
+        title.setRole(role);
+    }
+
+    public UUID getId() {
+        return title.getId();
+    }
+
+    public void setId(final UUID id) {
+        title.setId(id);
+    }
+
 }

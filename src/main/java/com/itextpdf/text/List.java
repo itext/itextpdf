@@ -636,7 +636,7 @@ public class List implements TextElementArray, Indentable, IAccessibleElement {
         accessibleAttributes.put(key, value);
     }
 
-    public HashMap<PdfName, PdfObject> getAccessibleAttribute() {
+    public HashMap<PdfName, PdfObject> getAccessibleAttributes() {
         return accessibleAttributes;
     }
 

@@ -987,9 +987,9 @@ public class Chunk implements Element, IAccessibleElement {
         }
     }
 
-    public HashMap<PdfName, PdfObject> getAccessibleAttribute() {
+    public HashMap<PdfName, PdfObject> getAccessibleAttributes() {
         if (getImage() != null)
-            return getImage().getAccessibleAttribute();
+            return getImage().getAccessibleAttributes();
         else
             return accessibleAttributes;
     }

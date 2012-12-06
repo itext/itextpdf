@@ -29,7 +29,7 @@ public interface IAccessibleElement {
      * Gets all the properties of accessible element.
      * @return
      */
-    HashMap<PdfName, PdfObject> getAccessibleAttribute();
+    HashMap<PdfName, PdfObject> getAccessibleAttributes();
 
     /**
      * Gets the role of the accessible element.

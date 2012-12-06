@@ -2076,7 +2076,7 @@ public abstract class Image extends Rectangle implements Indentable, Spaceable, 
         accessibleAttributes.put(key, value);
     }
 
-    public HashMap<PdfName, PdfObject> getAccessibleAttribute() {
+    public HashMap<PdfName, PdfObject> getAccessibleAttributes() {
         return accessibleAttributes;
     }
 

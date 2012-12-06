@@ -1674,12 +1674,22 @@ public class ColumnText {
                     ArrayList<PdfPRow> sub = nt.getRows();
                     // first we add the real header rows (if necessary)
                     if (!skipHeader && realHeaderRows > 0) {
-                        sub.addAll(table.getRows(0, realHeaderRows));
+                        ArrayList<PdfPRow> rows = table.getRows(0, realHeaderRows);
+                        if (isTagged(canvas))
+                            nt.header.rows = rows;
+                        sub.addAll(rows);
                     }
                     else
                         nt.setHeaderRows(footerRows);
                     // then we add the real content
-                    sub.addAll(table.getRows(rowIdx, k));
+
+                    {
+                        ArrayList<PdfPRow> rows = table.getRows(rowIdx, k);
+                        if (isTagged(canvas)) {
+                            nt.body.rows = rows;
+                        }
+                        sub.addAll(rows);
+                    }
                     // do we need to show a footer?
                     boolean showFooter = !table.isSkipLastFooter();
                     boolean newPageFollows = false;
@@ -1690,7 +1700,11 @@ public class ColumnText {
                     }
                     // we add the footer rows if necessary (not for incomplete tables)
                     if (footerRows > 0 && nt.isComplete() && showFooter) {
-                    	sub.addAll(table.getRows(realHeaderRows, realHeaderRows + footerRows));
+                        ArrayList<PdfPRow> rows = table.getRows(realHeaderRows, realHeaderRows + footerRows);
+                        if (isTagged(canvas)) {
+                            nt.footer.rows = rows;
+                        }
+                    	sub.addAll(rows);
                     }
                     else {
                     	footerRows = 0;

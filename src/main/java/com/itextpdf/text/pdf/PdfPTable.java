@@ -199,6 +199,9 @@ public class PdfPTable implements LargeElement, Spaceable, IAccessibleElement {
     protected PdfName role = PdfName.TABLE;
     protected HashMap<PdfName, PdfObject> accessibleAttributes = null;
     protected UUID id = UUID.randomUUID();
+    protected PdfPTableHeader header = new PdfPTableHeader();
+    protected PdfPTableBody body = new PdfPTableBody();
+    protected PdfPTableFooter footer = new PdfPTableFooter();
 
 
 	protected PdfPTable() {
@@ -310,6 +313,9 @@ public class PdfPTable implements LargeElement, Spaceable, IAccessibleElement {
         role = sourceTable.role;
         if (sourceTable.accessibleAttributes != null)
             accessibleAttributes = new HashMap<PdfName, PdfObject>(sourceTable.accessibleAttributes);
+        header = sourceTable.header;
+        body = sourceTable.body;
+        footer = sourceTable.footer;
     }
 
     /**
@@ -735,11 +741,27 @@ public class PdfPTable implements LargeElement, Spaceable, IAccessibleElement {
         LOGGER.info(String.format("Writing row %s to %s; column %s to %s", rowStart, rowEnd, colStart, colEnd));
         
         float yPosStart = yPos;
+
+        PdfPTableBlock currentBlock = null;
         for (int k = rowStart; k < rowEnd; ++k) {
             PdfPRow row = rows.get(k);
+            if (header.rows != null && header.rows.contains(row) && currentBlock == null) {
+                currentBlock = openTableBlock(header, canvases[TEXTCANVAS]);
+            } else if (body.rows != null && body.rows.contains(row) && currentBlock == null) {
+                currentBlock = openTableBlock(body, canvases[TEXTCANVAS]);
+            } else if (footer.rows != null && footer.rows.contains(row) && currentBlock == null) {
+                currentBlock = openTableBlock(footer, canvases[TEXTCANVAS]);
+            }
             if (row != null) {
                 row.writeCells(colStart, colEnd, xPos, yPos, canvases, reusable);
                 yPos -= row.getMaxHeights();
+            }
+            if (header.rows != null && header.rows.contains(row) && (k == rowEnd - 1 || !header.rows.contains(rows.get(k + 1)))) {
+                currentBlock = closeTableBlock(header, canvases[TEXTCANVAS]);
+            } else if (body.rows != null && body.rows.contains(row) && (k == rowEnd - 1 || !body.rows.contains(rows.get(k + 1)))) {
+                currentBlock = closeTableBlock(body, canvases[TEXTCANVAS]);
+            } else if (footer.rows != null && footer.rows.contains(row) && (k == rowEnd - 1 || !footer.rows.contains(rows.get(k + 1)))) {
+                currentBlock = closeTableBlock(footer, canvases[TEXTCANVAS]);
             }
         }
 
@@ -757,6 +779,16 @@ public class PdfPTable implements LargeElement, Spaceable, IAccessibleElement {
         }
 
         return yPos;
+    }
+
+    private PdfPTableBlock openTableBlock(PdfPTableBlock block, PdfContentByte canvas) {
+        canvas.openMCBlock(block);
+        return block;
+    }
+
+    private PdfPTableBlock closeTableBlock(PdfPTableBlock block, PdfContentByte canvas) {
+        canvas.closeMCBlock(block);
+        return null;
     }
 
     /**
@@ -1781,7 +1813,7 @@ public class PdfPTable implements LargeElement, Spaceable, IAccessibleElement {
         accessibleAttributes.put(key, value);
     }
 
-    public HashMap<PdfName, PdfObject> getAccessibleAttribute() {
+    public HashMap<PdfName, PdfObject> getAccessibleAttributes() {
         return accessibleAttributes;
     }
 

@@ -215,8 +215,8 @@ public class PdfStructureElement extends PdfDictionary implements IPdfStructureE
         } else if (element instanceof PdfPCell) {
             writeAttributes((PdfPCell)element);
         }
-        if (element.getAccessibleAttribute() != null) {
-            for (PdfName key : element.getAccessibleAttribute().keySet()) {
+        if (element.getAccessibleAttributes() != null) {
+            for (PdfName key : element.getAccessibleAttributes().keySet()) {
                 if (key.equals(PdfName.LANG) || key.equals(PdfName.ALT) || key.equals(PdfName.ACTUALTEXT) || key.equals(PdfName.E)) {
                     put(key, element.getAccessibleAttribute(key));
                 } else {
