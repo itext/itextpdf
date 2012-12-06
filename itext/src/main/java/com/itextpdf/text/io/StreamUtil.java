@@ -42,8 +42,10 @@
 package com.itextpdf.text.io;
 
 import java.io.ByteArrayOutputStream;
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 
 /**
  * Utility class with commonly used stream operations
@@ -72,5 +74,20 @@ public final class StreamUtil {
         }
         out.close();
         return out.toByteArray();
+    }
+    
+    public static void CopyBytes(RandomAccessSource source, long start, long length, OutputStream outs) throws IOException {
+        if (length <= 0)
+            return;
+        long idx = start;
+        byte[] buf = new byte[8192];
+        while (length > 0) {
+            long n = source.get(idx, buf,0, (int)Math.min((long)buf.length, length));
+            if (n <= 0)
+                throw new EOFException();
+            outs.write(buf, 0, (int)n);
+            idx += n;
+            length -= n;
+        }
     }
 }
