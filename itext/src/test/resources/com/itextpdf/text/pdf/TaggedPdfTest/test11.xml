@@ -201,8 +201,7 @@
 <Span>2.3.3. </Span>
 <Span>Third subsection of a third section of a second chapter</Span>
 </H3>
-<P>
-<Span>Some text...</Span>
+<P><Span>Some text...</Span>
 </P>
 <H1 color="[0, 0, 1]">
 <Span>3. </Span>

@@ -110,6 +110,9 @@ public class ListItem extends Paragraph {
 	 */
     protected Chunk symbol;
 
+    private ListBody listBody = null;
+    private ListLabel listLabel = null;
+
     // constructors
 
     /**
@@ -272,6 +275,18 @@ public class ListItem extends Paragraph {
      */
     public Chunk getListSymbol() {
         return symbol;
+    }
+
+    public ListBody getListBody() {
+        if (listBody == null)
+            listBody = new ListBody(this);
+        return listBody;
+    }
+
+    public ListLabel getListLabel() {
+        if (listLabel == null)
+            listLabel = new ListLabel(this);
+        return listLabel;
     }
 
 }

@@ -1,42 +1,38 @@
-package com.itextpdf.text.pdf;
+package com.itextpdf.text;
 
-import com.itextpdf.text.ListItem;
+import com.itextpdf.text.pdf.PdfName;
+import com.itextpdf.text.pdf.PdfObject;
 import com.itextpdf.text.pdf.interfaces.IAccessibleElement;
 
 import java.util.HashMap;
 import java.util.UUID;
 
-public class PdfListBody implements IAccessibleElement {
+public class ListBody implements IAccessibleElement {
 
     protected PdfName role = PdfName.LBODY;
     protected UUID id = UUID.randomUUID();
+    protected HashMap<PdfName, PdfObject> accessibleAttributes = null;
     protected ListItem parentItem = null;
-    protected float indentation = 0;
 
-    public PdfListBody() {
-
-    }
-
-    public PdfListBody(final ListItem parentItem) {
-        this();
+    protected ListBody(final ListItem parentItem) {
         this.parentItem = parentItem;
     }
 
-    public PdfListBody(final ListItem parentItem, float indentation) {
-        this(parentItem);
-        this.indentation = indentation;
-    }
-
     public PdfObject getAccessibleAttribute(final PdfName key) {
-        return null;
+        if (accessibleAttributes != null)
+            return accessibleAttributes.get(key);
+        else
+            return null;
     }
 
     public void setAccessibleAttribute(final PdfName key, final PdfObject value) {
-
+        if (accessibleAttributes == null)
+            accessibleAttributes = new HashMap<PdfName, PdfObject>();
+        accessibleAttributes.put(key, value);
     }
 
     public HashMap<PdfName, PdfObject> getAccessibleAttributes() {
-        return null;
+        return accessibleAttributes;
     }
 
     public PdfName getRole() {

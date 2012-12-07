@@ -866,9 +866,9 @@ public class ColumnText {
         if (composite)
             return goComposite(simulate);
 
-        PdfListBody lBody = null;
+        ListBody lBody = null;
         if (isTagged(canvas) && elementToGo instanceof ListItem) {
-            lBody = getTaggedPdfContext(canvas).lBodies.get(elementToGo);
+            lBody = ((ListItem)elementToGo).getListBody();
         }
 
         addWaitingPhrase();
@@ -988,9 +988,9 @@ public class ColumnText {
             if (isTagged(canvas) && elementToGo instanceof ListItem) {
                 if (!Float.isNaN(firstLineY) && !firstLineYDone) {
                     if (!simulate) {
-                        PdfListLabel lbl = new PdfListLabel();
+                        ListLabel lbl = ((ListItem)elementToGo).getListLabel();
                         canvas.openMCBlock(lbl);
-                        ColumnText.showTextAligned(canvas, Element.ALIGN_LEFT, new Phrase(((ListItem)elementToGo).getListSymbol()), leftX + (lBody != null ? lBody.indentation : 0), firstLineY, 0);
+                        ColumnText.showTextAligned(canvas, Element.ALIGN_LEFT, new Phrase(((ListItem)elementToGo).getListSymbol()), leftX + lbl.getIndentation(), firstLineY, 0);
                         canvas.closeMCBlock(lbl);
                     }
                     firstLineYDone = true;
@@ -1461,21 +1461,16 @@ public class ColumnText {
                     compositeColumn.minY = minY;
                     compositeColumn.maxY = maxY;
                     boolean keepCandidate = item.getKeepTogether() && createHere && !(firstPass && adjustFirstLine);
-                    PdfListBody lBody = null;
                     boolean s = simulate || keepCandidate && keep == 0;
                     if (isTagged(canvas) && !s) {
-                        lBody = getTaggedPdfContext(canvas).lBodies.get(item);
-                        if (lBody == null) {
-                            lBody = new PdfListBody(item, listIndentation);
-                            getTaggedPdfContext(canvas).lBodies.put(item, lBody);
-                        }
+                        item.getListLabel().setIndentation(listIndentation);
                         if (list.getFirstItem() == item || (compositeColumn != null && compositeColumn.bidiLine != null))
                             canvas.openMCBlock(list);
                         canvas.openMCBlock(item);
                     }
 					status = compositeColumn.go(simulate || keepCandidate && keep == 0, item);
                     if (isTagged(canvas) && !s) {
-                        canvas.closeMCBlock(lBody);
+                        canvas.closeMCBlock(item.getListBody());
                         canvas.closeMCBlock(item);
                         if ((list.getLastItem() == item && (status & NO_MORE_TEXT) != 0) || (status & NO_MORE_COLUMN) != 0)
                             canvas.closeMCBlock(list);
@@ -1676,7 +1671,7 @@ public class ColumnText {
                     if (!skipHeader && realHeaderRows > 0) {
                         ArrayList<PdfPRow> rows = table.getRows(0, realHeaderRows);
                         if (isTagged(canvas))
-                            nt.header.rows = rows;
+                            nt.getHeader().rows = rows;
                         sub.addAll(rows);
                     }
                     else
@@ -1686,7 +1681,7 @@ public class ColumnText {
                     {
                         ArrayList<PdfPRow> rows = table.getRows(rowIdx, k);
                         if (isTagged(canvas)) {
-                            nt.body.rows = rows;
+                            nt.getBody().rows = rows;
                         }
                         sub.addAll(rows);
                     }
@@ -1702,7 +1697,7 @@ public class ColumnText {
                     if (footerRows > 0 && nt.isComplete() && showFooter) {
                         ArrayList<PdfPRow> rows = table.getRows(realHeaderRows, realHeaderRows + footerRows);
                         if (isTagged(canvas)) {
-                            nt.footer.rows = rows;
+                            nt.getFooter().rows = rows;
                         }
                     	sub.addAll(rows);
                     }
@@ -1965,13 +1960,6 @@ public class ColumnText {
 
     private static boolean isTagged(final PdfContentByte canvas) {
         return (canvas != null) && (canvas.pdf != null) && (canvas.writer != null) && canvas.writer.isTagged();
-    }
-
-    protected TaggedPdfContext getTaggedPdfContext(final PdfContentByte canvas) {
-        if (canvas != null && canvas.pdf != null)
-            return canvas.pdf.taggedPdfContext;
-        else
-            return null;
     }
 
 }
