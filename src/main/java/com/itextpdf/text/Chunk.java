@@ -85,11 +85,15 @@ public class Chunk implements Element, IAccessibleElement {
 
 	/** This is a Chunk containing a newline. */
 	public static final Chunk NEWLINE = new Chunk("\n");
+    static {
+        NEWLINE.setRole(null);
+    }
 
 	/** This is a Chunk containing a newpage. */
 	public static final Chunk NEXTPAGE = new Chunk("");
 	static {
 		NEXTPAGE.setNewPage();
+        NEXTPAGE.setRole(null);
 	}
 
 	// member variables

@@ -1,19 +1,22 @@
-package com.itextpdf.text.pdf;
+package com.itextpdf.text;
 
+import com.itextpdf.text.pdf.PdfName;
+import com.itextpdf.text.pdf.PdfObject;
 import com.itextpdf.text.pdf.interfaces.IAccessibleElement;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.UUID;
 
-public class PdfPTableBlock implements IAccessibleElement {
+public class ListLabel implements IAccessibleElement {
 
+    protected PdfName role = PdfName.LBL;
     protected UUID id = UUID.randomUUID();
-    protected ArrayList<PdfPRow> rows = null;
     protected HashMap<PdfName, PdfObject> accessibleAttributes = null;
+    protected ListItem parentItem = null;
+    protected float indentation = 0;
 
-    public PdfPTableBlock() {
-
+    protected ListLabel(final ListItem parentItem) {
+        this.parentItem = parentItem;
     }
 
     public PdfObject getAccessibleAttribute(final PdfName key) {
@@ -34,10 +37,11 @@ public class PdfPTableBlock implements IAccessibleElement {
     }
 
     public PdfName getRole() {
-        return null;
+        return role;
     }
 
     public void setRole(final PdfName role) {
+        this.role = role;
     }
 
     public UUID getId() {
@@ -46,6 +50,14 @@ public class PdfPTableBlock implements IAccessibleElement {
 
     public void setId(final UUID id) {
         this.id = id;
+    }
+
+    public float getIndentation() {
+        return indentation;
+    }
+
+    public void setIndentation(float indentation) {
+        this.indentation = indentation;
     }
 
 }

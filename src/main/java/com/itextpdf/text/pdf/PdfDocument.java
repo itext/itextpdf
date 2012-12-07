@@ -300,8 +300,6 @@ public class PdfDocument extends Document {
     protected PdfWriter writer;
 
     protected HashMap<UUID, PdfStructureElement> structElements = new HashMap<UUID, PdfStructureElement>();
-    protected TaggedPdfContext taggedPdfContext = new TaggedPdfContext();
-
 
     /**
      * Adds a <CODE>PdfWriter</CODE> to the <CODE>PdfDocument</CODE>.
@@ -637,12 +635,9 @@ public class PdfDocument extends Document {
                     leadingCount++;
                     // we cast the element to a ListItem
                     ListItem listItem = (ListItem) element;
-                    PdfListBody lBody = null;
                     if (isTagged(writer)) {
                         flushLines();
-                        lBody = new PdfListBody(listItem);
                         text.openMCBlock(listItem);
-                        taggedPdfContext.lBodies.put(listItem, lBody);
                     }
 
                     addSpacing(listItem.getSpacingBefore(), leading, listItem.getFont());
@@ -671,7 +666,7 @@ public class PdfDocument extends Document {
                     leadingCount--;
                     if (isTagged(writer)) {
                         flushLines();
-                        text.closeMCBlock(lBody);
+                        text.closeMCBlock(listItem.getListBody());
                         text.closeMCBlock(listItem);
                     }
                     break;
@@ -1253,9 +1248,9 @@ public class PdfDocument extends Document {
 
 
             if (l.listSymbol() != null) {
-                PdfListLabel lbl = null;
+                ListLabel lbl = null;
                 if (isTagged(writer)) {
-                    lbl = new PdfListLabel();
+                    lbl = l.listItem().getListLabel();
                     graphics.openMCBlock(lbl);
                 }
                 ColumnText.showTextAligned(graphics, Element.ALIGN_LEFT, new Phrase(l.listSymbol()), text.getXTLM() - l.listIndent(), text.getYTLM(), 0);
@@ -1267,10 +1262,7 @@ public class PdfDocument extends Document {
             currentValues[0] = currentFont;
 
             if (isTagged(writer) && l.listItem() != null) {
-                PdfListBody lBody = taggedPdfContext.lBodies.get(l.listItem());
-                if (lBody != null) {
-                    text.openMCBlock(lBody);
-                }
+                text.openMCBlock(l.listItem().getListBody());
             }
             writeLineToContent(l, text, graphics, currentValues, writer.getSpaceCharRatio());
 
