@@ -125,10 +125,10 @@ public class PdfStructureElement extends PdfDictionary implements IPdfStructureE
         if (kids.size() > 0) {
             if (kids.getAsNumber(0) != null)
                 kids.remove(0);
-            for (int i = kids.size() - 1; i >= 0; i--) {
-                PdfDictionary mcr = kids.getAsDict(i);
+            if (kids.size() > 0) {
+                PdfDictionary mcr = kids.getAsDict(0);
                 if (mcr != null && PdfName.MCR.equals(mcr.getAsName(PdfName.TYPE))) {
-                    kids.remove(i);
+                    kids.remove(0);
                 }
             }
         }
@@ -211,10 +211,10 @@ public class PdfStructureElement extends PdfDictionary implements IPdfStructureE
             writeAttributes((List)element);
         } else if (element instanceof ListItem) {
             writeAttributes((ListItem)element);
-        } else if (element instanceof ListBody) {
-            writeAttributes((ListBody)element);
         } else if (element instanceof ListLabel) {
             writeAttributes((ListLabel)element);
+        } else if (element instanceof ListBody) {
+            writeAttributes((ListBody)element);
         } else if (element instanceof PdfPTable) {
             writeAttributes((PdfPTable)element);
         } else if (element instanceof PdfPRow) {
@@ -223,10 +223,10 @@ public class PdfStructureElement extends PdfDictionary implements IPdfStructureE
             writeAttributes((PdfPCell)element);
         } else if (element instanceof PdfPTableHeader) {
             writeAttributes((PdfPTableHeader)element);
-        } else if (element instanceof PdfPTableBody) {
-            writeAttributes((PdfPTableBody)element);
         } else if (element instanceof PdfPTableFooter) {
             writeAttributes((PdfPTableFooter)element);
+        } else if (element instanceof PdfPTableBody) {
+            writeAttributes((PdfPTableBody)element);
         }
         if (element.getAccessibleAttributes() != null) {
             for (PdfName key : element.getAccessibleAttributes().keySet()) {

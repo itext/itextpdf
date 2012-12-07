@@ -6,12 +6,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.UUID;
 
-public class PdfPTableFooter extends PdfPTableBlock {
+public class PdfPTableFooter extends PdfPTableBody {
 
     protected PdfName role = PdfName.TFOOT;
 
     public PdfPTableFooter() {
-
+        super();
     }
 
     public PdfName getRole() {

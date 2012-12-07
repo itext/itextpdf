@@ -742,7 +742,7 @@ public class PdfPTable implements LargeElement, Spaceable, IAccessibleElement {
         
         float yPosStart = yPos;
 
-        PdfPTableBlock currentBlock = null;
+        PdfPTableBody currentBlock = null;
         for (int k = rowStart; k < rowEnd; ++k) {
             PdfPRow row = rows.get(k);
             if (getHeader().rows != null && getHeader().rows.contains(row) && currentBlock == null) {
@@ -781,12 +781,12 @@ public class PdfPTable implements LargeElement, Spaceable, IAccessibleElement {
         return yPos;
     }
 
-    private PdfPTableBlock openTableBlock(PdfPTableBlock block, PdfContentByte canvas) {
+    private PdfPTableBody openTableBlock(PdfPTableBody block, PdfContentByte canvas) {
         canvas.openMCBlock(block);
         return block;
     }
 
-    private PdfPTableBlock closeTableBlock(PdfPTableBlock block, PdfContentByte canvas) {
+    private PdfPTableBody closeTableBlock(PdfPTableBody block, PdfContentByte canvas) {
         canvas.closeMCBlock(block);
         return null;
     }
