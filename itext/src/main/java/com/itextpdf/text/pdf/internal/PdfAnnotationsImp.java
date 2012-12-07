@@ -168,10 +168,12 @@ public class PdfAnnotationsImp {
                 array.add(dic.getIndirectReference());
                 if (!dic.isUsed()) {
                 	PdfArray tmp = dic.getAsArray(PdfName.RECT);
-                    PdfRectangle rect = new PdfRectangle(tmp.getAsNumber(0).floatValue(), tmp.getAsNumber(1).floatValue());
+                    PdfRectangle rect;
                     if (tmp.size() == 4) {
-                    	rect.add(tmp.getAsNumber(2));
-                    	rect.add(tmp.getAsNumber(3));
+                    	rect = new PdfRectangle(tmp.getAsNumber(0).floatValue(), tmp.getAsNumber(1).floatValue(), tmp.getAsNumber(2).floatValue(), tmp.getAsNumber(3).floatValue());
+                    }
+                    else {
+                    	rect = new PdfRectangle(tmp.getAsNumber(0).floatValue(), tmp.getAsNumber(1).floatValue());
                     }
                     if (rect != null) {
                     	switch (rotation) {
