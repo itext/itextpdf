@@ -1396,6 +1396,10 @@ public class PdfDocument extends Document {
                     	tabPosition = tmp;
                     }
                     if (chunk.isAttribute(Chunk.BACKGROUND)) {
+                        boolean inText = graphics.getInText();
+                        if (inText && isTagged(writer)) {
+                            graphics.endText();
+                        }
                         float subtract = lastBaseFactor;
                         if (nextChunk != null && nextChunk.isAttribute(Chunk.BACKGROUND))
                             subtract = 0;
@@ -1410,8 +1414,15 @@ public class PdfDocument extends Document {
                             ascender - descender + extra[1] + extra[3]);
                         graphics.fill();
                         graphics.setGrayFill(0);
+                        if (inText && isTagged(writer)) {
+                            graphics.beginText(true);
+                        }
                     }
                     if (chunk.isAttribute(Chunk.UNDERLINE)) {
+                        boolean inText = graphics.getInText();
+                        if (inText && isTagged(writer)) {
+                            graphics.endText();
+                        }
                         float subtract = lastBaseFactor;
                         if (nextChunk != null && nextChunk.isAttribute(Chunk.UNDERLINE))
                             subtract = 0;
@@ -1441,6 +1452,9 @@ public class PdfDocument extends Document {
                                 graphics.setLineCap(0);
                         }
                         graphics.setLineWidth(1);
+                        if (inText && isTagged(writer)) {
+                            graphics.beginText(true);
+                        }
                     }
                     if (chunk.isAttribute(Chunk.ACTION)) {
                         float subtract = lastBaseFactor;
