@@ -207,12 +207,7 @@ public final class RandomAccessSourceFactory {
         InputStream is = BaseFont.getResourceStream(filename);
         if (is == null)
             throw new IOException(MessageLocalization.getComposedMessage("1.not.found.as.file.or.resource", filename));
-        try {
-        	return new ArrayRandomAccessSource(StreamUtil.inputStreamToArray(is));
-        }
-        finally {
-            try {is.close();}catch(IOException ioe){}
-        }
+        return createByReadingToMemory(is);
 	}
 	
 	/**
