@@ -165,7 +165,7 @@ public final class RandomAccessSourceFactory {
 		}
 	        
         if (forceRead){
-        	return createByReadingToMemory(filename);
+        	return createByReadingToMemory(new FileInputStream(filename));
         }
 		
         if (usePlainRandomAccess){
@@ -207,6 +207,16 @@ public final class RandomAccessSourceFactory {
         InputStream is = BaseFont.getResourceStream(filename);
         if (is == null)
             throw new IOException(MessageLocalization.getComposedMessage("1.not.found.as.file.or.resource", filename));
+        return createByReadingToMemory(is);
+	}
+	
+	/**
+	 * Creates a new {@link RandomAccessSource} by reading the specified file/resource into memory
+	 * @param filename the name of the resource to read
+	 * @return the newly created {@link RandomAccessSource}
+	 * @throws IOException if reading the underling file or stream fails
+	 */
+	private RandomAccessSource createByReadingToMemory(InputStream is) throws IOException {
         try {
         	return new ArrayRandomAccessSource(StreamUtil.inputStreamToArray(is));
         }
