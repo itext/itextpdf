@@ -1449,7 +1449,7 @@ public class PdfContentByte {
      * Starts the writing of text.
      * @param restoreTM indicates if to restore text matrix of the previous text block.
      */
-    private void beginText(boolean restoreTM) {
+    protected void beginText(boolean restoreTM) {
     	if (inText) {
             if (writer.isTagged()) {
 
@@ -3771,6 +3771,10 @@ public class PdfContentByte {
             return obj instanceof UncoloredPattern && (((UncoloredPattern)obj).painter).equals(this.painter) && (((UncoloredPattern)obj).color).equals(this.color) && ((UncoloredPattern)obj).tint == this.tint;
         }
 
+    }
+
+    protected boolean getInText() {
+        return inText;
     }
 
 }
