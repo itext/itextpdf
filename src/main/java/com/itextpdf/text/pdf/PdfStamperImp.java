@@ -113,7 +113,7 @@ class PdfStamperImp extends PdfWriter {
         this.reader = reader;
         file = reader.getSafeFile();
         this.append = append;
-        if (append || (reader.isEncrypted() && PdfReader.unethicalreading)) {
+        if (reader.isEncrypted() && (append || PdfReader.unethicalreading)) {
             crypto = new PdfEncryption(reader.getDecrypt());
         }
         if (append) {
