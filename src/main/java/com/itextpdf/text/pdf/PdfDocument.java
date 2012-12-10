@@ -52,7 +52,6 @@ import com.itextpdf.text.pdf.draw.DrawInterface;
 import com.itextpdf.text.pdf.interfaces.IAccessibleElement;
 import com.itextpdf.text.pdf.internal.PdfAnnotationsImp;
 import com.itextpdf.text.pdf.internal.PdfViewerPreferencesImp;
-import sun.awt.image.SurfaceManager;
 
 import java.io.IOException;
 import java.text.DecimalFormat;
@@ -2486,9 +2485,9 @@ public class PdfDocument extends Document {
 
     private void flushFloatingElements() throws DocumentException {
         if (floatingElements != null && !floatingElements.isEmpty()) {
-            ArrayList<Element> cashedFloatingElements = floatingElements;
+            ArrayList<Element> cachedFloatingElements = floatingElements;
             floatingElements = null;
-            FloatLayout fl = new FloatLayout(cashedFloatingElements, false);
+            FloatLayout fl = new FloatLayout(cachedFloatingElements, false);
             int loop = 0;
             while (true) {
                 fl.setSimpleColumn(indentLeft(), indentBottom(), indentRight(), indentTop() - currentHeight);
