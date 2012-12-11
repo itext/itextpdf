@@ -1248,11 +1248,11 @@ public class PdfDocument extends Document {
 
             if (l.listSymbol() != null) {
                 ListLabel lbl = null;
-                Chunk symbol = null;
+                Chunk symbol = l.listSymbol();
                 if (isTagged(writer)) {
                     lbl = l.listItem().getListLabel();
                     graphics.openMCBlock(lbl);
-                    symbol = l.listSymbol() != null ? new Chunk(l.listSymbol()) : null;
+                    symbol = new Chunk(symbol);
                     if (!lbl.getTagLabelContent())
                         symbol.setRole(null);
                 }
