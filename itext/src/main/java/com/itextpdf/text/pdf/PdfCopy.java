@@ -401,7 +401,11 @@ public class PdfCopy extends PdfWriter {
             case PdfObject.DICTIONARY:
                 return copyDictionary((PdfDictionary)in, keepStruct, directRootKidds);
             case PdfObject.INDIRECT:
-                return copyIndirect((PRIndirectReference)in, keepStruct, directRootKidds);
+                if (!keepStruct && !directRootKidds)
+                    // fix for PdfSmartCopy
+                    return copyIndirect((PRIndirectReference)in);
+                else
+                    return copyIndirect((PRIndirectReference)in, keepStruct, directRootKidds);
             case PdfObject.ARRAY:
                 return copyArray((PdfArray)in, keepStruct, directRootKidds);
             case PdfObject.NUMBER:
