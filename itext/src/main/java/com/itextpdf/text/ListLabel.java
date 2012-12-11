@@ -11,6 +11,7 @@ public class ListLabel extends ListBody {
 
     protected PdfName role = PdfName.LBL;
     protected float indentation = 0;
+    protected boolean tagLabelContent = true;
 
     protected ListLabel(final ListItem parentItem) {
         super(parentItem);
@@ -30,6 +31,32 @@ public class ListLabel extends ListBody {
 
     public void setIndentation(float indentation) {
         this.indentation = indentation;
+    }
+
+    /**
+     * Gets the value of <code>tagLabelContent</code> property.
+     * If the property is <code>true</code> it means that content of the list item lable will be tagged.
+     * For example:
+     * <code>
+     * &lt;LI&gt;
+     *     &lt;Lbl&gt;
+     *         &lt;Span&gt;1.&lt;/Span&gt;
+     *     &lt;/Lbl&gt;
+     * &lt;/LI&gt;
+     * </code>
+     * If the property set to <code>false</code> it will look as follows:
+     * <code>
+     * &lt;LI&gt;
+     *     &lt;Lbl&gt;1.&lt;/Lbl&gt;
+     * &lt;/LI&gt;
+     * @return
+     */
+    public boolean getTagLabelContent() {
+        return tagLabelContent;
+    }
+
+    public void setTagLabelContent(boolean tagLabelContent) {
+        this.tagLabelContent = tagLabelContent;
     }
 
 }
