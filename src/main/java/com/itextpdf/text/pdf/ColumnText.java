@@ -990,7 +990,14 @@ public class ColumnText {
                     if (!simulate) {
                         ListLabel lbl = ((ListItem)elementToGo).getListLabel();
                         canvas.openMCBlock(lbl);
-                        ColumnText.showTextAligned(canvas, Element.ALIGN_LEFT, new Phrase(((ListItem)elementToGo).getListSymbol()), leftX + lbl.getIndentation(), firstLineY, 0);
+                        Chunk symbol = null;
+                        if (((ListItem)elementToGo).getListSymbol() != null) {
+                            symbol = new Chunk(((ListItem)elementToGo).getListSymbol());
+                            if (!lbl.getTagLabelContent()) {
+                                symbol.setRole(null);
+                            }
+                        }
+                        ColumnText.showTextAligned(canvas, Element.ALIGN_LEFT, new Phrase(symbol), leftX + lbl.getIndentation(), firstLineY, 0);
                         canvas.closeMCBlock(lbl);
                     }
                     firstLineYDone = true;

@@ -1248,11 +1248,15 @@ public class PdfDocument extends Document {
 
             if (l.listSymbol() != null) {
                 ListLabel lbl = null;
+                Chunk symbol = null;
                 if (isTagged(writer)) {
                     lbl = l.listItem().getListLabel();
                     graphics.openMCBlock(lbl);
+                    symbol = l.listSymbol() != null ? new Chunk(l.listSymbol()) : null;
+                    if (!lbl.getTagLabelContent())
+                        symbol.setRole(null);
                 }
-                ColumnText.showTextAligned(graphics, Element.ALIGN_LEFT, new Phrase(l.listSymbol()), text.getXTLM() - l.listIndent(), text.getYTLM(), 0);
+                ColumnText.showTextAligned(graphics, Element.ALIGN_LEFT, new Phrase(symbol), text.getXTLM() - l.listIndent(), text.getYTLM(), 0);
                 if (lbl != null) {
                     graphics.closeMCBlock(lbl);
                 }

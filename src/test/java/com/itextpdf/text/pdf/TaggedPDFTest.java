@@ -187,15 +187,21 @@ public class TaggedPDFTest {
     public void createTaggedPDF4() throws DocumentException, IOException, ParserConfigurationException, SAXException {
         initializeDocument("./target/com/itextpdf/test/pdf/TaggedPDFTest/out4.pdf");
         Paragraph p = new Paragraph();
-        p.setRole(new PdfName("Paragraph"));
+        PdfName nParagraph = new PdfName("Paragraph");
+        p.setRole(nParagraph);
+        writer.getStructureTreeRoot().mapRole(nParagraph, PdfName.P);
 
         try {
             Chunk c = new Chunk("Quick brown ");
-            c.setRole(new PdfName("TextBlock"));
+            PdfName nTextBlock = new PdfName("TextBlock");
+            c.setRole(nTextBlock);
+            writer.getStructureTreeRoot().mapRole(nTextBlock, PdfName.SPAN);
             p.add(c);
             Image i = Image.getInstance("./src/test/resources/com/itextpdf/text/pdf/TaggedPdfTest/fox.bmp");
             c = new Chunk(i, 0, 0);
-            c.setRole(new PdfName("Image"));
+            PdfName nImage = new PdfName("Image");
+            c.setRole(nImage);
+            writer.getStructureTreeRoot().mapRole(nImage, PdfName.FIGURE);
             c.setAccessibleAttribute(PdfName.ALT, new PdfString("Fox image"));
             p.add(c);
             p.add(new Chunk(" jumped over a lazy "));
@@ -232,11 +238,13 @@ public class TaggedPDFTest {
             listItem = new ListItem(c);
             list.add(listItem);
             listItem = new ListItem(new Chunk("jumped over a lazy"));
+            listItem.getListLabel().setTagLabelContent(false);
             list.add(listItem);
             i = Image.getInstance("./src/test/resources/com/itextpdf/text/pdf/TaggedPdfTest/dog.bmp");
             c = new Chunk(i, 0, 0);
             c.setAccessibleAttribute(PdfName.ALT, new PdfString("Dog image"));
             listItem = new ListItem(c);
+            listItem.getListLabel().setTagLabelContent(false);
             list.add(listItem);
         } catch (Exception e) {
 
