@@ -817,6 +817,7 @@ public class Chunk implements Element, IAccessibleElement {
 	 */
 
 	public Chunk setAction(final PdfAction action) {
+        setRole(PdfName.LINK);
 		return setAttribute(ACTION, action);
 	}
 
@@ -829,6 +830,7 @@ public class Chunk implements Element, IAccessibleElement {
 	 */
 
 	public Chunk setAnchor(final URL url) {
+        setRole(PdfName.LINK);
 		return setAttribute(ACTION, new PdfAction(url.toExternalForm()));
 	}
 
@@ -841,7 +843,8 @@ public class Chunk implements Element, IAccessibleElement {
 	 */
 
 	public Chunk setAnchor(final String url) {
-		return setAttribute(ACTION, new PdfAction(url));
+        setRole(PdfName.LINK);
+        return setAttribute(ACTION, new PdfAction(url));
 	}
 
 	/** Key for newpage. */
