@@ -62,6 +62,8 @@ public class TaggedPDFTest {
         document.open();
 
         //Required for PDF/UA
+        writer.setViewerPreferences(PdfWriter.DisplayDocTitle);
+        writer.createXmpMetadata();
         document.addLanguage("en-US");
         document.addTitle("Some title");
         Chunk c = new Chunk("Document Header", new Font(Font.FontFamily.HELVETICA,14,Font.BOLD,BaseColor.BLUE));
