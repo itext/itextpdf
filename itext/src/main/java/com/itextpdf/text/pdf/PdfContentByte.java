@@ -181,6 +181,8 @@ public class PdfContentByte {
     /** This is the actual content */
     protected ByteBuffer content = new ByteBuffer();
 
+    protected int markedContentSize = 0;
+
     /** This is the writer */
     protected PdfWriter writer;
 
@@ -281,6 +283,7 @@ public class PdfContentByte {
         if (other.writer != null && writer != other.writer)
             throw new RuntimeException(MessageLocalization.getComposedMessage("inconsistent.writers.are.you.mixing.two.documents"));
         content.append(other.content);
+        markedContentSize += other.markedContentSize;
     }
 
     /**
@@ -1438,6 +1441,7 @@ public class PdfContentByte {
      */
     public void reset( final boolean validateContent ) {
         content.reset();
+        markedContentSize = 0;
         if (validateContent) {
         	sanityCheck();
         }
@@ -1866,7 +1870,14 @@ public class PdfContentByte {
      * @return the size of the content
      */
     int size() {
-        return content.size();
+        return size(true);
+    }
+
+    int size(boolean includeMarkedContentSize) {
+        if (includeMarkedContentSize)
+            return content.size();
+        else
+            return content.size() - markedContentSize;
     }
 
     /**
@@ -3278,7 +3289,9 @@ public class PdfContentByte {
         }
         pdf.incMarkPoint();
         setMcDepth(getMcDepth() + 1);
+        int contentSize = content.size();
         content.append(struc.get(PdfName.S).getBytes()).append(" <</MCID ").append(mark).append(">> BDC").append_i(separator);
+        markedContentSize += content.size() - contentSize;
     }
 
     /**
@@ -3288,8 +3301,10 @@ public class PdfContentByte {
     	if (getMcDepth() == 0) {
     		throw new IllegalPdfSyntaxException(MessageLocalization.getComposedMessage("unbalanced.begin.end.marked.content.operators"));
     	}
-    	setMcDepth(getMcDepth() - 1);
+    	int contentSize = content.size();
+        setMcDepth(getMcDepth() - 1);
         content.append("EMC").append_i(separator);
+        markedContentSize += content.size() - contentSize;
     }
 
     /**
@@ -3301,32 +3316,34 @@ public class PdfContentByte {
      * to include the property in the resource dictionary with the possibility of reusing
      */
     public void beginMarkedContentSequence(final PdfName tag, final PdfDictionary property, final boolean inline) {
+        int contentSize = content.size();
         if (property == null) {
             content.append(tag.getBytes()).append(" BMC").append_i(separator);
             setMcDepth(getMcDepth() + 1);
-            return;
-        }
-        content.append(tag.getBytes()).append(' ');
-        if (inline)
-            try {
-                property.toPdf(writer, content);
+        } else {
+            content.append(tag.getBytes()).append(' ');
+            if (inline)
+                try {
+                    property.toPdf(writer, content);
+                }
+                catch (Exception e) {
+                    throw new ExceptionConverter(e);
+                }
+            else {
+                PdfObject[] objs;
+                if (writer.propertyExists(property))
+                    objs = writer.addSimpleProperty(property, null);
+                else
+                    objs = writer.addSimpleProperty(property, writer.getPdfIndirectReference());
+                PdfName name = (PdfName)objs[0];
+                PageResources prs = getPageResources();
+                name = prs.addProperty(name, (PdfIndirectReference)objs[1]);
+                content.append(name.getBytes());
             }
-            catch (Exception e) {
-                throw new ExceptionConverter(e);
-            }
-        else {
-            PdfObject[] objs;
-            if (writer.propertyExists(property))
-                objs = writer.addSimpleProperty(property, null);
-            else
-                objs = writer.addSimpleProperty(property, writer.getPdfIndirectReference());
-            PdfName name = (PdfName)objs[0];
-            PageResources prs = getPageResources();
-            name = prs.addProperty(name, (PdfIndirectReference)objs[1]);
-            content.append(name.getBytes());
+            content.append(" BDC").append_i(separator);
+            setMcDepth(getMcDepth() + 1);
         }
-        content.append(" BDC").append_i(separator);
-        setMcDepth(getMcDepth() + 1);
+        markedContentSize += content.size() - contentSize;
     }
 
     /**
