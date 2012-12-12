@@ -1158,11 +1158,12 @@ public class PdfPKCS7 {
             X509Certificate v = (X509Certificate)cc.get(cc.size() - 1);
             found = false;
             for (int k = 0; k < oc.size(); ++k) {
+            	X509Certificate issuer = (X509Certificate)oc.get(k);
                 try {
                     if (provider == null)
-                        v.verify(((X509Certificate)oc.get(k)).getPublicKey());
+                        v.verify(issuer.getPublicKey());
                     else
-                        v.verify(((X509Certificate)oc.get(k)).getPublicKey(), provider);
+                        v.verify(issuer.getPublicKey(), provider);
                     found = true;
                     cc.add(oc.get(k));
                     oc.remove(k);
