@@ -642,6 +642,21 @@ public class TaggedPDFTest {
         Assert.assertTrue(compareXmls("./src/test/resources/com/itextpdf/text/pdf/TaggedPdfTest/test13.xml", "./target/com/itextpdf/test/pdf/TaggedPDFTest/test13.xml"));
     }
 
+    @Test
+    public void createTaggedPDF14() throws DocumentException, IOException, ParserConfigurationException, SAXException {
+        initializeDocument("./target/com/itextpdf/test/pdf/TaggedPDFTest/out14.pdf");
+        Paragraph paragraph = new Paragraph("Document MUST contain 1 page only!");
+        document.newPage();
+        ColumnText columnText = new ColumnText(writer.getDirectContent());
+        columnText.setSimpleColumn(36, 36, 250, 800);
+        columnText.addElement(paragraph);
+        columnText.go();
+        document.close();
+
+        PdfReader reader = new PdfReader("./target/com/itextpdf/test/pdf/TaggedPDFTest/out14.pdf");
+        Assert.assertEquals(1, reader.getNumberOfPages());
+    }
+
     private boolean compareXmls(String xml1, String xml2) throws ParserConfigurationException, SAXException, IOException {
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         dbf.setNamespaceAware(true);
