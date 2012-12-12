@@ -1466,11 +1466,32 @@ public class PdfDocument extends Document {
                             subtract = 0;
                         if (nextChunk == null)
                             subtract += hangingCorrection;
+                        PdfAnnotation annot = null;
                         if (chunk.isImage()) {
-                        	text.addAnnotation(new PdfAnnotation(writer, xMarker, yMarker + chunk.getImageOffsetY(), xMarker + width - subtract, yMarker + chunk.getImage().getScaledHeight() + chunk.getImageOffsetY(), (PdfAction)chunk.getAttribute(Chunk.ACTION)));
+                            annot = new PdfAnnotation(writer, xMarker, yMarker + chunk.getImageOffsetY(), xMarker + width - subtract, yMarker + chunk.getImage().getScaledHeight() + chunk.getImageOffsetY(), (PdfAction)chunk.getAttribute(Chunk.ACTION));
                         }
                         else {
-                        	text.addAnnotation(new PdfAnnotation(writer, xMarker, yMarker + descender + chunk.getTextRise(), xMarker + width - subtract, yMarker + ascender + chunk.getTextRise(), (PdfAction)chunk.getAttribute(Chunk.ACTION)));
+                        	annot = new PdfAnnotation(writer, xMarker, yMarker + descender + chunk.getTextRise(), xMarker + width - subtract, yMarker + ascender + chunk.getTextRise(), (PdfAction)chunk.getAttribute(Chunk.ACTION));
+                        }
+                        text.addAnnotation(annot);
+                        if (isTagged(writer) && chunk.accessibleElement != null) {
+                            PdfStructureElement strucElem = structElements.get(chunk.accessibleElement.getId());
+                            if (strucElem != null) {
+                                PdfArray kArray = strucElem.getAsArray(PdfName.K);
+                                if (kArray == null) {
+                                    kArray = new PdfArray();
+                                    PdfObject k = strucElem.get(PdfName.K);
+                                    if (k != null) {
+                                        kArray.add(k);
+                                    }
+                                    strucElem.put(PdfName.K, kArray);
+                                }
+                                PdfDictionary dict = new PdfDictionary();
+                                dict.put(PdfName.TYPE, PdfName.OBJR);
+                                dict.put(PdfName.OBJ, annot.getIndirectReference());
+                                kArray.add(dict);
+                            }
+
                         }
                     }
                     if (chunk.isAttribute(Chunk.REMOTEGOTO)) {

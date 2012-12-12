@@ -619,6 +619,28 @@ public class TaggedPDFTest {
         Assert.assertTrue(compareXmls("./src/test/resources/com/itextpdf/text/pdf/TaggedPdfTest/test12.xml", "./target/com/itextpdf/test/pdf/TaggedPDFTest/test12.xml"));
     }
 
+    @Test
+    public void createTaggedPDF13() throws DocumentException, IOException, ParserConfigurationException, SAXException {
+        initializeDocument("./target/com/itextpdf/test/pdf/TaggedPDFTest/out13.pdf");
+
+
+        Paragraph p = new Paragraph();
+        Chunk chunk = new Chunk("Please visit ");
+        p.add(chunk);
+
+        PdfAction action = new PdfAction("http://itextpdf.com");
+        chunk = new Chunk("http://itextpdf.com", new Font(Font.FontFamily.HELVETICA,Font.UNDEFINED,Font.UNDERLINE,BaseColor.BLUE));
+        chunk.setAction(action);
+        p.add(chunk);
+        p.add(new Chunk(" for more details."));
+        document.add(p);
+        document.close();
+        PdfReader reader = new PdfReader("./target/com/itextpdf/test/pdf/TaggedPDFTest/out13.pdf");
+        FileOutputStream xmlOut = new FileOutputStream("./target/com/itextpdf/test/pdf/TaggedPDFTest/test13.xml");
+        new MyTaggedPdfReaderTool().convertToXml(reader, xmlOut);
+        xmlOut.close();
+        Assert.assertTrue(compareXmls("./src/test/resources/com/itextpdf/text/pdf/TaggedPdfTest/test13.xml", "./target/com/itextpdf/test/pdf/TaggedPDFTest/test13.xml"));
+    }
 
     private boolean compareXmls(String xml1, String xml2) throws ParserConfigurationException, SAXException, IOException {
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
