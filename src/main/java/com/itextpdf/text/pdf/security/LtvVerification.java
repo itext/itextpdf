@@ -187,7 +187,6 @@ public class LtvVerification {
             	&& !cert.equals(signingCert)) {
                 continue;
             }
-        	System.out.println("Certificate: " + cert.getSubjectDN());
             byte[] ocspEnc = null;
             if (ocsp != null && level != Level.CRL && k < xc.length - 1) {
                 ocspEnc = ocsp.getEncoded(cert, (X509Certificate)xc[k + 1], null);
@@ -214,14 +213,12 @@ public class LtvVerification {
                     }
                 }
             }
+            if (certInclude == CertificateInclusion.YES) {
+            	vd.certs.add(cert.getEncoded());
+            }
         }
         if (vd.crls.isEmpty() && vd.ocsps.isEmpty())
             return false;
-        if (certInclude == CertificateInclusion.YES) {
-            for (Certificate c : xc) {
-                vd.certs.add(c.getEncoded());
-            }
-        }
         validated.put(getSignatureHashKey(signatureName), vd);
         return true;
     }
