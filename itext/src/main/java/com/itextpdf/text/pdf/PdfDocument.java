@@ -2316,7 +2316,7 @@ public class PdfDocument extends Document {
     }
 
     boolean isPageEmpty() {
-        return writer == null || writer.getDirectContent().size(false) == 0 && writer.getDirectContentUnder().size(false) == 0 && (pageEmpty || writer.isPaused());
+        return writer == null || writer.getDirectContent().size(!isTagged(writer)) == 0 && writer.getDirectContentUnder().size(!isTagged(writer)) == 0 && (pageEmpty || writer.isPaused());
     }
 
 //	[U3] page actions
