@@ -7,13 +7,13 @@
 dog. A very long line appears here
 because we need new line.</Span>
 </TD>
-<TD><Figure></Figure>
+<TD><Figure bBox="[0, 0, 106, 61]" width="106" height="61"></Figure>
 </TD>
 </TR>
 <TR>
 <TD><Span>jumped over a lazy</Span>
 </TD>
-<TD><Figure></Figure>
+<TD><Figure bBox="[0, 0, 106, 61]" width="106" height="61"></Figure>
 </TD>
 </TR>
 <TR>

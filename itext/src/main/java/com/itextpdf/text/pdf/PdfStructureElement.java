@@ -47,6 +47,8 @@ import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.interfaces.IAccessibleElement;
 import com.itextpdf.text.pdf.interfaces.IPdfStructureElement;
 
+import java.util.HashMap;
+
 /**
  * This is a node in a document logical structure. It may contain a mark point or it may contain
  * other nodes.
@@ -244,13 +246,81 @@ public class PdfStructureElement extends PdfDictionary implements IPdfStructureE
             if (chunk.getImage() != null) {
                 writeAttributes(chunk.getImage());
             } else {
+                HashMap<String, Object> attr = chunk.getAttributes();
+                if (attr != null){
+                    // Setting non-inheritable attributes
+                    if (attr.containsKey(Chunk.UNDERLINE)){
+                        this.setAttribute(PdfName.TEXTDECORATIONTYPE, PdfName.UNDERLINE);
+                    }
+                    if (attr.containsKey(Chunk.BACKGROUND)){
+                        Object[] back = (Object[])attr.get(Chunk.BACKGROUND);
+                        BaseColor color = (BaseColor)back[0];
+                        this.setAttribute(PdfName.BACKGROUNDCOLOR, new PdfArray(new float[] {color.getRed()/255f, color.getGreen()/255f, color.getBlue()/255f}) );
+                    }
 
+                    // Setting inheritable attributes
+                    PdfObject obj = parent.getAttribute(PdfName.COLOR);
+                    IPdfStructureElement parent = (IPdfStructureElement) this.getParent(true);
+                    if ((chunk.getFont() != null) && (chunk.getFont().getColor() != null)) {
+                        BaseColor c = chunk.getFont().getColor();
+                        setColorAttribute(c, obj, PdfName.COLOR);
+                    }
+                    PdfObject decorThickness  = parent.getAttribute(PdfName.TEXTDECORATIONTHICKNESS);
+                    PdfObject decorColor  = parent.getAttribute(PdfName.TEXTDECORATIONCOLOR);
+                    if (attr.containsKey(Chunk.UNDERLINE)){
+                        Object[][] unders = (Object[][])attr.get(Chunk.UNDERLINE);
+                        Object[] arr = unders[unders.length-1];
+                        BaseColor color = (BaseColor)arr[0];
+                        float [] floats = (float[]) arr[1];
+                        float thickness = floats[0];
+                        // Setting thickness
+                        if (decorThickness instanceof PdfNumber){
+                            float t = ((PdfNumber) decorThickness).floatValue();
+                            if (Float.compare(thickness,t) != 0){
+                                this.setAttribute(PdfName.TEXTDECORATIONTHICKNESS, new PdfNumber(thickness));
+                            }
+                        }
+                        else
+                            this.setAttribute(PdfName.TEXTDECORATIONTHICKNESS, new PdfNumber(thickness));
+
+                        // Setting decoration color
+                        if (color != null){
+                            setColorAttribute(color, decorColor, PdfName.TEXTDECORATIONCOLOR);
+                        }
+                    }
+                    
+                    if (attr.containsKey(Chunk.LINEHEIGHT)){
+                        float height = (Float)attr.get(Chunk.LINEHEIGHT);
+                        PdfObject parentLH = parent.getAttribute(PdfName.LINEHEIGHT);
+                        if (parentLH instanceof PdfNumber){
+                            float pLH = ((PdfNumber)parentLH).floatValue();
+                            if (Float.compare(pLH, height) != 0){
+                                this.setAttribute(PdfName.LINEHEIGHT, new PdfNumber(height));
+                            }
+                        }
+                        else
+                            this.setAttribute(PdfName.LINEHEIGHT, new PdfNumber(height));
+                    }
+                }
             }
         }
     }
 
     private void writeAttributes(final Image image) {
         if (image != null) {
+            if (image.getWidth() > 0){
+                this.setAttribute(PdfName.WIDTH, new PdfNumber(image.getWidth()));
+            }
+            if (image.getHeight() > 0){
+                this.setAttribute(PdfName.HEIGHT, new PdfNumber(image.getHeight()));
+            }
+            PdfRectangle rect = new PdfRectangle(image, image.getRotation());
+            if (rect != null){
+                this.setAttribute(PdfName.BBOX, rect);
+            }
+            if (image.getAlt() != null){
+                put(PdfName.ALT, new PdfString(image.getAlt()));
+            }
 
         }
     }
@@ -258,21 +328,29 @@ public class PdfStructureElement extends PdfDictionary implements IPdfStructureE
     private void writeAttributes(final Paragraph paragraph) {
         if (paragraph != null) {
             // Setting non-inheritable attributes
-            if ((paragraph.getFont() != null) && (paragraph.getFont().getColor() != null)) {
-                BaseColor c = paragraph.getFont().getColor();
-                float[] colors = new float[]{(float)c.getRed() / 255f, (float)c.getGreen() / 255f, (float)c.getBlue() / 255f};
-                this.setAttribute(PdfName.COLOR, new PdfArray(colors));
-            }
             if (Float.compare(paragraph.getSpacingBefore(), 0f) != 0)
                 this.setAttribute(PdfName.SPACEBEFORE, new PdfNumber(paragraph.getSpacingBefore()));
             if (Float.compare(paragraph.getSpacingAfter(), 0f) != 0)
                 this.setAttribute(PdfName.SPACEAFTER, new PdfNumber(paragraph.getSpacingAfter()));
-            if (Float.compare(paragraph.getFirstLineIndent(), 0f) != 0)
-                this.setAttribute(PdfName.TEXTINDENT, new PdfNumber(paragraph.getFirstLineIndent()));
-
+           
             // Setting inheritable attributes
             IPdfStructureElement parent = (IPdfStructureElement) this.getParent(true);
-            PdfObject obj = parent.getAttribute(PdfName.STARTINDENT);
+            PdfObject obj = parent.getAttribute(PdfName.COLOR);
+            if ((paragraph.getFont() != null) && (paragraph.getFont().getColor() != null)) {
+                BaseColor c = paragraph.getFont().getColor();
+                setColorAttribute(c, obj, PdfName.COLOR);
+            }
+            obj = parent.getAttribute(PdfName.TEXTINDENT);
+            if (Float.compare(paragraph.getFirstLineIndent(), 0f) != 0) {
+                boolean writeIndent = true;
+                if (obj instanceof PdfNumber){
+                    if (Float.compare(((PdfNumber)obj).floatValue(), new Float(paragraph.getFirstLineIndent())) == 0)
+                        writeIndent = false;
+                }
+                if (writeIndent)
+                    this.setAttribute(PdfName.TEXTINDENT, new PdfNumber(paragraph.getFirstLineIndent()));
+            }
+            obj = parent.getAttribute(PdfName.STARTINDENT);
             if (obj instanceof PdfNumber) {
                 float startIndent = ((PdfNumber) obj).floatValue();
                 if (Float.compare(startIndent, paragraph.getIndentationLeft()) != 0)
@@ -377,6 +455,34 @@ public class PdfStructureElement extends PdfDictionary implements IPdfStructureE
         if (footer != null) {
 
         }
+    }
+    
+    private boolean colorsEqual(PdfArray parentColor, float [] color){
+        if (Float.compare(color[0], parentColor.getAsNumber(0).floatValue()) != 0){
+            return false;
+        }
+        if (Float.compare(color[1], parentColor.getAsNumber(1).floatValue()) != 0){
+            return false;
+        }
+        if (Float.compare(color[2], parentColor.getAsNumber(2).floatValue()) != 0){
+            return false;
+        }
+        return true;
+    }
+
+    private void setColorAttribute(BaseColor newColor, PdfObject oldColor, PdfName attributeName){
+        float [] colorArr = new float[]{newColor.getRed()/255f, newColor.getGreen()/255f, newColor.getBlue()/255f};
+        if (oldColor instanceof PdfArray){
+            PdfArray oldC = (PdfArray)oldColor;
+            if (colorsEqual(oldC, colorArr))
+            {
+                this.setAttribute(attributeName, new PdfArray(colorArr));
+            }
+            else
+                this.setAttribute(attributeName, new PdfArray(colorArr));
+        }
+        else
+            this.setAttribute(attributeName, new PdfArray(colorArr));
     }
 
 

@@ -1,7 +1,7 @@
 <Document><P>
 
 <Span>Please visit </Span>
-<Link>http://itextpdf.com
+<Link color="[0, 0, 1]">http://itextpdf.com
 </Link>
 <Span> for more details.</Span>
 </P>
