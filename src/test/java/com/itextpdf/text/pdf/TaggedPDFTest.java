@@ -625,7 +625,6 @@ public class TaggedPDFTest {
     public void createTaggedPDF13() throws DocumentException, IOException, ParserConfigurationException, SAXException {
         initializeDocument("./target/com/itextpdf/test/pdf/TaggedPDFTest/out13.pdf");
 
-
         Paragraph p = new Paragraph();
         Chunk chunk = new Chunk("Please visit ");
         p.add(chunk);
@@ -657,6 +656,26 @@ public class TaggedPDFTest {
 
         PdfReader reader = new PdfReader("./target/com/itextpdf/test/pdf/TaggedPDFTest/out14.pdf");
         Assert.assertEquals(1, reader.getNumberOfPages());
+    }
+
+    @Test
+    public void createTaggedPDF15() throws DocumentException, IOException, ParserConfigurationException, SAXException {
+        initializeDocument("./target/com/itextpdf/test/pdf/TaggedPDFTest/out15.pdf");
+
+        Paragraph p = new Paragraph();
+        Chunk chunk = new Chunk("Hello tagged world!");
+        chunk.setBackground(new BaseColor(255,0,255));
+        chunk.setFont(FontFactory.getFont("TimesNewRoman", 20, BaseColor.ORANGE));
+        chunk.setUnderline(BaseColor.PINK, 1.2f, 1, 1, 1, 0);
+        p.add(chunk);
+
+        document.add(p);
+        document.close();
+        PdfReader reader = new PdfReader("./target/com/itextpdf/test/pdf/TaggedPDFTest/out15.pdf");
+        FileOutputStream xmlOut = new FileOutputStream("./target/com/itextpdf/test/pdf/TaggedPDFTest/test15.xml");
+        new MyTaggedPdfReaderTool().convertToXml(reader, xmlOut);
+        xmlOut.close();
+        Assert.assertTrue(compareXmls("./src/test/resources/com/itextpdf/text/pdf/TaggedPdfTest/test15.xml", "./target/com/itextpdf/test/pdf/TaggedPDFTest/test15.xml"));
     }
 
     private boolean compareXmls(String xml1, String xml2) throws ParserConfigurationException, SAXException, IOException {
