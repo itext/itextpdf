@@ -1392,6 +1392,7 @@ public class PdfSignatureAppearance {
             }
         }
         finally {
+        	writer.reader.close();
             if (tempFile != null) {
                 try{raf.close();}catch(Exception ee){}
                 if (originalout != null)

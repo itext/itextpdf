@@ -641,6 +641,7 @@ public class PdfCopy extends PdfWriter {
 
     @Override
     public void freeReader(PdfReader reader) throws IOException {
+        reader.close();
         indirectMap.remove(reader);
 // TODO: Removed - the user should be responsible for closing all PdfReaders.  But, this could cause a lot of memory leaks in code out there that hasn't been properly closing things - maybe add a finalizer to PdfReader that calls PdfReader#close() ??            	
 //        if (currentPdfReaderInstance != null) {
