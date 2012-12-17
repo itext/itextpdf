@@ -1531,7 +1531,8 @@ public class CFFFontSubset extends CFFFont {
         	if (fdSubrs[i]!= null && fonts[Font].PrivateSubrsOffset[i] >= 0)
         	{
         		OutputList.addLast(new SubrMarkerItem(fdSubrs[i],fdPrivateBase[i]));
-        		OutputList.addLast(new RangeItem(new RandomAccessFileOrArray(NewLSubrsIndex[i]),0,NewLSubrsIndex[i].length));
+        		if(NewLSubrsIndex[i]!=null)
+        			OutputList.addLast(new RangeItem(new RandomAccessFileOrArray(NewLSubrsIndex[i]),0,NewLSubrsIndex[i].length));
         	}
         }
     }
