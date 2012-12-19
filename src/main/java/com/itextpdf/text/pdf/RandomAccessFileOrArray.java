@@ -222,10 +222,13 @@ public class RandomAccessFileOrArray implements DataInput {
         }
         if (len > 0){
         	int byteSourceCount = byteSource.get(byteSourcePosition, b, off, len);
-        	count += byteSourceCount;
-        	byteSourcePosition += byteSourceCount;
+            if (byteSourceCount > 0) {
+                count += byteSourceCount;
+                byteSourcePosition += byteSourceCount;
+            }
         }
-
+        if (count == 0)
+            return -1;
         return count;
     }
     
