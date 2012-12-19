@@ -44,16 +44,15 @@
 package com.itextpdf.text;
 
 import com.itextpdf.text.error_messages.MessageLocalization;
-import com.itextpdf.text.pdf.HyphenationEvent;
-import com.itextpdf.text.pdf.PdfAction;
-import com.itextpdf.text.pdf.PdfAnnotation;
-import com.itextpdf.text.pdf.PdfContentByte;
+import com.itextpdf.text.pdf.*;
 import com.itextpdf.text.pdf.draw.DrawInterface;
+import com.itextpdf.text.pdf.interfaces.IAccessibleElement;
 
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * This is the smallest significant part of text that can be added to a
@@ -77,7 +76,7 @@ import java.util.List;
  * </BLOCKQUOTE>
  */
 
-public class Chunk implements Element {
+public class Chunk implements Element, IAccessibleElement {
 
 	// public static membervariables
 
@@ -86,6 +85,9 @@ public class Chunk implements Element {
 
 	/** This is a Chunk containing a newline. */
 	public static final Chunk NEWLINE = new Chunk("\n");
+    static {
+        NEWLINE.setRole(PdfName.P);
+    }
 
 	/** This is a Chunk containing a newpage. */
 	public static final Chunk NEXTPAGE = new Chunk("");
@@ -104,6 +106,10 @@ public class Chunk implements Element {
 	/** Contains some of the attributes for this Chunk. */
 	protected HashMap<String, Object> attributes = null;
 
+    protected PdfName role = null;
+    protected HashMap<PdfName, PdfObject> accessibleAttributes = null;
+    protected UUID id = UUID.randomUUID();
+
 	// constructors
 
 	/**
@@ -112,6 +118,7 @@ public class Chunk implements Element {
 	public Chunk() {
 		this.content = new StringBuffer();
 		this.font = new Font();
+        this.role = PdfName.SPAN;
 	}
 
     /**
@@ -128,6 +135,11 @@ public class Chunk implements Element {
         if (ck.attributes != null) {
             attributes = new HashMap<String, Object>(ck.attributes);
         }
+        role = ck.role;
+        if (ck.accessibleAttributes != null) {
+            accessibleAttributes = new HashMap<PdfName, PdfObject>(ck.accessibleAttributes);
+        }
+        id = ck.id;
     }
 
 	/**
@@ -140,9 +152,10 @@ public class Chunk implements Element {
 	 *            the font
 	 */
 	public Chunk(final String content, final Font font) {
-		this.content = new StringBuffer(content);
-		this.font = font;
-	}
+        this.content = new StringBuffer(content);
+        this.font = font;
+        this.role = PdfName.SPAN;
+    }
 
 	/**
 	 * Constructs a chunk of text with a certain content, without specifying a
@@ -167,6 +180,7 @@ public class Chunk implements Element {
 		this.content = new StringBuffer();
 		this.content.append(c);
 		this.font = font;
+        this.role = PdfName.SPAN;
 	}
 
 	/**
@@ -196,6 +210,7 @@ public class Chunk implements Element {
 		copyImage.setAbsolutePosition(Float.NaN, Float.NaN);
 		setAttribute(IMAGE, new Object[] { copyImage, new Float(offsetX),
 				new Float(offsetY), Boolean.FALSE });
+        this.role = null;
 	}
 
 	/**
@@ -224,6 +239,7 @@ public class Chunk implements Element {
 	public Chunk(final DrawInterface separator, final boolean vertical) {
 		this(OBJECT_REPLACEMENT_CHARACTER, new Font());
 		setAttribute(SEPARATOR, new Object[] {separator, Boolean.valueOf(vertical)});
+        this.role = null;
 	}
 
 	/**
@@ -257,6 +273,7 @@ public class Chunk implements Element {
 			throw new IllegalArgumentException(MessageLocalization.getComposedMessage("a.tab.position.may.not.be.lower.than.0.yours.is.1", String.valueOf(tabPosition)));
 		}
 		setAttribute(TAB, new Object[] {separator, new Float(tabPosition), Boolean.valueOf(newline), new Float(0)});
+        this.role = null;
 	}
 
 	/**
@@ -276,6 +293,7 @@ public class Chunk implements Element {
 		this(OBJECT_REPLACEMENT_CHARACTER, new Font());
 		setAttribute(IMAGE, new Object[] { image, new Float(offsetX),
 				new Float(offsetY), Boolean.valueOf(changeLeading) });
+        this.role = null;
 	}
 
 	// implementation of the Element-methods
@@ -798,6 +816,7 @@ public class Chunk implements Element {
 	 */
 
 	public Chunk setAction(final PdfAction action) {
+        setRole(PdfName.LINK);
 		return setAttribute(ACTION, action);
 	}
 
@@ -810,6 +829,7 @@ public class Chunk implements Element {
 	 */
 
 	public Chunk setAnchor(final URL url) {
+        setRole(PdfName.LINK);
 		return setAttribute(ACTION, new PdfAction(url.toExternalForm()));
 	}
 
@@ -822,7 +842,8 @@ public class Chunk implements Element {
 	 */
 
 	public Chunk setAnchor(final String url) {
-		return setAttribute(ACTION, new PdfAction(url));
+        setRole(PdfName.LINK);
+        return setAttribute(ACTION, new PdfAction(url));
 	}
 
 	/** Key for newpage. */
@@ -952,4 +973,53 @@ public class Chunk implements Element {
     public boolean isTabspace() {
         return attributes != null && attributes.containsKey(TABSPACE);
     }
+
+    public PdfObject getAccessibleAttribute(final PdfName key) {
+        if (getImage() != null) {
+            return getImage().getAccessibleAttribute(key);
+        } else if (accessibleAttributes != null)
+            return accessibleAttributes.get(key);
+        else
+            return null;
+    }
+
+    public void setAccessibleAttribute(final PdfName key, final PdfObject value) {
+        if (getImage() != null) {
+            getImage().setAccessibleAttribute(key, value);
+        } else {
+            if (accessibleAttributes == null)
+                accessibleAttributes = new HashMap<PdfName, PdfObject>();
+            accessibleAttributes.put(key, value);
+        }
+    }
+
+    public HashMap<PdfName, PdfObject> getAccessibleAttributes() {
+        if (getImage() != null)
+            return getImage().getAccessibleAttributes();
+        else
+            return accessibleAttributes;
+    }
+
+    public PdfName getRole() {
+        if (getImage() != null)
+            return getImage().getRole();
+        else
+            return role;
+    }
+
+    public void setRole(final PdfName role) {
+        if (getImage() != null)
+            getImage().setRole(role);
+        else
+            this.role = role;
+    }
+
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(final UUID id) {
+        this.id = id;
+    }
+
 }

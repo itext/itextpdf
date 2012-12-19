@@ -45,8 +45,14 @@ package com.itextpdf.text;
 
 import com.itextpdf.text.api.Indentable;
 import com.itextpdf.text.factories.RomanAlphabetFactory;
+import com.itextpdf.text.pdf.PdfName;
+import com.itextpdf.text.pdf.PdfObject;
+import com.itextpdf.text.pdf.PdfStructureElement;
+import com.itextpdf.text.pdf.interfaces.IAccessibleElement;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.UUID;
 
 /**
  * A <CODE>List</CODE> contains several <CODE>ListItem</CODE>s.
@@ -93,7 +99,7 @@ import java.util.ArrayList;
  * @see		ListItem
  */
 
-public class List implements TextElementArray, Indentable {
+public class List implements TextElementArray, Indentable, IAccessibleElement {
 
     // constants
 
@@ -147,6 +153,10 @@ public class List implements TextElementArray, Indentable {
     protected float indentationRight = 0;
     /** The indentation of the listitems. */
     protected float symbolIndent = 0;
+
+    protected PdfName role = PdfName.L;
+    protected HashMap<PdfName, PdfObject> accessibleAttributes = null;
+    protected UUID id = UUID.randomUUID();
 
     // constructors
 
@@ -612,4 +622,38 @@ public class List implements TextElementArray, Indentable {
         }
         return null;
     }
+
+    public PdfObject getAccessibleAttribute(final PdfName key) {
+        if (accessibleAttributes != null)
+            return accessibleAttributes.get(key);
+        else
+            return null;
+    }
+
+    public void setAccessibleAttribute(final PdfName key, final PdfObject value) {
+        if (accessibleAttributes == null)
+            accessibleAttributes = new HashMap<PdfName, PdfObject>();
+        accessibleAttributes.put(key, value);
+    }
+
+    public HashMap<PdfName, PdfObject> getAccessibleAttributes() {
+        return accessibleAttributes;
+    }
+
+    public PdfName getRole() {
+        return role;
+    }
+
+    public void setRole(final PdfName role) {
+        this.role = role;
+    }
+
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(final UUID id) {
+        this.id = id;
+    }
+
 }

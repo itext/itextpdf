@@ -200,6 +200,11 @@ public class PdfName extends PdfObject implements Comparable<PdfName> {
      * @since	2.1.6
      */
     public static final PdfName BACKGROUND = new PdfName("Background");
+    /**
+     * A name
+     * @since	5.3.5
+     */
+    public static final PdfName BACKGROUNDCOLOR = new PdfName("BackgroundColor");
     /** A name */
     public static final PdfName BASEENCODING = new PdfName("BaseEncoding");
     /** A name */
@@ -1033,6 +1038,11 @@ public class PdfName extends PdfObject implements Comparable<PdfName> {
      * @since 2.1.6
      */
     public static final PdfName LINEAR = new PdfName("Linear");
+    /**
+     * A name.
+     * @since 5.3.5
+     */
+    public static final PdfName LINEHEIGHT = new PdfName("LineHeight");
     /** A name */
     public static final PdfName LINK = new PdfName("Link");
     /** A name */
@@ -1744,6 +1754,11 @@ public class PdfName extends PdfObject implements Comparable<PdfName> {
      * @since 2.1.6
      */
     public static final PdfName TD = new PdfName("TD");
+    /**
+     * A name
+     * @since 5.3.5
+     */
+    public static final PdfName TR = new PdfName("TR");
     /** A name */
     public static final PdfName TEXT = new PdfName("Text");
     /**
@@ -1751,6 +1766,21 @@ public class PdfName extends PdfObject implements Comparable<PdfName> {
      * @since 5.3.4
      */
     public static final PdfName TEXTALIGN = new PdfName("TextAlign");
+    /**
+     * A name
+     * @since 5.3.5
+     */
+    public static final PdfName TEXTDECORATIONCOLOR = new PdfName("TextDecorationColor");
+    /**
+     * A name
+     * @since 5.3.5
+     */
+    public static final PdfName TEXTDECORATIONTHICKNESS = new PdfName("TextDecorationThickness");
+    /**
+     * A name
+     * @since 5.3.5
+     */
+    public static final PdfName TEXTDECORATIONTYPE = new PdfName("TextDecorationType");
     /**
      * A name
      * @since 5.3.4

@@ -46,8 +46,13 @@ package com.itextpdf.text;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.UUID;
 
 import com.itextpdf.text.error_messages.MessageLocalization;
+import com.itextpdf.text.pdf.PdfName;
+import com.itextpdf.text.pdf.PdfObject;
+import com.itextpdf.text.pdf.interfaces.IAccessibleElement;
 
 /**
  * A generic Document class.
@@ -91,7 +96,7 @@ import com.itextpdf.text.error_messages.MessageLocalization;
  * </BLOCKQUOTE>
  */
 
-public class Document implements DocListener {
+public class Document implements DocListener, IAccessibleElement {
 
     /**
 	 * Allows the pdf documents to be produced without compression for debugging
@@ -163,6 +168,10 @@ public class Document implements DocListener {
     /** This is a chapter number in case ChapterAutoNumber is used. */
     protected int chapternumber = 0;
 
+    protected PdfName role = PdfName.DOCUMENT;
+    protected HashMap<PdfName, PdfObject> accessibleAttributes = null;
+    protected UUID id = UUID.randomUUID();
+
     // constructor
 
 	/**
@@ -219,6 +228,15 @@ public class Document implements DocListener {
 
     public void addDocListener(DocListener listener) {
         listeners.add(listener);
+        if (listener instanceof IAccessibleElement) {
+            IAccessibleElement ae = (IAccessibleElement)listener;
+            ae.setRole(this.role);
+            ae.setId(this.id);
+            if (this.accessibleAttributes != null) {
+                for (PdfName key : this.accessibleAttributes.keySet())
+                    ae.setAccessibleAttribute(key, this.accessibleAttributes.get(key));
+            }
+        }
     }
 
 	/**
@@ -282,7 +300,7 @@ public class Document implements DocListener {
 		for (DocListener listener : listeners) {
             listener.setPageSize(pageSize);
 			listener.setMargins(marginLeft, marginRight, marginTop,
-					marginBottom);
+                    marginBottom);
             listener.open();
         }
     }
@@ -509,6 +527,19 @@ public class Document implements DocListener {
         try {
             return add(new Meta(Element.PRODUCER, Version.getInstance().getVersion()));
 		} catch (DocumentException de) {
+            throw new ExceptionConverter(de);
+        }
+    }
+
+    /**
+     * Adds a language to th document. Required for PDF/UA compatible documents.
+     * @param language
+     * @return <code>true</code> if successfull, <code>false</code> otherwise
+     */
+    public boolean addLanguage(String language) {
+        try {
+            return add(new Meta(Element.LANGUAGE, language));
+        } catch (DocumentException de) {
             throw new ExceptionConverter(de);
         }
     }
@@ -785,4 +816,38 @@ public class Document implements DocListener {
     public boolean isMarginMirroring() {
         return marginMirroring;
     }
+
+    public PdfObject getAccessibleAttribute(final PdfName key) {
+        if (accessibleAttributes != null)
+            return accessibleAttributes.get(key);
+        else
+            return null;
+    }
+
+    public void setAccessibleAttribute(final PdfName key, final PdfObject value) {
+        if (accessibleAttributes == null)
+            accessibleAttributes = new HashMap<PdfName, PdfObject>();
+        accessibleAttributes.put(key, value);
+    }
+
+    public HashMap<PdfName, PdfObject> getAccessibleAttributes() {
+        return accessibleAttributes;
+    }
+
+    public PdfName getRole() {
+        return role;
+    }
+
+    public void setRole(final PdfName role) {
+        this.role = role;
+    }
+
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(final UUID id) {
+        this.id = id;
+    }
+
 }

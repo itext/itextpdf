@@ -71,7 +71,7 @@ public class SpotColor extends ExtendedColor {
     }
 
     public boolean equals(Object obj) {
-        return this == obj;
+        return obj instanceof SpotColor && (((SpotColor)obj).spot).equals(this.spot) && ((SpotColor)obj).tint == this.tint;
     }
     
     public int hashCode() {

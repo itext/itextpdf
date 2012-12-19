@@ -68,7 +68,7 @@ public class PatternColor extends ExtendedColor {
     }
     
     public boolean equals(Object obj) {
-        return this == obj;
+        return obj instanceof PatternColor && (((PatternColor)obj).painter).equals(this.painter);
     }
     
     public int hashCode() {

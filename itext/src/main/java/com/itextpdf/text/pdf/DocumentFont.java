@@ -43,15 +43,16 @@
  */
 package com.itextpdf.text.pdf;
 
-import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.ExceptionConverter;
-import com.itextpdf.text.pdf.fonts.cmaps.CMapParserEx;
-import com.itextpdf.text.pdf.fonts.cmaps.CMapToUnicode;
-import com.itextpdf.text.pdf.fonts.cmaps.CidLocationFromByte;
-
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.ExceptionConverter;
+import com.itextpdf.text.io.RandomAccessSourceFactory;
+import com.itextpdf.text.pdf.fonts.cmaps.CMapParserEx;
+import com.itextpdf.text.pdf.fonts.cmaps.CMapToUnicode;
+import com.itextpdf.text.pdf.fonts.cmaps.CidLocationFromByte;
 
 /**
  *
@@ -202,7 +203,7 @@ public class DocumentFont extends BaseFont {
 
     private void fillMetrics(byte[] touni, IntHashtable widths, int dw) {
         try {
-            PdfContentParser ps = new PdfContentParser(new PRTokeniser(touni));
+            PdfContentParser ps = new PdfContentParser(new PRTokeniser(new RandomAccessFileOrArray(new RandomAccessSourceFactory().createSource(touni))));
             PdfObject ob = null;
             boolean notFound = true;
             int nestLevel = 0;
@@ -766,6 +767,14 @@ public class DocumentFont extends BaseFont {
     @Override
     protected int[] getRawCharBBox(int c, String name) {
         return null;
+    }
+
+    @Override
+    public boolean isVertical() {
+        if (cjkMirror != null)
+            return cjkMirror.isVertical();
+        else
+            return super.isVertical();
     }
 
     /**

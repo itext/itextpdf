@@ -122,6 +122,7 @@ public class PdfEncryption {
 	static long seq = System.currentTimeMillis();
 
 	private int revision;
+    
 
 	private ARCFOUREncryption arcfour = new ARCFOUREncryption();
 
@@ -522,7 +523,11 @@ public class PdfEncryption {
 		setupUserKey();
 	}
 
-	public void setupByEncryptionKey(byte[] key, int keylength) {
+	public void setKey(byte[] key) {
+        this.key = key;
+    }
+    
+    public void setupByEncryptionKey(byte[] key, int keylength) {
 		mkey = new byte[keylength / 8];
 		System.arraycopy(key, 0, mkey, 0, mkey.length);
 	}
@@ -561,7 +566,7 @@ public class PdfEncryption {
 
 	public PdfDictionary getEncryptionDictionary() {
 		PdfDictionary dic = new PdfDictionary();
-
+        
 		if (publicKeyHandler.getRecipientsSize() > 0) {
 			PdfArray recipients = null;
 
@@ -584,17 +589,28 @@ public class PdfEncryption {
 				dic.put(PdfName.SUBFILTER, PdfName.ADBE_PKCS7_S4);
 				dic.put(PdfName.RECIPIENTS, recipients);
 			} else {
-				dic.put(PdfName.R, new PdfNumber(AES_128));
-				dic.put(PdfName.V, new PdfNumber(4));
+                if (revision == AES_256) {
+                    dic.put(PdfName.R, new PdfNumber(AES_256));
+                    dic.put(PdfName.V, new PdfNumber(5));
+                }
+                else {
+                    dic.put(PdfName.R, new PdfNumber(AES_128));
+                    dic.put(PdfName.V, new PdfNumber(4));
+                }
 				dic.put(PdfName.SUBFILTER, PdfName.ADBE_PKCS7_S5);
 
 				PdfDictionary stdcf = new PdfDictionary();
 				stdcf.put(PdfName.RECIPIENTS, recipients);
 				if (!encryptMetadata)
 					stdcf.put(PdfName.ENCRYPTMETADATA, PdfBoolean.PDFFALSE);
-
-				if (revision == AES_128)
+				if (revision == AES_128) {
 					stdcf.put(PdfName.CFM, PdfName.AESV2);
+					stdcf.put(PdfName.LENGTH, new PdfNumber(128));
+                }
+                else if (revision == AES_256) {
+					stdcf.put(PdfName.CFM, PdfName.AESV3);
+                    stdcf.put(PdfName.LENGTH, new PdfNumber(256));
+                }
 				else
 					stdcf.put(PdfName.CFM, PdfName.V2);
 				PdfDictionary cf = new PdfDictionary();
@@ -615,7 +631,10 @@ public class PdfEncryption {
 			byte[] encodedRecipient = null;
 
 			try {
-				md = MessageDigest.getInstance("SHA-1");
+                if (revision == AES_256)
+				    md = MessageDigest.getInstance("SHA-256");
+                else
+				    md = MessageDigest.getInstance("SHA-1");
 				md.update(publicKeyHandler.getSeed());
 				for (int i = 0; i < publicKeyHandler.getRecipientsSize(); i++) {
 					encodedRecipient = publicKeyHandler.getEncodedRecipient(i);
@@ -630,7 +649,10 @@ public class PdfEncryption {
 
 			byte[] mdResult = md.digest();
 
-			setupByEncryptionKey(mdResult, keyLength);
+            if (revision == AES_256)
+                key = mdResult;
+            else
+                setupByEncryptionKey(mdResult, keyLength);
 		} else {
 			dic.put(PdfName.FILTER, PdfName.STANDARD);
 			dic.put(PdfName.O, new PdfLiteral(PdfContentByte

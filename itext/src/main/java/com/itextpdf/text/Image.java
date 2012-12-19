@@ -48,32 +48,22 @@ import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Dictionary;
+import java.util.HashMap;
+import java.util.UUID;
 
 import com.itextpdf.awt.PdfGraphics2D;
 import com.itextpdf.text.api.Indentable;
 import com.itextpdf.text.api.Spaceable;
 import com.itextpdf.text.error_messages.MessageLocalization;
-import com.itextpdf.text.pdf.ICC_Profile;
-import com.itextpdf.text.pdf.PRIndirectReference;
-import com.itextpdf.text.pdf.PdfArray;
-import com.itextpdf.text.pdf.PdfContentByte;
-import com.itextpdf.text.pdf.PdfDictionary;
-import com.itextpdf.text.pdf.PdfIndirectReference;
-import com.itextpdf.text.pdf.PdfName;
-import com.itextpdf.text.pdf.PdfNumber;
-import com.itextpdf.text.pdf.PdfOCG;
-import com.itextpdf.text.pdf.PdfObject;
-import com.itextpdf.text.pdf.PdfReader;
-import com.itextpdf.text.pdf.PdfStream;
-import com.itextpdf.text.pdf.PdfTemplate;
-import com.itextpdf.text.pdf.PdfWriter;
-import com.itextpdf.text.pdf.RandomAccessFileOrArray;
+import com.itextpdf.text.pdf.*;
 import com.itextpdf.text.pdf.codec.BmpImage;
 import com.itextpdf.text.pdf.codec.CCITTG4Encoder;
 import com.itextpdf.text.pdf.codec.GifImage;
 import com.itextpdf.text.pdf.codec.JBIG2Image;
 import com.itextpdf.text.pdf.codec.PngImage;
 import com.itextpdf.text.pdf.codec.TiffImage;
+import com.itextpdf.text.pdf.interfaces.IAccessibleElement;
 
 /**
  * An <CODE>Image</CODE> is the representation of a graphic element (JPEG, PNG
@@ -83,7 +73,7 @@ import com.itextpdf.text.pdf.codec.TiffImage;
  * @see Rectangle
  */
 
-public abstract class Image extends Rectangle implements Indentable, Spaceable {
+public abstract class Image extends Rectangle implements Indentable, Spaceable, IAccessibleElement {
 
 	// static final membervariables
 
@@ -211,6 +201,11 @@ public abstract class Image extends Rectangle implements Indentable, Spaceable {
 
 	/** an iText attributed unique id for this image. */
 	protected Long mySerialId = getSerialId();
+
+    protected PdfName role = PdfName.FIGURE;
+    protected HashMap<PdfName, PdfObject> accessibleAttributes = null;
+    protected UUID id = UUID.randomUUID();
+
 
 	// image from file or URL
 
@@ -702,6 +697,10 @@ public abstract class Image extends Rectangle implements Indentable, Spaceable {
 		this.imageMask = image.imageMask;
 		this.smask = image.smask;
 		this.transparency = image.transparency;
+        this.role = image.role;
+        if (image.accessibleAttributes != null)
+            this.accessibleAttributes = new HashMap<PdfName, PdfObject>(image.accessibleAttributes);
+        this.id = image.id;
 	}
 
 	/**
@@ -2063,4 +2062,38 @@ public abstract class Image extends Rectangle implements Indentable, Spaceable {
         g2d.dispose();
         return getInstance(tp);
     }
+
+    public PdfObject getAccessibleAttribute(final PdfName key) {
+        if (accessibleAttributes != null)
+            return accessibleAttributes.get(key);
+        else
+            return null;
+    }
+
+    public void setAccessibleAttribute(final PdfName key, final PdfObject value) {
+        if (accessibleAttributes == null)
+            accessibleAttributes = new HashMap<PdfName, PdfObject>();
+        accessibleAttributes.put(key, value);
+    }
+
+    public HashMap<PdfName, PdfObject> getAccessibleAttributes() {
+        return accessibleAttributes;
+    }
+
+    public PdfName getRole() {
+        return role;
+    }
+
+    public void setRole(final PdfName role) {
+        this.role = role;
+    }
+
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(final UUID id) {
+        this.id = id;
+    }
+
 }

@@ -159,7 +159,7 @@ public class LtvVerification {
         reader = stp.getReader();
         acroFields = stp.getAcroFields();
     }
-
+    
     /**
      * Add verification for a particular signature
      * @param signatureName the signature to validate (it may be a timestamp)
@@ -177,12 +177,16 @@ public class LtvVerification {
             throw new IllegalStateException(MessageLocalization.getComposedMessage("verification.already.output"));
         PdfPKCS7 pk = acroFields.verifySignature(signatureName);
         LOGGER.info("Adding verification for " + signatureName);
-        Certificate[] xc = pk.getSignCertificateChain();
+        Certificate[] xc = pk.getCertificates();
         X509Certificate cert;
+        X509Certificate signingCert = pk.getSigningCertificate();
         ValidationData vd = new ValidationData();
         for (int k = 0; k < xc.length; ++k) {
         	cert = (X509Certificate)xc[k];
-        	System.out.println("Certificate: " + cert.getSubjectDN());
+            if (certOption == CertificateOption.SIGNING_CERTIFICATE
+            	&& !cert.equals(signingCert)) {
+                continue;
+            }
             byte[] ocspEnc = null;
             if (ocsp != null && level != Level.CRL && k < xc.length - 1) {
                 ocspEnc = ocsp.getEncoded(cert, (X509Certificate)xc[k + 1], null);
@@ -209,16 +213,12 @@ public class LtvVerification {
                     }
                 }
             }
-            if (certOption == CertificateOption.SIGNING_CERTIFICATE)
-                break;
+            if (certInclude == CertificateInclusion.YES) {
+            	vd.certs.add(cert.getEncoded());
+            }
         }
         if (vd.crls.isEmpty() && vd.ocsps.isEmpty())
             return false;
-        if (certInclude == CertificateInclusion.YES) {
-            for (Certificate c : xc) {
-                vd.certs.add(c.getEncoded());
-            }
-        }
         validated.put(getSignatureHashKey(signatureName), vd);
         return true;
     }

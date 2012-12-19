@@ -555,4 +555,17 @@ public class PdfArray extends PdfObject implements Iterable<PdfObject> {
 	public Iterator<PdfObject> iterator() {
 		return arrayList.iterator();
 	}
+	
+	/**
+	 * 
+	 * @return this PdfArray's values as a long[] 
+	 * @since 5.3.5
+	 */
+	public long[] asLongArray(){
+		long[] rslt = new long[size()];
+        for (int k = 0; k < rslt.length; ++k) {
+            rslt[k] = getAsNumber(k).longValue();
+        }
+        return rslt;
+	}
 }

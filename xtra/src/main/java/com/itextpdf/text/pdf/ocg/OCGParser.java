@@ -62,6 +62,7 @@ import com.itextpdf.text.pdf.PdfName;
 import com.itextpdf.text.pdf.PdfObject;
 import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.PdfString;
+import com.itextpdf.text.pdf.RandomAccessFileOrArray;
 
 /**
  * A helper class for OCGRemover.
@@ -130,7 +131,7 @@ public class OCGParser {
     	try {
     		// parse the content stream
     		byte[] contentBytes = PdfReader.getStreamBytes(stream);
-            PRTokeniser tokeniser = new PRTokeniser(contentBytes);
+            PRTokeniser tokeniser = new PRTokeniser(new RandomAccessFileOrArray(contentBytes));
             PdfContentParser ps = new PdfContentParser(tokeniser);
             ArrayList<PdfObject> operands = new ArrayList<PdfObject>();
             while (ps.parse(operands).size() > 0){

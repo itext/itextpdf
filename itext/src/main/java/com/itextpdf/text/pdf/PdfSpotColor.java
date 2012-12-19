@@ -110,4 +110,9 @@ public class PdfSpotColor{
         array.add(func.getReference());
         return array;
     }
+
+    public boolean equals(Object obj) {
+        return obj instanceof PdfSpotColor && ((PdfSpotColor)obj).name == this.name && ((PdfSpotColor)obj).altcs == this.altcs;
+    }
+
 }

@@ -70,7 +70,7 @@ public class ShadingColor extends ExtendedColor {
     }
     
     public boolean equals(Object obj) {
-        return this == obj;
+        return obj instanceof ShadingColor && (((ShadingColor)obj).shadingPattern).equals(this.shadingPattern);
     }
     
     public int hashCode() {

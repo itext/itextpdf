@@ -99,7 +99,6 @@ class CJKFont extends BaseFont {
     private IntHashtable vMetrics;
     private IntHashtable hMetrics;
     private HashMap<String, Object> fontDesc;
-    private boolean vertical = false;
 
     private static void loadProperties() {
         if (propertiesLoaded)

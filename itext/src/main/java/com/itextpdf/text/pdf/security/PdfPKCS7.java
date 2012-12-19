@@ -70,7 +70,6 @@ import java.util.GregorianCalendar;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.ASN1Encoding;
 import org.bouncycastle.asn1.ASN1Enumerated;
@@ -106,7 +105,6 @@ import org.bouncycastle.cert.ocsp.BasicOCSPResp;
 import org.bouncycastle.cert.ocsp.CertificateID;
 import org.bouncycastle.cert.ocsp.SingleResp;
 import org.bouncycastle.jce.X509Principal;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.jce.provider.X509CertParser;
 import org.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder;
 import org.bouncycastle.tsp.TimeStampToken;
@@ -227,7 +225,7 @@ public class PdfPKCS7 {
      * @param tsp set to true if there's a PAdES LTV time stamp.
      * @param provider the provider or <code>null</code> for the default provider
      */
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@SuppressWarnings({ "unchecked" })
 	public PdfPKCS7(byte[] contentsKey, PdfName filterSubtype, String provider) {
         this.filterSubtype = filterSubtype;
         isTsp = PdfName.ETSI_RFC3161.equals(filterSubtype);
@@ -1158,11 +1156,12 @@ public class PdfPKCS7 {
             X509Certificate v = (X509Certificate)cc.get(cc.size() - 1);
             found = false;
             for (int k = 0; k < oc.size(); ++k) {
+            	X509Certificate issuer = (X509Certificate)oc.get(k);
                 try {
                     if (provider == null)
-                        v.verify(((X509Certificate)oc.get(k)).getPublicKey());
+                        v.verify(issuer.getPublicKey());
                     else
-                        v.verify(((X509Certificate)oc.get(k)).getPublicKey(), provider);
+                        v.verify(issuer.getPublicKey(), provider);
                     found = true;
                     cc.add(oc.get(k));
                     oc.remove(k);

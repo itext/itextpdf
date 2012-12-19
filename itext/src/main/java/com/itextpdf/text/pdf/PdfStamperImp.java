@@ -113,18 +113,17 @@ class PdfStamperImp extends PdfWriter {
         this.reader = reader;
         file = reader.getSafeFile();
         this.append = append;
+        if (reader.isEncrypted() && (append || PdfReader.unethicalreading)) {
+            crypto = new PdfEncryption(reader.getDecrypt());
+        }
         if (append) {
             if (reader.isRebuilt())
                 throw new DocumentException(MessageLocalization.getComposedMessage("append.mode.requires.a.document.without.errors.even.if.recovery.was.possible"));
-            if (reader.isEncrypted())
-                crypto = new PdfEncryption(reader.getDecrypt());
             pdf_version.setAppendmode(true);
-            file.reOpen();
             byte buf[] = new byte[8192];
             int n;
             while ((n = file.read(buf)) > 0)
                 this.os.write(buf, 0, n);
-            file.close();
             prevxref = reader.getLastXref();
             reader.setAppendable(true);
         }
@@ -329,43 +328,33 @@ class PdfStamperImp extends PdfWriter {
     }
 
     protected void close(PdfIndirectReference info, int skipInfo) throws IOException {
-        try {
-            file.reOpen();
-            alterContents();
-            int rootN = ((PRIndirectReference)reader.trailer.get(PdfName.ROOT)).getNumber();
-            if (append) {
-                int keys[] = marked.getKeys();
-                for (int k = 0; k < keys.length; ++k) {
-                    int j = keys[k];
-                    PdfObject obj = reader.getPdfObjectRelease(j);
-                    if (obj != null && skipInfo != j && j < initialXrefSize) {
-                        addToBody(obj, j, j != rootN);
-                    }
-                }
-                for (int k = initialXrefSize; k < reader.getXrefSize(); ++k) {
-                    PdfObject obj = reader.getPdfObject(k);
-                    if (obj != null) {
-                        addToBody(obj, getNewObjectNumber(reader, k, 0));
-                    }
+        alterContents();
+        int rootN = ((PRIndirectReference)reader.trailer.get(PdfName.ROOT)).getNumber();
+        if (append) {
+            int keys[] = marked.getKeys();
+            for (int k = 0; k < keys.length; ++k) {
+                int j = keys[k];
+                PdfObject obj = reader.getPdfObjectRelease(j);
+                if (obj != null && skipInfo != j && j < initialXrefSize) {
+                    addToBody(obj, j, j != rootN);
                 }
             }
-            else {
-                for (int k = 1; k < reader.getXrefSize(); ++k) {
-                    PdfObject obj = reader.getPdfObjectRelease(k);
-                    if (obj != null && skipInfo != k) {
-                        addToBody(obj, getNewObjectNumber(reader, k, 0), k != rootN);
-                    }
+            for (int k = initialXrefSize; k < reader.getXrefSize(); ++k) {
+                PdfObject obj = reader.getPdfObject(k);
+                if (obj != null) {
+                    addToBody(obj, getNewObjectNumber(reader, k, 0));
                 }
             }
         }
-        finally {
-            try {
-                file.close();
-            }
-            catch (Exception e) {
-                // empty on purpose
+        else {
+            for (int k = 1; k < reader.getXrefSize(); ++k) {
+                PdfObject obj = reader.getPdfObjectRelease(k);
+                if (obj != null && skipInfo != k) {
+                    addToBody(obj, getNewObjectNumber(reader, k, 0), k != rootN);
+                }
             }
         }
+
         PdfIndirectReference encryption = null;
         PdfObject fileID = null;
         if (crypto != null) {
@@ -402,7 +391,6 @@ class PdfStamperImp extends PdfWriter {
         os.flush();
         if (isCloseStream())
             os.close();
-        reader.close();
     }
 
     void applyRotation(PdfDictionary pageN, ByteBuffer out) {

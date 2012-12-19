@@ -53,6 +53,8 @@ import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.log.Logger;
 import com.itextpdf.text.log.LoggerFactory;
 import com.itextpdf.text.pdf.draw.DrawInterface;
+import com.itextpdf.text.pdf.interfaces.IAccessibleElement;
+import com.itextpdf.text.pdf.languages.ArabicLigaturizer;
 
 /**
  * Formats text in a columnwise form. The text is bound
@@ -464,8 +466,6 @@ public class ColumnText {
         }
         else if (element.type() == Element.PHRASE) {
         	element = new Paragraph((Phrase)element);
-        } if (element.type() == Element.PTABLE) {
-            element = new PdfPTable((PdfPTable) element);
         }
         if (element.type() != Element.PARAGRAPH && element.type() != Element.LIST && element.type() != Element.PTABLE && element.type() != Element.YMARK && element.type() != Element.DIV)
             throw new IllegalArgumentException(MessageLocalization.getComposedMessage("element.not.allowed"));
@@ -862,9 +862,15 @@ public class ColumnText {
         return go(simulate, null);
     }
 
-    protected int go(final boolean simulate, Element elementToGo) throws DocumentException {
+    public int go(final boolean simulate, final IAccessibleElement elementToGo) throws DocumentException {
         if (composite)
             return goComposite(simulate);
+
+        ListBody lBody = null;
+        if (isTagged(canvas) && elementToGo instanceof ListItem) {
+            lBody = ((ListItem)elementToGo).getListBody();
+        }
+
         addWaitingPhrase();
         if (bidiLine == null)
             return NO_MORE_TEXT;
@@ -887,7 +893,7 @@ public class ColumnText {
         if (canvas != null) {
             graphics = canvas;
             pdf = canvas.getPdfDocument();
-            if (pdf.useSeparateCanvasesForTextAndGraphics)
+            if (!isTagged(canvas))
                 text = canvas.getDuplicate();
             else
                 text = canvas;
@@ -911,12 +917,6 @@ public class ColumnText {
         PdfLine line;
         float x1;
         int status = 0;
-        if (!simulate && pdf.writer.isTagged()) {
-            if (elementToGo instanceof Paragraph) {
-                if (text != null)
-                    text.openMCBlock(elementToGo);
-            }
-        }
         while(true) {
         	firstIndent = lastWasNewline ? indent : followingIndent; //
         	if (rectangularMode) {
@@ -947,7 +947,7 @@ public class ColumnText {
                 }
                 yLine -= currentLeading;
                 if (!simulate && !dirty) {
-                	text.beginText();
+                    text.beginText();
                 	dirty = true;
                 }
                 if (Float.isNaN(firstLineY))
@@ -985,7 +985,26 @@ public class ColumnText {
                     break;
                 }
             }
+            if (isTagged(canvas) && elementToGo instanceof ListItem) {
+                if (!Float.isNaN(firstLineY) && !firstLineYDone) {
+                    if (!simulate) {
+                        ListLabel lbl = ((ListItem)elementToGo).getListLabel();
+                        canvas.openMCBlock(lbl);
+                        Chunk symbol = new Chunk(((ListItem)elementToGo).getListSymbol());
+                        if (!lbl.getTagLabelContent()) {
+                            symbol.setRole(null);
+                        }
+                        ColumnText.showTextAligned(canvas, Element.ALIGN_LEFT, new Phrase(symbol), leftX + lbl.getIndentation(), firstLineY, 0);
+                        canvas.closeMCBlock(lbl);
+                    }
+                    firstLineYDone = true;
+                }
+            }
             if (!simulate) {
+                if (lBody != null) {
+                    canvas.openMCBlock(lBody);
+                    lBody = null;
+                }
                 currentValues[0] = currentFont;
                 text.setTextMatrix(x1 + (line.isRTL() ? rightIndent : firstIndent) + line.indentLeft(), yLine);
                 lastX = pdf.writeLineToContent(line, text, graphics, currentValues, ratio);
@@ -998,12 +1017,6 @@ public class ColumnText {
         }
         if (dirty) {
             text.endText();
-            if (!simulate && pdf.writer.isTagged()) {
-                if (elementToGo instanceof Paragraph) {
-                    if (text != null && (status & NO_MORE_COLUMN) == 0)
-                        text.closeMCBlock(elementToGo);
-                }
-            }
             if (canvas != text)
                 canvas.add(text);
         }
@@ -1300,7 +1313,10 @@ public class ColumnText {
     
     
     protected int goComposite(final boolean simulate) throws DocumentException {
-    	if (!rectangularMode)
+    	PdfDocument pdf = null;
+        if (canvas != null)
+            pdf = canvas.pdf;
+        if (!rectangularMode)
             throw new DocumentException(MessageLocalization.getComposedMessage("irregular.columns.are.not.supported.in.composite.mode"));
     	linesWritten = 0;
         descender = 0;
@@ -1342,7 +1358,14 @@ public class ColumnText {
                     compositeColumn.minY = minY;
                     compositeColumn.maxY = maxY;
                     boolean keepCandidate = para.getKeepTogether() && createHere && !(firstPass && adjustFirstLine);
-                    status = compositeColumn.go(simulate || keepCandidate && keep == 0, element);
+                    boolean s = simulate || keepCandidate && keep == 0;
+                    if (isTagged(canvas) && !s) {
+                        canvas.openMCBlock(para);
+                    }
+                    status = compositeColumn.go(s);
+                    if (isTagged(canvas) && !s) {
+                        canvas.closeMCBlock(para);
+                    }
                     lastX = compositeColumn.getLastX();
                     updateFilledWidth(compositeColumn.filledWidth);
                     if ((status & NO_MORE_TEXT) == 0 && keepCandidate) {
@@ -1442,7 +1465,20 @@ public class ColumnText {
                     compositeColumn.minY = minY;
                     compositeColumn.maxY = maxY;
                     boolean keepCandidate = item.getKeepTogether() && createHere && !(firstPass && adjustFirstLine);
-                    status = compositeColumn.go(simulate || keepCandidate && keep == 0);
+                    boolean s = simulate || keepCandidate && keep == 0;
+                    if (isTagged(canvas) && !s) {
+                        item.getListLabel().setIndentation(listIndentation);
+                        if (list.getFirstItem() == item || (compositeColumn != null && compositeColumn.bidiLine != null))
+                            canvas.openMCBlock(list);
+                        canvas.openMCBlock(item);
+                    }
+					status = compositeColumn.go(simulate || keepCandidate && keep == 0, item);
+                    if (isTagged(canvas) && !s) {
+                        canvas.closeMCBlock(item.getListBody());
+                        canvas.closeMCBlock(item);
+                        if ((list.getLastItem() == item && (status & NO_MORE_TEXT) != 0) || (status & NO_MORE_COLUMN) != 0)
+                            canvas.closeMCBlock(list);
+                    }
                     lastX = compositeColumn.getLastX();
                     updateFilledWidth(compositeColumn.filledWidth);
                     if ((status & NO_MORE_TEXT) == 0 && keepCandidate) {
@@ -1462,10 +1498,13 @@ public class ColumnText {
                 linesWritten += compositeColumn.linesWritten;
                 descender = compositeColumn.descender;
                 currentLeading = compositeColumn.currentLeading;
-                if (!Float.isNaN(compositeColumn.firstLineY) && !compositeColumn.firstLineYDone) {
-                    if (!simulate)
-                        showTextAligned(canvas, Element.ALIGN_LEFT, new Phrase(item.getListSymbol()), compositeColumn.leftX + listIndentation, compositeColumn.firstLineY, 0);
-                    compositeColumn.firstLineYDone = true;
+                if (!isTagged(canvas)) {
+                    if (!Float.isNaN(compositeColumn.firstLineY) && !compositeColumn.firstLineYDone) {
+                        if (!simulate) {
+                            showTextAligned(canvas, Element.ALIGN_LEFT, new Phrase(item.getListSymbol()), compositeColumn.leftX + listIndentation, compositeColumn.firstLineY, 0);
+                        }
+                        compositeColumn.firstLineYDone = true;
+                    }
                 }
                 if ((status & NO_MORE_TEXT) != 0) {
                     compositeColumn = null;
@@ -1634,12 +1673,22 @@ public class ColumnText {
                     ArrayList<PdfPRow> sub = nt.getRows();
                     // first we add the real header rows (if necessary)
                     if (!skipHeader && realHeaderRows > 0) {
-                        sub.addAll(table.getRows(0, realHeaderRows));
+                        ArrayList<PdfPRow> rows = table.getRows(0, realHeaderRows);
+                        if (isTagged(canvas))
+                            nt.getHeader().rows = rows;
+                        sub.addAll(rows);
                     }
                     else
                         nt.setHeaderRows(footerRows);
                     // then we add the real content
-                    sub.addAll(table.getRows(rowIdx, k));
+
+                    {
+                        ArrayList<PdfPRow> rows = table.getRows(rowIdx, k);
+                        if (isTagged(canvas)) {
+                            nt.getBody().rows = rows;
+                        }
+                        sub.addAll(rows);
+                    }
                     // do we need to show a footer?
                     boolean showFooter = !table.isSkipLastFooter();
                     boolean newPageFollows = false;
@@ -1650,7 +1699,11 @@ public class ColumnText {
                     }
                     // we add the footer rows if necessary (not for incomplete tables)
                     if (footerRows > 0 && nt.isComplete() && showFooter) {
-                    	sub.addAll(table.getRows(realHeaderRows, realHeaderRows + footerRows));
+                        ArrayList<PdfPRow> rows = table.getRows(realHeaderRows, realHeaderRows + footerRows);
+                        if (isTagged(canvas)) {
+                            nt.getFooter().rows = rows;
+                        }
+                    	sub.addAll(rows);
                     }
                     else {
                     	footerRows = 0;
@@ -1675,10 +1728,25 @@ public class ColumnText {
                     }
 
                     // now we render the rows of the new table
-                    if (canvases != null)
+                    if (canvases != null) {
+                        if (isTagged(canvases[PdfPTable.TEXTCANVAS])) {
+                            canvases[PdfPTable.TEXTCANVAS].openMCBlock(table);
+                        }
                         nt.writeSelectedRows(0, -1, 0, -1, x1, yLineWrite, canvases, false);
-                    else
+                        if (isTagged(canvases[PdfPTable.TEXTCANVAS])) {
+                            canvases[PdfPTable.TEXTCANVAS].closeMCBlock(table);
+                        }
+                    }
+                    else {
+                        if (isTagged(canvas)) {
+                            canvas.openMCBlock(table);
+                        }
                         nt.writeSelectedRows(0, -1, 0, -1, x1, yLineWrite, canvas, false);
+                        if (isTagged(canvas)) {
+                            canvas.closeMCBlock(table);
+                        }
+                    }
+
                     // if the row was split, we copy the content of the last row
                     // that was consumed into the first row shown on the next page
                     if (splittedRow == k && k < table.size()) {
@@ -1742,23 +1810,13 @@ public class ColumnText {
                     element = !compositeElements.isEmpty() ? compositeElements.getFirst() : null;
                 } while (element != null && element.type() == Element.DIV);
 
-                compositeColumn = new ColumnText(canvas);
-                compositeColumn.setUseAscender((firstPass || descender == 0) && adjustFirstLine ? useAscender : false);
-                //compositeColumn.setAlignment(div.getTextAlignment());
-                //compositeColumn.setIndent(para.getIndentationLeft() + para.getFirstLineIndent());
-                compositeColumn.setRunDirection(runDirection);
-                compositeColumn.setArabicOptions(arabicOptions);
-                compositeColumn.setSpaceCharRatio(spaceCharRatio);
-
-
-                FloatLayout fl = new FloatLayout(compositeColumn, floatingElements);
+                FloatLayout fl = new FloatLayout(floatingElements, useAscender);
                 fl.setSimpleColumn(leftX, minY, rightX, yLine);
-                int status = fl.layout(simulate);
+                int status = fl.layout(canvas, simulate);
 
                 //firstPass = false;
                 yLine = fl.getYLine();
                 descender = 0;
-                compositeColumn = null;
                 if ((status & NO_MORE_TEXT) == 0) {
                     compositeElements.addAll(floatingElements);
                     return status;
@@ -1903,4 +1961,9 @@ public class ColumnText {
     public void setAdjustFirstLine(final boolean adjustFirstLine) {
         this.adjustFirstLine = adjustFirstLine;
     }
+
+    private static boolean isTagged(final PdfContentByte canvas) {
+        return (canvas != null) && (canvas.pdf != null) && (canvas.writer != null) && canvas.writer.isTagged();
+    }
+
 }

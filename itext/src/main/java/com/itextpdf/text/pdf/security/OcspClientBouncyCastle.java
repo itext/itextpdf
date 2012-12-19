@@ -73,6 +73,7 @@ import org.bouncycastle.operator.OperatorException;
 import org.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder;
 
 import com.itextpdf.text.error_messages.MessageLocalization;
+import com.itextpdf.text.io.StreamUtil;
 import com.itextpdf.text.log.Level;
 import com.itextpdf.text.log.Logger;
 import com.itextpdf.text.log.LoggerFactory;
@@ -143,7 +144,7 @@ public class OcspClientBouncyCastle implements OcspClient {
         }
         //Get Response
         InputStream in = (InputStream) con.getContent();
-        return new OCSPResp(RandomAccessFileOrArray.InputStreamToArray(in));
+        return new OCSPResp(StreamUtil.inputStreamToArray(in));
     }
     
     public BasicOCSPResp getBasicOCSPResp(X509Certificate checkCert, X509Certificate rootCert, String url) {

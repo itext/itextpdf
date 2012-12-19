@@ -43,7 +43,11 @@
  */
 package com.itextpdf.text.pdf;
 
+import com.itextpdf.text.*;
+import com.itextpdf.text.pdf.interfaces.IAccessibleElement;
 import com.itextpdf.text.pdf.interfaces.IPdfStructureElement;
+
+import java.util.HashMap;
 
 /**
  * This is a node in a document logical structure. It may contain a mark point or it may contain
@@ -57,12 +61,14 @@ public class PdfStructureElement extends PdfDictionary implements IPdfStructureE
      */
     private PdfStructureElement parent;
     private PdfStructureTreeRoot top;
-    
+
     /**
      * Holds value of property reference.
      */
     private PdfIndirectReference reference;
-    
+
+    private int pageMark;
+
     /**
      * Creates a new instance of PdfStructureElement.
      * @param parent the parent of this node
@@ -75,12 +81,12 @@ public class PdfStructureElement extends PdfDictionary implements IPdfStructureE
         put(PdfName.P, parent.reference);
         put(PdfName.TYPE, PdfName.STRUCTELEM);
     }
-    
+
     /**
      * Creates a new instance of PdfStructureElement.
      * @param parent the parent of this node
      * @param structureType the type of structure. It may be a standard type or a user type mapped by the role map
-     */    
+     */
     public PdfStructureElement(PdfStructureTreeRoot parent, PdfName structureType) {
         top = parent;
         init(parent, structureType);
@@ -118,26 +124,42 @@ public class PdfStructureElement extends PdfDictionary implements IPdfStructureE
             kids.add(kido);
             parent.put(PdfName.K, kids);
         }
+        if (kids.size() > 0) {
+            if (kids.getAsNumber(0) != null)
+                kids.remove(0);
+            if (kids.size() > 0) {
+                PdfDictionary mcr = kids.getAsDict(0);
+                if (mcr != null && PdfName.MCR.equals(mcr.getAsName(PdfName.TYPE))) {
+                    kids.remove(0);
+                }
+            }
+        }
         kids.add(this);
         put(PdfName.S, structureType);
         reference = top.getWriter().getPdfIndirectReference();
     }
-    
+
     /**
      * Gets the parent of this node.
      * @return the parent of this node
-     */    
+     */
     public PdfDictionary getParent() {
-        return parent;
+        return getParent(false);
     }
-    
+
+    public PdfDictionary getParent(boolean includeStructTreeRoot) {
+        if (parent == null && includeStructTreeRoot)
+            return top;
+        else
+            return parent;
+    }
+
     void setPageMark(int page, int mark) {
         if (mark >= 0)
             put(PdfName.K, new PdfNumber(mark));
-        if (parent == null)
-            top.setPageMark(page, reference);
+        top.setPageMark(page, reference);
     }
-    
+
     /**
      * Gets the reference this object will be written to.
      * @return the reference this object will be written to
@@ -179,4 +201,289 @@ public class PdfStructureElement extends PdfDictionary implements IPdfStructureE
         }
         attr.put(name, obj);
     }
+
+    public void writeAttributes(final IAccessibleElement element) {
+        if (element instanceof Paragraph) {
+            writeAttributes((Paragraph) element);
+        } else if (element instanceof Chunk) {
+            writeAttributes((Chunk)element);
+        } else if (element instanceof Image) {
+            writeAttributes((Image)element);
+        } else if (element instanceof List) {
+            writeAttributes((List)element);
+        } else if (element instanceof ListItem) {
+            writeAttributes((ListItem)element);
+        } else if (element instanceof ListLabel) {
+            writeAttributes((ListLabel)element);
+        } else if (element instanceof ListBody) {
+            writeAttributes((ListBody)element);
+        } else if (element instanceof PdfPTable) {
+            writeAttributes((PdfPTable)element);
+        } else if (element instanceof PdfPRow) {
+            writeAttributes((PdfPRow)element);
+        } else if (element instanceof PdfPCell) {
+            writeAttributes((PdfPCell)element);
+        } else if (element instanceof PdfPTableHeader) {
+            writeAttributes((PdfPTableHeader)element);
+        } else if (element instanceof PdfPTableFooter) {
+            writeAttributes((PdfPTableFooter)element);
+        } else if (element instanceof PdfPTableBody) {
+            writeAttributes((PdfPTableBody)element);
+        }
+        if (element.getAccessibleAttributes() != null) {
+            for (PdfName key : element.getAccessibleAttributes().keySet()) {
+                if (key.equals(PdfName.LANG) || key.equals(PdfName.ALT) || key.equals(PdfName.ACTUALTEXT) || key.equals(PdfName.E)) {
+                    put(key, element.getAccessibleAttribute(key));
+                } else {
+                    setAttribute(key, element.getAccessibleAttribute(key));
+                }
+            }
+        }
+    }
+
+    private void writeAttributes(final Chunk chunk) {
+        if (chunk != null) {
+            if (chunk.getImage() != null) {
+                writeAttributes(chunk.getImage());
+            } else {
+                HashMap<String, Object> attr = chunk.getAttributes();
+                if (attr != null){
+                    // Setting non-inheritable attributes
+                    if (attr.containsKey(Chunk.UNDERLINE)){
+                        this.setAttribute(PdfName.TEXTDECORATIONTYPE, PdfName.UNDERLINE);
+                    }
+                    if (attr.containsKey(Chunk.BACKGROUND)){
+                        Object[] back = (Object[])attr.get(Chunk.BACKGROUND);
+                        BaseColor color = (BaseColor)back[0];
+                        this.setAttribute(PdfName.BACKGROUNDCOLOR, new PdfArray(new float[] {color.getRed()/255f, color.getGreen()/255f, color.getBlue()/255f}) );
+                    }
+
+                    // Setting inheritable attributes
+                    PdfObject obj = parent.getAttribute(PdfName.COLOR);
+                    IPdfStructureElement parent = (IPdfStructureElement) this.getParent(true);
+                    if ((chunk.getFont() != null) && (chunk.getFont().getColor() != null)) {
+                        BaseColor c = chunk.getFont().getColor();
+                        setColorAttribute(c, obj, PdfName.COLOR);
+                    }
+                    PdfObject decorThickness  = parent.getAttribute(PdfName.TEXTDECORATIONTHICKNESS);
+                    PdfObject decorColor  = parent.getAttribute(PdfName.TEXTDECORATIONCOLOR);
+                    if (attr.containsKey(Chunk.UNDERLINE)){
+                        Object[][] unders = (Object[][])attr.get(Chunk.UNDERLINE);
+                        Object[] arr = unders[unders.length-1];
+                        BaseColor color = (BaseColor)arr[0];
+                        float [] floats = (float[]) arr[1];
+                        float thickness = floats[0];
+                        // Setting thickness
+                        if (decorThickness instanceof PdfNumber){
+                            float t = ((PdfNumber) decorThickness).floatValue();
+                            if (Float.compare(thickness,t) != 0){
+                                this.setAttribute(PdfName.TEXTDECORATIONTHICKNESS, new PdfNumber(thickness));
+                            }
+                        }
+                        else
+                            this.setAttribute(PdfName.TEXTDECORATIONTHICKNESS, new PdfNumber(thickness));
+
+                        // Setting decoration color
+                        if (color != null){
+                            setColorAttribute(color, decorColor, PdfName.TEXTDECORATIONCOLOR);
+                        }
+                    }
+                    
+                    if (attr.containsKey(Chunk.LINEHEIGHT)){
+                        float height = (Float)attr.get(Chunk.LINEHEIGHT);
+                        PdfObject parentLH = parent.getAttribute(PdfName.LINEHEIGHT);
+                        if (parentLH instanceof PdfNumber){
+                            float pLH = ((PdfNumber)parentLH).floatValue();
+                            if (Float.compare(pLH, height) != 0){
+                                this.setAttribute(PdfName.LINEHEIGHT, new PdfNumber(height));
+                            }
+                        }
+                        else
+                            this.setAttribute(PdfName.LINEHEIGHT, new PdfNumber(height));
+                    }
+                }
+            }
+        }
+    }
+
+    private void writeAttributes(final Image image) {
+        if (image != null) {
+            if (image.getWidth() > 0){
+                this.setAttribute(PdfName.WIDTH, new PdfNumber(image.getWidth()));
+            }
+            if (image.getHeight() > 0){
+                this.setAttribute(PdfName.HEIGHT, new PdfNumber(image.getHeight()));
+            }
+            PdfRectangle rect = new PdfRectangle(image, image.getRotation());
+            if (rect != null){
+                this.setAttribute(PdfName.BBOX, rect);
+            }
+            if (image.getAlt() != null){
+                put(PdfName.ALT, new PdfString(image.getAlt()));
+            }
+
+        }
+    }
+
+    private void writeAttributes(final Paragraph paragraph) {
+        if (paragraph != null) {
+            // Setting non-inheritable attributes
+            if (Float.compare(paragraph.getSpacingBefore(), 0f) != 0)
+                this.setAttribute(PdfName.SPACEBEFORE, new PdfNumber(paragraph.getSpacingBefore()));
+            if (Float.compare(paragraph.getSpacingAfter(), 0f) != 0)
+                this.setAttribute(PdfName.SPACEAFTER, new PdfNumber(paragraph.getSpacingAfter()));
+           
+            // Setting inheritable attributes
+            IPdfStructureElement parent = (IPdfStructureElement) this.getParent(true);
+            PdfObject obj = parent.getAttribute(PdfName.COLOR);
+            if ((paragraph.getFont() != null) && (paragraph.getFont().getColor() != null)) {
+                BaseColor c = paragraph.getFont().getColor();
+                setColorAttribute(c, obj, PdfName.COLOR);
+            }
+            obj = parent.getAttribute(PdfName.TEXTINDENT);
+            if (Float.compare(paragraph.getFirstLineIndent(), 0f) != 0) {
+                boolean writeIndent = true;
+                if (obj instanceof PdfNumber){
+                    if (Float.compare(((PdfNumber)obj).floatValue(), new Float(paragraph.getFirstLineIndent())) == 0)
+                        writeIndent = false;
+                }
+                if (writeIndent)
+                    this.setAttribute(PdfName.TEXTINDENT, new PdfNumber(paragraph.getFirstLineIndent()));
+            }
+            obj = parent.getAttribute(PdfName.STARTINDENT);
+            if (obj instanceof PdfNumber) {
+                float startIndent = ((PdfNumber) obj).floatValue();
+                if (Float.compare(startIndent, paragraph.getIndentationLeft()) != 0)
+                    this.setAttribute(PdfName.STARTINDENT, new PdfNumber(paragraph.getIndentationLeft()));
+            } else {
+                if (Math.abs(paragraph.getIndentationLeft()) > Float.MIN_VALUE)
+                    this.setAttribute(PdfName.STARTINDENT, new PdfNumber(paragraph.getIndentationLeft()));
+            }
+
+            obj = parent.getAttribute(PdfName.ENDINDENT);
+            if (obj instanceof PdfNumber) {
+                float endIndent = ((PdfNumber) obj).floatValue();
+                if (Float.compare(endIndent, paragraph.getIndentationRight()) != 0)
+                    this.setAttribute(PdfName.ENDINDENT, new PdfNumber(paragraph.getIndentationRight()));
+            } else {
+                if (Float.compare(paragraph.getIndentationRight(), 0) != 0)
+                    this.setAttribute(PdfName.ENDINDENT, new PdfNumber(paragraph.getIndentationRight()));
+            }
+
+            PdfName align = null;
+            switch (paragraph.getAlignment()) {
+                case Element.ALIGN_LEFT:
+                    align = PdfName.START;
+                    break;
+                case Element.ALIGN_CENTER:
+                    align = PdfName.CENTER;
+                    break;
+                case Element.ALIGN_RIGHT:
+                    align = PdfName.END;
+                    break;
+                case Element.ALIGN_JUSTIFIED:
+                    align = PdfName.JUSTIFY;
+                    break;
+            }
+            obj = parent.getAttribute(PdfName.TEXTALIGN);
+            if (obj instanceof PdfName) {
+                PdfName textAlign = ((PdfName) obj);
+                if (align != null && !textAlign.equals(align))
+                    this.setAttribute(PdfName.TEXTALIGN, align);
+            } else {
+                if (align != null && !PdfName.START.equals(align))
+                    this.setAttribute(PdfName.TEXTALIGN, align);
+            }
+        }
+    }
+
+    private void writeAttributes(final List list) {
+        if (list != null) {
+
+        }
+    }
+
+    private void writeAttributes(final ListItem listItem) {
+        if (listItem != null) {
+
+        }
+    }
+
+    private void writeAttributes(final ListBody listBody) {
+        if (listBody != null) {
+
+        }
+    }
+
+    private void writeAttributes(final ListLabel listLabel) {
+        if (listLabel != null) {
+
+        }
+    }
+
+    private void writeAttributes(final PdfPTable table) {
+        if (table != null) {
+
+        }
+    }
+
+    private void writeAttributes(final PdfPRow row) {
+        if (row != null) {
+
+        }
+    }
+
+    private void writeAttributes(final PdfPCell cell) {
+        if (cell != null) {
+
+        }
+    }
+
+    private void writeAttributes(final PdfPTableHeader header) {
+        if (header != null) {
+
+        }
+    }
+
+    private void writeAttributes(final PdfPTableBody body) {
+        if (body != null) {
+
+        }
+    }
+
+    private void writeAttributes(final PdfPTableFooter footer) {
+        if (footer != null) {
+
+        }
+    }
+    
+    private boolean colorsEqual(PdfArray parentColor, float [] color){
+        if (Float.compare(color[0], parentColor.getAsNumber(0).floatValue()) != 0){
+            return false;
+        }
+        if (Float.compare(color[1], parentColor.getAsNumber(1).floatValue()) != 0){
+            return false;
+        }
+        if (Float.compare(color[2], parentColor.getAsNumber(2).floatValue()) != 0){
+            return false;
+        }
+        return true;
+    }
+
+    private void setColorAttribute(BaseColor newColor, PdfObject oldColor, PdfName attributeName){
+        float [] colorArr = new float[]{newColor.getRed()/255f, newColor.getGreen()/255f, newColor.getBlue()/255f};
+        if (oldColor instanceof PdfArray){
+            PdfArray oldC = (PdfArray)oldColor;
+            if (colorsEqual(oldC, colorArr))
+            {
+                this.setAttribute(attributeName, new PdfArray(colorArr));
+            }
+            else
+                this.setAttribute(attributeName, new PdfArray(colorArr));
+        }
+        else
+            this.setAttribute(attributeName, new PdfArray(colorArr));
+    }
+
+
 }

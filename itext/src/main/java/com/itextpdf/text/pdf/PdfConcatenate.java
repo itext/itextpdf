@@ -94,6 +94,7 @@ public class PdfConcatenate {
 	        copy.addPage(copy.getImportedPage(reader, i));
 	    }
 	    copy.freeReader(reader);
+	    reader.close();
 	    return n;
 	}
 	

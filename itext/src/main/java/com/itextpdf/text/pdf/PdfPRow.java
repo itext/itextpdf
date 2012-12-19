@@ -51,13 +51,17 @@ import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.log.Logger;
 import com.itextpdf.text.log.LoggerFactory;
+import com.itextpdf.text.pdf.interfaces.IAccessibleElement;
+
+import java.util.HashMap;
+import java.util.UUID;
 
 /**
  * A row in a PdfPTable.
  * 
  * @author Paulo Soares
  */
-public class PdfPRow {
+public class PdfPRow implements IAccessibleElement {
 	
 	private final Logger LOGGER = LoggerFactory.getLogger(PdfPRow.class);
 	
@@ -87,6 +91,10 @@ public class PdfPRow {
 	protected boolean calculated = false;
     
     private int[] canvasesPos;
+
+    protected PdfName role = PdfName.TR;
+    protected HashMap<PdfName, PdfObject> accessibleAttributes = null;
+    protected UUID id = UUID.randomUUID();
     
 	/**
 	 * Constructs a new PdfPRow with the cells in the array that was passed
@@ -95,10 +103,20 @@ public class PdfPRow {
 	 * @param cells
 	 */
 	public PdfPRow(PdfPCell cells[]) {
-		this.cells = cells;
-		widths = new float[cells.length];
-		initExtraHeights();
+		this(cells, null);
 	}
+
+    public PdfPRow(PdfPCell cells[], PdfPRow source) {
+        this.cells = cells;
+        widths = new float[cells.length];
+        initExtraHeights();
+        if (source != null) {
+            this.id = source.id;
+            this.role = source.role;
+            if (source.accessibleAttributes != null)
+                this.accessibleAttributes = new HashMap<PdfName, PdfObject>(source.accessibleAttributes);
+        }
+    }
 
 	/**
 	 * Makes a copy of an existing row.
@@ -117,6 +135,10 @@ public class PdfPRow {
 		widths = new float[cells.length];
 		System.arraycopy(row.widths, 0, widths, 0, cells.length);
 		initExtraHeights();
+        this.id = row.id;
+        this.role = row.role;
+        if (row.accessibleAttributes != null)
+            this.accessibleAttributes = new HashMap<PdfName, PdfObject>(row.accessibleAttributes);
 	}
 
 	/**
@@ -324,11 +346,17 @@ public class PdfPRow {
 			newStart = 0;
 		if (cells[newStart] != null)
 			xPos -= cells[newStart].getLeft();
-		
-		for (int k = newStart; k < colEnd; ++k) {
-			PdfPCell cell = cells[k];
+
+        if (isTagged(canvases[PdfPTable.TEXTCANVAS])) {
+            canvases[PdfPTable.TEXTCANVAS].openMCBlock(this);
+        }
+        for (int k = newStart; k < colEnd; ++k) {
+            PdfPCell cell = cells[k];
 			if (cell == null)
 				continue;
+            if (isTagged(canvases[PdfPTable.TEXTCANVAS])) {
+                canvases[PdfPTable.TEXTCANVAS].openMCBlock(cell);
+            }
 			float currentMaxHeight = maxHeight + extraHeights[k];
 			
 			writeBorderAndBackground(xPos, yPos, currentMaxHeight, cell, canvases);
@@ -390,7 +418,13 @@ public class PdfPRow {
 				}
 				img.setAbsolutePosition(left, tly - img.getScaledHeight());
 				try {
-					canvases[PdfPTable.TEXTCANVAS].addImage(img);
+                    if (isTagged(canvases[PdfPTable.TEXTCANVAS])) {
+                        canvases[PdfPTable.TEXTCANVAS].openMCBlock(img);
+                    }
+                    canvases[PdfPTable.TEXTCANVAS].addImage(img);
+                    if (isTagged(canvases[PdfPTable.TEXTCANVAS])) {
+                        canvases[PdfPTable.TEXTCANVAS].closeMCBlock(img);
+                    }
 				} catch (DocumentException e) {
 					throw new ExceptionConverter(e);
 				}
@@ -531,7 +565,13 @@ public class PdfPRow {
 						+ yPos);
 				evt.cellLayout(cell, rect, canvases);
 			}
+            if (isTagged(canvases[PdfPTable.TEXTCANVAS])) {
+                canvases[PdfPTable.TEXTCANVAS].closeMCBlock(cell);
+            }
 		}
+        if (isTagged(canvases[PdfPTable.TEXTCANVAS])) {
+            canvases[PdfPTable.TEXTCANVAS].closeMCBlock(this);
+        }
 	}
 	
 	/**
@@ -728,7 +768,7 @@ public class PdfPRow {
 			return null;
 		}
 		calculateHeights();
-		PdfPRow split = new PdfPRow(newCells);
+		PdfPRow split = new PdfPRow(newCells, this);
 		split.widths = (float[]) widths.clone();
 		return split;
 	}
@@ -756,4 +796,42 @@ public class PdfPRow {
 		}
 		return false;
 	}
+
+    public PdfObject getAccessibleAttribute(final PdfName key) {
+        if (accessibleAttributes != null)
+            return accessibleAttributes.get(key);
+        else
+            return null;
+    }
+
+    public void setAccessibleAttribute(final PdfName key, final PdfObject value) {
+        if (accessibleAttributes == null)
+            accessibleAttributes = new HashMap<PdfName, PdfObject>();
+        accessibleAttributes.put(key, value);
+    }
+
+    public HashMap<PdfName, PdfObject> getAccessibleAttributes() {
+        return accessibleAttributes;
+    }
+
+    public PdfName getRole() {
+        return role;
+    }
+
+    public void setRole(final PdfName role) {
+        this.role = role;
+    }
+
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(final UUID id) {
+        this.id = id;
+    }
+
+    static private boolean isTagged(PdfContentByte canvas) {
+        return canvas != null && canvas.writer != null && canvas.writer.isTagged();
+    }
+
 }

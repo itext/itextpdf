@@ -622,11 +622,12 @@ class TrueTypeFont extends BaseFont {
     void process(byte ttfAfm[], boolean preload) throws DocumentException, IOException {
         tables = new HashMap<String, int[]>();
 
+        if (ttfAfm == null)
+            rf = new RandomAccessFileOrArray(fileName, preload, Document.plainRandomAccess);
+        else
+            rf = new RandomAccessFileOrArray(ttfAfm);
+        
         try {
-            if (ttfAfm == null)
-                rf = new RandomAccessFileOrArray(fileName, preload, Document.plainRandomAccess);
-            else
-                rf = new RandomAccessFileOrArray(ttfAfm);
             if (ttcIndex.length() > 0) {
                 int dirIdx = Integer.parseInt(ttcIndex);
                 if (dirIdx < 0)
@@ -670,10 +671,10 @@ class TrueTypeFont extends BaseFont {
             }
         }
         finally {
-            if (rf != null) {
-                rf.close();
-                if (!embedded)
-                    rf = null;
+        	//TODO: For embedded fonts, the underlying data source for the font will be left open until this TrueTypeFont object is collected by the Garbage Collector.  That may not be optimal.
+            if (!embedded){
+            	rf.close();
+                rf = null;
             }
         }
     }

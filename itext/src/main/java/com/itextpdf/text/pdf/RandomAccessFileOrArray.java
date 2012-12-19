@@ -43,41 +43,94 @@
  */
 package com.itextpdf.text.pdf;
 
-import com.itextpdf.text.Document;
-import java.io.ByteArrayOutputStream;
 import java.io.DataInput;
 import java.io.DataInputStream;
 import java.io.EOFException;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.RandomAccessFile;
 import java.net.URL;
-import java.nio.channels.FileChannel;
-import com.itextpdf.text.error_messages.MessageLocalization;
-/** An implementation of a RandomAccessFile for input only
- * that accepts a file or a byte array as data source.
+
+import com.itextpdf.text.Document;
+import com.itextpdf.text.io.IndependentRandomAccessSource;
+import com.itextpdf.text.io.RandomAccessSource;
+import com.itextpdf.text.io.RandomAccessSourceFactory;
+/** Intended to be layered on top of a low level RandomAccessSource object.  Provides
+ * functionality useful during parsing:
+ * <ul>
+ * 	<li>tracks current position in the file</li>
+ * 	<li>allows single byte pushback</li>
+ * 	<li>allows reading of multi-byte data structures (int, long, String) for both Big and Little Endian representations</li>
+ * 	<li>allows creation of independent 'views' of the underlying data source</li>
+ * </ul>
  *
- * @author Paulo Soares
+ * @author Paulo Soares, Kevin Day
  */
 public class RandomAccessFileOrArray implements DataInput {
 	
-    MappedRandomAccessFile rf;
-    RandomAccessFile trf;
-    boolean plainRandomAccess;
-    String filename;
-    byte arrayIn[];
-    long arrayInPtr;
-    byte back;
-    boolean isBack = false;
+	/**
+	 * The source that backs this object
+	 */
+	private final RandomAccessSource byteSource;
+	
+	/**
+	 * The physical location in the underlying byte source.
+	 */
+    private long byteSourcePosition;
     
-    /** Holds value of property startOffset. */
-    private long startOffset = 0;
+    /**
+     * the pushed  back byte, if any
+     */
+    private byte back;
+    /**
+     * Whether there is a pushed back byte
+     */
+    private boolean isBack = false;
 
+    /**
+     * @deprecated use {@link RandomAccessFileOrArray#RandomAccessFileOrArray(RandomAccessSource)} instead
+     * @param filename
+     * @throws IOException
+     */
+    @Deprecated
     public RandomAccessFileOrArray(String filename) throws IOException {
-    	this(filename, false, Document.plainRandomAccess);
+    	this(new RandomAccessSourceFactory()
+		.setForceRead(false)
+		.setUsePlainRandomAccess(Document.plainRandomAccess)
+		.createBestSource(filename));
+    	
+    }
+    
+    /**
+     * Creates an independent view of the specified source.  Closing the new object will not close the source.
+     * Closing the source will have adverse effect on the behavior of the new view.
+     * @deprecated use {@link RandomAccessFileOrArray#createView()} instead
+     * @param source the source for the new independent view
+     */
+    @Deprecated
+    public RandomAccessFileOrArray(RandomAccessFileOrArray source) {
+    	this(new IndependentRandomAccessSource(source.byteSource));
+    }
+
+    /**
+     * Creates an independent view of this object (with it's own file pointer and pushback queue).  Closing the new object will not close this object.
+     * Closing this object will have adverse effect on the view.
+     * @return the new view
+     */
+    public RandomAccessFileOrArray createView(){
+    	return new RandomAccessFileOrArray(new IndependentRandomAccessSource(byteSource));
+    }
+    
+    public RandomAccessSource createSourceView() {
+        return new IndependentRandomAccessSource(byteSource);
+    }
+    
+    /**
+     * Creates a RandomAccessFileOrArray that wraps the specified byte source.  The byte source will be closed when
+     * this RandomAccessFileOrArray is closed.
+     * @param byteSource the byte source to wrap
+     */
+    public RandomAccessFileOrArray(RandomAccessSource byteSource){
+    	this.byteSource = byteSource;
     }
     
     /**
@@ -86,194 +139,94 @@ public class RandomAccessFileOrArray implements DataInput {
      * @param forceRead if true, the entire file will be read into memory
      * @param plainRandomAccess if true, a regular RandomAccessFile is used to access the file contents.  If false, a memory mapped file will be used, unless the file cannot be mapped into memory, in which case regular RandomAccessFile will be used
      * @throws IOException if there is a failure opening or reading the file
+     * @deprecated use {@link RandomAccessSourceFactory#createBestSource(String)} and {@link RandomAccessFileOrArray#RandomAccessFileOrArray(RandomAccessSource)} instead
      */
+    @Deprecated
     public RandomAccessFileOrArray(String filename, boolean forceRead, boolean plainRandomAccess) throws IOException {
-        this.plainRandomAccess = plainRandomAccess;
-        File file = new File(filename);
-        if (!file.canRead()) {
-            if (filename.startsWith("file:/")
-            		|| filename.startsWith("http://") 
-                    || filename.startsWith("https://")
-                    || filename.startsWith("jar:")
-                    || filename.startsWith("wsjar:")
-                    || filename.startsWith("wsjar:")
-                    || filename.startsWith("vfszip:")) {
-                InputStream is = new URL(filename).openStream();
-                try {
-                    this.arrayIn = InputStreamToArray(is);
-                    return;
-                }
-                finally {
-                    try {is.close();}catch(IOException ioe){}
-                }
-            }
-            else {
-                InputStream is = BaseFont.getResourceStream(filename);
-                if (is == null)
-                    throw new IOException(MessageLocalization.getComposedMessage("1.not.found.as.file.or.resource", filename));
-                try {
-                    this.arrayIn = InputStreamToArray(is);
-                    return;
-                }
-                finally {
-                    try {is.close();}catch(IOException ioe){}
-                }
-            }
-        }
-        else if (forceRead) {
-            InputStream s = null;
-            try {
-                s = new FileInputStream(file);
-                this.arrayIn = InputStreamToArray(s);
-            }
-            finally {
-                try {if (s != null) {s.close();}}catch(Exception e){}
-            }
-        	return;
-        }
-        this.filename = filename;
-        openFile(filename);
+    	this(new RandomAccessSourceFactory()
+    		.setForceRead(forceRead)
+    		.setUsePlainRandomAccess(plainRandomAccess)
+    		.createBestSource(filename));
     }
 
     /**
-     * Utility method that opens the underlying file in plain random access mode or mapped random access mode
-     * @param filename the file to open
-     * @throws FileNotFoundException if the file does not exist
-     * @since 5.1.2
+     * @param url
+     * @throws IOException
+     * @deprecated use {@link RandomAccessSourceFactory#createSource(URL)} and {@link RandomAccessFileOrArray#RandomAccessFileOrArray(RandomAccessSource)} instead
      */
-    
-    private void openFile(String filename) throws IOException{
-        
-        if (plainRandomAccess){
-            openForPlainRandomAccess(filename);
-        }else{
-            try{
-                rf = new MappedRandomAccessFile(filename, "r");
-                trf = null;
-            } catch (IOException e){
-                if (exceptionIsMapFailureException(e)){
-                    openForPlainRandomAccess(filename);
-                } else {
-                    throw e;
-                }
-            }
-        }
-        
-    }
-    
-    /**
-     * Utility method that opens this RAFOA in plain random access mode
-     * @param filename the file to open
-     * @throws FileNotFoundException if the file does not exist
-     * @since 5.1.2
-     */
-    private void openForPlainRandomAccess(String filename) throws FileNotFoundException{
-        this.plainRandomAccess = true;
-        trf = new RandomAccessFile(filename, "r");
-        rf = null;
-    }
-    
-    /**
-     * Utility method that determines whether a given IOException is the result
-     * of a failure to map a memory mapped file.  It would be better if the runtime
-     * provided a special exception for this case, but it doesn't, so we have to rely
-     * on parsing the exception message.
-     * @param e the exception to check
-     * @return true if the exception was the result of a failure to map a memory mapped file
-     * @since 5.0.3
-     */
-    private static boolean exceptionIsMapFailureException(IOException e){
-        if (e.getMessage() != null && e.getMessage().indexOf("Map failed") >= 0)
-            return true;
-
-        return false;
-    }
-    
+    @Deprecated
     public RandomAccessFileOrArray(URL url) throws IOException {
-        InputStream is = url.openStream();
-        try {
-            this.arrayIn = InputStreamToArray(is);
-        }
-        finally {
-            try {is.close();}catch(IOException ioe){}
-        }
+    	this (new RandomAccessSourceFactory().createSource(url));
     }
 
+    /**
+     * @param is
+     * @throws IOException
+     * @deprecated use {@link RandomAccessSourceFactory#createSource(InputStream)} and {@link RandomAccessFileOrArray#RandomAccessFileOrArray(RandomAccessSource)} instead
+     */
+    @Deprecated
     public RandomAccessFileOrArray(InputStream is) throws IOException {
-        this.arrayIn = InputStreamToArray(is);
+    	this (new RandomAccessSourceFactory().createSource(is));
     }
     
-    public static byte[] InputStreamToArray(InputStream is) throws IOException {
-        byte b[] = new byte[8192];
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        while (true) {
-            int read = is.read(b);
-            if (read < 1)
-                break;
-            out.write(b, 0, read);
-        }
-        out.close();
-        return out.toByteArray();
-    }
 
+    /**
+     * @param url
+     * @throws IOException
+     * @deprecated use {@link RandomAccessSourceFactory#createSource(byte[])} and {@link RandomAccessFileOrArray#RandomAccessFileOrArray(RandomAccessSource)} instead
+     */
+   @Deprecated
     public RandomAccessFileOrArray(byte arrayIn[]) {
-        this.arrayIn = arrayIn;
+    	this (new RandomAccessSourceFactory().createSource(arrayIn));
     }
     
-    public RandomAccessFileOrArray(RandomAccessFileOrArray file) {
-        filename = file.filename;
-        arrayIn = file.arrayIn;
-        startOffset = file.startOffset;
-        plainRandomAccess = file.plainRandomAccess;
+    @Deprecated
+    //TODO: I'm only putting this in here for backwards compatability with PdfReader(RAFOA, byte[]).  Once we get rid of the
+    //PdfReader constructor, we can get rid of this method as well
+    protected RandomAccessSource getByteSource(){
+    	return byteSource;
     }
     
+    /**
+     * Pushes a byte back.  The next get() will return this byte instead of the value from the underlying data source
+     * @param b the byte to push
+     */
     public void pushBack(byte b) {
         back = b;
         isBack = true;
     }
     
+    /**
+     * Reads a single byte
+     * @return the byte, or -1 if EOF is reached
+     * @throws IOException
+     */
     public int read() throws IOException {
         if(isBack) {
             isBack = false;
             return back & 0xff;
         }
-        if (arrayIn == null)
-            return plainRandomAccess ? trf.read() : rf.read();
-        else {
-            if (arrayInPtr >= arrayIn.length)
-                return -1;
-            return arrayIn[(int)(arrayInPtr++)] & 0xff;
-        }
+        
+        return byteSource.get(byteSourcePosition++);
     }
     
     public int read(byte[] b, int off, int len) throws IOException {
         if (len == 0)
             return 0;
-        int n = 0;
-        if (isBack) {
+        int count = 0;
+        if (isBack && len > 0) {
             isBack = false;
-            if (len == 1) {
-                b[off] = back;
-                return 1;
-            }
-            else {
-                n = 1;
-                b[off++] = back;
-                --len;
-            }
+            b[off++] = back;
+            --len;
+            count++;
         }
-        if (arrayIn == null) {
-            return (plainRandomAccess ? trf.read(b, off, len) : rf.read(b, off, len)) + n;
+        if (len > 0){
+        	int byteSourceCount = byteSource.get(byteSourcePosition, b, off, len);
+        	count += byteSourceCount;
+        	byteSourcePosition += byteSourceCount;
         }
-        else {
-            if (arrayInPtr >= arrayIn.length)
-                return -1;
-            if (arrayInPtr + len > arrayIn.length)
-                len = (int)(arrayIn.length - arrayInPtr);
-            System.arraycopy(arrayIn, (int)arrayInPtr, b, off, len);
-            arrayInPtr += len;
-            return len + n;
-        }
+
+        return count;
     }
     
     public int read(byte b[]) throws IOException {
@@ -329,70 +282,44 @@ public class RandomAccessFileOrArray implements DataInput {
         return (int)skip(n);
     }
     
+    @Deprecated
+    //TODO: remove all references to this call, then remove this method
     public void reOpen() throws IOException {
-        if (filename != null && rf == null && trf == null) {
-            openFile(filename);
-        }
         seek(0);
     }
     
+    @Deprecated
+    //TODO: remove all references to this call, then remove this method
     protected void insureOpen() throws IOException {
-        if (filename != null && rf == null && trf == null) {
-            reOpen();
-        }
+        
     }
     
+    @Deprecated
+    //TODO: remove all references to this call, then remove this method
     public boolean isOpen() {
-        return (filename == null || rf != null || trf != null);
+        return true;
     }
+    
+
     
     public void close() throws IOException {
         isBack = false;
-        if (rf != null) {
-            rf.close();
-            rf = null;
-            // it's very expensive to open a memory mapped file and for the usage pattern of this class
-            // in iText it's faster the next re-openings to be done as a plain random access
-            // file
-            plainRandomAccess = true;
-        }
-        else if (trf != null) {
-            trf.close();
-            trf = null;
-        }
+        
+        byteSource.close();
     }
     
     public long length() throws IOException {
-        if (arrayIn == null) {
-            insureOpen();
-            return (plainRandomAccess ? trf.length() : rf.length()) - startOffset;
-        }
-        else
-            return arrayIn.length - startOffset;
+    	return byteSource.length();
     }
     
     public void seek(long pos) throws IOException {
-        pos += startOffset;
-        isBack = false;
-        if (arrayIn == null) {
-            insureOpen();
-            if (plainRandomAccess)
-                trf.seek(pos);
-            else
-                rf.seek(pos);
-        }
-        else
-            arrayInPtr = pos;
+    	byteSourcePosition = pos;
+    	isBack = false;
     }
     
+    //TODO: consider changing method name to getPosition or something like that - might not be worth making a breaking change, though
     public long getFilePointer() throws IOException {
-        insureOpen();
-        int n = isBack ? 1 : 0;
-        if (arrayIn == null) {
-            return (plainRandomAccess ? trf.getFilePointer() : rf.getFilePointer()) - n - startOffset;
-        }
-        else
-            return arrayInPtr - n - startOffset;
+    	return byteSourcePosition - (isBack ? 1 : 0);
     }
     
     public boolean readBoolean() throws IOException {
@@ -667,34 +594,4 @@ public class RandomAccessFileOrArray implements DataInput {
         return DataInputStream.readUTF(this);
     }
     
-    /** Getter for property startOffset.
-     * @return Value of property startOffset.
-     *
-     */
-    public long getStartOffset() {
-        return this.startOffset;
-    }
-    
-    /** Setter for property startOffset.
-     * @param startOffset New value of property startOffset.
-     *
-     */
-    public void setStartOffset(long startOffset) {
-        this.startOffset = startOffset;
-    }
-
-    /**
-     * @since 2.0.8
-     */
-    public java.nio.ByteBuffer getNioByteBuffer() throws IOException {
-    	if (filename != null) {
-    		FileChannel channel;
-            if (plainRandomAccess)
-                channel = trf.getChannel();
-            else
-                channel = rf.getChannel();
-            return channel.map(FileChannel.MapMode.READ_ONLY, 0, channel.size());
-    	}
-    	return java.nio.ByteBuffer.wrap(arrayIn);
-    }
 }

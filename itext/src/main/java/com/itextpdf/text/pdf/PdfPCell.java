@@ -43,7 +43,9 @@
  */
 package com.itextpdf.text.pdf;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.DocumentException;
@@ -54,12 +56,13 @@ import com.itextpdf.text.Phrase;
 import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.pdf.events.PdfPCellEventForwarder;
+import com.itextpdf.text.pdf.interfaces.IAccessibleElement;
 
 /**
  * A cell in a PdfPTable.
  */
 
-public class PdfPCell extends Rectangle{
+public class PdfPCell extends Rectangle implements IAccessibleElement {
 
     private ColumnText column = new ColumnText(null);
 
@@ -119,6 +122,10 @@ public class PdfPCell extends Rectangle{
      * 0, 90, 180 and 270.
      */
     private int rotation;
+
+    protected PdfName role = PdfName.TD;
+    protected HashMap<PdfName, PdfObject> accessibleAttributes = null;
+    protected UUID id = UUID.randomUUID();
 
     /**
      * Constructs an empty <CODE>PdfPCell</CODE>.
@@ -250,6 +257,10 @@ public class PdfPCell extends Rectangle{
         column = ColumnText.duplicate(cell.column);
         useBorderPadding = cell.useBorderPadding;
         rotation = cell.rotation;
+        id = cell.id;
+        role = cell.role;
+        if (cell.accessibleAttributes != null)
+            accessibleAttributes = new HashMap<PdfName, PdfObject>(cell.accessibleAttributes);
     }
 
     /**
@@ -264,6 +275,12 @@ public class PdfPCell extends Rectangle{
         }
         if (element instanceof PdfPTable) {
             ((PdfPTable) element).setSplitLate(false);
+        } else if (element instanceof PdfDiv) {
+            for (Element divChildElement : ((PdfDiv)element).getContent()) {
+                if (divChildElement instanceof PdfPTable) {
+                    ((PdfPTable) divChildElement).setSplitLate(false);
+                }
+            }
         }
         column.addElement(element);
     }
@@ -988,4 +1005,38 @@ public class PdfPCell extends Rectangle{
 			height = getMinimumHeight();
 		return height;
 	}
+
+    public PdfObject getAccessibleAttribute(final PdfName key) {
+        if (accessibleAttributes != null)
+            return accessibleAttributes.get(key);
+        else
+            return null;
+    }
+
+    public void setAccessibleAttribute(final PdfName key, final PdfObject value) {
+        if (accessibleAttributes == null)
+            accessibleAttributes = new HashMap<PdfName, PdfObject>();
+        accessibleAttributes.put(key, value);
+    }
+
+    public HashMap<PdfName, PdfObject> getAccessibleAttributes() {
+        return accessibleAttributes;
+    }
+
+    public PdfName getRole() {
+        return role;
+    }
+
+    public void setRole(final PdfName role) {
+        this.role = role;
+    }
+
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(final UUID id) {
+        this.id = id;
+    }
+
 }

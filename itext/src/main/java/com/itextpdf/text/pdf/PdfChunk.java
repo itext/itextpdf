@@ -44,6 +44,7 @@
 package com.itextpdf.text.pdf;
 
 import com.itextpdf.text.*;
+import com.itextpdf.text.pdf.interfaces.IAccessibleElement;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -144,6 +145,8 @@ public class PdfChunk {
 /** The leading that can overrule the existing leading. */
     protected float leading = 0;
 
+    protected IAccessibleElement accessibleElement = null;
+
     // constructors
 
 /**
@@ -175,6 +178,7 @@ public class PdfChunk {
         splitCharacter = (SplitCharacter)noStroke.get(Chunk.SPLITCHARACTER);
         if (splitCharacter == null)
             splitCharacter = DefaultSplitCharacter.DEFAULT;
+        accessibleElement = other.accessibleElement;
     }
 
 /**
@@ -267,6 +271,7 @@ public class PdfChunk {
         splitCharacter = (SplitCharacter)noStroke.get(Chunk.SPLITCHARACTER);
         if (splitCharacter == null)
             splitCharacter = DefaultSplitCharacter.DEFAULT;
+        accessibleElement = chunk;
     }
 
     // methods
@@ -876,5 +881,7 @@ public class PdfChunk {
     public static boolean noPrint(int c) {
         return c >= 0x200b && c <= 0x200f || c >= 0x202a && c <= 0x202e;
     }
+
+
 
 }

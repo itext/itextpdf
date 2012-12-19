@@ -43,6 +43,13 @@
  */
 package com.itextpdf.text;
 
+import com.itextpdf.text.pdf.PdfName;
+import com.itextpdf.text.pdf.PdfObject;
+import com.itextpdf.text.pdf.PdfStructureElement;
+import com.itextpdf.text.pdf.interfaces.IAccessibleElement;
+
+import java.util.HashMap;
+
 /**
  * A <CODE>ListItem</CODE> is a <CODE>Paragraph</CODE>
  * that can be added to a <CODE>List</CODE>.
@@ -103,6 +110,9 @@ public class ListItem extends Paragraph {
 	 */
     protected Chunk symbol;
 
+    private ListBody listBody = null;
+    private ListLabel listLabel = null;
+
     // constructors
 
     /**
@@ -110,6 +120,7 @@ public class ListItem extends Paragraph {
      */
     public ListItem() {
         super();
+        setRole(PdfName.LI);
     }
 
     /**
@@ -119,6 +130,7 @@ public class ListItem extends Paragraph {
      */
     public ListItem(final float leading) {
         super(leading);
+        setRole(PdfName.LI);
     }
 
     /**
@@ -128,6 +140,7 @@ public class ListItem extends Paragraph {
      */
     public ListItem(final Chunk chunk) {
         super(chunk);
+        setRole(PdfName.LI);
     }
 
     /**
@@ -137,6 +150,7 @@ public class ListItem extends Paragraph {
      */
     public ListItem(final String string) {
         super(string);
+        setRole(PdfName.LI);
     }
 
     /**
@@ -148,6 +162,7 @@ public class ListItem extends Paragraph {
      */
     public ListItem(final String string, final Font font) {
         super(string, font);
+        setRole(PdfName.LI);
     }
 
     /**
@@ -159,6 +174,7 @@ public class ListItem extends Paragraph {
      */
     public ListItem(final float leading, final Chunk chunk) {
         super(leading, chunk);
+        setRole(PdfName.LI);
     }
 
     /**
@@ -170,6 +186,7 @@ public class ListItem extends Paragraph {
      */
     public ListItem(final float leading, final String string) {
         super(leading, string);
+        setRole(PdfName.LI);
     }
 
     /**
@@ -182,6 +199,7 @@ public class ListItem extends Paragraph {
      */
     public ListItem(final float leading, final String string, final Font font) {
         super(leading, string, font);
+        setRole(PdfName.LI);
     }
 
     /**
@@ -191,6 +209,7 @@ public class ListItem extends Paragraph {
      */
     public ListItem(final Phrase phrase) {
         super(phrase);
+        setRole(PdfName.LI);
     }
 
     // implementation of the Element-methods
@@ -256,6 +275,18 @@ public class ListItem extends Paragraph {
      */
     public Chunk getListSymbol() {
         return symbol;
+    }
+
+    public ListBody getListBody() {
+        if (listBody == null)
+            listBody = new ListBody(this);
+        return listBody;
+    }
+
+    public ListLabel getListLabel() {
+        if (listLabel == null)
+            listLabel = new ListLabel(this);
+        return listLabel;
     }
 
 }

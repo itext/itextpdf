@@ -151,6 +151,7 @@ public class OCSPVerifier extends RootStoreVerifier {
 			}
 			// check if the issuer matches
 			try {
+				if (issuerCert == null) issuerCert = signCert;
 				if (!resp[i].getCertID().matchesIssuer(new X509CertificateHolder(issuerCert.getEncoded()), new BcDigestCalculatorProvider())) {
 					LOGGER.info("OCSP: Issuers doesn't match.");
 					continue;

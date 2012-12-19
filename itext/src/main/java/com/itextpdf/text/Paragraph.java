@@ -45,9 +45,13 @@ package com.itextpdf.text;
 
 import com.itextpdf.text.api.Indentable;
 import com.itextpdf.text.api.Spaceable;
-import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.*;
+import com.itextpdf.text.pdf.interfaces.IAccessibleElement;
+import com.itextpdf.text.pdf.interfaces.IPdfStructureElement;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.UUID;
 
 /**
  * A <CODE>Paragraph</CODE> is a series of <CODE>Chunk</CODE>s and/or <CODE>Phrases</CODE>.
@@ -70,7 +74,7 @@ import java.util.ArrayList;
  * @see		ListItem
  */
 
-public class Paragraph extends Phrase implements Indentable, Spaceable {
+public class Paragraph extends Phrase implements Indentable, Spaceable, IAccessibleElement {
 
 	// constants
 	private static final long serialVersionUID = 7852314969733375514L;
@@ -103,6 +107,10 @@ public class Paragraph extends Phrase implements Indentable, Spaceable {
 
     /** Does the paragraph has to be kept together on 1 page. */
     protected boolean keeptogether = false;
+
+    protected PdfName role = PdfName.P;
+    protected HashMap<PdfName, PdfObject> accessibleAttributes = null;
+    protected UUID id = UUID.randomUUID();
 
     // constructors
 
@@ -202,6 +210,10 @@ public class Paragraph extends Phrase implements Indentable, Spaceable {
         	setSpacingAfter(p.getSpacingAfter());
         	setSpacingBefore(p.getSpacingBefore());
         	setExtraParagraphSpace(p.getExtraParagraphSpace());
+            setRole(p.role);
+            id = p.id;
+            if (p.accessibleAttributes != null)
+                accessibleAttributes = new HashMap<PdfName, PdfObject>(p.accessibleAttributes);
         }
     }
 
@@ -221,6 +233,10 @@ public class Paragraph extends Phrase implements Indentable, Spaceable {
     	if (spacingBefore)
     		copy.setSpacingBefore(getSpacingBefore());
     	copy.setExtraParagraphSpace(getExtraParagraphSpace());
+        copy.setRole(role);
+        copy.id = id;
+        if (accessibleAttributes != null)
+            copy.accessibleAttributes = new HashMap<PdfName, PdfObject>(accessibleAttributes);
     	return copy;
     }
     
@@ -538,6 +554,39 @@ public class Paragraph extends Phrase implements Indentable, Spaceable {
     @Deprecated
     public float spacingAfter() {
         return spacingAfter;
+    }
+
+    public PdfObject getAccessibleAttribute(final PdfName key) {
+        if (accessibleAttributes != null)
+            return accessibleAttributes.get(key);
+        else
+            return null;
+    }
+
+    public void setAccessibleAttribute(final PdfName key, final PdfObject value) {
+        if (accessibleAttributes == null)
+            accessibleAttributes = new HashMap<PdfName, PdfObject>();
+        accessibleAttributes.put(key, value);
+    }
+
+    public HashMap<PdfName, PdfObject> getAccessibleAttributes() {
+        return accessibleAttributes;
+    }
+
+    public PdfName getRole() {
+        return role;
+    }
+
+    public void setRole(final PdfName role) {
+        this.role = role;
+    }
+
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(final UUID id) {
+        this.id = id;
     }
 
 }

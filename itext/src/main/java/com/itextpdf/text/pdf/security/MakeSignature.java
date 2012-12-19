@@ -44,17 +44,26 @@
 package com.itextpdf.text.pdf.security;
 
 import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.io.RASInputStream;
+import com.itextpdf.text.io.RandomAccessSource;
+import com.itextpdf.text.io.RandomAccessSourceFactory;
+import com.itextpdf.text.io.StreamUtil;
 import com.itextpdf.text.log.Logger;
 import com.itextpdf.text.log.LoggerFactory;
+import com.itextpdf.text.pdf.AcroFields;
+import com.itextpdf.text.pdf.ByteBuffer;
+import com.itextpdf.text.pdf.PdfArray;
 import com.itextpdf.text.pdf.PdfDate;
 import com.itextpdf.text.pdf.PdfDictionary;
 import com.itextpdf.text.pdf.PdfName;
+import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.PdfSignature;
 import com.itextpdf.text.pdf.PdfSignatureAppearance;
 import com.itextpdf.text.pdf.PdfString;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.security.GeneralSecurityException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.Certificate;
@@ -139,7 +148,7 @@ public class MakeSignature {
 
         byte[] encodedSig = sgn.getEncodedPKCS7(hash, cal, tsaClient, ocsp, crlBytes, sigtype);
 
-        if (estimatedSize + 2 < encodedSig.length)
+        if (estimatedSize < encodedSig.length)
             throw new IOException("Not enough space");
 
         byte[] paddedSig = new byte[estimatedSize];
@@ -173,5 +182,86 @@ public class MakeSignature {
             return null;
         else
             return crlBytes;
+    }
+    
+    /**
+     * Sign the document using an external container, usually a PKCS7. The signature is fully composed
+     * externally, iText will just put the container inside the document.
+     * @param sap the PdfSignatureAppearance
+     * @param externalSignatureContainer the interface providing the actual signing
+     * @param estimatedSize the reserved size for the signature
+     * @throws GeneralSecurityException
+     * @throws IOException
+     * @throws DocumentException 
+     */
+    public static void signExternalContainer(PdfSignatureAppearance sap, ExternalSignatureContainer externalSignatureContainer, int estimatedSize) throws GeneralSecurityException, IOException, DocumentException {
+        PdfSignature dic = new PdfSignature(null, null);
+        dic.setReason(sap.getReason());
+        dic.setLocation(sap.getLocation());
+        dic.setContact(sap.getContact());
+        dic.setDate(new PdfDate(sap.getSignDate())); // time-stamp will over-rule this
+        externalSignatureContainer.modifySigningDictionary(dic);
+        sap.setCryptoDictionary(dic);
+
+        HashMap<PdfName, Integer> exc = new HashMap<PdfName, Integer>();
+        exc.put(PdfName.CONTENTS, new Integer(estimatedSize * 2 + 2));
+        sap.preClose(exc);
+
+        InputStream data = sap.getRangeStream();
+        byte[] encodedSig = externalSignatureContainer.sign(data);
+
+        if (estimatedSize < encodedSig.length)
+            throw new IOException("Not enough space");
+
+        byte[] paddedSig = new byte[estimatedSize];
+        System.arraycopy(encodedSig, 0, paddedSig, 0, encodedSig.length);
+
+        PdfDictionary dic2 = new PdfDictionary();
+        dic2.put(PdfName.CONTENTS, new PdfString(paddedSig).setHexWriting(true));
+        sap.close(dic2);
+    }
+    
+    /**
+     * Signs a PDF where space was already reserved.
+     * @param reader the original PDF
+     * @param fieldName the field to sign. It must be the last field
+     * @param outs the output PDF
+     * @param externalSignatureContainer the signature container doing the actual signing. Only the 
+     * method ExternalSignatureContainer.sign is used
+     * @throws DocumentException
+     * @throws IOException
+     * @throws GeneralSecurityException 
+     */
+    public static void signDeferred(PdfReader reader, String fieldName, OutputStream outs, ExternalSignatureContainer externalSignatureContainer) throws DocumentException, IOException, GeneralSecurityException {
+        AcroFields af = reader.getAcroFields();
+        PdfDictionary v = af.getSignatureDictionary(fieldName);
+        if (v == null)
+            throw new DocumentException("No field");
+        if (!af.signatureCoversWholeDocument(fieldName))
+            throw new DocumentException("Not the last signature");
+        PdfArray b = v.getAsArray(PdfName.BYTERANGE);
+        long[] gaps = b.asLongArray();
+        if (b.size() != 4 || gaps[0] != 0)
+            throw new DocumentException("Single exclusion space supported");
+        RandomAccessSource readerSource = reader.getSafeFile().createSourceView();
+        InputStream rg = new RASInputStream(new RandomAccessSourceFactory().createRanged(readerSource, gaps));
+        byte[] signedContent = externalSignatureContainer.sign(rg);
+        int spaceAvailable = (int)(gaps[2] - gaps[1]) - 2;
+        if ((spaceAvailable & 1) != 0)
+            throw new DocumentException("Gap is not a multiple of 2");
+        spaceAvailable /= 2;
+        if (spaceAvailable < signedContent.length)
+            throw new DocumentException("Not enough space");
+        StreamUtil.CopyBytes(readerSource, 0, gaps[1] + 1, outs);
+        ByteBuffer bb = new ByteBuffer(spaceAvailable * 2);
+        for (byte bi : signedContent) {
+            bb.appendHex(bi);
+        }
+        int remain = (spaceAvailable - signedContent.length) * 2;
+        for (int k = 0; k < remain; ++k) {
+            bb.append((byte)48);
+        }
+        bb.writeTo(outs);
+        StreamUtil.CopyBytes(readerSource, gaps[2] - 1, gaps[3] + 1, outs);
     }
 }

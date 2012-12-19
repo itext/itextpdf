@@ -32,7 +32,6 @@ public class ComplexDiv01Test extends SampleTest {
         Document doc = new Document(PageSize.A3.rotate());
 
         PdfWriter pdfWriter = PdfWriter.getInstance(doc, new FileOutputStream(outPdf));
-        pdfWriter.setTagged();
         pdfWriter.createXmpMetadata();
 
         doc.setMargins(200, 200, 0, 0);

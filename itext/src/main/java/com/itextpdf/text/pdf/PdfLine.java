@@ -76,10 +76,10 @@ public class PdfLine {
     protected float height;
 
     /** The listsymbol (if necessary). */
-    protected Chunk listSymbol = null;
+//    protected Chunk listSymbol = null;
 
     /** The listsymbol (if necessary). */
-    protected float symbolIndent;
+//    protected float symbolIndent;
 
     /** <CODE>true</CODE> if the chunk splitting was caused by a newline. */
     protected boolean newlineSplit = false;
@@ -88,6 +88,8 @@ public class PdfLine {
     protected float originalWidth;
 
     protected boolean isRTL = false;
+
+    protected ListItem listItem = null;
 
     // constructors
 
@@ -344,8 +346,9 @@ public class PdfLine {
      */
 
     public void setListItem(ListItem listItem) {
-        this.listSymbol = listItem.getListSymbol();
-        this.symbolIndent = listItem.getIndentationLeft();
+        this.listItem = listItem;
+//        this.listSymbol = listItem.getListSymbol();
+//        this.symbolIndent = listItem.getIndentationLeft();
     }
 
     /**
@@ -355,7 +358,7 @@ public class PdfLine {
      */
 
     public Chunk listSymbol() {
-        return listSymbol;
+        return listItem != null ? listItem.getListSymbol() : null;
     }
 
     /**
@@ -365,7 +368,11 @@ public class PdfLine {
      */
 
     public float listIndent() {
-        return symbolIndent;
+        return listItem != null ? listItem.getIndentationLeft() : 0;
+    }
+
+    public ListItem listItem() {
+        return listItem;
     }
 
     /**
@@ -469,18 +476,17 @@ public class PdfLine {
         PdfChunk chunk;
         for (int k = 0; k < line.size(); ++k) {
             chunk = line.get(k);
-            if (!chunk.isImage()) {
+            if (chunk.isImage()) {
+                Image img = chunk.getImage();
+                if (chunk.changeLeading()) {
+                    float height = img.getScaledHeight() + chunk.getImageOffsetY() + img.getSpacingBefore();
+                    image_leading = Math.max(height, image_leading);
+                }
+            } else {
                 if (chunk.changeLeading())
                     normal_leading = Math.max(chunk.getLeading(), normal_leading);
                 else
                     normal_leading = Math.max(fixedLeading + multipliedLeading * chunk.font().size(), normal_leading);
-            }
-            else {
-            	Image img = chunk.getImage();
-            	if (chunk.changeLeading()) {
-            		float height = img.getScaledHeight() + chunk.getImageOffsetY() + img.getSpacingBefore();
-            		image_leading = Math.max(height, image_leading);
-            	}
             }
         }
         return new float[]{normal_leading > 0 ? normal_leading : fixedLeading, image_leading};
@@ -531,7 +537,7 @@ public class PdfLine {
  * in this line.
  * @return maximum size of all the ascenders used in this line
  */
-   public float getAscender() {
+    public float getAscender() {
        float ascender = 0;
        for (int k = 0; k < line.size(); ++k) {
            PdfChunk ck = line.get(k);
@@ -544,7 +550,7 @@ public class PdfLine {
            }
        }
        return ascender;
-   }
+    }
 
 /**
  * Gets the biggest descender for all the fonts used

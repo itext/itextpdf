@@ -408,6 +408,8 @@ public class Phrase extends ArrayList<Element> implements TextElementArray {
         }
         Chunk newChunk = new Chunk(c, f);
         newChunk.setAttributes(chunk.getAttributes());
+        newChunk.role = chunk.getRole();
+        newChunk.accessibleAttributes = chunk.getAccessibleAttributes();
         if (hyphenation != null && newChunk.getHyphenation() == null && !newChunk.isEmpty()) {
         	newChunk.setHyphenation(hyphenation);
         }

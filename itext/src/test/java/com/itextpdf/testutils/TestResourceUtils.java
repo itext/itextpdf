@@ -100,7 +100,7 @@ public final class TestResourceUtils {
         
         for (File file : itextTempFiles) {
             if (!file.delete()){
-                System.err.println("Unable to delete iText temporary test file " + file);
+                throw new Error("Unable to delete iText temporary test file " + file);
             }
         }
     }
@@ -109,13 +109,18 @@ public final class TestResourceUtils {
         
         InputStream is = getResourceAsStream(context, resourceName);
         
-        return writeStreamToTempFile(is);
+        return writeStreamToTempFile(resourceName, is);
     }
     
-    private static File writeStreamToTempFile(InputStream is) throws IOException{
+    public static File getBytesAsTempFile(byte[] bytes) throws IOException {
+    	return writeStreamToTempFile("bytes", new ByteArrayInputStream(bytes));
+    }
+    		 
+    
+    private static File writeStreamToTempFile(String id, InputStream is) throws IOException{
         if (is == null) throw new NullPointerException("Input stream is null");
         
-        File f = File.createTempFile(TESTPREFIX, ".pdf");
+        File f = File.createTempFile(TESTPREFIX + id + "-", ".pdf");
         f.deleteOnExit();
 
         final OutputStream os = new BufferedOutputStream(new FileOutputStream(f));
@@ -195,7 +200,7 @@ public final class TestResourceUtils {
      * @throws IOException
      */
     public static void openBytesAsPdf(byte[] bytes) throws IOException{
-        File f = writeStreamToTempFile(new ByteArrayInputStream(bytes));
+        File f = writeStreamToTempFile("bytes", new ByteArrayInputStream(bytes));
         
         String osName = System.getProperty("os.name");
         if (osName.toLowerCase().indexOf("win") >= 0){
