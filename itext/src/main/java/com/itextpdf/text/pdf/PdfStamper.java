@@ -184,18 +184,17 @@ public class PdfStamper
      * Closes the document. No more content can be written after the
      * document is closed.
      * <p>
-     * The reader passed into the constructor will also be closed.
-     * <p>
      * If closing a signed document with an external signature the closing must be done
      * in the <CODE>PdfSignatureAppearance</CODE> instance.
      * @throws DocumentException on error
      * @throws IOException on error
      */
     public void close() throws DocumentException, IOException {
+        if (stamper.closed)
+            return;
         if (!hasSignature) {
             mergeVerification();
             stamper.close(moreInfo);
-            return;
         }
         else {
             throw new DocumentException("Signature defined. Must be closed in PdfSignatureAppearance.");
