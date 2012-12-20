@@ -184,8 +184,6 @@ public class PdfStamper
      * Closes the document. No more content can be written after the
      * document is closed.
      * <p>
-     * The reader passed into the constructor will also be closed.
-     * <p>
      * If closing a signed document with an external signature the closing must be done
      * in the <CODE>PdfSignatureAppearance</CODE> instance.
      * @throws DocumentException on error
