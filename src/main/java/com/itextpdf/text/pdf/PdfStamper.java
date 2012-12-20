@@ -190,10 +190,11 @@ public class PdfStamper
      * @throws IOException on error
      */
     public void close() throws DocumentException, IOException {
+        if (stamper.closed)
+            return;
         if (!hasSignature) {
             mergeVerification();
             stamper.close(moreInfo);
-            return;
         }
         else {
             throw new DocumentException("Signature defined. Must be closed in PdfSignatureAppearance.");
