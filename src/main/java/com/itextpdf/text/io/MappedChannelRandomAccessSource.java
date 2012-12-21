@@ -100,8 +100,28 @@ class MappedChannelRandomAccessSource implements RandomAccessSource {
 		if (!channel.isOpen())
 			throw new IllegalStateException("Channel is closed");
 
-		source = new ByteBufferRandomAccessSource(channel.map(FileChannel.MapMode.READ_ONLY, offset, length));
+		try{
+			source = new ByteBufferRandomAccessSource(channel.map(FileChannel.MapMode.READ_ONLY, offset, length));
+		} catch (IOException e){
+			if (exceptionIsMapFailureException(e))
+				throw new MapFailedException(e);
+		}
 	}
+	
+    /**
+     * Utility method that determines whether a given IOException is the result
+     * of a failure to map a memory mapped file.  It would be better if the runtime
+     * provided a special exception for this case, but it doesn't, so we have to rely
+     * on parsing the exception message.
+     * @param e the exception to check
+     * @return true if the exception was the result of a failure to map a memory mapped file
+     */
+    private static boolean exceptionIsMapFailureException(IOException e){
+        if (e.getMessage() != null && e.getMessage().indexOf("Map failed") >= 0)
+            return true;
+
+        return false;
+    }
 	
 	/**
 	 * {@inheritDoc}
