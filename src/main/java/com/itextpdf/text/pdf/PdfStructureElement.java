@@ -259,8 +259,8 @@ public class PdfStructureElement extends PdfDictionary implements IPdfStructureE
                     }
 
                     // Setting inheritable attributes
-                    PdfObject obj = parent.getAttribute(PdfName.COLOR);
                     IPdfStructureElement parent = (IPdfStructureElement) this.getParent(true);
+                    PdfObject obj = parent.getAttribute(PdfName.COLOR);
                     if ((chunk.getFont() != null) && (chunk.getFont().getColor() != null)) {
                         BaseColor c = chunk.getFont().getColor();
                         setColorAttribute(c, obj, PdfName.COLOR);
@@ -399,7 +399,29 @@ public class PdfStructureElement extends PdfDictionary implements IPdfStructureE
 
     private void writeAttributes(final List list) {
         if (list != null) {
+            if (list.isAutoindent()){
+                if (list.isNumbered()){
+                    if (list.isLettered()){
+                        if (list.isLowercase()){
+                            this.setAttribute(PdfName.LISTNUMBERING, PdfName.LOWERROMAN);
+                        }
+                        else
+                            this.setAttribute(PdfName.LISTNUMBERING, PdfName.UPPERROMAN);
+                    }
+                    else{
+                        this.setAttribute(PdfName.LISTNUMBERING, PdfName.DECIMAL);
+                    }
 
+                }
+                else
+                    if (list.isLettered()){
+                        if (list.isLowercase()){
+                            this.setAttribute(PdfName.LISTNUMBERING, PdfName.LOWERALPHA);
+                        }
+                        else
+                            this.setAttribute(PdfName.LISTNUMBERING, PdfName.UPPERALPHA);
+                    }
+            }
         }
     }
 

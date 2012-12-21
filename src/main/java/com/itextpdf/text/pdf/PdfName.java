@@ -469,6 +469,11 @@ public class PdfName extends PdfObject implements Comparable<PdfName> {
      * A name.
      * @since 2.1.6
      */
+    public static final PdfName DECIMAL = new PdfName("Decimal");
+    /**
+     * A name.
+     * @since 2.1.6
+     */
     public static final PdfName DEACTIVATION = new PdfName("Deactivation");
     /** A name */
     public static final PdfName DECODE = new PdfName("Decode");
@@ -1048,6 +1053,8 @@ public class PdfName extends PdfObject implements Comparable<PdfName> {
     /** A name */
     public static final PdfName LISTMODE = new PdfName("ListMode");
     /** A name */
+    public static final PdfName LISTNUMBERING = new PdfName("ListNumbering");
+    /** A name */
     public static final PdfName LOCATION = new PdfName("Location");
     /** A name */
     public static final PdfName LOCK = new PdfName("Lock");
@@ -1056,6 +1063,16 @@ public class PdfName extends PdfObject implements Comparable<PdfName> {
      * @since	2.1.2
      */
     public static final PdfName LOCKED = new PdfName("Locked");
+    /**
+     * A name
+     * @since	5.3.5
+     */
+    public static final PdfName LOWERALPHA = new PdfName("LowerAlpha");
+    /**
+     * A name
+     * @since	5.3.5
+     */
+    public static final PdfName LOWERROMAN = new PdfName("LowerRoman");
     /**
      * A name of an attribute.
      * @since 5.1.0
@@ -1918,6 +1935,16 @@ public class PdfName extends PdfObject implements Comparable<PdfName> {
      * @since 5.2.1
      */
     public static final PdfName UNIX = new PdfName("Unix");
+    /**
+     * A name.
+     * @since 5.3.5
+     */
+    public static final PdfName UPPERALPHA = new PdfName("UpperAlpha");
+    /**
+     * A name.
+     * @since 5.3.5
+     */
+    public static final PdfName UPPERROMAN = new PdfName("UpperRoman");
     /** A name */
     public static final PdfName UR = new PdfName("UR");
     /** A name */
