@@ -13,7 +13,7 @@ import com.itextpdf.testutils.TestResourceUtils;
 public class RandomAccessSourceFactoryTest {
 
 	private File testFile;
-	
+	/*
 	@Before
 	public void setUp() throws Exception {
 		TestResourceUtils.purgeTempFiles();
@@ -24,7 +24,7 @@ public class RandomAccessSourceFactoryTest {
 	public void tearDown() throws Exception {
 		TestResourceUtils.purgeTempFiles();
 	}
-
+*/
 //  Test note: We can't actually test this inside the same JVM (locking happens per-process)	
 //	@Test
 //	public void testExclusive() throws Exception {
