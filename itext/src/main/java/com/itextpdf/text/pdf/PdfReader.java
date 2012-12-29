@@ -622,7 +622,7 @@ public class PdfReader implements PdfViewerPreferences {
 
         strings.clear();
         readPages();
-        eliminateSharedStreams();
+        //eliminateSharedStreams();
         removeUnusedObjects();
 
     }
