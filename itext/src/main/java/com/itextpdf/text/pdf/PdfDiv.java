@@ -46,14 +46,17 @@ package com.itextpdf.text.pdf;
 import com.itextpdf.awt.geom.AffineTransform;
 import com.itextpdf.text.*;
 import com.itextpdf.text.api.Spaceable;
+import com.itextpdf.text.pdf.interfaces.IAccessibleElement;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * A special element to put a collection of elements at an absolute position.
  */
-public class PdfDiv implements Element, Spaceable {
+public class PdfDiv implements Element, Spaceable, IAccessibleElement {
     public enum FloatType {NONE, LEFT, RIGHT};
 
     public enum PositionType {STATIC, ABSOLUTE, FIXED, RELATIVE};
@@ -95,6 +98,10 @@ public class PdfDiv implements Element, Spaceable {
     private PositionType position = PositionType.STATIC;
 
     private FloatLayout floatLayout = null;
+
+    protected PdfName role = PdfName.DIV;
+    protected HashMap<PdfName, PdfObject> accessibleAttributes = null;
+    protected UUID id = UUID.randomUUID();
 
     public float getContentWidth() {
         return contentWidth;
@@ -511,4 +518,38 @@ public class PdfDiv implements Element, Spaceable {
 
         return contentCutByFixedHeight ? ColumnText.NO_MORE_TEXT : status;
     }
+
+    public PdfObject getAccessibleAttribute(final PdfName key) {
+        if (accessibleAttributes != null)
+            return accessibleAttributes.get(key);
+        else
+            return null;
+    }
+
+    public void setAccessibleAttribute(final PdfName key, final PdfObject value) {
+        if (accessibleAttributes == null)
+            accessibleAttributes = new HashMap<PdfName, PdfObject>();
+        accessibleAttributes.put(key, value);
+    }
+
+    public HashMap<PdfName, PdfObject> getAccessibleAttributes() {
+        return accessibleAttributes;
+    }
+
+    public PdfName getRole() {
+        return role;
+    }
+
+    public void setRole(final PdfName role) {
+        this.role = role;
+    }
+
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(final UUID id) {
+        this.id = id;
+    }
+
 }

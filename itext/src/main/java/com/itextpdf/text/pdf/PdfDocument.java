@@ -2290,10 +2290,10 @@ public class PdfDocument extends Document {
             text = graphics;
         }
         text.beginText();
-        if (isTagged(writer))
-            textEmptySize = text.size();
         // we move to the left/top position of the page
         text.moveText(left(), top());
+        if (isTagged(writer))
+            textEmptySize = text.size();
     }
 
     /**
@@ -2316,7 +2316,11 @@ public class PdfDocument extends Document {
     }
 
     boolean isPageEmpty() {
-        return writer == null || writer.getDirectContent().size(!isTagged(writer)) == 0 && writer.getDirectContentUnder().size(!isTagged(writer)) == 0 && (pageEmpty || writer.isPaused());
+        if (isTagged(writer)) {
+            return writer == null || writer.getDirectContent().size(false) == 0 && writer.getDirectContentUnder().size(false) == 0 && text.size(false) - textEmptySize == 0 && (pageEmpty || writer.isPaused());
+        }
+        else
+            return writer == null || writer.getDirectContent().size() == 0 && writer.getDirectContentUnder().size() == 0 && (pageEmpty || writer.isPaused());
     }
 
 //	[U3] page actions
@@ -2480,7 +2484,7 @@ public class PdfDocument extends Document {
      * @throws DocumentException on error
      */
     void addPTable(final PdfPTable ptable) throws DocumentException {
-        ColumnText ct = new ColumnText(writer.getDirectContent());
+        ColumnText ct = new ColumnText(isTagged(writer) ? text : writer.getDirectContent());
         // if the table prefers to be on a single page, and it wouldn't
         //fit on the current page, start a new page.
         if (ptable.getKeepTogether() && !fitsPage(ptable, 0f) && currentHeight > 0)  {
@@ -2497,7 +2501,11 @@ public class PdfDocument extends Document {
             ct.setSimpleColumn(indentLeft(), indentBottom(), indentRight(), indentTop() - currentHeight);
             int status = ct.go();
             if ((status & ColumnText.NO_MORE_TEXT) != 0) {
-                text.moveText(0, ct.getYLine() - indentTop() + currentHeight);
+                if (isTagged(writer)) {
+                    text.setTextMatrix(indentLeft(), ct.getYLine());
+                } else {
+                    text.moveText(0, ct.getYLine() - indentTop() + currentHeight);
+                }
                 currentHeight = indentTop() - ct.getYLine();
                 break;
             }
@@ -2509,6 +2517,9 @@ public class PdfDocument extends Document {
             	throw new DocumentException(MessageLocalization.getComposedMessage("infinite.table.loop"));
             }
             newPage();
+            if (isTagged(writer)) {
+                ct.setCanvas(text);
+            }
         }
         ptable.setHeadersInEvent(he);
     }
@@ -2531,9 +2542,13 @@ public class PdfDocument extends Document {
             while (true) {
                 fl.setSimpleColumn(indentLeft(), indentBottom(), indentRight(), indentTop() - currentHeight);
                 try {
-                    int status = fl.layout(writer.getDirectContent(), false);
+                    int status = fl.layout(isTagged(writer) ? text : writer.getDirectContent(), false);
                     if ((status & ColumnText.NO_MORE_TEXT) != 0) {
-                        text.moveText(0, fl.getYLine() - indentTop() + currentHeight);
+                        if (isTagged(writer)) {
+                            text.setTextMatrix(indentLeft(), fl.getYLine());
+                        } else {
+                            text.moveText(0, fl.getYLine() - indentTop() + currentHeight);
+                        }
                         currentHeight = indentTop() - fl.getYLine();
                         break;
                     }
