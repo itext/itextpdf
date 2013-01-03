@@ -129,6 +129,7 @@ public class TaggedPDFTest {
 
     @Test
     public void createTaggedPDF1() throws DocumentException, IOException, ParserConfigurationException, SAXException {
+
         initializeDocument("./target/com/itextpdf/test/pdf/TaggedPDFTest/out1.pdf");
         Paragraph paragraph = new Paragraph(text);
         paragraph.setFont(new Font(Font.FontFamily.HELVETICA,8,Font.NORMAL,BaseColor.RED));
@@ -404,6 +405,7 @@ public class TaggedPDFTest {
         }
         document.add(h1);
         document.add(table);
+        document.add(new Paragraph("Extra paragraph at the end of the document. Please make sure that this is really last portion of page content."));
         document.close();
 
         PdfReader reader = new PdfReader("./target/com/itextpdf/test/pdf/TaggedPDFTest/out9.pdf");
@@ -677,6 +679,36 @@ public class TaggedPDFTest {
         xmlOut.close();
         Assert.assertTrue(compareXmls("./src/test/resources/com/itextpdf/text/pdf/TaggedPdfTest/test15.xml", "./target/com/itextpdf/test/pdf/TaggedPDFTest/test15.xml"));
     }
+
+    @Test
+    public void createTaggedPDF16() throws DocumentException, IOException, ParserConfigurationException, SAXException {
+        initializeDocument("./target/com/itextpdf/test/pdf/TaggedPDFTest/out16.pdf");
+
+        Paragraph p = new Paragraph();
+        Chunk chunk = new Chunk("Hello tagged world!");
+        chunk.setBackground(new BaseColor(255,0,255));
+        chunk.setFont(FontFactory.getFont("TimesNewRoman", 20, BaseColor.ORANGE));
+        chunk.setUnderline(BaseColor.PINK, 1.2f, 1, 1, 1, 0);
+        p.add(chunk);
+        PdfDiv div = new PdfDiv();
+        div.addElement(p);
+        document.add(div);
+
+        document.add(new Paragraph("This paragraph appears between 2 div blocks"));
+
+        div = new PdfDiv();
+        div.addElement(new Paragraph(text));
+        document.add(div);
+
+
+        document.close();
+        PdfReader reader = new PdfReader("./target/com/itextpdf/test/pdf/TaggedPDFTest/out16.pdf");
+        FileOutputStream xmlOut = new FileOutputStream("./target/com/itextpdf/test/pdf/TaggedPDFTest/test16.xml");
+        new MyTaggedPdfReaderTool().convertToXml(reader, xmlOut);
+        xmlOut.close();
+        Assert.assertTrue(compareXmls("./src/test/resources/com/itextpdf/text/pdf/TaggedPdfTest/test16.xml", "./target/com/itextpdf/test/pdf/TaggedPDFTest/test16.xml"));
+    }
+
 
     private boolean compareXmls(String xml1, String xml2) throws ParserConfigurationException, SAXException, IOException {
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();

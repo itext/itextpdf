@@ -1,4 +1,5 @@
 <Document>
+
 <H1 color="[0, 0, 1]">Document Header</H1>
 <Table><TBody>
 
@@ -139,4 +140,7 @@ tempus eget dolor.</Span>
 </TR>
 </TBody>
 </Table>
+<P><Span>Extra paragraph at the end of the document. Please make sure that this is really last portion of
+page content.</Span>
+</P>
 </Document>

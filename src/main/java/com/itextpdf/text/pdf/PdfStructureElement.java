@@ -229,6 +229,10 @@ public class PdfStructureElement extends PdfDictionary implements IPdfStructureE
             writeAttributes((PdfPTableFooter)element);
         } else if (element instanceof PdfPTableBody) {
             writeAttributes((PdfPTableBody)element);
+        } else if (element instanceof PdfDiv) {
+            writeAttributes((PdfDiv)element);
+        } else if (element instanceof Document) {
+            writeAttributes((Document)element);
         }
         if (element.getAccessibleAttributes() != null) {
             for (PdfName key : element.getAccessibleAttributes().keySet()) {
@@ -478,7 +482,19 @@ public class PdfStructureElement extends PdfDictionary implements IPdfStructureE
 
         }
     }
-    
+
+    private void writeAttributes(final PdfDiv div) {
+        if (div != null) {
+
+        }
+    }
+
+    private void writeAttributes(final Document document) {
+        if (document != null) {
+
+        }
+    }
+
     private boolean colorsEqual(PdfArray parentColor, float [] color){
         if (Float.compare(color[0], parentColor.getAsNumber(0).floatValue()) != 0){
             return false;
