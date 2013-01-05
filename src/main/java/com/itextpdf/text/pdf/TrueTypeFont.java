@@ -684,6 +684,16 @@ class TrueTypeFont extends BaseFont {
                         int glyphCode = cmap31.get(charCode)[0];
                         glyphToCharacterMap.put(glyphCode, c);
                     }
+                    
+//                    if (false) {
+//                    	StringBuilder  sb = new StringBuilder(50);
+//                        
+//                        for (int glyphCode : glyphToCharacterMap.keySet()) {
+//                        	sb.append(glyphCode).append("=>").append(glyphToCharacterMap.get(glyphCode)).append("\n");
+//                        }
+//                        
+//                        System.out.println("glyphToCharacterMap:\n" + sb.toString());
+//                    }
                 
                     GlyphSubstitutionTableReader gsubReader = new GlyphSubstitutionTableReader(fileName, tables.get("GSUB")[0], glyphToCharacterMap, GlyphWidths);
                     
@@ -691,7 +701,7 @@ class TrueTypeFont extends BaseFont {
                     try {
                         glyphSubstitutionMap = gsubReader.getGlyphSubstitutionMap();
                     } catch (FontReadingException e) {
-                        //e.printStackTrace();
+//                        e.printStackTrace();
                     }
                     
                 }

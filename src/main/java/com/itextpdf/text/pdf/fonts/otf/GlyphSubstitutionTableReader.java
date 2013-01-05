@@ -47,7 +47,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -82,7 +82,7 @@ public class GlyphSubstitutionTableReader extends OpenTypeFontTableReader {
 
     public Map<String, Glyph> getGlyphSubstitutionMap() throws FontReadingException {
         
-        rawLigatureSubstitutionMap = new HashMap<Integer, List<Integer>>();
+        rawLigatureSubstitutionMap = new LinkedHashMap<Integer, List<Integer>>();
         
         try {
             readLookupListTable();
@@ -90,7 +90,7 @@ public class GlyphSubstitutionTableReader extends OpenTypeFontTableReader {
             throw new FontReadingException("Could not read lookupListTable", e);
         }
         
-        Map<String, Glyph> glyphSubstitutionMap = new HashMap<String, Glyph>();
+        Map<String, Glyph> glyphSubstitutionMap = new LinkedHashMap<String, Glyph>();
         
         for (Integer glyphIdToReplace : rawLigatureSubstitutionMap.keySet()) {
             List<Integer> constituentGlyphs = rawLigatureSubstitutionMap.get(glyphIdToReplace);
@@ -103,6 +103,7 @@ public class GlyphSubstitutionTableReader extends OpenTypeFontTableReader {
             Glyph glyph = new Glyph(glyphIdToReplace, glyphWidthByIndex[glyphIdToReplace], chars.toString());
             
             glyphSubstitutionMap.put(glyph.chars, glyph);
+//            System.err.println("++++++glyphIdToReplace=" + glyphIdToReplace + "=>" + glyph.chars); 
         }
         
         return Collections.unmodifiableMap(glyphSubstitutionMap);
@@ -239,7 +240,7 @@ public class GlyphSubstitutionTableReader extends OpenTypeFontTableReader {
     private void readLigatureTable(int ligatureTableLocation, int coverageGlyphId) throws IOException {
         rf.seek(ligatureTableLocation);
         int ligGlyph = rf.readShort();
-        LOG.debug("@@@@@@@@@@@@@@ ligGlyph=" + ligGlyph);
+//        System.out.println("************ ligGlyph=" + ligGlyph);
         int compCount = rf.readShort();
 
         List<Integer> glyphIdList = new ArrayList<Integer>();
@@ -252,7 +253,13 @@ public class GlyphSubstitutionTableReader extends OpenTypeFontTableReader {
             LOG.debug("############################glyphId=" + glyphId);
         }
 
-        rawLigatureSubstitutionMap.put(ligGlyph, glyphIdList);
+        List<Integer> previousValue = rawLigatureSubstitutionMap.put(ligGlyph, glyphIdList);
+        
+        if (previousValue != null) {
+        	LOG.warn("GlyphSubstitutionTableReader.readLigatureTable(): glyphId=" + ligGlyph 
+        			+ ",\npreviousValue=" + previousValue
+        			+ ",\ncurrentVal=" + glyphIdList);
+        }
     }
 
 }

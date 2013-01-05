@@ -93,12 +93,13 @@ public abstract class OpenTypeFontTableReader {
     private void readLookupTable(int lookupTableLocation) throws IOException {
         rf.seek(lookupTableLocation);
         int lookupType = rf.readShort();
-        System.out.println("lookupType=" + lookupType);
+//        System.out.println("lookupType=" + lookupType);
+        
+        // skip 2 bytes for the field `lookupFlag`
+        rf.skipBytes(2);
 
-        int lookupFlag = rf.readShort();
-        System.out.println("lookupFlag=" + lookupFlag);
         int subTableCount = rf.readShort();
-        System.out.println("subTableCount=" + subTableCount);
+//        System.out.println("subTableCount=" + subTableCount);
 
         List<Integer> subTableOffsets = new ArrayList<Integer>();
 
@@ -108,7 +109,7 @@ public abstract class OpenTypeFontTableReader {
         }
 
         for (int subTableOffset : subTableOffsets) {
-            System.out.println("subTableOffset=" + subTableOffset);
+//            System.out.println("subTableOffset=" + subTableOffset);
             readSubTable(lookupType, lookupTableLocation + subTableOffset);
         }
     }

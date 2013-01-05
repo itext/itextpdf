@@ -263,6 +263,14 @@ class FontDetails {
                         Set<String> compositeCharacters = new TreeSet<String>(new IndicCompositeCharacterComparator());
                         compositeCharacters.addAll(glyphSubstitutionMap.keySet());
                         
+//                        List<String> compositeCharacters = new ArrayList<String>();
+//                        
+//                        for (String glyphSubKey : glyphSubstitutionMap.keySet()) {
+//                        	compositeCharacters.add(0, glyphSubKey);
+//                        }
+                        
+//                        System.out.println("compositeCharacters=" + compositeCharacters); 
+                        
                         // convert the text to a list of Glyph, also take care of the substitution
                         ArrayBasedStringTokenizer tokenizer = new ArrayBasedStringTokenizer(compositeCharacters.toArray(new String[0]));
                         String[] tokens = tokenizer.tokenize(text);
@@ -296,9 +304,16 @@ class FontDetails {
                             charEncodedGlyphCodes[i] = (char) glyph.code;
                             Integer glyphCode = Integer.valueOf(glyph.code);
                             
+//                            if (glyphCode == 101) {
+//                             	System.err.println("*******************");
+//                             	//get the previous entry
+//                             	Glyph previousGlyph = glyphList.get(i - 1); 
+//                             	longTag.get(previousGlyph.code)[1] = 0;
+//                             }
+                            
                             if (!longTag.containsKey(glyphCode)) {
                                 // FIXME: this is buggy as the 3rd arg. should be a String as a Glyph can represent more than 1 char
-                                longTag.put(glyphCode, new int[]{glyph.code, glyph.width, glyph.chars.charAt(0)}); 
+                                longTag.put(glyphCode, new int[]{glyph.code,  glyph.width, glyph.chars.charAt(0)}); 
                             }
                         }
                         
