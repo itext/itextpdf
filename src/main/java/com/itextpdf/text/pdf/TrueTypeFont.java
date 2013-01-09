@@ -700,15 +700,19 @@ class TrueTypeFont extends BaseFont {
                     // failsafe
                     try {
                         glyphSubstitutionMap = gsubReader.getGlyphSubstitutionMap();
-                    } catch (FontReadingException e) {
+                    } catch (Exception e) {
 //                        e.printStackTrace();
                     }
                     
                 }
                 
                 if (tables.get("GPOS") != null) {
-                    GlyphPositioningTableReader gposReader = new GlyphPositioningTableReader(fileName, tables.get("GPOS")[0]);
-                    gposReader.read();
+                    try {
+                        GlyphPositioningTableReader gposReader = new GlyphPositioningTableReader(fileName, tables.get("GPOS")[0]);
+                        gposReader.read();
+                    } catch (Exception e) {
+//                        e.printStackTrace();
+                    }
                 }
                 
 //                if (false) {
