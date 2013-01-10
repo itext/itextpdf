@@ -43,20 +43,15 @@
  */
 package com.itextpdf.text.pdf;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
-
-import com.itextpdf.text.Chunk;
-import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.Element;
-import com.itextpdf.text.ExceptionConverter;
-import com.itextpdf.text.Image;
-import com.itextpdf.text.Phrase;
-import com.itextpdf.text.Rectangle;
+import com.itextpdf.text.*;
 import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.pdf.events.PdfPCellEventForwarder;
 import com.itextpdf.text.pdf.interfaces.IAccessibleElement;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.UUID;
 
 /**
  * A cell in a PdfPTable.
@@ -126,6 +121,8 @@ public class PdfPCell extends Rectangle implements IAccessibleElement {
     protected PdfName role = PdfName.TD;
     protected HashMap<PdfName, PdfObject> accessibleAttributes = null;
     protected UUID id = UUID.randomUUID();
+    
+    protected ArrayList<PdfPHeaderCell> headers = null;
 
     /**
      * Constructs an empty <CODE>PdfPCell</CODE>.
@@ -261,6 +258,7 @@ public class PdfPCell extends Rectangle implements IAccessibleElement {
         role = cell.role;
         if (cell.accessibleAttributes != null)
             accessibleAttributes = new HashMap<PdfName, PdfObject>(cell.accessibleAttributes);
+        headers = cell.headers;
     }
 
     /**
@@ -1039,4 +1037,13 @@ public class PdfPCell extends Rectangle implements IAccessibleElement {
         this.id = id;
     }
 
+    public void addHeader(PdfPHeaderCell header){
+        if (headers == null)
+            headers = new ArrayList<PdfPHeaderCell>();
+        headers.add(header);
+    }
+
+    public ArrayList<PdfPHeaderCell> getHeaders(){
+        return headers;
+    }
 }

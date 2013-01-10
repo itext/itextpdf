@@ -290,7 +290,10 @@ public class PdfPTable implements LargeElement, Spaceable, IAccessibleElement {
         currentColIdx = 0;
         tableEvent = sourceTable.tableEvent;
         runDirection = sourceTable.runDirection;
-        defaultCell = new PdfPCell(sourceTable.defaultCell);
+        if (sourceTable.defaultCell instanceof PdfPHeaderCell)
+            defaultCell = new PdfPHeaderCell((PdfPHeaderCell)sourceTable.defaultCell);
+        else
+            defaultCell = new PdfPCell(sourceTable.defaultCell);
         currentRow = new PdfPCell[sourceTable.currentRow.length];
         isColspan = sourceTable.isColspan;
         splitRows = sourceTable.splitRows;
@@ -473,7 +476,14 @@ public class PdfPTable implements LargeElement, Spaceable, IAccessibleElement {
      */
     public PdfPCell addCell(final PdfPCell cell) {
         rowCompleted = false;
-        PdfPCell ncell = new PdfPCell(cell);
+        PdfPCell ncell;
+        if (cell instanceof PdfPHeaderCell){
+            ncell = new PdfPHeaderCell((PdfPHeaderCell)cell);
+        } else {
+
+            ncell = new PdfPCell(cell);
+        }
+
 
         int colspan = ncell.getColspan();
         colspan = Math.max(colspan, 1);
