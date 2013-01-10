@@ -351,11 +351,13 @@ public class CertificateInfo {
 	 */
 	public static X500Name getSubjectFields(X509Certificate cert) {
 	    try {
-	        return new X500Name((ASN1Sequence)CertificateInfo.getSubject(cert.getTBSCertificate()));
+	    	if (cert != null)
+	    		return new X500Name((ASN1Sequence)CertificateInfo.getSubject(cert.getTBSCertificate()));
 	    }
 	    catch (Exception e) {
 	        throw new ExceptionConverter(e);
 	    }
+	    return null;
 	}
 
 	/**

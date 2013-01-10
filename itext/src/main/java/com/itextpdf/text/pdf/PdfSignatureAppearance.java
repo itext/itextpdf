@@ -71,6 +71,7 @@ import com.itextpdf.text.io.RASInputStream;
 import com.itextpdf.text.io.RandomAccessSource;
 import com.itextpdf.text.io.RandomAccessSourceFactory;
 import com.itextpdf.text.pdf.security.CertificateInfo;
+import com.itextpdf.text.pdf.security.CertificateInfo.X500Name;
 
 /**
  * Class that takes care of the cryptographic options
@@ -829,9 +830,13 @@ public class PdfSignatureAppearance {
             if (layer2Text == null) {
                 StringBuilder buf = new StringBuilder();
                 buf.append("Digitally signed by ");
-                String name = CertificateInfo.getSubjectFields((X509Certificate)signCertificate).getField("CN");
-                if (name == null)
-                    name = CertificateInfo.getSubjectFields((X509Certificate)signCertificate).getField("E");
+                String name = null;
+                X500Name x500name = CertificateInfo.getSubjectFields((X509Certificate)signCertificate);
+                if (x500name != null) {
+                	name = x500name.getField("CN");
+                	if (name == null)
+                		name = x500name.getField("E");
+                }
                 if (name == null)
                     name = "";
                 buf.append(name).append('\n');
