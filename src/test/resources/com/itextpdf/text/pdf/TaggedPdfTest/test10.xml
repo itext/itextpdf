@@ -1,44 +1,44 @@
 <Document>
 <H1 color="[0, 0, 1]">Document Header</H1>
-<Table><TBody>
+<Table width="418.4" height="418.4"><TBody>
 
-<TR>
-<TD><Span>Quick brown fox jumped over a lazy
+<TR o="/Table">
+<TD o="/Table"><Span>Quick brown fox jumped over a lazy
 dog. A very long line appears here
 because we need new line.</Span>
 </TD>
-<TD><Figure bBox="[0, 0, 106, 61]" width="106" height="61"></Figure>
+<TD o="/Table"><Figure bBox="[0, 0, 106, 61]" width="106" height="61"></Figure>
 </TD>
 </TR>
-<TR>
-<TD><Span>jumped over a lazy</Span>
+<TR o="/Table">
+<TD o="/Table"><Span>jumped over a lazy</Span>
 </TD>
-<TD><Figure bBox="[0, 0, 106, 61]" width="106" height="61"></Figure>
+<TD o="/Table"><Figure bBox="[0, 0, 106, 61]" width="106" height="61"></Figure>
 </TD>
 </TR>
-<TR>
-<TD><Table><TBody>
+<TR o="/Table">
+<TD o="/Table"><Table width="205.2" height="205.2"><TBody>
 
-<TR>
-<TD><Span>Quick brown fox
+<TR o="/Table">
+<TD o="/Table"><Span>Quick brown fox
 jumped over a
 lazy dog. A very
 long line appears
 here because we
 need new line.</Span>
 </TD>
-<TD><Figure bBox="[0, 0, 106, 61]" width="106" height="61"></Figure>
+<TD o="/Table"><Figure bBox="[0, 0, 106, 61]" width="106" height="61"></Figure>
 </TD>
 </TR>
-<TR>
-<TD><Span>jumped over a
+<TR o="/Table">
+<TD o="/Table"><Span>jumped over a
 lazy</Span>
 </TD>
-<TD><Figure bBox="[0, 0, 106, 61]" width="106" height="61"></Figure>
+<TD o="/Table"><Figure bBox="[0, 0, 106, 61]" width="106" height="61"></Figure>
 </TD>
 </TR>
-<TR>
-<TD><Span>Lorem ipsum
+<TR o="/Table">
+<TD o="/Table"><Span>Lorem ipsum
 dolor sit
 amet,consectetur
 adipiscing
@@ -306,13 +306,13 @@ semper vitae,
 tempus eget
 dolor.</Span>
 </TD>
-<TD><Span>Hello World</Span>
+<TD o="/Table"><Span>Hello World</Span>
 </TD>
 </TR>
 </TBody>
 </Table>
 </TD>
-<TD><Span>Lorem ipsum dolor sit
+<TD o="/Table"><Span>Lorem ipsum dolor sit
 amet,consectetur adipiscing
 elit.Pellentesque a lectus sit amet
 lectus accumsan aliquam.Quisque

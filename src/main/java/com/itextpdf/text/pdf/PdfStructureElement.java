@@ -47,6 +47,7 @@ import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.interfaces.IAccessibleElement;
 import com.itextpdf.text.pdf.interfaces.IPdfStructureElement;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -221,6 +222,8 @@ public class PdfStructureElement extends PdfDictionary implements IPdfStructureE
             writeAttributes((PdfPTable)element);
         } else if (element instanceof PdfPRow) {
             writeAttributes((PdfPRow)element);
+        } else if (element instanceof PdfPHeaderCell) {
+            writeAttributes((PdfPHeaderCell)element);
         } else if (element instanceof PdfPCell) {
             writeAttributes((PdfPCell)element);
         } else if (element instanceof PdfPTableHeader) {
@@ -374,35 +377,13 @@ public class PdfStructureElement extends PdfDictionary implements IPdfStructureE
                     this.setAttribute(PdfName.ENDINDENT, new PdfNumber(paragraph.getIndentationRight()));
             }
 
-            PdfName align = null;
-            switch (paragraph.getAlignment()) {
-                case Element.ALIGN_LEFT:
-                    align = PdfName.START;
-                    break;
-                case Element.ALIGN_CENTER:
-                    align = PdfName.CENTER;
-                    break;
-                case Element.ALIGN_RIGHT:
-                    align = PdfName.END;
-                    break;
-                case Element.ALIGN_JUSTIFIED:
-                    align = PdfName.JUSTIFY;
-                    break;
-            }
-            obj = parent.getAttribute(PdfName.TEXTALIGN);
-            if (obj instanceof PdfName) {
-                PdfName textAlign = ((PdfName) obj);
-                if (align != null && !textAlign.equals(align))
-                    this.setAttribute(PdfName.TEXTALIGN, align);
-            } else {
-                if (align != null && !PdfName.START.equals(align))
-                    this.setAttribute(PdfName.TEXTALIGN, align);
-            }
+            setTextAlignAttribute(paragraph.getAlignment());
         }
     }
 
     private void writeAttributes(final List list) {
         if (list != null) {
+            this.setAttribute(PdfName.O, PdfName.LIST);
             if (list.isAutoindent()){
                 if (list.isNumbered()){
                     if (list.isLettered()){
@@ -449,25 +430,61 @@ public class PdfStructureElement extends PdfDictionary implements IPdfStructureE
 
     private void writeAttributes(final PdfPTable table) {
         if (table != null) {
-
+            if (table.getTotalHeight() > 0){
+                this.setAttribute(PdfName.HEIGHT, new PdfNumber(table.getTotalWidth()));
+            }
+            if (table.getTotalWidth() > 0){
+                this.setAttribute(PdfName.WIDTH, new PdfNumber(table.getTotalWidth()));
+            }
         }
     }
 
     private void writeAttributes(final PdfPRow row) {
         if (row != null) {
-
+            this.setAttribute(PdfName.O, PdfName.TABLE);
         }
     }
 
     private void writeAttributes(final PdfPCell cell) {
         if (cell != null) {
+            this.setAttribute(PdfName.O, PdfName.TABLE);
+            if (cell.getColspan() != 1){
+                this.setAttribute(PdfName.COLSPAN, new PdfNumber(cell.getColspan()));
+            }
+            if (cell.getRowspan() != 1){
+                this.setAttribute(PdfName.ROWSPAN, new PdfNumber(cell.getRowspan()));
+            }
+            if (cell.getHeaders() != null){
+                PdfArray headers = new PdfArray();
+                ArrayList<PdfPHeaderCell> list = cell.getHeaders();
+                for (PdfPHeaderCell header : list){
+                    if (header.getName() != null)
+                        headers.add(new PdfString(header.getName()));
+                }
+                if (!headers.isEmpty())
+                    this.setAttribute(PdfName.HEADERS, headers);
+            }
+        }
+    }
 
+    private void writeAttributes(final PdfPHeaderCell headerCell) {
+        if (headerCell != null) {
+            if (headerCell.getScope() != PdfPHeaderCell.NONE){
+                switch (headerCell.getScope()){
+                    case PdfPHeaderCell.ROW     : this.setAttribute(PdfName.SCOPE, PdfName.ROW); break;
+                    case PdfPHeaderCell.COLUMN  : this.setAttribute(PdfName.SCOPE, PdfName.COLUMN); break;
+                    case PdfPHeaderCell.BOTH    : this.setAttribute(PdfName.SCOPE, PdfName.BOTH); break;
+                }
+            }
+            if (headerCell.getName() != null)
+                this.setAttribute(PdfName.NAME, new PdfName(headerCell.getName()));
+            writeAttributes((PdfPCell)headerCell);
         }
     }
 
     private void writeAttributes(final PdfPTableHeader header) {
         if (header != null) {
-
+            this.setAttribute(PdfName.O, PdfName.TABLE);
         }
     }
 
@@ -485,7 +502,12 @@ public class PdfStructureElement extends PdfDictionary implements IPdfStructureE
 
     private void writeAttributes(final PdfDiv div) {
         if (div != null) {
+            // Setting non-inheritable attributes
+            if (div.getBackgroundColor() != null)
+                setColorAttribute(div.getBackgroundColor(), null, PdfName.BACKGROUNDCOLOR);
 
+            // Setting inheritable attributes
+            setTextAlignAttribute(div.getTextAlignment());
         }
     }
 
@@ -494,7 +516,7 @@ public class PdfStructureElement extends PdfDictionary implements IPdfStructureE
 
         }
     }
-
+    
     private boolean colorsEqual(PdfArray parentColor, float [] color){
         if (Float.compare(color[0], parentColor.getAsNumber(0).floatValue()) != 0){
             return false;
@@ -510,7 +532,7 @@ public class PdfStructureElement extends PdfDictionary implements IPdfStructureE
 
     private void setColorAttribute(BaseColor newColor, PdfObject oldColor, PdfName attributeName){
         float [] colorArr = new float[]{newColor.getRed()/255f, newColor.getGreen()/255f, newColor.getBlue()/255f};
-        if (oldColor instanceof PdfArray){
+        if ((oldColor != null) && (oldColor instanceof PdfArray)){
             PdfArray oldC = (PdfArray)oldColor;
             if (colorsEqual(oldC, colorArr))
             {
@@ -523,5 +545,30 @@ public class PdfStructureElement extends PdfDictionary implements IPdfStructureE
             this.setAttribute(attributeName, new PdfArray(colorArr));
     }
 
-
+    private void setTextAlignAttribute(final int elementAlign){
+        PdfName align = null;
+        switch (elementAlign) {
+            case Element.ALIGN_LEFT:
+                align = PdfName.START;
+                break;
+            case Element.ALIGN_CENTER:
+                align = PdfName.CENTER;
+                break;
+            case Element.ALIGN_RIGHT:
+                align = PdfName.END;
+                break;
+            case Element.ALIGN_JUSTIFIED:
+                align = PdfName.JUSTIFY;
+                break;
+        }
+        PdfObject obj = parent.getAttribute(PdfName.TEXTALIGN);
+        if (obj instanceof PdfName) {
+            PdfName textAlign = ((PdfName) obj);
+            if (align != null && !textAlign.equals(align))
+                this.setAttribute(PdfName.TEXTALIGN, align);
+        } else {
+            if (align != null && !PdfName.START.equals(align))
+                this.setAttribute(PdfName.TEXTALIGN, align);
+        }
+    }
 }
