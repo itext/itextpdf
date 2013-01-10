@@ -675,45 +675,45 @@ class TrueTypeFont extends BaseFont {
                 
                 /////////////////////////////////////////////
 
-                if (tables.get("GSUB") != null) {
-                    
-                    Map<Integer, Character> glyphToCharacterMap = new HashMap<Integer, Character>(cmap31.size());
-
-                    for (Integer charCode : cmap31.keySet()) {
-                        char c = (char) charCode.intValue();
-                        int glyphCode = cmap31.get(charCode)[0];
-                        glyphToCharacterMap.put(glyphCode, c);
-                    }
-                    
-//                    if (false) {
-//                    	StringBuilder  sb = new StringBuilder(50);
-//                        
-//                        for (int glyphCode : glyphToCharacterMap.keySet()) {
-//                        	sb.append(glyphCode).append("=>").append(glyphToCharacterMap.get(glyphCode)).append("\n");
-//                        }
-//                        
-//                        System.out.println("glyphToCharacterMap:\n" + sb.toString());
+//                if (tables.get("GSUB") != null) {
+//                    
+//                    Map<Integer, Character> glyphToCharacterMap = new HashMap<Integer, Character>(cmap31.size());
+//
+//                    for (Integer charCode : cmap31.keySet()) {
+//                        char c = (char) charCode.intValue();
+//                        int glyphCode = cmap31.get(charCode)[0];
+//                        glyphToCharacterMap.put(glyphCode, c);
 //                    }
-                
-                    GlyphSubstitutionTableReader gsubReader = new GlyphSubstitutionTableReader(fileName, tables.get("GSUB")[0], glyphToCharacterMap, GlyphWidths);
-                    
-                    // failsafe
-                    try {
-                        glyphSubstitutionMap = gsubReader.getGlyphSubstitutionMap();
-                    } catch (Exception e) {
-//                        e.printStackTrace();
-                    }
-                    
-                }
-                
-                if (tables.get("GPOS") != null) {
-                    try {
-                        GlyphPositioningTableReader gposReader = new GlyphPositioningTableReader(fileName, tables.get("GPOS")[0]);
-                        gposReader.read();
-                    } catch (Exception e) {
-//                        e.printStackTrace();
-                    }
-                }
+//                    
+////                    if (false) {
+////                    	StringBuilder  sb = new StringBuilder(50);
+////                        
+////                        for (int glyphCode : glyphToCharacterMap.keySet()) {
+////                        	sb.append(glyphCode).append("=>").append(glyphToCharacterMap.get(glyphCode)).append("\n");
+////                        }
+////                        
+////                        System.out.println("glyphToCharacterMap:\n" + sb.toString());
+////                    }
+//                
+//                    GlyphSubstitutionTableReader gsubReader = new GlyphSubstitutionTableReader(fileName, tables.get("GSUB")[0], glyphToCharacterMap, GlyphWidths);
+//                    
+//                    // failsafe
+//                    try {
+//                        glyphSubstitutionMap = gsubReader.getGlyphSubstitutionMap();
+//                    } catch (Exception e) {
+////                        e.printStackTrace();
+//                    }
+//                    
+//                }
+//                
+//                if (tables.get("GPOS") != null) {
+//                    try {
+//                        GlyphPositioningTableReader gposReader = new GlyphPositioningTableReader(fileName, tables.get("GPOS")[0]);
+//                        gposReader.read();
+//                    } catch (Exception e) {
+////                        e.printStackTrace();
+//                    }
+//                }
                 
 //                if (false) {
 //                    StringBuilder sb = new StringBuilder(50);
