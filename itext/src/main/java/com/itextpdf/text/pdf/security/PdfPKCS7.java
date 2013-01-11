@@ -106,6 +106,7 @@ import org.bouncycastle.cert.ocsp.CertificateID;
 import org.bouncycastle.cert.ocsp.SingleResp;
 import org.bouncycastle.jce.X509Principal;
 import org.bouncycastle.jce.provider.X509CertParser;
+import org.bouncycastle.operator.DigestCalculator;
 import org.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder;
 import org.bouncycastle.tsp.TimeStampToken;
 import org.bouncycastle.tsp.TimeStampTokenInfo;
@@ -1232,10 +1233,11 @@ public class PdfPKCS7 {
             X509Certificate[] cs = (X509Certificate[])getSignCertificateChain();
             SingleResp sr = basicResp.getResponses()[0];
             CertificateID cid = sr.getCertID();
+            DigestCalculator digestalg = new JcaDigestCalculatorProviderBuilder().build().get(new AlgorithmIdentifier(cid.getHashAlgOID(), DERNull.INSTANCE));
             X509Certificate sigcer = getSigningCertificate();
             X509Certificate isscer = cs[1];
             CertificateID tis = new CertificateID(
-                new JcaDigestCalculatorProviderBuilder().build().get(CertificateID.HASH_SHA1), new JcaX509CertificateHolder(isscer), sigcer.getSerialNumber());
+                digestalg, new JcaX509CertificateHolder(isscer), sigcer.getSerialNumber());
             return tis.equals(cid);
         }
         catch (Exception ex) {
