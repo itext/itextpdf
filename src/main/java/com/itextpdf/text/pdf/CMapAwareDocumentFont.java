@@ -46,6 +46,7 @@ package com.itextpdf.text.pdf;
 import com.itextpdf.text.ExceptionConverter;
 import com.itextpdf.text.Utilities;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Map;
 
 import com.itextpdf.text.error_messages.MessageLocalization;
@@ -155,13 +156,14 @@ public class CMapAwareDocumentFont extends DocumentFont {
         cidbyte2uni = new char[256];
         if (toUnicodeCmap == null) {
         	for (int k = 0; k < e.length; ++k) {
-        		int n = uni2byte.get(e[k]);
-            
         		// this is messy, messy - an encoding can have multiple unicode values mapping to the same cid - we are going to arbitrarily choose the first one
         		// what we really need to do is to parse the encoding, and handle the differences info ourselves.  This is a huge duplication of code of what is already
         		// being done in DocumentFont, so I really hate to go down that path without seriously thinking about a change in the organization of the Font class hierarchy
-        		if (n < 256 && cidbyte2uni[n] == 0)
-                cidbyte2uni[n] = (char)e[k];
+        		ArrayList<Integer> nList = uni2byte.getValues(e[k]);
+        		for (int n : nList) {
+        			if (n < 256 && cidbyte2uni[n] == 0)
+        				cidbyte2uni[n] = (char)e[k];
+        		}
         	}
         }
         else {
