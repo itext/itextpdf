@@ -1066,19 +1066,29 @@ public abstract class Image extends Rectangle implements Indentable, Spaceable, 
 		setWidthPercentage(0);
 	}
 
+
 	/**
 	 * Returns the transformation matrix of the image.
 	 *
 	 * @return an array [AX, AY, BX, BY, CX, CY, DX, DY]
 	 */
 	public float[] matrix() {
+		return matrix(1);
+	}
+
+	/**
+	 * Returns the transformation matrix of the image.
+	 *
+	 * @return an array [AX, AY, BX, BY, CX, CY, DX, DY]
+	 */
+	public float[] matrix(float scalePercentage) {
 		float[] matrix = new float[8];
 		float cosX = (float) Math.cos(rotationRadians);
 		float sinX = (float) Math.sin(rotationRadians);
-		matrix[AX] = plainWidth * cosX;
-		matrix[AY] = plainWidth * sinX;
-		matrix[BX] = -plainHeight * sinX;
-		matrix[BY] = plainHeight * cosX;
+		matrix[AX] = plainWidth * cosX * scalePercentage;
+		matrix[AY] = plainWidth * sinX * scalePercentage;
+		matrix[BX] = -plainHeight * sinX * scalePercentage;
+		matrix[BY] = plainHeight * cosX * scalePercentage;
 		if (rotationRadians < Math.PI / 2f) {
 			matrix[CX] = matrix[BX];
 			matrix[CY] = 0;

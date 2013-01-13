@@ -208,7 +208,7 @@ public class PdfLine {
         	float f;
         	if (chunk.isImage()) {
         		Image img = chunk.getImage();
-        		f = img.getScaledHeight() + chunk.getImageOffsetY()
+        		f = chunk.getImageHeight() + chunk.getImageOffsetY()
         				+ img.getBorderWidthTop() + img.getSpacingBefore();
         	}
         	else {
@@ -479,7 +479,7 @@ public class PdfLine {
             if (chunk.isImage()) {
                 Image img = chunk.getImage();
                 if (chunk.changeLeading()) {
-                    float height = img.getScaledHeight() + chunk.getImageOffsetY() + img.getSpacingBefore();
+                    float height = chunk.getImageHeight() + chunk.getImageOffsetY() + img.getSpacingBefore();
                     image_leading = Math.max(height, image_leading);
                 }
             } else {
@@ -542,7 +542,7 @@ public class PdfLine {
        for (int k = 0; k < line.size(); ++k) {
            PdfChunk ck = line.get(k);
            if (ck.isImage())
-               ascender = Math.max(ascender, ck.getImage().getScaledHeight() + ck.getImageOffsetY());
+               ascender = Math.max(ascender, ck.getImageHeight() + ck.getImageOffsetY());
            else {
                PdfFont font = ck.font();
                float textRise = ck.getTextRise();
