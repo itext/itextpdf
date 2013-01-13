@@ -29,7 +29,7 @@
 
 package com.itextpdf.text.pdf;
 
-import java.util.ArrayList;
+// import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
@@ -237,7 +237,6 @@ public class IntHashtable implements Cloneable {
      *          <code>null</code> if the key is not mapped to any value in
      *          this hashtable.
      * @see     #put(int, int)
-     */
     public ArrayList<Integer> getValues(int key) {
         Entry tab[] = table;
         int hash = key;
@@ -249,6 +248,7 @@ public class IntHashtable implements Cloneable {
         }
         return null;
     }
+     */
     
     /***
      * <p>Increases the capacity of and internally reorganizes this
@@ -304,7 +304,7 @@ public class IntHashtable implements Cloneable {
         for (Entry e = tab[index]; e != null; e = e.next) {
             if (e.hash == hash && e.key == key) {
                 int old = e.value;
-                e.addValue(old);
+                //e.addValue(old);
                 e.value = value;
                 return old;
             }
@@ -375,7 +375,7 @@ public class IntHashtable implements Cloneable {
         int hash;
         int key;
         int value;
-        ArrayList<Integer> values = new ArrayList<Integer>();
+        //ArrayList<Integer> values = new ArrayList<Integer>();
         Entry next;
 
         /***
@@ -391,9 +391,9 @@ public class IntHashtable implements Cloneable {
             this.key = key;
             this.value = value;
             this.next = next;
-            values.add(value);
+            //values.add(value);
         }
-
+/*
         public void addValue(int old) {
         	if (!(hash == 0 || values.contains(old)))
         		values.add(old);
@@ -402,7 +402,7 @@ public class IntHashtable implements Cloneable {
         public ArrayList<Integer> getValues() {
         	return values;
         }
-        
+*/        
         // extra methods for inner class Entry by Paulo
         public int getKey() {
         	return key;

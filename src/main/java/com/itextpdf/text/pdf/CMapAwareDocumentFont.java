@@ -46,7 +46,7 @@ package com.itextpdf.text.pdf;
 import com.itextpdf.text.ExceptionConverter;
 import com.itextpdf.text.Utilities;
 import java.io.IOException;
-import java.util.ArrayList;
+//import java.util.ArrayList;
 import java.util.Map;
 
 import com.itextpdf.text.error_messages.MessageLocalization;
@@ -148,23 +148,39 @@ public class CMapAwareDocumentFont extends DocumentFont {
      * @since 2.1.7
      */
     private void processUni2Byte() throws IOException{
-        IntHashtable uni2byte = getUni2Byte();
-        int e[] = uni2byte.toOrderedKeys();
-        if (e.length == 0)
-            return;
-        
+        //IntHashtable uni2byte = getUni2Byte();
+        //int e[] = uni2byte.toOrderedKeys();
+        //if (e.length == 0)
+        //    return;
+    	
+    	IntHashtable byte2uni = getByte2Uni();
+    	int e[] = byte2uni.toOrderedKeys();
+    	if (e.length == 0)
+    		return;
+    	
         cidbyte2uni = new char[256];
         if (toUnicodeCmap == null) {
         	for (int k = 0; k < e.length; ++k) {
+        		int key = e[k];
+        		cidbyte2uni[key] = (char)byte2uni.get(key);
+        	}
+        	/*
+        	for (int k = 0; k < e.length; ++k) {
+        		// Kevin Day:
         		// this is messy, messy - an encoding can have multiple unicode values mapping to the same cid - we are going to arbitrarily choose the first one
         		// what we really need to do is to parse the encoding, and handle the differences info ourselves.  This is a huge duplication of code of what is already
         		// being done in DocumentFont, so I really hate to go down that path without seriously thinking about a change in the organization of the Font class hierarchy
+        		
+        		// Bruno Lowagie:
+        		// I wish I could fix this in a better way, for instance by creating a uni2byte intHashtable in DocumentFont.
+        		// However, I chose a quick & dirty solution, allowing intHashtable to store an array of int values.
         		ArrayList<Integer> nList = uni2byte.getValues(e[k]);
         		for (int n : nList) {
         			if (n < 256 && cidbyte2uni[n] == 0)
         				cidbyte2uni[n] = (char)e[k];
         		}
         	}
+        	*/
         }
         else {
         	Map<Integer, Integer> dm = toUnicodeCmap.createDirectMapping();

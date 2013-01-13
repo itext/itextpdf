@@ -65,6 +65,7 @@ public class DocumentFont extends BaseFont {
     private PRIndirectReference refFont;
     private PdfDictionary font;
     private IntHashtable uni2byte = new IntHashtable();
+    private IntHashtable byte2uni = new IntHashtable();
     private IntHashtable diffmap;
     private float ascender = 800;
     private float capHeight = 700;
@@ -300,6 +301,7 @@ public class DocumentFont extends BaseFont {
                     Map<Integer, Integer> rm = toUnicode.createReverseMapping();
                     for (Map.Entry<Integer, Integer> kv : rm.entrySet()) {
                         uni2byte.put(kv.getKey().intValue(), kv.getValue().intValue());
+                        byte2uni.put(kv.getValue().intValue(), kv.getKey().intValue());
                     }
                 }
             }
@@ -329,6 +331,7 @@ public class DocumentFont extends BaseFont {
                             int c[] = GlyphList.nameToUnicode(PdfName.decodeName(((PdfName)obj).toString()));
                             if (c != null && c.length > 0) {
                                 uni2byte.put(c[0], currentNumber);
+                                byte2uni.put(currentNumber, c[0]);
                                 diffmap.put(c[0], currentNumber);
                             }
                             else {
@@ -341,6 +344,7 @@ public class DocumentFont extends BaseFont {
                                 final String unicode = toUnicode.lookup(new byte[]{(byte) currentNumber}, 0, 1);
                                 if ((unicode != null) && (unicode.length() == 1)) {
                                     this.uni2byte.put(unicode.charAt(0), currentNumber);
+                                    this.byte2uni.put(currentNumber, unicode.charAt(0));
                                     this.diffmap.put(unicode.charAt(0), currentNumber);
                                 }
                             }
@@ -363,14 +367,12 @@ public class DocumentFont extends BaseFont {
             }
             int e[] = uni2byte.toOrderedKeys();
             for (int k = 0; k < e.length; ++k) {
-                int n = uni2byte.get(e[k]);
-                widths[n] = bf.getRawWidth(n, GlyphList.unicodeToName(e[k]));
+            	updateWidths(e[k], bf);
             }
             if (diffmap != null) { //widths for diffmap must override existing ones
                 e = diffmap.toOrderedKeys();
                 for (int k = 0; k < e.length; ++k) {
-                    int n = diffmap.get(e[k]);
-                    widths[n] = bf.getRawWidth(n, GlyphList.unicodeToName(e[k]));
+                	updateWidths(e[k], bf);
                 }
                 diffmap = null;
             }
@@ -399,6 +401,15 @@ public class DocumentFont extends BaseFont {
         fillFontDesc(font.getAsDict(PdfName.FONTDESCRIPTOR));
     }
 
+    /**
+     * Updates the widths array. Currently only used for Base14 fonts.
+     * We assume that every cid maps to a single unicode value.
+     */
+    private void updateWidths(int key, BaseFont bf) {
+        int n = uni2byte.get(key);
+        widths[n] = bf.getRawWidth(n, GlyphList.unicodeToName(key));
+    }
+    
     private CMapToUnicode processToUnicode() {
         CMapToUnicode cmapRet = null;
         PdfObject toUni = PdfReader.getPdfObjectRelease(this.font.get(PdfName.TOUNICODE));
@@ -469,11 +480,13 @@ public class DocumentFont extends BaseFont {
             char arr[] = cv.toCharArray();
             for (int k = 0; k < 256; ++k) {
                 uni2byte.put(arr[k], k);
+                byte2uni.put(k, arr[k]);
             }
         }
         else {
             for (int k = 0; k < 256; ++k) {
                 uni2byte.put(stdEnc[k], k);
+                byte2uni.put(k, stdEnc[k]);
             }
         }
     }
@@ -784,6 +797,15 @@ public class DocumentFont extends BaseFont {
      */
     IntHashtable getUni2Byte(){
         return uni2byte;
+    }
+
+    /**
+     * Exposes the CID - > unicode map that is constructed from the font's encoding
+     * @return the CID to unicode map
+     * @since 5.4.0
+     */
+    IntHashtable getByte2Uni(){
+        return byte2uni;
     }
 
     /**
