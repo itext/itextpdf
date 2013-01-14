@@ -216,7 +216,7 @@ public class CompareTool {
         cmpPdfName = new File(cmpPdf).getName();
         cmpPdfName.substring(0, cmpPdfName.indexOf('.'));
         outImage = outPdfName + "-%03d.png";
-        cmpImage = "cmp_" + outPdfName + "-%03d.png";
+        cmpImage = "cmp_" + cmpPdfName + "-%03d.png";
     }
 
     private boolean compareStreams(InputStream is1, InputStream is2) throws IOException {
@@ -238,6 +238,7 @@ public class CompareTool {
     }
 
     class PngFileFilter implements FileFilter {
+
         public boolean accept(File pathname) {
             String ap = pathname.getAbsolutePath();
             boolean b1 = ap.endsWith(".png");
