@@ -5,15 +5,16 @@
  */
 package com.itextpdf.text.pdf.fonts.cmaps;
 
-import static org.junit.Assert.*;
+import java.util.Map;
+
+import junit.framework.Assert;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import com.itextpdf.testutils.TestResourceUtils;
-import com.itextpdf.text.pdf.PRStream;
-import com.itextpdf.text.pdf.PdfReader;
+import com.itextpdf.text.pdf.CMapAwareDocumentFont;
 
 /**
  * @author kevin
