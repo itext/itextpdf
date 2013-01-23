@@ -372,8 +372,13 @@ public class BidiLine {
                 continue;
             if (surrogate)
                 charWidth = ck.getCharWidth(uniC);
-            else
-                charWidth = ck.getCharWidth(text[currentChar]);
+            else {
+                if (ck.isImage()) {
+                    charWidth = ck.getImageWidth();
+                } else {
+                    charWidth = ck.getCharWidth(text[currentChar]);
+                }
+            }
             splitChar = ck.isExtSplitCharacter(oldCurrentChar, currentChar, totalTextLength, text, detailChunks);
             if (splitChar && Character.isWhitespace((char)uniC))
                 lastSplit = currentChar;
