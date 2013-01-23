@@ -5,15 +5,16 @@
  */
 package com.itextpdf.text.pdf.fonts.cmaps;
 
-import static org.junit.Assert.*;
+import java.util.Map;
+
+import junit.framework.Assert;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import com.itextpdf.testutils.TestResourceUtils;
-import com.itextpdf.text.pdf.PRStream;
-import com.itextpdf.text.pdf.PdfReader;
+import com.itextpdf.text.pdf.CMapAwareDocumentFont;
 
 /**
  * @author kevin
@@ -34,6 +35,21 @@ public class CMapParserExTest {
         CidLocationFromByte lb = new CidLocationFromByte(touni);
         CMapToUnicode cmapRet = new CMapToUnicode();
         CMapParserEx.parseCid("", cmapRet, lb);
+    }
+    
+    @Test
+    public void testCMapThatResultsInEmptyMap() throws Exception{
+        byte[] touni = TestResourceUtils.getResourceAsByteArray(this, "cmap_results_in_empty_map.cmap");
+        CidLocationFromByte lb = new CidLocationFromByte(touni);
+        CMapToUnicode cmapRet = new CMapToUnicode();
+        CMapParserEx.parseCid("", cmapRet, lb);
+        
+        byte[] in = new byte[]{80, 111, 114}; // should translate to "Por"
+        String rslt = cmapRet.lookup(in, 0, 1);
+        Assert.assertEquals("P", cmapRet.lookup(in, 0, 1));
+        Assert.assertEquals("P", cmapRet.lookup(in, 1, 1));
+        Assert.assertEquals("P", cmapRet.lookup(in, 2, 1));
+        
     }
 
 }
