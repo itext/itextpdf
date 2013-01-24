@@ -160,8 +160,13 @@ public class OCSPVerifier extends RootStoreVerifier {
 				continue;
 			}
 			// check if the OCSP response was valid at the time of signing
-			if (signDate.after(resp[i].getNextUpdate())) {
-				LOGGER.info(String.format("OCSP no longer valid: %s after %s", signDate, resp[i].getNextUpdate()));
+			Date nextUpdate = resp[i].getNextUpdate();
+			if (nextUpdate == null) {
+				nextUpdate = new Date(resp[i].getThisUpdate().getTime() + 180000l);
+				LOGGER.info(String.format("No 'next update' for OCSP Response; assuming %s", nextUpdate));
+			}
+			if (signDate.after(nextUpdate)) {
+				LOGGER.info(String.format("OCSP no longer valid: %s after %s", signDate, nextUpdate));
 				continue;
 			}
 			// check the status of the certificate
