@@ -216,6 +216,8 @@ public class FdfReader extends PdfReader {
                     return new String(b, "GBK");
                 else if (encoding.equals(PdfName.BIGFIVE))
                     return new String(b, "Big5");
+                else if (encoding.equals(PdfName.UTF_8))
+                    return new String(b, "UTF8");
             }
             catch (Exception e) {
             }
