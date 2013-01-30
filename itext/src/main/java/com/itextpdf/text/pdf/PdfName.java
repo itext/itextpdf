@@ -2012,6 +2012,8 @@ public class PdfName extends PdfObject implements Comparable<PdfName> {
     /** A name */
     public static final PdfName USETHUMBS = new PdfName("UseThumbs");
     /** A name */
+    public static final PdfName UTF_8 = new PdfName("utf_8");
+    /** A name */
     public static final PdfName V = new PdfName("V");
     /** A name */
     public static final PdfName V2 = new PdfName("V2");
