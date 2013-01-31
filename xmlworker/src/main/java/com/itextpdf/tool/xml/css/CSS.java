@@ -116,6 +116,7 @@ public final class CSS {
 		public static final String VERTICAL_ALIGN = "vertical-align";
 		public static final String LINE_HEIGHT = "line-height";
 		public static final String TEXT_ALIGN = "text-align";
+        public static final String TEXT_VALIGN = "text-valign";
 		public static final String TEXT_INDENT = "text-indent";
 		public static final String POSITION = "position";
 		public static final String EMPTY_CELLS = "empty-cells";
