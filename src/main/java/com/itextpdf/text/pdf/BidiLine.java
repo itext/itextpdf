@@ -337,7 +337,7 @@ public class BidiLine {
                 ArrayList<PdfChunk> ar = new ArrayList<PdfChunk>();
                 PdfChunk ck = new PdfChunk("", detailChunks[0]);
                 ar.add(ck);
-                return new PdfLine(0, 0, 0, alignment, true, ar, isRTL);
+                return new PdfLine(0, 0, width, alignment, true, ar, isRTL);
             }
         }
         float originalWidth = width;
