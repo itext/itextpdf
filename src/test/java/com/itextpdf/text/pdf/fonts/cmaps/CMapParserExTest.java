@@ -36,20 +36,5 @@ public class CMapParserExTest {
         CMapToUnicode cmapRet = new CMapToUnicode();
         CMapParserEx.parseCid("", cmapRet, lb);
     }
-    
-    @Test
-    public void testCMapThatResultsInEmptyMap() throws Exception{
-        byte[] touni = TestResourceUtils.getResourceAsByteArray(this, "cmap_results_in_empty_map.cmap");
-        CidLocationFromByte lb = new CidLocationFromByte(touni);
-        CMapToUnicode cmapRet = new CMapToUnicode();
-        CMapParserEx.parseCid("", cmapRet, lb);
-        
-        byte[] in = new byte[]{80, 111, 114}; // should translate to "Por"
-        String rslt = cmapRet.lookup(in, 0, 1);
-        Assert.assertEquals("P", cmapRet.lookup(in, 0, 1));
-        Assert.assertEquals("P", cmapRet.lookup(in, 1, 1));
-        Assert.assertEquals("P", cmapRet.lookup(in, 2, 1));
-        
-    }
 
 }
