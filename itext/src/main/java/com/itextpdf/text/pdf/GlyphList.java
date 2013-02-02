@@ -108,7 +108,15 @@ public class GlyphList {
     }
 
     public static int[] nameToUnicode(String name) {
-        return names2unicode.get(name);
+        int[] v = names2unicode.get(name);
+        if (v == null && name.length() == 7 && name.toLowerCase().startsWith("uni")) {
+            try {
+                return new int[]{Integer.parseInt(name.substring(3), 16)};
+            }
+            catch (Exception ex) {
+            }
+        }
+        return v;
     }
 
     public static String unicodeToName(int num) {
