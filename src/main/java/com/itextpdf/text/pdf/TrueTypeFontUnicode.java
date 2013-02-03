@@ -46,10 +46,15 @@ package com.itextpdf.text.pdf;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Utilities;
 import com.itextpdf.text.error_messages.MessageLocalization;
+import com.itextpdf.text.pdf.fonts.otf.GlyphSubstitutionTableReader;
+import com.itextpdf.text.pdf.fonts.otf.Language;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /** Represents a True Type font with Unicode encoding. All the character
  * in the font can be used directly by using the encoding Identity-H or
@@ -58,6 +63,11 @@ import java.util.HashMap;
  * @author  Paulo Soares
  */
 class TrueTypeFontUnicode extends TrueTypeFont implements Comparator<int[]>{
+	
+	private static final List<Language> SUPPORTED_LANGUAGES_FOR_OTF = Arrays.asList(Language.BENGALI);  
+	
+	private Map<String, Glyph> glyphSubstitutionMap;
+	private Language supportedLanguage;
 
     /**
      * Creates a new TrueType font addressed by Unicode characters. The font
@@ -103,6 +113,12 @@ class TrueTypeFontUnicode extends TrueTypeFont implements Comparator<int[]>{
         else
             throw new DocumentException(MessageLocalization.getComposedMessage("1.2.is.not.a.ttf.font.file", fileName, style));
         vertical = enc.endsWith("V");
+    }
+    
+    @Override
+    void process(byte ttfAfm[], boolean preload) throws DocumentException, IOException {
+    	super.process(ttfAfm, preload);
+    	readGsubTable();
     }
 
     /**
@@ -326,7 +342,6 @@ class TrueTypeFontUnicode extends TrueTypeFont implements Comparator<int[]>{
      * @throws IOException on error
      * @throws DocumentException error in generating the object
      */
-    @SuppressWarnings("unchecked")
     @Override
     void writeFont(PdfWriter writer, PdfIndirectReference ref, Object params[]) throws DocumentException, IOException {
         writer.getTtfUnicodeWriter().writeFont(this, ref, params, rotbits);
@@ -419,5 +434,59 @@ class TrueTypeFontUnicode extends TrueTypeFont implements Comparator<int[]>{
         if (m == null)
             return null;
         return bboxes[m[0]];
+    }
+    
+    protected Map<String, Glyph> getGlyphSubstitutionMap() {
+        return glyphSubstitutionMap;
+    }
+    
+    Language getSupportedLanguage() {
+    	return supportedLanguage;
+    }
+    
+    private void readGsubTable() throws IOException { 
+        if (tables.get("GSUB") != null) {
+            
+            Map<Integer, Character> glyphToCharacterMap = new HashMap<Integer, Character>(cmap31.size());
+
+            for (Integer charCode : cmap31.keySet()) {
+                char c = (char) charCode.intValue();
+                int glyphCode = cmap31.get(charCode)[0];
+                glyphToCharacterMap.put(glyphCode, c);
+            }
+        
+            GlyphSubstitutionTableReader gsubReader = new GlyphSubstitutionTableReader(
+            		fileName, tables.get("GSUB")[0], glyphToCharacterMap, glyphWidthsByIndex);
+            
+            try {
+            	gsubReader.read();
+            	supportedLanguage = gsubReader.getSupportedLanguage();
+            	
+            	if (SUPPORTED_LANGUAGES_FOR_OTF.contains(supportedLanguage)) {
+            		glyphSubstitutionMap = gsubReader.getGlyphSubstitutionMap();
+                    /*if (false) {
+                    	StringBuilder  sb = new StringBuilder(50);
+                        
+                        for (int glyphCode : glyphToCharacterMap.keySet()) {
+                        	sb.append(glyphCode).append("=>").append(glyphToCharacterMap.get(glyphCode)).append("\n");
+                        }
+                        System.out.println("GlyphToCharacterMap:\n" + sb.toString());
+                    }
+                    if (false) {
+                        StringBuilder sb = new StringBuilder(50);
+                        int count = 1;
+                        
+                        for (String chars : glyphSubstitutionMap.keySet()) {
+                            int glyphId = glyphSubstitutionMap.get(chars).code;
+                            sb.append(count++).append(".>");
+                            sb.append(chars).append(" => ").append(glyphId).append("\n");
+                        }
+                        System.out.println("GlyphSubstitutionMap:\n" + sb.toString());
+                    }*/
+            	}
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 }
