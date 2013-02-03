@@ -51,6 +51,7 @@ import java.io.InputStream;
 import java.net.URL;
 
 import com.itextpdf.text.Document;
+import com.itextpdf.text.ExceptionConverter;
 import com.itextpdf.text.io.IndependentRandomAccessSource;
 import com.itextpdf.text.io.RandomAccessSource;
 import com.itextpdf.text.io.RandomAccessSourceFactory;
@@ -595,6 +596,24 @@ public class RandomAccessFileOrArray implements DataInput {
     
     public String readUTF() throws IOException {
         return DataInputStream.readUTF(this);
+    }
+    
+    /** Reads a <CODE>String</CODE> from the font file as bytes using the given
+     *  encoding.
+     * @param length the length of bytes to read
+     * @param encoding the given encoding
+     * @return the <CODE>String</CODE> read
+     * @throws IOException the font file could not be read
+     */
+    public String readString(int length, String encoding) throws IOException {
+        byte buf[] = new byte[length];
+        readFully(buf);
+        try {
+            return new String(buf, encoding);
+        }
+        catch (Exception e) {
+            throw new ExceptionConverter(e);
+        }
     }
     
 }
