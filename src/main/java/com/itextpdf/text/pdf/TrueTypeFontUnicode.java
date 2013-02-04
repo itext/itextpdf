@@ -118,7 +118,7 @@ class TrueTypeFontUnicode extends TrueTypeFont implements Comparator<int[]>{
     @Override
     void process(byte ttfAfm[], boolean preload) throws DocumentException, IOException {
     	super.process(ttfAfm, preload);
-    	readGsubTable();
+    	//readGsubTable();
     }
 
     /**
