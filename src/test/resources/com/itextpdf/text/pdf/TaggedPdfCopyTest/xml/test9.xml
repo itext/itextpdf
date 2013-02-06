@@ -1,0 +1,1650 @@
+<root><Document>
+<H1>Document Header</H1>
+<Paragraph>
+
+
+<TextBlock>Quick brown </TextBlock>
+<Image></Image>
+<Span> jumped over a lazy </Span>
+<Figure></Figure>
+</Paragraph>
+</Document>
+<Document><Table><TBody><TR>
+<TD><Table><TBody>
+
+<TR>
+<TD><Span>Quick brown fox
+jumped over a
+lazy dog. A very
+long line appears
+here because we
+need new line.</Span>
+</TD>
+<TD><Figure></Figure>
+</TD>
+</TR>
+<TR>
+<TD><Span>jumped over a
+lazy</Span>
+</TD>
+<TD><Figure></Figure>
+</TD>
+</TR>
+<TR>
+<TD><Span>Lorem ipsum
+dolor sit
+amet,consectetur
+adipiscing
+elit.Pellentesque a
+lectus sit amet
+lectus accumsan
+aliquam.Quisque
+facilisis
+ullamcorper dolor,
+quis gravida leo
+faucibus in.
+Donec a dolor
+ligula, quis
+placerat nunc.
+Etiam enim velit,
+egestas in lacinia
+at, ultricies eu
+massa.Cras
+ornare felis id
+quam vehicula
+lobortis. Ut
+semper
+malesuada nulla,
+in vulputate dui
+eleifend at.
+Phasellus pulvinar
+nisl a lorem
+volutpat
+pellentesque. In
+vitaeligula et
+quam vestibulum
+iaculis eget vitae
+massa. Fusce
+vitae leo ut diam
+suscipit dictum in
+id sapien.
+Praesent mi
+ligula, auctor vitae
+ultrices in,
+venenatis
+nonodio. Nullam
+sit amet velit
+pellentesque
+lectus consectetur
+lacinia nec quis
+mi. In hac
+habitasse platea
+dictumst.Quisque
+facilisis
+ullamcorper dolor,
+quis gravida leo
+faucibus in.Donec
+a dolor ligula, quis
+placerat nunc.
+1. Etiam enim
+velit, egestas in
+lacinia at, ultricies
+eu massa. Cras
+ornare felis id
+quam vehicula
+lobortis. Ut
+semper
+convallis justo
+euismod.
+Curabitur velit
+nisi, adipiscing
+sed consequat et,
+dignissim eget
+dolor. Aenean
+malesuada quam
+id mivestibulum
+pulvinar. Nullam
+diam quam,
+lobortis sit amet
+semper vitae,
+tempus eget
+dolor.</Span>
+</TD>
+<TD><Span>Hello World</Span>
+</TD>
+</TR>
+</TBody>
+</Table>
+</TD>
+<TD><Span>Lorem ipsum dolor sit
+amet,consectetur adipiscing
+elit.Pellentesque a lectus sit amet
+lectus accumsan aliquam.Quisque
+facilisis ullamcorper dolor, quis
+gravida leo faucibus in. Donec a dolor
+ligula, quis placerat nunc. Etiam enim
+velit, egestas in lacinia at, ultricies eu
+massa.Cras ornare felis id quam
+vehicula lobortis. Ut semper
+malesuada nulla, in vulputate dui
+eleifend at. Phasellus pulvinar nisl a
+lorem volutpat pellentesque. In
+vitaeligula et quam vestibulum iaculis
+eget vitae massa. Fusce vitae leo ut
+diam suscipit dictum in id sapien.
+Praesent mi ligula, auctor vitae
+ultrices in, venenatis nonodio. Nullam
+sit amet velit pellentesque lectus
+consectetur lacinia nec quis mi. In hac
+habitasse platea dictumst.Quisque
+facilisis ullamcorper dolor, quis
+gravida leo faucibus in.Donec a dolor
+ligula, quis placerat nunc.
+1. Etiam enim velit, egestas in lacinia
+at, ultricies eu massa. Cras ornare
+felis id quam vehicula lobortis. Ut
+semper malesuada nulla, in vulputate
+dui eleifend at.Phasellus pulvinar nisl
+a lorem volutpat pellentesque. In vitae
+ligula et quam vestibulum iaculis eget
+vitae massa. Fusce vitae leo ut diam
+suscipit dictum in idsapien. Praesent
+mi ligula, auctor vitae ultrices in,
+venenatis non odio. Nullam sit amet
+velit pellentesque lectus consectetur
+lacinia nec quis mi. In hachabitasse
+platea dictumst.
+2. Morbi euismod, nunc quis
+malesuada feugiat, dui nibh rhoncus
+leo, quis cursus erat tellus vel tortor.
+Mauris nibh dolor, iaculis et pharetra
+pretium,pellentesque vitae erat.
+Aenean enim nisi, euismod quis
+ultricies vel, convallis nec nulla.
+Suspendisse nisl purus, molestie et
+egestas ac, cursus in mauris.Aliquam
+erat volutpat. Donec at nulla in elit
+faucibus mollis ac vel enim. Nullam
+dapibus dui sit amet sem consectetur
+ac vulputate est sagittis. Aliquam
+luctusornare nulla. Mauris adipiscing
+congue pharetra. Proin tempus, nibh
+sed pretium tempor, arcu est hendrerit
+est, et dignissim odio leo non
+purus.Suspendisse non elit massa.
+Vestibulum tincidunt ipsum vitae dui
+congue sagittis. Aenean porttitor
+tristique euismod. Nulla id justo in
+quam imperdietfacilisis ut non turpis.
+Lorem ipsum dolor sit amet,
+consectetur adipiscing elit.
+3. Aliquam non elit ligula, nec
+hendrerit urna. Mauris ut velit sapien.
+Sed in convallis diam. Nulla faucibus,
+purus a porttitor ultrices, est quam
+convallis magna,molestie aliquam
+sapien nulla eget metus. Integer nec
+enim mi, eu mattis massa. Integer
+quis sapien vel purus pretium
+ullamcorper ac id dui.
+Suspendissepellentesque tellus sit
+amet neque pulvinar egestas lacinia
+diam imperdiet.
+4. Curabitur hendrerit, sem et facilisis
+vestibulum, massa felis vestibulum
+ligula, ut faucibus massa nisi in
+neque. Nulla facilisi. Etiam diam
+mauris, pellentesquelacinia dapibus
+at, lobortis non quam. Nullam et
+neque quis diam vestibulum
+scelerisque ullamcorper non mauris.
+Cras massa enim, commodo
+malesuadatincidunt ac, lobortis eu
+erat. Sed sed risus velit. Suspendisse
+tellus tortor, ullamcorper nec tristique
+ac, semper non nulla. Maecenas vitae
+diam orci, sedfermentum enim.
+Curabitur a libero nisl, vel laoreet
+nulla. Integer id volutpat sem.
+Pellentesque blandit, tellus at
+consequat dictum, urna sem
+elementum nisi,a bibendum nisi ipsum
+sit amet felis. Donec mattis ipsum nec
+metus lobortis eget volutpat nisl
+volutpat.
+5. Fusce in aliquet nibh. Etiam quis
+varius ipsum. Vivamus sit amet mauris
+a libero iaculis semper in a neque.
+Nam faucibus congue posuere. Cras
+vitae nibhsed magna ultricies pretium.
+Proin eget lacus quis dui ullamcorper
+cursus commodo in lacus. Quisque et
+sem id leo venenatis dictum dignissim
+et felis.Vestibulum enim urna, vehicula
+vel dictum in, congue quis sapien.
+Quisque ac mauris tellus. Nulla cursus
+pellentesque mauris viverra
+bibendum. Fuscemolestie dui id sem
+blandit in convallis justo euismod.
+Curabitur velit nisi, adipiscing sed
+consequat et, dignissim eget dolor.
+Aenean malesuada quam id
+mivestibulum pulvinar. Nullam diam
+quam, lobortis sit amet semper vitae,
+tempus eget dolor.</Span>
+</TD>
+</TR>
+</TBody>
+</Table>
+</Document>
+<Book><Document><Article_A><TextSection><Figure-title><Normal><ExampleN-><Span>xref</Span>
+<Span> </Span>
+<Span>0</Span>
+<Span> </Span>
+<Span>6</Span>
+<Span> </Span>
+<Span>0000000003</Span>
+<Span> </Span>
+<Span>65535</Span>
+<Span> </Span>
+<Span>f</Span>
+<Span> </Span>
+<Span>0000000017</Span>
+<Span> </Span>
+<Span>00000</Span>
+<Span> </Span>
+<Span>n</Span>
+<Span> </Span>
+<Span>0000000081</Span>
+<Span> </Span>
+<Span>00000</Span>
+<Span> </Span>
+<Span>n</Span>
+<Span> </Span>
+<Span>0000000000</Span>
+<Span> </Span>
+<Span>00007</Span>
+<Span> </Span>
+<Span>f</Span>
+<Span> </Span>
+<Span>0000000331</Span>
+<Span> </Span>
+<Span>00000</Span>
+<Span> </Span>
+<Span>n</Span>
+<Span> </Span>
+<Span>0000000409</Span>
+<Span> </Span>
+<Span>00000</Span>
+<Span> </Span>
+<Span>n</Span>
+</ExampleN->
+<ExampleN-><Span>EXAMPLE 3 The following shows a cross-reference section with four subsections, containing a total of five entries. The 
+first subsection contains one entry, for object number 0, which is free. The second subsection contains 
+one entry, for object number 3, which is in use. The third subsection contains two entries, for objects 
+number 23 and 24, both of which are in use. Object number 23 has been reused, as can be seen from the 
+fact that it has a generation number of 2. The fourth subsection contains one entry, for object number 30, 
+which is in use. </Span>
+<Span> </Span>
+<Span> </Span>
+<Span>xref</Span>
+<Span> </Span>
+<Span>0</Span>
+<Span> </Span>
+<Span>1</Span>
+<Span> </Span>
+<Span>0000000000</Span>
+<Span> </Span>
+<Span>65535</Span>
+<Span> </Span>
+<Span>f</Span>
+<Span> </Span>
+<Span>3</Span>
+<Span> </Span>
+<Span>1</Span>
+<Span> </Span>
+<Span>0000025325</Span>
+<Span> </Span>
+<Span>00000</Span>
+<Span> </Span>
+<Span>n</Span>
+<Span> </Span>
+<Span>23</Span>
+<Span> </Span>
+<Span>2</Span>
+<Span> </Span>
+<Span>0000025518</Span>
+<Span> </Span>
+<Span>00002</Span>
+<Span> </Span>
+<Span>n</Span>
+<Span> </Span>
+<Span>0000025635</Span>
+<Span> </Span>
+<Span>00000</Span>
+<Span> </Span>
+<Span>n</Span>
+<Span> </Span>
+<Span>30</Span>
+<Span> </Span>
+<Span>1</Span>
+<Span> </Span>
+<Span>0000025777</Span>
+<Span> </Span>
+<Span>00000</Span>
+<Span> </Span>
+<Span>n</Span>
+</ExampleN->
+</Normal>
+<Normal><Span>See </Span>
+<Link>
+<Span>H.7, &quot;Updating Example&quot;</Span>
+</Link>
+<Span>, for a more extensive example of the structure of a PDF file that has been </Span>
+<Span>updated several times. </Span>
+</Normal>
+<Heading-3><Span>7.5.5 File Trailer</Span>
+</Heading-3>
+<Normal><Span>The trailer of a PDF file enables a conforming reader to quickly find the cross-reference table and certain 
+special objects. Conforming readers should read a PDF file from its end. The last line of the file shall contain 
+only the end-of-file marker, %%EOF. The two preceding lines shall contain, one per line and in order, the 
+keyword startxref and the byte offset in the decoded stream from the beginning of the file to the beginning of 
+the xref keyword in the last cross-reference section. The startxref line shall be preceded by the trailer 
+dictionary, consisting of the keyword trailer followed by a series of key-value pairs enclosed in double angle 
+brackets (&lt;&lt;</Span>
+<Span> </Span>
+<Span>&#8230;</Span>
+<Span> </Span>
+<Span>&gt;&gt;) (using LESS-THAN SIGNs (3Ch) and GREATER-THAN SIGNs (3Eh)). Thus, the trailer has 
+the following overall structure: </Span>
+</Normal>
+<Normal><Span>trailer</Span>
+<Span> </Span>
+<Span>&lt;&lt;</Span>
+<Span> </Span>
+<Span>key</Span>
+<Span>1</Span>
+<Span> </Span>
+<Span>value</Span>
+<Span>1</Span>
+<Span> </Span>
+<Span> </Span>
+<Span>key</Span>
+<Span>2</Span>
+<Span> </Span>
+<Span>value</Span>
+<Span>2</Span>
+<Span> </Span>
+<Span> </Span>
+<Span>&#8230;</Span>
+<Span> </Span>
+<Span> </Span>
+<Span>key</Span>
+<Span>n</Span>
+<Span> </Span>
+<Span>value</Span>
+<Span>n</Span>
+<Span> </Span>
+<Span>&gt;&gt;</Span>
+<Span> </Span>
+<Span>startxref</Span>
+<Span> </Span>
+<Span>Byte_offset_of_last_cross-reference_section</Span>
+<Span> </Span>
+<Span>%%EOF</Span>
+</Normal>
+</Figure-title>
+<Figure-title><Normal><ExampleN-><Span>EXAMPLE 2 3 0 R</Span>
+</ExampleN->
+</Normal>
+<Normal><Span>In an encrypted file (i.e., entire object stream is encrypted), strings occurring anywhere in an object stream 
+shall not be separately encrypted.</Span>
+</Normal>
+<Normal><Span>A conforming writer shall store the first object immediately after the last byte offset. A conforming reader shall 
+rely on the First entry in the stream dictionary to locate the first object.</Span>
+</Normal>
+<Normal><Span>An object stream itself, like any stream, shall be an indirect object, and therefore, there shall be an entry for it in 
+a cross-reference table or cross-reference stream (see </Span>
+<Link>
+<Span>7.5.8, &quot;Cross-Reference Streams&quot;</Span>
+</Link>
+<Span>), although there </Span>
+<Span>might not be any references to it (of the form 243 0 R). </Span>
+</Normal>
+<Normal><Span>The generation number of an object stream and of any compressed object shall be zero. If either an object 
+stream or a compressed object is deleted and the object number is freed, that object number shall be reused 
+only for an ordinary (uncompressed) object other than an object stream. When new object streams and 
+compressed objects are created, they shall always be assigned new object numbers, not old ones taken from 
+the free list.</Span>
+<ExampleN-><Span>EXAMPLE 3 The following shows three objects (two fonts and a font descriptor) as they would be represented in a 
+PDF 1.4 or earlier file, along with a cross-reference table. </Span>
+<Span> </Span>
+<Span> </Span>
+<Span>11 0 obj</Span>
+<Span> </Span>
+<Span>&lt;&lt; /Type /Font</Span>
+<Span> </Span>
+<Span>/Subtype /TrueType</Span>
+<Span> </Span>
+<Span>...other entries...</Span>
+<Span> </Span>
+<Span>/FontDescriptor 12 0 R</Span>
+<Span> </Span>
+<Span>&gt;&gt;</Span>
+<Span> </Span>
+<Span>endobj</Span>
+<Span> </Span>
+<Span> </Span>
+<Span>12 0 obj</Span>
+<Span> </Span>
+<Span>&lt;&lt; /Type /FontDescriptor</Span>
+<Span> </Span>
+<Span>/Ascent 891</Span>
+<Span> </Span>
+<Span>...other entries...</Span>
+<Span> </Span>
+<Span>/FontFile2 22 0 R</Span>
+<Span> </Span>
+<Span>&gt;&gt;</Span>
+<Span> </Span>
+<Span>endobj</Span>
+<Span> </Span>
+<Span> </Span>
+<Span>13 0 obj</Span>
+<Span> </Span>
+<Span>&lt;&lt; /Type /Font</Span>
+<Span> </Span>
+<Span>/Subtype /Type0</Span>
+<Span> </Span>
+<Span>...other entries...</Span>
+<Span> </Span>
+<Span>/ToUnicode 10 0 R</Span>
+<Span> </Span>
+<Span>&gt;&gt;</Span>
+<Span> </Span>
+<Span>endobj</Span>
+<Span> </Span>
+<Span> </Span>
+<Span>...</Span>
+<Span> </Span>
+<Span> </Span>
+<Span>xref</Span>
+<Span> </Span>
+<Span>0 32</Span>
+<Span> </Span>
+<Span>0000000000 65535 f</Span>
+<Span> </Span>
+<Span>... cross-reference entries for objects 1 through 10 ...</Span>
+<Span> </Span>
+<Span>0000001434 00000 n </Span>
+<Span> </Span>
+<Span>0000001735 00000 n </Span>
+<Span> </Span>
+<Span>0000002155 00000 n</Span>
+<Span> </Span>
+<Span>... cross-reference entries for objects 14 and on ...</Span>
+<Span> </Span>
+<Span>trailer</Span>
+<Span> </Span>
+<Span>&lt;&lt; /Size 32</Span>
+<Span> </Span>
+<Span>/Root ...</Span>
+<Span> </Span>
+<Span>&gt;&gt;</Span>
+</ExampleN->
+<NoteN-><Span>NOTE 8 For readability, the object stream has been shown unencoded. In a real PDF 1.5 file, Flate encoding would 
+typically be used to gain the benefits of compression. </Span>
+</NoteN->
+</Normal>
+</Figure-title>
+</TextSection>
+</Article_A>
+</Document>
+</Book>
+<Document>
+<H1>Document Header</H1>
+<Paragraph>
+
+
+<TextBlock>Quick brown </TextBlock>
+<Image></Image>
+<Span> jumped over a lazy </Span>
+<Figure></Figure>
+</Paragraph>
+</Document>
+<Book><Document><Article_A><TextSection><Figure-title><Normal><ExampleN-><Span>xref</Span>
+<Span> </Span>
+<Span>0</Span>
+<Span> </Span>
+<Span>6</Span>
+<Span> </Span>
+<Span>0000000003</Span>
+<Span> </Span>
+<Span>65535</Span>
+<Span> </Span>
+<Span>f</Span>
+<Span> </Span>
+<Span>0000000017</Span>
+<Span> </Span>
+<Span>00000</Span>
+<Span> </Span>
+<Span>n</Span>
+<Span> </Span>
+<Span>0000000081</Span>
+<Span> </Span>
+<Span>00000</Span>
+<Span> </Span>
+<Span>n</Span>
+<Span> </Span>
+<Span>0000000000</Span>
+<Span> </Span>
+<Span>00007</Span>
+<Span> </Span>
+<Span>f</Span>
+<Span> </Span>
+<Span>0000000331</Span>
+<Span> </Span>
+<Span>00000</Span>
+<Span> </Span>
+<Span>n</Span>
+<Span> </Span>
+<Span>0000000409</Span>
+<Span> </Span>
+<Span>00000</Span>
+<Span> </Span>
+<Span>n</Span>
+</ExampleN->
+<ExampleN-><Span>EXAMPLE 3 The following shows a cross-reference section with four subsections, containing a total of five entries. The 
+first subsection contains one entry, for object number 0, which is free. The second subsection contains 
+one entry, for object number 3, which is in use. The third subsection contains two entries, for objects 
+number 23 and 24, both of which are in use. Object number 23 has been reused, as can be seen from the 
+fact that it has a generation number of 2. The fourth subsection contains one entry, for object number 30, 
+which is in use. </Span>
+<Span> </Span>
+<Span> </Span>
+<Span>xref</Span>
+<Span> </Span>
+<Span>0</Span>
+<Span> </Span>
+<Span>1</Span>
+<Span> </Span>
+<Span>0000000000</Span>
+<Span> </Span>
+<Span>65535</Span>
+<Span> </Span>
+<Span>f</Span>
+<Span> </Span>
+<Span>3</Span>
+<Span> </Span>
+<Span>1</Span>
+<Span> </Span>
+<Span>0000025325</Span>
+<Span> </Span>
+<Span>00000</Span>
+<Span> </Span>
+<Span>n</Span>
+<Span> </Span>
+<Span>23</Span>
+<Span> </Span>
+<Span>2</Span>
+<Span> </Span>
+<Span>0000025518</Span>
+<Span> </Span>
+<Span>00002</Span>
+<Span> </Span>
+<Span>n</Span>
+<Span> </Span>
+<Span>0000025635</Span>
+<Span> </Span>
+<Span>00000</Span>
+<Span> </Span>
+<Span>n</Span>
+<Span> </Span>
+<Span>30</Span>
+<Span> </Span>
+<Span>1</Span>
+<Span> </Span>
+<Span>0000025777</Span>
+<Span> </Span>
+<Span>00000</Span>
+<Span> </Span>
+<Span>n</Span>
+</ExampleN->
+</Normal>
+<Normal><Span>See </Span>
+<Link>
+<Span>H.7, &quot;Updating Example&quot;</Span>
+</Link>
+<Span>, for a more extensive example of the structure of a PDF file that has been </Span>
+<Span>updated several times. </Span>
+</Normal>
+<Heading-3><Span>7.5.5 File Trailer</Span>
+</Heading-3>
+<Normal><Span>The trailer of a PDF file enables a conforming reader to quickly find the cross-reference table and certain 
+special objects. Conforming readers should read a PDF file from its end. The last line of the file shall contain 
+only the end-of-file marker, %%EOF. The two preceding lines shall contain, one per line and in order, the 
+keyword startxref and the byte offset in the decoded stream from the beginning of the file to the beginning of 
+the xref keyword in the last cross-reference section. The startxref line shall be preceded by the trailer 
+dictionary, consisting of the keyword trailer followed by a series of key-value pairs enclosed in double angle 
+brackets (&lt;&lt;</Span>
+<Span> </Span>
+<Span>&#8230;</Span>
+<Span> </Span>
+<Span>&gt;&gt;) (using LESS-THAN SIGNs (3Ch) and GREATER-THAN SIGNs (3Eh)). Thus, the trailer has 
+the following overall structure: </Span>
+</Normal>
+<Normal><Span>trailer</Span>
+<Span> </Span>
+<Span>&lt;&lt;</Span>
+<Span> </Span>
+<Span>key</Span>
+<Span>1</Span>
+<Span> </Span>
+<Span>value</Span>
+<Span>1</Span>
+<Span> </Span>
+<Span> </Span>
+<Span>key</Span>
+<Span>2</Span>
+<Span> </Span>
+<Span>value</Span>
+<Span>2</Span>
+<Span> </Span>
+<Span> </Span>
+<Span>&#8230;</Span>
+<Span> </Span>
+<Span> </Span>
+<Span>key</Span>
+<Span>n</Span>
+<Span> </Span>
+<Span>value</Span>
+<Span>n</Span>
+<Span> </Span>
+<Span>&gt;&gt;</Span>
+<Span> </Span>
+<Span>startxref</Span>
+<Span> </Span>
+<Span>Byte_offset_of_last_cross-reference_section</Span>
+<Span> </Span>
+<Span>%%EOF</Span>
+</Normal>
+</Figure-title>
+<Figure-title><Normal><ExampleN-><Span>EXAMPLE 2 3 0 R</Span>
+</ExampleN->
+</Normal>
+<Normal><Span>In an encrypted file (i.e., entire object stream is encrypted), strings occurring anywhere in an object stream 
+shall not be separately encrypted.</Span>
+</Normal>
+<Normal><Span>A conforming writer shall store the first object immediately after the last byte offset. A conforming reader shall 
+rely on the First entry in the stream dictionary to locate the first object.</Span>
+</Normal>
+<Normal><Span>An object stream itself, like any stream, shall be an indirect object, and therefore, there shall be an entry for it in 
+a cross-reference table or cross-reference stream (see </Span>
+<Link>
+<Span>7.5.8, &quot;Cross-Reference Streams&quot;</Span>
+</Link>
+<Span>), although there </Span>
+<Span>might not be any references to it (of the form 243 0 R). </Span>
+</Normal>
+<Normal><Span>The generation number of an object stream and of any compressed object shall be zero. If either an object 
+stream or a compressed object is deleted and the object number is freed, that object number shall be reused 
+only for an ordinary (uncompressed) object other than an object stream. When new object streams and 
+compressed objects are created, they shall always be assigned new object numbers, not old ones taken from 
+the free list.</Span>
+<ExampleN-><Span>EXAMPLE 3 The following shows three objects (two fonts and a font descriptor) as they would be represented in a 
+PDF 1.4 or earlier file, along with a cross-reference table. </Span>
+<Span> </Span>
+<Span> </Span>
+<Span>11 0 obj</Span>
+<Span> </Span>
+<Span>&lt;&lt; /Type /Font</Span>
+<Span> </Span>
+<Span>/Subtype /TrueType</Span>
+<Span> </Span>
+<Span>...other entries...</Span>
+<Span> </Span>
+<Span>/FontDescriptor 12 0 R</Span>
+<Span> </Span>
+<Span>&gt;&gt;</Span>
+<Span> </Span>
+<Span>endobj</Span>
+<Span> </Span>
+<Span> </Span>
+<Span>12 0 obj</Span>
+<Span> </Span>
+<Span>&lt;&lt; /Type /FontDescriptor</Span>
+<Span> </Span>
+<Span>/Ascent 891</Span>
+<Span> </Span>
+<Span>...other entries...</Span>
+<Span> </Span>
+<Span>/FontFile2 22 0 R</Span>
+<Span> </Span>
+<Span>&gt;&gt;</Span>
+<Span> </Span>
+<Span>endobj</Span>
+<Span> </Span>
+<Span> </Span>
+<Span>13 0 obj</Span>
+<Span> </Span>
+<Span>&lt;&lt; /Type /Font</Span>
+<Span> </Span>
+<Span>/Subtype /Type0</Span>
+<Span> </Span>
+<Span>...other entries...</Span>
+<Span> </Span>
+<Span>/ToUnicode 10 0 R</Span>
+<Span> </Span>
+<Span>&gt;&gt;</Span>
+<Span> </Span>
+<Span>endobj</Span>
+<Span> </Span>
+<Span> </Span>
+<Span>...</Span>
+<Span> </Span>
+<Span> </Span>
+<Span>xref</Span>
+<Span> </Span>
+<Span>0 32</Span>
+<Span> </Span>
+<Span>0000000000 65535 f</Span>
+<Span> </Span>
+<Span>... cross-reference entries for objects 1 through 10 ...</Span>
+<Span> </Span>
+<Span>0000001434 00000 n </Span>
+<Span> </Span>
+<Span>0000001735 00000 n </Span>
+<Span> </Span>
+<Span>0000002155 00000 n</Span>
+<Span> </Span>
+<Span>... cross-reference entries for objects 14 and on ...</Span>
+<Span> </Span>
+<Span>trailer</Span>
+<Span> </Span>
+<Span>&lt;&lt; /Size 32</Span>
+<Span> </Span>
+<Span>/Root ...</Span>
+<Span> </Span>
+<Span>&gt;&gt;</Span>
+</ExampleN->
+<NoteN-><Span>NOTE 8 For readability, the object stream has been shown unencoded. In a real PDF 1.5 file, Flate encoding would 
+typically be used to gain the benefits of compression. </Span>
+<ExampleN-><Span>EXAMPLE 4 The following shows the same objects from the previous example stored in an object stream in a PDF 1.5 
+file, along with a cross-reference stream.</Span>
+<Span> </Span>
+<Span> </Span>
+<Span>The cross-reference stream (see </Span>
+<Link>
+<Span>7.5.8, &quot;Cross-Reference Streams&quot;</Span>
+</Link>
+<Span>) contains entries for the fonts (objects </Span>
+<Span>11 and 13) and the descriptor (object 12), which are compressed objects in an object stream. The first 
+field of these entries is the entry type (2), the second field is the number of the object stream (15), and the 
+third field is the position within the sequence of objects in the object stream (0, 1, and 2). The cross-
+reference stream also contains a type 1 entry for the object stream itself.</Span>
+<Span> </Span>
+<Span> </Span>
+<Span>15 0 obj % The object stream</Span>
+<Span> </Span>
+<Span>&lt;&lt; /Type /ObjStm</Span>
+<Span> </Span>
+<Span>/Length 1856</Span>
+<Span> </Span>
+<Span>/N 3 % The number of objects in the stream</Span>
+<Span> </Span>
+<Span>/First 24 % The byte offset in the decoded stream of the first object</Span>
+<Span> </Span>
+<Span>% The object numbers and offsets of the objects, relative to the first are shown on the first line of</Span>
+<Span> </Span>
+<Span>%  the stream (i.e., 11 0 12 547 13 665).</Span>
+<Span> </Span>
+<Span>&gt;&gt;</Span>
+<Span> </Span>
+<Span>stream</Span>
+<Span> </Span>
+<Span>11 0 12 547 13 665</Span>
+<Span> </Span>
+<Span>&lt;&lt; /Type /Font</Span>
+<Span> </Span>
+<Span>/Subtype /TrueType</Span>
+<Span> </Span>
+<Span>...other keys...</Span>
+<Span> </Span>
+<Span>/FontDescriptor 12 0 R</Span>
+<Span> </Span>
+<Span>&gt;&gt;</Span>
+<Span> </Span>
+<Span> </Span>
+<Span>&lt;&lt; /Type /FontDescriptor</Span>
+<Span> </Span>
+<Span>/Ascent 891</Span>
+<Span> </Span>
+<Span>...other keys...</Span>
+<Span> </Span>
+<Span>/FontFile2 22 0 R</Span>
+<Span> </Span>
+<Span>&gt;&gt;</Span>
+<Span> </Span>
+<Span>&lt;&lt; /Type /Font</Span>
+<Span> </Span>
+<Span>/Subtype /Type0</Span>
+<Span> </Span>
+<Span>...other keys...</Span>
+<Span> </Span>
+<Span>/ToUnicode 10 0 R</Span>
+<Span> </Span>
+<Span>&gt;&gt;</Span>
+<Span> </Span>
+<Span>...</Span>
+<Span> </Span>
+<Span>endstream</Span>
+<Span> </Span>
+<Span>endobj</Span>
+<Span> </Span>
+<Span> </Span>
+<Span>99 0 obj % The cross-reference stream</Span>
+<Span> </Span>
+<Span>&lt;&lt; /Type /XRef</Span>
+<Span> </Span>
+<Span>/Index [0 32] % This section has one subsection with 32 objects</Span>
+<Span> </Span>
+<Span>/W [1 2 2] % Each entry has 3 fields: 1, 2 and 2 bytes in width,</Span>
+<Span> </Span>
+<Span>% respectively</Span>
+<Span> </Span>
+<Span>/Filter /ASCIIHexDecode % For readability in this example</Span>
+<Span> </Span>
+<Span>/Size 32</Span>
+<Span> </Span>
+<Span>... </Span>
+<Span> </Span>
+<Span>&gt;&gt;</Span>
+<Span> </Span>
+<Span>stream</Span>
+<Span> </Span>
+<Span>00 0000 FFFF</Span>
+<Span> </Span>
+<Span>... cross-references for objects 1 through 10 ...</Span>
+<Span> </Span>
+<Span>02 000F 0000</Span>
+<Span> </Span>
+<Span>02 000F 0001</Span>
+<Span> </Span>
+<Span>02 000F 0002</Span>
+<Span> </Span>
+<Span>... cross-reference for object 14 ...</Span>
+<Span> </Span>
+<Span>01 BA5E 0000</Span>
+<Span> </Span>
+<Span>...</Span>
+<Span> </Span>
+<Span>endstream</Span>
+<Span> </Span>
+<Span>endobj</Span>
+<Span> </Span>
+<Span> </Span>
+<Span>startxref</Span>
+<Span> </Span>
+<Span>54321</Span>
+<Span> </Span>
+<Span>%%EOF</Span>
+</ExampleN->
+</NoteN->
+<NoteN-><Span>NOTE 9 The number 54321 in </Span>
+<Link>
+<Span>Example 4</Span>
+</Link>
+<Span> is the offset for object 99 0.</Span>
+</NoteN->
+</Normal>
+<Normal><Span>The Size entry of the trailer shall be large enough to include all objects, including those defined in the cross-
+reference stream referenced by the XRefStm entry. However, to allow random access, a main cross-reference 
+section shall contain entries for all objects numbered 0 through Size - 1 (see </Span>
+<Link>
+<Span>7.5.4, &quot;Cross-Reference Table&quot;</Span>
+</Link>
+<Span>). </Span>
+<Span>Therefore, the XRefStm entry shall not be used in the trailer dictionary of the main cross-reference section but 
+only in an update cross-reference section. </Span>
+</Normal>
+<Normal><Span>When a conforming reader opens a hybrid-reference file, objects with entries in cross-reference streams are 
+not hidden. When the conforming reader searches for an object, if an entry is not found in any given standard 
+cross-reference section, the search shall proceed to a cross-reference stream specified by the XRefStm entry 
+before looking in the previous cross-reference section (the Prev entry in the trailer). </Span>
+</Normal>
+<Normal><Span>Hidden objects, therefore, have two cross-reference entries. One is in the cross-reference stream. The other is 
+a free entry in some previous section, typically the section referenced by the Prev entry. A conforming reader 
+shall look in the cross-reference stream first, shall find the object there, and shall ignore the free entry in the 
+previous section. A reader designed only to support versions of PDF before PDF 1.5 ignores the cross-
+reference stream and looks in the previous section, where it finds the free entry. The free entry shall have a 
+next-generation number of 65535 so that the object number shall not be reused.</Span>
+</Normal>
+<Normal><Span>There are limitations on which objects in a hybrid-reference file can be hidden without making the file appear 
+invalid to readers designed only to support versions of PDF before PDF 1.5. In particular, the root of the PDF 
+file and the document catalog (see </Span>
+<Link>
+<Span>7.7.2, &quot;Document Catalog&quot;</Span>
+</Link>
+<Span>) shall not be hidden, nor any object that is visible </Span>
+<Span>from the root. Such objects can be determined by starting from the root and working recursively:</Span>
+</Normal>
+<List-Continue><Span>&#8226; In any dictionary that is visible, direct objects shall be visible. The value of any required key-value pair shall 
+be visible. </Span>
+</List-Continue>
+<List-Continue><Span>&#8226; In any array that is visible, every element shall be visible.</Span>
+</List-Continue>
+<List-Continue><Span>&#8226; Resource dictionaries in content streams shall be visible. Although a resource dictionary is not required, 
+strictly speaking, the content stream to which it is attached is assumed to contain references to the 
+resources. </Span>
+</List-Continue>
+<Normal><Span>In general, the objects that may be hidden are optional objects specified by indirect references. A conforming 
+reader can resolve those references by processing the cross-reference streams. In a reader designed only to 
+support versions of PDF before PDF 1.5, the objects appear to be free, and the references shall be treated as 
+references to the null object. </Span>
+<ExampleN1><Span>EXAMPLE 1 The Outlines entry in the catalog dictionary is optional. Therefore, its value may be an indirect reference 
+to a hidden object. A reader designed only to support versions of PDF before PDF 1.5 treats it as a 
+reference to the null object, which is equivalent to having omitted the entry entirely; a conforming reader 
+recognizes it. </Span>
+</ExampleN1>
+</Normal>
+<Normal><Span>If the value of the Outlines entry is an indirect reference to a visible object, the entire outline tree shall be 
+visible because nodes in the outline tree contain required pointers to other nodes. </Span>
+</Normal>
+<Normal><Span>Items that shall be visible include the entire page tree, fonts, font descriptors, and width tables. Objects that 
+may be hidden in a hybrid-reference file include the structure tree, the outline tree, article threads, annotations, 
+destinations, Web Capture information, and page labels,. </Span>
+<ExampleN-><Span>EXAMPLE 2 In this example, an ASCIIHexDecode filter is specified to make the format and contents of the cross-
+reference stream readable. </Span>
+<Span> </Span>
+<Span> </Span>
+<Span>This example shows a hybrid-reference file containing a main cross-reference section and an update 
+cross-reference section with an XRefStm entry that points to a cross-reference stream (object 11), which 
+in turn has references to an object stream (object 2).</Span>
+<Span> </Span>
+<Span> </Span>
+<Span>In this example, the catalog (object 1) contains an indirect reference (3 0 R) to the root of the structure 
+tree. The search for the object starts at the update cross-reference table, which has no objects in it. The 
+search proceeds depending on the version of the conforming reader.</Span>
+<Span> </Span>
+<Span> </Span>
+</ExampleN->
+</Normal>
+</Figure-title>
+</TextSection>
+</Article_A>
+</Document>
+</Book>
+<Document><Table><TBody><TR>
+<TD><Table><TBody><TR>
+<TD><Span>Lorem ipsum
+dolor sit
+amet,consectetur
+adipiscing
+elit.Pellentesque a
+lectus sit amet
+lectus accumsan
+aliquam.Quisque
+facilisis
+ullamcorper dolor,
+quis gravida leo
+faucibus in.
+Donec a dolor
+ligula, quis
+placerat nunc.
+Etiam enim velit,
+egestas in lacinia
+at, ultricies eu
+massa.Cras
+ornare felis id
+quam vehicula
+lobortis. Ut
+semper
+malesuada nulla,
+in vulputate dui
+eleifend at.
+Phasellus pulvinar
+nisl a lorem
+volutpat
+pellentesque. In
+vitaeligula et
+quam vestibulum
+iaculis eget vitae
+massa. Fusce
+vitae leo ut diam
+suscipit dictum in
+id sapien.
+Praesent mi
+ligula, auctor vitae
+ultrices in,
+venenatis
+nonodio. Nullam
+sit amet velit
+pellentesque
+lectus consectetur
+lacinia nec quis
+mi. In hac
+habitasse platea
+dictumst.Quisque
+facilisis
+ullamcorper dolor,
+quis gravida leo
+faucibus in.Donec
+a dolor ligula, quis
+placerat nunc.
+1. Etiam enim
+velit, egestas in
+lacinia at, ultricies
+eu massa. Cras
+ornare felis id
+quam vehicula
+lobortis. Ut
+semper
+malesuada nulla,
+in vulputate dui
+eleifend
+at.Phasellus
+pulvinar nisl a
+lorem volutpat
+pellentesque. In
+vitae ligula et
+quam vestibulum
+iaculis eget vitae
+massa. Fusce
+vitae leo ut diam
+suscipit dictum in
+idsapien.
+Praesent mi
+ligula, auctor vitae
+ultrices in,
+venenatis non
+odio. Nullam sit
+amet velit
+pellentesque
+lectus consectetur
+lacinia nec quis
+mi. In
+hachabitasse
+platea dictumst.
+2. Morbi euismod,
+nunc quis
+malesuada
+feugiat, dui nibh
+rhoncus leo, quis
+cursus erat tellus
+vel tortor. Mauris
+nibh dolor, iaculis
+et pharetra
+pretium,pellentesq
+ue vitae erat.
+Aenean enim nisi,
+euismod quis
+ultricies vel,
+convallis nec
+nulla.
+Suspendisse nisl
+purus, molestie et
+egestas ac,
+cursus in
+mauris.Aliquam
+erat volutpat.
+Donec at nulla in
+elit faucibus mollis
+ac vel enim.
+Nullam dapibus
+dui sit amet sem
+consectetur ac
+vulputate est
+sagittis. Aliquam
+luctusornare nulla.
+Mauris adipiscing
+congue pharetra.
+Proin tempus,
+nibh sed pretium
+tempor, arcu est
+hendrerit est, et</Span>
+</TD>
+<TD><Span>Hello World</Span>
+</TD>
+</TR>
+</TBody>
+</Table>
+</TD>
+<TD><Span>hendrerit urna. Mauris ut velit sapien.
+Sed in convallis diam. Nulla faucibus,
+purus a porttitor ultrices, est quam
+convallis magna,molestie aliquam
+sapien nulla eget metus. Integer nec
+enim mi, eu mattis massa. Integer
+quis sapien vel purus pretium
+ullamcorper ac id dui.
+Suspendissepellentesque tellus sit
+amet neque pulvinar egestas lacinia
+diam imperdiet.
+4. Curabitur hendrerit, sem et facilisis
+vestibulum, massa felis vestibulum
+ligula, ut faucibus massa nisi in
+neque. Nulla facilisi. Etiam diam
+mauris, pellentesquelacinia dapibus
+at, lobortis non quam. Nullam et
+neque quis diam vestibulum
+scelerisque ullamcorper non mauris.
+Cras massa enim, commodo
+malesuadatincidunt ac, lobortis eu
+erat. Sed sed risus velit. Suspendisse
+tellus tortor, ullamcorper nec tristique
+ac, semper non nulla. Maecenas vitae
+diam orci, sedfermentum enim.
+Curabitur a libero nisl, vel laoreet
+nulla. Integer id volutpat sem.
+Pellentesque blandit, tellus at
+consequat dictum, urna sem
+elementum nisi,a bibendum nisi ipsum
+sit amet felis. Donec mattis ipsum nec
+metus lobortis eget volutpat nisl
+volutpat.
+5. Fusce in aliquet nibh. Etiam quis
+varius ipsum. Vivamus sit amet mauris
+a libero iaculis semper in a neque.
+Nam faucibus congue posuere. Cras
+vitae nibhsed magna ultricies pretium.
+Proin eget lacus quis dui ullamcorper
+cursus commodo in lacus. Quisque et
+sem id leo venenatis dictum dignissim
+et felis.Vestibulum enim urna, vehicula
+vel dictum in, congue quis sapien.
+Quisque ac mauris tellus. Nulla cursus
+pellentesque mauris viverra
+bibendum. Fuscemolestie dui id sem
+blandit in convallis justo euismod.
+Curabitur velit nisi, adipiscing sed
+consequat et, dignissim eget dolor.
+Aenean malesuada quam id
+mivestibulum pulvinar. Nullam diam
+quam, lobortis sit amet semper vitae,
+tempus eget dolor.</Span>
+</TD>
+</TR>
+</TBody>
+</Table>
+</Document>
+<Document>
+<H1>Document Header</H1>
+<Table><TBody>
+<TR>
+<TD><Span>Quick brown fox jumped over a lazy
+dog. A very long line appears here
+because we need new line.</Span>
+</TD>
+<TD><Figure></Figure>
+</TD>
+</TR>
+<TR>
+<TD><Span>jumped over a lazy</Span>
+</TD>
+<TD><Figure></Figure>
+</TD>
+</TR>
+</TBody>
+</Table>
+</Document>
+<Book><Document><Article_A><TextSection><zzCover><Span>First Edition</Span>
+</zzCover>
+<zzCover><Span>2008-7-1</Span>
+</zzCover>
+<zzCoverT><Span>Document management</Span>
+<Span> </Span>
+<Span>&#8212;</Span>
+<Span> </Span>
+<Span>Portable document format</Span>
+<Span> </Span>
+<Span>&#8212;</Span>
+<Span> </Span>
+<Span>Part 1: 
+PDF 1.7</Span>
+</zzCoverT>
+</TextSection>
+</Article_A>
+</Document>
+<Document><Article_A><TextSection><zzSTDTitle><TermNum><Span>4.11</Span>
+</TermNum>
+<Term-s-><Span>conforming reader</Span>
+</Term-s->
+<Definition><Span>software application that is able to read and process PDF files that have been made in conformance with this 
+specification and that itself conforms to requirements of conforming readers specified here [ISO 32000-1]</Span>
+</Definition>
+<TermNum><Span>4.12</Span>
+</TermNum>
+<Term-s-><Span>conforming product</Span>
+</Term-s->
+<Definition><Span>software application that is both a conforming reader and a conforming writer</Span>
+</Definition>
+<TermNum><Span>4.13</Span>
+</TermNum>
+<Term-s-><Span>conforming writer</Span>
+</Term-s->
+<Definition><Span>software application that is able to write PDF files that conform to this specification [ISO 32000-1]</Span>
+</Definition>
+<TermNum><Span>4.14</Span>
+</TermNum>
+<Term-s-><Span>content stream</Span>
+</Term-s->
+<Definition><Span>stream object whose data consists of a sequence of instructions describing the graphical elements to be 
+painted on a page</Span>
+</Definition>
+<TermNum><Span>4.15</Span>
+</TermNum>
+<Term-s-><Span>cross reference table</Span>
+</Term-s->
+<Definition><Span>data structure that contains the byte offset start for each of the indirect objects within the file</Span>
+</Definition>
+<TermNum><Span>4.16</Span>
+</TermNum>
+<Term-s-><Span>developer</Span>
+</Term-s->
+<Definition><Span>Any entity, including individuals, companies, non-profits, standards bodies, open source groups, etc., who are 
+developing standards or software to use and extend ISO 32000-1.</Span>
+</Definition>
+<TermNum><Span>4.17</Span>
+</TermNum>
+<Term-s-><Span>dictionary object</Span>
+</Term-s->
+<Definition><Span>an associative table containing pairs of objects, the first object being a name object serving as the key and the 
+second object serving as the value and may be any kind of object including another dictionary</Span>
+</Definition>
+<TermNum><Span>4.18</Span>
+</TermNum>
+<Term-s-><Span>direct object</Span>
+</Term-s->
+<Definition><Span>any object that has not been made into an indirect object</Span>
+</Definition>
+<TermNum><Span>4.19</Span>
+</TermNum>
+<Term-s-><Span>electronic document</Span>
+</Term-s->
+<Definition><Span>electronic representation of a page-oriented aggregation of text, image and graphic data, and metadata useful 
+to identify, understand and render that data, that can be reproduced on paper or displayed without significant 
+loss of its information content</Span>
+</Definition>
+<TermNum><Span>4.20</Span>
+</TermNum>
+<Term-s-><Span>end-of-line marker (EOL marker)</Span>
+</Term-s->
+<Definition><Span>one or two character sequence marking the end of a line of text, consisting of a CARRIAGE RETURN 
+character (0Dh) or a LINE FEED character (0Ah) or a CARRIAGE RETURN followed immediately by a LINE 
+FEED</Span>
+</Definition>
+<TermNum><Span>4.21</Span>
+</TermNum>
+<Term-s-><Span>FDF file</Span>
+</Term-s->
+<Definition><Span>File conforming to the Forms Data Format containing form data or annotations that may be imported into a PDF 
+file (see </Span>
+<Link>
+<Span>12.7.7, &#8220;Forms Data Format&#8221;</Span>
+</Link>
+<Span>)</Span>
+</Definition>
+<TermNum><Span>4.22</Span>
+</TermNum>
+<Term-s-><Span>filter</Span>
+</Term-s->
+<Definition><Span>an optional part of the specification of a stream object, indicating how the data in the stream should be decoded 
+before it is used</Span>
+</Definition>
+</zzSTDTitle>
+</TextSection>
+</Article_A>
+</Document>
+<Document><Article_A><TextSection><Figure-title><Normal><Span>level syntactic entities, principally objects, which are the basic data values from which a PDF document is 
+constructed. </Span>
+</Normal>
+<Normal><Span>A non-encrypted PDF can be entirely represented using byte values corresponding to the visible printable 
+subset of the character set defined in ANSI X3.4-1986, plus white space characters. However, a PDF file is not 
+restricted to the ASCII character set; it may contain arbitrary bytes, subject to the following considerations: </Span>
+</Normal>
+<List-Continue><Span>&#8226; The tokens that delimit objects and that describe the structure of a PDF file shall use the ASCII character 
+set. In addition all the reserved words and the names used as keys in PDF standard dictionaries and 
+certain types of arrays shall be defined using the ASCII character set.</Span>
+</List-Continue>
+<List-Continue><Span>&#8226; The data values of strings and streams objects may be written either entirely using the ASCII character set 
+or entirely in binary data. In actual practice, data that is naturally binary, such as sampled images, is 
+usually represented in binary for compactness and efficiency.</Span>
+</List-Continue>
+<List-Continue><Span>&#8226; A PDF file containing binary data shall be transported as a binary file rather than as a text file to insure that 
+all bytes of the file are faithfully preserved. </Span>
+<NoteN1><Span>NOTE 1 A binary file is not portable to environments that impose reserved character codes, maximum line lengths, end-
+of-line conventions, or other restrictions</Span>
+</NoteN1>
+<NoteN-><Span>NOTE 2 In this clause, the usage of the term character is entirely independent of any logical meaning that the value 
+may have when it is treated as data in specific contexts, such as representing human-readable text or 
+selecting a glyph from a font. </Span>
+</NoteN->
+</List-Continue>
+<Heading-3><Span>7.2.2 Character Set</Span>
+</Heading-3>
+<Normal><Span>The PDF character set is divided into three classes, called regular, delimiter, and white-space characters. This 
+classification determines the grouping of characters into tokens. The rules defined in this sub-clause apply to 
+all characters in the file except within strings, streams, and comments. </Span>
+</Normal>
+<Normal><Span>The White-space characters shown in </Span>
+<Link>
+
+
+<Span>Table</Span>
+<Span> </Span>
+<Span>1</Span>
+</Link>
+<Span> separate syntactic constructs such as names and numbers from </Span>
+<Span>each other. All white-space characters are equivalent, except in comments, strings, and streams. In all other 
+contexts, PDF treats any sequence of consecutive white-space characters as one character.</Span>
+<Span><Table><TableTitle><Table-title>
+
+
+
+
+<Span>Table</Span>
+<Span> </Span>
+<Span>1</Span>
+<Span> </Span>
+<Span>&#8211;  White-space characters </Span>
+<Span> </Span>
+</Table-title>
+</TableTitle>
+<TableHead><TR><TH><Table-text--9-><Span>Decimal</Span>
+</Table-text--9->
+</TH>
+<TH><Table-text--9-><Span>Hexadecimal</Span>
+</Table-text--9->
+</TH>
+<TH><Table-text--9-><Span> Octal</Span>
+</Table-text--9->
+</TH>
+<TH><Table-text--9-><Span>Name</Span>
+</Table-text--9->
+</TH>
+</TR>
+</TableHead>
+<TableBody><TR><TD><Table-text--9-><Span>0</Span>
+</Table-text--9->
+</TD>
+<TD><Table-text--9-><Span>00</Span>
+</Table-text--9->
+</TD>
+<TD><Table-text--9-><Span>000</Span>
+</Table-text--9->
+</TD>
+<TD><Table-text--9-><Span>Null (NUL)</Span>
+</Table-text--9->
+</TD>
+</TR>
+<TR><TD><Table-text--9-><Span>9</Span>
+</Table-text--9->
+</TD>
+<TD><Table-text--9-><Span>09</Span>
+</Table-text--9->
+</TD>
+<TD><Table-text--9-><Span>011</Span>
+</Table-text--9->
+</TD>
+<TD><Table-text--9-><Span>HORIZONTAL TAB (HT)</Span>
+</Table-text--9->
+</TD>
+</TR>
+<TR><TD><Table-text--9-><Span>10</Span>
+</Table-text--9->
+</TD>
+<TD><Table-text--9-><Span>0A</Span>
+</Table-text--9->
+</TD>
+<TD><Table-text--9-><Span>012</Span>
+</Table-text--9->
+</TD>
+<TD><Table-text--9-><Span>LINE FEED (LF)</Span>
+</Table-text--9->
+</TD>
+</TR>
+<TR><TD><Table-text--9-><Span>12</Span>
+</Table-text--9->
+</TD>
+<TD><Table-text--9-><Span>0C</Span>
+</Table-text--9->
+</TD>
+<TD><Table-text--9-><Span>014</Span>
+</Table-text--9->
+</TD>
+<TD><Table-text--9-><Span>FORM FEED (FF)</Span>
+</Table-text--9->
+</TD>
+</TR>
+<TR><TD><Table-text--9-><Span>13</Span>
+</Table-text--9->
+</TD>
+<TD><Table-text--9-><Span>0D</Span>
+</Table-text--9->
+</TD>
+<TD><Table-text--9-><Span>015</Span>
+</Table-text--9->
+</TD>
+<TD><Table-text--9-><Span>CARRIAGE RETURN (CR)</Span>
+</Table-text--9->
+</TD>
+</TR>
+<TR><TD><Table-text--9-><Span>32</Span>
+</Table-text--9->
+</TD>
+<TD><Table-text--9-><Span>20</Span>
+</Table-text--9->
+</TD>
+<TD><Table-text--9-><Span>040</Span>
+</Table-text--9->
+</TD>
+<TD><Table-text--9-><Span>SPACE (SP)</Span>
+</Table-text--9->
+</TD>
+</TR>
+</TableBody>
+</Table>
+</Span>
+</Normal>
+<Normal><Span>The CARRIAGE RETURN (0Dh) and LINE FEED (0Ah) characters, also called newline characters, shall be 
+treated as end-of-line (EOL) markers. The combination of a CARRIAGE RETURN followed immediately by a 
+LINE FEED shall be treated as one EOL marker. EOL markers may be treated the same as any other white-
+space characters. However, sometimes an EOL marker is required or recommended&#8212;that is, preceding a 
+token that must appear at the beginning of a line. </Span>
+</Normal>
+<Note><Span>NOTE The examples in this standard use a convention that arranges tokens into lines. However, the examples&#8217; use of 
+white space for indentation is purely for clarity of exposition and need not be included in practical use. </Span>
+</Note>
+</Figure-title>
+</TextSection>
+</Article_A>
+</Document>
+</Book>
+<Book><Document><Article_A><TextSection><zzContents><ANNEXTOC><Link>
+
+
+
+
+<Span>(normative)</Span>
+<Span> </Span>
+<Span> </Span>
+<Span>Implementation</Span>
+<Span> </Span>
+<Span>Limits. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 649</Span>
+</Link>
+</ANNEXTOC>
+<ANNEXTOC><Link>
+
+
+
+
+
+<Span>Annex  D    </Span>
+<Span> </Span>
+<Span>(normative)</Span>
+<Span> </Span>
+<Span> </Span>
+<Span>Character Sets and Encodings. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 651</Span>
+</Link>
+</ANNEXTOC>
+<ANNEXTOC><Link>
+
+
+
+
+
+<Span>Annex  E    </Span>
+<Span> </Span>
+<Span>(normative)</Span>
+<Span> </Span>
+<Span> </Span>
+<Span>PDF Name Registry . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 673</Span>
+</Link>
+</ANNEXTOC>
+<ANNEXTOC><Link>
+
+
+
+
+
+<Span>Annex  F    </Span>
+<Span> </Span>
+<Span>(normative)</Span>
+<Span> </Span>
+<Span> </Span>
+<Span>Linearized PDF . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 675</Span>
+</Link>
+</ANNEXTOC>
+<ANNEXTOC><Link>
+
+
+
+
+
+<Span>Annex  G    </Span>
+<Span> </Span>
+<Span>(informative)</Span>
+<Span> </Span>
+<Span> </Span>
+<Span>Linearized PDF Access Strategies . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 695</Span>
+</Link>
+</ANNEXTOC>
+<ANNEXTOC><Link>
+
+
+
+
+
+<Span>Annex  H    </Span>
+<Span> </Span>
+<Span>(informative)</Span>
+<Span> </Span>
+<Span> </Span>
+<Span>Example PDF Files. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 699</Span>
+</Link>
+</ANNEXTOC>
+<ANNEXTOC><Link>
+
+
+
+
+
+<Span>Annex  I    </Span>
+<Span> </Span>
+<Span>(normative)</Span>
+<Span> </Span>
+<Span> </Span>
+<Span>PDF Versions and Compatibility . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 727</Span>
+</Link>
+</ANNEXTOC>
+<ANNEXTOC><Link>
+
+
+
+
+
+<Span>Annex  J    </Span>
+<Span> </Span>
+<Span>(informative)</Span>
+<Span> </Span>
+<Span> </Span>
+<Span>FDF Rename Flag Implementation Example . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 729</Span>
+</Link>
+</ANNEXTOC>
+<ANNEXTOC><Link>
+
+
+
+
+
+<Span>Annex  K    </Span>
+<Span> </Span>
+<Span>(informative)</Span>
+<Span> </Span>
+<Span> </Span>
+<Span>PostScript Compatibility &#8212; Transparent Imaging Model. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 731</Span>
+</Link>
+</ANNEXTOC>
+<ANNEXTOC><Link>
+
+
+
+
+
+<Span>Annex  L    </Span>
+<Span> </Span>
+<Span>(informative)</Span>
+<Span> </Span>
+<Span> </Span>
+<Span>Colour Plates . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 733</Span>
+</Link>
+</ANNEXTOC>
+<zzBiblioTOC><Link>
+<Span>Bibliography . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 745</Span>
+</Link>
+</zzBiblioTOC>
+</zzContents>
+</TextSection>
+</Article_A>
+</Document>
+</Book>
+<Document>
+<H1>Document Header</H1>
+<Paragraph>
+
+
+<TextBlock>Quick brown </TextBlock>
+<Image></Image>
+<Span> jumped over a lazy </Span>
+<Figure></Figure>
+</Paragraph>
+</Document>
+<Document><Table><TBody><TR>
+<TD><Table><TBody><TR>
+<TD><Span>convallis justo
+euismod.
+Curabitur velit
+nisi, adipiscing
+sed consequat et,
+dignissim eget
+dolor. Aenean
+malesuada quam
+id mivestibulum
+pulvinar. Nullam
+diam quam,
+lobortis sit amet
+semper vitae,
+tempus eget
+dolor.</Span>
+</TD>
+<TD></TD>
+</TR>
+</TBody>
+</Table>
+</TD>
+<TD></TD>
+</TR>
+</TBody>
+</Table>
+</Document>
+</root>

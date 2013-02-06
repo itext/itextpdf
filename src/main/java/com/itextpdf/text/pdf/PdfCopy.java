@@ -53,6 +53,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Iterator;
 
 /**
@@ -77,7 +78,15 @@ public class PdfCopy extends PdfWriter {
         void setNotCopied() { hasCopied = false; }
         boolean getCopied() { return hasCopied; }
         PdfIndirectReference getRef() { return theRef; }
+
+        @Override
+        public String toString() {
+            String ext = "";
+            if (hasCopied) ext += " Copied";
+            return getRef() + ext;
+        }
     }
+
     protected HashMap<RefKey, IndirectReferences> indirects;
     protected HashMap<PdfReader, HashMap<RefKey, IndirectReferences>> indirectMap;
     protected HashMap<PdfObject, PdfObject> parentObjects;
@@ -91,6 +100,18 @@ public class PdfCopy extends PdfWriter {
     protected HashSet<PdfTemplate> fieldTemplates;
     private PdfStructTreeController structTreeController = null;
     private int currentStructArrayNumber = 0;
+    //remember to avoid coping
+    protected PRIndirectReference structTreeRootReference;
+    //to remove unused objects
+    protected HashMap<RefKey, PdfIndirectObject> indirectObjects;
+    //PdfIndirectObjects, that generate PdfWriter.addToBody(PdfObject) method, already saved to PdfBody
+    protected ArrayList<PdfIndirectObject> savedObjects;
+    //imported pages from getImportedPage(PdfReader, int, boolean)
+    protected ArrayList<ImportedPage> importedPages;
+    //for correct cleaning of indirects in getImportedPage(), to avoid cleaning of streams
+    protected HashSet<RefKey> streams;
+    //for correct update of kids in StructTreeRootController
+    protected boolean updateRootKids = false;
 
     /**
      * A key to allow us to hash indirect references
@@ -126,9 +147,29 @@ public class PdfCopy extends PdfWriter {
         }
     }
 
+    protected static class ImportedPage {
+        Integer pageNumber;
+        PdfReader reader;
+        ImportedPage(PdfReader reader, int pageNumber) {
+            this.pageNumber = pageNumber;
+            this.reader = reader;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (!(o instanceof ImportedPage)) return false;
+            ImportedPage other = (ImportedPage)o;
+            return this.pageNumber == other.pageNumber && this.reader.equals(reader);
+        }
+        @Override
+        public String toString() {
+            return Integer.toString(pageNumber);
+        }
+    }
+
     /**
      * Constructor
-     * @param document
+     * @param document document
      * @param os outputstream
      */
     public PdfCopy(Document document, OutputStream os) throws DocumentException {
@@ -138,6 +179,11 @@ public class PdfCopy extends PdfWriter {
         indirectMap = new HashMap<PdfReader, HashMap<RefKey, IndirectReferences>>();
         parentObjects = new HashMap<PdfObject, PdfObject>();
         disableIndirects = new HashSet<PdfObject>();
+
+        indirectObjects = new HashMap<RefKey, PdfIndirectObject>();
+        savedObjects = new ArrayList<PdfIndirectObject>();
+        importedPages = new ArrayList<ImportedPage>();
+        streams = new HashSet<RefKey>();
     }
 
     /**
@@ -180,6 +226,7 @@ public class PdfCopy extends PdfWriter {
     }
 
     public PdfImportedPage getImportedPage(PdfReader reader, int pageNumber, boolean keepTaggedPdfStructure) throws BadPdfFormatException {
+        updateRootKids = false;
         if (!keepTaggedPdfStructure)
             return getImportedPage(reader, pageNumber);
         else {
@@ -189,9 +236,89 @@ public class PdfCopy extends PdfWriter {
             } else {
                 structTreeController = new PdfStructTreeController(reader, this);
             }
+
+            ImportedPage newPage = new ImportedPage(reader, pageNumber);
+            switch (checkStructureTreeRootKids(newPage)) {
+                case -1: //-1 - clear , update
+                    clearIndirects(reader);
+                    updateRootKids = true;
+                    break;
+                case 0: //0 - not clear, not update
+                    updateRootKids = false;
+                    break;
+                case 1: //1 - not clear, update
+                    updateRootKids = true;
+                    break;
+            }
+            importedPages.add(newPage);
+
             disableIndirects.clear();
             parentObjects.clear();
             return getImportedPageImpl(reader, pageNumber);
+        }
+    }
+
+    private void clearIndirects(PdfReader reader) {
+        HashMap<RefKey, IndirectReferences> currIndirects = indirectMap.get(reader);
+        ArrayList<RefKey> forDelete = new ArrayList<RefKey>();
+        for (Map.Entry<RefKey, IndirectReferences> entry: currIndirects.entrySet()) {
+            PdfIndirectReference iRef = entry.getValue().theRef;
+            RefKey key = new RefKey(iRef);
+            PdfIndirectObject iObj = indirectObjects.get(key);
+            if (iObj == null) {
+                if (!streams.contains(key))
+                    forDelete.add(entry.getKey());
+            }
+            else if (iObj.object.isArray() || iObj.object.isDictionary()) {
+                forDelete.add(entry.getKey());
+            }
+        }
+
+        for (RefKey key: forDelete)
+            currIndirects.remove(key);
+    }
+
+    //0 - not clear, not update
+    //-1 - clear , update
+    //1 - not clear, update
+    private int checkStructureTreeRootKids(ImportedPage newPage) {
+        //start of document;
+        if (importedPages.size() == 0) return 1;
+        boolean readerExist = false;
+        for (ImportedPage page: importedPages) {
+            if (page.reader.equals(newPage.reader)) {
+                readerExist = true;
+                break;
+            }
+        }
+
+        //add new reader;
+        if (!readerExist) return 1;
+
+        ImportedPage lastPage = importedPages.get(importedPages.size() - 1);
+        boolean equalReader = lastPage.reader.equals(newPage.reader);
+        //reader exist, correct order;
+        if (equalReader && newPage.pageNumber > lastPage.pageNumber) return 0;
+        //reader exist, incorrect order;
+        return -1;
+    }
+
+    protected void fixStructureTreeRoot(HashSet<RefKey> activeKeys, HashSet<PdfName> activeClassMaps) {
+        HashMap<PdfName, PdfObject> newClassMap = new HashMap<PdfName, PdfObject>(activeClassMaps.size());
+        for (PdfName key: activeClassMaps) {
+            PdfObject cm = structureTreeRoot.classes.get(key);
+            if (cm != null) newClassMap.put(key, cm);
+        }
+
+        structureTreeRoot.classes = newClassMap;
+
+        PdfArray kids = structureTreeRoot.getAsArray(PdfName.K);
+        if (kids != null) {
+            for (int i = 0; i < kids.size(); ++i) {
+                PdfIndirectReference iref = (PdfIndirectReference)kids.getPdfObject(i);
+                RefKey key = new RefKey(iref);
+                if (!activeKeys.contains(key)) kids.remove(i--);
+            }
         }
     }
 
@@ -294,7 +421,7 @@ public class PdfCopy extends PdfWriter {
             throws IOException, BadPdfFormatException {
         PdfDictionary out = new PdfDictionary();
         PdfObject type = PdfReader.getPdfObjectRelease(in.get(PdfName.TYPE));
-        
+
         if (keepStruct)
         {
             if ((directRootKids) && (in.contains(PdfName.PG)))
@@ -316,8 +443,8 @@ public class PdfCopy extends PdfWriter {
         for (Object element : in.getKeys()) {
             PdfName key = (PdfName)element;
             PdfObject value = in.get(key);
-            if (structTreeController != null && structTreeController.reader != null && (key.equals(PdfName.STRUCTPARENT) || key.equals(PdfName.STRUCTPARENTS))) {
-                out.put(key,new PdfNumber(currentStructArrayNumber));
+            if (structTreeController != null && structTreeController.reader != null && key.equals(PdfName.STRUCTPARENTS)) {
+                out.put(key, new PdfNumber(currentStructArrayNumber));
                 structTreeController.copyStructTreeForPage((PdfNumber)value, currentStructArrayNumber++);
                 continue;
             }
@@ -330,7 +457,12 @@ public class PdfCopy extends PdfWriter {
                 }
             }
             else {
-                PdfObject res = copyObject(value, keepStruct, directRootKids);
+                PdfObject res;
+                if (tagged && value.isIndirect() && isStructTreeRootReference((PRIndirectReference)value)) {
+                    res = structureTreeRoot.getReference();
+                } else {
+                    res = copyObject(value, keepStruct, directRootKids);
+                }
                 if ((res != null) && !(res instanceof PdfNull))
                     out.put(key, res);
             }
@@ -394,26 +526,26 @@ public class PdfCopy extends PdfWriter {
     /**
      * Translate a PR-object to a Pdf-object
      */
-    protected PdfObject copyObject(PdfObject in, boolean keepStruct, boolean directRootKidds) throws IOException,BadPdfFormatException {
-        if (in == null)
+    protected PdfObject copyObject(PdfObject in, boolean keepStruct, boolean directRootKids) throws IOException,BadPdfFormatException {
+         if (in == null)
             return PdfNull.PDFNULL;
         switch (in.type) {
             case PdfObject.DICTIONARY:
-                return copyDictionary((PdfDictionary)in, keepStruct, directRootKidds);
+                return copyDictionary((PdfDictionary)in, keepStruct, directRootKids);
             case PdfObject.INDIRECT:
-                if (!keepStruct && !directRootKidds)
+                if (!keepStruct && !directRootKids)
                     // fix for PdfSmartCopy
                     return copyIndirect((PRIndirectReference)in);
                 else
-                    return copyIndirect((PRIndirectReference)in, keepStruct, directRootKidds);
+                    return copyIndirect((PRIndirectReference)in, keepStruct, directRootKids);
             case PdfObject.ARRAY:
-                return copyArray((PdfArray)in, keepStruct, directRootKidds);
+                return copyArray((PdfArray)in, keepStruct, directRootKids);
             case PdfObject.NUMBER:
             case PdfObject.NAME:
             case PdfObject.STRING:
             case PdfObject.NULL:
             case PdfObject.BOOLEAN:
-            case 0:
+            case 0://PdfIndirectReference
                 return in;
             case PdfObject.STREAM:
                 return copyStream((PRStream)in);
@@ -492,10 +624,13 @@ public class PdfCopy extends PdfWriter {
             indirects.put(key, iRef);
         }
         iRef.setCopied();
+        if (tagged)
+            structTreeRootReference = (PRIndirectReference)reader.getCatalog().get(PdfName.STRUCTTREEROOT);
         PdfDictionary newPage = copyDictionary(thePage);
         root.addPage(newPage);
         iPage.setCopied();
         ++currentPageNumber;
+        structTreeRootReference = null;
     }
 
     /**
@@ -512,6 +647,261 @@ public class PdfCopy extends PdfWriter {
     	page.put(PdfName.TABS, getTabs());
     	root.addPage(page);
     	++currentPageNumber;
+    }
+
+    @Override
+    public PdfIndirectObject addToBody(final PdfObject object, final PdfIndirectReference ref) throws IOException {
+        if (tagged && indirectObjects != null && (object.isArray() || object.isDictionary())) {
+            RefKey key = new RefKey(ref);
+            PdfIndirectObject obj = indirectObjects.get(key);
+            if (obj == null) {
+                obj = new PdfIndirectObject(ref, object, this);
+                indirectObjects.put(key, obj);
+            }
+            return obj;
+        } else {
+            if (tagged && object.isStream()) streams.add(new RefKey(ref));
+            return super.addToBody(object, ref);
+        }
+    }
+
+    @Override
+    public PdfIndirectObject addToBody(final PdfObject object) throws IOException {
+        PdfIndirectObject iobj = super.addToBody(object);
+        if (tagged && indirectObjects != null) {
+            savedObjects.add(iobj);
+            RefKey key = new RefKey(iobj.number, iobj.generation);
+            if (!indirectObjects.containsKey(key)) indirectObjects.put(key, iobj);
+        }
+        return iobj;
+    }
+
+    @Override
+    protected void flushTaggedObjects() throws IOException {
+        fixTaggedStructure();
+        flushIndirectObjects();
+    }
+
+    protected void fixTaggedStructure() {
+        HashMap<Integer, PdfIndirectReference> numTree = structureTreeRoot.getNumTree();
+        HashSet<PdfCopy.RefKey> activeKeys = new HashSet<PdfCopy.RefKey>();
+        ArrayList<PdfIndirectReference> actives = new ArrayList<PdfIndirectReference>();
+        if (pageReferences.size() == numTree.size()) {
+            //from end, because some objects can appear on several pages because of MCR (out16.pdf)
+            for (int i = numTree.size() - 1; i >= 0; --i) {
+                PdfIndirectReference currNum = numTree.get(i);
+                PdfCopy.RefKey numKey = new PdfCopy.RefKey(currNum);
+                activeKeys.add(numKey);
+                actives.add(currNum);
+
+                PdfArray currNums = (PdfArray)indirectObjects.get(numKey).object;
+                PdfIndirectReference currPage = pageReferences.get(i);
+                activeKeys.add(new PdfCopy.RefKey(currPage));
+                actives.add(currPage);
+                PdfIndirectReference prevKid = null;
+                for (int j = 0; j < currNums.size(); j++) {
+                    PdfIndirectReference currKid = (PdfIndirectReference)currNums.getDirectObject(j);
+                    if (currKid.equals(prevKid)) continue;
+                    PdfCopy.RefKey kidKey = new PdfCopy.RefKey(currKid);
+                    activeKeys.add(kidKey);
+                    actives.add(currKid);
+
+                    PdfIndirectObject obj = indirectObjects.get(kidKey);
+                    if (obj.object.isDictionary()) {
+                        PdfDictionary dict = (PdfDictionary)obj.object;
+                        PdfIndirectReference pg = (PdfIndirectReference)dict.get(PdfName.PG);
+                        //if pg is real page - do nothing, else set correct pg and remove first MCID if exists
+                        if (!pageReferences.contains(pg) && !pg.equals(currPage)){
+                            dict.put(PdfName.PG, currPage);
+                            PdfArray kids = dict.getAsArray(PdfName.K);
+                            if (kids != null) {
+                                PdfObject firstKid = kids.getDirectObject(0);
+                                if (firstKid.isNumber()) kids.remove(0);
+                            }
+                        }
+                    }
+                    prevKid = currKid;
+                }
+            }
+        }
+        HashSet<PdfName> activeClassMaps = new HashSet<PdfName>();
+        //collect all active objects from current active set (include kids, classmap, attributes)
+        findActives(actives, activeKeys, activeClassMaps);
+        //find parents of active objects
+        ArrayList<PdfIndirectReference> newRefs = findActiveParents(activeKeys);
+        //find new objects with incorrect Pg; if find, set Pg from first correct kid. This correct kid must be.
+        fixPgKey(newRefs, activeKeys);
+        //remove unused kids of StructTreeRoot and remove unused objects from class map
+        fixStructureTreeRoot(activeKeys, activeClassMaps);
+
+        for(Map.Entry<PdfCopy.RefKey, PdfIndirectObject> entry: indirectObjects.entrySet()) {
+            if (!activeKeys.contains(entry.getKey())) {
+                entry.setValue(null);
+            }
+            else {
+                if (entry.getValue().object.isArray()) {
+                    removeInactiveReferences((PdfArray)entry.getValue().object, activeKeys);
+                } else if (entry.getValue().object.isDictionary()) {
+                    PdfObject kids = ((PdfDictionary)entry.getValue().object).get(PdfName.K);
+                    if (kids != null && kids.isArray())
+                        removeInactiveReferences((PdfArray)kids, activeKeys);
+                }
+            }
+        }
+    }
+
+    private void removeInactiveReferences(PdfArray array, HashSet<PdfCopy.RefKey> activeKeys) {
+        for (int i = 0; i < array.size(); ++i) {
+            PdfObject obj = array.getPdfObject(i);
+            if ((obj.type() == 0 && !activeKeys.contains(new PdfCopy.RefKey((PdfIndirectReference)obj))) ||
+                    (obj.isDictionary() && containsInactivePg((PdfDictionary)obj, activeKeys)))
+                array.remove(i--);
+        }
+    }
+
+    private boolean containsInactivePg(PdfDictionary dict, HashSet<PdfCopy.RefKey> activeKeys) {
+        PdfObject pg = dict.get(PdfName.PG);
+        if (pg != null && !activeKeys.contains(new PdfCopy.RefKey((PdfIndirectReference)pg)))
+            return true;
+        return false;
+    }
+
+    //return new found objects
+    private ArrayList<PdfIndirectReference> findActiveParents(HashSet<RefKey> activeKeys){
+        ArrayList<PdfIndirectReference> newRefs = new ArrayList<PdfIndirectReference>();
+        ArrayList<PdfCopy.RefKey> tmpActiveKeys = new ArrayList<PdfCopy.RefKey>(activeKeys);
+        for (int i = 0; i < tmpActiveKeys.size(); ++i) {
+            PdfIndirectObject iobj = indirectObjects.get(tmpActiveKeys.get(i));
+            if (iobj == null || !iobj.object.isDictionary()) continue;
+            PdfObject parent = ((PdfDictionary)iobj.object).get(PdfName.P);
+            if (parent != null && parent.type() == 0) {
+                PdfCopy.RefKey key = new PdfCopy.RefKey((PdfIndirectReference)parent);
+                if (!activeKeys.contains(key) && key.num != 1) {
+                    activeKeys.add(key);
+                    tmpActiveKeys.add(key);
+                    newRefs.add((PdfIndirectReference) parent);
+                }
+            }
+        }
+        return newRefs;
+    }
+
+    private void fixPgKey(ArrayList<PdfIndirectReference> newRefs, HashSet<RefKey> activeKeys){
+        for (PdfIndirectReference iref: newRefs) {
+            PdfIndirectObject iobj = indirectObjects.get(new RefKey(iref));
+            if (iobj == null || !iobj.object.isDictionary()) continue;
+            PdfDictionary dict = (PdfDictionary)iobj.object;
+            PdfObject pg = dict.get(PdfName.PG);
+            if (pg == null || activeKeys.contains(new RefKey((PdfIndirectReference)pg))) continue;
+            PdfArray kids = dict.getAsArray(PdfName.K);
+            if (kids == null) continue;
+            for (int i = 0; i < kids.size(); ++i) {
+                PdfObject obj = kids.getPdfObject(i);
+                if (obj.type() != 0) {
+                    kids.remove(i--);
+                } else {
+                    PdfIndirectObject kid = indirectObjects.get(new RefKey((PdfIndirectReference)obj));
+                    if (kid != null && kid.object.isDictionary()) {
+                        PdfObject kidPg = ((PdfDictionary)kid.object).get(PdfName.PG);
+                        if (kidPg != null && activeKeys.contains(new RefKey((PdfIndirectReference)kidPg))) {
+                            dict.put(PdfName.PG, kidPg);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private void findActives(ArrayList<PdfIndirectReference> actives, HashSet<RefKey> activeKeys, HashSet<PdfName> activeClassMaps){
+        //collect all active objects from current active set (include kids, classmap, attributes)
+        for (int i = 0; i < actives.size(); ++i) {
+            PdfCopy.RefKey key = new PdfCopy.RefKey(actives.get(i));
+            PdfIndirectObject iobj = indirectObjects.get(key);
+            if (iobj == null || iobj.object == null) continue;
+            switch (iobj.object.type()){
+                case 0://PdfIndirectReference
+                    findActivesFromReference((PdfIndirectReference)iobj.object, actives, activeKeys);
+                    break;
+                case PdfObject.ARRAY:
+                    findActivesFromArray((PdfArray)iobj.object, actives, activeKeys, activeClassMaps);
+                    break;
+                case PdfObject.DICTIONARY:
+                    findActivesFromDict((PdfDictionary)iobj.object, actives, activeKeys, activeClassMaps);
+                    break;
+            }
+        }
+    }
+
+    private void findActivesFromReference(PdfIndirectReference iref, ArrayList<PdfIndirectReference> actives, HashSet<PdfCopy.RefKey> activeKeys) {
+        PdfCopy.RefKey key = new PdfCopy.RefKey(iref);
+        PdfIndirectObject obj = indirectObjects.get(key);
+        if (obj != null && obj.object.isDictionary() && containsInactivePg((PdfDictionary) obj.object, activeKeys)) return;
+
+        if(!activeKeys.contains(key)) {
+            activeKeys.add(key);
+            actives.add(iref);
+        }
+    }
+
+    private void findActivesFromArray(PdfArray array, ArrayList<PdfIndirectReference> actives, HashSet<PdfCopy.RefKey> activeKeys, HashSet<PdfName> activeClassMaps) {
+        for (PdfObject obj: array) {
+            switch (obj.type()) {
+                case 0://PdfIndirectReference
+                    findActivesFromReference((PdfIndirectReference)obj, actives, activeKeys);
+                    break;
+                case PdfObject.ARRAY:
+                    findActivesFromArray((PdfArray)obj, actives, activeKeys, activeClassMaps);
+                    break;
+                case PdfObject.DICTIONARY:
+                    findActivesFromDict((PdfDictionary)obj, actives, activeKeys, activeClassMaps);
+                    break;
+            }
+        }
+    }
+
+    private void findActivesFromDict(PdfDictionary dict, ArrayList<PdfIndirectReference> actives, HashSet<PdfCopy.RefKey> activeKeys,  HashSet<PdfName> activeClassMaps) {
+        if (containsInactivePg(dict, activeKeys)) return;
+        for (PdfName key: dict.getKeys()) {
+            PdfObject obj = dict.get(key);
+            if (key.equals(PdfName.P)) continue;
+            else if (key.equals(PdfName.C)) { //classmap
+                if (obj.isArray()) {
+                    for (PdfObject cm: (PdfArray)obj) {
+                        if (cm.isName()) activeClassMaps.add((PdfName)cm);
+                    }
+                }
+                else if (obj.isName()) activeClassMaps.add((PdfName)obj);
+                continue;
+            }
+            switch (obj.type()) {
+                case 0://PdfIndirectReference
+                    findActivesFromReference((PdfIndirectReference)obj, actives, activeKeys);
+                    break;
+                case PdfObject.ARRAY:
+                    findActivesFromArray((PdfArray)obj, actives, activeKeys, activeClassMaps);
+                    break;
+                case PdfObject.DICTIONARY:
+                    findActivesFromDict((PdfDictionary)obj, actives, activeKeys, activeClassMaps);
+                    break;
+            }
+        }
+    }
+
+    protected void flushIndirectObjects() throws IOException {
+        for (PdfIndirectObject iobj: savedObjects)
+            indirectObjects.remove(new PdfCopy.RefKey(iobj.number, iobj.generation));
+        HashSet<RefKey> inactives = new HashSet<RefKey>();
+        for(Map.Entry<RefKey, PdfIndirectObject> entry: indirectObjects.entrySet()) {
+            if (entry.getValue() != null) body.write(entry.getValue(), entry.getValue().number);
+            else inactives.add(entry.getKey());
+        }
+        ArrayList<PdfBody.PdfCrossReference> pdfCrossReferences = new ArrayList<PdfBody.PdfCrossReference>(body.xrefs);
+        for (PdfBody.PdfCrossReference cr : pdfCrossReferences) {
+            RefKey key = new RefKey(cr.getRefnum(), 0);
+            if (inactives.contains(key)) body.xrefs.remove(cr);
+        }
+        indirectObjects = null;
     }
 
     /**
@@ -566,6 +956,12 @@ public class PdfCopy extends PdfWriter {
         catch (IOException e) {
             throw new ExceptionConverter(e);
         }
+    }
+
+    protected boolean isStructTreeRootReference(PdfIndirectReference prRef) {
+        if (prRef == null || structTreeRootReference == null)
+            return false;
+        return prRef.number == structTreeRootReference.number && prRef.generation == structTreeRootReference.generation;
     }
 
     private void addFieldResources(PdfDictionary catalog) throws IOException {
