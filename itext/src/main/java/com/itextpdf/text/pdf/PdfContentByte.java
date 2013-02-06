@@ -3600,12 +3600,18 @@ public class PdfContentByte {
     }
 
     protected void openMCBlock(IAccessibleElement element) {
-        if (writer.isTagged() && element != null/* && element.getRole() != null*/) {
-            if (!getMcElements().contains(element)) {
-                PdfStructureElement structureElement = openMCBlockInt(element);
-                getMcElements().add(element);
-                if (structureElement != null)
-                    pdf.structElements.put(element.getId(), structureElement);
+        if (writer.isTagged()) {
+            if (pdf.openMCDocument) {
+                pdf.openMCDocument = false;
+                writer.getDirectContentUnder().openMCBlock(pdf);
+            }
+            if (element != null/* && element.getRole() != null*/) {
+                if (!getMcElements().contains(element)) {
+                    PdfStructureElement structureElement = openMCBlockInt(element);
+                    getMcElements().add(element);
+                    if (structureElement != null)
+                        pdf.structElements.put(element.getId(), structureElement);
+                }
             }
         }
     }

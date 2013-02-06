@@ -58,7 +58,7 @@ public class PdfStructureTreeRoot extends PdfDictionary implements IPdfStructure
     private HashMap<Integer, PdfObject> parentTree = new HashMap<Integer, PdfObject>();
     private PdfIndirectReference reference;
     private PdfDictionary classMap = null;
-    private HashMap<PdfName,PdfObject> classes = null;
+    protected HashMap<PdfName,PdfObject> classes = null;
 
     /**
      * Holds value of property writer.
@@ -167,15 +167,11 @@ public class PdfStructureTreeRoot extends PdfDictionary implements IPdfStructure
     }
 
     void buildTree() throws IOException {
-        HashMap<Integer, PdfIndirectReference> numTree = new HashMap<Integer, PdfIndirectReference>();
-        for (Integer i: parentTree.keySet()) {
-            PdfArray ar = (PdfArray)parentTree.get(i);
-            numTree.put(i, writer.addToBody(ar).getIndirectReference());
-        }
+        HashMap<Integer, PdfIndirectReference> numTree = getNumTree();
         PdfDictionary dicTree = PdfNumberTree.writeTree(numTree, writer);
         if (dicTree != null)
             put(PdfName.PARENTTREE, writer.addToBody(dicTree).getIndirectReference());
-        if (classMap != null) {
+        if (classMap != null && !classes.isEmpty()) {
             for (Map.Entry<PdfName,PdfObject> entry : classes.entrySet()) {
                 PdfObject value = entry.getValue();
                 if (value.isDictionary())
@@ -193,6 +189,16 @@ public class PdfStructureTreeRoot extends PdfDictionary implements IPdfStructure
             put(PdfName.CLASSMAP, writer.addToBody(classMap).getIndirectReference());
         }
         nodeProcess(this, reference);
+    }
+
+    protected HashMap<Integer, PdfIndirectReference> getNumTree() {
+        HashMap<Integer, PdfIndirectReference> numTree = new HashMap<Integer, PdfIndirectReference>();
+        for (Integer i: parentTree.keySet()) {
+            PdfArray ar = (PdfArray)parentTree.get(i);
+            PdfIndirectReference iRef = (PdfIndirectReference)ar.getDirectObject(0);
+            numTree.put(i, iRef);
+        }
+        return numTree;
     }
 
     /**

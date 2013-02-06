@@ -300,6 +300,8 @@ public class PdfDocument extends Document {
 
     protected HashMap<UUID, PdfStructureElement> structElements = new HashMap<UUID, PdfStructureElement>();
 
+    protected boolean openMCDocument = false;
+
     /**
      * Adds a <CODE>PdfWriter</CODE> to the <CODE>PdfDocument</CODE>.
      *
@@ -759,7 +761,7 @@ public class PdfDocument extends Document {
         try {
             initPage();
             if (isTagged(writer)) {
-                writer.getDirectContentUnder().openMCBlock(this);
+                openMCDocument = true;
             }
         }
         catch(DocumentException de) {
@@ -785,6 +787,7 @@ public class PdfDocument extends Document {
                 flushFloatingElements();
                 flushLines();
                 writer.getDirectContent().closeMCBlock(this);
+                writer.flushTaggedObjects();
             }
             boolean wasImage = imageWait != null;
             newPage();
