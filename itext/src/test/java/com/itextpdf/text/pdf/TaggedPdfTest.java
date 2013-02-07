@@ -18,7 +18,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-@Ignore
 public class TaggedPdfTest {
     private Document document;
     private PdfWriter writer;

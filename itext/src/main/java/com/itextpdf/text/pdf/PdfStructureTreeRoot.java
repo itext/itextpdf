@@ -167,7 +167,16 @@ public class PdfStructureTreeRoot extends PdfDictionary implements IPdfStructure
     }
 
     void buildTree() throws IOException {
-        HashMap<Integer, PdfIndirectReference> numTree = getNumTree();
+        HashMap<Integer, PdfIndirectReference> numTree = new HashMap<Integer, PdfIndirectReference>();
+        for (Integer i: parentTree.keySet()) {
+            PdfArray ar = (PdfArray)parentTree.get(i);
+            if (writer instanceof PdfCopy) { //because we already construct nums
+                PdfIndirectReference iRef = (PdfIndirectReference)ar.getDirectObject(0);
+                numTree.put(i, iRef);
+            } else {
+                numTree.put(i, writer.addToBody(ar).getIndirectReference());
+            }
+        }
         PdfDictionary dicTree = PdfNumberTree.writeTree(numTree, writer);
         if (dicTree != null)
             put(PdfName.PARENTTREE, writer.addToBody(dicTree).getIndirectReference());
