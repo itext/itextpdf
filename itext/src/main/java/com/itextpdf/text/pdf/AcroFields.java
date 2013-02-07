@@ -163,6 +163,7 @@ public class AcroFields {
         PdfDictionary top = (PdfDictionary)PdfReader.getPdfObjectRelease(reader.getCatalog().get(PdfName.ACROFORM));
         if (top == null)
             return;
+        top.remove(PdfName.NEEDAPPEARANCES);
         PdfArray arrfds = (PdfArray)PdfReader.getPdfObjectRelease(top.get(PdfName.FIELDS));
         if (arrfds == null || arrfds.size() == 0)
             return;
