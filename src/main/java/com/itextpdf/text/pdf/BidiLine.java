@@ -421,7 +421,7 @@ public class BidiLine {
                 float decrement = module - ((originalWidth - width) % module);
 
                 if (width < decrement)
-                    return new PdfLine(0, originalWidth, width, alignment, false,
+                    return new PdfLine(0, originalWidth, width, alignment, true,
                             createArrayOfPdfChunks(oldCurrentChar, currentChar-1), isRTL);
 
                 width -= decrement;
