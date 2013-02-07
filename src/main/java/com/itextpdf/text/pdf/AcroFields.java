@@ -984,7 +984,11 @@ public class AcroFields {
                         merged = item.getMerged( k );
                         da = merged.getAsString(PdfName.DA);
                         PdfDictionary dr = merged.getAsDict(PdfName.DR);
-                        if (da != null && dr != null) {
+                        if (da != null) {
+                            if (dr == null) {
+                            	dr = new PdfDictionary();
+                            	merged.put(PdfName.DR, dr);
+                            }
                             Object dao[] = splitDAelements(da.toUnicodeString());
                             PdfAppearance cb = new PdfAppearance();
                             if (dao[DA_FONT] != null) {
