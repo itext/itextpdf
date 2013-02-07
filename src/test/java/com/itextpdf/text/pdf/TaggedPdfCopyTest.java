@@ -146,7 +146,7 @@ public class TaggedPdfCopyTest {
         PdfArray array = ((PdfDictionary)obj).getAsArray(PdfName.NUMS);
         int[] nums = new int[] {30, 32, 39, 80};
         for (int i = 0; i < n; ++i)
-            verifyArraySize(PdfStructTreeController.getDirectObject(array.getPdfObject(i*2+1)), nums[i], "Nums of page "+i);
+            verifyArraySize(PdfStructTreeController.getDirectObject(array.getPdfObject(i*2+1)), nums[i], "Nums of page "+(i+1));
 
         PdfDictionary ClassMap = verifyIsDictionary(PdfStructTreeController.getDirectObject(structTreeRoot.get(PdfName.CLASSMAP)), NO_CLASS_MAP);
         PdfDictionary CM31 = verifyIsDictionary(PdfStructTreeController.getDirectObject(ClassMap.get(new PdfName("CM31"))), "ClassMap does not contain.\"CM31\"");
@@ -198,7 +198,7 @@ public class TaggedPdfCopyTest {
         int k = 0;
         for (int i = 0; i < arrays.length; ++i)
             for (int j = 0; j < arrays[i].size() / 2; ++j)
-                verifyArraySize(PdfStructTreeController.getDirectObject(arrays[i].getPdfObject(j*2+1)), nums[k++], "Nums of page "+i);
+                verifyArraySize(PdfStructTreeController.getDirectObject(arrays[i].getPdfObject(j*2+1)), nums[k++], "Nums of page "+(i+1));
         //writer.write(((PdfArray)(PdfStructTreeController.getDirectObject(arrays[i].getPdfObject(j*2+1)))).size()+", ");
         //writer.close();
 
