@@ -686,6 +686,10 @@ public class PdfCopy extends PdfWriter {
         HashMap<Integer, PdfIndirectReference> numTree = structureTreeRoot.getNumTree();
         HashSet<PdfCopy.RefKey> activeKeys = new HashSet<PdfCopy.RefKey>();
         ArrayList<PdfIndirectReference> actives = new ArrayList<PdfIndirectReference>();
+        for (PdfIndirectReference iref: pageReferences){
+            actives.add(iref);
+            activeKeys.add(new RefKey(iref));
+        }
         if (pageReferences.size() == numTree.size()) {
             //from end, because some objects can appear on several pages because of MCR (out16.pdf)
             for (int i = numTree.size() - 1; i >= 0; --i) {
@@ -693,11 +697,10 @@ public class PdfCopy extends PdfWriter {
                 PdfCopy.RefKey numKey = new PdfCopy.RefKey(currNum);
                 activeKeys.add(numKey);
                 actives.add(currNum);
-
-                PdfArray currNums = (PdfArray)indirectObjects.get(numKey).object;
+                PdfObject obj = indirectObjects.get(numKey).object;
+                if (!obj.isArray()) obj = tryGenerateNumsArray(obj, currNum, activeKeys);
+                PdfArray currNums = (PdfArray)obj;
                 PdfIndirectReference currPage = pageReferences.get(i);
-                activeKeys.add(new PdfCopy.RefKey(currPage));
-                actives.add(currPage);
                 PdfIndirectReference prevKid = null;
                 for (int j = 0; j < currNums.size(); j++) {
                     PdfIndirectReference currKid = (PdfIndirectReference)currNums.getDirectObject(j);
@@ -706,9 +709,9 @@ public class PdfCopy extends PdfWriter {
                     activeKeys.add(kidKey);
                     actives.add(currKid);
 
-                    PdfIndirectObject obj = indirectObjects.get(kidKey);
-                    if (obj.object.isDictionary()) {
-                        PdfDictionary dict = (PdfDictionary)obj.object;
+                    PdfIndirectObject iobj = indirectObjects.get(kidKey);
+                    if (iobj.object.isDictionary()) {
+                        PdfDictionary dict = (PdfDictionary)iobj.object;
                         PdfIndirectReference pg = (PdfIndirectReference)dict.get(PdfName.PG);
                         //if pg is real page - do nothing, else set correct pg and remove first MCID if exists
                         if (!pageReferences.contains(pg) && !pg.equals(currPage)){
@@ -723,7 +726,8 @@ public class PdfCopy extends PdfWriter {
                     prevKid = currKid;
                 }
             }
-        }
+        } else return;//invalid tagged document -> flush all objects
+
         HashSet<PdfName> activeClassMaps = new HashSet<PdfName>();
         //collect all active objects from current active set (include kids, classmap, attributes)
         findActives(actives, activeKeys, activeClassMaps);
@@ -748,6 +752,32 @@ public class PdfCopy extends PdfWriter {
                 }
             }
         }
+    }
+
+    private PdfArray tryGenerateNumsArray(PdfObject nums, PdfIndirectReference iref, HashSet<RefKey> activeKeys) throws UnsupportedOperationException {
+        PdfArray array = new PdfArray();
+        array.add(iref);
+        if (nums.isDictionary()) {
+            for (int i = 0; i < array.size(); ++i) {
+                PdfIndirectObject curr = indirectObjects.get(new RefKey((PdfIndirectReference)array.getPdfObject(i)));
+                if (curr == null || !curr.object.isDictionary()) continue;
+                PdfObject pg = ((PdfDictionary)curr.object).get(PdfName.PG);
+                if (pg != null && !activeKeys.contains(new RefKey((PdfIndirectReference)pg)))
+                    array.remove(i--); // remove kids with invalid page reference;
+                PdfObject kids = ((PdfDictionary)curr.object).get(PdfName.K);
+                if (kids == null) continue;
+                if (kids.isArray()) {
+                    for (PdfObject obj: (PdfArray)kids)
+                        if (obj.type() == 0) array.add(obj);
+                } else if (kids.type() == 0) array.add(kids);
+            }
+        } else if (nums.type() == 0) {
+            array.add(nums);
+        } else {
+            throw new UnsupportedOperationException("Error in nums structure of tagged document");
+        }
+
+        return array;
     }
 
     private void removeInactiveReferences(PdfArray array, HashSet<PdfCopy.RefKey> activeKeys) {
