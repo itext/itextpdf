@@ -1,10 +1,12 @@
 package com.itextpdf.text.pdf;
 
 import com.itextpdf.text.*;
+import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.pdf.parser.*;
 import com.itextpdf.text.xml.XMLUtil;
 import org.junit.After;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.xml.sax.SAXException;
 
@@ -16,10 +18,14 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+@Ignore
 public class TaggedPdfTest {
     private Document document;
     private PdfWriter writer;
     private Paragraph h1;
+
+    public static final String NO_PARENT_TREE = "the.document.does.not.contain.parenttree";
+    public static final String NO_STRUCT_TREE_ROOT = "no.StructTreeRoot.found";
 
     private static final String text = new String("Lorem ipsum dolor sit amet," +
             "consectetur adipiscing elit." +
@@ -141,7 +147,8 @@ public class TaggedPdfTest {
         columnText.setSimpleColumn(300, 36, 500, 800);
         columnText.go();
         document.close();
-
+        int[] nums = new int[]{77} ;
+        compareNums("1", nums);
         compareResults("1");
     }
 
@@ -159,7 +166,8 @@ public class TaggedPdfTest {
         columnText.setSimpleColumn(36,36,400,800);
         columnText.go();
         document.close();
-
+//        int[] nums = new int[]{237, 47} ;
+//        compareNums("2", nums);
         compareResults("2");
     }
 
@@ -170,7 +178,8 @@ public class TaggedPdfTest {
         document.add(h1);
         document.add(paragraph);
         document.close();
-
+        int[] nums = new int[]{43, 6};
+        compareNums("3", nums);
         compareResults("3");
     }
 
@@ -207,7 +216,8 @@ public class TaggedPdfTest {
         document.add(h1);
         document.add(p);
         document.close();
-
+        int[] nums = new int[]{7};
+        compareNums("4", nums);
         compareResults("4");
     }
 
@@ -240,7 +250,8 @@ public class TaggedPdfTest {
         document.add(list);
         document.close();
 
-
+        int[] nums = new int[]{22};
+        compareNums("5", nums);
         compareResults("5");
     }
 
@@ -275,7 +286,8 @@ public class TaggedPdfTest {
         columnText.addElement(list);
         columnText.go();
         document.close();
-
+        int[] nums = new int[]{24};
+        compareNums("6", nums);
         compareResults("6");
     }
 
@@ -309,7 +321,8 @@ public class TaggedPdfTest {
         document.add(list);
         document.close();
 
-
+        int[] nums = new int[]{63, 14} ;
+        compareNums("7", nums);
         compareResults("7");
     }
 
@@ -351,7 +364,8 @@ public class TaggedPdfTest {
         columnText.go();
         document.close();
 
-
+        int[] nums = new int[]{64, 35} ;
+        compareNums("8", nums);
         compareResults("8");
     }
 
@@ -378,7 +392,8 @@ public class TaggedPdfTest {
         document.add(table);
         document.add(new Paragraph("Extra paragraph at the end of the document. Please make sure that this is really last portion of page content."));
         document.close();
-
+        int[] nums = new int[]{16, 70, 62} ;
+        compareNums("9", nums);
         compareResults("9");
     }
 
@@ -419,7 +434,8 @@ public class TaggedPdfTest {
         document.add(table);
         document.close();
 
-
+        int[] nums = new int[]{16, 87, 128, 74, 74, 74, 26} ;
+        compareNums("10", nums);
         compareResults("10");
     }
 
@@ -543,7 +559,8 @@ public class TaggedPdfTest {
 
         document.close();
 
-
+        int[] nums = new int[]{114, 60} ;
+        compareNums("11", nums);
         compareResults("11");
     }
 
@@ -577,7 +594,8 @@ public class TaggedPdfTest {
         document.add(table);
         document.close();
 
-
+        int[] nums = new int[]{237, 47} ;
+        compareNums("12", nums);
         compareResults("12");
     }
 
@@ -596,7 +614,8 @@ public class TaggedPdfTest {
         p.add(new Chunk(" for more details."));
         document.add(p);
         document.close();
-
+        int[] nums = new int[]{5} ;
+        compareNums("13", nums);
         compareResults("13");
     }
 
@@ -610,6 +629,9 @@ public class TaggedPdfTest {
         columnText.addElement(paragraph);
         columnText.go();
         document.close();
+
+        int[] nums = new int[]{3} ;
+        compareNums("14", nums);
 
         PdfReader reader = new PdfReader("./target/com/itextpdf/test/pdf/TaggedPdfTest/out14.pdf");
         Assert.assertEquals(1, reader.getNumberOfPages());
@@ -628,6 +650,8 @@ public class TaggedPdfTest {
 
         document.add(p);
         document.close();
+        int[] nums = new int[]{3} ;
+        compareNums("15", nums);
         compareResults("15");
     }
 
@@ -653,6 +677,8 @@ public class TaggedPdfTest {
 
 
         document.close();
+        int[] nums = new int[]{48, 7} ;
+        compareNums("16", nums);
         compareResults("16");
     }
 
@@ -711,6 +737,8 @@ public class TaggedPdfTest {
         }
         document.add(table);
         document.close();
+        int[] nums = new int[]{27} ;
+        compareNums("17", nums);
         compareResults("17");
     }
 
@@ -728,7 +756,35 @@ public class TaggedPdfTest {
         div.addElement(paragraph);
         document.add(div);
         document.close();
+        int[] nums = new int[]{32} ;
+        compareNums("18", nums);
         compareResults("18");
+    }
+
+    private void compareNums(String name, int[] nums) throws IOException {
+        PdfReader reader = new PdfReader("./target/com/itextpdf/test/pdf/TaggedPdfTest/out"+ name +".pdf");
+        PdfDictionary structTreeRoot = verifyIsDictionary(reader.getCatalog().getDirectObject(PdfName.STRUCTTREEROOT), NO_STRUCT_TREE_ROOT);
+        verifyArraySize(structTreeRoot.get(PdfName.K), 1, "Invalid count of kids in StructTreeRoot");
+        PdfObject obj = PdfStructTreeController.getDirectObject(structTreeRoot.get(PdfName.PARENTTREE));
+        verifyIsDictionary(obj, NO_PARENT_TREE);
+        PdfArray array = ((PdfDictionary)obj).getAsArray(PdfName.NUMS);
+        verifyArraySize(array, nums.length*2, "nums");
+        for (int i = 0; i < nums.length; ++i)
+            verifyArraySize(PdfStructTreeController.getDirectObject(array.getPdfObject(i*2+1)), nums[i], "Nums of page "+(i+1));
+        reader.close();
+    }
+
+    private PdfArray verifyArraySize(PdfObject obj, Integer size, String message) {
+        if (obj == null || !obj.isArray()) Assert.fail(message + " is not array");
+        if (((PdfArray)obj).size() != size)
+            Assert.fail(message + " has wrong size");
+        return (PdfArray)obj;
+    }
+
+    private PdfDictionary verifyIsDictionary(PdfObject obj, String message) {
+        if (obj == null || !obj.isDictionary())
+            Assert.fail(message);
+        return (PdfDictionary)obj;
     }
 
     private boolean compareXmls(String xml1, String xml2) throws ParserConfigurationException, SAXException, IOException {
