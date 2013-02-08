@@ -63,7 +63,7 @@ public class PdfStructTreeController {
 //
 //        }
         if (copyPageMarks(parentTree, sourceArrayNumber, newArrayNumber) == returnType.NOTFOUND) {
-            throw new BadPdfFormatException(MessageLocalization.getComposedMessage("structparent.not.found"));
+            throw new BadPdfFormatException(MessageLocalization.getComposedMessage("invalid.structparent"));
         }
     }
 
@@ -100,6 +100,7 @@ public class PdfStructTreeController {
                 }
             }
         } else {
+            if (pages.size() == 0) return returnType.NOTFOUND;
             return findAndCopyMarks(pages, arrayNumber.intValue(), newArrayNumber);
         }
     }
@@ -116,8 +117,10 @@ public class PdfStructTreeController {
             curNumber = pages.getAsNumber((begin + cur) * 2).intValue();
             if (curNumber == arrayNumber) {
                 PdfObject obj = pages.getPdfObject((begin + cur) * 2 + 1);
-                while (obj.isIndirect())
-                    obj = PdfReader.getPdfObjectRelease(obj);
+                while (obj.isIndirect()) obj = PdfReader.getPdfObjectRelease(obj);
+                //invalid Nums
+                if (!obj.isArray()) return returnType.NOTFOUND;
+
                 PdfObject firstNotNullKid = null;
                 for (PdfObject numObj: (PdfArray)obj){
                     if (numObj.isNull()) continue;

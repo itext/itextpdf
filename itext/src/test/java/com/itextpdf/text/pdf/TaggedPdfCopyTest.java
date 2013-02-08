@@ -35,21 +35,11 @@ public class TaggedPdfCopyTest {
     public static final String SOURCE22 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/2/source22.pdf";
     public static final String SOURCE32 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/3/source32.pdf";
     public static final String SOURCE42 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/4/source42.pdf";
+    public static final String SOURCE51 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/5/source51.pdf";
+    public static final String SOURCE52 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/5/source52.pdf";
+    public static final String SOURCE53 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/5/source53.pdf";
 
-    public static final String CLASSMAP = "./target/com/itextpdf/test/pdf/TaggedPdfCopyTest/classmap.pdf";
-    public static final String ROLEMAP =  "./target/com/itextpdf/test/pdf/TaggedPdfCopyTest/rolemap.pdf";
-    public static final String MERGE =    "./target/com/itextpdf/test/pdf/TaggedPdfCopyTest/merge.pdf";
-    public static final String OUT0 =     "./target/com/itextpdf/test/pdf/TaggedPdfCopyTest/out0.pdf";
-    public static final String OUT1 =     "./target/com/itextpdf/test/pdf/TaggedPdfCopyTest/out1.pdf";
-    public static final String OUT2 =     "./target/com/itextpdf/test/pdf/TaggedPdfCopyTest/out2.pdf";
-    public static final String OUT3 =     "./target/com/itextpdf/test/pdf/TaggedPdfCopyTest/out3.pdf";
-    public static final String OUT4 =     "./target/com/itextpdf/test/pdf/TaggedPdfCopyTest/out4.pdf";
-    public static final String OUT5 =     "./target/com/itextpdf/test/pdf/TaggedPdfCopyTest/out5.pdf";
-    public static final String OUT6 =     "./target/com/itextpdf/test/pdf/TaggedPdfCopyTest/out6.pdf";
-    public static final String OUT7 =     "./target/com/itextpdf/test/pdf/TaggedPdfCopyTest/out7.pdf";
-    public static final String OUT8 =     "./target/com/itextpdf/test/pdf/TaggedPdfCopyTest/out8.pdf";
-    public static final String OUT9 =     "./target/com/itextpdf/test/pdf/TaggedPdfCopyTest/out9.pdf";
-    public static final String OUT10 =    "./target/com/itextpdf/test/pdf/TaggedPdfCopyTest/out10.pdf";
+    public static final String OUT = "./target/com/itextpdf/test/pdf/TaggedPdfCopyTest/out";
 
     public static final PdfDictionary CM31 = new PdfDictionary();
     public static final PdfDictionary sElem = new PdfDictionary();
@@ -74,8 +64,8 @@ public class TaggedPdfCopyTest {
         Document.compress = false;
     }
 
-    private void initializeDocument(String output) throws DocumentException, FileNotFoundException {
-        this.output = output;
+    private void initializeDocument(String name) throws DocumentException, FileNotFoundException {
+        this.output = OUT + name + ".pdf";
         document = new Document();
         copy = new PdfCopy(document, new FileOutputStream(output));
         copy.setTagged();
@@ -84,7 +74,7 @@ public class TaggedPdfCopyTest {
 
     @Test
     public void classMapConflict() throws IOException, DocumentException {
-        initializeDocument(CLASSMAP);
+        initializeDocument("-cmc");
         PdfReader reader1 = new PdfReader(SOURCE11);
         try {
             copy.addPage(copy.getImportedPage(reader1, 76, true));
@@ -104,7 +94,7 @@ public class TaggedPdfCopyTest {
 
     @Test
     public void roleMapConflict() throws IOException, DocumentException {
-        initializeDocument(ROLEMAP);
+        initializeDocument("-rolemap");
 
         PdfReader reader1 = new PdfReader(SOURCE11);
         //PdfDictionary trailer = reader1.trailer;
@@ -126,7 +116,7 @@ public class TaggedPdfCopyTest {
 
     @Test
     public void pdfMergeTest() throws IOException, DocumentException {
-        initializeDocument(MERGE);
+        initializeDocument("-merge");
 
         int n = 4;
         PdfReader reader1 = new PdfReader(SOURCE11);
@@ -163,7 +153,7 @@ public class TaggedPdfCopyTest {
 
     @Test
     public void copyTaggedPdf0() throws IOException, DocumentException, ParserConfigurationException, SAXException {
-        initializeDocument(OUT0);
+        initializeDocument("0");
         PdfReader reader = new PdfReader(SOURCE11);
         int n = reader.getNumberOfPages();
         for (int i = 1; i <= n; ++i)
@@ -230,7 +220,7 @@ public class TaggedPdfCopyTest {
 
     @Test
     public void copyTaggedPdf1() throws IOException, DocumentException, ParserConfigurationException, SAXException {
-        initializeDocument(OUT1);
+        initializeDocument("1");
         PdfReader reader = new PdfReader(SOURCE32);
         copy.addPage(copy.getImportedPage(reader, 5, true));
         document.close();
@@ -250,7 +240,7 @@ public class TaggedPdfCopyTest {
 
     @Test
     public void copyTaggedPdf2() throws IOException, DocumentException, ParserConfigurationException, SAXException {
-        initializeDocument(OUT2);
+        initializeDocument("2");
         PdfReader reader = new PdfReader(SOURCE16);
         copy.addPage(copy.getImportedPage(reader, 2, true));
         document.close();
@@ -270,7 +260,7 @@ public class TaggedPdfCopyTest {
 
     @Test
     public void copyTaggedPdf3() throws IOException, DocumentException, ParserConfigurationException, SAXException {
-        initializeDocument(OUT3);
+        initializeDocument("3");
         PdfReader reader = new PdfReader(SOURCE10);
         int n = reader.getNumberOfPages();
         for (int i = 1; i <= n; ++i)
@@ -295,7 +285,7 @@ public class TaggedPdfCopyTest {
 
     @Test
     public void copyTaggedPdf4() throws IOException, DocumentException, ParserConfigurationException, SAXException {
-        initializeDocument(OUT4);
+        initializeDocument("4");
         PdfReader reader = new PdfReader(SOURCE10);
         int n = reader.getNumberOfPages();
         for (int i = n; i > 0; --i)
@@ -320,7 +310,7 @@ public class TaggedPdfCopyTest {
 
     @Test
     public void copyTaggedPdf5() throws IOException, DocumentException, ParserConfigurationException, SAXException {
-        initializeDocument(OUT5);
+        initializeDocument("5");
         PdfReader reader = new PdfReader(SOURCE10);
         int n = 3;
         copy.addPage(copy.getImportedPage(reader, 1, true));
@@ -347,7 +337,7 @@ public class TaggedPdfCopyTest {
 
     @Test
     public void copyTaggedPdf6() throws IOException, DocumentException, ParserConfigurationException, SAXException {
-        initializeDocument(OUT6);
+        initializeDocument("6");
         PdfReader reader = new PdfReader(SOURCE11);
         int n = 8;
         copy.addPage(copy.getImportedPage(reader, 1, true));
@@ -389,7 +379,7 @@ public class TaggedPdfCopyTest {
 
     @Test
     public void copyTaggedPdf7() throws IOException, DocumentException, ParserConfigurationException, SAXException {
-        initializeDocument(OUT7);
+        initializeDocument("7");
         PdfReader reader = new PdfReader(SOURCE16);
         int n = reader.getNumberOfPages();
         for (int i = 1; i <= n; ++i){
@@ -421,7 +411,7 @@ public class TaggedPdfCopyTest {
 
     @Test
     public void copyTaggedPdf8() throws IOException, DocumentException, ParserConfigurationException, SAXException {
-        initializeDocument(OUT8);
+        initializeDocument("8");
         PdfReader reader = new PdfReader(SOURCE42);
         int n = reader.getNumberOfPages();
         for (int i = 1; i <= n; ++i){
@@ -453,7 +443,7 @@ public class TaggedPdfCopyTest {
 
     @Test
     public void copyTaggedPdf9() throws IOException, DocumentException, ParserConfigurationException, SAXException {
-        initializeDocument(OUT9);
+        initializeDocument("9");
         PdfReader reader4 = new PdfReader(SOURCE4);
         PdfReader reader10 = new PdfReader(SOURCE10);
         PdfReader reader32 = new PdfReader(SOURCE32);
@@ -503,7 +493,7 @@ public class TaggedPdfCopyTest {
     @Test
     public void copyTaggedPdf10() throws IOException, DocumentException, ParserConfigurationException, SAXException {
         //source17: StructTreeRoot has no kids - incorrect syntax of tags - try to fix in result pdf
-        initializeDocument(OUT10);
+        initializeDocument("10");
         PdfReader reader = new PdfReader(SOURCE17);
         copy.addPage(copy.getImportedPage(reader, 2, true));
         document.close();
@@ -518,7 +508,101 @@ public class TaggedPdfCopyTest {
         verifyArraySize(array, 2, "Nums");
         verifyArraySize(PdfStructTreeController.getDirectObject(array.getPdfObject(1)), 7, "Nums of page 1");
         reader.close();
-        compareResults("2");
+        compareResults("10");
+    }
+
+    @Test
+    public void copyTaggedPdf11() throws IOException, DocumentException, ParserConfigurationException, SAXException {
+        //source51: invalid nums - references to PdfDictionary, all pages has the same "NumDictionary"
+        // 58 0 obj
+        // <</Nums[0 2 0 R 1 2 0 R 2 2 0 R 3 2 0 R 4 2 0 R 5 2 0 R 6 2 0 R]>>
+        // endobj
+        //where 2 0 R is StructElement of Document
+        initializeDocument("11");
+        PdfReader reader = new PdfReader(SOURCE51);
+        boolean exceptionThrown = false;
+        try {
+            copy.addPage(copy.getImportedPage(reader, 2, true));
+        } catch (BadPdfFormatException e) {
+            exceptionThrown = true;
+        }
+        //document.close();
+        reader.close();
+
+        if (!exceptionThrown)
+            Assert.fail("BadPdfFormatException expected!");
+
+//        reader = new PdfReader(output);
+//        PdfDictionary structTreeRoot = verifyIsDictionary(reader.getCatalog().getDirectObject(PdfName.STRUCTTREEROOT), NO_STRUCT_TREE_ROOT);
+//        verifyArraySize(structTreeRoot.get(PdfName.K), 1, "Invalid count of kids in StructTreeRoot");
+//        PdfObject obj = PdfStructTreeController.getDirectObject(structTreeRoot.get(PdfName.PARENTTREE));
+//        verifyIsDictionary(obj, NO_PARENT_TREE);
+//        PdfArray array = ((PdfDictionary)obj).getAsArray(PdfName.NUMS);
+//        verifyArraySize(array, 2, "Nums");
+//        verifyArraySize(PdfStructTreeController.getDirectObject(array.getPdfObject(1)), 7, "Nums of page 1");
+//        reader.close();
+//        compareResults("11");
+    }
+
+    @Test
+    public void copyTaggedPdf12() throws IOException, DocumentException, ParserConfigurationException, SAXException {
+        //source52: Nums array is empty:
+        // 58 0 obj
+        // <</Nums[                                                       ]>>
+        // endobj
+        initializeDocument("12");
+        PdfReader reader = new PdfReader(SOURCE52);
+        boolean exceptionThrown = false;
+        try {
+            copy.addPage(copy.getImportedPage(reader, 2, true));
+        } catch (BadPdfFormatException e) {
+            exceptionThrown = true;
+        }
+        //document.close();
+        reader.close();
+
+        if (!exceptionThrown)
+            Assert.fail("BadPdfFormatException expected!");
+
+//        reader = new PdfReader(output);
+//        PdfDictionary structTreeRoot = verifyIsDictionary(reader.getCatalog().getDirectObject(PdfName.STRUCTTREEROOT), NO_STRUCT_TREE_ROOT);
+//        verifyArraySize(structTreeRoot.get(PdfName.K), 1, "Invalid count of kids in StructTreeRoot");
+//        PdfObject obj = PdfStructTreeController.getDirectObject(structTreeRoot.get(PdfName.PARENTTREE));
+//        verifyIsDictionary(obj, NO_PARENT_TREE);
+//        PdfArray array = ((PdfDictionary)obj).getAsArray(PdfName.NUMS);
+//        verifyArraySize(array, 2, "Nums");
+//        verifyArraySize(PdfStructTreeController.getDirectObject(array.getPdfObject(1)), 7, "Nums of page 1");
+//        reader.close();
+//        compareResults("12");
+    }
+
+    @Test
+    public void copyTaggedPdf13() throws IOException, DocumentException, ParserConfigurationException, SAXException {
+        //source53: StructTreeRoot doesn't have kids and Nums is empty
+        initializeDocument("13");
+        PdfReader reader = new PdfReader(SOURCE53);
+        boolean exceptionThrown = false;
+        try {
+            copy.addPage(copy.getImportedPage(reader, 2, true));
+        } catch (BadPdfFormatException e) {
+            exceptionThrown = true;
+        }
+        //document.close();
+        reader.close();
+
+        if (!exceptionThrown)
+            Assert.fail("BadPdfFormatException expected!");
+
+//        reader = new PdfReader(output);
+//        PdfDictionary structTreeRoot = verifyIsDictionary(reader.getCatalog().getDirectObject(PdfName.STRUCTTREEROOT), NO_STRUCT_TREE_ROOT);
+//        verifyArraySize(structTreeRoot.get(PdfName.K), 1, "Invalid count of kids in StructTreeRoot");
+//        PdfObject obj = PdfStructTreeController.getDirectObject(structTreeRoot.get(PdfName.PARENTTREE));
+//        verifyIsDictionary(obj, NO_PARENT_TREE);
+//        PdfArray array = ((PdfDictionary)obj).getAsArray(PdfName.NUMS);
+//        verifyArraySize(array, 2, "Nums");
+//        verifyArraySize(PdfStructTreeController.getDirectObject(array.getPdfObject(1)), 7, "Nums of page 1");
+//        reader.close();
+//        compareResults("13");
     }
 
     @After
