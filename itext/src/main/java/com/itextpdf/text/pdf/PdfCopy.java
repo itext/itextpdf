@@ -684,7 +684,7 @@ public class PdfCopy extends PdfWriter {
         } finally {flushIndirectObjects();}
     }
 
-    protected void fixTaggedStructure() {
+    protected void fixTaggedStructure() throws IOException {
         HashMap<Integer, PdfIndirectReference> numTree = structureTreeRoot.getNumTree();
         HashSet<PdfCopy.RefKey> activeKeys = new HashSet<PdfCopy.RefKey>();
         ArrayList<PdfIndirectReference> actives = new ArrayList<PdfIndirectReference>();
