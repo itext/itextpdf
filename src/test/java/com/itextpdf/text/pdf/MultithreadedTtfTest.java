@@ -34,7 +34,7 @@ public class MultithreadedTtfTest {
             exec.submit(runner);
         }
         exec.shutdown();
-        exec.awaitTermination(1, TimeUnit.MINUTES);
+        exec.awaitTermination(60, TimeUnit.SECONDS);
 
         Assert.assertEquals(0, exceptions.size());
     }
