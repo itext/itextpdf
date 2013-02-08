@@ -115,14 +115,21 @@ public class PdfStructTreeController {
         while (true) {
             curNumber = pages.getAsNumber((begin + cur) * 2).intValue();
             if (curNumber == arrayNumber) {
-                PdfObject res = writer.copyObject(pages.getPdfObject((begin + cur) * 2 + 1), true, false);
-                if (!(res instanceof PdfIndirectReference))
-                    res = writer.addToBody(res).getIndirectReference();
-                structureTreeRoot.addPageMark(newArrayNumber, (PdfIndirectReference) res);
+                PdfObject obj = pages.getPdfObject((begin + cur) * 2 + 1);
+                while (obj.isIndirect())
+                    obj = PdfReader.getPdfObjectRelease(obj);
+                PdfObject firstNotNullKid = null;
+                for (PdfObject numObj: (PdfArray)obj){
+                    if (numObj.isNull()) continue;
+                    PdfObject res = writer.copyObject(numObj, true, false);
+                    if (firstNotNullKid == null) firstNotNullKid = res;
+                    structureTreeRoot.setPageMark(newArrayNumber, (PdfIndirectReference) res);
+                }
                 //Add kid to structureTreeRoot from structTreeRoot
                 PdfObject structKids = structTreeRoot.get(PdfName.K);
                 if (structKids == null || (!structKids.isArray() && !structKids.isIndirect())) {
-                    addKid(structureTreeRoot, res);
+                    // incorrect syntax of tags
+                    addKid(structureTreeRoot, firstNotNullKid);
                 } else {
                     if (structKids.isIndirect()) {
                         addKid(structKids);

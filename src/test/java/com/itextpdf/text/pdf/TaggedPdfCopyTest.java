@@ -4,7 +4,6 @@ import com.itextpdf.text.*;
 import com.itextpdf.text.error_messages.MessageLocalization;
 
 import com.itextpdf.text.pdf.parser.*;
-import com.itextpdf.text.xml.XMLUtil;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -32,6 +31,7 @@ public class TaggedPdfCopyTest {
     public static final String SOURCE11 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/1/source11.pdf";
     public static final String SOURCE12 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/1/source12.pdf";
     public static final String SOURCE16 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/1/source16.pdf";
+    public static final String SOURCE17 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/1/source17.pdf";
     public static final String SOURCE22 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/2/source22.pdf";
     public static final String SOURCE32 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/3/source32.pdf";
     public static final String SOURCE42 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/4/source42.pdf";
@@ -49,6 +49,7 @@ public class TaggedPdfCopyTest {
     public static final String OUT7 =     "./target/com/itextpdf/test/pdf/TaggedPdfCopyTest/out7.pdf";
     public static final String OUT8 =     "./target/com/itextpdf/test/pdf/TaggedPdfCopyTest/out8.pdf";
     public static final String OUT9 =     "./target/com/itextpdf/test/pdf/TaggedPdfCopyTest/out9.pdf";
+    public static final String OUT10 =    "./target/com/itextpdf/test/pdf/TaggedPdfCopyTest/out10.pdf";
 
     public static final PdfDictionary CM31 = new PdfDictionary();
     public static final PdfDictionary sElem = new PdfDictionary();
@@ -380,7 +381,7 @@ public class TaggedPdfCopyTest {
         PdfDictionary RoleMap = verifyIsDictionary(PdfStructTreeController.getDirectObject(structTreeRoot.get(PdfName.ROLEMAP)), NO_ROLE_MAP);
         if (!PdfName.SPAN.equals(RoleMap.get(new PdfName("ParagraphSpan"))))
             throw new BadPdfFormatException("RoleMap does not contain \"ParagraphSpan\".");
-        if (reader.eofPos != 249077) Assert.fail("Invalid size of pdf.");
+        if (reader.eofPos != 249068) Assert.fail("Invalid size of pdf.");
 
         reader.close();
         compareResults("6");
@@ -497,6 +498,27 @@ public class TaggedPdfCopyTest {
 
         reader.close();
         compareResults("9");
+    }
+
+    @Test
+    public void copyTaggedPdf10() throws IOException, DocumentException, ParserConfigurationException, SAXException {
+        //source17: StructTreeRoot has no kids - incorrect syntax of tags - try to fix in result pdf
+        initializeDocument(OUT10);
+        PdfReader reader = new PdfReader(SOURCE17);
+        copy.addPage(copy.getImportedPage(reader, 2, true));
+        document.close();
+        reader.close();
+
+        reader = new PdfReader(output);
+        PdfDictionary structTreeRoot = verifyIsDictionary(reader.getCatalog().getDirectObject(PdfName.STRUCTTREEROOT), NO_STRUCT_TREE_ROOT);
+        verifyArraySize(structTreeRoot.get(PdfName.K), 1, "Invalid count of kids in StructTreeRoot");
+        PdfObject obj = PdfStructTreeController.getDirectObject(structTreeRoot.get(PdfName.PARENTTREE));
+        verifyIsDictionary(obj, NO_PARENT_TREE);
+        PdfArray array = ((PdfDictionary)obj).getAsArray(PdfName.NUMS);
+        verifyArraySize(array, 2, "Nums");
+        verifyArraySize(PdfStructTreeController.getDirectObject(array.getPdfObject(1)), 7, "Nums of page 1");
+        reader.close();
+        compareResults("2");
     }
 
     @After
