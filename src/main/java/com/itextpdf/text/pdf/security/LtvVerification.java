@@ -43,24 +43,6 @@
  */
 package com.itextpdf.text.pdf.security;
 
-import com.itextpdf.text.Utilities;
-import com.itextpdf.text.log.Logger;
-import com.itextpdf.text.log.LoggerFactory;
-import com.itextpdf.text.pdf.security.OcspClient;
-import com.itextpdf.text.pdf.security.CrlClient;
-import com.itextpdf.text.error_messages.MessageLocalization;
-import com.itextpdf.text.pdf.AcroFields;
-import com.itextpdf.text.pdf.PRIndirectReference;
-import com.itextpdf.text.pdf.PdfArray;
-import com.itextpdf.text.pdf.PdfDictionary;
-import com.itextpdf.text.pdf.PdfIndirectReference;
-import com.itextpdf.text.pdf.PdfName;
-import com.itextpdf.text.pdf.PdfObject;
-import com.itextpdf.text.pdf.PdfReader;
-import com.itextpdf.text.pdf.PdfStamper;
-import com.itextpdf.text.pdf.PdfStream;
-import com.itextpdf.text.pdf.PdfString;
-import com.itextpdf.text.pdf.PdfWriter;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
@@ -74,14 +56,32 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import org.bouncycastle.asn1.ASN1EncodableVector;
-import org.bouncycastle.asn1.ASN1InputStream;
 import org.bouncycastle.asn1.ASN1Enumerated;
+import org.bouncycastle.asn1.ASN1InputStream;
 import org.bouncycastle.asn1.ASN1Primitive;
 import org.bouncycastle.asn1.DEROctetString;
 import org.bouncycastle.asn1.DERSequence;
 import org.bouncycastle.asn1.DERTaggedObject;
 import org.bouncycastle.asn1.ocsp.OCSPObjectIdentifiers;
+
+import com.itextpdf.text.Utilities;
+import com.itextpdf.text.error_messages.MessageLocalization;
+import com.itextpdf.text.log.Logger;
+import com.itextpdf.text.log.LoggerFactory;
+import com.itextpdf.text.pdf.AcroFields;
+import com.itextpdf.text.pdf.PRIndirectReference;
+import com.itextpdf.text.pdf.PdfArray;
+import com.itextpdf.text.pdf.PdfDictionary;
+import com.itextpdf.text.pdf.PdfIndirectReference;
+import com.itextpdf.text.pdf.PdfName;
+import com.itextpdf.text.pdf.PdfObject;
+import com.itextpdf.text.pdf.PdfReader;
+import com.itextpdf.text.pdf.PdfStamper;
+import com.itextpdf.text.pdf.PdfStream;
+import com.itextpdf.text.pdf.PdfString;
+import com.itextpdf.text.pdf.PdfWriter;
 
 /**
  * Add verification according to PAdES-LTV (part 4)
@@ -183,13 +183,14 @@ public class LtvVerification {
         ValidationData vd = new ValidationData();
         for (int k = 0; k < xc.length; ++k) {
         	cert = (X509Certificate)xc[k];
+        	LOGGER.info("Certificate: " + cert.getSubjectDN());
             if (certOption == CertificateOption.SIGNING_CERTIFICATE
             	&& !cert.equals(signingCert)) {
                 continue;
             }
             byte[] ocspEnc = null;
-            if (ocsp != null && level != Level.CRL && k < xc.length - 1) {
-                ocspEnc = ocsp.getEncoded(cert, (X509Certificate)xc[k + 1], null);
+            if (ocsp != null && level != Level.CRL) {
+                ocspEnc = ocsp.getEncoded(cert, getParent(cert, xc), null);
                 if (ocspEnc != null) {
                     vd.ocsps.add(buildOCSPResponse(ocspEnc));
                     LOGGER.info("OCSP added");
@@ -221,6 +222,28 @@ public class LtvVerification {
             return false;
         validated.put(getSignatureHashKey(signatureName), vd);
         return true;
+    }
+    
+    /**
+     * Returns the issuing certificate for a child certificate.
+     * @param cert	the certificate for which we search the parent
+     * @param certs	an array with certificates that contains the parent
+     * @return	the partent certificate
+     */
+    private X509Certificate getParent(X509Certificate cert, Certificate[] certs) {
+    	X509Certificate parent;
+    	for (int i = 0; i < certs.length; i++) {
+    		parent = (X509Certificate)certs[i];
+    		if (!cert.getIssuerDN().equals(parent.getSubjectDN()))
+    			continue;
+    		try {
+				cert.verify(parent.getPublicKey());
+				return parent;
+			} catch (Exception e) {
+				// do nothing
+			}
+    	}
+    	return null;
     }
 
     /**
