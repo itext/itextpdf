@@ -288,6 +288,7 @@ startxref.not.found=startxref niet gevonden.
 stdcf.not.found.encryption=/StdCF niet gevonden (encryption)
 stream.could.not.be.compressed.filter.is.not.a.name.or.array=Stream kon niet gecomprimeerd worden: de filter is geen naam of array.
 structparent.not.found=StructParent niet gevonden.
+invalid.structparent=Ongeldige StructParent.
 table.1.does.not.exist.in.2=Tabel '{1}' bestaat niet in {2}
 tag.1.not.allowed=Tag {1} niet toegelaten.
 tagging.must.be.set.before.opening.the.document=Tagging moet bepaald worden voor het document geopend is.
