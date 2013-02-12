@@ -48,6 +48,8 @@ import java.io.OutputStream;
 import java.security.MessageDigest;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
@@ -140,6 +142,7 @@ public class PdfSmartCopy extends PdfCopy {
         private byte[] b;
         private int hash;
         private MessageDigest md5;
+        private HashSet<PdfObject> serialized = new HashSet<PdfObject>();
 
         private void serObject(PdfObject obj, int level, ByteBuffer bb) throws IOException {
             if (level <= 0)
@@ -147,6 +150,12 @@ public class PdfSmartCopy extends PdfCopy {
             if (obj == null) {
                 bb.append("$Lnull");
                 return;
+            }
+            if (obj.isIndirect()) {
+                if (serialized.contains(obj))
+                    return;
+                else
+                    serialized.add(obj);
             }
             obj = PdfReader.getPdfObject(obj);
             if (obj.isStream()) {
