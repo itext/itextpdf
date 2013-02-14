@@ -71,6 +71,11 @@ public final class RandomAccessSourceFactory {
 	private boolean usePlainRandomAccess = false;
 	
 	/**
+	 * Whether the underlying file should have a RW lock on it or just an R lock
+	 */
+	private boolean exclusivelyLockFile = false;
+	
+	/**
 	 * Creates a factory that will give preference to accessing the underling data source using memory mapped files
 	 */
 	public RandomAccessSourceFactory() {
@@ -93,6 +98,11 @@ public final class RandomAccessSourceFactory {
 	 */
 	public RandomAccessSourceFactory setUsePlainRandomAccess(boolean usePlainRandomAccess){
 		this.usePlainRandomAccess = usePlainRandomAccess;
+		return this;
+	}
+	
+	public RandomAccessSourceFactory setExclusivelyLockFile(boolean exclusivelyLockFile){
+		this.exclusivelyLockFile = exclusivelyLockFile;
 		return this;
 	}
 	
@@ -168,22 +178,27 @@ public final class RandomAccessSourceFactory {
         	return createByReadingToMemory(new FileInputStream(filename));
         }
 		
+        String openMode = exclusivelyLockFile ? "rw" : "r";
+        
+    	@SuppressWarnings("resource") // the RAF will be closed by the RAFRandomAccessSource, FileChannelRandomAccessSource or PagedChannelRandomAccessSource
+		RandomAccessFile raf = new RandomAccessFile(file, openMode);
+    	if (exclusivelyLockFile){
+    		raf.getChannel().lock();
+    	}
+    	
         if (usePlainRandomAccess){
-        	return new RAFRandomAccessSource(new RandomAccessFile(file, "r"));
+        	return new RAFRandomAccessSource(raf);
         }
         
 		try{
-			FileChannel channel = new FileInputStream(file).getChannel(); // this will get closed by FileChannelRandomAccessSource or PagedFileChannelRandomAccessSource
+			FileChannel channel = raf.getChannel();
 			if (channel.size() <= PagedChannelRandomAccessSource.DEFAULT_TOTAL_BUFSIZE){ // if less than the fully mapped usage of PagedFileChannelRandomAccessSource, just map the whole thing and be done with it
 				return new GetBufferedRandomAccessSource(new FileChannelRandomAccessSource(channel));
 			} else {
 				return new GetBufferedRandomAccessSource(new PagedChannelRandomAccessSource(channel));
 			}
-		} catch (IOException e){
-			if (exceptionIsMapFailureException(e)){
-				return new RAFRandomAccessSource(new RandomAccessFile(file, "r"));
-			}
-			throw e;
+		} catch (MapFailedException e){
+			return new RAFRandomAccessSource(raf);
 		}
 		
 	}
@@ -225,20 +240,5 @@ public final class RandomAccessSourceFactory {
         }
 	}
 	
-    /**
-     * Utility method that determines whether a given IOException is the result
-     * of a failure to map a memory mapped file.  It would be better if the runtime
-     * provided a special exception for this case, but it doesn't, so we have to rely
-     * on parsing the exception message.
-     * @param e the exception to check
-     * @return true if the exception was the result of a failure to map a memory mapped file
-     */
-    private static boolean exceptionIsMapFailureException(IOException e){
-        if (e.getMessage() != null && e.getMessage().indexOf("Map failed") >= 0)
-            return true;
-
-        return false;
-    }
-    
 
 }

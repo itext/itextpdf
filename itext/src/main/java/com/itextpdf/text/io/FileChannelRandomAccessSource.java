@@ -48,7 +48,7 @@ import java.nio.channels.FileChannel;
  * A RandomAccessSource that is based on an underlying {@link FileChannel}.  The entire channel will be mapped into memory for efficient reads.
  * @since 5.3.5
  */
-class FileChannelRandomAccessSource implements RandomAccessSource {
+public class FileChannelRandomAccessSource implements RandomAccessSource {
 
     /**
      * The channel this source is based on

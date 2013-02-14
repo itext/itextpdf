@@ -1,24 +1,30 @@
 package com.itextpdf.text.pdf;
 
 import com.itextpdf.text.*;
-import com.itextpdf.text.Document;
+import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.pdf.parser.*;
 import com.itextpdf.text.xml.XMLUtil;
-
 import org.junit.After;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import java.io.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
-public class TaggedPDFTest {
+public class TaggedPdfTest {
     private Document document;
     private PdfWriter writer;
     private Paragraph h1;
+
+    public static final String NO_PARENT_TREE = "the.document.does.not.contain.parenttree";
+    public static final String NO_STRUCT_TREE_ROOT = "no.StructTreeRoot.found";
 
     private static final String text = new String("Lorem ipsum dolor sit amet," +
             "consectetur adipiscing elit." +
@@ -54,7 +60,7 @@ public class TaggedPDFTest {
             "vestibulum pulvinar. Nullam diam quam, lobortis sit amet semper vitae, tempus eget dolor.");
 
     private void initializeDocument(String path) throws DocumentException, FileNotFoundException {
-        new File("./target/com/itextpdf/test/pdf/TaggedPDFTest/").mkdirs();
+        new File("./target/com/itextpdf/test/pdf/TaggedPdfTest/").mkdirs();
         Document.compress = false;
         document = new Document();
         writer = PdfWriter.getInstance(document, new FileOutputStream(path));
@@ -74,8 +80,8 @@ public class TaggedPDFTest {
     }
 
     @Test
-    public void createTaggedPDF0() throws DocumentException, IOException, ParserConfigurationException, SAXException {
-        initializeDocument("./target/com/itextpdf/test/pdf/TaggedPDFTest/out0.pdf");
+    public void createTaggedPdf0() throws DocumentException, IOException, ParserConfigurationException, SAXException {
+        initializeDocument("./target/com/itextpdf/test/pdf/TaggedPdfTest/out0.pdf");
         Paragraph paragraph = new Paragraph();
         Chunk c = new Chunk(" Hello ");
         paragraph.add(c);
@@ -87,7 +93,7 @@ public class TaggedPDFTest {
         columnText.go();
         document.close();
 
-        initializeDocument("./target/com/itextpdf/test/pdf/TaggedPDFTest/out0.pdf");
+        initializeDocument("./target/com/itextpdf/test/pdf/TaggedPdfTest/out0.pdf");
         paragraph = new Paragraph();
         c = new Chunk("  ");
         paragraph.add(c);
@@ -97,7 +103,7 @@ public class TaggedPDFTest {
         columnText.go();
         document.close();
 
-        initializeDocument("./target/com/itextpdf/test/pdf/TaggedPDFTest/out0.pdf");
+        initializeDocument("./target/com/itextpdf/test/pdf/TaggedPdfTest/out0.pdf");
         paragraph = new Paragraph();
         c = new Chunk("Hello World");
         paragraph.add(c);
@@ -107,14 +113,14 @@ public class TaggedPDFTest {
         columnText.go();
         document.close();
 
-        initializeDocument("./target/com/itextpdf/test/pdf/TaggedPDFTest/out0.pdf");
+        initializeDocument("./target/com/itextpdf/test/pdf/TaggedPdfTest/out0.pdf");
         paragraph = new Paragraph();
         c = new Chunk("Hello World");
         paragraph.add(c);
         document.add(paragraph);
         document.close();
 
-        initializeDocument("./target/com/itextpdf/test/pdf/TaggedPDFTest/out0.pdf");
+        initializeDocument("./target/com/itextpdf/test/pdf/TaggedPdfTest/out0.pdf");
         paragraph = new Paragraph();
         c = new Chunk(" Hello ");
         paragraph.add(c);
@@ -128,8 +134,8 @@ public class TaggedPDFTest {
 
 
     @Test
-    public void createTaggedPDF1() throws DocumentException, IOException, ParserConfigurationException, SAXException {
-        initializeDocument("./target/com/itextpdf/test/pdf/TaggedPDFTest/out1.pdf");
+    public void createTaggedPdf1() throws DocumentException, IOException, ParserConfigurationException, SAXException {
+        initializeDocument("./target/com/itextpdf/test/pdf/TaggedPdfTest/out1.pdf");
         Paragraph paragraph = new Paragraph(text);
         paragraph.setFont(new Font(Font.FontFamily.HELVETICA,8,Font.NORMAL,BaseColor.RED));
         ColumnText columnText = new ColumnText(writer.getDirectContent());
@@ -140,17 +146,14 @@ public class TaggedPDFTest {
         columnText.setSimpleColumn(300, 36, 500, 800);
         columnText.go();
         document.close();
-
-        PdfReader reader = new PdfReader("./target/com/itextpdf/test/pdf/TaggedPDFTest/out1.pdf");
-        FileOutputStream xmlOut = new FileOutputStream("./target/com/itextpdf/test/pdf/TaggedPDFTest/test1.xml");
-        new MyTaggedPdfReaderTool().convertToXml(reader, xmlOut);
-        xmlOut.close();
-        Assert.assertTrue(compareXmls("./src/test/resources/com/itextpdf/text/pdf/TaggedPdfTest/test1.xml", "./target/com/itextpdf/test/pdf/TaggedPDFTest/test1.xml"));
+        int[] nums = new int[]{77} ;
+        compareNums("1", nums);
+        compareResults("1");
     }
 
     @Test
-    public void createTaggedPDF2() throws DocumentException, IOException, ParserConfigurationException, SAXException {
-        initializeDocument("./target/com/itextpdf/test/pdf/TaggedPDFTest/out2.pdf");
+    public void createTaggedPdf2() throws DocumentException, IOException, ParserConfigurationException, SAXException {
+        initializeDocument("./target/com/itextpdf/test/pdf/TaggedPdfTest/out2.pdf");
         Paragraph paragraph = new Paragraph(text);
         ColumnText columnText = new ColumnText(writer.getDirectContent());
 
@@ -162,32 +165,26 @@ public class TaggedPDFTest {
         columnText.setSimpleColumn(36,36,400,800);
         columnText.go();
         document.close();
-
-        PdfReader reader = new PdfReader("./target/com/itextpdf/test/pdf/TaggedPDFTest/out2.pdf");
-        FileOutputStream xmlOut = new FileOutputStream("./target/com/itextpdf/test/pdf/TaggedPDFTest/test2.xml");
-        new MyTaggedPdfReaderTool().convertToXml(reader, xmlOut);
-        xmlOut.close();
-        Assert.assertTrue(compareXmls("./src/test/resources/com/itextpdf/text/pdf/TaggedPdfTest/test2.xml", "./target/com/itextpdf/test/pdf/TaggedPDFTest/test2.xml"));
+//        int[] nums = new int[]{237, 47} ;
+//        compareNums("2", nums);
+        compareResults("2");
     }
 
     @Test
-    public void createTaggedPDF3() throws DocumentException, IOException, ParserConfigurationException, SAXException {
-        initializeDocument("./target/com/itextpdf/test/pdf/TaggedPDFTest/out3.pdf");
+    public void createTaggedPdf3() throws DocumentException, IOException, ParserConfigurationException, SAXException {
+        initializeDocument("./target/com/itextpdf/test/pdf/TaggedPdfTest/out3.pdf");
         Paragraph paragraph = new Paragraph(text);
         document.add(h1);
         document.add(paragraph);
         document.close();
-
-        PdfReader reader = new PdfReader("./target/com/itextpdf/test/pdf/TaggedPDFTest/out3.pdf");
-        FileOutputStream xmlOut = new FileOutputStream("./target/com/itextpdf/test/pdf/TaggedPDFTest/test3.xml");
-        new MyTaggedPdfReaderTool().convertToXml(reader, xmlOut);
-        xmlOut.close();
-        Assert.assertTrue(compareXmls("./src/test/resources/com/itextpdf/text/pdf/TaggedPdfTest/test3.xml", "./target/com/itextpdf/test/pdf/TaggedPDFTest/test3.xml"));
+        int[] nums = new int[]{43, 6};
+        compareNums("3", nums);
+        compareResults("3");
     }
 
     @Test
-    public void createTaggedPDF4() throws DocumentException, IOException, ParserConfigurationException, SAXException {
-        initializeDocument("./target/com/itextpdf/test/pdf/TaggedPDFTest/out4.pdf");
+    public void createTaggedPdf4() throws DocumentException, IOException, ParserConfigurationException, SAXException {
+        initializeDocument("./target/com/itextpdf/test/pdf/TaggedPdfTest/out4.pdf");
         Paragraph p = new Paragraph();
         PdfName nParagraph = new PdfName("Paragraph");
         p.setRole(nParagraph);
@@ -218,17 +215,14 @@ public class TaggedPDFTest {
         document.add(h1);
         document.add(p);
         document.close();
-
-        PdfReader reader = new PdfReader("./target/com/itextpdf/test/pdf/TaggedPDFTest/out4.pdf");
-        FileOutputStream xmlOut = new FileOutputStream("./target/com/itextpdf/test/pdf/TaggedPDFTest/test4.xml");
-        new MyTaggedPdfReaderTool().convertToXml(reader, xmlOut);
-        xmlOut.close();
-        Assert.assertTrue(compareXmls("./src/test/resources/com/itextpdf/text/pdf/TaggedPdfTest/test4.xml", "./target/com/itextpdf/test/pdf/TaggedPDFTest/test4.xml"));
+        int[] nums = new int[]{7};
+        compareNums("4", nums);
+        compareResults("4");
     }
 
     @Test
-    public void createTaggedPDF5() throws DocumentException, IOException, ParserConfigurationException, SAXException {
-        initializeDocument("./target/com/itextpdf/test/pdf/TaggedPDFTest/out5.pdf");
+    public void createTaggedPdf5() throws DocumentException, IOException, ParserConfigurationException, SAXException {
+        initializeDocument("./target/com/itextpdf/test/pdf/TaggedPdfTest/out5.pdf");
         List list = new List(true);
         try {
             list = new List(true);
@@ -255,16 +249,14 @@ public class TaggedPDFTest {
         document.add(list);
         document.close();
 
-        PdfReader reader = new PdfReader("./target/com/itextpdf/test/pdf/TaggedPDFTest/out5.pdf");
-        FileOutputStream xmlOut = new FileOutputStream("./target/com/itextpdf/test/pdf/TaggedPDFTest/test5.xml");
-        new MyTaggedPdfReaderTool().convertToXml(reader, xmlOut);
-        xmlOut.close();
-        Assert.assertTrue(compareXmls("./src/test/resources/com/itextpdf/text/pdf/TaggedPdfTest/test5.xml", "./target/com/itextpdf/test/pdf/TaggedPDFTest/test5.xml"));
+        int[] nums = new int[]{22};
+        compareNums("5", nums);
+        compareResults("5");
     }
 
     @Test
-    public void createTaggedPDF6() throws DocumentException, IOException, ParserConfigurationException, SAXException {
-        initializeDocument("./target/com/itextpdf/test/pdf/TaggedPDFTest/out6.pdf");
+    public void createTaggedPdf6() throws DocumentException, IOException, ParserConfigurationException, SAXException {
+        initializeDocument("./target/com/itextpdf/test/pdf/TaggedPdfTest/out6.pdf");
 
         ColumnText columnText = new ColumnText(writer.getDirectContent());
 
@@ -293,17 +285,14 @@ public class TaggedPDFTest {
         columnText.addElement(list);
         columnText.go();
         document.close();
-
-        PdfReader reader = new PdfReader("./target/com/itextpdf/test/pdf/TaggedPDFTest/out6.pdf");
-        FileOutputStream xmlOut = new FileOutputStream("./target/com/itextpdf/test/pdf/TaggedPDFTest/test6.xml");
-        new MyTaggedPdfReaderTool().convertToXml(reader, xmlOut);
-        xmlOut.close();
-        Assert.assertTrue(compareXmls("./src/test/resources/com/itextpdf/text/pdf/TaggedPdfTest/test6.xml", "./target/com/itextpdf/test/pdf/TaggedPDFTest/test6.xml"));
+        int[] nums = new int[]{24};
+        compareNums("6", nums);
+        compareResults("6");
     }
 
     @Test
-    public void createTaggedPDF7() throws DocumentException, IOException, ParserConfigurationException, SAXException {
-        initializeDocument("./target/com/itextpdf/test/pdf/TaggedPDFTest/out7.pdf");
+    public void createTaggedPdf7() throws DocumentException, IOException, ParserConfigurationException, SAXException {
+        initializeDocument("./target/com/itextpdf/test/pdf/TaggedPdfTest/out7.pdf");
         List list = new List(true);
         try {
             list = new List(true);
@@ -331,16 +320,14 @@ public class TaggedPDFTest {
         document.add(list);
         document.close();
 
-        PdfReader reader = new PdfReader("./target/com/itextpdf/test/pdf/TaggedPDFTest/out7.pdf");
-        FileOutputStream xmlOut = new FileOutputStream("./target/com/itextpdf/test/pdf/TaggedPDFTest/test7.xml");
-        new MyTaggedPdfReaderTool().convertToXml(reader, xmlOut);
-        xmlOut.close();
-        Assert.assertTrue(compareXmls("./src/test/resources/com/itextpdf/text/pdf/TaggedPdfTest/test7.xml", "./target/com/itextpdf/test/pdf/TaggedPDFTest/test7.xml"));
+        int[] nums = new int[]{63, 14} ;
+        compareNums("7", nums);
+        compareResults("7");
     }
 
     @Test
-    public void createTaggedPDF8() throws DocumentException, IOException, ParserConfigurationException, SAXException {
-        initializeDocument("./target/com/itextpdf/test/pdf/TaggedPDFTest/out8.pdf");
+    public void createTaggedPdf8() throws DocumentException, IOException, ParserConfigurationException, SAXException {
+        initializeDocument("./target/com/itextpdf/test/pdf/TaggedPdfTest/out8.pdf");
 
         ColumnText columnText = new ColumnText(writer.getDirectContent());
 
@@ -376,16 +363,14 @@ public class TaggedPDFTest {
         columnText.go();
         document.close();
 
-        PdfReader reader = new PdfReader("./target/com/itextpdf/test/pdf/TaggedPDFTest/out8.pdf");
-        FileOutputStream xmlOut = new FileOutputStream("./target/com/itextpdf/test/pdf/TaggedPDFTest/test8.xml");
-        new MyTaggedPdfReaderTool().convertToXml(reader, xmlOut);
-        xmlOut.close();
-        Assert.assertTrue(compareXmls("./src/test/resources/com/itextpdf/text/pdf/TaggedPdfTest/test8.xml", "./target/com/itextpdf/test/pdf/TaggedPDFTest/test8.xml"));
+        int[] nums = new int[]{64, 35} ;
+        compareNums("8", nums);
+        compareResults("8");
     }
 
     @Test
-    public void createTaggedPDF9() throws DocumentException, IOException, ParserConfigurationException, SAXException {
-        initializeDocument("./target/com/itextpdf/test/pdf/TaggedPDFTest/out9.pdf");
+    public void createTaggedPdf9() throws DocumentException, IOException, ParserConfigurationException, SAXException {
+        initializeDocument("./target/com/itextpdf/test/pdf/TaggedPdfTest/out9.pdf");
         PdfPTable table = new PdfPTable(2);
         try {
             table.addCell("Quick brown fox jumped over a lazy dog. A very long line appears here because we need new line.");
@@ -404,18 +389,16 @@ public class TaggedPDFTest {
         }
         document.add(h1);
         document.add(table);
+        document.add(new Paragraph("Extra paragraph at the end of the document. Please make sure that this is really last portion of page content."));
         document.close();
-
-        PdfReader reader = new PdfReader("./target/com/itextpdf/test/pdf/TaggedPDFTest/out9.pdf");
-        FileOutputStream xmlOut = new FileOutputStream("./target/com/itextpdf/test/pdf/TaggedPDFTest/test9.xml");
-        new MyTaggedPdfReaderTool().convertToXml(reader, xmlOut);
-        xmlOut.close();
-        Assert.assertTrue(compareXmls("./src/test/resources/com/itextpdf/text/pdf/TaggedPdfTest/test9.xml", "./target/com/itextpdf/test/pdf/TaggedPDFTest/test9.xml"));
+        int[] nums = new int[]{16, 70, 62} ;
+        compareNums("9", nums);
+        compareResults("9");
     }
 
     @Test
-    public void createTaggedPDF10() throws DocumentException, IOException, ParserConfigurationException, SAXException {
-        initializeDocument("./target/com/itextpdf/test/pdf/TaggedPDFTest/out10.pdf");
+    public void createTaggedPdf10() throws DocumentException, IOException, ParserConfigurationException, SAXException {
+        initializeDocument("./target/com/itextpdf/test/pdf/TaggedPdfTest/out10.pdf");
         PdfPTable table = new PdfPTable(2);
         try {
             table.addCell("Quick brown fox jumped over a lazy dog. A very long line appears here because we need new line.");
@@ -450,16 +433,14 @@ public class TaggedPDFTest {
         document.add(table);
         document.close();
 
-        PdfReader reader = new PdfReader("./target/com/itextpdf/test/pdf/TaggedPDFTest/out10.pdf");
-        FileOutputStream xmlOut = new FileOutputStream("./target/com/itextpdf/test/pdf/TaggedPDFTest/test10.xml");
-        new MyTaggedPdfReaderTool().convertToXml(reader, xmlOut);
-        xmlOut.close();
-        Assert.assertTrue(compareXmls("./src/test/resources/com/itextpdf/text/pdf/TaggedPdfTest/test10.xml", "./target/com/itextpdf/test/pdf/TaggedPDFTest/test10.xml"));
+        int[] nums = new int[]{16, 87, 128, 74, 74, 74, 26} ;
+        compareNums("10", nums);
+        compareResults("10");
     }
 
     @Test
-    public void createTaggedPDF11() throws DocumentException, IOException, ParserConfigurationException, SAXException {
-        initializeDocument("./target/com/itextpdf/test/pdf/TaggedPDFTest/out11.pdf");
+    public void createTaggedPdf11() throws DocumentException, IOException, ParserConfigurationException, SAXException {
+        initializeDocument("./target/com/itextpdf/test/pdf/TaggedPdfTest/out11.pdf");
 
         Chapter c = new Chapter(new Paragraph("First chapter", new Font(Font.FontFamily.HELVETICA,16,Font.BOLD,BaseColor.BLUE)), 1);
         c.setTriggerNewPage(false);
@@ -498,7 +479,7 @@ public class TaggedPDFTest {
         s2.setIndentation(10);
         s2.add(new Paragraph("Some text..."));
         document.add(c);
-        
+
         c = new Chapter(new Paragraph("Second chapter", new Font(Font.FontFamily.HELVETICA,16,Font.BOLD,BaseColor.BLUE)), 2);
         c.setTriggerNewPage(false);
         c.setIndentation(40);
@@ -536,7 +517,7 @@ public class TaggedPDFTest {
         s2.setIndentation(10);
         s2.add(new Paragraph("Some text..."));
         document.add(c);
-        
+
         c = new Chapter(new Paragraph("Third chapter", new Font(Font.FontFamily.HELVETICA,16,Font.BOLD,BaseColor.BLUE)), 3);
         c.setTriggerNewPage(false);
         c.setIndentation(40);
@@ -577,16 +558,14 @@ public class TaggedPDFTest {
 
         document.close();
 
-        PdfReader reader = new PdfReader("./target/com/itextpdf/test/pdf/TaggedPDFTest/out11.pdf");
-        FileOutputStream xmlOut = new FileOutputStream("./target/com/itextpdf/test/pdf/TaggedPDFTest/test11.xml");
-        new MyTaggedPdfReaderTool().convertToXml(reader, xmlOut);
-        xmlOut.close();
-        Assert.assertTrue(compareXmls("./src/test/resources/com/itextpdf/text/pdf/TaggedPdfTest/test11.xml", "./target/com/itextpdf/test/pdf/TaggedPDFTest/test11.xml"));
+        int[] nums = new int[]{114, 60} ;
+        compareNums("11", nums);
+        compareResults("11");
     }
 
     @Test
-    public void createTaggedPDF12() throws DocumentException, IOException, ParserConfigurationException, SAXException {
-        initializeDocument("./target/com/itextpdf/test/pdf/TaggedPDFTest/out12.pdf");
+    public void createTaggedPdf12() throws DocumentException, IOException, ParserConfigurationException, SAXException {
+        initializeDocument("./target/com/itextpdf/test/pdf/TaggedPdfTest/out12.pdf");
 
         PdfPTable table = new PdfPTable(2);
         PdfPCell cell = new PdfPCell(new Paragraph("header 1"));
@@ -614,16 +593,14 @@ public class TaggedPDFTest {
         document.add(table);
         document.close();
 
-        PdfReader reader = new PdfReader("./target/com/itextpdf/test/pdf/TaggedPDFTest/out12.pdf");
-        FileOutputStream xmlOut = new FileOutputStream("./target/com/itextpdf/test/pdf/TaggedPDFTest/test12.xml");
-        new MyTaggedPdfReaderTool().convertToXml(reader, xmlOut);
-        xmlOut.close();
-        Assert.assertTrue(compareXmls("./src/test/resources/com/itextpdf/text/pdf/TaggedPdfTest/test12.xml", "./target/com/itextpdf/test/pdf/TaggedPDFTest/test12.xml"));
+        int[] nums = new int[]{237, 47} ;
+        compareNums("12", nums);
+        compareResults("12");
     }
 
     @Test
-    public void createTaggedPDF13() throws DocumentException, IOException, ParserConfigurationException, SAXException {
-        initializeDocument("./target/com/itextpdf/test/pdf/TaggedPDFTest/out13.pdf");
+    public void createTaggedPdf13() throws DocumentException, IOException, ParserConfigurationException, SAXException {
+        initializeDocument("./target/com/itextpdf/test/pdf/TaggedPdfTest/out13.pdf");
 
         Paragraph p = new Paragraph();
         Chunk chunk = new Chunk("Please visit ");
@@ -636,16 +613,14 @@ public class TaggedPDFTest {
         p.add(new Chunk(" for more details."));
         document.add(p);
         document.close();
-        PdfReader reader = new PdfReader("./target/com/itextpdf/test/pdf/TaggedPDFTest/out13.pdf");
-        FileOutputStream xmlOut = new FileOutputStream("./target/com/itextpdf/test/pdf/TaggedPDFTest/test13.xml");
-        new MyTaggedPdfReaderTool().convertToXml(reader, xmlOut);
-        xmlOut.close();
-        Assert.assertTrue(compareXmls("./src/test/resources/com/itextpdf/text/pdf/TaggedPdfTest/test13.xml", "./target/com/itextpdf/test/pdf/TaggedPDFTest/test13.xml"));
+        int[] nums = new int[]{5} ;
+        compareNums("13", nums);
+        compareResults("13");
     }
 
     @Test
-    public void createTaggedPDF14() throws DocumentException, IOException, ParserConfigurationException, SAXException {
-        initializeDocument("./target/com/itextpdf/test/pdf/TaggedPDFTest/out14.pdf");
+    public void createTaggedPdf14() throws DocumentException, IOException, ParserConfigurationException, SAXException {
+        initializeDocument("./target/com/itextpdf/test/pdf/TaggedPdfTest/out14.pdf");
         Paragraph paragraph = new Paragraph("Document MUST contain 1 page only!");
         document.newPage();
         ColumnText columnText = new ColumnText(writer.getDirectContent());
@@ -654,13 +629,16 @@ public class TaggedPDFTest {
         columnText.go();
         document.close();
 
-        PdfReader reader = new PdfReader("./target/com/itextpdf/test/pdf/TaggedPDFTest/out14.pdf");
+        int[] nums = new int[]{3} ;
+        compareNums("14", nums);
+
+        PdfReader reader = new PdfReader("./target/com/itextpdf/test/pdf/TaggedPdfTest/out14.pdf");
         Assert.assertEquals(1, reader.getNumberOfPages());
     }
 
     @Test
-    public void createTaggedPDF15() throws DocumentException, IOException, ParserConfigurationException, SAXException {
-        initializeDocument("./target/com/itextpdf/test/pdf/TaggedPDFTest/out15.pdf");
+    public void createTaggedPdf15() throws DocumentException, IOException, ParserConfigurationException, SAXException {
+        initializeDocument("./target/com/itextpdf/test/pdf/TaggedPdfTest/out15.pdf");
 
         Paragraph p = new Paragraph();
         Chunk chunk = new Chunk("Hello tagged world!");
@@ -671,11 +649,141 @@ public class TaggedPDFTest {
 
         document.add(p);
         document.close();
-        PdfReader reader = new PdfReader("./target/com/itextpdf/test/pdf/TaggedPDFTest/out15.pdf");
-        FileOutputStream xmlOut = new FileOutputStream("./target/com/itextpdf/test/pdf/TaggedPDFTest/test15.xml");
-        new MyTaggedPdfReaderTool().convertToXml(reader, xmlOut);
-        xmlOut.close();
-        Assert.assertTrue(compareXmls("./src/test/resources/com/itextpdf/text/pdf/TaggedPdfTest/test15.xml", "./target/com/itextpdf/test/pdf/TaggedPDFTest/test15.xml"));
+        int[] nums = new int[]{3} ;
+        compareNums("15", nums);
+        compareResults("15");
+    }
+
+    @Test
+    public void createTaggedPdf16() throws DocumentException, IOException, ParserConfigurationException, SAXException {
+        initializeDocument("./target/com/itextpdf/test/pdf/TaggedPdfTest/out16.pdf");
+
+        Paragraph p = new Paragraph();
+        Chunk chunk = new Chunk("Hello tagged world!");
+        chunk.setBackground(new BaseColor(255,0,255));
+        chunk.setFont(FontFactory.getFont("TimesNewRoman", 20, BaseColor.ORANGE));
+        chunk.setUnderline(BaseColor.PINK, 1.2f, 1, 1, 1, 0);
+        p.add(chunk);
+        PdfDiv div = new PdfDiv();
+        div.addElement(p);
+        document.add(div);
+
+        document.add(new Paragraph("This paragraph appears between 2 div blocks"));
+
+        div = new PdfDiv();
+        div.addElement(new Paragraph(text));
+        document.add(div);
+
+
+        document.close();
+        int[] nums = new int[]{48, 7} ;
+        compareNums("16", nums);
+        compareResults("16");
+    }
+
+    @Test
+    public void createTaggedPdf17() throws DocumentException, IOException, ParserConfigurationException, SAXException {
+        initializeDocument("./target/com/itextpdf/test/pdf/TaggedPdfTest/out17.pdf");
+
+        PdfPTable table = new PdfPTable(2);
+        PdfPCell cell = new PdfPCell(new Paragraph("h1"));
+        cell.setColspan(2);
+        table.addCell(cell);
+        cell = new PdfPCell(new Paragraph("h2"));
+        cell.setColspan(2);
+        table.addCell(cell);
+        cell = new PdfPCell(new Paragraph("footer 1"));
+        cell.setColspan(2);
+        table.addCell(cell);
+        cell = new PdfPCell(new Paragraph("footer 2"));
+        cell.setColspan(2);
+        table.addCell(cell);
+        table.setHeaderRows(4);
+        table.setFooterRows(2);
+
+        try {
+            PdfPHeaderCell headerCell = null, headerCell2 = null;
+            cell = null;
+            for (int i = 1; i <= 2; i++) {
+                if (i == 1){
+                    headerCell = new PdfPHeaderCell();
+                    headerCell.setScope(PdfPHeaderCell.ROW);
+                    headerCell.setPhrase(new Phrase("header1"));
+                    headerCell.setName("header1");
+                    table.addCell(headerCell);
+
+                    headerCell2 = new PdfPHeaderCell();
+                    headerCell2.setScope(PdfPHeaderCell.ROW);
+                    headerCell2.setPhrase(new Phrase("header2"));
+                    headerCell2.setName("header2");
+                    table.addCell(headerCell2);
+                }
+                else
+                {
+                    cell = new PdfPCell(new Phrase("row " + i + ", coumn 1"));
+                    cell.addHeader(headerCell);
+                    table.addCell(cell);
+
+                    cell = new PdfPCell(new Phrase("row " + i + ", coumn 2"));
+                    cell.addHeader(headerCell2);
+                    cell.addHeader(headerCell2);
+
+                    table.addCell(cell);
+                }
+            }
+        } catch (Exception e) {
+            System.out.println(e.getLocalizedMessage());
+        }
+        document.add(table);
+        document.close();
+        int[] nums = new int[]{27} ;
+        compareNums("17", nums);
+        compareResults("17");
+    }
+
+    @Test
+    public void createTaggedPdf18() throws DocumentException, IOException, ParserConfigurationException, SAXException {
+        initializeDocument("./target/com/itextpdf/test/pdf/TaggedPdfTest/out18.pdf");
+
+        PdfDiv div = new PdfDiv();
+
+        Paragraph paragraph = new Paragraph(text);
+        paragraph.setFont(new Font(Font.FontFamily.HELVETICA,8,Font.NORMAL,BaseColor.RED));
+
+        div.setBackgroundColor(BaseColor.MAGENTA);
+        div.setTextAlignment(Element.ALIGN_CENTER);
+        div.addElement(paragraph);
+        document.add(div);
+        document.close();
+        int[] nums = new int[]{32} ;
+        compareNums("18", nums);
+        compareResults("18");
+    }
+
+    private void compareNums(String name, int[] nums) throws IOException {
+        PdfReader reader = new PdfReader("./target/com/itextpdf/test/pdf/TaggedPdfTest/out"+ name +".pdf");
+        PdfDictionary structTreeRoot = verifyIsDictionary(reader.getCatalog().getDirectObject(PdfName.STRUCTTREEROOT), NO_STRUCT_TREE_ROOT);
+        verifyArraySize(structTreeRoot.get(PdfName.K), 1, "Invalid count of kids in StructTreeRoot");
+        PdfObject obj = PdfStructTreeController.getDirectObject(structTreeRoot.get(PdfName.PARENTTREE));
+        verifyIsDictionary(obj, NO_PARENT_TREE);
+        PdfArray array = ((PdfDictionary)obj).getAsArray(PdfName.NUMS);
+        verifyArraySize(array, nums.length*2, "nums");
+        for (int i = 0; i < nums.length; ++i)
+            verifyArraySize(PdfStructTreeController.getDirectObject(array.getPdfObject(i*2+1)), nums[i], "Nums of page "+(i+1));
+        reader.close();
+    }
+
+    private PdfArray verifyArraySize(PdfObject obj, Integer size, String message) {
+        if (obj == null || !obj.isArray()) Assert.fail(message + " is not array");
+        if (((PdfArray)obj).size() != size)
+            Assert.fail(message + " has wrong size");
+        return (PdfArray)obj;
+    }
+
+    private PdfDictionary verifyIsDictionary(PdfObject obj, String message) {
+        if (obj == null || !obj.isDictionary())
+            Assert.fail(message);
+        return (PdfDictionary)obj;
     }
 
     private boolean compareXmls(String xml1, String xml2) throws ParserConfigurationException, SAXException, IOException {
@@ -745,5 +853,12 @@ public class TaggedPDFTest {
     	Document.compress = true;
     }
 
+    private void compareResults(String name) throws IOException, ParserConfigurationException, SAXException {
+        PdfReader reader = new PdfReader("./target/com/itextpdf/test/pdf/TaggedPdfTest/out"+ name +".pdf");
+        FileOutputStream xmlOut = new FileOutputStream("./target/com/itextpdf/test/pdf/TaggedPdfTest/test"+ name +".xml");
+        new MyTaggedPdfReaderTool().convertToXml(reader, xmlOut);
+        xmlOut.close();
+        Assert.assertTrue(compareXmls("./src/test/resources/com/itextpdf/text/pdf/TaggedPdfTest/test"+ name +".xml", "./target/com/itextpdf/test/pdf/TaggedPdfTest/test"+ name +".xml"));
+    }
 
 }

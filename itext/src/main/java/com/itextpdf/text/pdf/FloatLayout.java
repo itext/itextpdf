@@ -138,7 +138,9 @@ public class FloatLayout {
                     status = floatingElement.layout(canvas, useAscender, true, floatLeftX, minY, floatRightX, yLine);
 
                     if (!simulate) {
+                        canvas.openMCBlock(floatingElement);
                         status = floatingElement.layout(canvas, useAscender, simulate, floatLeftX, minY, floatRightX, yLine);
+                        canvas.closeMCBlock(floatingElement);
                     }
 
                     yLine -= floatingElement.getActualHeight();

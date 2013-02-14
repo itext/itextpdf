@@ -52,7 +52,6 @@ import java.util.Map;
 
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.ExceptionConverter;
 import com.itextpdf.text.error_messages.MessageLocalization;
 
 /** Reads a Truetype font
@@ -171,7 +170,7 @@ class TrueTypeFont extends BaseFont {
     /** The width of the glyphs. This is essentially the content of table
      * 'hmtx' normalized to 1000 units.
      */
-    protected int GlyphWidths[];
+    protected int glyphWidthsByIndex[];
 
     protected int bboxes[][];
     /** The map containing the code information for the table 'cmap', encoding 1.0.
@@ -190,7 +189,7 @@ class TrueTypeFont extends BaseFont {
     protected HashMap<Integer, int[]> cmap31;
 
     protected HashMap<Integer, int[]> cmapExt;
-
+    
     /** The map containing the kerning information. It represents the content of
      * table 'kern'. The key is an <CODE>Integer</CODE> where the top 16 bits
      * are the glyph number for the first character and the lower 16 bits are the
@@ -667,7 +666,6 @@ class TrueTypeFont extends BaseFont {
                 readCMaps();
                 readKerning();
                 readBbox();
-                GlyphWidths = null;
             }
         }
         finally {
@@ -686,14 +684,7 @@ class TrueTypeFont extends BaseFont {
      * @throws IOException the font file could not be read
      */
     protected String readStandardString(int length) throws IOException {
-        byte buf[] = new byte[length];
-        rf.readFully(buf);
-        try {
-            return new String(buf, WINANSI);
-        }
-        catch (Exception e) {
-            throw new ExceptionConverter(e);
-        }
+        return rf.readString(length, WINANSI);
     }
 
     /** Reads a Unicode <CODE>String</CODE> from the font file. Each character is
@@ -723,10 +714,11 @@ class TrueTypeFont extends BaseFont {
         if (table_location == null)
             throw new DocumentException(MessageLocalization.getComposedMessage("table.1.does.not.exist.in.2", "hmtx", fileName + style));
         rf.seek(table_location[0]);
-        GlyphWidths = new int[hhea.numberOfHMetrics];
+        glyphWidthsByIndex = new int[hhea.numberOfHMetrics];
         for (int k = 0; k < hhea.numberOfHMetrics; ++k) {
-            GlyphWidths[k] = rf.readUnsignedShort() * 1000 / head.unitsPerEm;
-            rf.readUnsignedShort();
+            glyphWidthsByIndex[k] = rf.readUnsignedShort() * 1000 / head.unitsPerEm;
+            @SuppressWarnings("unused")
+			int leftSideBearing = rf.readShort() * 1000 / head.unitsPerEm;
         }
     }
 
@@ -735,9 +727,9 @@ class TrueTypeFont extends BaseFont {
      * @return the width of the glyph in normalized 1000 units
      */
     protected int getGlyphWidth(int glyph) {
-        if (glyph >= GlyphWidths.length)
-            glyph = GlyphWidths.length - 1;
-        return GlyphWidths[glyph];
+        if (glyph >= glyphWidthsByIndex.length)
+            glyph = glyphWidthsByIndex.length - 1;
+        return glyphWidthsByIndex[glyph];
     }
 
     private void readBbox() throws DocumentException, IOException {
@@ -1162,6 +1154,11 @@ class TrueTypeFont extends BaseFont {
         }
     }
 
+    synchronized protected byte[] getSubSet(HashSet glyphs, boolean subsetp) throws IOException, DocumentException {
+        TrueTypeFontSubSet sb = new TrueTypeFontSubSet(fileName, new RandomAccessFileOrArray(rf), glyphs, directoryOffset, true, !subsetp);
+        return sb.process();
+    }
+
     protected static int[] compactRanges(ArrayList<int[]> ranges) {
         ArrayList<int[]> simp = new ArrayList<int[]>();
         for (int k = 0; k < ranges.size(); ++k) {
@@ -1308,8 +1305,7 @@ class TrueTypeFont extends BaseFont {
                 addRangeUni(glyphs, subsetp);
                 byte[] b = null;
                 if (subsetp || directoryOffset != 0 || subsetRanges != null) {
-                    TrueTypeFontSubSet sb = new TrueTypeFontSubSet(fileName, new RandomAccessFileOrArray(rf), glyphs, directoryOffset, true, !subsetp);
-                    b = sb.process();
+                    b = getSubSet(glyphs, subsetp);
                 }
                 else {
                     b = getFullFont();
@@ -1572,4 +1568,5 @@ class TrueTypeFont extends BaseFont {
             return null;
         return bboxes[metric[0]];
     }
+    
 }

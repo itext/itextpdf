@@ -3,8 +3,6 @@ package com.itextpdf.text.pdf;
 import com.itextpdf.text.error_messages.MessageLocalization;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 
 public class PdfStructTreeController {
@@ -17,11 +15,10 @@ public class PdfStructTreeController {
     private PdfDictionary roleMap = null;
     private PdfDictionary sourceRoleMap = null;
     private PdfDictionary sourceClassMap = null;
-    private HashSet<Integer> openedDocuments = new HashSet<Integer>();
+//    private HashSet<Integer> openedDocuments = new HashSet<Integer>();
 
-    public static enum returnType {BELOW, FOUND, ABOVE, NOTFOUND}
+    public static enum returnType {BELOW, FOUND, ABOVE, NOTFOUND};
 
-    ;
     public static final PdfName[] standardTypes = {PdfName.P, PdfName.H, PdfName.H1, PdfName.H2, PdfName.H3, PdfName.H4,
             PdfName.H5, PdfName.H6, PdfName.L, PdfName.LBL, PdfName.LI, PdfName.LBODY, PdfName.TABLE, PdfName.TABLEROW,
             PdfName.TH, PdfName.TD, PdfName.THEAD, PdfName.TBODY, PdfName.TFOOT, PdfName.SPAN, PdfName.QUOTE, PdfName.NOTE,
@@ -60,13 +57,13 @@ public class PdfStructTreeController {
     }
 
     public void copyStructTreeForPage(PdfNumber sourceArrayNumber, int newArrayNumber) throws BadPdfFormatException, IOException {
-        int documentHash = getDocumentHash(reader);
-		if (!openedDocuments.contains(documentHash)) {
-            openedDocuments.add(documentHash);
-            addKid(structureTreeRoot, writer.copyObject(structTreeRoot.get(PdfName.K), true, true));
-        }
+//        int documentHash = getDocumentHash(reader);
+//        if (!openedDocuments.contains(documentHash)) {
+//            openedDocuments.add(documentHash);
+//
+//        }
         if (copyPageMarks(parentTree, sourceArrayNumber, newArrayNumber) == returnType.NOTFOUND) {
-            throw new BadPdfFormatException(MessageLocalization.getComposedMessage("structparent.not.found"));
+            throw new BadPdfFormatException(MessageLocalization.getComposedMessage("invalid.structparent"));
         }
     }
 
@@ -103,6 +100,7 @@ public class PdfStructTreeController {
                 }
             }
         } else {
+            if (pages.size() == 0) return returnType.NOTFOUND;
             return findAndCopyMarks(pages, arrayNumber.intValue(), newArrayNumber);
         }
     }
@@ -118,11 +116,31 @@ public class PdfStructTreeController {
         while (true) {
             curNumber = pages.getAsNumber((begin + cur) * 2).intValue();
             if (curNumber == arrayNumber) {
-                PdfObject res = writer.copyObject(pages.getPdfObject((begin + cur) * 2 + 1), true, false);
-                if (!(res instanceof PdfIndirectReference))
-                    res = writer.addToBody(res).getIndirectReference();
-                structureTreeRoot.addPageMark(newArrayNumber, (PdfIndirectReference) res);
-                addKid(structureTreeRoot, res);
+                PdfObject obj = pages.getPdfObject((begin + cur) * 2 + 1);
+                while (obj.isIndirect()) obj = PdfReader.getPdfObjectRelease(obj);
+                //invalid Nums
+                if (!obj.isArray()) return returnType.NOTFOUND;
+
+                PdfObject firstNotNullKid = null;
+                for (PdfObject numObj: (PdfArray)obj){
+                    if (numObj.isNull()) continue;
+                    PdfObject res = writer.copyObject(numObj, true, false);
+                    if (firstNotNullKid == null) firstNotNullKid = res;
+                    structureTreeRoot.setPageMark(newArrayNumber, (PdfIndirectReference) res);
+                }
+                //Add kid to structureTreeRoot from structTreeRoot
+                PdfObject structKids = structTreeRoot.get(PdfName.K);
+                if (structKids == null || (!structKids.isArray() && !structKids.isIndirect())) {
+                    // incorrect syntax of tags
+                    addKid(structureTreeRoot, firstNotNullKid);
+                } else {
+                    if (structKids.isIndirect()) {
+                        addKid(structKids);
+                    } else { //structKids.isArray()
+                        for (PdfObject kid: (PdfArray)structKids)
+                            addKid(kid);
+                    }
+                }
                 return returnType.FOUND;
             }
             if (curNumber < arrayNumber) {
@@ -139,6 +157,20 @@ public class PdfStructTreeController {
             if (cur == 0)
                 return returnType.NOTFOUND;
             cur /= 2;
+        }
+    }
+
+    private void addKid(PdfObject obj) throws IOException, BadPdfFormatException {
+        if (!obj.isIndirect()) return;
+        PRIndirectReference currRef = (PRIndirectReference)obj;
+        PdfCopy.RefKey key =  new PdfCopy.RefKey(currRef);
+        if (!writer.indirects.containsKey(key)) {
+            writer.copyIndirect(currRef, true, false);
+        }
+        PdfIndirectReference newKid = writer.indirects.get(key).getRef();
+
+        if (writer.updateRootKids) {
+            addKid(structureTreeRoot, newKid);
         }
     }
 
@@ -326,25 +358,25 @@ public class PdfStructTreeController {
         parent.put(PdfName.K, kids);
     }
 
-    private int getDocumentHash(final PdfReader reader) {
-        PdfDictionary trailer = reader.trailer;
-        int hash = trailer.size();
-        HashMap<String, String> info = reader.getInfo();
-        PdfArray id = trailer.getAsArray(PdfName.ID);
-        if (id != null) {
-            for (PdfObject idPart : id) {
-                if (idPart instanceof PdfString) {
-                    hash = hash ^ ((PdfString)idPart).toUnicodeString().hashCode();
-                }
-            }
-        }
-        for (String key : info.keySet()) {
-            String value = info.get(key);
-            if (value != null) {
-                hash = hash ^ key.hashCode() ^ value.hashCode();
-            }
-        }
-        return hash;
-    }
+//    private int getDocumentHash(final PdfReader reader) {
+//        PdfDictionary trailer = reader.trailer;
+//        int hash = trailer.size();
+//        HashMap<String, String> info = reader.getInfo();
+//        PdfArray id = trailer.getAsArray(PdfName.ID);
+//        if (id != null) {
+//            for (PdfObject idPart : id) {
+//                if (idPart instanceof PdfString) {
+//                    hash = hash ^ ((PdfString)idPart).toUnicodeString().hashCode();
+//                }
+//            }
+//        }
+//        for (String key : info.keySet()) {
+//            String value = info.get(key);
+//            if (value != null) {
+//                hash = hash ^ key.hashCode() ^ value.hashCode();
+//            }
+//        }
+//        return hash;
+//    }
 
 }

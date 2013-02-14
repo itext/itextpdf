@@ -300,6 +300,8 @@ public class PdfDocument extends Document {
 
     protected HashMap<UUID, PdfStructureElement> structElements = new HashMap<UUID, PdfStructureElement>();
 
+    protected boolean openMCDocument = false;
+
     /**
      * Adds a <CODE>PdfWriter</CODE> to the <CODE>PdfDocument</CODE>.
      *
@@ -759,7 +761,7 @@ public class PdfDocument extends Document {
         try {
             initPage();
             if (isTagged(writer)) {
-                writer.getDirectContentUnder().openMCBlock(this);
+                openMCDocument = true;
             }
         }
         catch(DocumentException de) {
@@ -785,6 +787,7 @@ public class PdfDocument extends Document {
                 flushFloatingElements();
                 flushLines();
                 writer.getDirectContent().closeMCBlock(this);
+                writer.flushTaggedObjects();
             }
             boolean wasImage = imageWait != null;
             newPage();
@@ -1164,6 +1167,8 @@ public class PdfDocument extends Document {
             	line = null;
             	newPage();
             	line = overflowLine;
+                //update left indent because of mirror margins.
+                overflowLine.left = indentLeft();
             }
             currentHeight += line.height();
             lines.add(line);
@@ -1468,7 +1473,7 @@ public class PdfDocument extends Document {
                             subtract += hangingCorrection;
                         PdfAnnotation annot = null;
                         if (chunk.isImage()) {
-                            annot = new PdfAnnotation(writer, xMarker, yMarker + chunk.getImageOffsetY(), xMarker + width - subtract, yMarker + chunk.getImage().getScaledHeight() + chunk.getImageOffsetY(), (PdfAction)chunk.getAttribute(Chunk.ACTION));
+                            annot = new PdfAnnotation(writer, xMarker, yMarker + chunk.getImageOffsetY(), xMarker + width - subtract, yMarker + chunk.getImageHeight() + chunk.getImageOffsetY(), (PdfAction)chunk.getAttribute(Chunk.ACTION));
                         }
                         else {
                         	annot = new PdfAnnotation(writer, xMarker, yMarker + descender + chunk.getTextRise(), xMarker + width - subtract, yMarker + ascender + chunk.getTextRise(), (PdfAction)chunk.getAttribute(Chunk.ACTION));
@@ -1562,11 +1567,11 @@ public class PdfDocument extends Document {
 					}
                     if (chunk.isImage()) {
                         Image image = chunk.getImage();
-                        float matrix[] = image.matrix();
+                        float matrix[] = image.matrix(chunk.getImageScalePercentage());
                         matrix[Image.CX] = xMarker + chunk.getImageOffsetX() - matrix[Image.CX];
                         matrix[Image.CY] = yMarker + chunk.getImageOffsetY() - matrix[Image.CY];
                         graphics.addImage(image, matrix[0], matrix[1], matrix[2], matrix[3], matrix[4], matrix[5]);
-                        text.moveText(xMarker + lastBaseFactor + image.getScaledWidth() - text.getXTLM(), 0);
+                        text.moveText(xMarker + lastBaseFactor + chunk.getImageWidth() - text.getXTLM(), 0);
                     }
                 }
                 if (!chunk.isTabSpace())
@@ -2290,10 +2295,10 @@ public class PdfDocument extends Document {
             text = graphics;
         }
         text.beginText();
-        if (isTagged(writer))
-            textEmptySize = text.size();
         // we move to the left/top position of the page
         text.moveText(left(), top());
+        if (isTagged(writer))
+            textEmptySize = text.size();
     }
 
     /**
@@ -2316,7 +2321,11 @@ public class PdfDocument extends Document {
     }
 
     boolean isPageEmpty() {
-        return writer == null || writer.getDirectContent().size(!isTagged(writer)) == 0 && writer.getDirectContentUnder().size(!isTagged(writer)) == 0 && (pageEmpty || writer.isPaused());
+        if (isTagged(writer)) {
+            return writer == null || writer.getDirectContent().size(false) == 0 && writer.getDirectContentUnder().size(false) == 0 && text.size(false) - textEmptySize == 0 && (pageEmpty || writer.isPaused());
+        }
+        else
+            return writer == null || writer.getDirectContent().size() == 0 && writer.getDirectContentUnder().size() == 0 && (pageEmpty || writer.isPaused());
     }
 
 //	[U3] page actions
@@ -2480,7 +2489,7 @@ public class PdfDocument extends Document {
      * @throws DocumentException on error
      */
     void addPTable(final PdfPTable ptable) throws DocumentException {
-        ColumnText ct = new ColumnText(writer.getDirectContent());
+        ColumnText ct = new ColumnText(isTagged(writer) ? text : writer.getDirectContent());
         // if the table prefers to be on a single page, and it wouldn't
         //fit on the current page, start a new page.
         if (ptable.getKeepTogether() && !fitsPage(ptable, 0f) && currentHeight > 0)  {
@@ -2497,7 +2506,11 @@ public class PdfDocument extends Document {
             ct.setSimpleColumn(indentLeft(), indentBottom(), indentRight(), indentTop() - currentHeight);
             int status = ct.go();
             if ((status & ColumnText.NO_MORE_TEXT) != 0) {
-                text.moveText(0, ct.getYLine() - indentTop() + currentHeight);
+                if (isTagged(writer)) {
+                    text.setTextMatrix(indentLeft(), ct.getYLine());
+                } else {
+                    text.moveText(0, ct.getYLine() - indentTop() + currentHeight);
+                }
                 currentHeight = indentTop() - ct.getYLine();
                 break;
             }
@@ -2509,6 +2522,9 @@ public class PdfDocument extends Document {
             	throw new DocumentException(MessageLocalization.getComposedMessage("infinite.table.loop"));
             }
             newPage();
+            if (isTagged(writer)) {
+                ct.setCanvas(text);
+            }
         }
         ptable.setHeadersInEvent(he);
     }
@@ -2531,9 +2547,13 @@ public class PdfDocument extends Document {
             while (true) {
                 fl.setSimpleColumn(indentLeft(), indentBottom(), indentRight(), indentTop() - currentHeight);
                 try {
-                    int status = fl.layout(writer.getDirectContent(), false);
+                    int status = fl.layout(isTagged(writer) ? text : writer.getDirectContent(), false);
                     if ((status & ColumnText.NO_MORE_TEXT) != 0) {
-                        text.moveText(0, fl.getYLine() - indentTop() + currentHeight);
+                        if (isTagged(writer)) {
+                            text.setTextMatrix(indentLeft(), fl.getYLine());
+                        } else {
+                            text.moveText(0, fl.getYLine() - indentTop() + currentHeight);
+                        }
                         currentHeight = indentTop() - fl.getYLine();
                         break;
                     }

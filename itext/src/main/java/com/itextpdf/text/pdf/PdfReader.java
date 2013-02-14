@@ -622,7 +622,7 @@ public class PdfReader implements PdfViewerPreferences {
 
         strings.clear();
         readPages();
-        eliminateSharedStreams();
+        //eliminateSharedStreams();
         removeUnusedObjects();
 
     }
@@ -817,7 +817,7 @@ public class PdfReader implements PdfViewerPreferences {
                 recipients = (PdfArray)dic.get(PdfName.RECIPIENTS);
                 break;
             default:
-            	throw new UnsupportedPdfException(MessageLocalization.getComposedMessage("unknown.encryption.type.v.eq.1", rValue));
+            	throw new UnsupportedPdfException(MessageLocalization.getComposedMessage("unknown.encryption.type.v.eq.1", vValue));
             }
             X509CertificateHolder certHolder;
             try {

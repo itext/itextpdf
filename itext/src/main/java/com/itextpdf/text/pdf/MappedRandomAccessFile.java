@@ -179,7 +179,7 @@ public class MappedRandomAccessFile {
             if (offN > currentBuffer.limit())
                 break;
             currentBuffer.position(offN);
-            int bytesFromThisBuffer = Math.min(len, currentBuffer.remaining());
+            int bytesFromThisBuffer = Math.min(len - totalRead, currentBuffer.remaining());
             currentBuffer.get(bytes, off, bytesFromThisBuffer);
             off += bytesFromThisBuffer;
             pos += bytesFromThisBuffer;

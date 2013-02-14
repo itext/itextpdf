@@ -1,0 +1,366 @@
+<root><P></P>
+<P>iPhone </P>
+<Part><H1>User&#8217;s Guide
+</H1>
+<Sect><Sect><P>Chapter 2 Basics </P>
+<P>25 </P>
+</Sect>
+<P> (
+&#194;	 If no Wi-Fi networks are available or you choose not to join any, iPhone connects to 
+the Internet over a cellular data network or ). You cannot access the iTunes Wi-
+Fi Music Store over a cellular network. </P>
+<Sect><P>If no Wi-Fi networks are available and a cellular data network is not available, iPhone 
+cannot connect to the Internet. Turning on airplane mode disables both Wi-Fi and 
+cellular network access. </P>
+<P>Note: Because iPhone uses the cellular network for the phone, you cannot use the 
+Internet over a cellular network when you&#8217;re on a call. To talk on the phone and use 
+Internet applications at the same time, connect over a Wi-Fi network. </P>
+<P>Many Wi-Fi networks can be used free of charge including, in some regions, Wi-Fi 
+hotspots provided by your iPhone carrier. Some Wi-Fi networks require a fee. To join a 
+Wi-Fi network at a hotspot where charges apply, you can usually open Safari to see a 
+webpage that allows you to sign up for service. </P>
+<Sect><H3>Joining a Wi-Fi Network </H3>
+<P>The Wi-Fi settings let you turn on Wi-Fi and join Wi-Fi networks. </P>
+<P>Turn on Wi-Fi </P>
+<P>Choose Settings &gt; Wi-Fi and turn Wi-Fi on. </P>
+<P>Join a Wi-Fi network </P>
+<P>Choose Settings &gt; Wi-Fi, wait a moment as iPhone detects networks in range, 
+then select a network. If necessary, enter a password and tap Join (networks that 
+require a password appear with a lock icon). </P>
+<P>Once you&#8217;ve joined a Wi-Fi network manually, iPhone will automatically connect to it 
+whenever the network is in range. If more than one previously used network is in 
+range, iPhone joins the one last used. </P>
+<P>When iPhone is connected to a Wi-Fi network, the Wi-Fi icon in the status bar at the 
+top of the screen shows connection strength. The more bars you see, the stronger the 
+connection. </P>
+<P><Link>
+For information about configuring Wi-Fi settings, see &#8220;Wi-Fi&#8221; on page 92. </Link>
+</P>
+</Sect>
+<Sect><H3>Accessing the Internet via Cellular Network </H3>
+<P>EDGE and GPRS allow Internet connectivity over the cellular network available through 
+your iPhone carrier&#8217;s wireless service. Check the carrier&#8217;s network coverage in your area 
+for availability. </P>
+<P>While iPhone is actively transferring data over a cellular network&#8212;downloading a 
+webpage, for example&#8212;you may not be able to receive calls. Incoming calls then go 
+directly to voicemail. </P>
+</Sect>
+</Sect>
+</Sect>
+</Part>
+<Part><Sect><P>Chapter 1 Activating and Setting Up iPhone </P>
+<P>7 </P>
+<Sect><H3>Syncing iPhone with Your Computer </H3>
+<P>When you connect iPhone to your computer, iTunes syncs iPhone with the information 
+and media on your computer, according to how you&#8217;ve configured the iPhone sync 
+settings in iTunes. </P>
+<P></P>
+<P>You can set iTunes to sync any or all of the following: 
+&#194; Contacts&#8212;names, phone numbers, addresses, email addresses, and so on 
+&#194; Calendars&#8212;appointments and events 
+&#194; Email account settings 
+&#194; Webpage bookmarks 
+&#194; Ringtones 
+&#194; Music and audiobooks 
+&#194; Photos 
+&#194; Podcasts 
+&#194; Videos </P>
+<P>Ringtones, music, audiobooks, podcasts, and video content are synced from your 
+iTunes library. If you don&#8217;t already have content in iTunes, the iTunes Store (available in 
+some countries) makes it easy to purchase or subscribe to content and download it to 
+iTunes. You can also add music to your iTunes library from your CDs. To learn about 
+iTunes and the iTunes Store, open iTunes and choose Help &gt; iTunes Help. </P>
+<P>Contacts, calendars, webpage bookmarks, and photos are synced from applications on 
+your computer, as described below. Contacts and calendars are synced both ways 
+between your computer and iPhone. New entries or changes you make on iPhone are 
+synced to your computer, and vice versa. Webpage bookmarks are also synced both 
+ways. </P>
+<P>Email account settings are only synced from your computer&#8217;s email application to 
+iPhone. This allows you to customize your email accounts on iPhone without affecting 
+email account settings on your computer. </P>
+</Sect>
+</Sect>
+<Sect><Sect><P>Chapter 4 Mail </P>
+<P>48 </P>
+<Sect><P>&#194;	 Your user name and password for incoming and outgoing servers (you may not need 
+to enter a user name and password for an outgoing server) </P>
+<P>Note: Exchange email accounts must be configured for IMAP in order to work with </P>
+<P>iPhone. Contact your IT organization for more information. </P>
+</Sect>
+</Sect>
+<Sect><H2>Sending Email </H2>
+<P>You can send an email message to anyone who has an email address. You can send the 
+message to one person or to a group of people. </P>
+<P>Compose and send a message </P>
+<P>1 Tap . </P>
+<P>2 Type one or more names or email addresses in the To or Cc (carbon copy) fields, or tap </P>
+<P> and choose a contact to add the contact&#8217;s email address.
+</P>
+<P>As you type an email address, comparable email addresses from your contacts list 
+appear below. Tap one to add it. 
+3 Type a subject if you like, then type a message. 
+4 Tap Send. </P>
+<P>Send a photo in a message </P>
+<P>From the Home screen choose Photos, then choose a photo. Then tap and tap 
+Email Photo.
+</P>
+<P>If you have more than one email account on iPhone, the photo is sent using the default 
+
+account (see 
+<Span><Link>
+page 101).
+</Link>
+</Span>
+</P>
+<P>Save a message as a draft so you can work on it later </P>
+<P>Start composing the message and tap Cancel. Then tap Save. You can find the message 
+in the Drafts mailbox, add to it or change it, and then send it. </P>
+<P>Reply to a message </P>
+<P>Open a message and tap . Tap Reply to reply to just the person who sent the </P>
+<P>message. Tap Reply All to reply to the sender and the other recipients. Then add a 
+message of your own if you like, and tap Send. </P>
+<P>When you reply to a message, files or images attached to the initial message aren&#8217;t sent 
+back. </P>
+<P>Forward a message </P>
+<P>Open a message and tap , then tap Forward. Add one or more email addresses and </P>
+<P>a message of your own if you like, then tap Send.
+
+When you forward a message, you can include the files or images attached to the 
+
+original message.
+</P>
+</Sect>
+<P>Chapter 4 Mail </P>
+<P>50 </P>
+<Sect><P>Open the message and tap . </P>
+<P>Delete a message </P>
+<P>You can also delete a message directly from the mailbox message list by swiping left or 
+right over the message title and then tapping Delete. </P>
+<P></P>
+<P>Or you can tap Edit and tap  next to a message. </P>
+<P>Check for new messages </P>
+<P>Choose a mailbox, or tap  at any time. </P>
+<P>Open an attached file </P>
+<P>You can view or read some types of files and images attached to messages you receive. 
+For example, if someone sends you a PDF, Microsoft Word, or Microsoft Excel 
+document, you can read it on iPhone. </P>
+<P> Tap the attachment. It downloads to iPhone and then opens. </P>
+<P></P>
+<P>You can view attachments in both portrait and landscape orientation. If the format of 
+an attached file isn&#8217;t supported by iPhone, you can see the name of the file but you 
+can&#8217;t open it. iPhone supports the following email attachment file formats: </P>
+<P>&#194; .doc, .docx, .htm, .html, .pdf, .txt, .xls, .xlsx </P>
+</Sect>
+</Sect>
+</Part>
+<Part><Sect><Part><Sect><Sect><Table><TR><TD></TD>
+<TD></TD>
+<TD></TD>
+</TR>
+<TR><TD></TD>
+<TD></TD>
+</TR>
+<TR><TD></TD>
+<TD></TD>
+</TR>
+<TR><TD></TD>
+<TD></TD>
+</TR>
+<TR><TD></TD>
+<TD></TD>
+</TR>
+<TR><TD></TD>
+<TD></TD>
+<TD></TD>
+</TR>
+<TR><TD></TD>
+<TD></TD>
+</TR>
+<TR><TD></TD>
+<TD></TD>
+</TR>
+<TR><TD></TD>
+<TD></TD>
+</TR>
+<TR><TD></TD>
+<TD></TD>
+</TR>
+<TR><TD></TD>
+<TD></TD>
+</TR>
+<TR><TD></TD>
+<TD></TD>
+</TR>
+<TR><TD></TD>
+<TD></TD>
+</TR>
+<TR><TD></TD>
+<TD></TD>
+</TR>
+<TR><TD></TD>
+<TD></TD>
+<TD></TD>
+</TR>
+<TR><TD></TD>
+<TD></TD>
+</TR>
+<TR><TD></TD>
+<TD></TD>
+</TR>
+<TR><TD></TD>
+<TD></TD>
+</TR>
+<TR><TD></TD>
+<TD></TD>
+</TR>
+<TR><TD></TD>
+<TD></TD>
+</TR>
+<TR><TD></TD>
+<TD></TD>
+</TR>
+<TR><TD></TD>
+<TD></TD>
+</TR>
+<TR><TD></TD>
+<TD></TD>
+<TD></TD>
+</TR>
+<TR><TD></TD>
+<TD></TD>
+</TR>
+<TR><TD></TD>
+<TD></TD>
+</TR>
+<TR><TD></TD>
+<TD></TD>
+</TR>
+<TR><TD></TD>
+<TD></TD>
+</TR>
+</Table>
+</Sect>
+</Sect>
+</Part>
+</Sect>
+<Sect><H2>Contents
+</H2>
+<P>2 </P>
+<Table><TR><TD>Chapter 1 </TD>
+<TD>5 Activating and Setting Up iPhone </TD>
+</TR>
+<TR><TD>5 What You Need </TD>
+</TR>
+<TR><TD>5 Activating iPhone </TD>
+</TR>
+<TR><TD>7 Syncing iPhone with Your Computer </TD>
+</TR>
+<TR><TD>11 Disconnecting iPhone from Your Computer </TD>
+</TR>
+<TR><TD>Chapter 2 </TD>
+<TD>12 Basics </TD>
+</TR>
+<TR><TD>12 iPhone at a Glance </TD>
+</TR>
+<TR><TD>14 Home Screen </TD>
+</TR>
+<TR><TD>17 iPhone Buttons and Touchscreen </TD>
+</TR>
+<TR><TD>23 Using the Stereo Headset </TD>
+</TR>
+<TR><TD>24 Connecting to the Internet </TD>
+</TR>
+<TR><TD>26 Using iPhone on an Airplane </TD>
+</TR>
+<TR><TD>27 Charging the Battery </TD>
+</TR>
+<TR><TD>28 Cleaning iPhone </TD>
+</TR>
+<TR><TD>Chapter 3 </TD>
+<TD>29 Phone </TD>
+</TR>
+<TR><TD>29 Calling and Answering </TD>
+</TR>
+<TR><TD>34 Visual Voicemail </TD>
+</TR>
+<TR><TD>37 Adding Contact Information to iPhone </TD>
+</TR>
+<TR><TD>40 Ringtones </TD>
+</TR>
+<TR><TD>41 Using iPhone with a Bluetooth Headset or Car Kit </TD>
+</TR>
+<TR><TD>44 Calling to and from Other Countries </TD>
+</TR>
+<TR><TD>45 Phone Settings </TD>
+</TR>
+<TR><TD>Chapter 4 </TD>
+<TD>46 Mail </TD>
+</TR>
+<TR><TD>46 Setting Up Email Accounts </TD>
+</TR>
+<TR><TD>48 Sending Email </TD>
+</TR>
+<TR><TD>49 Checking and Reading Email </TD>
+</TR>
+<TR><TD>51 Mail Settings </TD>
+</TR>
+</Table>
+</Sect>
+<Sect><P>Chapter 1 Activating and Setting Up iPhone </P>
+<P>8 </P>
+<Sect><P>If you like, you can set iPhone to sync with only a portion of what&#8217;s on your computer. 
+For example, you might want to sync only a group of contacts from your address book, 
+or only unwatched video podcasts. You can adjust sync settings whenever iPhone is 
+connected to your computer. </P>
+<P>Important: You can connect and sync with only one iPhone at a time. Disconnect one 
+before connecting another. You should be logged in to your own user account on the 
+computer before connecting iPhone. On a PC, if you sync more than one iPhone to the 
+same user account, use the same sync settings for each. </P>
+<Sect><H4>Setting Up Syncing </H4>
+<P>You use the iPhone settings panes in iTunes to specify the iTunes content and other 
+information you want to sync to iPhone. </P>
+<P></P>
+<P>Set up syncing </P>
+<P>1	 Connect iPhone to your computer, and open iTunes (if it doesn&#8217;t open automatically). 
+Unless your keyboard has a high-powered USB 2.0 port, you must connect iPhone to a 
+USB 2.0 port on your computer. </P>
+<P>2	 Select iPhone in the iTunes window (below Devices, on the left). </P>
+<P>3	 Configure the sync settings in each of the settings panes. </P>
+<P>4	 Click Apply in the lower-right corner of the screen. 
+The following sections provide an overview of each of the iPhone settings panes. 
+For more information, open iTunes and choose Help &gt; iTunes Help. </P>
+<P></P>
+</Sect>
+</Sect>
+</Sect>
+</Part>
+<Part><Sect><Sect><P>Chapter 7 Applications </P>
+<P>90 </P>
+<H2>Notes
+</H2>
+<P></P>
+<H3>Writing, Reading, and Emailing Notes </H3>
+<Sect><P>Notes are listed by date added, with the most recent note at the top. You can see the 
+first few words of each note in the list. </P>
+<P>Add a note </P>
+<P>Tap , then type your note and tap Done. </P>
+</Sect>
+<Sect><P>Read or edit a note </P>
+<P>Tap the note. Tap anywhere on the note to bring up the keyboard and edit the note. </P>
+<P>Tap or  to see the next or previous note. </P>
+<P>Delete a note </P>
+<P>Tap the note, then tap . </P>
+<P>Email a note </P>
+<P>Tap the note, then tap . </P>
+<P>
+
+). <Link>
+To email a note, iPhone must be set up for email (see &#8220;Setting Up Email Accounts&#8221; on </Link>
+<Link>
+page 46</Link>
+</P>
+</Sect>
+</Sect>
+</Sect>
+</Part>
+</root>

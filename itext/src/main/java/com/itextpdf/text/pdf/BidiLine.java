@@ -337,7 +337,7 @@ public class BidiLine {
                 ArrayList<PdfChunk> ar = new ArrayList<PdfChunk>();
                 PdfChunk ck = new PdfChunk("", detailChunks[0]);
                 ar.add(ck);
-                return new PdfLine(0, 0, 0, alignment, true, ar, isRTL);
+                return new PdfLine(0, 0, width, alignment, true, ar, isRTL);
             }
         }
         float originalWidth = width;
@@ -357,8 +357,10 @@ public class BidiLine {
             if (ck.isImage() && minY < yLine) {
                 Image img = ck.getImage();
                 if (img.isScaleToFitLineWhenOverflow() && yLine + 2 * descender - img.getScaledHeight() - ck.getImageOffsetY() - img.getSpacingBefore() < minY) {
-                    float scalePercent = (yLine + 2 * descender - ck.getImageOffsetY() - img.getSpacingBefore() - minY) / img.getHeight() * 100;
-            		img.scalePercent(scalePercent);
+                    //float scalePercent = (yLine + 2 * descender - ck.getImageOffsetY() - img.getSpacingBefore() - minY) / img.getHeight() * 100;
+            		//img.scalePercent(scalePercent);
+                    float scalePercent = (yLine + 2 * descender - ck.getImageOffsetY() - img.getSpacingBefore() - minY) / img.getHeight();
+                	ck.setImageScalePercentage(scalePercent);
                 }
             }
             surrogate = Utilities.isSurrogatePair(text, currentChar);
@@ -370,8 +372,13 @@ public class BidiLine {
                 continue;
             if (surrogate)
                 charWidth = ck.getCharWidth(uniC);
-            else
-                charWidth = ck.getCharWidth(text[currentChar]);
+            else {
+                if (ck.isImage()) {
+                    charWidth = ck.getImageWidth();
+                } else {
+                    charWidth = ck.getCharWidth(text[currentChar]);
+                }
+            }
             splitChar = ck.isExtSplitCharacter(oldCurrentChar, currentChar, totalTextLength, text, detailChunks);
             if (splitChar && Character.isWhitespace((char)uniC))
                 lastSplit = currentChar;
@@ -381,8 +388,10 @@ public class BidiLine {
             	if (lastValidChunk == null && ck.isImage()) {
             		Image img = ck.getImage();
             		if (img.isScaleToFitLineWhenOverflow()) {
-            			float scalePercent = width / img.getWidth() * 100;
-            			img.scalePercent(scalePercent);
+            			//float scalePercent = width / img.getWidth() * 100;
+            			//img.scalePercent(scalePercent);
+            			float scalePercent = width / img.getWidth();
+            			ck.setImageScalePercentage(scalePercent);
             			charWidth = width;
             		}
             	}
@@ -412,7 +421,7 @@ public class BidiLine {
                 float decrement = module - ((originalWidth - width) % module);
 
                 if (width < decrement)
-                    return new PdfLine(0, originalWidth, width, alignment, false,
+                    return new PdfLine(0, originalWidth, width, alignment, true,
                             createArrayOfPdfChunks(oldCurrentChar, currentChar-1), isRTL);
 
                 width -= decrement;

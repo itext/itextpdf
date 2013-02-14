@@ -37,8 +37,7 @@ public class TtfUnicodeWriter {
         } else {
             byte[] b;
             if (font.subset || font.directoryOffset != 0) {
-                TrueTypeFontSubSet sb = new TrueTypeFontSubSet(font.fileName, new RandomAccessFileOrArray(font.rf), new HashSet<Integer>(longTag.keySet()), font.directoryOffset, false, false);
-                b = sb.process();
+                b = font.getSubSet(new HashSet<Integer>(longTag.keySet()), true);
             }
             else {
                 b = font.getFullFont();

@@ -288,6 +288,7 @@ startxref.not.found=startxref not found.
 stdcf.not.found.encryption=/StdCF not found (encryption)
 stream.could.not.be.compressed.filter.is.not.a.name.or.array=Stream could not be compressed: filter is not a name or array.
 structparent.not.found=StructParent not found.
+invalid.structparent=Invalid StructParent.
 table.1.does.not.exist.in.2=Table '{1}' does not exist in {2}
 tag.1.not.allowed=Tag {1} not allowed.
 tagging.must.be.set.before.opening.the.document=Tagging must be set before opening the document.

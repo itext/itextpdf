@@ -383,15 +383,19 @@ public class PdfWriter extends DocWriter implements
             }
             else {
                 PdfIndirectObject indirect = new PdfIndirectObject(refNumber, object, writer);
-                PdfCrossReference pxref = new PdfCrossReference(refNumber, position);
-                if (!xrefs.add(pxref)) {
-                    xrefs.remove(pxref);
-                    xrefs.add(pxref);
-                }
-                indirect.writeTo(writer.getOs());
-                position = writer.getOs().getCounter();
+                write(indirect, refNumber);
                 return indirect;
             }
+        }
+
+        protected void write(final PdfIndirectObject indirect, final int refNumber) throws IOException {
+            PdfCrossReference pxref = new PdfCrossReference(refNumber, position);
+            if (!xrefs.add(pxref)) {
+                xrefs.remove(pxref);
+                xrefs.add(pxref);
+            }
+            indirect.writeTo(writer.getOs());
+            position = writer.getOs().getCounter();
         }
 
         /**
@@ -2494,6 +2498,12 @@ public class PdfWriter extends DocWriter implements
     public boolean isTagged() {
         return tagged;
     }
+
+    /**
+     * Fix structure of tagged document: remove unused objects, remove unused items from class map,
+     * fix xref table due to removed objects.
+     */
+    protected void flushTaggedObjects() throws IOException {}
 
     /**
      * Gets the structure tree root. If the document is not marked for tagging it will return <CODE>null</CODE>.
