@@ -1625,11 +1625,10 @@ public class PdfDocument extends Document {
             }
             else if (chunk.isTabSpace())
             {
-                Float module = (Float)chunk.getAttribute(Chunk.TABSPACE);
-                float increment = module - ((xMarker - text.getXTLM()) % module);
-                xMarker += increment;
+                float tabSpacePosition = Utilities.computeTabPosition(xMarker - text.getXTLM(), (Float)chunk.getAttribute(Chunk.TABSPACE), (java.util.List<Float>)chunk.getAttribute(Chunk.TABSTOPS));
                 PdfTextArray array = new PdfTextArray();
-                array.add(-(increment * 1000f / chunk.font.size() / hScale));
+                array.add((xMarker - tabSpacePosition - text.getXTLM()) * 1000f / chunk.font.size() / hScale);
+                xMarker = tabSpacePosition + text.getXTLM();
                 text.showText(array);
             }
             // If it is a CJK chunk or Unicode TTF we will have to simulate the

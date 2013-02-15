@@ -88,6 +88,7 @@ public class PdfChunk {
         keysAttributes.add(Chunk.SEPARATOR);
         keysAttributes.add(Chunk.TAB);
         keysAttributes.add(Chunk.TABSPACE);
+        keysAttributes.add(Chunk.TABSTOPS);
         keysAttributes.add(Chunk.CHAR_SPACING);
         keysAttributes.add(Chunk.LINEHEIGHT);
         keysNoStroke.add(Chunk.SUBSUPSCRIPT);

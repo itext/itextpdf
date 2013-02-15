@@ -43,13 +43,11 @@
  */
 package com.itextpdf.text.pdf;
 
-import com.itextpdf.text.Chunk;
-import com.itextpdf.text.Element;
-import com.itextpdf.text.Image;
-import com.itextpdf.text.ListItem;
+import com.itextpdf.text.*;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 /**
  * <CODE>PdfLine</CODE> defines an array with <CODE>PdfChunk</CODE>-objects
@@ -163,13 +161,11 @@ public class PdfLine {
             addToLine(chunk);
         }
         else if (chunk.isTabSpace()) {
-            if (!line.isEmpty())
-            {
-                Float module = (Float)chunk.getAttribute(Chunk.TABSPACE);
-                float decrement = module - ((originalWidth - width) % module);
-                if (width < decrement)
+            if (!line.isEmpty()) {
+                float tabPosition = Utilities.computeTabPosition(originalWidth - width, (Float)chunk.getAttribute(Chunk.TABSPACE), (List<Float>)chunk.getAttribute(Chunk.TABSTOPS));//((originalWidth - width) % module);
+                if (tabPosition > originalWidth)
                     return chunk;
-                width -= decrement;
+                width = originalWidth - tabPosition;
                 addToLine(chunk);
             }
         }
@@ -326,12 +322,16 @@ public class PdfLine {
      */
 
     int numberOfSpaces() {
-        String string = toString();
-        int length = string.length();
         int numberOfSpaces = 0;
-        for (int i = 0; i < length; i++) {
-            if (string.charAt(i) == ' ') {
-                numberOfSpaces++;
+        for (PdfChunk pdfChunk : line) {
+            if (pdfChunk.isTabSpace())
+                continue;
+            String tmp = pdfChunk.toString();
+            int length = tmp.length();
+            for (int i = 0; i < length; i++) {
+                if (tmp.charAt(i) == ' ') {
+                    numberOfSpaces++;
+                }
             }
         }
         return numberOfSpaces;
