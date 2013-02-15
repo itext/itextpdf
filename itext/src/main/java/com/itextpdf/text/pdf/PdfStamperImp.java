@@ -293,7 +293,7 @@ class PdfStamperImp extends PdfWriter {
         		else {
                     ByteArrayOutputStream baos = new ByteArrayOutputStream();
                     try {
-                        XmpWriter xmpw = new XmpWriter(baos, newInfo, getPDFXConformance());
+                        XmpWriter xmpw = getXmpWriter(baos, newInfo);
                         xmpw.close();
                     }
                     catch (IOException ioe) {
