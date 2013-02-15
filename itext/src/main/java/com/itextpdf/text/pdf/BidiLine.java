@@ -48,10 +48,10 @@ import com.itextpdf.text.Image;
 import com.itextpdf.text.Utilities;
 import com.itextpdf.text.pdf.draw.DrawInterface;
 import com.itextpdf.text.pdf.draw.LineSeparator;
-import com.itextpdf.text.pdf.interfaces.IAccessibleElement;
 import com.itextpdf.text.pdf.languages.ArabicLigaturizer;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /** Does all the line bidirectional processing with PdfChunk assembly.
  *
@@ -414,17 +414,14 @@ public class BidiLine {
         		}
         		detailChunks[currentChar].adjustLeft(leftX);
         		width = originalWidth - tabPosition;
-            }
-            else if (ck.isTabSpace())
-            {
-                Float module = (Float)ck.getAttribute(Chunk.TABSPACE);
-                float decrement = module - ((originalWidth - width) % module);
+            } else if (ck.isTabSpace()) {
+                float tabPosition = Utilities.computeTabPosition(originalWidth - width, (Float) ck.getAttribute(Chunk.TABSPACE), (List<Float>) ck.getAttribute(Chunk.TABSTOPS));
 
-                if (width < decrement)
+                if (tabPosition > originalWidth)
                     return new PdfLine(0, originalWidth, width, alignment, true,
-                            createArrayOfPdfChunks(oldCurrentChar, currentChar-1), isRTL);
+                            createArrayOfPdfChunks(oldCurrentChar, currentChar - 1), isRTL);
 
-                width -= decrement;
+                width = originalWidth - tabPosition;
             }
             else if (ck.isSeparator()) {
                 Object[] sep = (Object[])ck.getAttribute(Chunk.SEPARATOR);
@@ -499,9 +496,7 @@ public class BidiLine {
         for (; startIdx <= lastIdx; ++startIdx) {
             boolean surrogate = Utilities.isSurrogatePair(text, startIdx);
             if (detailChunks[startIdx].isTabSpace()){
-                Float module = (Float)detailChunks[startIdx].getAttribute(Chunk.TABSPACE);
-                float decrement = module - (width % module);
-                width += decrement;
+                width = Utilities.computeTabPosition(width, (Float)detailChunks[startIdx].getAttribute(Chunk.TABSPACE), (List<Float>)detailChunks[startIdx].getAttribute(Chunk.TABSTOPS));
             } else if (surrogate) {
                 width += detailChunks[startIdx].getCharWidth(Utilities.convertToUtf32(text, startIdx));
                 ++startIdx;

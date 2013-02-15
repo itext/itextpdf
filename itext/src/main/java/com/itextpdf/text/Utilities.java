@@ -378,4 +378,25 @@ public class Utilities {
 	    }
 	    return PdfEncodings.convertToString(buf.toByteArray(), null).toUpperCase();
 	}
+
+    public static float computeTabPosition(float currentPosition, float tabInterval, java.util.List<Float> tabStops) {
+        Float tabPosition = null;
+        if (tabStops != null) {
+            for (Float currentTabStop : tabStops) {
+                if (currentTabStop - currentPosition > 0.001) {
+                    tabPosition = currentTabStop;
+                    break;
+                }
+            }
+        }
+
+        if (tabPosition == null) {
+            currentPosition = (float)Math.round(currentPosition * 1000) / 1000;
+            tabInterval = (float)Math.round(tabInterval * 1000) / 1000;
+
+            tabPosition = currentPosition + tabInterval - currentPosition % tabInterval;
+        }
+
+        return tabPosition;
+    }
 }

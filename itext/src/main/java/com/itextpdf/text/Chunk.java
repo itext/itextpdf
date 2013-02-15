@@ -958,15 +958,17 @@ public class Chunk implements Element, IAccessibleElement {
     }
 
     public static final String TABSPACE = "TABSPACE";
+    public static final String TABSTOPS = "TABSTOPS";
 
     public static Chunk createTabspace() {
-        return createTabspace(60);
+        return createTabspace(60, null);
     }
 
-    public static Chunk createTabspace(float spacing)
+    public static Chunk createTabspace(float spacing, List<Float> tabStops)
     {
         Chunk tabspace = new Chunk(" ");
         tabspace.setAttribute(TABSPACE, spacing);
+        tabspace.setAttribute(TABSTOPS, tabStops);
         return tabspace;
     }
 
