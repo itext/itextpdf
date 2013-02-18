@@ -204,7 +204,9 @@ public class PdfStructureElement extends PdfDictionary implements IPdfStructureE
     }
 
     public void writeAttributes(final IAccessibleElement element) {
-        if (element instanceof Paragraph) {
+        if (element instanceof ListItem) {
+            writeAttributes((ListItem)element);
+        } else if (element instanceof Paragraph) {
             writeAttributes((Paragraph) element);
         } else if (element instanceof Chunk) {
             writeAttributes((Chunk)element);
@@ -212,8 +214,6 @@ public class PdfStructureElement extends PdfDictionary implements IPdfStructureE
             writeAttributes((Image)element);
         } else if (element instanceof List) {
             writeAttributes((List)element);
-        } else if (element instanceof ListItem) {
-            writeAttributes((ListItem)element);
         } else if (element instanceof ListLabel) {
             writeAttributes((ListLabel)element);
         } else if (element instanceof ListBody) {
@@ -384,25 +384,22 @@ public class PdfStructureElement extends PdfDictionary implements IPdfStructureE
     private void writeAttributes(final List list) {
         if (list != null) {
             this.setAttribute(PdfName.O, PdfName.LIST);
-            if (list.isAutoindent()){
-                if (list.isNumbered()){
-                    if (list.isLettered()){
-                        if (list.isLowercase()){
+            if (list.isAutoindent()) {
+                if (list.isNumbered()) {
+                    if (list.isLettered()) {
+                        if (list.isLowercase())
                             this.setAttribute(PdfName.LISTNUMBERING, PdfName.LOWERROMAN);
-                        }
                         else
                             this.setAttribute(PdfName.LISTNUMBERING, PdfName.UPPERROMAN);
                     }
-                    else{
+                    else {
                         this.setAttribute(PdfName.LISTNUMBERING, PdfName.DECIMAL);
                     }
-
                 }
                 else
-                    if (list.isLettered()){
-                        if (list.isLowercase()){
+                    if (list.isLettered()) {
+                        if (list.isLowercase())
                             this.setAttribute(PdfName.LISTNUMBERING, PdfName.LOWERALPHA);
-                        }
                         else
                             this.setAttribute(PdfName.LISTNUMBERING, PdfName.UPPERALPHA);
                     }
@@ -412,7 +409,25 @@ public class PdfStructureElement extends PdfDictionary implements IPdfStructureE
 
     private void writeAttributes(final ListItem listItem) {
         if (listItem != null) {
+            PdfObject obj = parent.getAttribute(PdfName.STARTINDENT);
+            if (obj instanceof PdfNumber) {
+                float startIndent = ((PdfNumber) obj).floatValue();
+                if (Float.compare(startIndent, listItem.getIndentationLeft()) != 0)
+                    this.setAttribute(PdfName.STARTINDENT, new PdfNumber(listItem.getIndentationLeft()));
+            } else {
+                if (Math.abs(listItem.getIndentationLeft()) > Float.MIN_VALUE)
+                    this.setAttribute(PdfName.STARTINDENT, new PdfNumber(listItem.getIndentationLeft()));
+            }
 
+            obj = parent.getAttribute(PdfName.ENDINDENT);
+            if (obj instanceof PdfNumber) {
+                float endIndent = ((PdfNumber) obj).floatValue();
+                if (Float.compare(endIndent, listItem.getIndentationRight()) != 0)
+                    this.setAttribute(PdfName.ENDINDENT, new PdfNumber(listItem.getIndentationRight()));
+            } else {
+                if (Float.compare(listItem.getIndentationRight(), 0) != 0)
+                    this.setAttribute(PdfName.ENDINDENT, new PdfNumber(listItem.getIndentationRight()));
+            }
         }
     }
 
