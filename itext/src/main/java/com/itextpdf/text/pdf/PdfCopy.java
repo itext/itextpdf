@@ -148,7 +148,7 @@ public class PdfCopy extends PdfWriter {
     }
 
     protected static class ImportedPage {
-        Integer pageNumber;
+        int pageNumber;
         PdfReader reader;
         ImportedPage(PdfReader reader, int pageNumber) {
             this.pageNumber = pageNumber;
@@ -264,12 +264,12 @@ public class PdfCopy extends PdfWriter {
         for (Map.Entry<RefKey, IndirectReferences> entry: currIndirects.entrySet()) {
             PdfIndirectReference iRef = entry.getValue().theRef;
             RefKey key = new RefKey(iRef);
-            PdfIndirectObject iObj = indirectObjects.get(key);
-            if (iObj == null) {
+            PdfIndirectObject iobj = indirectObjects.get(key);
+            if (iobj == null) {
                 if (!streams.contains(key))
                     forDelete.add(entry.getKey());
             }
-            else if (iObj.object.isArray() || iObj.object.isDictionary()) {
+            else if (iobj.object.isArray() || iobj.object.isDictionary()) {
                 forDelete.add(entry.getKey());
             }
         }
@@ -779,7 +779,7 @@ public class PdfCopy extends PdfWriter {
             PdfObject parent = ((PdfDictionary)iobj.object).get(PdfName.P);
             if (parent != null && parent.type() == 0) {
                 PdfCopy.RefKey key = new PdfCopy.RefKey((PdfIndirectReference)parent);
-                if (!activeKeys.contains(key) && key.num != 1) {
+                if (!activeKeys.contains(key)) {
                     activeKeys.add(key);
                     tmpActiveKeys.add(key);
                     newRefs.add((PdfIndirectReference) parent);
@@ -838,8 +838,8 @@ public class PdfCopy extends PdfWriter {
 
     private void findActivesFromReference(PdfIndirectReference iref, ArrayList<PdfIndirectReference> actives, HashSet<PdfCopy.RefKey> activeKeys) {
         PdfCopy.RefKey key = new PdfCopy.RefKey(iref);
-        PdfIndirectObject obj = indirectObjects.get(key);
-        if (obj != null && obj.object.isDictionary() && containsInactivePg((PdfDictionary) obj.object, activeKeys)) return;
+        PdfIndirectObject iobj = indirectObjects.get(key);
+        if (iobj != null && iobj.object.isDictionary() && containsInactivePg((PdfDictionary) iobj.object, activeKeys)) return;
 
         if(!activeKeys.contains(key)) {
             activeKeys.add(key);
