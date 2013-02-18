@@ -382,14 +382,16 @@ public class Table extends AbstractTagProcessor {
 			}
 
             Float tableHeight = new HeightCalculator().getHeight(tag, getHtmlPipelineContext(ctx).getPageSize().getHeight());
+            Float tableRowHeight = null;
+            if (tableHeight != null && tableHeight > 0) tableRowHeight = tableHeight/tableRows.size();
             int rowNumber = 0;
 			for (TableRowElement row : tableRows) {
 				int columnNumber = -1;
                 Float computedRowHeight = null;
-                if ( tableHeight != null &&  tableRows.indexOf(row) == tableRows.size() - 1) {
+                /*if (tableHeight != null &&  tableRows.indexOf(row) == tableRows.size() - 1) {
                     float computedTableHeigt = table.calculateHeights();
                     computedRowHeight = tableHeight - computedTableHeigt;
-                }
+                }*/
 				for (HtmlCell cell : row.getContent()) {
 					List<Element> compositeElements = cell.getCompositeElements();
 					if (compositeElements != null) {
@@ -419,10 +421,15 @@ public class Table extends AbstractTagProcessor {
 					table.addCell(cell);
 				}
 				table.completeRow();
+                if ((computedRowHeight == null || computedRowHeight <= 0) && tableRowHeight != null)
+                    computedRowHeight = tableRowHeight;
                 if (computedRowHeight != null && computedRowHeight > 0) {
                     float rowHeight = table.getRow(rowNumber).getMaxHeights();
                     if (rowHeight < computedRowHeight) {
                         table.getRow(rowNumber).setMaxHeights(computedRowHeight);
+                    } else if (tableRowHeight != null && tableRowHeight < rowHeight){
+                        tableRowHeight = (tableHeight - rowHeight - rowNumber*tableRowHeight)
+                                /(tableRows.size() - rowNumber - 1);
                     }
                 }
                 rowNumber++;
