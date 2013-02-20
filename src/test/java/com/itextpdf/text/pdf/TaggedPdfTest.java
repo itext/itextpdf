@@ -1,12 +1,10 @@
 package com.itextpdf.text.pdf;
 
 import com.itextpdf.text.*;
-import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.pdf.parser.*;
 import com.itextpdf.text.xml.XMLUtil;
 import org.junit.After;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.xml.sax.SAXException;
 
@@ -310,7 +308,6 @@ public class TaggedPdfTest {
             c.setAccessibleAttribute(PdfName.ALT, new PdfString("Dog image"));
             listItem = new ListItem(c);
             list.add(listItem);
-            Paragraph p = new Paragraph(text);
             listItem = new ListItem(new Paragraph(text));
             list.add(listItem);
         } catch (Exception e) {
@@ -348,7 +345,6 @@ public class TaggedPdfTest {
             c.setAccessibleAttribute(PdfName.ALT, new PdfString("Dog image"));
             listItem = new ListItem(c);
             list.add(listItem);
-            Paragraph p = new Paragraph(text);
             listItem = new ListItem(new Paragraph(text));
             list.add(listItem);
         } catch (Exception e) {
@@ -773,7 +769,7 @@ public class TaggedPdfTest {
         reader.close();
     }
 
-    private PdfArray verifyArraySize(PdfObject obj, Integer size, String message) {
+    private PdfArray verifyArraySize(PdfObject obj, int size, String message) {
         if (obj == null || !obj.isArray()) Assert.fail(message + " is not array");
         if (((PdfArray)obj).size() != size)
             Assert.fail(message + " has wrong size");
