@@ -737,7 +737,7 @@ public class PdfCopy extends PdfWriter {
         //remove unused kids of StructTreeRoot and remove unused objects from class map
         fixStructureTreeRoot(activeKeys, activeClassMaps);
 
-        for(Map.Entry<PdfCopy.RefKey, PdfIndirectObject> entry: indirectObjects.entrySet()) {
+        for(Map.Entry<RefKey, PdfIndirectObject> entry: indirectObjects.entrySet()) {
             if (!activeKeys.contains(entry.getKey())) {
                 entry.setValue(null);
             }

@@ -78,7 +78,7 @@ public class CompareTool {
     }
 
     public String compare(String outPath, String differenceImage) throws IOException, InterruptedException {
-        if (gsExec == null || gsExec.length() == 0) {
+        if (!(new File(gsExec).exists())) {
             return undefinedGsPath;
         }
         File targetDir = new File(outPath);
@@ -154,7 +154,7 @@ public class CompareTool {
                         is1.close();
                         is2.close();
                         if (!cmpResult) {
-                            if (compareExec != null && compareExec.length() > 0) {
+                            if (new File(compareExec).exists()) {
                                 String compareParams = this.compareParams.replace("<image1>", imageFiles[i].getAbsolutePath()).replace("<image2>", cmpImageFiles[i].getAbsolutePath()).replace("<difference>", differenceImage + Integer.toString(i + 1) + ".png");
                                 p = Runtime.getRuntime().exec(compareExec + compareParams);
                                 bre = new BufferedReader(new InputStreamReader(p.getErrorStream()));
@@ -212,9 +212,7 @@ public class CompareTool {
         this.outPdf = outPdf;
         this.cmpPdf = cmpPdf;
         outPdfName =  new File(outPdf).getName();
-        outPdfName.substring(0, outPdfName.indexOf('.'));
         cmpPdfName = new File(cmpPdf).getName();
-        cmpPdfName.substring(0, cmpPdfName.indexOf('.'));
         outImage = outPdfName + "-%03d.png";
         cmpImage = "cmp_" + cmpPdfName + "-%03d.png";
     }

@@ -322,13 +322,10 @@ public class PdfStructureElement extends PdfDictionary implements IPdfStructureE
                 this.setAttribute(PdfName.HEIGHT, new PdfNumber(image.getHeight()));
             }
             PdfRectangle rect = new PdfRectangle(image, image.getRotation());
-            if (rect != null){
-                this.setAttribute(PdfName.BBOX, rect);
-            }
+            this.setAttribute(PdfName.BBOX, rect);
             if (image.getAlt() != null){
                 put(PdfName.ALT, new PdfString(image.getAlt()));
             }
-
         }
     }
 
