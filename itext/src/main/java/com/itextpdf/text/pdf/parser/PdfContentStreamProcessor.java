@@ -198,7 +198,7 @@ public class PdfContentStreamProcessor {
         registerContentOperator("T*", tstarOperator);
 
         ShowText tjOperator = new ShowText();
-        registerContentOperator("Tj", new ShowText());
+        registerContentOperator("Tj", tjOperator);
         MoveNextLineAndShowText tickOperator = new MoveNextLineAndShowText(tstarOperator, tjOperator);
         registerContentOperator("'", tickOperator);
         registerContentOperator("\"", new MoveNextLineAndShowTextWithSpacing(twOperator, tcOperator, tickOperator));
@@ -367,8 +367,7 @@ public class PdfContentStreamProcessor {
                 if ("BI".equals(operator.toString())){
                     // we don't call invokeOperator for embedded images - this is one area of the PDF spec that is particularly nasty and inconsistent
                     PdfDictionary colorSpaceDic = resources != null ? resources.getAsDict(PdfName.COLORSPACE) : null;
-                    ImageRenderInfo renderInfo = ImageRenderInfo.createForEmbeddedImage(gs().ctm, InlineImageUtils.parseInlineImage(ps, colorSpaceDic), colorSpaceDic);
-                    renderListener.renderImage(renderInfo);
+                    handleInlineImage(InlineImageUtils.parseInlineImage(ps, colorSpaceDic), colorSpaceDic);
                 } else {
                     invokeOperator(operator, operands);
                 }
@@ -382,7 +381,15 @@ public class PdfContentStreamProcessor {
 
     }
 
-
+    /**
+     * Callback when an inline image is found.  This requires special handling because inline images don't follow the standard operator syntax
+     * @param info the inline image
+     * @param colorSpaceDic the color space for the inline immage
+     */
+    protected void handleInlineImage(InlineImageInfo info, PdfDictionary colorSpaceDic){
+        ImageRenderInfo renderInfo = ImageRenderInfo.createForEmbeddedImage(gs().ctm, info, colorSpaceDic);
+        renderListener.renderImage(renderInfo);
+    }
 
     /**
      * A resource dictionary that allows stack-like behavior to support resource dictionary inheritance
