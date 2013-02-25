@@ -106,6 +106,9 @@ class PagedChannelRandomAccessSource extends GroupedRandomAccessSource implement
 	 */
 	private static RandomAccessSource[] buildSources(final FileChannel channel, final int bufferSize) throws IOException{
 		long size = channel.size();
+		if (size <= 0)
+			throw new IOException("File size must be greater than zero");
+		
 		int bufferCount = (int)(size/bufferSize) + (size % bufferSize == 0 ? 0 : 1);
 
 		MappedChannelRandomAccessSource[] sources = new MappedChannelRandomAccessSource[bufferCount];
