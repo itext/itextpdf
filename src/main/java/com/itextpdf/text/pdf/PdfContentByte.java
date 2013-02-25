@@ -2098,6 +2098,21 @@ public class PdfContentByte {
 
     /**
      * Concatenate a matrix to the current transformation matrix.
+     * 
+     * Common transformations:
+     * 
+     * <ul>
+     *   <li>Translation: [1 0 0 1 tx ty]</li>
+     *   <li>Scaling: [sx 0 0 sy 0 0] (if sx or sy is negative, it will flip the coordinate system)</li>
+     *   <li>Rotation: [cos(q) sin(q) -sin(q) cos(q) 0 0] where q is angle of counter-clockwise rotation (rotated around positive z-axis - use Right Hand Rule)
+     *     <ul>
+     *         <li>Rotate 90 degrees CCW: [0 1 -1 0 0 0]</li>
+     * 		   <li>Rotate 180 degrees: [-1 0 0 -1 0 0]</li>
+     *		   <li>Rotate 270 degrees: [0 -1 1 0 0 0]</li>
+     *   </li>
+     *   <li>Skew: [1 tan(a) tan(b) 1 0 0] where a is x-axis skew angle and b is y-axis skew angle</li>
+	 *</ul>
+     * 
      * @param a an element of the transformation matrix
      * @param b an element of the transformation matrix
      * @param c an element of the transformation matrix
