@@ -155,23 +155,34 @@ public class PdfReader implements PdfViewerPreferences {
 
     /**
      * Constructs a new PdfReader.  This is the master constructor.
+     * @param the source of bytes for the reader
+     * @param partialRead if true, the reader is opened in partial mode (PDF is parsed on demand), if false, the entire PDF is parsed into memory as the reader opens
+     * @param ownerPassword the password or null if no password is required
+     * @param certificate the certificate or null if no certificate is required
+     * @param certificateKey the key or null if no certificate key is required
+     * @param certificateKeyProvider the name of the key provider, or null if no key is required
+     * @param closeSourceOnConstructorError if true, the byteSource will be closed if there is an error during construction of this reader
      */
-    private PdfReader(RandomAccessSource byteSource, boolean partialRead, byte ownerPassword[], Certificate certificate, Key certificateKey, String certificateKeyProvider) throws IOException {
+    private PdfReader(RandomAccessSource byteSource, boolean partialRead, byte ownerPassword[], Certificate certificate, Key certificateKey, String certificateKeyProvider, boolean closeSourceOnConstructorError) throws IOException {
         this.certificate = certificate;
         this.certificateKey = certificateKey;
         this.certificateKeyProvider = certificateKeyProvider;
         this.password = ownerPassword;
         this.partial = partialRead;
-        try {
-        	tokens = getOffsetTokeniser(byteSource);
-        	if (partialRead){
-        		readPdfPartial();
-        	} else {
-        		readPdf();
-        	}
-        }
-        catch(IOException ioe) {
-        	byteSource.close();
+        
+        try{
+        
+	        tokens = getOffsetTokeniser(byteSource);
+	        
+	        if (partialRead){
+	        	readPdfPartial();
+	        } else {
+	        	readPdf();
+	        }
+        } catch (IOException e){
+        	if (closeSourceOnConstructorError)
+        		byteSource.close();
+        	throw e;
         }
     }
     
@@ -200,7 +211,8 @@ public class PdfReader implements PdfViewerPreferences {
     			ownerPassword,
     			null,
     			null,
-    			null
+    			null,
+    			true
         		
         );   	
     	
@@ -227,7 +239,8 @@ public class PdfReader implements PdfViewerPreferences {
     			ownerPassword,
     			null,
     			null,
-    			null
+    			null,
+    			true
         		
         );
 
@@ -251,7 +264,8 @@ public class PdfReader implements PdfViewerPreferences {
     			null,
     			certificate,
     			certificateKey,
-    			certificateKeyProvider
+    			certificateKeyProvider,
+    			true
         		
         );
 
@@ -282,7 +296,8 @@ public class PdfReader implements PdfViewerPreferences {
     			ownerPassword,
     			null,
     			null,
-    			null
+    			null,
+    			true
         		
         );
 
@@ -303,7 +318,8 @@ public class PdfReader implements PdfViewerPreferences {
     			ownerPassword,
     			null,
     			null,
-    			null
+    			null,
+    			false
         		
         );
     	
@@ -335,7 +351,8 @@ public class PdfReader implements PdfViewerPreferences {
     			ownerPassword,
     			null,
     			null,
-    			null
+    			null,
+    			false
         		
         );
     }
