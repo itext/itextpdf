@@ -162,13 +162,16 @@ public class PdfReader implements PdfViewerPreferences {
         this.certificateKeyProvider = certificateKeyProvider;
         this.password = ownerPassword;
         this.partial = partialRead;
-        
-        tokens = getOffsetTokeniser(byteSource);
-        
-        if (partialRead){
-        	readPdfPartial();
-        } else {
-        	readPdf();
+        try {
+        	tokens = getOffsetTokeniser(byteSource);
+        	if (partialRead){
+        		readPdfPartial();
+        	} else {
+        		readPdf();
+        	}
+        }
+        catch(IOException ioe) {
+        	byteSource.close();
         }
     }
     
@@ -628,29 +631,25 @@ public class PdfReader implements PdfViewerPreferences {
     }
 
     protected void readPdfPartial() throws IOException {
+        fileLength = tokens.getFile().length();
+        pdfVersion = tokens.checkPdfHeader();
         try {
-            fileLength = tokens.getFile().length();
-            pdfVersion = tokens.checkPdfHeader();
-            try {
-                readXref();
-            }
-            catch (Exception e) {
-                try {
-                    rebuilt = true;
-                    rebuildXref();
-                    lastXref = -1;
-                }
-                catch (Exception ne) {
-                    throw new InvalidPdfException(MessageLocalization.getComposedMessage("rebuild.failed.1.original.message.2", ne.getMessage(), e.getMessage()), ne);
-                }
-            }
-            readDocObjPartial();
-            readPages();
+            readXref();
         }
-        catch (IOException e) {
-            try{tokens.close();}catch(Exception ee){}
-            throw e;
-        }
+        catch (Exception e) {
+			try {
+				rebuilt = true;
+				rebuildXref();
+				lastXref = -1;
+			} catch (Exception ne) {
+				throw new InvalidPdfException(
+						MessageLocalization.getComposedMessage(
+								"rebuild.failed.1.original.message.2",
+								ne.getMessage(), e.getMessage()), ne);
+			}
+		}
+		readDocObjPartial();
+		readPages();
     }
 
     private boolean equalsArray(final byte ar1[], final byte ar2[], final int size) {
