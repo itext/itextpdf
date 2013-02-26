@@ -352,7 +352,18 @@ public final class InlineImageUtils {
                 found++;
                 accumulated.write(ch);
             } else if (found == 3 && PRTokeniser.isWhitespace(ch)){
-                return baos.toByteArray();
+            	byte[] tmp = baos.toByteArray();
+            	try {
+            		new PdfImageObject(imageDictionary, tmp, colorSpaceDic);
+            		return tmp;
+            	}
+            	catch(Exception e) {
+                    baos.write(accumulated.toByteArray());
+                    accumulated.reset();
+                    
+                    baos.write(ch);
+                    found = 0;
+            	}
             } else {
                 baos.write(accumulated.toByteArray());
                 accumulated.reset();
