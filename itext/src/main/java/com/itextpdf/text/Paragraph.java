@@ -237,6 +237,7 @@ public class Paragraph extends Phrase implements Indentable, Spaceable, IAccessi
         copy.id = id;
         if (accessibleAttributes != null)
             copy.accessibleAttributes = new HashMap<PdfName, PdfObject>(accessibleAttributes);
+        copy.setTabStops(getTabStops());
     	return copy;
     }
     

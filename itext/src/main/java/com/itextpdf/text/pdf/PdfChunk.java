@@ -87,7 +87,6 @@ public class PdfChunk {
         keysAttributes.add(Chunk.HSCALE);
         keysAttributes.add(Chunk.SEPARATOR);
         keysAttributes.add(Chunk.TAB);
-        keysAttributes.add(Chunk.TABSPACE);
         keysAttributes.add(Chunk.TABSTOPS);
         keysAttributes.add(Chunk.CHAR_SPACING);
         keysAttributes.add(Chunk.LINEHEIGHT);
@@ -274,6 +273,19 @@ public class PdfChunk {
         if (splitCharacter == null)
             splitCharacter = DefaultSplitCharacter.DEFAULT;
         accessibleElement = chunk;
+    }
+
+    /**
+     * Constructs a <CODE>PdfChunk</CODE>-object.
+     *
+     * @param chunk     the original <CODE>Chunk</CODE>-object
+     * @param action    the <CODE>PdfAction</CODE> if the <CODE>Chunk</CODE> comes from an <CODE>Anchor</CODE>
+     * @param tabStops  the Phrase tab stops
+     */
+    PdfChunk(Chunk chunk, PdfAction action, java.util.List<TabStop> tabStops) {
+        this(chunk, action);
+        if (tabStops != null && attributes.get(Chunk.TABSTOPS) == null)
+            attributes.put(Chunk.TABSTOPS, tabStops);
     }
 
     // methods
@@ -547,9 +559,6 @@ public class PdfChunk {
         if (isAttribute(Chunk.SEPARATOR)) {
         	return 0;
         }
-        if (isAttribute(Chunk.TABSPACE)) {
-            return 0;
-        }
         return font.width(value);
     }
 
@@ -704,19 +713,11 @@ public class PdfChunk {
     }
 
     /**
-     * Checks if this <CODE>PdfChunk</CODE> is a tab Chunk.
-     * @return	true if this chunk is a separator.
-     * @since	5.3.4
-     */
-    boolean isTabSpace() {
-        return isAttribute(Chunk.TABSPACE);
-    }
-
-    /**
      * Correction for the tab position based on the left starting position.
      * @param	newValue	the new value for the left X.
      * @since	2.1.2
      */
+    @Deprecated
     void adjustLeft(float newValue) {
     	Object[] o = (Object[])attributes.get(Chunk.TAB);
     	if (o != null) {
