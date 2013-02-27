@@ -247,6 +247,11 @@ public class Chunk implements Element, IAccessibleElement {
 	 * @since	2.1.2
 	 */
 	public static final String TAB = "TAB";
+    /**
+     * Key for tab stops of the tab.
+     * @since	5.4.1
+     */
+    public static final String TABSTOPS = "TABSTOPS";
 
 	/**
 	 * Creates a tab Chunk.
@@ -255,6 +260,7 @@ public class Chunk implements Element, IAccessibleElement {
 	 * @param	tabPosition	an X coordinate that will be used as start position for the next Chunk.
 	 * @since	2.1.2
 	 */
+    @Deprecated
 	public Chunk(final DrawInterface separator, final float tabPosition) {
 		this(separator, tabPosition, false);
 	}
@@ -267,6 +273,7 @@ public class Chunk implements Element, IAccessibleElement {
 	 * @param	newline		if true, a newline will be added if the tabPosition has already been reached.
 	 * @since	2.1.2
 	 */
+    @Deprecated
 	public Chunk(final DrawInterface separator, final float tabPosition, final boolean newline) {
 		this(OBJECT_REPLACEMENT_CHARACTER, new Font());
 		if (tabPosition < 0) {
@@ -275,6 +282,46 @@ public class Chunk implements Element, IAccessibleElement {
 		setAttribute(TAB, new Object[] {separator, new Float(tabPosition), Boolean.valueOf(newline), new Float(0)});
         this.role = null;
 	}
+
+    /**
+     * Creates a tab Chunk.
+     * 
+     * @param   tabInterval     an interval that will be used if tab stops are omitted.
+     * @param   isWhitespace    if true, the current tab is treated as white space.
+     * @param   tabStops        list of predefines tab stops.
+     * @since 5.4.1
+     */
+    public Chunk(final float tabInterval, final boolean isWhitespace, final List<TabStop> tabStops) {
+        this(OBJECT_REPLACEMENT_CHARACTER, new Font());
+        if (tabInterval < 0) {
+            throw new IllegalArgumentException(MessageLocalization.getComposedMessage("a.tab.position.may.not.be.lower.than.0.yours.is.1", String.valueOf(tabInterval)));
+        }
+        setAttribute(TAB, new Object[]{tabInterval, Boolean.valueOf(isWhitespace)});
+        setAttribute(TABSTOPS, tabStops);
+        setAttribute(SPLITCHARACTER, TabSplitCharacter.TAB);
+        this.role = null;
+    }
+
+    /**
+     * Creates a tab Chunk.
+     * 
+     * @param    tabInterval    an interval that will be used if tab stops are omitted.
+     * @param    isWhitespace    if true, the current tab is treated as white space.
+     * @since 5.4.1
+     */
+    public Chunk(final float tabInterval, final boolean isWhitespace) {
+        this(tabInterval, isWhitespace, null);
+    }
+
+    /**
+     * Creates a tab Chunk.
+     *
+     * @param    tabInterval    an interval that will be used if tab stops are omitted.
+     * @since 5.4.1
+     */
+    public Chunk(final float tabInterval) {
+        this(tabInterval, false, null);
+    }
 
 	/**
 	 * Constructs a chunk containing an <CODE>Image</CODE>.
@@ -957,23 +1004,20 @@ public class Chunk implements Element, IAccessibleElement {
         return attributes != null && attributes.containsKey(WHITESPACE);
     }
 
-    public static final String TABSPACE = "TABSPACE";
-    public static final String TABSTOPS = "TABSTOPS";
-
+    @Deprecated
     public static Chunk createTabspace() {
-        return createTabspace(60, null);
+        return createTabspace(60);
     }
 
-    public static Chunk createTabspace(float spacing, List<Float> tabStops)
-    {
-        Chunk tabspace = new Chunk(" ");
-        tabspace.setAttribute(TABSPACE, spacing);
-        tabspace.setAttribute(TABSTOPS, tabStops);
+    @Deprecated
+    public static Chunk createTabspace(float spacing) {
+        Chunk tabspace = new Chunk(spacing, true);
         return tabspace;
     }
 
+    @Deprecated
     public boolean isTabspace() {
-        return attributes != null && attributes.containsKey(TABSPACE);
+        return attributes != null && attributes.containsKey(TAB);
     }
 
     public PdfObject getAccessibleAttribute(final PdfName key) {

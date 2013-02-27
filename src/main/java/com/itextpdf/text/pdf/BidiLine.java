@@ -45,6 +45,7 @@ package com.itextpdf.text.pdf;
 
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Image;
+import com.itextpdf.text.TabStop;
 import com.itextpdf.text.Utilities;
 import com.itextpdf.text.pdf.draw.DrawInterface;
 import com.itextpdf.text.pdf.draw.LineSeparator;
@@ -350,7 +351,6 @@ public class BidiLine {
         PdfChunk ck = null;
         float charWidth = 0;
         PdfChunk lastValidChunk = null;
-        boolean splitChar = false;
         boolean surrogate = false;
         for (; currentChar < totalTextLength; ++currentChar) {
             ck = detailChunks[currentChar];
@@ -379,9 +379,6 @@ public class BidiLine {
                     charWidth = ck.getCharWidth(text[currentChar]);
                 }
             }
-            splitChar = ck.isExtSplitCharacter(oldCurrentChar, currentChar, totalTextLength, text, detailChunks);
-            if (splitChar && Character.isWhitespace((char)uniC))
-                lastSplit = currentChar;
             if (width - charWidth < 0) {
             	// If the chunk is an image and it is the first one in line, check if resize requested
             	// If so, resize to fit the current line width
@@ -396,32 +393,28 @@ public class BidiLine {
             		}
             	}
             }
-            if (width - charWidth < 0)
-                break;
-            if (splitChar)
-                lastSplit = currentChar;
-
-            if (!ck.isTabSpace()) {
-                width -= charWidth;
-            }
-        	lastValidChunk = ck;
             if (ck.isTab()) {
             	Object[] tab = (Object[])ck.getAttribute(Chunk.TAB);
-        		float tabPosition = ((Float)tab[1]).floatValue();
-        		boolean newLine = ((Boolean)tab[2]).booleanValue();
-        		if (newLine && tabPosition < originalWidth - width) {
-        			return new PdfLine(0, originalWidth, width, alignment, true, createArrayOfPdfChunks(oldCurrentChar, currentChar - 1), isRTL);
-        		}
-        		detailChunks[currentChar].adjustLeft(leftX);
+                float tabPosition;
+                if (ck.isAttribute(Chunk.TABSTOPS)) {
+                    boolean isWhitespace = (Boolean)tab[1];
+                    if (isWhitespace)
+                        lastSplit = currentChar;
+                    tabPosition = TabStop.computeTabPosition(originalWidth - width, (Float) tab[0], (List<TabStop>) ck.getAttribute(Chunk.TABSTOPS)).getPosition();
+
+                    if (tabPosition > originalWidth)  {
+                        break;
+                    }
+                } else {
+                    //Keep deprecated tab logic for backward compatibility...
+                    tabPosition = ((Float)tab[1]).floatValue();
+                    boolean newLine = ((Boolean)tab[2]).booleanValue();
+                    if (newLine && tabPosition < originalWidth - width) {
+                        return new PdfLine(0, originalWidth, width, alignment, true, createArrayOfPdfChunks(oldCurrentChar, currentChar - 1), isRTL);
+                    }
+                    detailChunks[currentChar].adjustLeft(leftX);
+                }
         		width = originalWidth - tabPosition;
-            } else if (ck.isTabSpace()) {
-                float tabPosition = Utilities.computeTabPosition(originalWidth - width, (Float) ck.getAttribute(Chunk.TABSPACE), (List<Float>) ck.getAttribute(Chunk.TABSTOPS));
-
-                if (tabPosition > originalWidth)
-                    return new PdfLine(0, originalWidth, width, alignment, true,
-                            createArrayOfPdfChunks(oldCurrentChar, currentChar - 1), isRTL);
-
-                width = originalWidth - tabPosition;
             }
             else if (ck.isSeparator()) {
                 Object[] sep = (Object[])ck.getAttribute(Chunk.SEPARATOR);
@@ -434,7 +427,17 @@ public class BidiLine {
                         width = 0;
                     }
                 }
+            } else {
+                boolean splitChar = ck.isExtSplitCharacter(oldCurrentChar, currentChar, totalTextLength, text, detailChunks);
+                if (splitChar && Character.isWhitespace((char)uniC))
+                    lastSplit = currentChar;
+                if (width - charWidth < 0)
+                    break;
+                width -= charWidth;
+                if (splitChar)
+                    lastSplit = currentChar;
             }
+            lastValidChunk = ck;
             if (surrogate)
                 ++currentChar;
         }
@@ -495,8 +498,11 @@ public class BidiLine {
         float width = 0;
         for (; startIdx <= lastIdx; ++startIdx) {
             boolean surrogate = Utilities.isSurrogatePair(text, startIdx);
-            if (detailChunks[startIdx].isTabSpace()){
-                width = Utilities.computeTabPosition(width, (Float)detailChunks[startIdx].getAttribute(Chunk.TABSPACE), (List<Float>)detailChunks[startIdx].getAttribute(Chunk.TABSTOPS));
+            if (detailChunks[startIdx].isTab()
+                    //Keep deprecated tab logic for backward compatibility...
+                    && detailChunks[startIdx].isAttribute(Chunk.TABSTOPS)){
+                Object[] tab = (Object[]) detailChunks[startIdx].getAttribute(Chunk.TAB);
+                width = TabStop.computeTabPosition(width, (Float)tab[0], (List<TabStop>)detailChunks[startIdx].getAttribute(Chunk.TABSTOPS)).getPosition();
             } else if (surrogate) {
                 width += detailChunks[startIdx].getCharWidth(Utilities.convertToUtf32(text, startIdx));
                 ++startIdx;
@@ -607,8 +613,17 @@ public class BidiLine {
         char c = 0;
         for (; idx >= startIdx; --idx) {
             c = (char)detailChunks[idx].getUnicodeEquivalent(text[idx]);
-            if (!isWS(c) && !PdfChunk.noPrint(c))
+            if (!isWS(c) && !PdfChunk.noPrint(c)) {
+                if (detailChunks[idx].isTab()
+                        //Keep deprecated tab logic for backward compatibility...
+                        && detailChunks[idx].isAttribute(Chunk.TABSTOPS)) {
+                    Object[] tab = (Object[])detailChunks[idx].getAttribute(Chunk.TAB);
+                    boolean isWhitespace = (Boolean)tab[1];
+                    if (isWhitespace)
+                        continue;
+                }
                 break;
+            }
         }
         return idx;
     }
@@ -618,8 +633,17 @@ public class BidiLine {
         char c = 0;
         for (; idx <= endIdx; ++idx) {
             c = (char)detailChunks[idx].getUnicodeEquivalent(text[idx]);
-            if (!isWS(c) && !PdfChunk.noPrint(c))
+            if (!isWS(c) && !PdfChunk.noPrint(c)) {
+                if (detailChunks[idx].isTab()
+                        //Keep deprecated tab logic for backward compatibility...
+                        && detailChunks[idx].isAttribute(Chunk.TABSTOPS)) {
+                    Object[] tab = (Object[])detailChunks[idx].getAttribute(Chunk.TAB);
+                    boolean isWhitespace = (Boolean)tab[1];
+                    if (isWhitespace)
+                        continue;
+                }
                 break;
+            }
         }
         return idx;
     }

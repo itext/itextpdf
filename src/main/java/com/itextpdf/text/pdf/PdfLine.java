@@ -151,23 +151,32 @@ public class PdfLine {
         newlineSplit = chunk.isNewlineSplit() || overflow == null;
         if (chunk.isTab()) {
         	Object[] tab = (Object[])chunk.getAttribute(Chunk.TAB);
-    		float tabPosition = ((Float)tab[1]).floatValue();
-    		boolean newline = ((Boolean)tab[2]).booleanValue();
-    		if (newline && tabPosition < originalWidth - width) {
-    		    return chunk;
-    		}
-    		width = originalWidth - tabPosition;
-    		chunk.adjustLeft(left);
-            addToLine(chunk);
-        }
-        else if (chunk.isTabSpace()) {
-            if (!line.isEmpty()) {
-                float tabPosition = Utilities.computeTabPosition(originalWidth - width, (Float)chunk.getAttribute(Chunk.TABSPACE), (List<Float>)chunk.getAttribute(Chunk.TABSTOPS));//((originalWidth - width) % module);
-                if (tabPosition > originalWidth)
+            float tabPosition;
+            if (chunk.isAttribute(Chunk.TABSTOPS))  {
+                boolean isWhiteSpace = (Boolean)tab[1];
+                if (!isWhiteSpace || !line.isEmpty()) {
+                    float tabInterval = (Float)tab[0];
+                    tabPosition = TabStop.computeTabPosition(originalWidth - width, tabInterval, (List<TabStop>)chunk.getAttribute(Chunk.TABSTOPS)).getPosition();
+                    if (tabPosition > originalWidth) {
+                        width = 0;
+                        if (isWhiteSpace)
+                            return null;
+                        else
+                            return chunk;
+                    }
+                } else
+                    return null;
+            } else {
+                //Keep deprecated tab logic for backward compatibility...
+                tabPosition = ((Float)tab[1]).floatValue();
+                boolean newline = ((Boolean)tab[2]).booleanValue();
+                if (newline && tabPosition < originalWidth - width) {
                     return chunk;
-                width = originalWidth - tabPosition;
-                addToLine(chunk);
+                }
+                chunk.adjustLeft(left);
             }
+    		width = originalWidth - tabPosition;
+            addToLine(chunk);
         }
         // if the length of the chunk > 0 we add it to the line
         else if (chunk.length() > 0 || chunk.isImage()) {
@@ -324,8 +333,6 @@ public class PdfLine {
     int numberOfSpaces() {
         int numberOfSpaces = 0;
         for (PdfChunk pdfChunk : line) {
-            if (pdfChunk.isTabSpace())
-                continue;
             String tmp = pdfChunk.toString();
             int length = tmp.length();
             for (int i = 0; i < length; i++) {
@@ -508,6 +515,9 @@ public class PdfLine {
         for (Object element : line) {
         	ck = (PdfChunk)element;
         	if (ck.isTab()) {
+                if (ck.isAttribute(Chunk.TABSTOPS))
+                    continue;
+                //It seems justification was forbidden in the deprecated tab logic!!!
         		return -1;
         	}
         	if (ck.isHorizontalSeparator()) {

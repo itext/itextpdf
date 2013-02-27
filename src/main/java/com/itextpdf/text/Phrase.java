@@ -47,8 +47,8 @@ import com.itextpdf.text.Font.FontFamily;
 import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.pdf.HyphenationEvent;
 
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.*;
+import java.util.List;
 
 /**
  * A <CODE>Phrase</CODE> is a series of <CODE>Chunk</CODE>s.
@@ -94,6 +94,12 @@ public class Phrase extends ArrayList<Element> implements TextElementArray {
      */
     protected HyphenationEvent hyphenation = null;
 
+    /**
+     * Predefined tab position and properties(alignment, leader and etc.);
+     * @since	5.4.1
+     */
+    protected java.util.List<TabStop> tabStops = null;
+
     // constructors
 
     /**
@@ -112,6 +118,7 @@ public class Phrase extends ArrayList<Element> implements TextElementArray {
         this.addAll(phrase);
         leading = phrase.getLeading();
         font = phrase.getFont();
+        tabStops = phrase.getTabStops();
         setHyphenation(phrase.getHyphenation());
     }
 
@@ -536,6 +543,24 @@ public class Phrase extends ArrayList<Element> implements TextElementArray {
 	public void setHyphenation(final HyphenationEvent hyphenation) {
 		this.hyphenation = hyphenation;
 	}
+
+    /**
+     * Getter for the tab stops settings.
+     * @return	a HyphenationEvent
+     * @since	5.4.1
+     */
+    public List<TabStop> getTabStops() {
+        return tabStops;
+    }
+
+    /**
+     * Setter for the tab stops.
+     * @param	tabStops	a list of TabStop-s
+     * @since	5.4.1
+     */
+    public void setTabStops(List<TabStop> tabStops) {
+        this.tabStops = tabStops;
+    }
 
     // kept for historical reasons; people should use FontSelector
     // eligible for deprecation, but the methods are mentioned in the book p277.

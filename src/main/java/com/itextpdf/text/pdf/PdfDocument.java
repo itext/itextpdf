@@ -371,6 +371,30 @@ public class PdfDocument extends Document {
     protected PdfAction anchorAction = null;
 
     /**
+     * The current tab stops.
+     * @return	the current
+     * @since 5.4.0
+     */
+    protected java.util.List<TabStop> tabStops;
+
+    /**
+     * Getter for the current tab stops.
+     * @since	5.4.0
+     */
+    public java.util.List<TabStop> getTabStops() {
+        return tabStops;
+    }
+
+    /**
+     * Setter for the current tab stops.
+     * @param	tabStops the current tab stops
+     * @since	5.4.0
+     */
+    public void setTabStops(java.util.List<TabStop> tabStops) {
+        this.tabStops = tabStops;
+    }
+
+    /**
      * Signals that an <CODE>Element</CODE> was added to the <CODE>Document</CODE>.
      *
      * @param element the element to add
@@ -426,7 +450,7 @@ public class PdfDocument extends Document {
                     }
 
                     // we cast the element to a chunk
-                    PdfChunk chunk = new PdfChunk((Chunk) element, anchorAction);
+                    PdfChunk chunk = new PdfChunk((Chunk) element, anchorAction, tabStops);
                     // we try to add the chunk to the line, until we succeed
                     {
                         PdfChunk overflow;
@@ -474,15 +498,22 @@ public class PdfDocument extends Document {
                 }
                 case Element.PHRASE: {
                 	leadingCount++;
+                    java.util.List<TabStop> backupTabStops = tabStops;
+                    if (((Phrase) element).getTabStops() != null)
+                        tabStops = ((Phrase) element).getTabStops();
                     // we cast the element to a phrase and set the leading of the document
                     leading = ((Phrase) element).getTotalLeading();
                     // we process the element
                     element.process(this);
+                    tabStops = backupTabStops;
                     leadingCount--;
                     break;
                 }
                 case Element.PARAGRAPH: {
                     leadingCount++;
+                    java.util.List<TabStop> backupTabStops = tabStops;
+                    if (((Phrase) element).getTabStops() != null)
+                        tabStops = ((Phrase) element).getTabStops();
                     // we cast the element to a paragraph
                     Paragraph paragraph = (Paragraph) element;
                     if (isTagged(writer)) {
@@ -538,6 +569,7 @@ public class PdfDocument extends Document {
                     indentation.indentLeft -= paragraph.getIndentationLeft();
                     indentation.indentRight -= paragraph.getIndentationRight();
                     carriageReturn();
+                    tabStops = backupTabStops;
                     leadingCount--;
                     if (isTagged(writer)) {
                         flushLines();
@@ -1395,10 +1427,19 @@ public class PdfDocument extends Document {
                     }
                     if (chunk.isTab()) {
                     	Object[] tab = (Object[])chunk.getAttribute(Chunk.TAB);
-                        DrawInterface di = (DrawInterface)tab[0];
-                        tabPosition = ((Float)tab[1]).floatValue() + ((Float)tab[3]).floatValue();
-                        if (tabPosition > xMarker) {
-                        	di.draw(graphics, xMarker, yMarker + descender, tabPosition, ascender - descender, yMarker);
+                        if (chunk.isAttribute(Chunk.TABSTOPS)) {
+                            float tabInterval = (Float)tab[0];
+                            TabStop tabStop = TabStop.computeTabPosition(xMarker - text.getXTLM(), tabInterval, (java.util.List<TabStop>)chunk.getAttribute(Chunk.TABSTOPS));
+                            tabPosition = tabStop.getPosition() + text.getXTLM();
+                            if (tabStop.getLeader() != null)
+                                tabStop.getLeader().draw(graphics, xMarker, yMarker + descender, tabPosition, ascender - descender, yMarker);
+                        } else {
+                            //Keep deprecated tab logic for backward compatibility...
+                            DrawInterface di = (DrawInterface)tab[0];
+                            tabPosition = ((Float)tab[1]).floatValue() + ((Float)tab[3]).floatValue();
+                            if (tabPosition > xMarker) {
+                                di.draw(graphics, xMarker, yMarker + descender, tabPosition, ascender - descender, yMarker);
+                            }
                         }
                         float tmp = xMarker;
                     	xMarker = tabPosition;
@@ -1574,8 +1615,8 @@ public class PdfDocument extends Document {
                         text.moveText(xMarker + lastBaseFactor + chunk.getImageWidth() - text.getXTLM(), 0);
                     }
                 }
-                if (!chunk.isTabSpace())
-                    xMarker += width;
+
+                xMarker += width;
                 ++chunkStrokeIdx;
             }
 
@@ -1622,14 +1663,6 @@ public class PdfDocument extends Document {
             	PdfTextArray array = new PdfTextArray();
             	array.add((tabPosition - xMarker) * 1000f / chunk.font.size() / hScale);
             	text.showText(array);
-            }
-            else if (chunk.isTabSpace())
-            {
-                float tabSpacePosition = Utilities.computeTabPosition(xMarker - text.getXTLM(), (Float)chunk.getAttribute(Chunk.TABSPACE), (java.util.List<Float>)chunk.getAttribute(Chunk.TABSTOPS));
-                PdfTextArray array = new PdfTextArray();
-                array.add((xMarker - tabSpacePosition - text.getXTLM()) * 1000f / chunk.font.size() / hScale);
-                xMarker = tabSpacePosition + text.getXTLM();
-                text.showText(array);
             }
             // If it is a CJK chunk or Unicode TTF we will have to simulate the
             // space adjustment.
