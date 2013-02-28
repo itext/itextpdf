@@ -397,9 +397,7 @@ public class BidiLine {
             	Object[] tab = (Object[])ck.getAttribute(Chunk.TAB);
                 float tabPosition;
                 if (ck.isAttribute(Chunk.TABSTOPS)) {
-                    boolean isWhitespace = (Boolean)tab[1];
-                    if (isWhitespace)
-                        lastSplit = currentChar;
+                    lastSplit = currentChar;
                     tabPosition = TabStop.computeTabPosition(originalWidth - width, (Float) tab[0], (List<TabStop>) ck.getAttribute(Chunk.TABSTOPS)).getPosition();
 
                     if (tabPosition > originalWidth)  {
