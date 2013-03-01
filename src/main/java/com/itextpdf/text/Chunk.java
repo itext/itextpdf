@@ -305,7 +305,7 @@ public class Chunk implements Element, IAccessibleElement {
     /**
      * Creates a tab Chunk.
      * 
-     * @param    tabInterval    an interval that will be used if tab stops are omitted.
+     * @param   tabInterval    an interval that will be used if tab stops are omitted.
      * @param   tabStops        list of predefined tab stops.
      * @since 5.4.1
      */
@@ -316,7 +316,18 @@ public class Chunk implements Element, IAccessibleElement {
     /**
      * Creates a tab Chunk.
      *
-     * @param    tabInterval    an interval that will be used if tab stops are omitted.
+     * @param   tabInterval    an interval that will be used if tab stops are omitted.
+     * @param   isWhitespace    if true, the current tab is treated as white space.
+     * @since 5.4.1
+     */
+    public Chunk(final float tabInterval,  final boolean isWhitespace) {
+        this(tabInterval, null, isWhitespace);
+    }
+
+    /**
+     * Creates a tab Chunk.
+     *
+     * @param   tabInterval    an interval that will be used if tab stops are omitted.
      * @since 5.4.1
      */
     public Chunk(final float tabInterval) {
