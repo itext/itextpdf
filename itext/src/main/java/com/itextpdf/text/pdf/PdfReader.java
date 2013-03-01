@@ -3785,6 +3785,18 @@ public class PdfReader implements PdfViewerPreferences {
             return null;
         return new PdfIndirectReference(0, cryptoRef.getNumber(), cryptoRef.getGeneration());
     }
+    
+    /**
+     * Checks if this PDF has usage rights enabled.
+     * 
+     * @return <code>true</code> if usage rights are present; <code>false</code> otherwise
+     */
+    public boolean hasUsageRights() {
+        PdfDictionary perms = catalog.getAsDict(PdfName.PERMS);
+        if (perms == null)
+            return false;
+        return perms.contains(PdfName.UR) || perms.contains(PdfName.UR3);
+    }
 
     /**
      * Removes any usage rights that this PDF may have. Only Adobe can grant usage rights
