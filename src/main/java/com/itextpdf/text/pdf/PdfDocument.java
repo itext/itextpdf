@@ -1608,6 +1608,7 @@ public class PdfDocument extends Document {
 					}
                     if (chunk.isImage()) {
                         Image image = chunk.getImage();
+                        width = chunk.getImageWidth();
                         float matrix[] = image.matrix(chunk.getImageScalePercentage());
                         matrix[Image.CX] = xMarker + chunk.getImageOffsetX() - matrix[Image.CX];
                         matrix[Image.CY] = yMarker + chunk.getImageOffsetY() - matrix[Image.CY];

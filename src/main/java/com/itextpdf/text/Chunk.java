@@ -287,11 +287,11 @@ public class Chunk implements Element, IAccessibleElement {
      * Creates a tab Chunk.
      * 
      * @param   tabInterval     an interval that will be used if tab stops are omitted.
+     * @param   tabStops        list of predefined tab stops.
      * @param   isWhitespace    if true, the current tab is treated as white space.
-     * @param   tabStops        list of predefines tab stops.
      * @since 5.4.1
      */
-    public Chunk(final float tabInterval, final boolean isWhitespace, final List<TabStop> tabStops) {
+    public Chunk(final float tabInterval, final List<TabStop> tabStops, final boolean isWhitespace) {
         this(OBJECT_REPLACEMENT_CHARACTER, new Font());
         if (tabInterval < 0) {
             throw new IllegalArgumentException(MessageLocalization.getComposedMessage("a.tab.position.may.not.be.lower.than.0.yours.is.1", String.valueOf(tabInterval)));
@@ -306,11 +306,11 @@ public class Chunk implements Element, IAccessibleElement {
      * Creates a tab Chunk.
      * 
      * @param    tabInterval    an interval that will be used if tab stops are omitted.
-     * @param    isWhitespace    if true, the current tab is treated as white space.
+     * @param   tabStops        list of predefined tab stops.
      * @since 5.4.1
      */
-    public Chunk(final float tabInterval, final boolean isWhitespace) {
-        this(tabInterval, isWhitespace, null);
+    public Chunk(final float tabInterval,  final List<TabStop> tabStops) {
+        this(tabInterval, tabStops, false);
     }
 
     /**
@@ -320,7 +320,7 @@ public class Chunk implements Element, IAccessibleElement {
      * @since 5.4.1
      */
     public Chunk(final float tabInterval) {
-        this(tabInterval, false, null);
+        this(tabInterval, null, false);
     }
 
 	/**
@@ -1011,7 +1011,7 @@ public class Chunk implements Element, IAccessibleElement {
 
     @Deprecated
     public static Chunk createTabspace(float spacing) {
-        Chunk tabspace = new Chunk(spacing, true);
+        Chunk tabspace = new Chunk(spacing, null, true);
         return tabspace;
     }
 
