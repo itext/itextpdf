@@ -264,7 +264,6 @@ public class PdfChunk {
             offsetY = ((Float)obj[2]).floatValue();
             changeLeading = ((Boolean)obj[3]).booleanValue();
         }
-        font.setImage(image);
         Float hs = (Float)attributes.get(Chunk.HSCALE);
         if (hs != null)
             font.setHorizontalScaling(hs.floatValue());
@@ -552,14 +551,29 @@ public class PdfChunk {
  */
 
     float width() {
+        return width(value);
+    }
+
+    float width(String str) {
         if (isAttribute(Chunk.CHAR_SPACING)) {
-        	Float cs = (Float) getAttribute(Chunk.CHAR_SPACING);
-            return font.width(value) + value.length() * cs.floatValue();
-		}
-        if (isAttribute(Chunk.SEPARATOR)) {
-        	return 0;
+            Float cs = (Float) getAttribute(Chunk.CHAR_SPACING);
+            return font.width(str) + str.length() * cs.floatValue();
         }
-        return font.width(value);
+        if (isAttribute(Chunk.SEPARATOR)) {
+            return 0;
+        }
+        if (isImage()) {
+            return getImageWidth();
+        }
+        return font.width(str);
+    }
+
+    float height() {
+        if (isImage()) {
+            return getImageHeight();
+        } else {
+            return font.size();
+        }
     }
 
 /**
@@ -903,6 +917,9 @@ public class PdfChunk {
         	Float cs = (Float) getAttribute(Chunk.CHAR_SPACING);
 			return font.width(c) + cs.floatValue() * font.getHorizontalScaling();
 		}
+        if (isImage()) {
+            return getImageWidth();
+        }
         return font.width(c);
     }
 

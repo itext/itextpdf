@@ -466,7 +466,7 @@ public class BidiLine {
                     if (pre.length() > 0) {
                         PdfChunk extra = new PdfChunk(pre, lastValidChunk);
                         currentChar = word[1] - post.length();
-                        return new PdfLine(0, originalWidth, testWidth - lastValidChunk.font().width(pre), alignment, false, createArrayOfPdfChunks(oldCurrentChar, word[0] - 1, extra), isRTL);
+                        return new PdfLine(0, originalWidth, testWidth - lastValidChunk.width(pre), alignment, false, createArrayOfPdfChunks(oldCurrentChar, word[0] - 1, extra), isRTL);
                     }
                 }
             }

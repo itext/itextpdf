@@ -1399,8 +1399,15 @@ public class PdfDocument extends Document {
             }
             BaseColor color = chunk.color();
             float fontSize = chunk.font().size();
-            float ascender = chunk.font().getFont().getFontDescriptor(BaseFont.ASCENT, fontSize);
-            float descender = chunk.font().getFont().getFontDescriptor(BaseFont.DESCENT, fontSize);
+            float ascender;
+            float descender;
+            if (chunk.isImage()) {
+                ascender = chunk.height();
+                descender = 0;
+            } else {
+                ascender = chunk.font().getFont().getFontDescriptor(BaseFont.ASCENT, fontSize);
+                descender = chunk.font().getFont().getFontDescriptor(BaseFont.DESCENT, fontSize);
+            }
             hScale = 1;
 
             if (chunkStrokeIdx <= lastChunkStroke) {
@@ -1621,7 +1628,7 @@ public class PdfDocument extends Document {
                 ++chunkStrokeIdx;
             }
 
-            if (chunk.font().compareTo(currentFont) != 0) {
+            if (!chunk.isImage() && chunk.font().compareTo(currentFont) != 0) {
                 currentFont = chunk.font();
                 text.setFontAndSize(currentFont.getFont(), currentFont.size());
             }
