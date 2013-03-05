@@ -909,7 +909,7 @@ public class ColumnText {
         if (!rectangularMode) {
         	float max = 0;
         	for (PdfChunk c : bidiLine.chunks) {
-        		max = Math.max(max, c.font.size());
+        		max = Math.max(max, c.height());
         	}
         	currentLeading = fixedLeading + max * multipliedLeading;
         }
