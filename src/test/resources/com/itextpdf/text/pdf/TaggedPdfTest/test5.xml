@@ -4,25 +4,25 @@
 
 
 <LI startIndent="13.34">
-<Lbl><Span>1.</Span>
+<Lbl startIndent="0"><Span>1.</Span>
 </Lbl>
 <LBody><Span>Quick brown fox jumped over a lazy dog. A very long line appears here because we need new
 line.</Span>
 </LBody>
 </LI>
 <LI startIndent="13.34">
-<Lbl><Span>2.</Span>
+<Lbl startIndent="0"><Span>2.</Span>
 </Lbl>
 <LBody><Figure bBox="[0, 0, 106, 61]" width="106" height="61"></Figure>
 </LBody>
 </LI>
 <LI startIndent="13.34">
-<Lbl>3.</Lbl>
+<Lbl startIndent="0">3.</Lbl>
 <LBody><Span>jumped over a lazy</Span>
 </LBody>
 </LI>
 <LI startIndent="13.34">
-<Lbl>4.</Lbl>
+<Lbl startIndent="0">4.</Lbl>
 <LBody><Figure bBox="[0, 0, 106, 61]" width="106" height="61"></Figure>
 </LBody>
 </LI>

@@ -326,6 +326,10 @@ public class PdfStructureElement extends PdfDictionary implements IPdfStructureE
             if (image.getAlt() != null){
                 put(PdfName.ALT, new PdfString(image.getAlt()));
             }
+            if (image.getBackgroundColor() != null){
+                BaseColor color = image.getBackgroundColor();
+                this.setAttribute(PdfName.BACKGROUNDCOLOR, new PdfArray(new float[] {color.getRed()/255f, color.getGreen()/255f, color.getBlue()/255f}) );
+            }
         }
     }
 
@@ -336,7 +340,7 @@ public class PdfStructureElement extends PdfDictionary implements IPdfStructureE
                 this.setAttribute(PdfName.SPACEBEFORE, new PdfNumber(paragraph.getSpacingBefore()));
             if (Float.compare(paragraph.getSpacingAfter(), 0f) != 0)
                 this.setAttribute(PdfName.SPACEAFTER, new PdfNumber(paragraph.getSpacingAfter()));
-           
+
             // Setting inheritable attributes
             IPdfStructureElement parent = (IPdfStructureElement) this.getParent(true);
             PdfObject obj = parent.getAttribute(PdfName.COLOR);
@@ -401,6 +405,25 @@ public class PdfStructureElement extends PdfDictionary implements IPdfStructureE
                             this.setAttribute(PdfName.LISTNUMBERING, PdfName.UPPERALPHA);
                     }
             }
+            PdfObject obj = parent.getAttribute(PdfName.STARTINDENT);
+            if (obj instanceof PdfNumber) {
+                float startIndent = ((PdfNumber) obj).floatValue();
+                if (Float.compare(startIndent, list.getIndentationLeft()) != 0)
+                    this.setAttribute(PdfName.STARTINDENT, new PdfNumber(list.getIndentationLeft()));
+            } else {
+                if (Math.abs(list.getIndentationLeft()) > Float.MIN_VALUE)
+                    this.setAttribute(PdfName.STARTINDENT, new PdfNumber(list.getIndentationLeft()));
+            }
+
+            obj = parent.getAttribute(PdfName.ENDINDENT);
+            if (obj instanceof PdfNumber) {
+                float endIndent = ((PdfNumber) obj).floatValue();
+                if (Float.compare(endIndent, list.getIndentationRight()) != 0)
+                    this.setAttribute(PdfName.ENDINDENT, new PdfNumber(list.getIndentationRight()));
+            } else {
+                if (Float.compare(list.getIndentationRight(), 0) != 0)
+                    this.setAttribute(PdfName.ENDINDENT, new PdfNumber(list.getIndentationRight()));
+            }
         }
     }
 
@@ -436,14 +459,29 @@ public class PdfStructureElement extends PdfDictionary implements IPdfStructureE
 
     private void writeAttributes(final ListLabel listLabel) {
         if (listLabel != null) {
-
+            PdfObject obj = parent.getAttribute(PdfName.STARTINDENT);
+            if (obj instanceof PdfNumber) {
+                float startIndent = ((PdfNumber) obj).floatValue();
+                if (Float.compare(startIndent, listLabel.getIndentation()) != 0)
+                    this.setAttribute(PdfName.STARTINDENT, new PdfNumber(listLabel.getIndentation()));
+            } else {
+                if (Math.abs(listLabel.getIndentation()) > Float.MIN_VALUE)
+                    this.setAttribute(PdfName.STARTINDENT, new PdfNumber(listLabel.getIndentation()));
+            }
         }
     }
 
     private void writeAttributes(final PdfPTable table) {
         if (table != null) {
+            // Setting non-inheritable attributes
+            if (Float.compare(table.getSpacingBefore(), 0f) != 0)
+                this.setAttribute(PdfName.SPACEBEFORE, new PdfNumber(table.getSpacingBefore()));
+
+            if (Float.compare(table.getSpacingAfter(), 0f) != 0)
+                this.setAttribute(PdfName.SPACEAFTER, new PdfNumber(table.getSpacingAfter()));
+
             if (table.getTotalHeight() > 0){
-                this.setAttribute(PdfName.HEIGHT, new PdfNumber(table.getTotalWidth()));
+                this.setAttribute(PdfName.HEIGHT, new PdfNumber(table.getTotalHeight()));
             }
             if (table.getTotalWidth() > 0){
                 this.setAttribute(PdfName.WIDTH, new PdfNumber(table.getTotalWidth()));
@@ -475,6 +513,19 @@ public class PdfStructureElement extends PdfDictionary implements IPdfStructureE
                 }
                 if (!headers.isEmpty())
                     this.setAttribute(PdfName.HEADERS, headers);
+            }
+
+            if (cell.getFixedHeight() > 0){
+                this.setAttribute(PdfName.HEIGHT, new PdfNumber(cell.getFixedHeight()));
+            }
+
+            if (cell.getWidth() > 0){
+                this.setAttribute(PdfName.WIDTH, new PdfNumber(cell.getWidth()));
+            }
+
+            if (cell.getBackgroundColor() != null){
+                BaseColor color = cell.getBackgroundColor();
+                this.setAttribute(PdfName.BACKGROUNDCOLOR, new PdfArray(new float[] {color.getRed()/255f, color.getGreen()/255f, color.getBlue()/255f}) );
             }
         }
     }
