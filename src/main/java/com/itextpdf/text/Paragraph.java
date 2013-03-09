@@ -47,7 +47,6 @@ import com.itextpdf.text.api.Indentable;
 import com.itextpdf.text.api.Spaceable;
 import com.itextpdf.text.pdf.*;
 import com.itextpdf.text.pdf.interfaces.IAccessibleElement;
-import com.itextpdf.text.pdf.interfaces.IPdfStructureElement;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -237,7 +236,7 @@ public class Paragraph extends Phrase implements Indentable, Spaceable, IAccessi
         copy.id = id;
         if (accessibleAttributes != null)
             copy.accessibleAttributes = new HashMap<PdfName, PdfObject>(accessibleAttributes);
-        copy.setTabStops(getTabStops());
+        copy.setTabSettings(getTabSettings());
     	return copy;
     }
     

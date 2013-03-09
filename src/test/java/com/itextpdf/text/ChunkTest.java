@@ -155,25 +155,29 @@ public class ChunkTest {
 
         p = new Paragraph(new Chunk("Hello world", f));
         addTabs(p, f, 0);
-        p.setTabStops(tabStopsList);
+        p.setTabSettings(new TabSettings(tabStopsList, 38));
         doc.add(p);
 
         p = new Paragraph(new Chunk("Hello World!!!"));
+        p.setTabSettings(new TabSettings(38));
         addTabs(p, f, 0);
         doc.add(p);
 
         f.setSize(16);
         p = new Paragraph(new Chunk("Hello world", f));
+        p.setTabSettings(new TabSettings(38));
         addTabs(p, f, 0);
         doc.add(p);
 
         f = FontFactory.getFont(FontFactory.TIMES_ROMAN, 12);
         p = new Paragraph(new Chunk("Hello world", f));
+        p.setTabSettings(new TabSettings(38));
         addTabs(p, f, 0);
         doc.add(p);
 
         f.setSize(20);
         p = new Paragraph(new Chunk("Hello world", f));
+        p.setTabSettings(new TabSettings(38));
         addTabs(p, f, 0);
         doc.add(p);
 
@@ -199,28 +203,32 @@ public class ChunkTest {
         tabStopsList.add(new TabStop(200, new LineSeparator()));
         tabStopsList.add(new TabStop(300, new DottedLineSeparator()));
         p = new Paragraph(new Chunk("Hello world", f));
-        p.setTabStops(tabStopsList);
+        p.setTabSettings(new TabSettings(tabStopsList, 38));
         addTabs(p, f, 0);
         ct.addElement(p);
-        p.setTabStops(null);
+        p.setTabSettings(new TabSettings(38));
         ct.addElement(p);
 
         p = new Paragraph(new Chunk("Hello World!!!"));
+        p.setTabSettings(new TabSettings(38));
         addTabs(p, f, 0);
         ct.addElement(p);
 
         f.setSize(16);
         p = new Paragraph(new Chunk("Hello world", f));
+        p.setTabSettings(new TabSettings(38));
         addTabs(p, f, 0);
         ct.addElement(p);
 
         f = FontFactory.getFont(FontFactory.TIMES_ROMAN, 12);
         p = new Paragraph(new Chunk("Hello world", f));
+        p.setTabSettings(new TabSettings(38));
         addTabs(p, f, 0);
         ct.addElement(p);
 
         f.setSize(20);
         p = new Paragraph(new Chunk("Hello world", f));
+        p.setTabSettings(new TabSettings(38));
         addTabs(p, f, 0);
         ct.addElement(p);
         ct.go();
@@ -253,14 +261,14 @@ public class ChunkTest {
         //tabStops.add(new TabStop(550, new DottedLineSeparator()));
 
         Paragraph oPara = new Paragraph("Hello World! ", oFont1);
-        oPara.setTabStops(tabStops);
+        oPara.setTabSettings(new TabSettings(tabStops));
         oPara.add(new Chunk("iText ® is a library that allows you to create and manipulate PDF documents.", oFont2));
         oPara.add(new Chunk("It enables developers looking to enhance web- and other applications with dynamic PDF docu", oFont3));
-        oPara.add(new Chunk(400));
+        oPara.add(Chunk.TABBING);
         oPara.add(new Chunk("ment generation and/or manipulation.", oFont3));
         oPara.add(new Chunk(oImg, 0, 0, true));
         //oPara.Add(new Chunk(new TestVerticalPositionMark()));
-        oPara.add(new Chunk(200));
+        oPara.add(Chunk.TABBING);
         oPara.add(new Chunk("Developers can use iText to:", oFont4));
 
         ColumnText.showTextAligned(canvas, Element.ALIGN_LEFT, new Phrase("|100"), 100, 500, 0);
@@ -292,7 +300,7 @@ public class ChunkTest {
 
     public void addTabs(Paragraph p, Font f, int count)
     {
-        p.add(new Chunk(38));
+        p.add(Chunk.TABBING);
         p.add(new Chunk("|", f));
         if (count == 17)
             return;

@@ -279,12 +279,12 @@ public class PdfChunk {
      *
      * @param chunk     the original <CODE>Chunk</CODE>-object
      * @param action    the <CODE>PdfAction</CODE> if the <CODE>Chunk</CODE> comes from an <CODE>Anchor</CODE>
-     * @param tabStops  the Phrase tab stops
+     * @param tabSettings  the Phrase tab settings
      */
-    PdfChunk(Chunk chunk, PdfAction action, java.util.List<TabStop> tabStops) {
+    PdfChunk(Chunk chunk, PdfAction action, TabSettings tabSettings) {
         this(chunk, action);
-        if (tabStops != null && attributes.get(Chunk.TABSTOPS) == null)
-            attributes.put(Chunk.TABSTOPS, tabStops);
+        if (tabSettings != null && attributes.get(Chunk.TABSTOPS) == null)
+            attributes.put(Chunk.TABSTOPS, tabSettings);
     }
 
     // methods

@@ -94,6 +94,10 @@ public class Chunk implements Element, IAccessibleElement {
 	static {
 		NEXTPAGE.setNewPage();
 	}
+    
+    public static final Chunk TABBING = new Chunk(Float.NaN, false);
+
+    public static final Chunk SPACETABBING = new Chunk(Float.NaN, true);
 
 	// member variables
 
@@ -285,56 +289,24 @@ public class Chunk implements Element, IAccessibleElement {
 
     /**
      * Creates a tab Chunk.
-     * 
+     *
      * @param   tabInterval     an interval that will be used if tab stops are omitted.
-     * @param   tabStops        list of predefined tab stops.
      * @param   isWhitespace    if true, the current tab is treated as white space.
      * @since 5.4.1
      */
-    public Chunk(final float tabInterval, final List<TabStop> tabStops, final boolean isWhitespace) {
+    private Chunk(final Float tabInterval, final boolean isWhitespace) {
         this(OBJECT_REPLACEMENT_CHARACTER, new Font());
         if (tabInterval < 0) {
             throw new IllegalArgumentException(MessageLocalization.getComposedMessage("a.tab.position.may.not.be.lower.than.0.yours.is.1", String.valueOf(tabInterval)));
         }
         setAttribute(TAB, new Object[]{tabInterval, Boolean.valueOf(isWhitespace)});
-        setAttribute(TABSTOPS, tabStops);
         setAttribute(SPLITCHARACTER, TabSplitCharacter.TAB);
+
+        setAttribute(TABSTOPS, null);
         this.role = null;
     }
 
     /**
-     * Creates a tab Chunk.
-     * 
-     * @param   tabInterval    an interval that will be used if tab stops are omitted.
-     * @param   tabStops        list of predefined tab stops.
-     * @since 5.4.1
-     */
-    public Chunk(final float tabInterval,  final List<TabStop> tabStops) {
-        this(tabInterval, tabStops, false);
-    }
-
-    /**
-     * Creates a tab Chunk.
-     *
-     * @param   tabInterval    an interval that will be used if tab stops are omitted.
-     * @param   isWhitespace    if true, the current tab is treated as white space.
-     * @since 5.4.1
-     */
-    public Chunk(final float tabInterval,  final boolean isWhitespace) {
-        this(tabInterval, null, isWhitespace);
-    }
-
-    /**
-     * Creates a tab Chunk.
-     *
-     * @param   tabInterval    an interval that will be used if tab stops are omitted.
-     * @since 5.4.1
-     */
-    public Chunk(final float tabInterval) {
-        this(tabInterval, null, false);
-    }
-
-	/**
 	 * Constructs a chunk containing an <CODE>Image</CODE>.
 	 *
 	 * @param image
@@ -1022,7 +994,7 @@ public class Chunk implements Element, IAccessibleElement {
 
     @Deprecated
     public static Chunk createTabspace(float spacing) {
-        Chunk tabspace = new Chunk(spacing, null, true);
+        Chunk tabspace = new Chunk(spacing, true);
         return tabspace;
     }
 

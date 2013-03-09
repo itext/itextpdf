@@ -50,25 +50,4 @@ public class TabStop {
     public void setLeader(DrawInterface leader) {
         this.leader = leader;
     }
-
-    public static TabStop computeTabPosition(float currentPosition, float tabInterval, java.util.List<TabStop> tabStops) {
-        TabStop tabStop = null;
-        if (tabStops != null) {
-            for (TabStop currentTabStop : tabStops) {
-                if (currentTabStop.getPosition() - currentPosition > 0.001) {
-                    tabStop = currentTabStop;
-                    break;
-                }
-            }
-        }
-
-        if (tabStop == null) {
-            currentPosition = (float)Math.round(currentPosition * 1000) / 1000;
-            tabInterval = (float)Math.round(tabInterval * 1000) / 1000;
-
-            tabStop = new TabStop(currentPosition + tabInterval - currentPosition % tabInterval);
-        }
-
-        return tabStop;
-    }
 }
