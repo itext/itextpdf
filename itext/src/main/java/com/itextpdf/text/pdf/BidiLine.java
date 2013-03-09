@@ -43,16 +43,12 @@
  */
 package com.itextpdf.text.pdf;
 
-import com.itextpdf.text.Chunk;
-import com.itextpdf.text.Image;
-import com.itextpdf.text.TabStop;
-import com.itextpdf.text.Utilities;
+import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.draw.DrawInterface;
 import com.itextpdf.text.pdf.draw.LineSeparator;
 import com.itextpdf.text.pdf.languages.ArabicLigaturizer;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /** Does all the line bidirectional processing with PdfChunk assembly.
  *
@@ -398,7 +394,7 @@ public class BidiLine {
                 float tabPosition;
                 if (ck.isAttribute(Chunk.TABSTOPS)) {
                     lastSplit = currentChar;
-                    tabPosition = TabStop.computeTabPosition(originalWidth - width, (Float) tab[0], (List<TabStop>) ck.getAttribute(Chunk.TABSTOPS)).getPosition();
+                    tabPosition = TabSettings.getNextTabPosition(originalWidth - width, (Float) tab[0], (TabSettings)ck.getAttribute(Chunk.TABSTOPS)).getPosition();
 
                     if (tabPosition > originalWidth)  {
                         break;
@@ -500,7 +496,7 @@ public class BidiLine {
                     //Keep deprecated tab logic for backward compatibility...
                     && detailChunks[startIdx].isAttribute(Chunk.TABSTOPS)){
                 Object[] tab = (Object[]) detailChunks[startIdx].getAttribute(Chunk.TAB);
-                width = TabStop.computeTabPosition(width, (Float)tab[0], (List<TabStop>)detailChunks[startIdx].getAttribute(Chunk.TABSTOPS)).getPosition();
+                width = TabSettings.getNextTabPosition(width, (Float)tab[0], (TabSettings)detailChunks[startIdx].getAttribute(Chunk.TABSTOPS)).getPosition();
             } else if (surrogate) {
                 width += detailChunks[startIdx].getCharWidth(Utilities.convertToUtf32(text, startIdx));
                 ++startIdx;

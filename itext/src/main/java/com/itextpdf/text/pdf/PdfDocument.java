@@ -371,27 +371,27 @@ public class PdfDocument extends Document {
     protected PdfAction anchorAction = null;
 
     /**
-     * The current tab stops.
+     * The current tab settings.
      * @return	the current
      * @since 5.4.0
      */
-    protected java.util.List<TabStop> tabStops;
+    protected TabSettings tabSettings;
 
     /**
      * Getter for the current tab stops.
      * @since	5.4.0
      */
-    public java.util.List<TabStop> getTabStops() {
-        return tabStops;
+    public TabSettings getTabSettings() {
+        return tabSettings;
     }
 
     /**
      * Setter for the current tab stops.
-     * @param	tabStops the current tab stops
+     * @param	tabSettings the current tab settings
      * @since	5.4.0
      */
-    public void setTabStops(java.util.List<TabStop> tabStops) {
-        this.tabStops = tabStops;
+    public void setTabSettings(TabSettings tabSettings) {
+        this.tabSettings = tabSettings;
     }
 
     /**
@@ -450,7 +450,7 @@ public class PdfDocument extends Document {
                     }
 
                     // we cast the element to a chunk
-                    PdfChunk chunk = new PdfChunk((Chunk) element, anchorAction, tabStops);
+                    PdfChunk chunk = new PdfChunk((Chunk) element, anchorAction, tabSettings);
                     // we try to add the chunk to the line, until we succeed
                     {
                         PdfChunk overflow;
@@ -498,22 +498,22 @@ public class PdfDocument extends Document {
                 }
                 case Element.PHRASE: {
                 	leadingCount++;
-                    java.util.List<TabStop> backupTabStops = tabStops;
-                    if (((Phrase) element).getTabStops() != null)
-                        tabStops = ((Phrase) element).getTabStops();
+                    TabSettings backupTabSettings = tabSettings;
+                    if (((Phrase) element).getTabSettings() != null)
+                        tabSettings = ((Phrase) element).getTabSettings();
                     // we cast the element to a phrase and set the leading of the document
                     leading = ((Phrase) element).getTotalLeading();
                     // we process the element
                     element.process(this);
-                    tabStops = backupTabStops;
+                    tabSettings = backupTabSettings;
                     leadingCount--;
                     break;
                 }
                 case Element.PARAGRAPH: {
                     leadingCount++;
-                    java.util.List<TabStop> backupTabStops = tabStops;
-                    if (((Phrase) element).getTabStops() != null)
-                        tabStops = ((Phrase) element).getTabStops();
+                    TabSettings backupTabSettings = tabSettings;
+                    if (((Phrase) element).getTabSettings() != null)
+                        tabSettings = ((Phrase) element).getTabSettings();
                     // we cast the element to a paragraph
                     Paragraph paragraph = (Paragraph) element;
                     if (isTagged(writer)) {
@@ -569,7 +569,7 @@ public class PdfDocument extends Document {
                     indentation.indentLeft -= paragraph.getIndentationLeft();
                     indentation.indentRight -= paragraph.getIndentationRight();
                     carriageReturn();
-                    tabStops = backupTabStops;
+                    tabSettings = backupTabSettings;
                     leadingCount--;
                     if (isTagged(writer)) {
                         flushLines();
@@ -1436,7 +1436,7 @@ public class PdfDocument extends Document {
                     	Object[] tab = (Object[])chunk.getAttribute(Chunk.TAB);
                         if (chunk.isAttribute(Chunk.TABSTOPS)) {
                             float tabInterval = (Float)tab[0];
-                            TabStop tabStop = TabStop.computeTabPosition(xMarker - baseXMarker, tabInterval, (java.util.List<TabStop>)chunk.getAttribute(Chunk.TABSTOPS));
+                            TabStop tabStop = TabSettings.getNextTabPosition(xMarker - baseXMarker, tabInterval, (TabSettings)chunk.getAttribute(Chunk.TABSTOPS));
                             tabPosition = tabStop.getPosition() + baseXMarker;
                             if (tabStop.getLeader() != null)
                                 tabStop.getLeader().draw(graphics, xMarker, yMarker + descender, tabPosition, ascender - descender, yMarker);

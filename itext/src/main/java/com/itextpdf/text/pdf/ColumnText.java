@@ -362,7 +362,7 @@ public class ColumnText {
         if (bidiLine == null && waitPhrase != null) {
             bidiLine = new BidiLine();
             for (Chunk c: waitPhrase.getChunks()) {
-                bidiLine.addChunk(new PdfChunk(c, null, waitPhrase.getTabStops()));
+                bidiLine.addChunk(new PdfChunk(c, null, waitPhrase.getTabSettings()));
             }
             waitPhrase = null;
         }
@@ -383,7 +383,7 @@ public class ColumnText {
             return;
         }
         for (Object element : phrase.getChunks()) {
-            bidiLine.addChunk(new PdfChunk((Chunk)element, null, phrase.getTabStops()));
+            bidiLine.addChunk(new PdfChunk((Chunk)element, null, phrase.getTabSettings()));
         }
     }
 

@@ -47,7 +47,6 @@ import com.itextpdf.text.*;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 
 /**
  * <CODE>PdfLine</CODE> defines an array with <CODE>PdfChunk</CODE>-objects
@@ -156,7 +155,7 @@ public class PdfLine {
                 boolean isWhiteSpace = (Boolean)tab[1];
                 if (!isWhiteSpace || !line.isEmpty()) {
                     float tabInterval = (Float)tab[0];
-                    tabPosition = TabStop.computeTabPosition(originalWidth - width, tabInterval, (List<TabStop>)chunk.getAttribute(Chunk.TABSTOPS)).getPosition();
+                    tabPosition = TabSettings.getNextTabPosition(originalWidth - width, tabInterval, (TabSettings)chunk.getAttribute(Chunk.TABSTOPS)).getPosition();
                     if (tabPosition > originalWidth) {
                         width = 0;
                         if (isWhiteSpace)

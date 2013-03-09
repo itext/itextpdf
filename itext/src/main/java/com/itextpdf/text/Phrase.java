@@ -98,7 +98,7 @@ public class Phrase extends ArrayList<Element> implements TextElementArray {
      * Predefined tab position and properties(alignment, leader and etc.);
      * @since	5.4.1
      */
-    protected java.util.List<TabStop> tabStops = null;
+    protected TabSettings tabSettings = null;
 
     // constructors
 
@@ -118,7 +118,7 @@ public class Phrase extends ArrayList<Element> implements TextElementArray {
         this.addAll(phrase);
         leading = phrase.getLeading();
         font = phrase.getFont();
-        tabStops = phrase.getTabStops();
+        tabSettings = phrase.getTabSettings();
         setHyphenation(phrase.getHyphenation());
     }
 
@@ -549,17 +549,17 @@ public class Phrase extends ArrayList<Element> implements TextElementArray {
      * @return	a HyphenationEvent
      * @since	5.4.1
      */
-    public List<TabStop> getTabStops() {
-        return tabStops;
+    public TabSettings getTabSettings() {
+        return tabSettings;
     }
 
     /**
      * Setter for the tab stops.
-     * @param	tabStops	a list of TabStop-s
+     * @param	tabSettings tab settings
      * @since	5.4.1
      */
-    public void setTabStops(List<TabStop> tabStops) {
-        this.tabStops = tabStops;
+    public void setTabSettings(TabSettings tabSettings) {
+        this.tabSettings = tabSettings;
     }
 
     // kept for historical reasons; people should use FontSelector
