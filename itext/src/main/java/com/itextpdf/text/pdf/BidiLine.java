@@ -392,9 +392,9 @@ public class BidiLine {
             if (ck.isTab()) {
             	Object[] tab = (Object[])ck.getAttribute(Chunk.TAB);
                 float tabPosition;
-                if (ck.isAttribute(Chunk.TABSTOPS)) {
+                if (ck.isAttribute(Chunk.TABSETTINGS)) {
                     lastSplit = currentChar;
-                    tabPosition = TabSettings.getNextTabPosition(originalWidth - width, (Float) tab[0], (TabSettings)ck.getAttribute(Chunk.TABSTOPS)).getPosition();
+                    tabPosition = TabSettings.getNextTabPosition(originalWidth - width, (Float) tab[0], (TabSettings)ck.getAttribute(Chunk.TABSETTINGS)).getPosition();
 
                     if (tabPosition > originalWidth)  {
                         break;
@@ -494,9 +494,9 @@ public class BidiLine {
             boolean surrogate = Utilities.isSurrogatePair(text, startIdx);
             if (detailChunks[startIdx].isTab()
                     //Keep deprecated tab logic for backward compatibility...
-                    && detailChunks[startIdx].isAttribute(Chunk.TABSTOPS)){
+                    && detailChunks[startIdx].isAttribute(Chunk.TABSETTINGS)){
                 Object[] tab = (Object[]) detailChunks[startIdx].getAttribute(Chunk.TAB);
-                width = TabSettings.getNextTabPosition(width, (Float)tab[0], (TabSettings)detailChunks[startIdx].getAttribute(Chunk.TABSTOPS)).getPosition();
+                width = TabSettings.getNextTabPosition(width, (Float) tab[0], (TabSettings) detailChunks[startIdx].getAttribute(Chunk.TABSETTINGS)).getPosition();
             } else if (surrogate) {
                 width += detailChunks[startIdx].getCharWidth(Utilities.convertToUtf32(text, startIdx));
                 ++startIdx;
@@ -610,7 +610,7 @@ public class BidiLine {
             if (!isWS(c) && !PdfChunk.noPrint(c)) {
                 if (detailChunks[idx].isTab()
                         //Keep deprecated tab logic for backward compatibility...
-                        && detailChunks[idx].isAttribute(Chunk.TABSTOPS)) {
+                        && detailChunks[idx].isAttribute(Chunk.TABSETTINGS)) {
                     Object[] tab = (Object[])detailChunks[idx].getAttribute(Chunk.TAB);
                     boolean isWhitespace = (Boolean)tab[1];
                     if (isWhitespace)
@@ -630,7 +630,7 @@ public class BidiLine {
             if (!isWS(c) && !PdfChunk.noPrint(c)) {
                 if (detailChunks[idx].isTab()
                         //Keep deprecated tab logic for backward compatibility...
-                        && detailChunks[idx].isAttribute(Chunk.TABSTOPS)) {
+                        && detailChunks[idx].isAttribute(Chunk.TABSETTINGS)) {
                     Object[] tab = (Object[])detailChunks[idx].getAttribute(Chunk.TAB);
                     boolean isWhitespace = (Boolean)tab[1];
                     if (isWhitespace)
