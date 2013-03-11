@@ -255,7 +255,7 @@ public class Chunk implements Element, IAccessibleElement {
      * Key for tab stops of the tab.
      * @since	5.4.1
      */
-    public static final String TABSTOPS = "TABSTOPS";
+    public static final String TABSETTINGS = "TABSETTINGS";
 
 	/**
 	 * Creates a tab Chunk.
@@ -302,7 +302,7 @@ public class Chunk implements Element, IAccessibleElement {
         setAttribute(TAB, new Object[]{tabInterval, Boolean.valueOf(isWhitespace)});
         setAttribute(SPLITCHARACTER, TabSplitCharacter.TAB);
 
-        setAttribute(TABSTOPS, null);
+        setAttribute(TABSETTINGS, null);
         this.role = null;
     }
 

@@ -87,7 +87,7 @@ public class PdfChunk {
         keysAttributes.add(Chunk.HSCALE);
         keysAttributes.add(Chunk.SEPARATOR);
         keysAttributes.add(Chunk.TAB);
-        keysAttributes.add(Chunk.TABSTOPS);
+        keysAttributes.add(Chunk.TABSETTINGS);
         keysAttributes.add(Chunk.CHAR_SPACING);
         keysAttributes.add(Chunk.LINEHEIGHT);
         keysNoStroke.add(Chunk.SUBSUPSCRIPT);
@@ -283,8 +283,8 @@ public class PdfChunk {
      */
     PdfChunk(Chunk chunk, PdfAction action, TabSettings tabSettings) {
         this(chunk, action);
-        if (tabSettings != null && attributes.get(Chunk.TABSTOPS) == null)
-            attributes.put(Chunk.TABSTOPS, tabSettings);
+        if (tabSettings != null && attributes.get(Chunk.TABSETTINGS) == null)
+            attributes.put(Chunk.TABSETTINGS, tabSettings);
     }
 
     // methods

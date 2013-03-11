@@ -1434,9 +1434,9 @@ public class PdfDocument extends Document {
                     }
                     if (chunk.isTab()) {
                     	Object[] tab = (Object[])chunk.getAttribute(Chunk.TAB);
-                        if (chunk.isAttribute(Chunk.TABSTOPS)) {
+                        if (chunk.isAttribute(Chunk.TABSETTINGS)) {
                             float tabInterval = (Float)tab[0];
-                            TabStop tabStop = TabSettings.getNextTabPosition(xMarker - baseXMarker, tabInterval, (TabSettings)chunk.getAttribute(Chunk.TABSTOPS));
+                            TabStop tabStop = TabSettings.getNextTabPosition(xMarker - baseXMarker, tabInterval, (TabSettings)chunk.getAttribute(Chunk.TABSETTINGS));
                             tabPosition = tabStop.getPosition() + baseXMarker;
                             if (tabStop.getLeader() != null)
                                 tabStop.getLeader().draw(graphics, xMarker, yMarker + descender, tabPosition, ascender - descender, yMarker);

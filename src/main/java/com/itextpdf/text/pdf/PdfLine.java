@@ -151,11 +151,11 @@ public class PdfLine {
         if (chunk.isTab()) {
         	Object[] tab = (Object[])chunk.getAttribute(Chunk.TAB);
             float tabPosition;
-            if (chunk.isAttribute(Chunk.TABSTOPS))  {
+            if (chunk.isAttribute(Chunk.TABSETTINGS))  {
                 boolean isWhiteSpace = (Boolean)tab[1];
                 if (!isWhiteSpace || !line.isEmpty()) {
                     float tabInterval = (Float)tab[0];
-                    tabPosition = TabSettings.getNextTabPosition(originalWidth - width, tabInterval, (TabSettings)chunk.getAttribute(Chunk.TABSTOPS)).getPosition();
+                    tabPosition = TabSettings.getNextTabPosition(originalWidth - width, tabInterval, (TabSettings) chunk.getAttribute(Chunk.TABSETTINGS)).getPosition();
                     if (tabPosition > originalWidth) {
                         width = 0;
                         if (isWhiteSpace)
@@ -514,7 +514,7 @@ public class PdfLine {
         for (Object element : line) {
         	ck = (PdfChunk)element;
         	if (ck.isTab()) {
-                if (ck.isAttribute(Chunk.TABSTOPS))
+                if (ck.isAttribute(Chunk.TABSETTINGS))
                     continue;
                 //It seems justification was forbidden in the deprecated tab logic!!!
         		return -1;
