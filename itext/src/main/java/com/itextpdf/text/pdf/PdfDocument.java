@@ -1609,6 +1609,12 @@ public class PdfDocument extends Document {
                             hScale = hs.floatValue();
                         text.setTextMatrix(hScale, b, c, 1, xMarker, yMarker);
                     }
+                    if (!isJustified) {
+                    	if (chunk.isAttribute(Chunk.WORD_SPACING)) {
+                        	Float ws = (Float) chunk.getAttribute(Chunk.WORD_SPACING);
+        					text.setWordSpacing(ws.floatValue());
+        				}
+                    }
                     if (chunk.isAttribute(Chunk.CHAR_SPACING)) {
                     	Float cs = (Float) chunk.getAttribute(Chunk.CHAR_SPACING);
 						text.setCharacterSpacing(cs.floatValue());
@@ -1723,6 +1729,9 @@ public class PdfDocument extends Document {
             }
             if (chunk.isAttribute(Chunk.CHAR_SPACING)) {
 				text.setCharacterSpacing(baseCharacterSpacing);
+            }
+            if (chunk.isAttribute(Chunk.WORD_SPACING)) {
+				text.setWordSpacing(baseWordSpacing);
             }
             if (isTagged(writer) && chunk.accessibleElement != null) {
                 text.closeMCBlock(chunk.accessibleElement);
