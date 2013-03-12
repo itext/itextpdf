@@ -603,7 +603,7 @@ public class PdfChunk {
         int idx = -1;
         while ((idx = value.indexOf(' ', idx + 1)) >= 0)
             ++numberOfSpaces;
-        return width() + value.length() * charSpacing + numberOfSpaces * wordSpacing;
+        return font.width(value) + value.length() * charSpacing + numberOfSpaces * wordSpacing;
     }
 
     /**
