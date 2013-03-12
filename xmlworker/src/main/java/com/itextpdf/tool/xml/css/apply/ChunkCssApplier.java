@@ -51,6 +51,7 @@ import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.css.CSS;
 import com.itextpdf.tool.xml.css.CssUtils;
 import com.itextpdf.tool.xml.css.FontSizeTranslator;
+import com.itextpdf.tool.xml.html.HTML;
 
 import java.util.Arrays;
 import java.util.List;
@@ -130,6 +131,9 @@ public class ChunkCssApplier {
             if (CSS.Value.LINE_THROUGH.equalsIgnoreCase(value)) {
                 c.setUnderline(0.75f, size / 4f);
             }
+        }
+        if (t.getName() != null && t.getName().equals(HTML.Tag.U)) {
+            c.setUnderline(0.75f, -size / 8f);
         }
         if (null != rules.get(CSS.Property.BACKGROUND_COLOR)) {
             c.setBackground(HtmlUtilities.decodeColor(rules.get(CSS.Property.BACKGROUND_COLOR)));
