@@ -89,6 +89,7 @@ public class PdfChunk {
         keysAttributes.add(Chunk.TAB);
         keysAttributes.add(Chunk.TABSETTINGS);
         keysAttributes.add(Chunk.CHAR_SPACING);
+        keysAttributes.add(Chunk.WORD_SPACING);
         keysAttributes.add(Chunk.LINEHEIGHT);
         keysNoStroke.add(Chunk.SUBSUPSCRIPT);
         keysNoStroke.add(Chunk.SPLITCHARACTER);
@@ -555,17 +556,28 @@ public class PdfChunk {
     }
 
     float width(String str) {
-        if (isAttribute(Chunk.CHAR_SPACING)) {
-            Float cs = (Float) getAttribute(Chunk.CHAR_SPACING);
-            return font.width(str) + str.length() * cs.floatValue();
-        }
         if (isAttribute(Chunk.SEPARATOR)) {
             return 0;
         }
         if (isImage()) {
             return getImageWidth();
         }
-        return font.width(str);
+
+        float width = font.width(str);
+    	
+        if (isAttribute(Chunk.CHAR_SPACING)) {
+            Float cs = (Float) getAttribute(Chunk.CHAR_SPACING);
+            width += str.length() * cs.floatValue();
+        }
+        if (isAttribute(Chunk.WORD_SPACING)) {
+            int numberOfSpaces = 0;
+            int idx = -1;
+            while ((idx = str.indexOf(' ', idx + 1)) >= 0)
+                ++numberOfSpaces;
+        	Float ws = (Float) getAttribute(Chunk.WORD_SPACING);
+            width += numberOfSpaces * ws;
+		}
+        return width;
     }
 
     float height() {

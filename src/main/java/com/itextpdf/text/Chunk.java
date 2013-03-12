@@ -965,6 +965,34 @@ public class Chunk implements Element, IAccessibleElement {
 		return 0.0f;
 	}
 
+	/**
+	 *  Key for word spacing.
+	 */
+	public static final String WORD_SPACING = "WORD_SPACING";
+
+	/**
+	 * Sets the word spacing.
+	 *
+	 * @param wordSpace the word spacing value
+	 * @return this <CODE>Chunk</CODE>
+	 */	
+	public Chunk setWordSpacing(final float wordSpace) {
+		return setAttribute(WORD_SPACING, new Float(wordSpace));
+	}
+	
+	/**
+	 * Gets the word spacing.
+	 *
+	 * @return a value in float
+	 */	
+	public float getWordSpacing() {
+		if (attributes != null && attributes.containsKey(WORD_SPACING)) {
+			Float f = (Float) attributes.get(WORD_SPACING);
+			return f.floatValue();
+		}
+		return 0.0f;		
+	}
+
     public static final String WHITESPACE = "WHITESPACE";
 
     public static Chunk createWhitespace(final String content) {
