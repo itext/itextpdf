@@ -256,8 +256,9 @@ public class Chunk implements Element, IAccessibleElement {
      * @since	5.4.1
      */
     public static final String TABSETTINGS = "TABSETTINGS";
+    private String contentWithNoTabs = null;
 
-	/**
+    /**
 	 * Creates a tab Chunk.
      * Note that separator chunks can't be used in combination with tab chunks!
 	 * @param	separator	the drawInterface to use to draw the tab.
@@ -404,7 +405,9 @@ public class Chunk implements Element, IAccessibleElement {
 	 * @return a <CODE>String</CODE>
 	 */
 	public String getContent() {
-		return content.toString().replaceAll("\t", "");
+        if (contentWithNoTabs == null)
+		    contentWithNoTabs = content.toString().replaceAll("\t", "");
+        return contentWithNoTabs;
 	}
 
 	/**
