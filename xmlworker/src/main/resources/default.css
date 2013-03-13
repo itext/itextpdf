@@ -109,25 +109,6 @@ th {
     padding: 1px;
     vertical-align: inherit;
 }
-b, strong {
-    font-weight: bold;
-}
-i, cite, em, var, dfn, address {
-    font-style: italic;
-}
-u, ins {
-    text-decoration: underline;
-}
-s, strike, del {
-    text-decoration: line-through;
-}
-
-big {
-    font-size: larger;
-}
-small {
-    font-size: smaller;
-}
 sub {
     font-size: smaller;
     vertical-align: sub;

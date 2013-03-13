@@ -132,9 +132,6 @@ public class ChunkCssApplier {
                 c.setUnderline(0.75f, size / 4f);
             }
         }
-        if (t.getName() != null && t.getName().equals(HTML.Tag.U)) {
-            c.setUnderline(0.75f, -size / 8f);
-        }
         if (null != rules.get(CSS.Property.BACKGROUND_COLOR)) {
             c.setBackground(HtmlUtilities.decodeColor(rules.get(CSS.Property.BACKGROUND_COLOR)));
         }

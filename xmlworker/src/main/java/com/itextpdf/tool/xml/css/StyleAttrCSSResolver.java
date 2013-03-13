@@ -201,6 +201,48 @@ public class StyleAttrCSSResolver implements CSSResolver {
 				css.putAll(t.getParent().getCSS());
 			}
 		}
+
+        if (t.getName() != null) {
+            if(t.getName().equals(HTML.Tag.I) || t.getName().equals(HTML.Tag.CITE)
+                    || t.getName().equals(HTML.Tag.EM) || t.getName().equals(HTML.Tag.VAR)
+                    || t.getName().equals(HTML.Tag.DFN) || t.getName().equals(HTML.Tag.ADDRESS)) {
+                css.put(CSS.Property.FONT_STYLE, CSS.Value.ITALIC);
+            }
+            else if (t.getName().equals(HTML.Tag.B) || t.getName().equals(HTML.Tag.STRONG)) {
+                css.put(CSS.Property.FONT_WEIGHT, CSS.Value.BOLD);
+            }
+            else if (t.getName().equals(HTML.Tag.U) || t.getName().equals(HTML.Tag.INS)) {
+                css.put(CSS.Property.TEXT_DECORATION, CSS.Value.UNDERLINE);
+            }
+            else if (t.getName().equals(HTML.Tag.S) || t.getName().equals(HTML.Tag.STRIKE)
+                    || t.getName().equals(HTML.Tag.DEL)) {
+                css.put(CSS.Property.TEXT_DECORATION, CSS.Value.LINE_THROUGH);
+            }
+            else if (t.getName().equals(HTML.Tag.BIG)){
+                css.put(CSS.Property.FONT_SIZE, CSS.Value.LARGER);
+            }
+            else if (t.getName().equals(HTML.Tag.SMALL)){
+                css.put(CSS.Property.FONT_SIZE, CSS.Value.SMALLER);
+            }
+            else if (t.getName().equals(HTML.Tag.FONT)) {
+                String font_family = t.getAttributes().get(HTML.Attribute.FACE);
+                if (font_family != null) css.put(CSS.Property.FONT_FAMILY, font_family);
+                String color = t.getAttributes().get(HTML.Attribute.COLOR);
+                if (color != null) css.put(CSS.Property.COLOR, color);
+                String size = t.getAttributes().get(HTML.Attribute.SIZE);
+                if (size != null) {
+                    if(size.equals("1"))        css.put(CSS.Property.FONT_SIZE, CSS.Value.XX_SMALL);
+                    else if(size.equals("2"))   css.put(CSS.Property.FONT_SIZE, CSS.Value.X_SMALL);
+                    else if(size.equals("3"))   css.put(CSS.Property.FONT_SIZE, CSS.Value.SMALL);
+                    else if(size.equals("4"))   css.put(CSS.Property.FONT_SIZE, CSS.Value.MEDIUM);
+                    else if(size.equals("5"))   css.put(CSS.Property.FONT_SIZE, CSS.Value.LARGE);
+                    else if(size.equals("6"))   css.put(CSS.Property.FONT_SIZE, CSS.Value.X_LARGE);
+                    else if(size.equals("7"))   css.put(CSS.Property.FONT_SIZE, CSS.Value.XX_LARGE);
+
+                }
+            }
+        }
+
 		// overwrite properties (if value != inherit)
 		for (Entry<String, String> e : tagCss.entrySet()) {
 			if (!CSS.Value.INHERIT.equalsIgnoreCase(e.getValue())) {
