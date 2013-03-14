@@ -204,7 +204,7 @@ public abstract class Image extends Rectangle implements Indentable, Spaceable, 
 
     protected PdfName role = PdfName.FIGURE;
     protected HashMap<PdfName, PdfObject> accessibleAttributes = null;
-    protected UUID id = UUID.randomUUID();
+    private UUID id = null;
 
 
 	// image from file or URL
@@ -700,7 +700,7 @@ public abstract class Image extends Rectangle implements Indentable, Spaceable, 
         this.role = image.role;
         if (image.accessibleAttributes != null)
             this.accessibleAttributes = new HashMap<PdfName, PdfObject>(image.accessibleAttributes);
-        this.id = image.id;
+        setId(image.getId());
 	}
 
 	/**
@@ -1852,6 +1852,8 @@ public abstract class Image extends Rectangle implements Indentable, Spaceable, 
     }
 
     public UUID getId() {
+        if (id == null)
+            id = UUID.randomUUID();
         return id;
     }
 

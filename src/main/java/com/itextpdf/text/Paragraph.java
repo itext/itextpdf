@@ -109,7 +109,7 @@ public class Paragraph extends Phrase implements Indentable, Spaceable, IAccessi
 
     protected PdfName role = PdfName.P;
     protected HashMap<PdfName, PdfObject> accessibleAttributes = null;
-    protected UUID id = UUID.randomUUID();
+    private UUID id = null;
 
     // constructors
 
@@ -210,7 +210,7 @@ public class Paragraph extends Phrase implements Indentable, Spaceable, IAccessi
         	setSpacingBefore(p.getSpacingBefore());
         	setExtraParagraphSpace(p.getExtraParagraphSpace());
             setRole(p.role);
-            id = p.id;
+            id = p.getId();
             if (p.accessibleAttributes != null)
                 accessibleAttributes = new HashMap<PdfName, PdfObject>(p.accessibleAttributes);
         }
@@ -233,7 +233,7 @@ public class Paragraph extends Phrase implements Indentable, Spaceable, IAccessi
     		copy.setSpacingBefore(getSpacingBefore());
     	copy.setExtraParagraphSpace(getExtraParagraphSpace());
         copy.setRole(role);
-        copy.id = id;
+        copy.id = getId();
         if (accessibleAttributes != null)
             copy.accessibleAttributes = new HashMap<PdfName, PdfObject>(accessibleAttributes);
         copy.setTabSettings(getTabSettings());
@@ -582,6 +582,8 @@ public class Paragraph extends Phrase implements Indentable, Spaceable, IAccessi
     }
 
     public UUID getId() {
+        if (id == null)
+            id = UUID.randomUUID();
         return id;
     }
 

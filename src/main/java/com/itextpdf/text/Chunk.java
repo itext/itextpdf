@@ -112,7 +112,7 @@ public class Chunk implements Element, IAccessibleElement {
 
     protected PdfName role = null;
     protected HashMap<PdfName, PdfObject> accessibleAttributes = null;
-    protected UUID id = UUID.randomUUID();
+    private UUID id = null;
 
 	// constructors
 
@@ -143,7 +143,7 @@ public class Chunk implements Element, IAccessibleElement {
         if (ck.accessibleAttributes != null) {
             accessibleAttributes = new HashMap<PdfName, PdfObject>(ck.accessibleAttributes);
         }
-        id = ck.id;
+        id = ck.getId();
     }
 
 	/**
@@ -1075,6 +1075,8 @@ public class Chunk implements Element, IAccessibleElement {
     }
 
     public UUID getId() {
+        if (id == null)
+            id = UUID.randomUUID();
         return id;
     }
 
