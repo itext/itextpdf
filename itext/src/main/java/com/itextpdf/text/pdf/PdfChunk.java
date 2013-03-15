@@ -71,6 +71,7 @@ public class PdfChunk {
 
 /** The allowed attributes in variable <CODE>noStroke</CODE>. */
     private static final HashSet<String> keysNoStroke = new HashSet<String>();
+    private static final String TABSTOP = "TABSTOP";
 
     static {
         keysAttributes.add(Chunk.ACTION);
@@ -749,6 +750,28 @@ public class PdfChunk {
     	if (o != null) {
     		attributes.put(Chunk.TAB, new Object[]{o[0], o[1], o[2], new Float(newValue)});
     	}
+    }
+
+    static TabStop getTabStop(PdfChunk tab, float tabPosition) {
+        TabStop tabStop = null;
+        Object[] o = (Object[])tab.attributes.get(Chunk.TAB);
+        if (o != null) {
+            Float tabInterval = (Float) o[0];
+            if (Float.isNaN(tabInterval)) {
+                tabStop = TabSettings.getTabStopNewInstance(tabPosition, (TabSettings) tab.attributes.get(Chunk.TABSETTINGS));
+            } else {
+                tabStop = TabStop.newInstance(tabPosition, tabInterval);
+            }
+        }
+        return tabStop;
+    }
+
+    TabStop getTabStop() {
+        return (TabStop)attributes.get(TABSTOP);
+    }
+    
+    void setTabStop(TabStop tabStop) {
+        attributes.put(TABSTOP, tabStop);
     }
 
 /**

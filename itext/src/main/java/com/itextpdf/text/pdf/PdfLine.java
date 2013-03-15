@@ -87,6 +87,10 @@ public class PdfLine {
     protected boolean isRTL = false;
 
     protected ListItem listItem = null;
+    
+    protected TabStop tabStop = null;
+    
+    protected float tabPosition = Float.NaN;
 
     // constructors
 
@@ -150,31 +154,38 @@ public class PdfLine {
         newlineSplit = chunk.isNewlineSplit() || overflow == null;
         if (chunk.isTab()) {
         	Object[] tab = (Object[])chunk.getAttribute(Chunk.TAB);
-            float tabPosition;
             if (chunk.isAttribute(Chunk.TABSETTINGS))  {
                 boolean isWhiteSpace = (Boolean)tab[1];
                 if (!isWhiteSpace || !line.isEmpty()) {
-                    float tabInterval = (Float)tab[0];
-                    tabPosition = TabSettings.getNextTabPosition(originalWidth - width, tabInterval, (TabSettings) chunk.getAttribute(Chunk.TABSETTINGS)).getPosition();
-                    if (tabPosition > originalWidth) {
+                    flush();
+                    tabStop = PdfChunk.getTabStop(chunk, originalWidth - width);
+                    if (tabStop.getPosition() > originalWidth) {
                         width = 0;
                         if (isWhiteSpace)
                             return null;
                         else
                             return chunk;
                     }
+                    tabStop.setPosition(tabStop.getPosition());
+                    chunk.setTabStop(tabStop);
+                    if (tabStop.getAlignment() == TabStop.Alignment.LEFT) {
+                        width = originalWidth - tabStop.getPosition();
+                        tabStop = null;
+                        tabPosition = Float.NaN;
+                    } else
+                        tabPosition = originalWidth - width;
                 } else
                     return null;
             } else {
                 //Keep deprecated tab logic for backward compatibility...
-                tabPosition = ((Float)tab[1]).floatValue();
+                Float tabStopPosition = ((Float)tab[1]).floatValue();
                 boolean newline = ((Boolean)tab[2]).booleanValue();
                 if (newline && tabPosition < originalWidth - width) {
                     return chunk;
                 }
                 chunk.adjustLeft(left);
+                width = originalWidth - tabStopPosition;
             }
-    		width = originalWidth - tabPosition;
             addToLine(chunk);
         }
         // if the length of the chunk > 0 we add it to the line
@@ -579,5 +590,18 @@ public class PdfLine {
             }
         }
         return descender;
+    }
+
+    public void flush() {
+        if (tabStop != null) {
+            float textWidth = originalWidth - width - tabPosition;
+            float tabStopPosition = tabStop.getPosition(tabPosition, textWidth);
+            width = originalWidth - tabStopPosition - textWidth;
+            if (width < 0)
+                tabStopPosition += width;
+            tabStop.setPosition(tabStopPosition);
+            tabStop = null;
+            tabPosition = Float.NaN;
+        }
     }
 }
