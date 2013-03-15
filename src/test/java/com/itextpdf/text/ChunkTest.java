@@ -148,14 +148,14 @@ public class ChunkTest {
         Paragraph p;
         java.util.List<TabStop> tabStopsList = new ArrayList<TabStop>();
         tabStopsList.add(new TabStop(100, new DottedLineSeparator()));
-        tabStopsList.add(new TabStop(200, new LineSeparator()));
-        tabStopsList.add(new TabStop(300, new DottedLineSeparator()));
+        tabStopsList.add(new TabStop(200, new LineSeparator(), TabStop.Alignment.CENTER));
+        tabStopsList.add(new TabStop(300, new DottedLineSeparator(), TabStop.Alignment.RIGHT));
         writer.setCompressionLevel(0);
         doc.open();
 
         p = new Paragraph(new Chunk("Hello world", f));
-        addTabs(p, f, 0);
-        p.setTabSettings(new TabSettings(tabStopsList, 38));
+        addTabs(p, f, 0, "la|la");
+        p.setTabSettings(new TabSettings(tabStopsList, 50));
         doc.add(p);
 
         p = new Paragraph(new Chunk("Hello World!!!"));
@@ -184,7 +184,6 @@ public class ChunkTest {
         doc.close();
         fs.close();
         Assert.assertTrue(compareInnerText(SOURCE13, OUTTABD));
-
     }
 
     @Test
@@ -200,11 +199,11 @@ public class ChunkTest {
         ct.setSimpleColumn(36, 36, 436, 800);
         java.util.List<TabStop> tabStopsList = new ArrayList<TabStop>();
         tabStopsList.add(new TabStop(100, new DottedLineSeparator()));
-        tabStopsList.add(new TabStop(200, new LineSeparator()));
-        tabStopsList.add(new TabStop(300, new DottedLineSeparator()));
+        tabStopsList.add(new TabStop(200, new LineSeparator(), TabStop.Alignment.CENTER));
+        tabStopsList.add(new TabStop(300, new DottedLineSeparator(), TabStop.Alignment.RIGHT));
         p = new Paragraph(new Chunk("Hello world", f));
-        p.setTabSettings(new TabSettings(tabStopsList, 38));
-        addTabs(p, f, 0);
+        p.setTabSettings(new TabSettings(tabStopsList, 50));
+        addTabs(p, f, 0, "la|la");
         ct.addElement(p);
         p.setTabSettings(new TabSettings(38));
         ct.addElement(p);
@@ -296,6 +295,16 @@ public class ChunkTest {
             return;
         else
             addTabspaces(p, f, count + 1);
+    }
+
+    public void addTabs(Paragraph p, Font f, int count, String text)
+    {
+        p.add(Chunk.TABBING);
+        p.add(new Chunk(text, f));
+        if (count == 17)
+            return;
+        else
+            addTabs(p, f, count + 1, text);
     }
 
     public void addTabs(Paragraph p, Font f, int count)

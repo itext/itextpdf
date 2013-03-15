@@ -347,6 +347,8 @@ public class BidiLine {
         PdfChunk ck = null;
         float charWidth = 0;
         PdfChunk lastValidChunk = null;
+        TabStop tabStop = null;
+        float tabPosition = Float.NaN;
         boolean surrogate = false;
         for (; currentChar < totalTextLength; ++currentChar) {
             ck = detailChunks[currentChar];
@@ -390,25 +392,42 @@ public class BidiLine {
             	}
             }
             if (ck.isTab()) {
-            	Object[] tab = (Object[])ck.getAttribute(Chunk.TAB);
-                float tabPosition;
                 if (ck.isAttribute(Chunk.TABSETTINGS)) {
                     lastSplit = currentChar;
-                    tabPosition = TabSettings.getNextTabPosition(originalWidth - width, (Float) tab[0], (TabSettings)ck.getAttribute(Chunk.TABSETTINGS)).getPosition();
+                    if (tabStop != null) {
+                        float tabStopPosition = tabStop.getPosition(tabPosition, originalWidth - width - tabPosition);
+                        width = originalWidth - (tabStopPosition + (originalWidth - width - tabPosition));
+                        if (width < 0) {
+                            tabStopPosition += width;
+                            width = 0;
+                        }
+                        tabStop.setPosition(tabStopPosition);
+                    }
 
-                    if (tabPosition > originalWidth)  {
+                    tabStop = PdfChunk.getTabStop(ck, originalWidth - width);
+                    if (tabStop.getPosition() > originalWidth) {
+                        tabStop = null;
                         break;
                     }
+                    ck.setTabStop(tabStop);
+                    if (tabStop.getAlignment() == TabStop.Alignment.LEFT) {
+                        width = originalWidth - tabStop.getPosition();
+                        tabStop = null;
+                        tabPosition = Float.NaN;
+                    } else {
+                        tabPosition = originalWidth - width;
+                    }
                 } else {
+                    Object[] tab = (Object[])ck.getAttribute(Chunk.TAB);
                     //Keep deprecated tab logic for backward compatibility...
-                    tabPosition = ((Float)tab[1]).floatValue();
+                    float tabStopPosition = ((Float)tab[1]).floatValue();
                     boolean newLine = ((Boolean)tab[2]).booleanValue();
-                    if (newLine && tabPosition < originalWidth - width) {
+                    if (newLine && tabStopPosition < originalWidth - width) {
                         return new PdfLine(0, originalWidth, width, alignment, true, createArrayOfPdfChunks(oldCurrentChar, currentChar - 1), isRTL);
                     }
                     detailChunks[currentChar].adjustLeft(leftX);
+                    width = originalWidth - tabStopPosition;
                 }
-        		width = originalWidth - tabPosition;
             }
             else if (ck.isSeparator()) {
                 Object[] sep = (Object[])ck.getAttribute(Chunk.SEPARATOR);
@@ -442,6 +461,17 @@ public class BidiLine {
                 ++currentChar;
             return new PdfLine(0, originalWidth, 0, alignment, false, createArrayOfPdfChunks(currentChar - 1, currentChar - 1), isRTL);
         }
+
+        if (tabStop != null) {
+            float tabStopPosition = tabStop.getPosition(tabPosition, originalWidth - width - tabPosition);
+            width = originalWidth - (tabStopPosition + (originalWidth - width - tabPosition));
+            if (width < 0) {
+                tabStopPosition += width;
+                width = 0;
+            }
+            tabStop.setPosition(tabStopPosition);
+        }
+
         if (currentChar >= totalTextLength) {
             // there was more line than text
             return new PdfLine(0, originalWidth, width, alignment, true, createArrayOfPdfChunks(oldCurrentChar, totalTextLength - 1), isRTL);
@@ -490,13 +520,26 @@ public class BidiLine {
         char c = 0;
         PdfChunk ck = null;
         float width = 0;
+        TabStop lastTabStop = null;
+        float lastTabPosition = 0;
         for (; startIdx <= lastIdx; ++startIdx) {
             boolean surrogate = Utilities.isSurrogatePair(text, startIdx);
             if (detailChunks[startIdx].isTab()
                     //Keep deprecated tab logic for backward compatibility...
-                    && detailChunks[startIdx].isAttribute(Chunk.TABSETTINGS)){
-                Object[] tab = (Object[]) detailChunks[startIdx].getAttribute(Chunk.TAB);
-                width = TabSettings.getNextTabPosition(width, (Float) tab[0], (TabSettings) detailChunks[startIdx].getAttribute(Chunk.TABSETTINGS)).getPosition();
+                    && detailChunks[startIdx].isAttribute(Chunk.TABSETTINGS)) {
+                if (lastTabStop != null) {
+                    float tabStopPosition = lastTabStop.getPosition(lastTabPosition, width - lastTabPosition);
+                    width = tabStopPosition + (width - lastTabPosition);
+                    lastTabStop.setPosition(tabStopPosition);
+                }
+                TabStop tabStop = detailChunks[startIdx].getTabStop();
+                if (tabStop == null) {
+                    tabStop = lastTabStop = PdfChunk.getTabStop(detailChunks[startIdx], width);
+                    lastTabPosition = width;
+                } else {
+                    lastTabStop = null;
+                }
+                width = tabStop.getPosition();
             } else if (surrogate) {
                 width += detailChunks[startIdx].getCharWidth(Utilities.convertToUtf32(text, startIdx));
                 ++startIdx;
@@ -508,6 +551,11 @@ public class BidiLine {
                     continue;
                 width += detailChunks[startIdx].getCharWidth(c);
             }
+        }
+        if (lastTabStop != null) {
+            float tabStopPosition = lastTabStop.getPosition(lastTabPosition, width - lastTabPosition);
+            width = tabStopPosition + (width - lastTabPosition);
+            lastTabStop.setPosition(tabStopPosition);
         }
         return width;
     }

@@ -1281,7 +1281,7 @@ public class PdfDocument extends Document {
             float moveTextX = l.indentLeft() - indentLeft() + indentation.indentLeft + indentation.listIndentLeft + indentation.sectionIndentLeft;
             text.moveText(moveTextX, -l.height());
             // is the line preceded by a symbol?
-
+            l.flush();
 
             if (l.listSymbol() != null) {
                 ListLabel lbl = null;
@@ -1433,15 +1433,18 @@ public class PdfDocument extends Document {
                         }
                     }
                     if (chunk.isTab()) {
-                    	Object[] tab = (Object[])chunk.getAttribute(Chunk.TAB);
                         if (chunk.isAttribute(Chunk.TABSETTINGS)) {
-                            float tabInterval = (Float)tab[0];
-                            TabStop tabStop = TabSettings.getNextTabPosition(xMarker - baseXMarker, tabInterval, (TabSettings)chunk.getAttribute(Chunk.TABSETTINGS));
-                            tabPosition = tabStop.getPosition() + baseXMarker;
-                            if (tabStop.getLeader() != null)
-                                tabStop.getLeader().draw(graphics, xMarker, yMarker + descender, tabPosition, ascender - descender, yMarker);
+                            TabStop tabStop = chunk.getTabStop();
+                            if (tabStop != null) {
+                                tabPosition = tabStop.getPosition() + baseXMarker;
+                                if (tabStop.getLeader() != null)
+                                    tabStop.getLeader().draw(graphics, xMarker, yMarker + descender, tabPosition, ascender - descender, yMarker);
+                            } else {
+                                tabPosition = xMarker;
+                            }
                         } else {
                             //Keep deprecated tab logic for backward compatibility...
+                            Object[] tab = (Object[])chunk.getAttribute(Chunk.TAB);
                             DrawInterface di = (DrawInterface)tab[0];
                             tabPosition = ((Float)tab[1]).floatValue() + ((Float)tab[3]).floatValue();
                             if (tabPosition > xMarker) {
@@ -1673,7 +1676,7 @@ public class PdfDocument extends Document {
             	array.add(-glueWidth * 1000f / chunk.font.size() / hScale);
             	text.showText(array);
             }
-            else if (chunk.isTab()) {
+            else if (chunk.isTab() && tabPosition != xMarker) {
             	PdfTextArray array = new PdfTextArray();
             	array.add((tabPosition - xMarker) * 1000f / chunk.font.size() / hScale);
             	text.showText(array);
