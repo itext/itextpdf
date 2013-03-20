@@ -240,7 +240,11 @@ public class StyleAttrCSSResolver implements CSSResolver {
                     else if(size.equals("7"))   css.put(CSS.Property.FONT_SIZE, CSS.Value.XX_LARGE);
 
                 }
+            } else if (t.getName().equals(HTML.Tag.A)) {
+                css.put(CSS.Property.TEXT_DECORATION, CSS.Value.UNDERLINE);
+                css.put(CSS.Property.COLOR, "blue");
             }
+
         }
 
 		// overwrite properties (if value != inherit)
