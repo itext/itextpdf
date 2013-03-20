@@ -89,6 +89,8 @@ public class PdfLine {
     protected ListItem listItem = null;
     
     protected TabStop tabStop = null;
+
+    protected float tabStopAnchorPosition = Float.NaN;
     
     protected float tabPosition = Float.NaN;
 
@@ -158,6 +160,7 @@ public class PdfLine {
                 boolean isWhiteSpace = (Boolean)tab[1];
                 if (!isWhiteSpace || !line.isEmpty()) {
                     flush();
+                    tabStopAnchorPosition = Float.NaN;
                     tabStop = PdfChunk.getTabStop(chunk, originalWidth - width);
                     if (tabStop.getPosition() > originalWidth) {
                         width = 0;
@@ -230,6 +233,14 @@ public class PdfLine {
         		f = chunk.getLeading();
         	}
         	if (f > height) height = f;
+        }
+        if (tabStop != null && tabStop.getAlignment() == TabStop.Alignment.ANCHOR && Float.isNaN(tabStopAnchorPosition)) {
+            String value = chunk.toString();
+            int anchorIndex = value.indexOf(tabStop.getAnchorChar());
+            if (anchorIndex != -1) {
+                float subWidth = chunk.width(value.substring(anchorIndex, value.length()));
+                tabStopAnchorPosition = originalWidth - width - subWidth;
+            }
         }
     	line.add(chunk);
     }
@@ -595,7 +606,7 @@ public class PdfLine {
     public void flush() {
         if (tabStop != null) {
             float textWidth = originalWidth - width - tabPosition;
-            float tabStopPosition = tabStop.getPosition(tabPosition, textWidth);
+            float tabStopPosition = tabStop.getPosition(tabPosition, originalWidth - width, tabStopAnchorPosition);
             width = originalWidth - tabStopPosition - textWidth;
             if (width < 0)
                 tabStopPosition += width;
