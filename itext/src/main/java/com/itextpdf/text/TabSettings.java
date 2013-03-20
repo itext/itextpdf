@@ -51,7 +51,7 @@ public class TabSettings {
         if (tabStops != null) {
             for (TabStop currentTabStop : tabStops) {
                 if (currentTabStop.getPosition() - currentPosition > 0.001) {
-                    tabStop = new TabStop(currentTabStop.getPosition(), currentTabStop.getLeader(), currentTabStop.getAlignment());
+                    tabStop = new TabStop(currentTabStop);
                     break;
                 }
             }

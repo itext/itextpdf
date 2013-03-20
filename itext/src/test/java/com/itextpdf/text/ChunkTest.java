@@ -158,15 +158,28 @@ public class ChunkTest {
         p.setTabSettings(new TabSettings(tabStopsList, 50));
         doc.add(p);
 
+        tabStopsList = new ArrayList<TabStop>();
+        tabStopsList.add(new TabStop(100, new DottedLineSeparator()));
+        tabStopsList.add(new TabStop(200, new LineSeparator(), TabStop.Alignment.ANCHOR));
+        tabStopsList.add(new TabStop(300, new DottedLineSeparator(), TabStop.Alignment.ANCHOR));
         p = new Paragraph(new Chunk("Hello World!!!"));
-        p.setTabSettings(new TabSettings(38));
-        addTabs(p, f, 0);
+        p.setTabSettings(new TabSettings(tabStopsList, 50));
+        addTabs(p, f, 12, "l.aal");
+        addTabs(p, f, 12, "laa.l");
+        addTabs(p, f, 12, "la.al");
         doc.add(p);
 
         f.setSize(16);
+        tabStopsList = new ArrayList<TabStop>();
+        tabStopsList.add(new TabStop(100, new DottedLineSeparator()));
+        tabStopsList.add(new TabStop(200, new LineSeparator(), TabStop.Alignment.ANCHOR, ','));
+        tabStopsList.add(new TabStop(300, new DottedLineSeparator(), TabStop.Alignment.ANCHOR));
         p = new Paragraph(new Chunk("Hello world", f));
-        p.setTabSettings(new TabSettings(38));
-        addTabs(p, f, 0);
+        p.setTabSettings(new TabSettings(tabStopsList, 50));
+        addTabs(p, f, 13, "l.aal");
+        addTabs(p, f, 11, "l,aal");
+        addTabs(p, f, 11, "laa.l");
+        addTabs(p, f, 11, "laa,l");
         doc.add(p);
 
         f = FontFactory.getFont(FontFactory.TIMES_ROMAN, 12);
@@ -205,18 +218,29 @@ public class ChunkTest {
         p.setTabSettings(new TabSettings(tabStopsList, 50));
         addTabs(p, f, 0, "la|la");
         ct.addElement(p);
-        p.setTabSettings(new TabSettings(38));
-        ct.addElement(p);
 
+        tabStopsList = new ArrayList<TabStop>();
+        tabStopsList.add(new TabStop(100, new DottedLineSeparator()));
+        tabStopsList.add(new TabStop(200, new LineSeparator(), TabStop.Alignment.ANCHOR));
+        tabStopsList.add(new TabStop(300, new DottedLineSeparator(), TabStop.Alignment.ANCHOR));
         p = new Paragraph(new Chunk("Hello World!!!"));
-        p.setTabSettings(new TabSettings(38));
-        addTabs(p, f, 0);
+        p.setTabSettings(new TabSettings(tabStopsList, 50));
+        addTabs(p, f, 12, "l.aal");
+        addTabs(p, f, 12, "laa.l");
+        addTabs(p, f, 12, "la.al");
         ct.addElement(p);
 
         f.setSize(16);
         p = new Paragraph(new Chunk("Hello world", f));
-        p.setTabSettings(new TabSettings(38));
-        addTabs(p, f, 0);
+        tabStopsList = new ArrayList<TabStop>();
+        tabStopsList.add(new TabStop(100, new DottedLineSeparator()));
+        tabStopsList.add(new TabStop(200, new LineSeparator(), TabStop.Alignment.ANCHOR, ','));
+        tabStopsList.add(new TabStop(300, new DottedLineSeparator(), TabStop.Alignment.ANCHOR));
+        p.setTabSettings(new TabSettings(tabStopsList, 50));
+        addTabs(p, f, 15, "l.aal");
+        addTabs(p, f, 13, "laa,l");
+        addTabs(p, f, 13, "laa.l");
+        addTabs(p, f, 13, "l,aal");
         ct.addElement(p);
 
         f = FontFactory.getFont(FontFactory.TIMES_ROMAN, 12);

@@ -22,9 +22,10 @@ public class TabStop {
     protected float position;
     protected Alignment alignment = Alignment.LEFT;
     protected DrawInterface leader;
+    protected char anchorChar = '.';
 
     public TabStop(float position) {
-        this(position, null, Alignment.LEFT);
+        this(position, Alignment.LEFT);
     }
 
     public TabStop(float position, DrawInterface leader) {
@@ -35,10 +36,23 @@ public class TabStop {
         this(position, null, alignment);
     }
 
+    public TabStop(float position, Alignment alignment, char anchorChar) {
+        this(position, null, alignment, anchorChar);
+    }
+
     public TabStop(float position, DrawInterface leader, Alignment alignment) {
+        this(position, leader, alignment, '.');
+    }
+
+    public TabStop(float position, DrawInterface leader, Alignment alignment, char anchorChar) {
         this.position = position;
         this.leader = leader;
         this.alignment = alignment;
+        this.anchorChar = anchorChar;
+    }
+
+    public TabStop(TabStop tabStop) {
+        this(tabStop.getPosition(), tabStop.getLeader(), tabStop.getAlignment(), tabStop.getAnchorChar());
     }
 
     public float getPosition() {
@@ -65,11 +79,20 @@ public class TabStop {
         this.leader = leader;
     }
 
-    public float getPosition(float tabPosition, float textWidth) {
+    public char getAnchorChar() {
+        return anchorChar;
+    }
+
+    public void setAnchorChar(char anchorChar) {
+        this.anchorChar = anchorChar;
+    }
+
+    public float getPosition(float tabPosition, float currentPosition, float anchorPosition) {
         float newPosition = position;
+        float textWidth = currentPosition - tabPosition;
         switch (alignment) {
             case RIGHT:
-                if (tabPosition + textWidth < position ) {
+                if (tabPosition + textWidth < position) {
                     newPosition = position - textWidth;
                 } else {
                     newPosition = tabPosition;
@@ -80,6 +103,21 @@ public class TabStop {
                     newPosition = position - textWidth / 2f;
                 } else {
                     newPosition = tabPosition;
+                }
+                break;
+            case ANCHOR:
+                if (!Float.isNaN(anchorPosition)) {
+                    if (anchorPosition < position) {
+                        newPosition = position - (anchorPosition - tabPosition);
+                    } else {
+                        newPosition = tabPosition;
+                    }
+                } else {
+                    if (tabPosition + textWidth < position) {
+                        newPosition = position - textWidth;
+                    } else {
+                        newPosition = tabPosition;
+                    }
                 }
                 break;
         }
