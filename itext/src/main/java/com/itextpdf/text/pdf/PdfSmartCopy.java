@@ -49,7 +49,6 @@ import java.security.MessageDigest;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
@@ -68,6 +67,7 @@ public class PdfSmartCopy extends PdfCopy {
 
 	/** the cache with the streams and references. */
     private HashMap<ByteStore, PdfIndirectReference> streamMap = null;
+    private final HashSet<PdfObject> serialized = new HashSet<PdfObject>();
 
     /** Creates a PdfSmartCopy instance. */
     public PdfSmartCopy(Document document, OutputStream os) throws DocumentException {
@@ -92,7 +92,7 @@ public class PdfSmartCopy extends PdfCopy {
         ByteStore streamKey = null;
         boolean validStream = false;
         if (srcObj.isStream()) {
-            streamKey = new ByteStore((PRStream)srcObj);
+            streamKey = new ByteStore((PRStream)srcObj, serialized);
             validStream = true;
             PdfIndirectReference streamRef = streamMap.get(streamKey);
             if (streamRef != null) {
@@ -100,7 +100,7 @@ public class PdfSmartCopy extends PdfCopy {
             }
         }
         else if (srcObj.isDictionary()) {
-            streamKey = new ByteStore((PdfDictionary)srcObj);
+            streamKey = new ByteStore((PdfDictionary)srcObj, serialized);
             validStream = true;
             PdfIndirectReference streamRef = streamMap.get(streamKey);
             if (streamRef != null) {
@@ -139,12 +139,11 @@ public class PdfSmartCopy extends PdfCopy {
     }
 
     static class ByteStore {
-        private byte[] b;
-        private int hash;
+        private final byte[] b;
+        private final int hash;
         private MessageDigest md5;
-        private HashSet<PdfObject> serialized = new HashSet<PdfObject>();
 
-        private void serObject(PdfObject obj, int level, ByteBuffer bb) throws IOException {
+        private void serObject(PdfObject obj, int level, ByteBuffer bb, HashSet<PdfObject> serialized) throws IOException {
             if (level <= 0)
                 return;
             if (obj == null) {
@@ -160,17 +159,17 @@ public class PdfSmartCopy extends PdfCopy {
             obj = PdfReader.getPdfObject(obj);
             if (obj.isStream()) {
                 bb.append("$B");
-                serDic((PdfDictionary)obj, level - 1, bb);
+                serDic((PdfDictionary)obj, level - 1, bb, serialized);
                 if (level > 0) {
                     md5.reset();
                     bb.append(md5.digest(PdfReader.getStreamBytesRaw((PRStream)obj)));
                 }
             }
             else if (obj.isDictionary()) {
-                serDic((PdfDictionary)obj, level - 1, bb);
+                serDic((PdfDictionary)obj, level - 1, bb, serialized);
             }
             else if (obj.isArray()) {
-                serArray((PdfArray)obj, level - 1, bb);
+                serArray((PdfArray)obj, level - 1, bb, serialized);
             }
             else if (obj.isString()) {
                 bb.append("$S").append(obj.toString());
@@ -182,28 +181,28 @@ public class PdfSmartCopy extends PdfCopy {
                 bb.append("$L").append(obj.toString());
         }
 
-        private void serDic(PdfDictionary dic, int level, ByteBuffer bb) throws IOException {
+        private void serDic(PdfDictionary dic, int level, ByteBuffer bb, HashSet<PdfObject> serialized) throws IOException {
             bb.append("$D");
             if (level <= 0)
                 return;
             Object[] keys = dic.getKeys().toArray();
             Arrays.sort(keys);
             for (int k = 0; k < keys.length; ++k) {
-                serObject((PdfObject)keys[k], level, bb);
-                serObject(dic.get((PdfName)keys[k]), level, bb);
+                serObject((PdfObject)keys[k], level, bb, serialized);
+                serObject(dic.get((PdfName)keys[k]), level, bb, serialized);
             }
         }
 
-        private void serArray(PdfArray array, int level, ByteBuffer bb) throws IOException {
+        private void serArray(PdfArray array, int level, ByteBuffer bb, HashSet<PdfObject> serialized) throws IOException {
             bb.append("$A");
             if (level <= 0)
                 return;
             for (int k = 0; k < array.size(); ++k) {
-                serObject(array.getPdfObject(k), level, bb);
+                serObject(array.getPdfObject(k), level, bb, serialized);
             }
         }
 
-        ByteStore(PRStream str) throws IOException {
+        ByteStore(PRStream str, HashSet<PdfObject> serialized) throws IOException {
             try {
                 md5 = MessageDigest.getInstance("MD5");
             }
@@ -212,12 +211,13 @@ public class PdfSmartCopy extends PdfCopy {
             }
             ByteBuffer bb = new ByteBuffer();
             int level = 100;
-            serObject(str, level, bb);
+            serObject(str, level, bb, serialized);
             this.b = bb.toByteArray();
+            hash = calculateHash(this.b);
             md5 = null;
         }
 
-        ByteStore(PdfDictionary dict) throws IOException {
+        ByteStore(PdfDictionary dict, HashSet<PdfObject> serialized) throws IOException {
             try {
                 md5 = MessageDigest.getInstance("MD5");
             }
@@ -226,9 +226,18 @@ public class PdfSmartCopy extends PdfCopy {
             }
             ByteBuffer bb = new ByteBuffer();
             int level = 100;
-            serObject(dict, level, bb);
+            serObject(dict, level, bb, serialized);
             this.b = bb.toByteArray();
+            hash = calculateHash(this.b);
             md5 = null;
+        }
+
+        private static int calculateHash(byte[] b) {
+             int hash = 0;
+                int len = b.length;
+                for (int k = 0; k < len; ++k)
+                    hash = hash * 31 + (b[k] & 0xff);
+             return hash;
         }
 
         @Override
@@ -242,12 +251,6 @@ public class PdfSmartCopy extends PdfCopy {
 
         @Override
         public int hashCode() {
-            if (hash == 0) {
-                int len = b.length;
-                for (int k = 0; k < len; ++k) {
-                    hash = hash * 31 + (b[k] & 0xff);
-                }
-            }
             return hash;
         }
     }
