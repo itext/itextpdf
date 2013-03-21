@@ -222,6 +222,8 @@ public class PdfCopy extends PdfWriter {
     public PdfImportedPage getImportedPage(PdfReader reader, int pageNumber) {
         if (structTreeController != null)
             structTreeController.reader = null;
+        disableIndirects.clear();
+        parentObjects.clear();
         return getImportedPageImpl(reader, pageNumber);
     }
 
