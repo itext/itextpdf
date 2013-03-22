@@ -199,8 +199,9 @@ public final class RandomAccessSourceFactory {
 			}
 		} catch (MapFailedException e){
 			return new RAFRandomAccessSource(raf);
-		}
-		
+		}  catch (IllegalArgumentException iae) {   //pdf files with zero or negative length stay opened without this catch
+            return new RAFRandomAccessSource(raf);
+        }
 	}
 	
 	public RandomAccessSource createRanged(RandomAccessSource source, long[] ranges) throws IOException{
