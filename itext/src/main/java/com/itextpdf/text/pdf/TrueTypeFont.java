@@ -1305,7 +1305,7 @@ class TrueTypeFont extends BaseFont {
                 addRangeUni(glyphs, subsetp);
                 byte[] b = null;
                 if (subsetp || directoryOffset != 0 || subsetRanges != null) {
-                    b = getSubSet(glyphs, subsetp);
+                    b = getSubSet(new HashSet(glyphs), subsetp);
                 }
                 else {
                     b = getFullFont();
