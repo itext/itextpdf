@@ -543,6 +543,7 @@ public class PdfDocument extends Document {
                     if (paragraph.getKeepTogether()) {
                     	carriageReturn();
                         PdfPTable table = new PdfPTable(1);
+                        table.setKeepTogether(paragraph.getKeepTogether());
                         table.setWidthPercentage(100f);
                         PdfPCell cell = new PdfPCell();
                         cell.addElement(paragraph);
