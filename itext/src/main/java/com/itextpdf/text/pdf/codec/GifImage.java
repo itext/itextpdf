@@ -43,24 +43,16 @@
  */
 package com.itextpdf.text.pdf.codec;
 
-import java.io.BufferedInputStream;
-import java.io.ByteArrayInputStream;
-import java.io.DataInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.util.ArrayList;
-
 import com.itextpdf.text.ExceptionConverter;
 import com.itextpdf.text.Image;
 import com.itextpdf.text.ImgRaw;
 import com.itextpdf.text.Utilities;
 import com.itextpdf.text.error_messages.MessageLocalization;
-import com.itextpdf.text.pdf.PdfArray;
-import com.itextpdf.text.pdf.PdfDictionary;
-import com.itextpdf.text.pdf.PdfName;
-import com.itextpdf.text.pdf.PdfNumber;
-import com.itextpdf.text.pdf.PdfString;
+import com.itextpdf.text.pdf.*;
+
+import java.io.*;
+import java.net.URL;
+import java.util.ArrayList;
 
 /** Reads gif images of all types. All the images in a gif are read in the constructors
  * and can be retrieved with other methods.
@@ -122,6 +114,19 @@ public class GifImage {
         InputStream is = null;
         try {
             is = url.openStream();
+
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            int read = 0;
+            byte[] bytes = new byte[1024];
+
+            while ((read = is.read(bytes)) != -1) {
+                baos.write(bytes, 0, read);
+            }
+
+            is = new ByteArrayInputStream(baos.toByteArray());
+            baos.flush();
+            baos.close();
+
             process(is);
         }
         finally {
