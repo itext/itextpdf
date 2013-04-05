@@ -43,14 +43,15 @@
  */
 package com.itextpdf.text.pdf;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-
+import com.itextpdf.testutils.TestResourceUtils;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.itextpdf.testutils.TestResourceUtils;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
 
 public class AcroFieldsTest {
     
@@ -83,5 +84,77 @@ public class AcroFieldsTest {
         AcroFields form = stamp.getAcroFields();
         form.setFields(fdfreader);
         stamp.close();
+    }
+
+    private final String PDF_COMBO = "./src/test/resources/com/itextpdf/text/pdf/AcroFieldsTest/choice_field_order.pdf";
+    private final String PDF_COMBO_EXPORT = "./src/test/resources/com/itextpdf/text/pdf/AcroFieldsTest/choice_field_order_export.pdf";
+    
+    private final String PDF_COMBO_FIELD_NAME = "choice_field";
+    
+    private final String[] PDF_COMBO_VALUES = {
+            "Option 1",
+            "Option 2",
+            "Option 3"
+    };
+    
+    private final String[] PDF_COMBO_EXPORT_VALUES = {
+            "Export 1",
+            "Export 2",
+            "Export 3"
+    };
+
+    @Test
+     public void testComboboxAppearanceStateOrder() {
+        try {
+            checkOrderOfAppearanceStates(PDF_COMBO, PDF_COMBO_FIELD_NAME, PDF_COMBO_VALUES);
+        } catch (IOException e) {
+            Assert.fail(e.getMessage());
+        }
+    }
+
+    @Test
+    public void testComboboxDisplayValues() {
+        try {
+            PdfReader reader = new PdfReader(PDF_COMBO);
+            AcroFields acroFields = reader.getAcroFields();
+            String[] actual = acroFields.getListOptionDisplay(PDF_COMBO_FIELD_NAME);
+
+            Assert.assertEquals(PDF_COMBO_VALUES.length, actual.length);
+
+            for ( int i = 0; i < PDF_COMBO_VALUES.length; i++ ) {
+                Assert.assertEquals(PDF_COMBO_VALUES[i], actual[i]);
+            }
+        } catch (IOException e) {
+            Assert.fail(e.getMessage());
+        }
+    }
+
+    @Test
+    public void testComboboxExportValues() {
+        try {
+            PdfReader reader = new PdfReader(PDF_COMBO_EXPORT);
+            AcroFields acroFields = reader.getAcroFields();
+            String[] actual = acroFields.getListOptionExport(PDF_COMBO_FIELD_NAME);
+
+            Assert.assertEquals(PDF_COMBO_EXPORT_VALUES.length, actual.length);
+
+            for ( int i = 0; i < PDF_COMBO_EXPORT_VALUES.length; i++ ) {
+                Assert.assertEquals(PDF_COMBO_EXPORT_VALUES[i], actual[i]);
+            }
+        } catch (IOException e) {
+            Assert.fail(e.getMessage());
+        }
+    }
+    
+    private void checkOrderOfAppearanceStates(String pdf, String fieldName, String[] expected) throws IOException {
+        PdfReader reader = new PdfReader(pdf);
+        AcroFields acroFields = reader.getAcroFields();
+        String[] actual = acroFields.getAppearanceStates(fieldName);
+
+        Assert.assertEquals(expected.length, actual.length);
+
+        for ( int i = 0; i < expected.length; i++ ) {
+            Assert.assertEquals(expected[i], actual[i]);
+        }
     }
 }

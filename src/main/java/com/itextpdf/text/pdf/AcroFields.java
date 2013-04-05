@@ -43,26 +43,7 @@
  */
 package com.itextpdf.text.pdf;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import org.w3c.dom.Node;
-
-import com.itextpdf.text.BaseColor;
-import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.Element;
-import com.itextpdf.text.ExceptionConverter;
-import com.itextpdf.text.Image;
-import com.itextpdf.text.Rectangle;
+import com.itextpdf.text.*;
 import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.io.RASInputStream;
 import com.itextpdf.text.io.RandomAccessSourceFactory;
@@ -71,6 +52,13 @@ import com.itextpdf.text.pdf.PRTokeniser.TokenType;
 import com.itextpdf.text.pdf.codec.Base64;
 import com.itextpdf.text.pdf.security.PdfPKCS7;
 import com.itextpdf.text.xml.XmlToTxt;
+import org.w3c.dom.Node;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.*;
+import java.util.List;
 
 /**
  * Query and change fields in existing documents either by method
@@ -265,6 +253,9 @@ public class AcroFields {
      * also be included. The name 'Off' may also be valid
      * even if not returned in the list.
      *
+     * For Comboboxes it will return an array of display values. To extract the
+     * export values of a Combobox, please refer to {@link AcroFields#getListOptionExport(String)}
+     *
      * @param fieldName the fully qualified field name
      * @return the list of names or <CODE>null</CODE> if the field does not exist
      */
@@ -272,9 +263,11 @@ public class AcroFields {
         Item fd = fields.get(fieldName);
         if (fd == null)
             return null;
-        HashSet<String> names = new HashSet<String>();
+        HashSet<String> names = new LinkedHashSet<String>();
         PdfDictionary vals = fd.getValue(0);
         PdfString stringOpt = vals.getAsString( PdfName.OPT );
+
+        // should not happen according to specs
         if (stringOpt != null) {
         	names.add(stringOpt.toUnicodeString());
         }
@@ -282,7 +275,19 @@ public class AcroFields {
             PdfArray arrayOpt = vals.getAsArray(PdfName.OPT);
             if (arrayOpt != null) {
             	for (int k = 0; k < arrayOpt.size(); ++k) {
-            		PdfString valStr = arrayOpt.getAsString( k );
+                    PdfObject pdfObject = arrayOpt.getDirectObject(k);
+                    PdfString valStr = null;
+                    
+                    switch ( pdfObject.type() ) {
+                        case PdfObject.ARRAY:
+                            PdfArray pdfArray = (PdfArray) pdfObject;
+                            valStr = pdfArray.getAsString( 1 );
+                            break;
+                        case PdfObject.STRING:
+                            valStr = (PdfString) pdfObject;
+                            break;
+                    }
+
             		if (valStr != null)
             			names.add(valStr.toUnicodeString());
             	}
