@@ -127,7 +127,7 @@ public class CssStateController {
 		if (currentSelector.contains(",")) {
 			String[] selectors = currentSelector.split(",");
 			for (String selector : selectors) {
-				css.add(utils.stripDoubleSpacesAndTrim(selector), map);
+				css.add(utils.stripDoubleSpacesAndTrim(selector), new HashMap<String, String>(map));
 			}
 		} else {
 			css.add(utils.stripDoubleSpacesAndTrim(currentSelector), map);

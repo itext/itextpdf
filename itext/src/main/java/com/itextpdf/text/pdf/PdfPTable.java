@@ -477,13 +477,10 @@ public class PdfPTable implements LargeElement, Spaceable, IAccessibleElement {
     public PdfPCell addCell(final PdfPCell cell) {
         rowCompleted = false;
         PdfPCell ncell;
-        if (cell instanceof PdfPHeaderCell){
+        if (cell instanceof PdfPHeaderCell)
             ncell = new PdfPHeaderCell((PdfPHeaderCell)cell);
-        } else {
-
+        else
             ncell = new PdfPCell(cell);
-        }
-
 
         int colspan = ncell.getColspan();
         colspan = Math.max(colspan, 1);

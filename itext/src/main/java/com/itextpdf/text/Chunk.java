@@ -94,6 +94,10 @@ public class Chunk implements Element, IAccessibleElement {
 	static {
 		NEXTPAGE.setNewPage();
 	}
+    
+    public static final Chunk TABBING = new Chunk(Float.NaN, false);
+
+    public static final Chunk SPACETABBING = new Chunk(Float.NaN, true);
 
 	// member variables
 
@@ -108,7 +112,7 @@ public class Chunk implements Element, IAccessibleElement {
 
     protected PdfName role = null;
     protected HashMap<PdfName, PdfObject> accessibleAttributes = null;
-    protected UUID id = UUID.randomUUID();
+    private UUID id = null;
 
 	// constructors
 
@@ -139,7 +143,7 @@ public class Chunk implements Element, IAccessibleElement {
         if (ck.accessibleAttributes != null) {
             accessibleAttributes = new HashMap<PdfName, PdfObject>(ck.accessibleAttributes);
         }
-        id = ck.id;
+        id = ck.getId();
     }
 
 	/**
@@ -247,14 +251,21 @@ public class Chunk implements Element, IAccessibleElement {
 	 * @since	2.1.2
 	 */
 	public static final String TAB = "TAB";
+    /**
+     * Key for tab stops of the tab.
+     * @since	5.4.1
+     */
+    public static final String TABSETTINGS = "TABSETTINGS";
+    private String contentWithNoTabs = null;
 
-	/**
+    /**
 	 * Creates a tab Chunk.
      * Note that separator chunks can't be used in combination with tab chunks!
 	 * @param	separator	the drawInterface to use to draw the tab.
 	 * @param	tabPosition	an X coordinate that will be used as start position for the next Chunk.
 	 * @since	2.1.2
 	 */
+    @Deprecated
 	public Chunk(final DrawInterface separator, final float tabPosition) {
 		this(separator, tabPosition, false);
 	}
@@ -267,6 +278,7 @@ public class Chunk implements Element, IAccessibleElement {
 	 * @param	newline		if true, a newline will be added if the tabPosition has already been reached.
 	 * @since	2.1.2
 	 */
+    @Deprecated
 	public Chunk(final DrawInterface separator, final float tabPosition, final boolean newline) {
 		this(OBJECT_REPLACEMENT_CHARACTER, new Font());
 		if (tabPosition < 0) {
@@ -276,7 +288,26 @@ public class Chunk implements Element, IAccessibleElement {
         this.role = null;
 	}
 
-	/**
+    /**
+     * Creates a tab Chunk.
+     *
+     * @param   tabInterval     an interval that will be used if tab stops are omitted.
+     * @param   isWhitespace    if true, the current tab is treated as white space.
+     * @since 5.4.1
+     */
+    private Chunk(final Float tabInterval, final boolean isWhitespace) {
+        this(OBJECT_REPLACEMENT_CHARACTER, new Font());
+        if (tabInterval < 0) {
+            throw new IllegalArgumentException(MessageLocalization.getComposedMessage("a.tab.position.may.not.be.lower.than.0.yours.is.1", String.valueOf(tabInterval)));
+        }
+        setAttribute(TAB, new Object[]{tabInterval, Boolean.valueOf(isWhitespace)});
+        setAttribute(SPLITCHARACTER, TabSplitCharacter.TAB);
+
+        setAttribute(TABSETTINGS, null);
+        this.role = null;
+    }
+
+    /**
 	 * Constructs a chunk containing an <CODE>Image</CODE>.
 	 *
 	 * @param image
@@ -374,7 +405,9 @@ public class Chunk implements Element, IAccessibleElement {
 	 * @return a <CODE>String</CODE>
 	 */
 	public String getContent() {
-		return content.toString().replaceAll("\t", "");
+        if (contentWithNoTabs == null)
+		    contentWithNoTabs = content.toString().replaceAll("\t", "");
+        return contentWithNoTabs;
 	}
 
 	/**
@@ -935,6 +968,34 @@ public class Chunk implements Element, IAccessibleElement {
 		return 0.0f;
 	}
 
+	/**
+	 *  Key for word spacing.
+	 */
+	public static final String WORD_SPACING = "WORD_SPACING";
+
+	/**
+	 * Sets the word spacing.
+	 *
+	 * @param wordSpace the word spacing value
+	 * @return this <CODE>Chunk</CODE>
+	 */	
+	public Chunk setWordSpacing(final float wordSpace) {
+		return setAttribute(WORD_SPACING, new Float(wordSpace));
+	}
+	
+	/**
+	 * Gets the word spacing.
+	 *
+	 * @return a value in float
+	 */	
+	public float getWordSpacing() {
+		if (attributes != null && attributes.containsKey(WORD_SPACING)) {
+			Float f = (Float) attributes.get(WORD_SPACING);
+			return f.floatValue();
+		}
+		return 0.0f;		
+	}
+
     public static final String WHITESPACE = "WHITESPACE";
 
     public static Chunk createWhitespace(final String content) {
@@ -957,21 +1018,20 @@ public class Chunk implements Element, IAccessibleElement {
         return attributes != null && attributes.containsKey(WHITESPACE);
     }
 
-    public static final String TABSPACE = "TABSPACE";
-
+    @Deprecated
     public static Chunk createTabspace() {
         return createTabspace(60);
     }
 
-    public static Chunk createTabspace(float spacing)
-    {
-        Chunk tabspace = new Chunk(" ");
-        tabspace.setAttribute(TABSPACE, spacing);
+    @Deprecated
+    public static Chunk createTabspace(float spacing) {
+        Chunk tabspace = new Chunk(spacing, true);
         return tabspace;
     }
 
+    @Deprecated
     public boolean isTabspace() {
-        return attributes != null && attributes.containsKey(TABSPACE);
+        return attributes != null && attributes.containsKey(TAB);
     }
 
     public PdfObject getAccessibleAttribute(final PdfName key) {
@@ -1015,6 +1075,8 @@ public class Chunk implements Element, IAccessibleElement {
     }
 
     public UUID getId() {
+        if (id == null)
+            id = UUID.randomUUID();
         return id;
     }
 

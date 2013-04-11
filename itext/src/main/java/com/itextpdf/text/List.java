@@ -156,7 +156,7 @@ public class List implements TextElementArray, Indentable, IAccessibleElement {
 
     protected PdfName role = PdfName.L;
     protected HashMap<PdfName, PdfObject> accessibleAttributes = null;
-    protected UUID id = UUID.randomUUID();
+    private UUID id = null;
 
     // constructors
 
@@ -649,6 +649,8 @@ public class List implements TextElementArray, Indentable, IAccessibleElement {
     }
 
     public UUID getId() {
+        if (id == null)
+            id = UUID.randomUUID();
         return id;
     }
 

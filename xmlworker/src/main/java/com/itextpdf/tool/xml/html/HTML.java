@@ -111,6 +111,7 @@ public final class HTML {
 		public static final String FIGCAPTION = "figcaption";
 		public static final String FIGURE = "figure";
 		public static final String FOOTER = "footer";
+		public static final String FONT = "font";
 		public static final String FORM = "form";
 		public static final String HEADER = "header";
 		public static final String HGROUP = "hgroup";
@@ -240,7 +241,7 @@ public final class HTML {
 				Tag.H3, Tag.H4, Tag.H5, Tag.H6, Tag.HEADER, Tag.HGROUP, Tag.HR, Tag.I, Tag.IFRAME, Tag.IMG, Tag.INPUT,
 				Tag.INS, Tag.KBD, Tag.KEYGEN, Tag.LABEL, Tag.MAP, Tag.MARK, Tag.MATH, Tag.MENU, Tag.METER, Tag.NAV,
 				Tag.NOSCRIPT, Tag.OBJECT, Tag.OL, Tag.OUTPUT, Tag.P, Tag.PRE, Tag.PROGRESS, Tag.Q, Tag.RUBY, Tag.SAMP,
-				Tag.SCRIPT, Tag.SECTION, Tag.SELECT, Tag.SMALL, Tag.SPAN, Tag.STRONG, Tag.SUB, Tag.SUP, Tag.SVG,
+				Tag.SCRIPT, Tag.SECTION, Tag.SELECT, Tag.SMALL, Tag.SPAN, Tag.FONT, Tag.STRONG, Tag.SUB, Tag.SUP, Tag.SVG,
 				Tag.TABLE, Tag.TEXTAREA, Tag.TIME, Tag.UL, Tag.VAR, Tag.VIDEO, Tag.WBR }));
 		/**
 		 * HTML5<br />
@@ -286,7 +287,7 @@ public final class HTML {
 				Tag.ABBR, Tag.AUDIO, Tag.B, Tag.BDO, Tag.BR, Tag.BUTTON, Tag.CANVAS, Tag.CITE, Tag.CODE, Tag.COMMAND,
 				Tag.DATALIST, Tag.DFN, Tag.EM, Tag.EMBED, Tag.I, Tag.IFRAME, Tag.IMG, Tag.INPUT, Tag.KBD, Tag.KEYGEN,
 				Tag.LABEL, Tag.MARK, Tag.MATH, Tag.METER, Tag.NOSCRIPT, Tag.OBJECT, Tag.OUTPUT, Tag.PROGRESS, Tag.Q,
-				Tag.RUBY, Tag.SAMP, Tag.SCRIPT, Tag.SELECT, Tag.SMALL, Tag.SPAN, Tag.STRONG, Tag.SUB, Tag.SUP, Tag.SVG,
+				Tag.RUBY, Tag.SAMP, Tag.SCRIPT, Tag.SELECT, Tag.SMALL, Tag.SPAN, Tag.FONT, Tag.STRONG, Tag.SUB, Tag.SUP, Tag.SVG,
 				Tag.TEXTAREA, Tag.TIME, Tag.VAR, Tag.VIDEO, Tag.WBR
 		}));
 		/**
@@ -327,6 +328,9 @@ public final class HTML {
 		public static final String ROWSPAN = "rowspan";
         public static final String VALIGN  = "valign";
         public static final String ALIGN  = "align";
+        public static final String FACE  = "face";
+        public static final String SIZE  = "size";
+        public static final String COLOR  = "color";
 
 		/**
 		 * Possible attribute values.

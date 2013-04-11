@@ -262,7 +262,7 @@ public class VerticalText {
         for (Iterator<PdfChunk> j = line.iterator(); j.hasNext(); ) {
             chunk = j.next();
 
-            if (chunk.font().compareTo(currentFont) != 0) {
+            if (!chunk.isImage() && chunk.font().compareTo(currentFont) != 0) {
                 currentFont = chunk.font();
                 text.setFontAndSize(currentFont.getFont(), currentFont.size());
             }

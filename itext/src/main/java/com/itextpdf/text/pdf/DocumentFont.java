@@ -367,12 +367,14 @@ public class DocumentFont extends BaseFont {
             }
             int e[] = uni2byte.toOrderedKeys();
             for (int k = 0; k < e.length; ++k) {
-            	updateWidths(e[k], bf);
+                int n = uni2byte.get(e[k]);
+                widths[n] = bf.getRawWidth(n, GlyphList.unicodeToName(e[k]));
             }
             if (diffmap != null) { //widths for diffmap must override existing ones
                 e = diffmap.toOrderedKeys();
                 for (int k = 0; k < e.length; ++k) {
-                	updateWidths(e[k], bf);
+                    int n = diffmap.get(e[k]);
+                    widths[n] = bf.getRawWidth(n, GlyphList.unicodeToName(e[k]));
                 }
                 diffmap = null;
             }
@@ -401,15 +403,6 @@ public class DocumentFont extends BaseFont {
         fillFontDesc(font.getAsDict(PdfName.FONTDESCRIPTOR));
     }
 
-    /**
-     * Updates the widths array. Currently only used for Base14 fonts.
-     * We assume that every cid maps to a single unicode value.
-     */
-    private void updateWidths(int key, BaseFont bf) {
-        int n = uni2byte.get(key);
-        widths[n] = bf.getRawWidth(n, GlyphList.unicodeToName(key));
-    }
-    
     private CMapToUnicode processToUnicode() {
         CMapToUnicode cmapRet = null;
         PdfObject toUni = PdfReader.getPdfObjectRelease(this.font.get(PdfName.TOUNICODE));

@@ -71,6 +71,7 @@ public class PdfChunk {
 
 /** The allowed attributes in variable <CODE>noStroke</CODE>. */
     private static final HashSet<String> keysNoStroke = new HashSet<String>();
+    private static final String TABSTOP = "TABSTOP";
 
     static {
         keysAttributes.add(Chunk.ACTION);
@@ -87,8 +88,9 @@ public class PdfChunk {
         keysAttributes.add(Chunk.HSCALE);
         keysAttributes.add(Chunk.SEPARATOR);
         keysAttributes.add(Chunk.TAB);
-        keysAttributes.add(Chunk.TABSPACE);
+        keysAttributes.add(Chunk.TABSETTINGS);
         keysAttributes.add(Chunk.CHAR_SPACING);
+        keysAttributes.add(Chunk.WORD_SPACING);
         keysAttributes.add(Chunk.LINEHEIGHT);
         keysNoStroke.add(Chunk.SUBSUPSCRIPT);
         keysNoStroke.add(Chunk.SPLITCHARACTER);
@@ -264,7 +266,6 @@ public class PdfChunk {
             offsetY = ((Float)obj[2]).floatValue();
             changeLeading = ((Boolean)obj[3]).booleanValue();
         }
-        font.setImage(image);
         Float hs = (Float)attributes.get(Chunk.HSCALE);
         if (hs != null)
             font.setHorizontalScaling(hs.floatValue());
@@ -273,6 +274,19 @@ public class PdfChunk {
         if (splitCharacter == null)
             splitCharacter = DefaultSplitCharacter.DEFAULT;
         accessibleElement = chunk;
+    }
+
+    /**
+     * Constructs a <CODE>PdfChunk</CODE>-object.
+     *
+     * @param chunk     the original <CODE>Chunk</CODE>-object
+     * @param action    the <CODE>PdfAction</CODE> if the <CODE>Chunk</CODE> comes from an <CODE>Anchor</CODE>
+     * @param tabSettings  the Phrase tab settings
+     */
+    PdfChunk(Chunk chunk, PdfAction action, TabSettings tabSettings) {
+        this(chunk, action);
+        if (tabSettings != null && attributes.get(Chunk.TABSETTINGS) == null)
+            attributes.put(Chunk.TABSETTINGS, tabSettings);
     }
 
     // methods
@@ -539,17 +553,40 @@ public class PdfChunk {
  */
 
     float width() {
-        if (isAttribute(Chunk.CHAR_SPACING)) {
-        	Float cs = (Float) getAttribute(Chunk.CHAR_SPACING);
-            return font.width(value) + value.length() * cs.floatValue();
-		}
+        return width(value);
+    }
+
+    float width(String str) {
         if (isAttribute(Chunk.SEPARATOR)) {
-        	return 0;
-        }
-        if (isAttribute(Chunk.TABSPACE)) {
             return 0;
         }
-        return font.width(value);
+        if (isImage()) {
+            return getImageWidth();
+        }
+
+        float width = font.width(str);
+    	
+        if (isAttribute(Chunk.CHAR_SPACING)) {
+            Float cs = (Float) getAttribute(Chunk.CHAR_SPACING);
+            width += str.length() * cs.floatValue();
+        }
+        if (isAttribute(Chunk.WORD_SPACING)) {
+            int numberOfSpaces = 0;
+            int idx = -1;
+            while ((idx = str.indexOf(' ', idx + 1)) >= 0)
+                ++numberOfSpaces;
+        	Float ws = (Float) getAttribute(Chunk.WORD_SPACING);
+            width += numberOfSpaces * ws;
+		}
+        return width;
+    }
+
+    float height() {
+        if (isImage()) {
+            return getImageHeight();
+        } else {
+            return font.size();
+        }
     }
 
 /**
@@ -579,7 +616,7 @@ public class PdfChunk {
         int idx = -1;
         while ((idx = value.indexOf(' ', idx + 1)) >= 0)
             ++numberOfSpaces;
-        return width() + value.length() * charSpacing + numberOfSpaces * wordSpacing;
+        return font.width(value) + value.length() * charSpacing + numberOfSpaces * wordSpacing;
     }
 
     /**
@@ -703,24 +740,38 @@ public class PdfChunk {
     }
 
     /**
-     * Checks if this <CODE>PdfChunk</CODE> is a tab Chunk.
-     * @return	true if this chunk is a separator.
-     * @since	5.3.4
-     */
-    boolean isTabSpace() {
-        return isAttribute(Chunk.TABSPACE);
-    }
-
-    /**
      * Correction for the tab position based on the left starting position.
      * @param	newValue	the new value for the left X.
      * @since	2.1.2
      */
+    @Deprecated
     void adjustLeft(float newValue) {
     	Object[] o = (Object[])attributes.get(Chunk.TAB);
     	if (o != null) {
     		attributes.put(Chunk.TAB, new Object[]{o[0], o[1], o[2], new Float(newValue)});
     	}
+    }
+
+    static TabStop getTabStop(PdfChunk tab, float tabPosition) {
+        TabStop tabStop = null;
+        Object[] o = (Object[])tab.attributes.get(Chunk.TAB);
+        if (o != null) {
+            Float tabInterval = (Float) o[0];
+            if (Float.isNaN(tabInterval)) {
+                tabStop = TabSettings.getTabStopNewInstance(tabPosition, (TabSettings) tab.attributes.get(Chunk.TABSETTINGS));
+            } else {
+                tabStop = TabStop.newInstance(tabPosition, tabInterval);
+            }
+        }
+        return tabStop;
+    }
+
+    TabStop getTabStop() {
+        return (TabStop)attributes.get(TABSTOP);
+    }
+    
+    void setTabStop(TabStop tabStop) {
+        attributes.put(TABSTOP, tabStop);
     }
 
 /**
@@ -901,6 +952,9 @@ public class PdfChunk {
         	Float cs = (Float) getAttribute(Chunk.CHAR_SPACING);
 			return font.width(c) + cs.floatValue() * font.getHorizontalScaling();
 		}
+        if (isImage()) {
+            return getImageWidth();
+        }
         return font.width(c);
     }
 

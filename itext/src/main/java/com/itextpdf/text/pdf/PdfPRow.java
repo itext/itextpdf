@@ -129,11 +129,12 @@ public class PdfPRow implements IAccessibleElement {
 		calculated = row.calculated;
 		cells = new PdfPCell[row.cells.length];
 		for (int k = 0; k < cells.length; ++k) {
-			if (row.cells[k] != null)
+			if (row.cells[k] != null) {
                 if (row.cells[k] instanceof PdfPHeaderCell)
                     cells[k] = new PdfPHeaderCell((PdfPHeaderCell)row.cells[k]);
                 else
 				    cells[k] = new PdfPCell(row.cells[k]);
+            }
 		}
 		widths = new float[cells.length];
 		System.arraycopy(row.widths, 0, widths, 0, cells.length);

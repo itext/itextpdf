@@ -127,6 +127,8 @@ class MappedChannelRandomAccessSource implements RandomAccessSource {
 	 * {@inheritDoc}
 	 */
 	public int get(long position) throws IOException {
+		if (source == null)
+			throw new IOException("RandomAccessSource not opened");
 		return source.get(position);
 	}
 
@@ -134,6 +136,8 @@ class MappedChannelRandomAccessSource implements RandomAccessSource {
 	 * {@inheritDoc}
 	 */
 	public int get(long position, byte[] bytes, int off, int len) throws IOException {
+		if (source == null)
+			throw new IOException("RandomAccessSource not opened");
 		return source.get(position, bytes, off, len);
 	}
 

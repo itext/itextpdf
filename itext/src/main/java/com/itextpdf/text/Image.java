@@ -204,7 +204,7 @@ public abstract class Image extends Rectangle implements Indentable, Spaceable, 
 
     protected PdfName role = PdfName.FIGURE;
     protected HashMap<PdfName, PdfObject> accessibleAttributes = null;
-    protected UUID id = UUID.randomUUID();
+    private UUID id = null;
 
 
 	// image from file or URL
@@ -700,7 +700,7 @@ public abstract class Image extends Rectangle implements Indentable, Spaceable, 
         this.role = image.role;
         if (image.accessibleAttributes != null)
             this.accessibleAttributes = new HashMap<PdfName, PdfObject>(image.accessibleAttributes);
-        this.id = image.id;
+        setId(image.getId());
 	}
 
 	/**
@@ -1826,6 +1826,41 @@ public abstract class Image extends Rectangle implements Indentable, Spaceable, 
 			this.compressionLevel = compressionLevel;
 	}
 
+	public PdfObject getAccessibleAttribute(final PdfName key) {
+        if (accessibleAttributes != null)
+            return accessibleAttributes.get(key);
+        else
+            return null;
+    }
+
+    public void setAccessibleAttribute(final PdfName key, final PdfObject value) {
+        if (accessibleAttributes == null)
+            accessibleAttributes = new HashMap<PdfName, PdfObject>();
+        accessibleAttributes.put(key, value);
+    }
+
+    public HashMap<PdfName, PdfObject> getAccessibleAttributes() {
+        return accessibleAttributes;
+    }
+
+    public PdfName getRole() {
+        return role;
+    }
+
+    public void setRole(final PdfName role) {
+        this.role = role;
+    }
+
+    public UUID getId() {
+        if (id == null)
+            id = UUID.randomUUID();
+        return id;
+    }
+
+    public void setId(final UUID id) {
+        this.id = id;
+    }
+
     // AWT related methods (remove this if you port to Android / GAE)
 
 	/**
@@ -2072,38 +2107,4 @@ public abstract class Image extends Rectangle implements Indentable, Spaceable, 
         g2d.dispose();
         return getInstance(tp);
     }
-
-    public PdfObject getAccessibleAttribute(final PdfName key) {
-        if (accessibleAttributes != null)
-            return accessibleAttributes.get(key);
-        else
-            return null;
-    }
-
-    public void setAccessibleAttribute(final PdfName key, final PdfObject value) {
-        if (accessibleAttributes == null)
-            accessibleAttributes = new HashMap<PdfName, PdfObject>();
-        accessibleAttributes.put(key, value);
-    }
-
-    public HashMap<PdfName, PdfObject> getAccessibleAttributes() {
-        return accessibleAttributes;
-    }
-
-    public PdfName getRole() {
-        return role;
-    }
-
-    public void setRole(final PdfName role) {
-        this.role = role;
-    }
-
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId(final UUID id) {
-        this.id = id;
-    }
-
 }

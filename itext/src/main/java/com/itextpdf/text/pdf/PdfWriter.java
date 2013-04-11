@@ -3270,7 +3270,7 @@ public class PdfWriter extends DocWriter implements
 
     protected XmpWriter xmpWriter = null;
 
-    protected XmpWriter getXmpWriter(ByteArrayOutputStream baos, PdfDocument.PdfInfo info) throws IOException {
+    protected XmpWriter getXmpWriter(ByteArrayOutputStream baos, PdfDictionary info) throws IOException {
         if (xmpWriter == null)
             xmpWriter = new XmpWriter(baos, info);
         return xmpWriter;

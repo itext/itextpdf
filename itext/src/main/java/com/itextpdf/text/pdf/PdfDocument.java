@@ -371,6 +371,30 @@ public class PdfDocument extends Document {
     protected PdfAction anchorAction = null;
 
     /**
+     * The current tab settings.
+     * @return	the current
+     * @since 5.4.0
+     */
+    protected TabSettings tabSettings;
+
+    /**
+     * Getter for the current tab stops.
+     * @since	5.4.0
+     */
+    public TabSettings getTabSettings() {
+        return tabSettings;
+    }
+
+    /**
+     * Setter for the current tab stops.
+     * @param	tabSettings the current tab settings
+     * @since	5.4.0
+     */
+    public void setTabSettings(TabSettings tabSettings) {
+        this.tabSettings = tabSettings;
+    }
+
+    /**
      * Signals that an <CODE>Element</CODE> was added to the <CODE>Document</CODE>.
      *
      * @param element the element to add
@@ -426,7 +450,7 @@ public class PdfDocument extends Document {
                     }
 
                     // we cast the element to a chunk
-                    PdfChunk chunk = new PdfChunk((Chunk) element, anchorAction);
+                    PdfChunk chunk = new PdfChunk((Chunk) element, anchorAction, tabSettings);
                     // we try to add the chunk to the line, until we succeed
                     {
                         PdfChunk overflow;
@@ -474,15 +498,22 @@ public class PdfDocument extends Document {
                 }
                 case Element.PHRASE: {
                 	leadingCount++;
+                    TabSettings backupTabSettings = tabSettings;
+                    if (((Phrase) element).getTabSettings() != null)
+                        tabSettings = ((Phrase) element).getTabSettings();
                     // we cast the element to a phrase and set the leading of the document
                     leading = ((Phrase) element).getTotalLeading();
                     // we process the element
                     element.process(this);
+                    tabSettings = backupTabSettings;
                     leadingCount--;
                     break;
                 }
                 case Element.PARAGRAPH: {
                     leadingCount++;
+                    TabSettings backupTabSettings = tabSettings;
+                    if (((Phrase) element).getTabSettings() != null)
+                        tabSettings = ((Phrase) element).getTabSettings();
                     // we cast the element to a paragraph
                     Paragraph paragraph = (Paragraph) element;
                     if (isTagged(writer)) {
@@ -512,6 +543,7 @@ public class PdfDocument extends Document {
                     if (paragraph.getKeepTogether()) {
                     	carriageReturn();
                         PdfPTable table = new PdfPTable(1);
+                        table.setKeepTogether(paragraph.getKeepTogether());
                         table.setWidthPercentage(100f);
                         PdfPCell cell = new PdfPCell();
                         cell.addElement(paragraph);
@@ -538,6 +570,7 @@ public class PdfDocument extends Document {
                     indentation.indentLeft -= paragraph.getIndentationLeft();
                     indentation.indentRight -= paragraph.getIndentationRight();
                     carriageReturn();
+                    tabSettings = backupTabSettings;
                     leadingCount--;
                     if (isTagged(writer)) {
                         flushLines();
@@ -1249,7 +1282,7 @@ public class PdfDocument extends Document {
             float moveTextX = l.indentLeft() - indentLeft() + indentation.indentLeft + indentation.listIndentLeft + indentation.sectionIndentLeft;
             text.moveText(moveTextX, -l.height());
             // is the line preceded by a symbol?
-
+            l.flush();
 
             if (l.listSymbol() != null) {
                 ListLabel lbl = null;
@@ -1367,8 +1400,15 @@ public class PdfDocument extends Document {
             }
             BaseColor color = chunk.color();
             float fontSize = chunk.font().size();
-            float ascender = chunk.font().getFont().getFontDescriptor(BaseFont.ASCENT, fontSize);
-            float descender = chunk.font().getFont().getFontDescriptor(BaseFont.DESCENT, fontSize);
+            float ascender;
+            float descender;
+            if (chunk.isImage()) {
+                ascender = chunk.height();
+                descender = 0;
+            } else {
+                ascender = chunk.font().getFont().getFontDescriptor(BaseFont.ASCENT, fontSize);
+                descender = chunk.font().getFont().getFontDescriptor(BaseFont.DESCENT, fontSize);
+            }
             hScale = 1;
 
             if (chunkStrokeIdx <= lastChunkStroke) {
@@ -1394,11 +1434,23 @@ public class PdfDocument extends Document {
                         }
                     }
                     if (chunk.isTab()) {
-                    	Object[] tab = (Object[])chunk.getAttribute(Chunk.TAB);
-                        DrawInterface di = (DrawInterface)tab[0];
-                        tabPosition = ((Float)tab[1]).floatValue() + ((Float)tab[3]).floatValue();
-                        if (tabPosition > xMarker) {
-                        	di.draw(graphics, xMarker, yMarker + descender, tabPosition, ascender - descender, yMarker);
+                        if (chunk.isAttribute(Chunk.TABSETTINGS)) {
+                            TabStop tabStop = chunk.getTabStop();
+                            if (tabStop != null) {
+                                tabPosition = tabStop.getPosition() + baseXMarker;
+                                if (tabStop.getLeader() != null)
+                                    tabStop.getLeader().draw(graphics, xMarker, yMarker + descender, tabPosition, ascender - descender, yMarker);
+                            } else {
+                                tabPosition = xMarker;
+                            }
+                        } else {
+                            //Keep deprecated tab logic for backward compatibility...
+                            Object[] tab = (Object[])chunk.getAttribute(Chunk.TAB);
+                            DrawInterface di = (DrawInterface)tab[0];
+                            tabPosition = ((Float)tab[1]).floatValue() + ((Float)tab[3]).floatValue();
+                            if (tabPosition > xMarker) {
+                                di.draw(graphics, xMarker, yMarker + descender, tabPosition, ascender - descender, yMarker);
+                            }
                         }
                         float tmp = xMarker;
                     	xMarker = tabPosition;
@@ -1561,12 +1613,19 @@ public class PdfDocument extends Document {
                             hScale = hs.floatValue();
                         text.setTextMatrix(hScale, b, c, 1, xMarker, yMarker);
                     }
+                    if (!isJustified) {
+                    	if (chunk.isAttribute(Chunk.WORD_SPACING)) {
+                        	Float ws = (Float) chunk.getAttribute(Chunk.WORD_SPACING);
+        					text.setWordSpacing(ws.floatValue());
+        				}
+                    }
                     if (chunk.isAttribute(Chunk.CHAR_SPACING)) {
                     	Float cs = (Float) chunk.getAttribute(Chunk.CHAR_SPACING);
 						text.setCharacterSpacing(cs.floatValue());
 					}
                     if (chunk.isImage()) {
                         Image image = chunk.getImage();
+                        width = chunk.getImageWidth();
                         float matrix[] = image.matrix(chunk.getImageScalePercentage());
                         matrix[Image.CX] = xMarker + chunk.getImageOffsetX() - matrix[Image.CX];
                         matrix[Image.CY] = yMarker + chunk.getImageOffsetY() - matrix[Image.CY];
@@ -1574,12 +1633,12 @@ public class PdfDocument extends Document {
                         text.moveText(xMarker + lastBaseFactor + chunk.getImageWidth() - text.getXTLM(), 0);
                     }
                 }
-                if (!chunk.isTabSpace())
-                    xMarker += width;
+
+                xMarker += width;
                 ++chunkStrokeIdx;
             }
 
-            if (chunk.font().compareTo(currentFont) != 0) {
+            if (!chunk.isImage() && chunk.font().compareTo(currentFont) != 0) {
                 currentFont = chunk.font();
                 text.setFontAndSize(currentFont.getFont(), currentFont.size());
             }
@@ -1618,19 +1677,10 @@ public class PdfDocument extends Document {
             	array.add(-glueWidth * 1000f / chunk.font.size() / hScale);
             	text.showText(array);
             }
-            else if (chunk.isTab()) {
+            else if (chunk.isTab() && tabPosition != xMarker) {
             	PdfTextArray array = new PdfTextArray();
             	array.add((tabPosition - xMarker) * 1000f / chunk.font.size() / hScale);
             	text.showText(array);
-            }
-            else if (chunk.isTabSpace())
-            {
-                Float module = (Float)chunk.getAttribute(Chunk.TABSPACE);
-                float increment = module - ((xMarker - text.getXTLM()) % module);
-                xMarker += increment;
-                PdfTextArray array = new PdfTextArray();
-                array.add(-(increment * 1000f / chunk.font.size() / hScale));
-                text.showText(array);
             }
             // If it is a CJK chunk or Unicode TTF we will have to simulate the
             // space adjustment.
@@ -1683,6 +1733,9 @@ public class PdfDocument extends Document {
             }
             if (chunk.isAttribute(Chunk.CHAR_SPACING)) {
 				text.setCharacterSpacing(baseCharacterSpacing);
+            }
+            if (chunk.isAttribute(Chunk.WORD_SPACING)) {
+				text.setWordSpacing(baseWordSpacing);
             }
             if (isTagged(writer) && chunk.accessibleElement != null) {
                 text.closeMCBlock(chunk.accessibleElement);

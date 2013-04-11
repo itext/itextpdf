@@ -77,11 +77,11 @@ public class ContentByteUtils {
         {
             case PdfObject.INDIRECT:
                 final PRIndirectReference ref = (PRIndirectReference) contentObject;
-                final PdfObject directObject = PdfReader.getPdfObject(ref);
+                final PdfObject directObject = PdfReader.getPdfObjectRelease(ref);
                 result = getContentBytesFromContentObject(directObject);
                 break;
             case PdfObject.STREAM:
-                final PRStream stream = (PRStream) PdfReader.getPdfObject(contentObject);
+                final PRStream stream = (PRStream) PdfReader.getPdfObjectRelease(contentObject);
                 result = PdfReader.getStreamBytes(stream);
                 break;
             case PdfObject.ARRAY:

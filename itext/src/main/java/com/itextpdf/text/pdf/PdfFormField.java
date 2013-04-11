@@ -72,7 +72,7 @@ public class PdfFormField extends PdfAnnotation {
      * Allows text fields to support rich text.
      * @since 5.0.6
      */
-    public static final int FF_RICHTEXT = 1 << 26;
+    public static final int FF_RICHTEXT = 1 << 25;
     public static final int Q_LEFT = 0;
     public static final int Q_CENTER = 1;
     public static final int Q_RIGHT = 2;

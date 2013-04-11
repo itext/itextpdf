@@ -97,6 +97,7 @@ public class Tags {
 		factory.addProcessor(Tag.SUP, span);
 		factory.addProcessor(Tag.B, span);
 		factory.addProcessor(Tag.STRONG, span);
+        factory.addProcessor(Tag.FONT, span);
 		factory.addProcessor(Tag.I, span);
 		factory.addProcessor(Tag.CITE, span);
 		factory.addProcessor(Tag.EM, span);

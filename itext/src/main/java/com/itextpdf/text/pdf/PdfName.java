@@ -387,12 +387,12 @@ public class PdfName extends PdfObject implements Comparable<PdfName> {
     public static final PdfName COLLECTIONSUBITEM = new PdfName("CollectionSubitem");
     /**
      * A name.
-     * @since 5.3.5
+     * @since 5.4.0
      */
     public static final PdfName COLSPAN = new PdfName("Colspan");
     /**
      * A name.
-     * @since 5.3.5
+     * @since 5.4.0
      */
     public static final PdfName COLUMN = new PdfName("Column");
     /** A name */
@@ -482,7 +482,7 @@ public class PdfName extends PdfObject implements Comparable<PdfName> {
     public static final PdfName DCTDECODE = new PdfName("DCTDecode");
     /**
      * A name.
-     * @since 2.1.6
+     * @since 5.4.0
      */
     public static final PdfName DECIMAL = new PdfName("Decimal");
     /**
@@ -1090,12 +1090,12 @@ public class PdfName extends PdfObject implements Comparable<PdfName> {
     public static final PdfName LOCKED = new PdfName("Locked");
     /**
      * A name
-     * @since	5.3.5
+     * @since	5.4.0
      */
     public static final PdfName LOWERALPHA = new PdfName("LowerAlpha");
     /**
      * A name
-     * @since	5.3.5
+     * @since	5.4.0
      */
     public static final PdfName LOWERROMAN = new PdfName("LowerRoman");
     /**
@@ -1977,12 +1977,12 @@ public class PdfName extends PdfObject implements Comparable<PdfName> {
     public static final PdfName UNIX = new PdfName("Unix");
     /**
      * A name.
-     * @since 5.3.5
+     * @since 5.4.0
      */
     public static final PdfName UPPERALPHA = new PdfName("UpperAlpha");
     /**
      * A name.
-     * @since 5.3.5
+     * @since 5.4.0
      */
     public static final PdfName UPPERROMAN = new PdfName("UpperRoman");
     /** A name */
@@ -2011,7 +2011,10 @@ public class PdfName extends PdfObject implements Comparable<PdfName> {
     public static final PdfName USERUNIT = new PdfName("UserUnit");
     /** A name */
     public static final PdfName USETHUMBS = new PdfName("UseThumbs");
-    /** A name */
+    /**
+     * A name.
+     * @since 5.4.0
+     */
     public static final PdfName UTF_8 = new PdfName("utf_8");
     /** A name */
     public static final PdfName V = new PdfName("V");

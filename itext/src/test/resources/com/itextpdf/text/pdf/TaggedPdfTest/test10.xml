@@ -1,44 +1,44 @@
 <Document>
 <H1 color="[0, 0, 1]">Document Header</H1>
-<Table width="418.4" height="418.4"><TBody>
+<Table width="418.4" height="3592.92"><TBody>
 
 <TR o="/Table">
-<TD o="/Table"><Span>Quick brown fox jumped over a lazy
+<TD width="209.2" o="/Table"><Span>Quick brown fox jumped over a lazy
 dog. A very long line appears here
 because we need new line.</Span>
 </TD>
-<TD o="/Table"><Figure bBox="[0, 0, 106, 61]" width="106" height="61"></Figure>
+<TD width="209.2" o="/Table"><Figure bBox="[0, 0, 106, 61]" width="106" height="61"></Figure>
 </TD>
 </TR>
 <TR o="/Table">
-<TD o="/Table"><Span>jumped over a lazy</Span>
+<TD width="209.2" o="/Table"><Span>jumped over a lazy</Span>
 </TD>
-<TD o="/Table"><Figure bBox="[0, 0, 106, 61]" width="106" height="61"></Figure>
+<TD width="209.2" o="/Table"><Figure bBox="[0, 0, 106, 61]" width="106" height="61"></Figure>
 </TD>
 </TR>
 <TR o="/Table">
-<TD o="/Table"><Table width="205.2" height="205.2"><TBody>
+<TD width="209.2" o="/Table" height="770"><Table width="205.2" height="3344.74"><TBody>
 
 <TR o="/Table">
-<TD o="/Table"><Span>Quick brown fox
+<TD width="102.6" o="/Table"><Span>Quick brown fox
 jumped over a
 lazy dog. A very
 long line appears
 here because we
 need new line.</Span>
 </TD>
-<TD o="/Table"><Figure bBox="[0, 0, 106, 61]" width="106" height="61"></Figure>
+<TD width="102.6" o="/Table"><Figure bBox="[0, 0, 106, 61]" width="106" height="61"></Figure>
 </TD>
 </TR>
 <TR o="/Table">
-<TD o="/Table"><Span>jumped over a
+<TD width="102.6" o="/Table"><Span>jumped over a
 lazy</Span>
 </TD>
-<TD o="/Table"><Figure bBox="[0, 0, 106, 61]" width="106" height="61"></Figure>
+<TD width="102.6" o="/Table"><Figure bBox="[0, 0, 106, 61]" width="106" height="61"></Figure>
 </TD>
 </TR>
 <TR o="/Table">
-<TD o="/Table"><Span>Lorem ipsum
+<TD width="102.6" o="/Table" height="766"><Span>Lorem ipsum
 dolor sit
 amet,consectetur
 adipiscing
@@ -306,13 +306,13 @@ semper vitae,
 tempus eget
 dolor.</Span>
 </TD>
-<TD o="/Table"><Span>Hello World</Span>
+<TD width="102.6" o="/Table" height="766"><Span>Hello World</Span>
 </TD>
 </TR>
 </TBody>
 </Table>
 </TD>
-<TD o="/Table"><Span>Lorem ipsum dolor sit
+<TD width="209.2" o="/Table" height="770"><Span>Lorem ipsum dolor sit
 amet,consectetur adipiscing
 elit.Pellentesque a lectus sit amet
 lectus accumsan aliquam.Quisque

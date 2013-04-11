@@ -70,9 +70,6 @@ class PdfFont implements Comparable<PdfFont> {
     /** the size. */
     private float size;
 
-    /** an image. */
-    protected Image image;
-
     protected float hScale = 1;
 
     // constructors
@@ -92,8 +89,6 @@ class PdfFont implements Comparable<PdfFont> {
      */
 
     public int compareTo(PdfFont pdfFont) {
-        if (image != null)
-            return 0;
         if (pdfFont == null) {
             return -1;
         }
@@ -118,11 +113,7 @@ class PdfFont implements Comparable<PdfFont> {
      */
 
     float size() {
-        if (image == null)
-            return size;
-        else {
-            return image.getScaledHeight();
-        }
+        return size;
     }
 
     /**
@@ -143,25 +134,15 @@ class PdfFont implements Comparable<PdfFont> {
      */
 
     float width(int character) {
-        if (image == null)
-            return font.getWidthPoint(character, size) * hScale;
-        else
-            return image.getScaledWidth();
+        return font.getWidthPoint(character, size) * hScale;
     }
 
     float width(String s) {
-        if (image == null)
-            return font.getWidthPoint(s, size) * hScale;
-        else
-            return image.getScaledWidth();
+        return font.getWidthPoint(s, size) * hScale;
     }
 
     BaseFont getFont() {
         return font;
-    }
-
-    void setImage(Image image) {
-        this.image = image;
     }
 
     static PdfFont getDefaultFont() {

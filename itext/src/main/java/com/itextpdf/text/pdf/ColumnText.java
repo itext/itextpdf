@@ -362,7 +362,7 @@ public class ColumnText {
         if (bidiLine == null && waitPhrase != null) {
             bidiLine = new BidiLine();
             for (Chunk c: waitPhrase.getChunks()) {
-                bidiLine.addChunk(new PdfChunk(c, null));
+                bidiLine.addChunk(new PdfChunk(c, null, waitPhrase.getTabSettings()));
             }
             waitPhrase = null;
         }
@@ -383,7 +383,7 @@ public class ColumnText {
             return;
         }
         for (Object element : phrase.getChunks()) {
-            bidiLine.addChunk(new PdfChunk((Chunk)element, null));
+            bidiLine.addChunk(new PdfChunk((Chunk)element, null, phrase.getTabSettings()));
         }
     }
 
@@ -909,7 +909,7 @@ public class ColumnText {
         if (!rectangularMode) {
         	float max = 0;
         	for (PdfChunk c : bidiLine.chunks) {
-        		max = Math.max(max, c.font.size());
+        		max = Math.max(max, c.height());
         	}
         	currentLeading = fixedLeading + max * multipliedLeading;
         }

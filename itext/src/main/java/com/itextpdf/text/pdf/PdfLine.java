@@ -43,10 +43,7 @@
  */
 package com.itextpdf.text.pdf;
 
-import com.itextpdf.text.Chunk;
-import com.itextpdf.text.Element;
-import com.itextpdf.text.Image;
-import com.itextpdf.text.ListItem;
+import com.itextpdf.text.*;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -90,6 +87,12 @@ public class PdfLine {
     protected boolean isRTL = false;
 
     protected ListItem listItem = null;
+    
+    protected TabStop tabStop = null;
+
+    protected float tabStopAnchorPosition = Float.NaN;
+    
+    protected float tabPosition = Float.NaN;
 
     // constructors
 
@@ -153,25 +156,40 @@ public class PdfLine {
         newlineSplit = chunk.isNewlineSplit() || overflow == null;
         if (chunk.isTab()) {
         	Object[] tab = (Object[])chunk.getAttribute(Chunk.TAB);
-    		float tabPosition = ((Float)tab[1]).floatValue();
-    		boolean newline = ((Boolean)tab[2]).booleanValue();
-    		if (newline && tabPosition < originalWidth - width) {
-    		    return chunk;
-    		}
-    		width = originalWidth - tabPosition;
-    		chunk.adjustLeft(left);
-            addToLine(chunk);
-        }
-        else if (chunk.isTabSpace()) {
-            if (!line.isEmpty())
-            {
-                Float module = (Float)chunk.getAttribute(Chunk.TABSPACE);
-                float decrement = module - ((originalWidth - width) % module);
-                if (width < decrement)
+            if (chunk.isAttribute(Chunk.TABSETTINGS))  {
+                boolean isWhiteSpace = (Boolean)tab[1];
+                if (!isWhiteSpace || !line.isEmpty()) {
+                    flush();
+                    tabStopAnchorPosition = Float.NaN;
+                    tabStop = PdfChunk.getTabStop(chunk, originalWidth - width);
+                    if (tabStop.getPosition() > originalWidth) {
+                        width = 0;
+                        if (isWhiteSpace)
+                            return null;
+                        else
+                            return chunk;
+                    }
+                    tabStop.setPosition(tabStop.getPosition());
+                    chunk.setTabStop(tabStop);
+                    if (tabStop.getAlignment() == TabStop.Alignment.LEFT) {
+                        width = originalWidth - tabStop.getPosition();
+                        tabStop = null;
+                        tabPosition = Float.NaN;
+                    } else
+                        tabPosition = originalWidth - width;
+                } else
+                    return null;
+            } else {
+                //Keep deprecated tab logic for backward compatibility...
+                Float tabStopPosition = ((Float)tab[1]).floatValue();
+                boolean newline = ((Boolean)tab[2]).booleanValue();
+                if (newline && tabPosition < originalWidth - width) {
                     return chunk;
-                width -= decrement;
-                addToLine(chunk);
+                }
+                chunk.adjustLeft(left);
+                width = originalWidth - tabStopPosition;
             }
+            addToLine(chunk);
         }
         // if the length of the chunk > 0 we add it to the line
         else if (chunk.length() > 0 || chunk.isImage()) {
@@ -215,6 +233,14 @@ public class PdfLine {
         		f = chunk.getLeading();
         	}
         	if (f > height) height = f;
+        }
+        if (tabStop != null && tabStop.getAlignment() == TabStop.Alignment.ANCHOR && Float.isNaN(tabStopAnchorPosition)) {
+            String value = chunk.toString();
+            int anchorIndex = value.indexOf(tabStop.getAnchorChar());
+            if (anchorIndex != -1) {
+                float subWidth = chunk.width(value.substring(anchorIndex, value.length()));
+                tabStopAnchorPosition = originalWidth - width - subWidth;
+            }
         }
     	line.add(chunk);
     }
@@ -326,12 +352,14 @@ public class PdfLine {
      */
 
     int numberOfSpaces() {
-        String string = toString();
-        int length = string.length();
         int numberOfSpaces = 0;
-        for (int i = 0; i < length; i++) {
-            if (string.charAt(i) == ' ') {
-                numberOfSpaces++;
+        for (PdfChunk pdfChunk : line) {
+            String tmp = pdfChunk.toString();
+            int length = tmp.length();
+            for (int i = 0; i < length; i++) {
+                if (tmp.charAt(i) == ' ') {
+                    numberOfSpaces++;
+                }
             }
         }
         return numberOfSpaces;
@@ -508,6 +536,9 @@ public class PdfLine {
         for (Object element : line) {
         	ck = (PdfChunk)element;
         	if (ck.isTab()) {
+                if (ck.isAttribute(Chunk.TABSETTINGS))
+                    continue;
+                //It seems justification was forbidden in the deprecated tab logic!!!
         		return -1;
         	}
         	if (ck.isHorizontalSeparator()) {
@@ -570,5 +601,18 @@ public class PdfLine {
             }
         }
         return descender;
+    }
+
+    public void flush() {
+        if (tabStop != null) {
+            float textWidth = originalWidth - width - tabPosition;
+            float tabStopPosition = tabStop.getPosition(tabPosition, originalWidth - width, tabStopAnchorPosition);
+            width = originalWidth - tabStopPosition - textWidth;
+            if (width < 0)
+                tabStopPosition += width;
+            tabStop.setPosition(tabStopPosition);
+            tabStop = null;
+            tabPosition = Float.NaN;
+        }
     }
 }
