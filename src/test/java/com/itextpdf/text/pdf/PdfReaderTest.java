@@ -44,20 +44,19 @@
 
 package com.itextpdf.text.pdf;
 
-import static org.junit.Assert.assertTrue;
-
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.util.List;
-
+import com.itextpdf.testutils.TestResourceUtils;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.PageSize;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import com.itextpdf.testutils.TestResourceUtils;
-import com.itextpdf.text.Document;
-import com.itextpdf.text.PageSize;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.util.List;
+
+import static org.junit.Assert.assertTrue;
 
 public class PdfReaderTest {
 
@@ -69,22 +68,6 @@ public class PdfReaderTest {
     @After
     public void tearDown() throws Exception {
         TestResourceUtils.purgeTempFiles();
-    }
-
-    @Test
-    public void testPartialReadOpenFile() throws Exception {
-        /* commit 3265 incorrectly closed the input stream, make sure
-         * the constructor contract is kept, i.e. file is still open
-         */
-        File testFile = TestResourceUtils.getResourceAsTempFile(this, "RomeoJuliet.pdf");
-        RandomAccessFileOrArray f = new RandomAccessFileOrArray(testFile.getAbsolutePath());
-        
-        // doesn't throw?
-        PdfReader r = new PdfReader(f, null);
-
-        assertTrue("kept open", f.isOpen());
-        
-        r.close();
     }
 
     @Ignore("validity of test needs to be resolved")

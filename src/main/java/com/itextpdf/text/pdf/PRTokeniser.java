@@ -43,12 +43,11 @@
  */
 package com.itextpdf.text.pdf;
 
-import java.io.IOException;
-
 import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.exceptions.InvalidPdfException;
-import com.itextpdf.text.io.RandomAccessSource;
 import com.itextpdf.text.io.RandomAccessSourceFactory;
+
+import java.io.IOException;
 /**
  *
  * @author  Paulo Soares
@@ -112,16 +111,11 @@ public class PRTokeniser {
     protected int generation;
     protected boolean hexString;
 
-// TODO: get rid of this - it shouldn't be necessary    
-//    public PRTokeniser(String filename) throws IOException {
-//        file = new RandomAccessFileOrArray(filename);
-//    }
-
     /**
-     * Creates a PRTokeniser for the specified {@link RandomAccessSource}.
+     * Creates a PRTokeniser for the specified {@link RandomAccessFileOrArray}.
      * The beginning of the file is read to determine the location of the header, and the data source is adjusted
      * as necessary to account for any junk that occurs in the byte source before the header
-     * @param byteSource the source
+     * @param file the source
      */
     public PRTokeniser(RandomAccessFileOrArray file) {
     	this.file = file;
