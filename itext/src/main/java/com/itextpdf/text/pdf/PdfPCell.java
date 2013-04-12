@@ -176,6 +176,7 @@ public class PdfPCell extends Rectangle implements IAccessibleElement {
             setPadding(borderWidth / 2);
         }
         else {
+        	image.setScaleToFitLineWhenOverflow(false);
             column.addText(this.phrase = new Phrase(new Chunk(image, 0, 0, true)));
             setPadding(0);
         }
