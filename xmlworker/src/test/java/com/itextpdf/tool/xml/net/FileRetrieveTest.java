@@ -43,6 +43,16 @@
  */
 package com.itextpdf.tool.xml.net;
 
+import com.itextpdf.text.log.Logger;
+import com.itextpdf.text.log.LoggerFactory;
+import com.itextpdf.text.log.SysoLogger;
+import com.itextpdf.tool.xml.exceptions.RuntimeWorkerException;
+import org.apache.commons.io.FileUtils;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -50,17 +60,6 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.SocketTimeoutException;
 import java.net.URL;
-
-import org.apache.commons.io.FileUtils;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-
-import com.itextpdf.text.log.Logger;
-import com.itextpdf.text.log.LoggerFactory;
-import com.itextpdf.text.log.SysoLogger;
-import com.itextpdf.tool.xml.exceptions.RuntimeWorkerException;
 
 /**
  * @author redlab_b
@@ -91,7 +90,7 @@ public class FileRetrieveTest {
 	public void retrieveURL() throws IOException {
 		boolean execute = true;
     	try {
-    		URL url = new URL("http://www.redlab.be/test/test.css");
+    		URL url = new URL("http://itextsupport.com/files/testresources/css/test.css");
 			url.openConnection().connect();
 		} catch (SocketTimeoutException e) {
 			LOG.info("Skipping retrieve from URL test as we cannot open the url itself. Maybe no internet connection. Marking test as Success");
@@ -102,7 +101,7 @@ public class FileRetrieveTest {
 		}
 		if (execute) {
     		final FileOutputStream out = new FileOutputStream(actual);
-    		retriever.processFromHref("http://www.redlab.be/test/test.css", new ReadingProcessor() {
+    		retriever.processFromHref("http://itextsupport.com/files/testresources/css/test.css", new ReadingProcessor() {
 
     			public void process(final int inbit) {
     				try {
