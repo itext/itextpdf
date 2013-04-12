@@ -43,18 +43,18 @@
  */
 package com.itextpdf.text.pdf;
 
+import com.itextpdf.text.Document;
+import com.itextpdf.text.ExceptionConverter;
+import com.itextpdf.text.io.IndependentRandomAccessSource;
+import com.itextpdf.text.io.RandomAccessSource;
+import com.itextpdf.text.io.RandomAccessSourceFactory;
+
 import java.io.DataInput;
 import java.io.DataInputStream;
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-
-import com.itextpdf.text.Document;
-import com.itextpdf.text.ExceptionConverter;
-import com.itextpdf.text.io.IndependentRandomAccessSource;
-import com.itextpdf.text.io.RandomAccessSource;
-import com.itextpdf.text.io.RandomAccessSourceFactory;
 /** Intended to be layered on top of a low level RandomAccessSource object.  Provides
  * functionality useful during parsing:
  * <ul>
@@ -172,7 +172,7 @@ public class RandomAccessFileOrArray implements DataInput {
     
 
     /**
-     * @param url
+     * @param arrayIn byte[]
      * @throws IOException
      * @deprecated use {@link RandomAccessSourceFactory#createSource(byte[])} and {@link RandomAccessFileOrArray#RandomAccessFileOrArray(RandomAccessSource)} instead
      */
@@ -291,19 +291,6 @@ public class RandomAccessFileOrArray implements DataInput {
     public void reOpen() throws IOException {
         seek(0);
     }
-    
-    @Deprecated
-    //TODO: remove all references to this call, then remove this method
-    protected void insureOpen() throws IOException {
-        
-    }
-    
-    @Deprecated
-    //TODO: remove all references to this call, then remove this method
-    public boolean isOpen() {
-        return true;
-    }
-    
 
     
     public void close() throws IOException {

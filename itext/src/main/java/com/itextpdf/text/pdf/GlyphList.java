@@ -43,12 +43,13 @@
  */
 package com.itextpdf.text.pdf;
 
+import com.itextpdf.text.io.StreamUtil;
+import com.itextpdf.text.pdf.fonts.FontsResourceAnchor;
+
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.StringTokenizer;
-
-import com.itextpdf.text.pdf.fonts.FontsResourceAnchor;
 
 public class GlyphList {
     private static HashMap<Integer, String> unicode2names = new HashMap<Integer, String>();
@@ -57,7 +58,7 @@ public class GlyphList {
     static {
         InputStream is = null;
         try {
-            is = BaseFont.getResourceStream(BaseFont.RESOURCE_PATH + "glyphlist.txt", new FontsResourceAnchor().getClass().getClassLoader());
+            is = StreamUtil.getResourceStream(BaseFont.RESOURCE_PATH + "glyphlist.txt", new FontsResourceAnchor().getClass().getClassLoader());
             if (is == null) {
                 String msg = "glyphlist.txt not found as resource. (It must exist as resource in the package com.itextpdf.text.pdf.fonts)";
                 throw new Exception(msg);

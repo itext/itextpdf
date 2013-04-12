@@ -16,12 +16,12 @@
 
 package com.itextpdf.text.pdf.hyphenation;
 
+import com.itextpdf.text.io.StreamUtil;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.Hashtable;
-
-import com.itextpdf.text.pdf.BaseFont;
 
 /**
  * This class is the main entry point to the hyphenation package.
@@ -91,9 +91,9 @@ public class Hyphenator {
      */
     public static HyphenationTree getResourceHyphenationTree(String key) {
         try {
-            InputStream stream = BaseFont.getResourceStream(defaultHyphLocation + key + ".xml");
+            InputStream stream = StreamUtil.getResourceStream(defaultHyphLocation + key + ".xml");
             if (stream == null && key.length() > 2)
-                stream = BaseFont.getResourceStream(defaultHyphLocation + key.substring(0, 2) + ".xml");
+                stream = StreamUtil.getResourceStream(defaultHyphLocation + key.substring(0, 2) + ".xml");
             if (stream == null)
                 return null;
             HyphenationTree hTree = new HyphenationTree();

@@ -43,14 +43,14 @@
  */
 package com.itextpdf.text.error_messages;
 
+import com.itextpdf.text.io.StreamUtil;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.HashMap;
-
-import com.itextpdf.text.pdf.BaseFont;
 
 /**
  * Localizes error messages. The messages are located in the package
@@ -171,13 +171,13 @@ public final class MessageLocalization {
                 file = language + "_" + country + ".lng";
             else
                 file = language + ".lng";
-            is = BaseFont.getResourceStream(BASE_PATH + file, new MessageLocalization().getClass().getClassLoader());
+            is = StreamUtil.getResourceStream(BASE_PATH + file, new MessageLocalization().getClass().getClassLoader());
             if (is != null)
                 return readLanguageStream(is);
             if (country == null)
                 return null;
             file = language + ".lng";
-            is = BaseFont.getResourceStream(BASE_PATH + file, new MessageLocalization().getClass().getClassLoader());
+            is = StreamUtil.getResourceStream(BASE_PATH + file, new MessageLocalization().getClass().getClassLoader());
             if (is != null)
                 return readLanguageStream(is);
             else

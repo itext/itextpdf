@@ -47,6 +47,7 @@ import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.ExceptionConverter;
 import com.itextpdf.text.Utilities;
 import com.itextpdf.text.error_messages.MessageLocalization;
+import com.itextpdf.text.io.StreamUtil;
 import com.itextpdf.text.pdf.fonts.cmaps.CMapCache;
 import com.itextpdf.text.pdf.fonts.cmaps.CMapCidByte;
 import com.itextpdf.text.pdf.fonts.cmaps.CMapCidUni;
@@ -55,8 +56,13 @@ import com.itextpdf.text.pdf.fonts.cmaps.CMapUniCid;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.*;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map.Entry;
+import java.util.Properties;
+import java.util.Set;
+import java.util.StringTokenizer;
 
 /**
  * Creates a CJK font compatible with the fonts in the Adobe Asian font Pack.
@@ -119,7 +125,7 @@ class CJKFont extends BaseFont {
     }
 
     private static void loadRegistry() throws IOException {
-        InputStream is = getResourceStream(RESOURCE_PATH_CMAP + "cjk_registry.properties");
+        InputStream is = StreamUtil.getResourceStream(RESOURCE_PATH_CMAP + "cjk_registry.properties");
         Properties p = new Properties();
         p.load(is);
         is.close();
@@ -639,7 +645,7 @@ class CJKFont extends BaseFont {
 
     private static HashMap<String, Object> readFontProperties(String name) throws IOException {
         name += ".properties";
-        InputStream is = getResourceStream(RESOURCE_PATH_CMAP + name);
+        InputStream is = StreamUtil.getResourceStream(RESOURCE_PATH_CMAP + name);
         Properties p = new Properties();
         p.load(is);
         is.close();
