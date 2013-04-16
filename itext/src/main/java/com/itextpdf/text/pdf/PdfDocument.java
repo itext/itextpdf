@@ -1530,7 +1530,7 @@ public class PdfDocument extends Document {
                         else {
                         	annot = new PdfAnnotation(writer, xMarker, yMarker + descender + chunk.getTextRise(), xMarker + width - subtract, yMarker + ascender + chunk.getTextRise(), (PdfAction)chunk.getAttribute(Chunk.ACTION));
                         }
-                        text.addAnnotation(annot);
+                        text.addAnnotation(annot, true);
                         if (isTagged(writer) && chunk.accessibleElement != null) {
                             PdfStructureElement strucElem = structElements.get(chunk.accessibleElement.getId());
                             if (strucElem != null) {
@@ -1599,7 +1599,7 @@ public class PdfDocument extends Document {
                             subtract += hangingCorrection;
                         PdfAnnotation annot = PdfFormField.shallowDuplicate((PdfAnnotation)chunk.getAttribute(Chunk.PDFANNOTATION));
                         annot.put(PdfName.RECT, new PdfRectangle(xMarker, yMarker + descender, xMarker + width - subtract, yMarker + ascender));
-                        text.addAnnotation(annot);
+                        text.addAnnotation(annot, true);
                     }
                     float params[] = (float[])chunk.getAttribute(Chunk.SKEW);
                     Float hs = (Float)chunk.getAttribute(Chunk.HSCALE);

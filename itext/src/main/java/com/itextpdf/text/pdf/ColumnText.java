@@ -268,6 +268,11 @@ public class ColumnText {
     private boolean adjustFirstLine = true;
 
     /**
+     * @since 5.4.2
+     */
+    private boolean inheritGraphicState = false;
+
+    /**
      * Creates a <CODE>ColumnText</CODE>.
      *
      * @param canvas the place where the text will be written to. Can
@@ -356,6 +361,7 @@ public class ColumnText {
         useAscender = org.useAscender;
         filledWidth = org.filledWidth;
         adjustFirstLine = org.adjustFirstLine;
+        inheritGraphicState = org.inheritGraphicState;
     }
 
     private void addWaitingPhrase() {
@@ -840,6 +846,14 @@ public class ColumnText {
         return currentLeading;
     }
 
+    public boolean getInheritGraphicState() {
+        return inheritGraphicState;
+    }
+
+    public void setInheritGraphicState(boolean inheritGraphicState) {
+        this.inheritGraphicState = inheritGraphicState;
+    }
+
     /**
      * Outputs the lines to the document. It is equivalent to <CODE>go(false)</CODE>.
      *
@@ -894,7 +908,7 @@ public class ColumnText {
             graphics = canvas;
             pdf = canvas.getPdfDocument();
             if (!isTagged(canvas))
-                text = canvas.getDuplicate();
+                text = canvas.getDuplicate(inheritGraphicState);
             else
                 text = canvas;
         }
@@ -1350,6 +1364,7 @@ public class ColumnText {
                         createHere = true;
                     }
                     compositeColumn.setUseAscender((firstPass || descender == 0) && adjustFirstLine ? useAscender : false);
+                    compositeColumn.setInheritGraphicState(inheritGraphicState);
                     compositeColumn.leftX = leftX;
                     compositeColumn.rightX = rightX;
                     compositeColumn.yLine = yLine;
@@ -1442,6 +1457,7 @@ public class ColumnText {
                         }
                         compositeColumn = new ColumnText(canvas);
                         compositeColumn.setUseAscender((firstPass || descender == 0) && adjustFirstLine ? useAscender : false);
+                        compositeColumn.setInheritGraphicState(inheritGraphicState);
                         compositeColumn.setAlignment(item.getAlignment());
                         compositeColumn.setIndent(item.getIndentationLeft() + listIndentation + item.getFirstLineIndent(), false);
                         compositeColumn.setExtraParagraphSpace(item.getExtraParagraphSpace());
