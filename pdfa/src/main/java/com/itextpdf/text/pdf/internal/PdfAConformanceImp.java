@@ -43,77 +43,26 @@
  */
 package com.itextpdf.text.pdf.internal;
 
-import com.itextpdf.text.error_messages.MessageLocalization;
-import com.itextpdf.text.pdf.*;
+import com.itextpdf.text.pdf.PdfAConformanceLevel;
+import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.text.pdf.interfaces.PdfAConformance;
 
 /**
  * Implementation of the PdfAConformance interface,
  * including the level of conformance.
+ *
  * @see PdfAConformance
  */
 public class PdfAConformanceImp implements PdfAConformance {
 
-	/** The PDF conformance level, e.g. PDF/A1 Level A, PDF/A3 Level U,... */
-    private PdfAConformanceLevel conformanceLevel;
-
     /**
-     *
-     * @param writer
-     * @param key
-     * @param obj1
+     * The PDF conformance level, e.g. PDF/A1 Level A, PDF/A3 Level U,...
      */
-    static public void checkPdfAConformance(PdfWriter writer, int key, Object obj1) {
-        if (writer == null || !writer.isPdfIso())
-            return;
-        switch (key) {
-            case PdfIsoKeys.PDFISOKEY_FONT:
-                BaseFont bf = (BaseFont)obj1;
-                if (bf.getFontType() == BaseFont.FONT_TYPE_DOCUMENT) {
-                    PdfStream prs = null;
-                    PdfDictionary fontDictionary = ((DocumentFont)bf).getFontDictionary();
-                    PdfDictionary fontDescriptor = fontDictionary.getAsDict(PdfName.FONTDESCRIPTOR);
-                    if (fontDescriptor != null) {
-                        prs = fontDescriptor.getAsStream(PdfName.FONTFILE);
-                        if (prs == null) {
-                            prs = fontDescriptor.getAsStream(PdfName.FONTFILE2);
-                        }
-                        if (prs == null) {
-                            prs = fontDescriptor.getAsStream(PdfName.FONTFILE3);
-                        }
-                    }
-                    if (prs == null) {
-                        throw new PdfAConformanceException(MessageLocalization.getComposedMessage("all.the.fonts.must.be.embedded.this.one.isn.t.1", ((BaseFont) obj1).getPostscriptFontName()));
-                    }
-                } else {
-                    if (!bf.isEmbedded())
-                        throw new PdfAConformanceException(MessageLocalization.getComposedMessage("all.the.fonts.must.be.embedded.this.one.isn.t.1", ((BaseFont) obj1).getPostscriptFontName()));
-                }
-                break;
-            case PdfIsoKeys.PDFISOKEY_IMAGE:
-                PdfImage image = (PdfImage)obj1;
-                if (image.get(PdfName.SMASK) != null)
-                    throw new PdfAConformanceException(MessageLocalization.getComposedMessage("the.smask.key.is.not.allowed.in.images"));
-                break;
-            case PdfIsoKeys.PDFISOKEY_GSTATE:
-                PdfDictionary gs = (PdfDictionary)obj1;
-                PdfObject obj = gs.get(PdfName.BM);
-                if (obj != null && !PdfGState.BM_NORMAL.equals(obj) && !PdfGState.BM_COMPATIBLE.equals(obj))
-                    throw new PdfAConformanceException(MessageLocalization.getComposedMessage("blend.mode.1.not.allowed", obj.toString()));
-                obj = gs.get(PdfName.CA);
-                double v = 0.0;
-                if (obj != null && (v = ((PdfNumber)obj).doubleValue()) != 1.0)
-                    throw new PdfAConformanceException(MessageLocalization.getComposedMessage("transparency.is.not.allowed.ca.eq.1", String.valueOf(v)));
-                obj = gs.get(PdfName.ca);
-                v = 0.0;
-                if (obj != null && (v = ((PdfNumber)obj).doubleValue()) != 1.0)
-                    throw new PdfAConformanceException(MessageLocalization.getComposedMessage("transparency.is.not.allowed.ca.eq.1", String.valueOf(v)));
-                break;
-            case PdfIsoKeys.PDFISOKEY_LAYER:
-                throw new PdfAConformanceException(MessageLocalization.getComposedMessage("layers.are.not.allowed"));
-            default:
-                break;
-        }
+    protected PdfAConformanceLevel conformanceLevel;
+    protected PdfAChecker pdfAChecker;
+
+    public void checkPdfAConformance(PdfWriter writer, int key, Object obj1) {
+        pdfAChecker.checkPdfAConformance(writer, key, obj1);
     }
 
     /**
@@ -128,6 +77,25 @@ public class PdfAConformanceImp implements PdfAConformance {
      */
     public void setConformanceLevel(PdfAConformanceLevel conformanceLevel) {
         this.conformanceLevel = conformanceLevel;
+        switch (this.conformanceLevel) {
+            case PDF_A_1A:
+            case PDF_A_1B:
+                pdfAChecker = new PdfA1Checker();
+                break;
+            case PDF_A_2A:
+            case PDF_A_2B:
+            case PDF_A_2U:
+                pdfAChecker = new PdfA2Checker();
+                break;
+            case PDF_A_3A:
+            case PDF_A_3B:
+            case PDF_A_3U:
+                pdfAChecker = new PdfA3Checker();
+                break;
+            default:
+                pdfAChecker = new PdfA1Checker();
+                break;
+        }
     }
 
     /**

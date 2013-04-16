@@ -201,7 +201,7 @@ public class PdfAWriter extends PdfWriter {
      * @see PdfWriter#checkPdfIsoConformance(int, Object)
      */
     protected void checkPdfIsoConformance(int key, Object obj1) {
-        PdfAConformanceImp.checkPdfAConformance(this, key, obj1);
+        ((PdfAConformanceImp)pdfIsoConformance).checkPdfAConformance(this, key, obj1);
     }
 
     /**
