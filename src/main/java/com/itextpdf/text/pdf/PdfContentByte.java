@@ -109,6 +109,7 @@ public class PdfContentByte {
         protected BaseColor graphicsColorFill = new GrayColor(0);
         protected BaseColor textColorStroke = new GrayColor(0);
         protected BaseColor graphicsColorStroke = new GrayColor(0);
+        protected AffineTransform CTM = new AffineTransform();
 
         GraphicState() {
         }
@@ -132,6 +133,7 @@ public class PdfContentByte {
             graphicsColorFill = cp.graphicsColorFill;
             textColorStroke = cp.textColorStroke;
             graphicsColorStroke = cp.graphicsColorStroke;
+            CTM = new AffineTransform(cp.CTM);
         }
     }
 
@@ -2124,6 +2126,7 @@ public class PdfContentByte {
         if (inText && isTagged()) {
             endText();
         }
+        state.CTM.concatenate(new AffineTransform(a, b, c, d, e, f));
         content.append(a).append(' ').append(b).append(' ').append(c).append(' ');
         content.append(d).append(' ').append(e).append(' ').append(f).append(" cm").append_i(separator);
     }
@@ -2944,6 +2947,15 @@ public class PdfContentByte {
         return cb;
     }
 
+    public PdfContentByte getDuplicate(boolean inheritGraphicState) {
+        PdfContentByte cb = this.getDuplicate();
+        if (inheritGraphicState) {
+            cb.state = state;
+            cb.stateList = stateList;
+        }
+        return cb;
+    }
+
     /**
      * Implements a link to another document.
      * @param filename the filename for the remote document
@@ -3259,12 +3271,20 @@ public class PdfContentByte {
         }
         double matrix[] = new double[6];
         af.getMatrix(matrix);
+        state.CTM.concatenate(af);
         content.append(matrix[0]).append(' ').append(matrix[1]).append(' ').append(matrix[2]).append(' ');
         content.append(matrix[3]).append(' ').append(matrix[4]).append(' ').append(matrix[5]).append(" cm").append_i(separator);
     }
 
     void addAnnotation(final PdfAnnotation annot) {
         writer.addAnnotation(annot);
+    }
+
+    void addAnnotation(final PdfAnnotation annot, boolean applyCTM) {
+        if (applyCTM && state.CTM.getType() != AffineTransform.TYPE_IDENTITY) {
+            annot.applyCTM(state.CTM);
+        }
+        addAnnotation(annot);
     }
 
     /**

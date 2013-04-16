@@ -47,6 +47,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
 
+import com.itextpdf.awt.geom.AffineTransform;
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.error_messages.MessageLocalization;
@@ -780,6 +781,21 @@ public class PdfAnnotation extends PdfDictionary {
      */
     public void setName(String name) {
     	put(PdfName.NM, new PdfString(name));
+    }
+
+
+    public void applyCTM(AffineTransform ctm) {
+        PdfArray origRect = getAsArray(PdfName.RECT);
+        if (origRect != null) {
+            PdfRectangle rect;
+            if (origRect.size() == 4) {
+                rect = new PdfRectangle(origRect.getAsNumber(0).floatValue(), origRect.getAsNumber(1).floatValue(), origRect.getAsNumber(2).floatValue(), origRect.getAsNumber(3).floatValue());
+            }
+            else {
+                rect = new PdfRectangle(origRect.getAsNumber(0).floatValue(), origRect.getAsNumber(1).floatValue());
+            }
+            put(PdfName.RECT, rect.transform(ctm));
+        }
     }
 
     /**
