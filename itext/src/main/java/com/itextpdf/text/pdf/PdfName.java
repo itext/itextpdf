@@ -1249,7 +1249,7 @@ public class PdfName extends PdfObject implements Comparable<PdfName> {
      */
     public static final PdfName OBJ = new PdfName("Obj");
     /**
-     * a name used with Doucment Structure
+     * a name used with Document Structure
      * @since 2.1.5
      */
     public static final PdfName OBJR = new PdfName("OBJR");
