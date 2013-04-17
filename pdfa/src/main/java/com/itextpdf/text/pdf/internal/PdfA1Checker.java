@@ -4,6 +4,8 @@ import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.pdf.*;
 
 public class PdfA1Checker extends PdfAChecker {
+
+    @Override
     protected void checkFont(PdfWriter writer, int key, Object obj1) {
         BaseFont bf = (BaseFont) obj1;
         if (bf.getFontType() == BaseFont.FONT_TYPE_DOCUMENT) {
@@ -28,12 +30,14 @@ public class PdfA1Checker extends PdfAChecker {
         }
     }
 
+    @Override
     protected void checkImage(PdfWriter writer, int key, Object obj1) {
         PdfImage image = (PdfImage) obj1;
         if (image.get(PdfName.SMASK) != null)
             throw new PdfAConformanceException(MessageLocalization.getComposedMessage("the.smask.key.is.not.allowed.in.images"));
     }
 
+    @Override
     protected void checkGState(PdfWriter writer, int key, Object obj1) {
         PdfDictionary gs = (PdfDictionary) obj1;
         PdfObject obj = gs.get(PdfName.BM);
@@ -49,6 +53,7 @@ public class PdfA1Checker extends PdfAChecker {
             throw new PdfAConformanceException(MessageLocalization.getComposedMessage("transparency.is.not.allowed.ca.eq.1", String.valueOf(v)));
     }
 
+    @Override
     protected void checkLayer(PdfWriter writer, int key, Object obj1) {
         throw new PdfAConformanceException(MessageLocalization.getComposedMessage("layers.are.not.allowed"));
     }
