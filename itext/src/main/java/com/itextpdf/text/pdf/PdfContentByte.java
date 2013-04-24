@@ -3428,7 +3428,7 @@ public class PdfContentByte {
     	}
     }
 
-protected void openMCBlock(IAccessibleElement element) {
+    public void openMCBlock(IAccessibleElement element) {
         if (isTagged()) {
             if (pdf.openMCDocument) {
                 pdf.openMCDocument = false;
@@ -3480,7 +3480,7 @@ protected void openMCBlock(IAccessibleElement element) {
         return structureElement;
     }
 
-    protected void closeMCBlock(IAccessibleElement element) {
+    public void closeMCBlock(IAccessibleElement element) {
         if (isTagged() && element != null/* && element.getRole() != null*/) {
             if (getMcElements().contains(element)) {
                 closeMCBlockInt(element);
