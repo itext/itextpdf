@@ -557,6 +557,23 @@ public class AffineTransform implements Cloneable, Serializable {
         }
     }
 
+    public void inverseTransform(float[] src, int srcOff, float[] dst, int dstOff, int length)
+            throws NoninvertibleTransformException
+    {
+        float det = (float)getDeterminant();
+        if (Math.abs(det) < ZERO) {
+            // awt.204=Determinant is zero
+            throw new NoninvertibleTransformException(Messages.getString("awt.204")); //$NON-NLS-1$
+        }
+
+        while (--length >= 0) {
+            float x = src[srcOff++] - (float)m02;
+            float y = src[srcOff++] - (float)m12;
+            dst[dstOff++] = (x * (float)m11 - y * (float)m01) / det;
+            dst[dstOff++] = (y * (float)m00 - x * (float)m10) / det;
+        }
+    }
+
     public Shape createTransformedShape(Shape src) {
         if (src == null) {
             return null;
