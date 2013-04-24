@@ -62,6 +62,8 @@ public class PdfImage extends PdfStream {
     
     /** This is the <CODE>PdfName</CODE> of the image. */
     protected PdfName name = null;
+
+    protected Image image = null;
     
     // constructor
     
@@ -75,6 +77,7 @@ public class PdfImage extends PdfStream {
     
     public PdfImage(Image image, String name, PdfIndirectReference maskRef) throws BadPdfFormatException {
         super();
+        this.image = image;
         if (name == null) 
         	generateImgResName( image );
         else
@@ -266,7 +269,11 @@ public class PdfImage extends PdfStream {
     public PdfName name() {
         return name;
     }
-    
+
+    public Image getImage() {
+        return image;
+    }
+
     static void transferBytes(InputStream in, OutputStream out, int len) throws IOException {
         byte buffer[] = new byte[TRANSFERSIZE];
         if (len < 0)
