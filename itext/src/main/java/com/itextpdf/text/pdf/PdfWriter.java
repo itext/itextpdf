@@ -1221,6 +1221,7 @@ public class PdfWriter extends DocWriter implements
                 PdfIndirectReference rootRef = root.writePageTree();
                 // make the catalog-object and add it to the body
                 PdfDictionary catalog = getCatalog(rootRef);
+                PdfWriter.checkPdfIsoConformance(this, PdfIsoKeys.PDFISOKEY_LAYER, OCProperties);
                 // [C9] if there is XMP data to add: add it
                 if (xmpMetadata != null) {
                 	PdfStream xmp = new PdfStream(xmpMetadata);
@@ -2467,7 +2468,7 @@ public class PdfWriter extends DocWriter implements
     PdfObject[] addSimpleProperty(final Object prop, final PdfIndirectReference refi) {
         if (!documentProperties.containsKey(prop)) {
             if (prop instanceof PdfOCG)
-            	PdfWriter.checkPdfIsoConformance(this, PdfIsoKeys.PDFISOKEY_LAYER, null);
+            	PdfWriter.checkPdfIsoConformance(this, PdfIsoKeys.PDFISOKEY_LAYER, prop);
             documentProperties.put(prop, new PdfObject[]{new PdfName("Pr" + (documentProperties.size() + 1)), refi});
         }
         return documentProperties.get(prop);
@@ -2650,6 +2651,13 @@ public class PdfWriter extends DocWriter implements
         PdfDictionary d = new PdfDictionary();
         OCProperties.put(PdfName.D, d);
         d.put(PdfName.ORDER, order);
+        if (docOrder.size() > 0 && (docOrder.get(0) instanceof PdfLayer)) {
+            PdfLayer l = (PdfLayer)docOrder.get(0);
+            PdfString name = l.getAsString(PdfName.NAME);
+            if (name != null) {
+                d.put(PdfName.NAME, name);
+            }
+        }
         PdfArray gr = new PdfArray();
         for (Object element : documentOCG) {
             PdfLayer layer = (PdfLayer)element;
@@ -2670,7 +2678,7 @@ public class PdfWriter extends DocWriter implements
     }
 
     void registerLayer(final PdfOCG layer) {
-        PdfWriter.checkPdfIsoConformance(this, PdfIsoKeys.PDFISOKEY_LAYER, null);
+        PdfWriter.checkPdfIsoConformance(this, PdfIsoKeys.PDFISOKEY_LAYER, layer);
         if (layer instanceof PdfLayer) {
             PdfLayer la = (PdfLayer)layer;
             if (la.getTitle() == null) {

@@ -404,6 +404,11 @@ public class PdfName extends PdfObject implements Comparable<PdfName> {
     public static final PdfName CONDITION = new PdfName("Condition");
     /**
      * A name.
+     * @since 5.4.2
+     */
+    public static final PdfName CONFIGS = new PdfName("Configs");
+    /**
+     * A name.
      * @since 2.1.6
      */
     public static final PdfName CONFIGURATION = new PdfName("Configuration");

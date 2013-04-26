@@ -1,8 +1,6 @@
 package com.itextpdf.text.pdf;
 
-import com.itextpdf.text.Document;
-import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.Image;
+import com.itextpdf.text.*;
 import junit.framework.Assert;
 import org.junit.Test;
 
@@ -136,6 +134,62 @@ public class PdfA2CheckerTest {
         for (int i = 0; i < 4; i++) {
             Assert.assertEquals(true, pdfaErrors.get(i).contains("JPX"));
         }
+
+        document.close();
+        tmpPdf.delete();
+    }
+
+    @Test
+    public void layerCheckTest1() throws IOException, DocumentException {
+        File tmpPdf = File.createTempFile("pdfa2_", ".pdf");
+        FileOutputStream fos = new FileOutputStream(tmpPdf);
+        Document document = new Document();
+        PdfWriter writer = PdfAWriter.getInstance(document, fos, PdfAConformanceLevel.PDF_A_2A);
+        writer.setViewerPreferences(PdfWriter.PageModeUseOC);
+        writer.setPdfVersion(PdfWriter.VERSION_1_5);
+        document.open();
+        PdfLayer layer = new PdfLayer("Do you see me?", writer);
+        layer.setOn(true);
+        BaseFont bf = BaseFont.createFont("./src/test/resources/com/itextpdf/text/pdf/FreeMonoBold.ttf", BaseFont.WINANSI, true);
+        PdfContentByte cb = writer.getDirectContent();
+        cb.beginText();
+        cb.setFontAndSize(bf, 18);
+        cb.showTextAligned(Element.ALIGN_LEFT, "Do you see me?", 50, 790, 0);
+        cb.beginLayer(layer);
+        cb.showTextAligned(Element.ALIGN_LEFT, "Peek-a-Boo!!!", 50, 766, 0);
+        cb.endLayer();
+        cb.endText();
+        document.close();
+        tmpPdf.delete();
+    }
+
+    @Test
+    public void layerCheckTest2() throws IOException, DocumentException {
+        File tmpPdf = File.createTempFile("pdfa2_", ".pdf");
+        FileOutputStream fos = new FileOutputStream(tmpPdf);
+        Document document = new Document();
+        PdfWriter writer = PdfAWriter.getInstance(document, fos, PdfAConformanceLevel.PDF_A_2A);
+        writer.setViewerPreferences(PdfWriter.PageModeUseOC);
+        writer.setPdfVersion(PdfWriter.VERSION_1_5);
+        document.open();
+        PdfContentByte cb = writer.getDirectContent();
+        PdfLayer nested = new PdfLayer("Nested layers", writer);
+        PdfLayer nested_1 = new PdfLayer("Nested layer 1", writer);
+        PdfLayer nested_2 = new PdfLayer("Nested layer 2", writer);
+        nested.addChild(nested_1);
+        nested.addChild(nested_2);
+        writer.lockLayer(nested_2);
+        cb.beginLayer(nested);
+
+        Font font = FontFactory.getFont("./src/test/resources/com/itextpdf/text/pdf/FreeMonoBold.ttf", BaseFont.WINANSI, true);
+        ColumnText.showTextAligned(cb, Element.ALIGN_LEFT, new Phrase("nested layers", font), 50, 775, 0);
+        cb.endLayer();
+        cb.beginLayer(nested_1);
+        ColumnText.showTextAligned(cb, Element.ALIGN_LEFT, new Phrase("nested layer 1", font), 100, 800, 0);
+        cb.endLayer();
+        cb.beginLayer(nested_2);
+        ColumnText.showTextAligned(cb, Element.ALIGN_LEFT, new Phrase("nested layer 2", font), 100, 750, 0);
+        cb.endLayer();
 
         document.close();
         tmpPdf.delete();

@@ -69,5 +69,69 @@ public class PdfA2Checker extends PdfA1Checker {
         }
     }
 
+    @Override
+    protected void checkLayer(PdfWriter writer, int key, Object obj1) {
+        if (obj1 instanceof PdfOCG) {
+
+        } else if (obj1 instanceof PdfOCProperties) {
+            PdfOCProperties properties = (PdfOCProperties)obj1;
+            ArrayList<PdfDictionary> configsList = new ArrayList<PdfDictionary>();
+            PdfDictionary d = properties.getAsDict(PdfName.D);
+            if (d != null)
+                configsList.add(d);
+            PdfArray configs = properties.getAsArray(PdfName.CONFIGS);
+            if (configs != null) {
+                for (int i = 0; i < configs.size(); i++) {
+                    PdfDictionary config = configs.getAsDict(i);
+                    if (config != null)
+                        configsList.add(config);
+                }
+            }
+            HashSet<PdfObject> ocgs = new HashSet<PdfObject>();
+            PdfArray ocgsArray = properties.getAsArray(PdfName.OCGS);
+            if (ocgsArray != null)
+                for (int i = 0; i < ocgsArray.size(); i++)
+                    ocgs.add(ocgsArray.getPdfObject(i));
+            HashSet<String> names = new HashSet<String>();
+            HashSet<PdfObject> order = new HashSet<PdfObject>();
+            for (PdfDictionary config : configsList) {
+                PdfString name = config.getAsString(PdfName.NAME);
+                if (name == null) {
+                    throw new PdfAConformanceException(MessageLocalization.getComposedMessage("optional.content.configuration.dictionary.shall.contain.name.entry"));
+                }
+                String name1 = name.toUnicodeString();
+                if (names.contains(name1)) {
+                    throw new PdfAConformanceException(MessageLocalization.getComposedMessage("value.of.name.entry.shall.be.unique.amongst.all.optional.content.configuration.dictionaries"));
+                }
+                names.add(name1);
+                if (config.contains(PdfName.AS)) {
+                    throw new PdfAConformanceException(MessageLocalization.getComposedMessage("the.as.key.shall.not.appear.in.any.optional.content.configuration.dictionary"));
+                }
+                PdfArray orderArray = config.getAsArray(PdfName.ORDER);
+                if (orderArray != null)
+                    fillOrderRecursively(orderArray, order);
+            }
+            if (order.size() != ocgs.size()) {
+                throw new PdfAConformanceException(MessageLocalization.getComposedMessage("order.array.shall.contain.references.to.all.ocgs"));
+            }
+            ocgs.retainAll(order);
+            if (order.size() != ocgs.size()) {
+                throw new PdfAConformanceException(MessageLocalization.getComposedMessage("order.array.shall.contain.references.to.all.ocgs"));
+            }
+        } else {
+
+        }
+    }
+
+    private void fillOrderRecursively(PdfArray orderArray, HashSet<PdfObject> order) {
+        for (int i = 0; i < orderArray.size(); i++) {
+            PdfArray orderChild = orderArray.getAsArray(i);
+            if (orderChild == null) {
+                order.add(orderArray.getPdfObject(i));
+            } else {
+                fillOrderRecursively(orderChild, order);
+            }
+        }
+    }
 
 }
