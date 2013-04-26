@@ -165,24 +165,25 @@ public class FontFactoryImp implements FontProvider {
         String lowercasefontname = fontname.toLowerCase();
         ArrayList<String> tmp = fontFamilies.get(lowercasefontname);
         if (tmp != null) {
-            // some bugs were fixed here by Daniel Marczisovszky
-            int s = style == Font.UNDEFINED ? Font.NORMAL : style;
-            int fs = Font.NORMAL;
-            boolean found = false;
-            for (String string : tmp) {
-                String f = string;
-                String lcf = f.toLowerCase();
-                fs = Font.NORMAL;
-                if (lcf.toLowerCase().indexOf("bold") != -1) fs |= Font.BOLD;
-                if (lcf.toLowerCase().indexOf("italic") != -1 || lcf.toLowerCase().indexOf("oblique") != -1) fs |= Font.ITALIC;
-                if ((s & Font.BOLDITALIC) == fs) {
-                    fontname = f;
-                    found = true;
-                    break;
+            synchronized (tmp) {
+                // some bugs were fixed here by Daniel Marczisovszky
+                int s = style == Font.UNDEFINED ? Font.NORMAL : style;
+                int fs = Font.NORMAL;
+                boolean found = false;
+                for (String f : tmp) {
+                    String lcf = f.toLowerCase();
+                    fs = Font.NORMAL;
+                    if (lcf.indexOf("bold") != -1) fs |= Font.BOLD;
+                    if (lcf.indexOf("italic") != -1 || lcf.indexOf("oblique") != -1) fs |= Font.ITALIC;
+                    if ((s & Font.BOLDITALIC) == fs) {
+                        fontname = f;
+                        found = true;
+                        break;
+                    }
                 }
-            }
-            if (style != Font.UNDEFINED && found) {
-                style &= ~fs;
+                if (style != Font.UNDEFINED && found) {
+                    style &= ~fs;
+                }
             }
         }
         BaseFont basefont = null;
@@ -384,16 +385,15 @@ public class FontFactoryImp implements FontProvider {
      * @param fullName the font name
      * @param path the font path
      */
-    public void registerFamily(final String familyName, final String fullName, final String path) {
+    synchronized public void registerFamily(final String familyName, final String fullName, final String path) {
         if (path != null)
             trueTypeFonts.put(fullName, path);
         ArrayList<String> tmp = fontFamilies.get(familyName);
         if (tmp == null) {
             tmp = new ArrayList<String>();
-            tmp.add(fullName);
             fontFamilies.put(familyName, tmp);
         }
-        else {
+        if (!tmp.contains(fullName)) {
             int fullNameLength = fullName.length();
             boolean inserted = false;
             for (int j = 0; j < tmp.size(); ++j) {
