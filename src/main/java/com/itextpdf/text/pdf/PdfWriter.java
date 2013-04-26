@@ -1221,7 +1221,8 @@ public class PdfWriter extends DocWriter implements
                 PdfIndirectReference rootRef = root.writePageTree();
                 // make the catalog-object and add it to the body
                 PdfDictionary catalog = getCatalog(rootRef);
-                PdfWriter.checkPdfIsoConformance(this, PdfIsoKeys.PDFISOKEY_LAYER, OCProperties);
+                if (!documentOCG.isEmpty())
+                    PdfWriter.checkPdfIsoConformance(this, PdfIsoKeys.PDFISOKEY_LAYER, OCProperties);
                 // [C9] if there is XMP data to add: add it
                 if (xmpMetadata != null) {
                 	PdfStream xmp = new PdfStream(xmpMetadata);
