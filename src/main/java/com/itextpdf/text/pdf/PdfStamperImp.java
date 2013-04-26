@@ -52,6 +52,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 
+import com.itextpdf.text.pdf.internal.PdfIsoKeys;
 import org.xml.sax.SAXException;
 
 import com.itextpdf.text.DocumentException;
@@ -205,6 +206,7 @@ class PdfStamperImp extends PdfWriter {
         		ddict.put(PdfName.OFF, OCProperties.getAsDict(PdfName.D).get(PdfName.OFF));
         		ddict.put(PdfName.AS, OCProperties.getAsDict(PdfName.D).get(PdfName.AS));
             }
+            PdfWriter.checkPdfIsoConformance(this, PdfIsoKeys.PDFISOKEY_LAYER, OCProperties);
         }
         // metadata
         int skipInfo = -1;
