@@ -121,6 +121,12 @@ public final class CSS {
 		public static final String POSITION = "position";
 		public static final String EMPTY_CELLS = "empty-cells";
 		public static final String CELLPADDING = "cellpadding";
+        //deprecated
+        public static final String CELLPADDING_LEFT = "cellpadding-left";
+        public static final String CELLPADDING_TOP = "cellpadding-top";
+        public static final String CELLPADDING_RIGHT = "cellpadding-right";
+        public static final String CELLPADDING_BOTTOM = "cellpadding-bottom";
+
 		public static final String CAPTION_SIDE = "caption-side";
 		public static final String TAB_STOPS = "tab-stops";
 		public static final String XFA_TAB_STOPS = "xfa-tab-stops";

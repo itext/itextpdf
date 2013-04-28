@@ -689,40 +689,41 @@ public class Table extends AbstractTagProcessor {
 		List<Float> rulesWidth = new ArrayList<Float>();
 		float widestWordOfCell = 0f;
 		float startWidth = getCellStartWidth(cell);
-		float cellWidth = startWidth;
+		float cellWidth;
+        float widthDeviation = 0.001f;
 		List<Element> compositeElements = cell.getCompositeElements();
 		if (compositeElements != null) {
 			for (Element baseLevel : compositeElements) {
+                cellWidth = Float.NaN;
 				if (baseLevel instanceof Phrase) {
 					for (int i = 0; i < ((Phrase) baseLevel).size(); i++) {
 						Element inner = ((Phrase) baseLevel).get(i);
 						if (inner instanceof Chunk) {
+                            if (Float.isNaN(cellWidth))
+                                cellWidth = startWidth + widthDeviation;
 							cellWidth += ((Chunk) inner).getWidthPoint();
-							float widestWord = startWidth + getCssAppliers().getChunkCssAplier().getWidestWord((Chunk) inner);
+							float widestWord = startWidth + widthDeviation + getCssAppliers().getChunkCssAplier().getWidestWord((Chunk) inner);
 							if (widestWord > widestWordOfCell) {
 								widestWordOfCell = widestWord;
 							}
 						}
 					}
-					rulesWidth.add(cellWidth);
-					cellWidth = startWidth;
+                    if (!Float.isNaN(cellWidth))
+					    rulesWidth.add(cellWidth);
 				} else if (baseLevel instanceof com.itextpdf.text.List) {
 					for (Element li : ((com.itextpdf.text.List) baseLevel).getItems()) {
-						rulesWidth.add(cellWidth);
-						cellWidth = startWidth + ((ListItem) li).getIndentationLeft();
-						for (Chunk c : ((ListItem) li).getChunks()) {
+						cellWidth = startWidth + widthDeviation + ((ListItem) li).getIndentationLeft();
+						for (Chunk c : li.getChunks()) {
 							cellWidth += c.getWidthPoint();
 							float widestWord = getCssAppliers().getChunkCssAplier().getWidestWord(c);
-							if (startWidth + widestWord > widestWordOfCell) {
-								widestWordOfCell = startWidth + widestWord;
+							if (startWidth + widthDeviation + widestWord > widestWordOfCell) {
+								widestWordOfCell = startWidth + widthDeviation + widestWord;
 							}
 						}
+                        rulesWidth.add(cellWidth);
 					}
-					rulesWidth.add(cellWidth);
-					cellWidth = startWidth;
 				} else if (baseLevel instanceof PdfPTable) {
-					rulesWidth.add(cellWidth);
-					cellWidth = startWidth + ((PdfPTable) baseLevel).getTotalWidth();
+					cellWidth = startWidth + widthDeviation + ((PdfPTable) baseLevel).getTotalWidth();
 					for (PdfPRow innerRow : ((PdfPTable) baseLevel).getRows()) {
 						int size = innerRow.getCells().length;
 						TableBorderEvent event = (TableBorderEvent) ((PdfPTable) baseLevel).getTableEvent();
@@ -743,10 +744,13 @@ public class Table extends AbstractTagProcessor {
 						}
 					}
 					rulesWidth.add(cellWidth);
-					cellWidth = startWidth;
-				}
+				} else if (baseLevel instanceof PdfDiv) {
+                    cellWidth = startWidth + widthDeviation + ((PdfDiv) baseLevel).getActualWidth();
+                    rulesWidth.add(cellWidth);
+                }
 			}
 		}
+        cellWidth = startWidth;
 		for (Float width : rulesWidth) {
 			if (width > cellWidth) {
 				cellWidth = width;
@@ -821,7 +825,7 @@ public class Table extends AbstractTagProcessor {
 		// paddingLeft for all cells.
 		int spacingMultiplier = cell.getColspan() - 1;
 		float spacing = spacingMultiplier * cellStyleValues.getHorBorderSpacing();
-		return spacing + cell.getPaddingLeft() + cell.getPaddingRight() + 1;
+		return spacing + cell.getPaddingLeft() + cell.getPaddingRight();
 	}
 
 	/**

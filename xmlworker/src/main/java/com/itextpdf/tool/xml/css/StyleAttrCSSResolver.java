@@ -143,11 +143,11 @@ public class StyleAttrCSSResolver implements CSSResolver {
 	public void resolveStyles(final Tag t) {
 		// get css for this tag from resolver
 		Map<String, String> tagCss = new HashMap<String, String>();
-        Map<String, String> ListCss = null;
+        Map<String, String> listCss = null;
 		if (null != cssFiles && cssFiles.hasFiles()) {
 			tagCss = cssFiles.getCSS(t);
             if (t.getName().equalsIgnoreCase(HTML.Tag.P) || t.getName().equalsIgnoreCase(HTML.Tag.TD)) {
-                ListCss = cssFiles.getCSS(new Tag(HTML.Tag.UL));
+                listCss = cssFiles.getCSS(new Tag(HTML.Tag.UL));
             }
 //			Map<String, String> css = cssFiles.getCSS(t);
 //			if (null != css) {
@@ -184,24 +184,6 @@ public class StyleAttrCSSResolver implements CSSResolver {
 		}
 		// inherit css from parent tags, as defined in provided CssInheritanceRules or if property = inherit
 		Map<String, String> css = t.getCSS();
-        if (ListCss != null && ListCss.containsKey(CSS.Property.LIST_STYLE_TYPE)) {
-            css.put(CSS.Property.LIST_STYLE_TYPE, ListCss.get(CSS.Property.LIST_STYLE_TYPE));
-        }
-
-		if (mustInherit(t.getName()) && null != t.getParent() && null != t.getParent().getCSS()) {
-			if (null != this.inherit) {
-				for (Entry<String, String> entry : t.getParent().getCSS().entrySet()) {
-					String key = entry.getKey();
-					if ((tagCss.containsKey(key) && CSS.Value.INHERIT.equals(tagCss.get(key)) ) || canInherite(t, key)) {
-						//splitRules(css, key, entry.getValue());
-						css.put(key, entry.getValue());
-					}
-				}
-			} else {
-				css.putAll(t.getParent().getCSS());
-			}
-		}
-
         if (t.getName() != null) {
             if(t.getName().equals(HTML.Tag.I) || t.getName().equals(HTML.Tag.CITE)
                     || t.getName().equals(HTML.Tag.EM) || t.getName().equals(HTML.Tag.VAR)
@@ -224,7 +206,37 @@ public class StyleAttrCSSResolver implements CSSResolver {
             else if (t.getName().equals(HTML.Tag.SMALL)){
                 css.put(CSS.Property.FONT_SIZE, CSS.Value.SMALLER);
             }
-            else if (t.getName().equals(HTML.Tag.FONT)) {
+        }
+
+        if (listCss != null && listCss.containsKey(CSS.Property.LIST_STYLE_TYPE)) {
+            css.put(CSS.Property.LIST_STYLE_TYPE, listCss.get(CSS.Property.LIST_STYLE_TYPE));
+        }
+
+		if (mustInherit(t.getName()) && null != t.getParent() && null != t.getParent().getCSS()) {
+			if (null != this.inherit) {
+				for (Entry<String, String> entry : t.getParent().getCSS().entrySet()) {
+					String key = entry.getKey();
+					if ((tagCss.containsKey(key) && CSS.Value.INHERIT.equals(tagCss.get(key)) ) || canInherite(t, key)) {
+                        if (key.contains(CSS.Property.CELLPADDING)
+                                && (HTML.Tag.TD.equals(t.getName()) || HTML.Tag.TH.equals(t.getName()))) {
+                            String paddingKey = key.replace(CSS.Property.CELLPADDING, CSS.Property.PADDING);
+                            //if (!tagCss.containsKey(paddingKey)) {
+                            tagCss.put(paddingKey, entry.getValue());
+                            //continue;
+                            //}
+                        } else {
+						    //splitRules(css, key, entry.getValue());
+                            css.put(key, entry.getValue());
+                        }
+					}
+				}
+			} else {
+				css.putAll(t.getParent().getCSS());
+			}
+		}
+
+        if (t.getName() != null) {
+            if (t.getName().equals(HTML.Tag.FONT)) {
                 String font_family = t.getAttributes().get(HTML.Attribute.FACE);
                 if (font_family != null) css.put(CSS.Property.FONT_FAMILY, font_family);
                 String color = t.getAttributes().get(HTML.Attribute.COLOR);
@@ -244,7 +256,6 @@ public class StyleAttrCSSResolver implements CSSResolver {
                 css.put(CSS.Property.TEXT_DECORATION, CSS.Value.UNDERLINE);
                 css.put(CSS.Property.COLOR, "blue");
             }
-
         }
 
 		// overwrite properties (if value != inherit)
