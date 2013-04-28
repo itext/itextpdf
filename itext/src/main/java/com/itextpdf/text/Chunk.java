@@ -375,6 +375,7 @@ public class Chunk implements Element, IAccessibleElement {
 	 * @return a <CODE>StringBuffer</CODE>
 	 */
 	public StringBuffer append(final String string) {
+        contentWithNoTabs = null;
 		return content.append(string);
 	}
 

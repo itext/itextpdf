@@ -78,7 +78,7 @@ public class CompareTool {
     }
 
     public String compare(String outPath, String differenceImage) throws IOException, InterruptedException {
-        if (!(new File(gsExec).exists())) {
+        if (gsExec == null || !(new File(gsExec).exists())) {
             return undefinedGsPath;
         }
         File targetDir = new File(outPath);
