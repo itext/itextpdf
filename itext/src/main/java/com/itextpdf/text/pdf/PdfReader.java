@@ -601,6 +601,16 @@ public class PdfReader implements PdfViewerPreferences {
         return new Rectangle(Math.min(llx, urx), Math.min(lly, ury),
         Math.max(llx, urx), Math.max(lly, ury));
     }
+    
+    /**
+     * Checks if the PDF is a tagged PDF.
+     */
+    public boolean isTagged() {
+    	PdfDictionary markInfo = catalog.getAsDict(PdfName.MARKINFO);
+    	if (markInfo == null)
+    		return false;
+    	return PdfBoolean.PDFTRUE.equals(markInfo.getAsBoolean(PdfName.MARKED));
+    }
 
     /**
      * Parses the entire PDF
