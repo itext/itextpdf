@@ -51,6 +51,8 @@ import java.util.Map;
 import java.util.StringTokenizer;
 
 import com.itextpdf.text.DocWriter;
+import com.itextpdf.text.log.Counter;
+import com.itextpdf.text.log.CounterFactory;
 import com.itextpdf.text.pdf.AcroFields.Item;
 
 /** Writes an FDF form.
@@ -352,4 +354,9 @@ public class FdfWriter {
             return ar;
         }
     }
+
+	protected Counter COUNTER = CounterFactory.getCounter(FdfWriter.class);
+	protected Counter getCounter() {
+		return COUNTER;
+	}
 }

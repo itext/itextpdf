@@ -47,6 +47,8 @@ import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.ExceptionConverter;
 import com.itextpdf.text.Rectangle;
+import com.itextpdf.text.log.Counter;
+import com.itextpdf.text.log.CounterFactory;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -87,6 +89,10 @@ public class PdfCopy extends PdfWriter {
         }
     }
 
+    protected static Counter COUNTER = CounterFactory.getCounter(PdfCopy.class);
+    protected Counter getCounter() {
+    	return COUNTER;
+    }
     protected HashMap<RefKey, IndirectReferences> indirects;
     protected HashMap<PdfReader, HashMap<RefKey, IndirectReferences>> indirectMap;
     protected HashMap<PdfObject, PdfObject> parentObjects;

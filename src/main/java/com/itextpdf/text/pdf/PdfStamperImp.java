@@ -52,6 +52,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 
+import com.itextpdf.text.log.Counter;
+import com.itextpdf.text.log.CounterFactory;
 import com.itextpdf.text.pdf.internal.PdfIsoKeys;
 import org.xml.sax.SAXException;
 
@@ -95,6 +97,11 @@ class PdfStamperImp extends PdfWriter {
     protected int initialXrefSize;
     protected PdfAction openAction;
 
+    protected Counter COUNTER = CounterFactory.getCounter(PdfStamper.class);
+    protected Counter getCounter() {
+    	return COUNTER;
+    }
+    
     /** Creates new PdfStamperImp.
      * @param reader the read PDF
      * @param os the output destination
@@ -393,6 +400,7 @@ class PdfStamperImp extends PdfWriter {
         os.flush();
         if (isCloseStream())
             os.close();
+        getCounter().written(os.getCounter());
     }
 
     void applyRotation(PdfDictionary pageN, ByteBuffer out) {

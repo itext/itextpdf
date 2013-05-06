@@ -57,6 +57,8 @@ import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.ExceptionConverter;
 import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.exceptions.BadPasswordException;
+import com.itextpdf.text.log.Counter;
+import com.itextpdf.text.log.CounterFactory;
 import com.itextpdf.text.pdf.AcroFields.Item;
 
 /**
@@ -85,6 +87,11 @@ class PdfCopyFieldsImp extends PdfWriter {
     private ArrayList<Object> calculationOrderRefs;
     private boolean hasSignature;
 
+    protected Counter COUNTER = CounterFactory.getCounter(PdfCopyFields.class);
+    protected Counter getCounter() {
+    	return COUNTER;
+    }
+    
     PdfCopyFieldsImp(OutputStream os) throws DocumentException {
         this(os, '\0');
     }

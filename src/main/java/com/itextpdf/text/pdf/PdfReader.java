@@ -78,6 +78,8 @@ import com.itextpdf.text.exceptions.UnsupportedPdfException;
 import com.itextpdf.text.io.WindowRandomAccessSource;
 import com.itextpdf.text.io.RandomAccessSource;
 import com.itextpdf.text.io.RandomAccessSourceFactory;
+import com.itextpdf.text.log.Counter;
+import com.itextpdf.text.log.CounterFactory;
 import com.itextpdf.text.pdf.PRTokeniser.TokenType;
 import com.itextpdf.text.pdf.interfaces.PdfViewerPreferences;
 import com.itextpdf.text.pdf.internal.PdfViewerPreferencesImp;
@@ -96,6 +98,8 @@ public class PdfReader implements PdfViewerPreferences {
 	 */
 	public static boolean unethicalreading = false;
 
+	protected static Counter COUNTER = CounterFactory.getCounter(PdfReader.class);
+	
     static final PdfName pageInhCandidates[] = {
         PdfName.MEDIABOX, PdfName.ROTATE, PdfName.RESOURCES, PdfName.CROPBOX
     };
@@ -184,6 +188,7 @@ public class PdfReader implements PdfViewerPreferences {
         		byteSource.close();
         	throw e;
         }
+		COUNTER.read(fileLength);
     }
     
     /** Reads and parses a PDF document.
