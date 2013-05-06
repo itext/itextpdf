@@ -385,26 +385,31 @@ public class FontFactoryImp implements FontProvider {
      * @param fullName the font name
      * @param path the font path
      */
-    synchronized public void registerFamily(final String familyName, final String fullName, final String path) {
+    public void registerFamily(final String familyName, final String fullName, final String path) {
         if (path != null)
             trueTypeFonts.put(fullName, path);
-        ArrayList<String> tmp = fontFamilies.get(familyName);
-        if (tmp == null) {
-            tmp = new ArrayList<String>();
-            fontFamilies.put(familyName, tmp);
+        ArrayList<String> tmp;
+        synchronized (fontFamilies) {
+          tmp = fontFamilies.get(familyName);
+          if (tmp == null) {
+              tmp = new ArrayList<String>();
+              fontFamilies.put(familyName, tmp);
+          }
         }
-        if (!tmp.contains(fullName)) {
-            int fullNameLength = fullName.length();
-            boolean inserted = false;
-            for (int j = 0; j < tmp.size(); ++j) {
-                if (tmp.get(j).length() >= fullNameLength) {
-                    tmp.add(j, fullName);
-                    inserted = true;
-                    break;
-                }
-            }
-            if (!inserted)
-                tmp.add(fullName);
+        synchronized (tmp) {
+          if (!tmp.contains(fullName)) {
+              int fullNameLength = fullName.length();
+              boolean inserted = false;
+              for (int j = 0; j < tmp.size(); ++j) {
+                  if (tmp.get(j).length() >= fullNameLength) {
+                      tmp.add(j, fullName);
+                      inserted = true;
+                      break;
+                  }
+              }
+              if (!inserted)
+                  tmp.add(fullName);
+          }
         }
     }
 
