@@ -97,8 +97,6 @@ public class PdfReader implements PdfViewerPreferences {
 	 * @since 5.0.2
 	 */
 	public static boolean unethicalreading = false;
-
-	protected static Counter COUNTER = CounterFactory.getCounter(PdfReader.class);
 	
     static final PdfName pageInhCandidates[] = {
         PdfName.MEDIABOX, PdfName.ROTATE, PdfName.RESOURCES, PdfName.CROPBOX
@@ -157,6 +155,11 @@ public class PdfReader implements PdfViewerPreferences {
      */
     private boolean appendable;
 
+	protected static Counter COUNTER = CounterFactory.getCounter(PdfReader.class);
+	protected Counter getCounter() {
+		return COUNTER;
+	}
+	
     /**
      * Constructs a new PdfReader.  This is the master constructor.
      * @param the source of bytes for the reader
@@ -188,7 +191,7 @@ public class PdfReader implements PdfViewerPreferences {
         		byteSource.close();
         	throw e;
         }
-		COUNTER.read(fileLength);
+		getCounter().read(fileLength);
     }
     
     /** Reads and parses a PDF document.
