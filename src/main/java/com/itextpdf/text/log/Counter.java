@@ -44,6 +44,9 @@ package com.itextpdf.text.log;
 /**
  * Interface that can be implemented if you want to count the number of documents
  * that are being processed by iText.
+ * 
+ * Implementers may use this method to record actual system usage for licensing purposes
+ * (e.g. count the number of documents or the volumne in bytes in the context of a SaaS license).
  */
 public interface Counter {
 	

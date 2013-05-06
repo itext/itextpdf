@@ -41,6 +41,15 @@
  */
 package com.itextpdf.text.log;
 
+/**
+ * Factory that creates a counter for every reader or writer class.
+ * You can implement your own counter and declare it like this:
+ * <code>CounterFactory.getInstance().setCounter(new SysoCounter());</code>
+ * SysoCounter is just an example of a Counter implementation.
+ * It writes info about files being read and written to the System.out.
+ * 
+ * This functionality can be used to create metrics in a SaaS context.
+ */
 public class CounterFactory {
 
 	/** The singleton instance. */
