@@ -70,6 +70,8 @@ import com.itextpdf.text.ImgWMF;
 import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.Version;
 import com.itextpdf.text.error_messages.MessageLocalization;
+import com.itextpdf.text.log.Counter;
+import com.itextpdf.text.log.CounterFactory;
 import com.itextpdf.text.pdf.collection.PdfCollection;
 import com.itextpdf.text.pdf.events.PdfPageEventForwarder;
 import com.itextpdf.text.pdf.interfaces.*;
@@ -236,7 +238,7 @@ public class PdfWriter extends DocWriter implements
         }
 
         private static final int OBJSINSTREAM = 200;
-
+        
         // membervariables
 
         /** array containing the cross-reference table of the normal objects. */
@@ -573,6 +575,10 @@ public class PdfWriter extends DocWriter implements
     }
 
 //	ESSENTIALS
+    protected static Counter COUNTER = CounterFactory.getCounter(PdfWriter.class);
+    protected Counter getCounter() {
+    	return COUNTER;
+    }
 
 //	Construct a PdfWriter instance
 
@@ -1291,6 +1297,7 @@ public class PdfWriter extends DocWriter implements
                 throw new ExceptionConverter(ioe);
             }
         }
+        getCounter().written(os.getCounter());
     }
 
     protected void addXFormsToBody() throws IOException {

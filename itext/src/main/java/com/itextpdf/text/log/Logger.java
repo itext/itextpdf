@@ -98,9 +98,4 @@ public interface Logger {
 	 */
 	void error(final String message, Exception e);
 
-	/**
-	 * @param name
-	 * @return
-	 */
-
 }
