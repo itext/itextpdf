@@ -821,6 +821,12 @@ public class PdfDocument extends Document {
                 flushLines();
                 writer.getDirectContent().closeMCBlock(this);
                 writer.flushTaggedObjects();
+                if (isPageEmpty()) {
+                    int pageReferenceCount = writer.pageReferences.size();
+                    if (pageReferenceCount > 0 && writer.currentPageNumber == pageReferenceCount) {
+                        writer.pageReferences.remove(pageReferenceCount - 1);
+                    }
+                }
             }
             boolean wasImage = imageWait != null;
             newPage();

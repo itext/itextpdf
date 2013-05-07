@@ -115,6 +115,10 @@ public class PdfContentByte {
         }
 
         GraphicState(final GraphicState cp) {
+            copyParameters(cp);
+        }
+
+        void copyParameters(final GraphicState cp) {
             fontDetails = cp.fontDetails;
             colorDetails = cp.colorDetails;
             size = cp.size;
@@ -134,6 +138,10 @@ public class PdfContentByte {
             textColorStroke = cp.textColorStroke;
             graphicsColorStroke = cp.graphicsColorStroke;
             CTM = new AffineTransform(cp.CTM);
+        }
+
+        void restore(final GraphicState restore) {
+            copyParameters(restore);
         }
     }
 
@@ -1457,6 +1465,7 @@ public class PdfContentByte {
         	sanityCheck();
         }
         state = new GraphicState();
+        stateList = new ArrayList<GraphicState>();
     }
 
 
@@ -1550,7 +1559,7 @@ public class PdfContentByte {
         int idx = stateList.size() - 1;
         if (idx < 0)
             throw new IllegalPdfSyntaxException(MessageLocalization.getComposedMessage("unbalanced.save.restore.state.operators"));
-        state = stateList.get(idx);
+        state.restore(stateList.get(idx));
         stateList.remove(idx);
     }
 
@@ -2355,6 +2364,9 @@ public class PdfContentByte {
     PdfTemplate createTemplate(final float width, final float height, final PdfName forcedName) {
         checkWriter();
         PdfTemplate template = new PdfTemplate(writer);
+        ArrayList<IAccessibleElement> allMcElements = getMcElements();
+        if (allMcElements != null && allMcElements.size() > 0)
+            template.getMcElements().add(allMcElements.get(allMcElements.size() - 1));
         template.setWidth(width);
         template.setHeight(height);
         writer.addDirectTemplateSimple(template, forcedName);
