@@ -43,20 +43,25 @@
  */
 package com.itextpdf.text;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.lang.reflect.Constructor;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.Dictionary;
-import java.util.HashMap;
-import java.util.UUID;
-
 import com.itextpdf.awt.PdfGraphics2D;
 import com.itextpdf.text.api.Indentable;
 import com.itextpdf.text.api.Spaceable;
 import com.itextpdf.text.error_messages.MessageLocalization;
-import com.itextpdf.text.pdf.*;
+import com.itextpdf.text.pdf.ICC_Profile;
+import com.itextpdf.text.pdf.PRIndirectReference;
+import com.itextpdf.text.pdf.PdfArray;
+import com.itextpdf.text.pdf.PdfContentByte;
+import com.itextpdf.text.pdf.PdfDictionary;
+import com.itextpdf.text.pdf.PdfIndirectReference;
+import com.itextpdf.text.pdf.PdfName;
+import com.itextpdf.text.pdf.PdfNumber;
+import com.itextpdf.text.pdf.PdfOCG;
+import com.itextpdf.text.pdf.PdfObject;
+import com.itextpdf.text.pdf.PdfReader;
+import com.itextpdf.text.pdf.PdfStream;
+import com.itextpdf.text.pdf.PdfTemplate;
+import com.itextpdf.text.pdf.PdfWriter;
+import com.itextpdf.text.pdf.RandomAccessFileOrArray;
 import com.itextpdf.text.pdf.codec.BmpImage;
 import com.itextpdf.text.pdf.codec.CCITTG4Encoder;
 import com.itextpdf.text.pdf.codec.GifImage;
@@ -64,6 +69,14 @@ import com.itextpdf.text.pdf.codec.JBIG2Image;
 import com.itextpdf.text.pdf.codec.PngImage;
 import com.itextpdf.text.pdf.codec.TiffImage;
 import com.itextpdf.text.pdf.interfaces.IAccessibleElement;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.lang.reflect.Constructor;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.HashMap;
+import java.util.UUID;
 
 /**
  * An <CODE>Image</CODE> is the representation of a graphic element (JPEG, PNG
@@ -221,6 +234,10 @@ public abstract class Image extends Rectangle implements Indentable, Spaceable, 
 		this.alignment = DEFAULT;
 		rotationRadians = 0;
 	}
+    
+    public static Image getInstance(final URL url) throws BadElementException, MalformedURLException, IOException {
+        return Image.getInstance(url, false);
+    }
 
 	/**
 	 * Gets an instance of an Image.
@@ -232,7 +249,7 @@ public abstract class Image extends Rectangle implements Indentable, Spaceable, 
 	 * @throws MalformedURLException
 	 * @throws IOException
 	 */
-	public static Image getInstance(final URL url) throws BadElementException,
+	public static Image getInstance(final URL url, boolean handleIncorrectImage) throws BadElementException,
 			MalformedURLException, IOException {
 		InputStream is = null;
 		try {
@@ -283,7 +300,7 @@ public abstract class Image extends Rectangle implements Indentable, Spaceable, 
 						ra = new RandomAccessFileOrArray(file);
 					} else
 						ra = new RandomAccessFileOrArray(url);
-					Image img = TiffImage.getTiffImage(ra, 1);
+					Image img = TiffImage.getTiffImage(ra, handleIncorrectImage, 1);
 					img.url = url;
 					return img;
 				} finally {
@@ -310,8 +327,7 @@ public abstract class Image extends Rectangle implements Indentable, Spaceable, 
 							ra.close();
 				}
 			}
-			throw new IOException(url.toString()
-					+ " is not a recognized imageformat.");
+			throw new IOException(MessageLocalization.getComposedMessage("unknown.image.format", url.toString()));
 		} finally {
 			if (is != null) {
 				is.close();
@@ -334,6 +350,16 @@ public abstract class Image extends Rectangle implements Indentable, Spaceable, 
 			throws BadElementException, MalformedURLException, IOException {
 		return getInstance(Utilities.toURL(filename));
 	}
+    
+    public static Image getInstance(final String filename, boolean handleIncorrectImage) throws IOException, BadElementException {
+        return getInstance(Utilities.toURL(filename), handleIncorrectImage);
+    }
+
+
+    public static Image getInstance(final byte imgb[]) throws BadElementException,
+            MalformedURLException, IOException {
+        return getInstance(imgb, false);
+    }
 
 	/**
 	 * gets an instance of an Image
@@ -345,7 +371,7 @@ public abstract class Image extends Rectangle implements Indentable, Spaceable, 
 	 * @throws MalformedURLException
 	 * @throws IOException
 	 */
-	public static Image getInstance(final byte imgb[]) throws BadElementException,
+	public static Image getInstance(final byte imgb[], boolean handleIncorrectImage) throws BadElementException,
 			MalformedURLException, IOException {
 		InputStream is = null;
 		try {
@@ -385,7 +411,7 @@ public abstract class Image extends Rectangle implements Indentable, Spaceable, 
 				RandomAccessFileOrArray ra = null;
 				try {
 					ra = new RandomAccessFileOrArray(imgb);
-					Image img = TiffImage.getTiffImage(ra, 1);
+					Image img = TiffImage.getTiffImage(ra, 1, handleIncorrectImage);
                     if (img.getOriginalData() == null)
                         img.setOriginalData(imgb);
 					return img;

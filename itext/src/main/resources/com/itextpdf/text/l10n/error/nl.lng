@@ -400,6 +400,7 @@ unknown.encryption.type.r.eq.1=Onbekend encryptie type R = {1}
 unknown.encryption.type.v.eq.1=Onbekend encryptie type V = {1}
 unknown.filter.1=Onbekende filter: {1}
 unknown.hash.algorithm.1=Onbekend Hash Algoritme {1}
+unknown.image.format={1} is geen erkend afbeeldingsformaat.
 unknown.key.algorithm.1=Onbekend Key Algoritme {1}
 unknown.object.at.k.1=Onbekend object voor /K {1}
 unknown=onbekend

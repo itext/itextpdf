@@ -400,6 +400,7 @@ unknown.encryption.type.r.eq.1=Unknown encryption type R = {1}
 unknown.encryption.type.v.eq.1=Unknown encryption type V = {1}
 unknown.filter.1=Unknown filter: {1}
 unknown.hash.algorithm.1=Unknown Hash Algorithm {1}
+unknown.image.format={1} is not a recognized imageformat.
 unknown.key.algorithm.1=Unknown Key Algorithm {1}
 unknown.object.at.k.1=Unknown object at /K {1}
 unknown=unknown

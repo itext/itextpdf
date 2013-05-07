@@ -46,6 +46,7 @@
 package com.itextpdf.text.pdf.codec;
 
 import com.itextpdf.text.error_messages.MessageLocalization;
+import com.itextpdf.text.exceptions.InvalidImageException;
 
 /**
  * Class that can decode TIFF files.
@@ -72,6 +73,9 @@ public class TIFFFaxDecoder {
     private int uncompressedMode = 0;
     private int fillBits = 0;
     private int oneD;
+
+    //
+    private boolean handleIncorrectImage;
     
     static int table1[] = {
         0x00, // 0 bits are left in first byte - SHOULD NOT HAPPEN
@@ -953,7 +957,7 @@ public class TIFFFaxDecoder {
         
         int lineOffset = 0;
         int bitOffset;
-        
+
         for (int lines = 0; lines < height; lines++) {
             // a0 has to be set just before the start of the scanline.
             a0 = -1;
@@ -974,6 +978,7 @@ public class TIFFFaxDecoder {
             lastChangingElement = 0;
             
             // Till one whole scanline is decoded
+            escape:
             while (bitOffset < w) {
                 // Get the next changing element
                 getNextChangingElement(a0, isWhite, b);
@@ -1044,7 +1049,7 @@ public class TIFFFaxDecoder {
                     updatePointer(7 - bits);
                 } else if (code == 11) {
                     if (nextLesserThan8Bits(3) != 7) {
-                        throw new RuntimeException(MessageLocalization.getComposedMessage("invalid.code.encountered.while.decoding.2d.group.4.compressed.data"));
+                        throw new InvalidImageException(MessageLocalization.getComposedMessage("invalid.code.encountered.while.decoding.2d.group.4.compressed.data"));
                     }
                     
                     int zeros = 0;
@@ -1117,7 +1122,7 @@ public class TIFFFaxDecoder {
                 	bitOffset = w;
                 	updatePointer(7 - bits);
                 }
-            }
+            } // end loop
             
             // Add the changing element beyond the current scanline for the
             // other color too
@@ -1163,7 +1168,11 @@ public class TIFFFaxDecoder {
         // Fill in remaining bits
         while (bitNum < lastBit) {
             byteNum = bitNum >> 3;
-            buffer[byteNum] |= 1 << (7 - (bitNum & 0x7));
+            if ( handleIncorrectImage && !(byteNum < buffer.length) ) {
+                // do nothing
+            } else {
+                buffer[byteNum] |= 1 << (7 - (bitNum & 0x7));
+            }
             ++bitNum;
         }
     }
@@ -1173,7 +1182,7 @@ public class TIFFFaxDecoder {
         int current, entry, bits, isT, twoBits, code = -1;
         int runLength = 0;
         boolean isWhite = true;
-        
+
         while (isWhite) {
             current = nextNBits(10);
             entry = white[current];
@@ -1193,7 +1202,7 @@ public class TIFFFaxDecoder {
                 runLength += code;
                 updatePointer(4 - bits);
             } else if (bits == 0) {     // ERROR
-                throw new RuntimeException(MessageLocalization.getComposedMessage("invalid.code.encountered"));
+                throw new InvalidImageException(MessageLocalization.getComposedMessage("invalid.code.encountered"));
             } else if (bits == 15) {    // EOL
                 throw new RuntimeException(MessageLocalization.getComposedMessage("eol.code.word.encountered.in.white.run"));
             } else {
@@ -1440,7 +1449,7 @@ public class TIFFFaxDecoder {
     }
     
     private int nextLesserThan8Bits(int bitsToGet) {
-        byte b, next;
+        byte b = 0, next = 0;
         int l = data.length - 1;
         int bp = this.bytePointer;
         
@@ -1452,11 +1461,15 @@ public class TIFFFaxDecoder {
                 next = data[bp + 1];
             }
         } else if (fillOrder == 2) {
-            b = flipTable[data[bp] & 0xff];
-            if (bp == l) {
-                next = 0x00;
+            if ( handleIncorrectImage && !(bp < data.length)  ) {
+                // do nothing
             } else {
-                next = flipTable[data[bp + 1] & 0xff];
+                b = flipTable[data[bp] & 0xff];
+                if (bp == l) {
+                    next = 0x00;
+                } else {
+                    next = flipTable[data[bp + 1] & 0xff];
+                }
             }
         } else {
             throw new RuntimeException(MessageLocalization.getComposedMessage("tiff.fill.order.tag.must.be.either.1.or.2"));
@@ -1507,5 +1520,8 @@ public class TIFFFaxDecoder {
         
         return true;
     }
-}
 
+    public void setHandleIncorrectImage(boolean handleIncorrectImage) {
+        this.handleIncorrectImage = handleIncorrectImage;
+    }
+}
