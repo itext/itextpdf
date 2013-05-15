@@ -1004,6 +1004,15 @@ public abstract class Image extends Rectangle implements Indentable, Spaceable, 
 		return plainHeight;
 	}
 
+    /**
+     * Scale the image to the dimensions of the rectangle
+     *
+     * @param rectangle dimensions to scale the Image
+     */
+    public void scaleAbsolute(final Rectangle rectangle) {
+        scaleAbsolute(rectangle.getWidth(), rectangle.getHeight());
+    }
+
 	/**
 	 * Scale the image to an absolute width and an absolute height.
 	 *
@@ -1075,6 +1084,15 @@ public abstract class Image extends Rectangle implements Indentable, Spaceable, 
 		scaledHeight = matrix[DY] - matrix[CY];
 		setWidthPercentage(0);
 	}
+
+    /**
+     * Scales the images to the dimensions of the rectangle.
+     *
+     * @param rectangle the dimensions to fit
+     */
+    public void scaleToFit(final Rectangle rectangle) {
+        scaleToFit(rectangle.getWidth(), rectangle.getHeight());
+    }
 
 	/**
 	 * Scales the image so that it fits a certain width and height.
