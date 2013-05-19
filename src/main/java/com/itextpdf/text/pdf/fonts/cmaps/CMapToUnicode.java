@@ -137,6 +137,10 @@ public class CMapToUnicode extends AbstractCMap {
         return value;
     }
 
+    void addChar(int cid, String uni) {
+        doubleByteMappings.put(Integer.valueOf(cid), uni);
+    }
+    
     @Override
     void addChar(PdfString mark, PdfObject code) {
         try {

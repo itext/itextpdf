@@ -76,7 +76,7 @@ public class DocumentFont extends BaseFont {
     private float lly = -200;
     private float urx = 100;
     private float ury = 900;
-    private boolean isType0 = false;
+    protected boolean isType0 = false;
     protected String cjkEncoding;
     protected String uniMap;
 
