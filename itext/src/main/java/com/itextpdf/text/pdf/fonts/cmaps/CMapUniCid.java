@@ -71,5 +71,14 @@ public class CMapUniCid extends AbstractCMap {
     
     public int lookup(int character) {
         return map.get(character);
-    }    
+    }
+    
+    public CMapToUnicode exportToUnicode() {
+        CMapToUnicode uni = new CMapToUnicode();
+        int[] keys = map.toOrderedKeys();
+        for (int key : keys) {
+            uni.addChar(map.get(key), Utilities.convertFromUtf32(key));
+        }
+        return uni;
+    }
 }

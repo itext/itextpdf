@@ -58,6 +58,7 @@ import com.itextpdf.text.pdf.fonts.cmaps.CMapParserEx;
 import com.itextpdf.text.pdf.fonts.cmaps.CMapSequence;
 import com.itextpdf.text.pdf.fonts.cmaps.CMapToUnicode;
 import com.itextpdf.text.pdf.fonts.cmaps.CidLocationFromByte;
+import com.itextpdf.text.pdf.fonts.cmaps.IdentityToUnicode;
 
 
 /**
@@ -137,6 +138,33 @@ public class CMapAwareDocumentFont extends DocumentFont {
                 uni2cid = null;
                 // technically, we should log this or provide some sort of feedback... but sometimes the cmap will be junk, but it's still possible to get text, so we don't want to throw an exception
                 //throw new IllegalStateException("Unable to process ToUnicode map - " + e.getMessage(), e);
+            }
+        }
+        else if (isType0) {
+            // fake a ToUnicode for CJK Identity-H fonts
+            try {
+                PdfName encodingName = fontDic.getAsName(PdfName.ENCODING);
+                if (encodingName == null)
+                    return;
+                String enc = PdfName.decodeName(encodingName.toString());
+                if (!enc.equals("Identity-H"))
+                    return;
+                PdfArray df = (PdfArray)PdfReader.getPdfObjectRelease(fontDic.get(PdfName.DESCENDANTFONTS));
+                PdfDictionary cidft = (PdfDictionary)PdfReader.getPdfObjectRelease(df.getPdfObject(0));
+                PdfDictionary cidinfo = cidft.getAsDict(PdfName.CIDSYSTEMINFO);
+                if (cidinfo == null)
+                    return;
+                PdfString ordering = cidinfo.getAsString(PdfName.ORDERING);
+                if (ordering == null)
+                    return;
+                CMapToUnicode touni = IdentityToUnicode.GetMapFromOrdering(ordering.toUnicodeString());
+                if (touni == null)
+                    return;
+                toUnicodeCmap = touni;
+                uni2cid = toUnicodeCmap.createReverseMapping();
+            } catch (IOException e) {
+                toUnicodeCmap = null;
+                uni2cid = null;
             }
         }
     }
