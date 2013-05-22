@@ -376,8 +376,15 @@ class PdfStamperImp extends PdfWriter {
             }
             fileID = crypto.getFileID();
         }
-        else
-            fileID = PdfEncryption.createInfoId(PdfEncryption.createDocumentId());
+        else {
+        	PdfArray IDs = reader.trailer.getAsArray(PdfName.ID);
+        	if (IDs != null && IDs.getAsString(0) != null) {
+                fileID = PdfEncryption.createInfoId(IDs.getAsString(0).getBytes());
+        	}
+        	else {
+                fileID = PdfEncryption.createInfoId(PdfEncryption.createDocumentId());
+        	}	
+        }
         PRIndirectReference iRoot = (PRIndirectReference)reader.trailer.get(PdfName.ROOT);
         PdfIndirectReference root = new PdfIndirectReference(0, getNewObjectNumber(reader, iRoot.getNumber(), 0));
         // write the cross-reference table of the body
