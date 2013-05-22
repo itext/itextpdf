@@ -57,6 +57,8 @@ import com.itextpdf.text.pdf.internal.PdfIsoKeys;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * <CODE>PdfContentByte</CODE> is an object containing the user positioned
@@ -3476,15 +3478,30 @@ public class PdfContentByte {
             if (parent != null && parent.getRole() == null)
                 element.setRole(null);
             if (element.getRole() != null) {
-                structureElement = pdf.structElements.get(element.getId());
-                if (structureElement == null) {
-                    structureElement = new PdfStructureElement(getParentStructureElement(), element.getRole());
-                    structureElement.writeAttributes(element);
+                if (!(element instanceof PdfArtifact)) {
+                    structureElement = pdf.structElements.get(element.getId());
+                    if (structureElement == null) {
+                        structureElement = new PdfStructureElement(getParentStructureElement(), element.getRole());
+                        structureElement.writeAttributes(element);
+                    }
                 }
                 boolean inTextLocal = inText;
                 if (inText)
                     endText();
-                beginMarkedContentSequence(structureElement);
+                if (element instanceof PdfArtifact) {
+                    HashMap<PdfName, PdfObject> properties = element.getAccessibleAttributes();
+                    PdfDictionary propertiesDict = null;
+                    if (properties == null || properties.isEmpty()) {
+                    } else {
+                        propertiesDict = new PdfDictionary();
+                        for (Map.Entry<PdfName, PdfObject> entry : properties.entrySet()) {
+                            propertiesDict.put(entry.getKey(), entry.getValue());
+                        }
+                    }
+                    beginMarkedContentSequence(element.getRole(), propertiesDict, true);
+                } else {
+                    beginMarkedContentSequence(structureElement);
+                }
                 if (inTextLocal)
                     beginText(true);
             }
