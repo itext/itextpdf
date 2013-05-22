@@ -60,8 +60,13 @@ public class PdfAConformanceImp implements PdfAConformance {
      */
     protected PdfAConformanceLevel conformanceLevel;
     protected PdfAChecker pdfAChecker;
+    protected PdfWriter writer;
 
-    public void checkPdfAConformance(PdfWriter writer, int key, Object obj1) {
+    public PdfAConformanceImp(PdfWriter writer) {
+        this.writer = writer;
+    }
+
+    public void checkPdfIsoConformance(int key, Object obj1) {
         pdfAChecker.checkPdfAConformance(writer, key, obj1);
     }
 

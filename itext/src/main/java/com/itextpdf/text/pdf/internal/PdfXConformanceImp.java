@@ -68,7 +68,12 @@ public class PdfXConformanceImp implements PdfXConformance {
      * The value indicating if the PDF has to be in conformance with PDF/X.
      */
     protected int pdfxConformance = PdfWriter.PDFXNONE;
-    
+    protected PdfWriter writer;
+
+    public PdfXConformanceImp(PdfWriter writer) {
+        this.writer = writer;
+    }
+
     /**
      * @see com.itextpdf.text.pdf.interfaces.PdfXConformance#setPDFXConformance(int)
      */
@@ -114,11 +119,10 @@ public class PdfXConformanceImp implements PdfXConformance {
 
     /**
 	 * Business logic that checks if a certain object is in conformance with PDF/X.
-     * @param writer	the writer that is supposed to write the PDF/X file
      * @param key		the type of PDF ISO conformance that has to be checked
      * @param obj1		the object that is checked for conformance
      */
-    public static void checkPDFXConformance(PdfWriter writer, int key, Object obj1) {
+    public void checkPdfIsoConformance(int key, Object obj1) {
         if (writer == null || !writer.isPdfX())
             return;
         int conf = writer.getPDFXConformance();
@@ -136,15 +140,15 @@ public class PdfXConformanceImp implements PdfXConformance {
                                     throw new PdfXConformanceException(MessageLocalization.getComposedMessage("colorspace.rgb.is.not.allowed"));
                                 case ExtendedColor.TYPE_SEPARATION:
                                     SpotColor sc = (SpotColor)ec;
-                                    checkPDFXConformance(writer, PdfIsoKeys.PDFISOKEY_COLOR, sc.getPdfSpotColor().getAlternativeCS());
+                                    checkPdfIsoConformance(PdfIsoKeys.PDFISOKEY_COLOR, sc.getPdfSpotColor().getAlternativeCS());
                                     break;
                                 case ExtendedColor.TYPE_SHADING:
                                     ShadingColor xc = (ShadingColor)ec;
-                                    checkPDFXConformance(writer, PdfIsoKeys.PDFISOKEY_COLOR, xc.getPdfShadingPattern().getShading().getColorSpace());
+                                    checkPdfIsoConformance(PdfIsoKeys.PDFISOKEY_COLOR, xc.getPdfShadingPattern().getShading().getColorSpace());
                                     break;
                                 case ExtendedColor.TYPE_PATTERN:
                                     PatternColor pc = (PatternColor)ec;
-                                    checkPDFXConformance(writer, PdfIsoKeys.PDFISOKEY_COLOR, pc.getPainter().getDefaultColor());
+                                    checkPdfIsoConformance(PdfIsoKeys.PDFISOKEY_COLOR, pc.getPainter().getDefaultColor());
                                     break;
                             }
                         }

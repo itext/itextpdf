@@ -200,17 +200,10 @@ public class PdfAWriter extends PdfWriter {
     }
 
     /**
-     * @see PdfWriter#checkPdfIsoConformance(int, Object)
-     */
-    protected void checkPdfIsoConformance(int key, Object obj1) {
-        ((PdfAConformanceImp)pdfIsoConformance).checkPdfAConformance(this, key, obj1);
-    }
-
-    /**
      * @see com.itextpdf.text.pdf.PdfWriter#getPdfIsoConformance()
      */
     protected PdfIsoConformance getPdfIsoConformance() {
-        return new PdfAConformanceImp();
+        return new PdfAConformanceImp(this);
     }
 
 	protected Counter COUNTER = CounterFactory.getCounter(PdfAWriter.class);

@@ -44,6 +44,7 @@
 package com.itextpdf.text.pdf.interfaces;
 
 import com.itextpdf.text.pdf.PdfAConformanceLevel;
+import com.itextpdf.text.pdf.PdfWriter;
 
 /**
  * Extension of the PdfIsoConformance interface for Pdf/A
