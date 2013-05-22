@@ -94,7 +94,6 @@ public class PdfWriter extends DocWriter implements
 	PdfVersion,
 	PdfDocumentActions,
 	PdfPageActions,
-    PdfIsoConformance,
 	PdfRunDirection,
 	PdfAnnotations {
 
@@ -1813,7 +1812,7 @@ public class PdfWriter extends DocWriter implements
 	protected PdfIsoConformance pdfIsoConformance = getPdfIsoConformance();
 
     protected PdfIsoConformance getPdfIsoConformance() {
-        return new PdfXConformanceImp();
+        return new PdfXConformanceImp(this);
     }
 
     /** @see com.itextpdf.text.pdf.interfaces.PdfXConformance#setPDFXConformance(int) */
@@ -3297,8 +3296,8 @@ public class PdfWriter extends DocWriter implements
             writer.checkPdfIsoConformance(key, obj1);
     }
 
-    protected void checkPdfIsoConformance(int key, Object obj1) {
-        PdfXConformanceImp.checkPDFXConformance(this, key, obj1);
+    public void checkPdfIsoConformance(int key, Object obj1) {
+        pdfIsoConformance.checkPdfIsoConformance(key, obj1);
     }
 
     private void completeInfoDictionary(PdfDictionary info) {
