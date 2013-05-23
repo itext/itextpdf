@@ -166,15 +166,15 @@
 	</profiles>
 	<!-- Dependencies -->
 	<dependencies>
-        <dependency>
-            <groupId>org.bouncycastle</groupId>
+        	<dependency>
+            		<groupId>org.bouncycastle</groupId>
 			<artifactId>bcprov-jdk15on</artifactId>
 			<version>1.48</version>
 			<type>jar</type>
 			<scope>compile</scope>
 			<optional>true</optional>
-        </dependency>
-        <dependency>
+	        </dependency>
+        	<dependency>
 			<groupId>org.bouncycastle</groupId>
 			<artifactId>bcpkix-jdk15on</artifactId>
 			<version>1.48</version>
@@ -188,6 +188,13 @@
 			<version>4.8.2</version>
 			<type>jar</type>
 			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.sun.xml.security</groupId>
+			<artifactId>xml-security-impl</artifactId>
+			<version>1.0</version>
+			<scope>compile</scope>
+			<optional>true</optional>
 		</dependency>
 	</dependencies>
 	<reporting>
