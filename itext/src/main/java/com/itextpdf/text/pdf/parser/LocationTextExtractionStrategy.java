@@ -144,7 +144,7 @@ public class LocationTextExtractionStrategy implements TextExtractionStrategy {
     protected boolean isChunkAtWordBoundary(TextChunk chunk, TextChunk previousChunk){
         float dist = chunk.distanceFromEndOf(previousChunk);
         
-        if (dist < -chunk.charSpaceWidth || dist > chunk.charSpaceWidth/2.0f)
+        if (dist < -chunk.getCharSpaceWidth() || dist > chunk.getCharSpaceWidth()/2.0f)
             return true;
         
         return false;
@@ -285,6 +285,21 @@ public class LocationTextExtractionStrategy implements TextExtractionStrategy {
         public Vector getEndLocation(){
         	return endLocation;
         }
+        
+        /**
+         * @return the text captured by this chunk
+         */
+        public String getText(){
+        	return text;
+        }
+        
+        /**
+         * @return the width of a single space character as rendered by this chunk
+         */
+        public float getCharSpaceWidth() {
+			return charSpaceWidth;
+		}
+        
         private void printDiagnostics(){
             System.out.println("Text (@" + startLocation + " -> " + endLocation + "): " + text);
             System.out.println("orientationMagnitude: " + orientationMagnitude);
