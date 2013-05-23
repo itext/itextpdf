@@ -80,6 +80,7 @@ public class PdfStamper
     private Map<String, String> moreInfo;
     protected boolean hasSignature;
     protected PdfSignatureAppearance sigApp;
+    protected XmlSignatureAppearance sigXmlApp;
     private LtvVerification verification;
 
     /** Starts the process of adding extra content to an existing PDF
@@ -178,6 +179,14 @@ public class PdfStamper
      */
     public PdfSignatureAppearance getSignatureAppearance() {
         return sigApp;
+    }
+
+    /**
+     * Gets the xml signing instance. The appearances and other parameters can the be set.
+     * @return the xml signing instance
+     */
+    public XmlSignatureAppearance getXmlSignatureAppearance() {
+        return sigXmlApp;
     }
 
     /**
@@ -729,9 +738,19 @@ public class PdfStamper
      * @throws DocumentException on error
      * @throws IOException on error
      */
-    public static PdfStamper createSignature(final PdfReader reader, final OutputStream os, final char pdfVersion, final File tempFile) throws DocumentException, IOException
-    {
+    public static PdfStamper createSignature(final PdfReader reader, final OutputStream os, final char pdfVersion, final File tempFile) throws DocumentException, IOException {
         return createSignature(reader, os, pdfVersion, tempFile, false);
+    }
+
+    public static PdfStamper createXmlSignature(final PdfReader reader, final OutputStream os) throws IOException, DocumentException {
+        PdfStamper stp;
+        stp = new PdfStamper(reader, os);
+        stp.sigXmlApp = new XmlSignatureAppearance(stp.stamper);
+        //stp.sigApp.setSigout(bout);
+        //stp.sigApp.setOriginalout(os);
+        stp.sigXmlApp.setStamper(stp);
+
+        return stp;
     }
 
     /**

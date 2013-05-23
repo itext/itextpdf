@@ -3478,7 +3478,7 @@ public class PdfContentByte {
             if (parent != null && parent.getRole() == null)
                 element.setRole(null);
             if (element.getRole() != null) {
-                if (!(element instanceof PdfArtifact)) {
+                if (!PdfName.ARTIFACT.equals(element.getRole())) {
                     structureElement = pdf.structElements.get(element.getId());
                     if (structureElement == null) {
                         structureElement = new PdfStructureElement(getParentStructureElement(), element.getRole());
@@ -3488,7 +3488,7 @@ public class PdfContentByte {
                 boolean inTextLocal = inText;
                 if (inText)
                     endText();
-                if (element instanceof PdfArtifact) {
+                if (PdfName.ARTIFACT.equals(element.getRole())) {
                     HashMap<PdfName, PdfObject> properties = element.getAccessibleAttributes();
                     PdfDictionary propertiesDict = null;
                     if (properties == null || properties.isEmpty()) {
