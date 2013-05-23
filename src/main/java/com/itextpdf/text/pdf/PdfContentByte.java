@@ -3475,7 +3475,7 @@ public class PdfContentByte {
             IAccessibleElement parent = null;
             if (getMcElements().size() > 0)
                 parent = getMcElements().get(getMcElements().size() - 1);
-            if (parent != null && parent.getRole() == null)
+            if (parent != null && (parent.getRole() == null || PdfName.ARTIFACT.equals(parent.getRole())))
                 element.setRole(null);
             if (element.getRole() != null) {
                 if (!PdfName.ARTIFACT.equals(element.getRole())) {
