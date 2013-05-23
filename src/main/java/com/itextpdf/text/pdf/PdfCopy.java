@@ -165,7 +165,7 @@ public class PdfCopy extends PdfWriter {
         public boolean equals(Object o) {
             if (!(o instanceof ImportedPage)) return false;
             ImportedPage other = (ImportedPage)o;
-            return this.pageNumber == other.pageNumber && this.reader.equals(reader);
+            return this.pageNumber == other.pageNumber && this.reader.equals(other.reader);
         }
         @Override
         public String toString() {
