@@ -384,30 +384,13 @@ public class PdfWriter extends DocWriter implements
             }
             else {
                 PdfIndirectObject indirect = new PdfIndirectObject(refNumber, object, writer);
-                write(indirect, refNumber, 0);
+                write(indirect, refNumber);
                 return indirect;
             }
         }
 
-        protected PdfIndirectObject add(final PdfObject object, final int refNumber, final int generation, final boolean inObjStm) throws IOException {
-            if (inObjStm && object.canBeInObjStm() && writer.isFullCompression()) {
-                PdfCrossReference pxref = addToObjStm(object, refNumber);
-                PdfIndirectObject indirect = new PdfIndirectObject(refNumber, object, writer);
-                if (!xrefs.add(pxref)) {
-                    xrefs.remove(pxref);
-                    xrefs.add(pxref);
-                }
-                return indirect;
-            }
-            else {
-                PdfIndirectObject indirect = new PdfIndirectObject(refNumber, generation, object, writer);
-                write(indirect, refNumber, generation);
-                return indirect;
-            }
-        }
-
-        protected void write(final PdfIndirectObject indirect, final int refNumber, final int generation) throws IOException {
-            PdfCrossReference pxref = new PdfCrossReference(refNumber, position, generation);
+        protected void write(final PdfIndirectObject indirect, final int refNumber) throws IOException {
+            PdfCrossReference pxref = new PdfCrossReference(refNumber, position);
             if (!xrefs.add(pxref)) {
                 xrefs.remove(pxref);
                 xrefs.add(pxref);
@@ -868,20 +851,6 @@ public class PdfWriter extends DocWriter implements
      */
     public PdfIndirectObject addToBody(final PdfObject object, final int refNumber, final boolean inObjStm) throws IOException {
         PdfIndirectObject iobj = body.add(object, refNumber, inObjStm);
-        return iobj;
-    }
-
-    /**
-     * Use this method to add a PDF object to the PDF body.
-     * Use this method only if you know what you're doing!
-     * @param object
-     * @param refNumber
-     * @param inObjStm
-     * @return a PdfIndirectObject
-     * @throws IOException
-     */
-    public PdfIndirectObject addToBody(final PdfObject object, final int refNumber, final int generation, final boolean inObjStm) throws IOException {
-        PdfIndirectObject iobj = body.add(object, refNumber, generation, inObjStm);
         return iobj;
     }
 
