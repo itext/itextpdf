@@ -102,7 +102,15 @@ public class DublinCoreSchema extends XmpSchema {
 		setProperty(TITLE, array);
 	}
 
-	/**
+    /**
+     * Adds a title.
+     * @param title
+     */
+    public void addTitle(LangAlt title) {
+        setProperty(TITLE, title);
+    }
+
+    /**
 	 * Adds a description.
 	 * @param desc
 	 */
@@ -112,7 +120,15 @@ public class DublinCoreSchema extends XmpSchema {
 		setProperty(DESCRIPTION, array);
 	}
 
-	/**
+    /**
+     * Adds a description.
+     * @param desc
+     */
+    public void addDescription(LangAlt desc) {
+        setProperty(DESCRIPTION, desc);
+    }
+
+    /**
 	 * Adds a subject.
 	 * @param subject
 	 */
