@@ -26,15 +26,16 @@ import javax.xml.crypto.dsig.keyinfo.KeyInfo;
 import javax.xml.crypto.dsig.keyinfo.KeyInfoFactory;
 import javax.xml.crypto.dsig.keyinfo.KeyValue;
 import javax.xml.crypto.dsig.keyinfo.X509Data;
-import javax.xml.crypto.dsig.spec.C14NMethodParameterSpec;
-import javax.xml.crypto.dsig.spec.TransformParameterSpec;
+import javax.xml.crypto.dsig.spec.*;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.Key;
 import java.security.PublicKey;
 import java.security.cert.Certificate;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 
 public class MakeXmlSignature {
@@ -52,7 +53,6 @@ public class MakeXmlSignature {
             return instance;
         }
 
-
         public String getAlgorithm() {
             return null;
         }
@@ -66,6 +66,9 @@ public class MakeXmlSignature {
         }
     }
 
+    /**
+     *
+     */
     public static void signXmlDSig(XmlSignatureAppearance sap, ExternalSignature externalSignature, KeyInfo keyInfo)
             throws GeneralSecurityException, IOException, DocumentException {
 
@@ -80,10 +83,17 @@ public class MakeXmlSignature {
 
         Document doc = xmlLocator.getDocument();
 
+        List<Transform> transforms = new ArrayList<Transform>();
+        transforms.add(fac.newTransform(Transform.ENVELOPED, (TransformParameterSpec) null));
+
         // Create the Reference
+        XpathConstructor xpathConstructor = sap.getXpathConstructor();
+        if (xpathConstructor != null && !xpathConstructor.getXpathExpression().isEmpty()) {
+            XPathFilter2ParameterSpec xpath2Spec = new XPathFilter2ParameterSpec(Collections.singletonList(new XPathType(xpathConstructor.getXpathExpression(), XPathType.Filter.INTERSECT)));
+            transforms.add(fac.newTransform(Transform.XPATH2, xpath2Spec));
+        }
         DOMReference reference = (DOMReference)fac.newReference("", digestMethodSHA1,
-                Collections.singletonList(fac.newTransform(Transform.ENVELOPED, (TransformParameterSpec) null)),
-                null, null);
+                transforms, null, null);
 
         String signatureMethod;
         if (externalSignature.getEncryptionAlgorithm().equals("RSA"))

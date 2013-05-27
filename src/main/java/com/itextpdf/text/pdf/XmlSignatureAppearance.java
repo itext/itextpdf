@@ -1,6 +1,7 @@
 package com.itextpdf.text.pdf;
 
 import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.pdf.security.XpathConstructor;
 import com.itextpdf.text.pdf.security.XmlLocator;
 
 import java.io.IOException;
@@ -20,6 +21,7 @@ public class XmlSignatureAppearance {
     private PdfStamper stamper;
     private Certificate signCertificate;
     private XmlLocator xmlLocator;
+    private XpathConstructor xpathConstructor;
 
     public PdfStamperImp getWriter() {
         return writer;
@@ -52,6 +54,14 @@ public class XmlSignatureAppearance {
 
     public void setXmlLocator(XmlLocator xmlLocator) {
         this.xmlLocator = xmlLocator;
+    }
+
+    public XpathConstructor getXpathConstructor() {
+        return xpathConstructor;
+    }
+
+    public void setXpathConstructor(XpathConstructor xpathConstructor) {
+        this.xpathConstructor = xpathConstructor;
     }
 
     public void close() throws IOException, DocumentException {
