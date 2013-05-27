@@ -1,19 +1,14 @@
 package com.itextpdf.text.signature;
 
 import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.pdf.PdfReader;
-import com.itextpdf.text.pdf.PdfStamper;
-import com.itextpdf.text.pdf.XfaXmlLocator;
-import com.itextpdf.text.pdf.XmlSignatureAppearance;
-import com.itextpdf.text.pdf.XfaForm;
-import com.itextpdf.text.pdf.security.ExternalSignature;
-import com.itextpdf.text.pdf.security.MakeXmlSignature;
-import com.itextpdf.text.pdf.security.PrivateKeySignature;
-import com.itextpdf.text.pdf.security.XmlLocator;
+import com.itextpdf.text.pdf.*;
+import com.itextpdf.text.pdf.security.*;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.jcp.xml.dsig.internal.dom.DOMKeyInfoFactory;
 import org.xml.sax.SAXException;
 
+import javax.xml.crypto.URIReferenceException;
+import javax.xml.crypto.dsig.TransformException;
 import javax.xml.crypto.dsig.keyinfo.KeyInfoFactory;
 import javax.xml.crypto.dsig.keyinfo.KeyValue;
 import javax.xml.parsers.DocumentBuilder;
@@ -52,15 +47,14 @@ public class XmlDSigTests {
         PdfStamper stamper = PdfStamper.createXmlSignature(reader, os);
         // Creating the appearance
         XmlSignatureAppearance appearance = stamper.getXmlSignatureAppearance();
-        XmlLocator xfaLocator = new XfaXmlLocator(stamper);
-        appearance.setXmlLocator(xfaLocator);
+        appearance.setXmlLocator(new XfaXmlLocator(stamper));
         // Creating the signature
         ExternalSignature pks = new PrivateKeySignature(pk, digestAlgorithm, provider);
         MakeXmlSignature.signXmlDSig(appearance, pks, chain);
     }
 
     protected void signWithKeyInfo(String src, String dest, PrivateKey pk, PublicKey publicKey, String digestAlgorithm,
-                                String provider) throws GeneralSecurityException, IOException, DocumentException {
+                                String provider) throws GeneralSecurityException, IOException, DocumentException, TransformException, URIReferenceException {
 
         // Creating the reader and the stamper
         PdfReader reader = new PdfReader(src);
@@ -68,8 +62,7 @@ public class XmlDSigTests {
         PdfStamper stamper = PdfStamper.createXmlSignature(reader, os);
         // Creating the appearance
         XmlSignatureAppearance appearance = stamper.getXmlSignatureAppearance();
-        XmlLocator xfaLocator = new XfaXmlLocator(stamper);
-        appearance.setXmlLocator(xfaLocator);
+        appearance.setXmlLocator(new XfaXmlLocator(stamper));
         // Creating the signature
         ExternalSignature pks = new PrivateKeySignature(pk, digestAlgorithm, provider);
         KeyInfoFactory kif = new DOMKeyInfoFactory();
@@ -87,8 +80,57 @@ public class XmlDSigTests {
         PdfStamper stamper = PdfStamper.createXmlSignature(reader, os);
         // Creating the appearance
         XmlSignatureAppearance appearance = stamper.getXmlSignatureAppearance();
-        XmlLocator xfaLocator = new XfaXmlLocator(stamper);
-        appearance.setXmlLocator(xfaLocator);
+        appearance.setXmlLocator(new XfaXmlLocator(stamper));
+        // Creating the signature
+        ExternalSignature pks = new PrivateKeySignature(pk, digestAlgorithm, provider);
+
+        MakeXmlSignature.signXmlDSig(appearance, pks, publicKey);
+    }
+
+    protected void signPackageWithCertificate(String src, String dest, XfaXpathConstructor.XdpPackage xdpPackage, PrivateKey pk, Certificate[] chain, String digestAlgorithm, String provider) throws GeneralSecurityException, IOException, DocumentException {
+
+        // Creating the reader and the stamper
+        PdfReader reader = new PdfReader(src);
+        FileOutputStream os = new FileOutputStream(dest);
+        PdfStamper stamper = PdfStamper.createXmlSignature(reader, os);
+        // Creating the appearance
+        XmlSignatureAppearance appearance = stamper.getXmlSignatureAppearance();
+        appearance.setXmlLocator(new XfaXmlLocator(stamper));
+        appearance.setXpathConstructor(new XfaXpathConstructor(xdpPackage));
+        // Creating the signature
+        ExternalSignature pks = new PrivateKeySignature(pk, digestAlgorithm, provider);
+
+        MakeXmlSignature.signXmlDSig(appearance, pks, chain);
+    }
+
+    protected void signPackageWithKeyInfo(String src, String dest, XfaXpathConstructor.XdpPackage xdpPackage, PrivateKey pk, PublicKey publicKey, String digestAlgorithm, String provider) throws GeneralSecurityException, IOException, DocumentException, TransformException, URIReferenceException {
+
+        // Creating the reader and the stamper
+        PdfReader reader = new PdfReader(src);
+        FileOutputStream os = new FileOutputStream(dest);
+        PdfStamper stamper = PdfStamper.createXmlSignature(reader, os);
+        // Creating the appearance
+        XmlSignatureAppearance appearance = stamper.getXmlSignatureAppearance();
+        appearance.setXmlLocator(new XfaXmlLocator(stamper));
+        appearance.setXpathConstructor(new XfaXpathConstructor(xdpPackage));
+        // Creating the signature
+        ExternalSignature pks = new PrivateKeySignature(pk, digestAlgorithm, provider);
+        KeyInfoFactory kif = new DOMKeyInfoFactory();
+        KeyValue kv = kif.newKeyValue(publicKey);
+
+        MakeXmlSignature.signXmlDSig(appearance, pks, kif.newKeyInfo(Collections.singletonList(kv)));
+    }
+
+    protected void signPackageWithPublicKey(String src, String dest, XfaXpathConstructor.XdpPackage xdpPackage, PrivateKey pk, PublicKey publicKey, String digestAlgorithm, String provider) throws GeneralSecurityException, IOException, DocumentException {
+
+        // Creating the reader and the stamper
+        PdfReader reader = new PdfReader(src);
+        FileOutputStream os = new FileOutputStream(dest);
+        PdfStamper stamper = PdfStamper.createXmlSignature(reader, os);
+        // Creating the appearance
+        XmlSignatureAppearance appearance = stamper.getXmlSignatureAppearance();
+        appearance.setXmlLocator(new XfaXmlLocator(stamper));
+        appearance.setXpathConstructor(new XfaXpathConstructor(xdpPackage));
         // Creating the signature
         ExternalSignature pks = new PrivateKeySignature(pk, digestAlgorithm, provider);
 
