@@ -2,8 +2,14 @@ package com.itextpdf.text.pdf;
 
 import com.itextpdf.text.pdf.security.XpathConstructor;
 
+/**
+ * Constructor for xpath expression for signing XfaForm
+ */
 public class XfaXpathConstructor implements XpathConstructor {
 
+    /**
+     * Possible xdp packages to sign
+     */
     public enum XdpPackage {
         Config,
         ConnectionSet,
@@ -30,11 +36,17 @@ public class XfaXpathConstructor implements XpathConstructor {
     private final String XFDF = "xfdf";
     private final String XMPMETA = "xmpmeta";
 
-
+    /**
+     * Empty constructor, no transform.
+     */
     public XfaXpathConstructor() {
         this.xpathExpression = "";
     }
 
+    /**
+     * Construct for Xpath2 expression. Depends from selected xdp package.
+     * @param xdpPackage
+     */
     public XfaXpathConstructor(XdpPackage xdpPackage) {
         String strPackage;
         switch (xdpPackage) {
@@ -84,6 +96,9 @@ public class XfaXpathConstructor implements XpathConstructor {
 
     private String xpathExpression;
 
+    /**
+     * Get XPath2 expression
+     */
     public String getXpathExpression() {
         return xpathExpression;
     }

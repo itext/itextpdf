@@ -62,6 +62,7 @@ public class XmlDSigTests {
         PdfStamper stamper = PdfStamper.createXmlSignature(reader, os);
         // Creating the appearance
         XmlSignatureAppearance appearance = stamper.getXmlSignatureAppearance();
+        //Set XfaXmlLocator to control getting and setting Document
         appearance.setXmlLocator(new XfaXmlLocator(stamper));
         // Creating the signature
         ExternalSignature pks = new PrivateKeySignature(pk, digestAlgorithm, provider);
@@ -80,6 +81,7 @@ public class XmlDSigTests {
         PdfStamper stamper = PdfStamper.createXmlSignature(reader, os);
         // Creating the appearance
         XmlSignatureAppearance appearance = stamper.getXmlSignatureAppearance();
+        //Set XfaXmlLocator to control getting and setting Document
         appearance.setXmlLocator(new XfaXmlLocator(stamper));
         // Creating the signature
         ExternalSignature pks = new PrivateKeySignature(pk, digestAlgorithm, provider);
@@ -95,7 +97,9 @@ public class XmlDSigTests {
         PdfStamper stamper = PdfStamper.createXmlSignature(reader, os);
         // Creating the appearance
         XmlSignatureAppearance appearance = stamper.getXmlSignatureAppearance();
+        //Set XfaXmlLocator to control getting and setting Document
         appearance.setXmlLocator(new XfaXmlLocator(stamper));
+        // Set XpathConstructor, to construct xpath expression for signing an xdp package
         appearance.setXpathConstructor(new XfaXpathConstructor(xdpPackage));
         // Creating the signature
         ExternalSignature pks = new PrivateKeySignature(pk, digestAlgorithm, provider);
@@ -111,7 +115,9 @@ public class XmlDSigTests {
         PdfStamper stamper = PdfStamper.createXmlSignature(reader, os);
         // Creating the appearance
         XmlSignatureAppearance appearance = stamper.getXmlSignatureAppearance();
+        //Set XfaXmlLocator to control getting and setting Document
         appearance.setXmlLocator(new XfaXmlLocator(stamper));
+        // Set XpathConstructor, to construct xpath expression for signing an xdp package
         appearance.setXpathConstructor(new XfaXpathConstructor(xdpPackage));
         // Creating the signature
         ExternalSignature pks = new PrivateKeySignature(pk, digestAlgorithm, provider);
@@ -129,7 +135,9 @@ public class XmlDSigTests {
         PdfStamper stamper = PdfStamper.createXmlSignature(reader, os);
         // Creating the appearance
         XmlSignatureAppearance appearance = stamper.getXmlSignatureAppearance();
+        //Set XfaXmlLocator to control getting and setting Document
         appearance.setXmlLocator(new XfaXmlLocator(stamper));
+        // Set XpathConstructor, to construct xpath expression for signing an xdp package
         appearance.setXpathConstructor(new XfaXpathConstructor(xdpPackage));
         // Creating the signature
         ExternalSignature pks = new PrivateKeySignature(pk, digestAlgorithm, provider);

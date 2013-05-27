@@ -8,9 +8,9 @@ import java.io.IOException;
 import java.security.cert.Certificate;
 
 public class XmlSignatureAppearance {
+
     /**
-     * Constructs a XmlSignatureAppearance object.
-     *
+     * Constructs XmlSignatureAppearance object.
      * @param writer the writer to which the signature will be written.
      */
     XmlSignatureAppearance(PdfStamperImp writer) {
@@ -48,14 +48,23 @@ public class XmlSignatureAppearance {
         return signCertificate;
     }
 
+    /**
+     * Helps to locate xml stream
+     * @return XmlLocator, cannot be null.
+     */
     public XmlLocator getXmlLocator() {
         return xmlLocator;
     }
+
 
     public void setXmlLocator(XmlLocator xmlLocator) {
         this.xmlLocator = xmlLocator;
     }
 
+    /**
+     * Constructor for xpath expression in case signing only part of XML document.
+     * @return XpathConstructor, can be null
+     */
     public XpathConstructor getXpathConstructor() {
         return xpathConstructor;
     }
@@ -64,6 +73,11 @@ public class XmlSignatureAppearance {
         this.xpathConstructor = xpathConstructor;
     }
 
+    /**
+     * Close PdfStamper
+     * @throws IOException
+     * @throws DocumentException
+     */
     public void close() throws IOException, DocumentException {
         writer.close(stamper.getMoreInfo());
     }

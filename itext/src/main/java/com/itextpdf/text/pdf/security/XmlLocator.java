@@ -6,7 +6,7 @@ import javax.xml.transform.TransformerConfigurationException;
 import java.io.IOException;
 
 /**
- * Help to locate xml stream inside Pdf document
+ * Helps to locate xml stream
  */
 public interface XmlLocator {
 
