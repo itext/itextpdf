@@ -345,7 +345,7 @@ class PdfStamperImp extends PdfWriter {
                 int j = keys[k];
                 PdfObject obj = reader.getPdfObjectRelease(j);
                 if (obj != null && skipInfo != j && j < initialXrefSize) {
-                    addToBody(obj, j, j != rootN);
+                    addToBody(obj, j, obj.getIndRef().generation, j != rootN);
                 }
             }
             for (int k = initialXrefSize; k < reader.getXrefSize(); ++k) {

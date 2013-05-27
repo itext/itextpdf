@@ -904,7 +904,7 @@ public class PdfCopy extends PdfWriter {
             indirectObjects.remove(new PdfCopy.RefKey(iobj.number, iobj.generation));
         HashSet<RefKey> inactives = new HashSet<RefKey>();
         for(Map.Entry<RefKey, PdfIndirectObject> entry: indirectObjects.entrySet()) {
-            if (entry.getValue() != null) body.write(entry.getValue(), entry.getValue().number);
+            if (entry.getValue() != null) body.write(entry.getValue(), entry.getValue().number, entry.getValue().generation);
             else inactives.add(entry.getKey());
         }
         ArrayList<PdfBody.PdfCrossReference> pdfCrossReferences = new ArrayList<PdfBody.PdfCrossReference>(body.xrefs);
