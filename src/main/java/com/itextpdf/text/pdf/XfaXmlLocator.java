@@ -19,6 +19,9 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+/**
+ * Helps to locate xml stream inside PDF document with Xfa form.
+ */
 public class XfaXmlLocator implements XmlLocator {
 
     public XfaXmlLocator(PdfStamper stamper) throws DocumentException, IOException {
@@ -41,10 +44,19 @@ public class XfaXmlLocator implements XmlLocator {
         xfaForm = new XfaForm(stamper.getReader());
     }
 
+    /**
+     * Gets Document to sign
+     */
     public Document getDocument() {
         return xfaForm.getDomDocument();
     }
 
+    /**
+     * Save document as single XML stream in AcroForm.
+     * @param document signed document
+     * @throws IOException
+     * @throws DocumentException
+     */
     public void setDocument(Document document) throws IOException, DocumentException {
 
         try {

@@ -1,8 +1,6 @@
 package com.itextpdf.text.pdf.security;
 
 import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.log.Logger;
-import com.itextpdf.text.log.LoggerFactory;
 import com.itextpdf.text.pdf.XmlSignatureAppearance;
 import com.sun.org.apache.xml.internal.security.utils.Base64;
 import org.jcp.xml.dsig.internal.dom.DOMReference;
@@ -37,12 +35,14 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-
+/**
+ * Class that signs your XML.
+ */
 public class MakeXmlSignature {
 
-    /** The Logger instance. */
-    private static final Logger LOGGER = LoggerFactory.getLogger(MakeXmlSignature.class);
-
+    /**
+     * Empty class for key simulation
+     */
     private static class EmptyKey implements Key {
 
         private EmptyKey(){}
@@ -67,7 +67,13 @@ public class MakeXmlSignature {
     }
 
     /**
-     *
+     * Signs the xml using the enveloped mode, with optional xpath transform (see XmlSignatureAppearance).
+     * @param sap the XmlSignatureAppearance
+     * @param externalSignature  the interface providing the actual signing
+     * @param keyInfo KeyInfo for verification
+     * @throws GeneralSecurityException
+     * @throws IOException
+     * @throws DocumentException
      */
     public static void signXmlDSig(XmlSignatureAppearance sap, ExternalSignature externalSignature, KeyInfo keyInfo)
             throws GeneralSecurityException, IOException, DocumentException {
@@ -134,17 +140,15 @@ public class MakeXmlSignature {
         sap.close();
     }
 
-
-    private static Element findElement(NodeList nodes, String localName)
-    {
-        for(int i = nodes.getLength() - 1; i >= 0; --i) {
-            Node currNode = nodes.item(i);
-            if (currNode.getNodeType() == Node.ELEMENT_NODE && currNode.getLocalName().equals(localName))
-                return (Element)currNode;
-        }
-        return null;
-    }
-
+    /**
+     * Signs the xml using the enveloped mode, with optional xpath transform (see XmlSignatureAppearance).
+     * @param sap the XmlSignatureAppearance
+     * @param externalSignature  the interface providing the actual signing
+     * @param chain the certificate chain
+     * @throws GeneralSecurityException
+     * @throws IOException
+     * @throws DocumentException
+     */
     public static void signXmlDSig(XmlSignatureAppearance sap, ExternalSignature externalSignature, Certificate[] chain)
             throws DocumentException, GeneralSecurityException, IOException {
 
@@ -159,10 +163,32 @@ public class MakeXmlSignature {
         signXmlDSig(sap, externalSignature, ki);
     }
 
+    /**
+     * Signs the xml using the enveloped mode, with optional xpath transform (see XmlSignatureAppearance).
+     * @param sap the XmlSignatureAppearance
+     * @param externalSignature  the interface providing the actual signing
+     * @param publicKey PublicKey for verification
+     * @throws GeneralSecurityException
+     * @throws IOException
+     * @throws DocumentException
+     */
     public static void signXmlDSig(XmlSignatureAppearance sap, ExternalSignature externalSignature, PublicKey publicKey)
             throws GeneralSecurityException, DocumentException, IOException {
         KeyInfoFactory kif = new DOMKeyInfoFactory();
         KeyValue kv = kif.newKeyValue(publicKey);
         signXmlDSig(sap, externalSignature, kif.newKeyInfo(Collections.singletonList(kv)));
+    }
+
+    /**
+     * Find Signature and SignatureValue elements after marshalization.
+     */
+    private static Element findElement(NodeList nodes, String localName)
+    {
+        for(int i = nodes.getLength() - 1; i >= 0; --i) {
+            Node currNode = nodes.item(i);
+            if (currNode.getNodeType() == Node.ELEMENT_NODE && currNode.getLocalName().equals(localName))
+                return (Element)currNode;
+        }
+        return null;
     }
 }
