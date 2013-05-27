@@ -211,14 +211,14 @@ public class XmpWriter {
         			continue;
         		value = ((PdfString)obj).toUnicodeString();
         		if (PdfName.TITLE.equals(key)) {
-        			dc.addTitle(value);
+        			dc.addTitle(new LangAlt(value));
         		}
         		if (PdfName.AUTHOR.equals(key)) {
         			dc.addAuthor(value);
         		}
         		if (PdfName.SUBJECT.equals(key)) {
         			dc.addSubject(value);
-        			dc.addDescription(value);
+        			dc.addDescription(new LangAlt(value));
         		}
         		if (PdfName.KEYWORDS.equals(key)) {
         			p.addKeywords(value);
@@ -265,14 +265,14 @@ public class XmpWriter {
         			continue;
         		value = ((PdfString)obj).toUnicodeString();
         		if (PdfName.TITLE.equals(key)) {
-        			dc.addTitle(value);
-        		}
+        			dc.addTitle(new LangAlt(value));
+                }
         		if (PdfName.AUTHOR.equals(key)) {
         			dc.addAuthor(value);
         		}
         		if (PdfName.SUBJECT.equals(key)) {
         			dc.addSubject(value);
-        			dc.addDescription(value);
+        			dc.addDescription(new LangAlt(value));
         		}
         		if (PdfName.KEYWORDS.equals(key)) {
         			p.addKeywords(value);
@@ -316,14 +316,14 @@ public class XmpWriter {
         		if (value == null)
         			continue;
         		if ("Title".equals(key)) {
-        			dc.addTitle(value);
+        			dc.addTitle(new LangAlt(value));
         		}
         		if ("Author".equals(key)) {
         			dc.addAuthor(value);
         		}
         		if ("Subject".equals(key)) {
         			dc.addSubject(value);
-        			dc.addDescription(value);
+        			dc.addDescription(new LangAlt(value));
         		}
         		if ("Keywords".equals(key)) {
         			p.addKeywords(value);
