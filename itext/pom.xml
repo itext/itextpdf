@@ -11,7 +11,7 @@
 	<artifactId>itextpdf</artifactId>
 	<packaging>jar</packaging>
 	<name>iText, a Free Java-PDF library</name>
-	<version>5.4.2-SNAPSHOT</version>
+	<version>5.4.3-SNAPSHOT</version>
 	<description>iText, a free Java-PDF library</description>
 	<!-- General Info -->
 	<url>http://www.itextpdf.com/</url>
@@ -190,9 +190,9 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.santuario</groupId>
-			<artifactId>xmlsec</artifactId>
-			<version>1.5.1</version>
+			<groupId>com.sun.xml.security</groupId>
+			<artifactId>xml-security-impl</artifactId>
+			<version>1.0</version>
 			<scope>compile</scope>
 			<optional>true</optional>
 		</dependency>
