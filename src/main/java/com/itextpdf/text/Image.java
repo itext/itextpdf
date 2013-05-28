@@ -43,6 +43,14 @@
  */
 package com.itextpdf.text;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.lang.reflect.Constructor;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.HashMap;
+import java.util.UUID;
+
 import com.itextpdf.awt.PdfGraphics2D;
 import com.itextpdf.text.api.Indentable;
 import com.itextpdf.text.api.Spaceable;
@@ -69,14 +77,6 @@ import com.itextpdf.text.pdf.codec.JBIG2Image;
 import com.itextpdf.text.pdf.codec.PngImage;
 import com.itextpdf.text.pdf.codec.TiffImage;
 import com.itextpdf.text.pdf.interfaces.IAccessibleElement;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.lang.reflect.Constructor;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.HashMap;
-import java.util.UUID;
 
 /**
  * An <CODE>Image</CODE> is the representation of a graphic element (JPEG, PNG
@@ -705,6 +705,7 @@ public abstract class Image extends Rectangle implements Indentable, Spaceable, 
 
 		this.widthPercentage = image.widthPercentage;
 		this.scaleToFitLineWhenOverflow = image.scaleToFitLineWhenOverflow;
+		this.scaleToFitHeight = image.scaleToFitHeight;
 		this.annotation = image.annotation;
 		this.layer = image.layer;
 		this.interpolation = image.interpolation;
@@ -1369,7 +1370,7 @@ public abstract class Image extends Rectangle implements Indentable, Spaceable, 
 	 * when the image exceeds the available width.
 	 * @since iText 5.0.6
 	 */
-	protected boolean scaleToFitLineWhenOverflow = true;
+	protected boolean scaleToFitLineWhenOverflow;
 
 	/**
 	 * Gets the value of scaleToFitLineWhenOverflow.
@@ -1389,7 +1390,34 @@ public abstract class Image extends Rectangle implements Indentable, Spaceable, 
 		this.scaleToFitLineWhenOverflow = scaleToFitLineWhenOverflow;
 	}
 
-    // annotation
+	// scaling the image to the available height (or not)
+
+	/**
+	 * Indicates if the image should be scaled to fit
+	 * when the image exceeds the available height.
+	 * @since iText 5.4.2
+	 */
+	protected boolean scaleToFitHeight = true;
+
+	/**
+	 * Gets the value of scaleToFitHeight.
+	 * @return true if the image size has to scale to the available height
+	 * @since iText 5.4.2
+	 */
+	public boolean isScaleToFitHeight() {
+		return scaleToFitHeight;
+	}
+
+	/**
+	 * Sets the value of scaleToFitHeight
+	 * @param scaleToFitHeight true if you want the image to scale to the available height
+	 * @since iText 5.4.2
+	 */
+	public void setScaleToFitHeight(final boolean scaleToFitHeight) {
+		this.scaleToFitHeight = scaleToFitHeight;
+	}
+
+	// annotation
 
 	/** if the annotation is not null the image will be clickable. */
 	protected Annotation annotation = null;
