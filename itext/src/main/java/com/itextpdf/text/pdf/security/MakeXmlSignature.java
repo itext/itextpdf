@@ -1,6 +1,7 @@
 package com.itextpdf.text.pdf.security;
 
 import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.pdf.XmlSignatureAppearance;
 import com.sun.org.apache.xml.internal.security.utils.Base64;
 import org.jcp.xml.dsig.internal.dom.DOMReference;
@@ -80,9 +81,9 @@ public class MakeXmlSignature {
 
         XmlLocator xmlLocator = sap.getXmlLocator();
         if (xmlLocator == null)
-            throw new DocumentException("Set XmlLocator to XMlSignatureAppearance");
+            throw new DocumentException(MessageLocalization.getComposedMessage("xmllocator.cannot.be.null"));
         if (!externalSignature.getHashAlgorithm().equals("SHA1"))
-            throw new UnsupportedOperationException("Support SHA1 hash algorithm");
+            throw new UnsupportedOperationException(MessageLocalization.getComposedMessage("support.only.sha1.hash.algorithm"));
 
         XMLSignatureFactory fac = DOMXMLSignatureFactory.getInstance();
         DigestMethod digestMethodSHA1 = fac.newDigestMethod(DigestMethod.SHA1, null);
@@ -107,7 +108,7 @@ public class MakeXmlSignature {
         else if (externalSignature.getEncryptionAlgorithm().equals("DSA"))
             signatureMethod = SignatureMethod.DSA_SHA1;
         else
-            throw new UnsupportedOperationException("Support only RSA and DSA");
+            throw new UnsupportedOperationException(MessageLocalization.getComposedMessage("support.only.rsa.and.dsa.algorithms"));
 
         // Create the SignedInfo
         DOMSignedInfo signedInfo = (DOMSignedInfo)fac.newSignedInfo(
