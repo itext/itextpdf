@@ -48,7 +48,6 @@ import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.UUID;
 
@@ -56,7 +55,21 @@ import com.itextpdf.awt.PdfGraphics2D;
 import com.itextpdf.text.api.Indentable;
 import com.itextpdf.text.api.Spaceable;
 import com.itextpdf.text.error_messages.MessageLocalization;
-import com.itextpdf.text.pdf.*;
+import com.itextpdf.text.pdf.ICC_Profile;
+import com.itextpdf.text.pdf.PRIndirectReference;
+import com.itextpdf.text.pdf.PdfArray;
+import com.itextpdf.text.pdf.PdfContentByte;
+import com.itextpdf.text.pdf.PdfDictionary;
+import com.itextpdf.text.pdf.PdfIndirectReference;
+import com.itextpdf.text.pdf.PdfName;
+import com.itextpdf.text.pdf.PdfNumber;
+import com.itextpdf.text.pdf.PdfOCG;
+import com.itextpdf.text.pdf.PdfObject;
+import com.itextpdf.text.pdf.PdfReader;
+import com.itextpdf.text.pdf.PdfStream;
+import com.itextpdf.text.pdf.PdfTemplate;
+import com.itextpdf.text.pdf.PdfWriter;
+import com.itextpdf.text.pdf.RandomAccessFileOrArray;
 import com.itextpdf.text.pdf.codec.BmpImage;
 import com.itextpdf.text.pdf.codec.CCITTG4Encoder;
 import com.itextpdf.text.pdf.codec.GifImage;
@@ -221,6 +234,10 @@ public abstract class Image extends Rectangle implements Indentable, Spaceable, 
 		this.alignment = DEFAULT;
 		rotationRadians = 0;
 	}
+    
+    public static Image getInstance(final URL url) throws BadElementException, MalformedURLException, IOException {
+        return Image.getInstance(url, false);
+    }
 
 	/**
 	 * Gets an instance of an Image.
@@ -232,7 +249,7 @@ public abstract class Image extends Rectangle implements Indentable, Spaceable, 
 	 * @throws MalformedURLException
 	 * @throws IOException
 	 */
-	public static Image getInstance(final URL url) throws BadElementException,
+	public static Image getInstance(final URL url, boolean handleIncorrectImage) throws BadElementException,
 			MalformedURLException, IOException {
 		InputStream is = null;
 		try {
@@ -283,7 +300,7 @@ public abstract class Image extends Rectangle implements Indentable, Spaceable, 
 						ra = new RandomAccessFileOrArray(file);
 					} else
 						ra = new RandomAccessFileOrArray(url);
-					Image img = TiffImage.getTiffImage(ra, 1);
+					Image img = TiffImage.getTiffImage(ra, handleIncorrectImage, 1);
 					img.url = url;
 					return img;
 				} finally {
@@ -310,8 +327,7 @@ public abstract class Image extends Rectangle implements Indentable, Spaceable, 
 							ra.close();
 				}
 			}
-			throw new IOException(url.toString()
-					+ " is not a recognized imageformat.");
+			throw new IOException(MessageLocalization.getComposedMessage("unknown.image.format", url.toString()));
 		} finally {
 			if (is != null) {
 				is.close();
@@ -334,6 +350,16 @@ public abstract class Image extends Rectangle implements Indentable, Spaceable, 
 			throws BadElementException, MalformedURLException, IOException {
 		return getInstance(Utilities.toURL(filename));
 	}
+    
+    public static Image getInstance(final String filename, boolean handleIncorrectImage) throws IOException, BadElementException {
+        return getInstance(Utilities.toURL(filename), handleIncorrectImage);
+    }
+
+
+    public static Image getInstance(final byte imgb[]) throws BadElementException,
+            MalformedURLException, IOException {
+        return getInstance(imgb, false);
+    }
 
 	/**
 	 * gets an instance of an Image
@@ -345,7 +371,7 @@ public abstract class Image extends Rectangle implements Indentable, Spaceable, 
 	 * @throws MalformedURLException
 	 * @throws IOException
 	 */
-	public static Image getInstance(final byte imgb[]) throws BadElementException,
+	public static Image getInstance(final byte imgb[], boolean handleIncorrectImage) throws BadElementException,
 			MalformedURLException, IOException {
 		InputStream is = null;
 		try {
@@ -385,7 +411,7 @@ public abstract class Image extends Rectangle implements Indentable, Spaceable, 
 				RandomAccessFileOrArray ra = null;
 				try {
 					ra = new RandomAccessFileOrArray(imgb);
-					Image img = TiffImage.getTiffImage(ra, 1);
+					Image img = TiffImage.getTiffImage(ra, 1, handleIncorrectImage);
                     if (img.getOriginalData() == null)
                         img.setOriginalData(imgb);
 					return img;
@@ -679,6 +705,7 @@ public abstract class Image extends Rectangle implements Indentable, Spaceable, 
 
 		this.widthPercentage = image.widthPercentage;
 		this.scaleToFitLineWhenOverflow = image.scaleToFitLineWhenOverflow;
+		this.scaleToFitHeight = image.scaleToFitHeight;
 		this.annotation = image.annotation;
 		this.layer = image.layer;
 		this.interpolation = image.interpolation;
@@ -978,6 +1005,15 @@ public abstract class Image extends Rectangle implements Indentable, Spaceable, 
 		return plainHeight;
 	}
 
+    /**
+     * Scale the image to the dimensions of the rectangle
+     *
+     * @param rectangle dimensions to scale the Image
+     */
+    public void scaleAbsolute(final Rectangle rectangle) {
+        scaleAbsolute(rectangle.getWidth(), rectangle.getHeight());
+    }
+
 	/**
 	 * Scale the image to an absolute width and an absolute height.
 	 *
@@ -1049,6 +1085,15 @@ public abstract class Image extends Rectangle implements Indentable, Spaceable, 
 		scaledHeight = matrix[DY] - matrix[CY];
 		setWidthPercentage(0);
 	}
+
+    /**
+     * Scales the images to the dimensions of the rectangle.
+     *
+     * @param rectangle the dimensions to fit
+     */
+    public void scaleToFit(final Rectangle rectangle) {
+        scaleToFit(rectangle.getWidth(), rectangle.getHeight());
+    }
 
 	/**
 	 * Scales the image so that it fits a certain width and height.
@@ -1325,7 +1370,7 @@ public abstract class Image extends Rectangle implements Indentable, Spaceable, 
 	 * when the image exceeds the available width.
 	 * @since iText 5.0.6
 	 */
-	protected boolean scaleToFitLineWhenOverflow = true;
+	protected boolean scaleToFitLineWhenOverflow;
 
 	/**
 	 * Gets the value of scaleToFitLineWhenOverflow.
@@ -1345,7 +1390,34 @@ public abstract class Image extends Rectangle implements Indentable, Spaceable, 
 		this.scaleToFitLineWhenOverflow = scaleToFitLineWhenOverflow;
 	}
 
-    // annotation
+	// scaling the image to the available height (or not)
+
+	/**
+	 * Indicates if the image should be scaled to fit
+	 * when the image exceeds the available height.
+	 * @since iText 5.4.2
+	 */
+	protected boolean scaleToFitHeight = true;
+
+	/**
+	 * Gets the value of scaleToFitHeight.
+	 * @return true if the image size has to scale to the available height
+	 * @since iText 5.4.2
+	 */
+	public boolean isScaleToFitHeight() {
+		return scaleToFitHeight;
+	}
+
+	/**
+	 * Sets the value of scaleToFitHeight
+	 * @param scaleToFitHeight true if you want the image to scale to the available height
+	 * @since iText 5.4.2
+	 */
+	public void setScaleToFitHeight(final boolean scaleToFitHeight) {
+		this.scaleToFitHeight = scaleToFitHeight;
+	}
+
+	// annotation
 
 	/** if the annotation is not null the image will be clickable. */
 	protected Annotation annotation = null;

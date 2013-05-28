@@ -46,6 +46,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.HashMap;
+
+import com.itextpdf.text.log.Counter;
+import com.itextpdf.text.log.CounterFactory;
 /** Reads an FDF form and makes the fields available
  * @author Paulo Soares
  */
@@ -88,6 +91,11 @@ public class FdfReader extends PdfReader {
         super(is);
     }
 
+	protected static Counter COUNTER = CounterFactory.getCounter(FdfReader.class);
+	protected Counter getCounter() {
+		return COUNTER;
+	}
+	
     @Override
     protected void readPdf() throws IOException {
         fields = new HashMap<String, PdfDictionary>();

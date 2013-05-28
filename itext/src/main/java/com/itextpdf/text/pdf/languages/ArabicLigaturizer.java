@@ -46,6 +46,7 @@ package com.itextpdf.text.pdf.languages;
 import com.itextpdf.text.pdf.BidiLine;
 import com.itextpdf.text.pdf.BidiOrder;
 import com.itextpdf.text.pdf.PdfWriter;
+import java.util.HashMap;
 
 /**
  * Shape arabic characters. This code was inspired by an LGPL'ed C library:
@@ -56,6 +57,8 @@ import com.itextpdf.text.pdf.PdfWriter;
  */
 public class ArabicLigaturizer implements LanguageProcessor {
     
+    private static HashMap<Character,char[]> maptable = new HashMap<Character, char[]>();
+    
     static boolean isVowel(char s) {
         return ((s >= 0x064B) && (s <= 0x0655)) || (s == 0x0670);
     }
@@ -63,22 +66,10 @@ public class ArabicLigaturizer implements LanguageProcessor {
     static char charshape(char s, int which)
     /* which 0=isolated 1=final 2=initial 3=medial */
     {
-        int l, r, m;
         if ((s >= 0x0621) && (s <= 0x06D3)) {
-            l = 0;
-            r = chartable.length - 1;
-            while (l <= r) {
-                m = (l + r) / 2;
-                if (s == chartable[m][0]) {
-                    return chartable[m][which + 1];
-                }
-                else if (s < chartable[m][0]) {
-                    r = m - 1;
-                }
-                else {
-                    l = m + 1;
-                }
-            }
+            char[] c = maptable.get(Character.valueOf(s));
+            if (c != null)
+                return c[which + 1];
         }
         else if (s >= 0xfef5 && s <= 0xfefb)
             return (char)(s + which);
@@ -86,22 +77,10 @@ public class ArabicLigaturizer implements LanguageProcessor {
     }
 
     static int shapecount(char s) {
-        int l, r, m;
         if ((s >= 0x0621) && (s <= 0x06D3) && !isVowel(s)) {
-            l = 0;
-            r = chartable.length - 1;
-            while (l <= r) {
-                m = (l + r) / 2;
-                if (s == chartable[m][0]) {
-                    return chartable[m].length - 1;
-                }
-                else if (s < chartable[m][0]) {
-                    r = m - 1;
-                }
-                else {
-                    l = m + 1;
-                }
-            }
+            char[] c = maptable.get(Character.valueOf(s));
+            if (c != null)
+                return c.length - 1;
         }
         else if (s == ZWJ) {
             return 4;
@@ -703,95 +682,101 @@ public class ArabicLigaturizer implements LanguageProcessor {
         {0x06D3, 0xFBB0, 0xFBB1} /* YEH BARREE WITH HAMZA ABOVE */
         };
 
-        public static final int ar_nothing  = 0x0;
-        public static final int ar_novowel = 0x1;
-        public static final int ar_composedtashkeel = 0x4;
-        public static final int ar_lig = 0x8;
-        /**
-         * Digit shaping option: Replace European digits (U+0030...U+0039) by Arabic-Indic digits.
-         */
-        public static final int DIGITS_EN2AN = 0x20;
-        
-        /**
-         * Digit shaping option: Replace Arabic-Indic digits by European digits (U+0030...U+0039).
-         */
-        public static final int DIGITS_AN2EN = 0x40;
-        
-        /**
-         * Digit shaping option:
-         * Replace European digits (U+0030...U+0039) by Arabic-Indic digits
-         * if the most recent strongly directional character
-         * is an Arabic letter (its Bidi direction value is RIGHT_TO_LEFT_ARABIC).
-         * The initial state at the start of the text is assumed to be not an Arabic,
-         * letter, so European digits at the start of the text will not change.
-         * Compare to DIGITS_ALEN2AN_INIT_AL.
-         */
-        public static final int DIGITS_EN2AN_INIT_LR = 0x60;
-        
-        /**
-         * Digit shaping option:
-         * Replace European digits (U+0030...U+0039) by Arabic-Indic digits
-         * if the most recent strongly directional character
-         * is an Arabic letter (its Bidi direction value is RIGHT_TO_LEFT_ARABIC).
-         * The initial state at the start of the text is assumed to be an Arabic,
-         * letter, so European digits at the start of the text will change.
-         * Compare to DIGITS_ALEN2AN_INT_LR.
-         */
-        public static final int DIGITS_EN2AN_INIT_AL = 0x80;
-        
-        /** Not a valid option value. */
-        private static final int DIGITS_RESERVED = 0xa0;
-        
-        /**
-         * Bit mask for digit shaping options.
-         */
-        public static final int DIGITS_MASK = 0xe0;
-        
-        /**
-         * Digit type option: Use Arabic-Indic digits (U+0660...U+0669).
-         */
-        public static final int DIGIT_TYPE_AN = 0;
-        
-        /**
-         * Digit type option: Use Eastern (Extended) Arabic-Indic digits (U+06f0...U+06f9).
-         */
-        public static final int DIGIT_TYPE_AN_EXTENDED = 0x100;
+    public static final int ar_nothing  = 0x0;
+    public static final int ar_novowel = 0x1;
+    public static final int ar_composedtashkeel = 0x4;
+    public static final int ar_lig = 0x8;
+    /**
+     * Digit shaping option: Replace European digits (U+0030...U+0039) by Arabic-Indic digits.
+     */
+    public static final int DIGITS_EN2AN = 0x20;
 
-        /**
-         * Bit mask for digit type options.
-         */
-        public static final int DIGIT_TYPE_MASK = 0x0100; // 0x3f00?
+    /**
+     * Digit shaping option: Replace Arabic-Indic digits by European digits (U+0030...U+0039).
+     */
+    public static final int DIGITS_AN2EN = 0x40;
 
-        static class charstruct {
-            char basechar;
-            char mark1;               /* has to be initialized to zero */
-            char vowel;
-            int lignum;           /* is a ligature with lignum aditional characters */
-            int numshapes = 1;
-        };
+    /**
+     * Digit shaping option:
+     * Replace European digits (U+0030...U+0039) by Arabic-Indic digits
+     * if the most recent strongly directional character
+     * is an Arabic letter (its Bidi direction value is RIGHT_TO_LEFT_ARABIC).
+     * The initial state at the start of the text is assumed to be not an Arabic,
+     * letter, so European digits at the start of the text will not change.
+     * Compare to DIGITS_ALEN2AN_INIT_AL.
+     */
+    public static final int DIGITS_EN2AN_INIT_LR = 0x60;
+
+    /**
+     * Digit shaping option:
+     * Replace European digits (U+0030...U+0039) by Arabic-Indic digits
+     * if the most recent strongly directional character
+     * is an Arabic letter (its Bidi direction value is RIGHT_TO_LEFT_ARABIC).
+     * The initial state at the start of the text is assumed to be an Arabic,
+     * letter, so European digits at the start of the text will change.
+     * Compare to DIGITS_ALEN2AN_INT_LR.
+     */
+    public static final int DIGITS_EN2AN_INIT_AL = 0x80;
+
+    /** Not a valid option value. */
+    private static final int DIGITS_RESERVED = 0xa0;
+
+    /**
+     * Bit mask for digit shaping options.
+     */
+    public static final int DIGITS_MASK = 0xe0;
+
+    /**
+     * Digit type option: Use Arabic-Indic digits (U+0660...U+0669).
+     */
+    public static final int DIGIT_TYPE_AN = 0;
+
+    /**
+     * Digit type option: Use Eastern (Extended) Arabic-Indic digits (U+06f0...U+06f9).
+     */
+    public static final int DIGIT_TYPE_AN_EXTENDED = 0x100;
+
+    /**
+     * Bit mask for digit type options.
+     */
+    public static final int DIGIT_TYPE_MASK = 0x0100; // 0x3f00?
+
+    static class charstruct {
+        char basechar;
+        char mark1;               /* has to be initialized to zero */
+        char vowel;
+        int lignum;           /* is a ligature with lignum aditional characters */
+        int numshapes = 1;
+    };
 
 
-        protected int options = 0;
-        protected int runDirection = PdfWriter.RUN_DIRECTION_RTL;
-        
-        public ArabicLigaturizer() {
+    protected int options = 0;
+    protected int runDirection = PdfWriter.RUN_DIRECTION_RTL;
+
+    public ArabicLigaturizer() {
+    }
+
+    public ArabicLigaturizer(int runDirection, int options) {
+        this.runDirection = runDirection;
+        this.options = options;
+    }
+
+    public String process(String s) {
+        return BidiLine.processLTR(s, runDirection, options);
+    }
+
+    /**
+     * Arabic is written from right to left.
+     * @return true
+     * @see com.itextpdf.text.pdf.languages.LanguageProcessor#isRTL()
+     */
+    public boolean isRTL() {
+        return true;
+    }
+    
+    static {
+        for (char[] c : chartable) {
+            maptable.put(Character.valueOf(c[0]), c);
         }
-        
-        public ArabicLigaturizer(int runDirection, int options) {
-        	this.runDirection = runDirection;
-        	this.options = options;
-        }
-    	
-    	public String process(String s) {
-    		return BidiLine.processLTR(s, runDirection, options);
-    	}
-
-		/**
-		 * Arabic is written from right to left.
-		 * @return true
-		 * @see com.itextpdf.text.pdf.languages.LanguageProcessor#isRTL()
-		 */
-		public boolean isRTL() {
-			return true;
-		}
+    }
 }

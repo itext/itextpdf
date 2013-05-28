@@ -41,6 +41,8 @@
  */
 package com.itextpdf.text.io;
 
+import com.itextpdf.text.error_messages.MessageLocalization;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -48,9 +50,6 @@ import java.io.InputStream;
 import java.io.RandomAccessFile;
 import java.net.URL;
 import java.nio.channels.FileChannel;
-
-import com.itextpdf.text.error_messages.MessageLocalization;
-import com.itextpdf.text.pdf.BaseFont;
 
 /**
  * Factory to create {@link RandomAccessSource} objects based on various types of sources
@@ -180,7 +179,6 @@ public final class RandomAccessSourceFactory {
 		
         String openMode = exclusivelyLockFile ? "rw" : "r";
         
-    	@SuppressWarnings("resource") // the RAF will be closed by the RAFRandomAccessSource, FileChannelRandomAccessSource or PagedChannelRandomAccessSource
 		RandomAccessFile raf = new RandomAccessFile(file, openMode);
     	if (exclusivelyLockFile){
     		raf.getChannel().lock();
@@ -191,17 +189,30 @@ public final class RandomAccessSourceFactory {
         }
         
 		try{
-			FileChannel channel = raf.getChannel();
-			if (channel.size() <= PagedChannelRandomAccessSource.DEFAULT_TOTAL_BUFSIZE){ // if less than the fully mapped usage of PagedFileChannelRandomAccessSource, just map the whole thing and be done with it
-				return new GetBufferedRandomAccessSource(new FileChannelRandomAccessSource(channel));
-			} else {
-				return new GetBufferedRandomAccessSource(new PagedChannelRandomAccessSource(channel));
-			}
+	    	// if this throws, the RAF will be closed by the FileChannelRandomAccessSource or PagedChannelRandomAccessSource
+			return createBestSource(raf.getChannel());
 		} catch (MapFailedException e){
+	    	// if this throws, the RAF will be closed by the RAFRandomAccessSource
 			return new RAFRandomAccessSource(raf);
 		}  catch (IllegalArgumentException iae) {   //pdf files with zero or negative length stay opened without this catch
             return new RAFRandomAccessSource(raf);
         }
+	}
+	
+	/**
+	 * Creates a {@link RandomAccessSource} based on memory mapping a file channel.
+	 * Unless you are explicitly working with a FileChannel already, it is better to use
+	 * {@link RandomAccessSourceFactory#createBestSource(String)}.
+	 * If the file is large, it will be opened using a paging strategy.
+	 * @param filename the name of the file or resource to create the {@link RandomAccessSource} for
+	 * @return the newly created {@link RandomAccessSource}
+	 */
+	public RandomAccessSource createBestSource(FileChannel channel) throws IOException{
+		if (channel.size() <= PagedChannelRandomAccessSource.DEFAULT_TOTAL_BUFSIZE){ // if less than the fully mapped usage of PagedFileChannelRandomAccessSource, just map the whole thing and be done with it
+			return new GetBufferedRandomAccessSource(new FileChannelRandomAccessSource(channel));
+		} else {
+			return new GetBufferedRandomAccessSource(new PagedChannelRandomAccessSource(channel));
+		}
 	}
 	
 	public RandomAccessSource createRanged(RandomAccessSource source, long[] ranges) throws IOException{
@@ -219,8 +230,7 @@ public final class RandomAccessSourceFactory {
 	 * @throws IOException if reading the underling file or stream fails
 	 */
 	private RandomAccessSource createByReadingToMemory(String filename) throws IOException {
-    	//TODO: seems odd that we are using BaseFont here...
-        InputStream is = BaseFont.getResourceStream(filename);
+        InputStream is = StreamUtil.getResourceStream(filename);
         if (is == null)
             throw new IOException(MessageLocalization.getComposedMessage("1.not.found.as.file.or.resource", filename));
         return createByReadingToMemory(is);
@@ -228,7 +238,7 @@ public final class RandomAccessSourceFactory {
 	
 	/**
 	 * Creates a new {@link RandomAccessSource} by reading the specified file/resource into memory
-	 * @param filename the name of the resource to read
+	 * @param is the name of the resource to read
 	 * @return the newly created {@link RandomAccessSource}
 	 * @throws IOException if reading the underling file or stream fails
 	 */

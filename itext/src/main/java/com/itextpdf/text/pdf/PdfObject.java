@@ -219,22 +219,6 @@ public abstract class PdfObject {
     }
 
     /**
-     * Returns the length of the PDF representation of the <CODE>PdfObject</CODE>.
-     * <P>
-     * In some cases, namely for <CODE>PdfString</CODE> and <CODE>PdfStream</CODE>,
-     * this method differs from the method <CODE>length</CODE> because <CODE>length</CODE>
-     * returns the length of the actual content of the <CODE>PdfObject</CODE>.</P>
-     * <P>
-     * Remark: the actual content of an object is in most cases identical to its representation.
-     * The following statement is always true: length() &gt;= pdfLength().</P>
-     *
-     * @return		a length
-     */
-//    public int pdfLength() {
-//        return toPdf(null).length;
-//    }
-
-    /**
      * Returns the length of the actual content of the <CODE>PdfObject</CODE>.
      * <P>
      * In some cases, namely for <CODE>PdfString</CODE> and <CODE>PdfStream</CODE>,

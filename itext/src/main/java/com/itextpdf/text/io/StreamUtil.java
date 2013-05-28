@@ -54,15 +54,15 @@ import java.io.OutputStream;
  */
 public final class StreamUtil {
 
-	private StreamUtil() {
-	}
+    private StreamUtil() {
+    }
 
-	/**
-	 * Reads the full content of a stream and returns them in a byte array
-	 * @param is the stream to read
-	 * @return a byte array containing all of the bytes from the stream
-	 * @throws IOException if there is a problem reading from the input stream
-	 */
+    /**
+     * Reads the full content of a stream and returns them in a byte array
+     * @param is the stream to read
+     * @return a byte array containing all of the bytes from the stream
+     * @throws IOException if there is a problem reading from the input stream
+     */
     public static byte[] inputStreamToArray(InputStream is) throws IOException {
         byte b[] = new byte[8192];
         ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -75,7 +75,7 @@ public final class StreamUtil {
         out.close();
         return out.toByteArray();
     }
-    
+
     public static void CopyBytes(RandomAccessSource source, long start, long length, OutputStream outs) throws IOException {
         if (length <= 0)
             return;
@@ -89,5 +89,51 @@ public final class StreamUtil {
             idx += n;
             length -= n;
         }
+    }
+
+    /**
+     * Gets the resource's inputstream.
+     * @param key the full name of the resource
+     * @return the <CODE>InputStream</CODE> to get the resource or
+     * <CODE>null</CODE> if not found
+     */
+    public static InputStream getResourceStream(String key) {
+        return getResourceStream(key, null);
+    }
+
+    /**
+     * Gets the resource's inputstream
+     * .
+     * @param key the full name of the resource
+     * @param loader the ClassLoader to load the resource or null to try the ones available
+     * @return the <CODE>InputStream</CODE> to get the resource or
+     * <CODE>null</CODE> if not found
+     */
+    public static InputStream getResourceStream(String key, ClassLoader loader) {
+        if (key.startsWith("/"))
+            key = key.substring(1);
+        InputStream is = null;
+        if (loader != null) {
+            is = loader.getResourceAsStream(key);
+            if (is != null)
+                return is;
+        }
+        // Try to use Context Class Loader to load the properties file.
+        try {
+            ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
+            if (contextClassLoader != null) {
+                is = contextClassLoader.getResourceAsStream(key);
+            }
+        } catch (Throwable e) {
+            // empty body
+        }
+
+        if (is == null) {
+            is = StreamUtil.class.getResourceAsStream("/" + key);
+        }
+        if (is == null) {
+            is = ClassLoader.getSystemResourceAsStream(key);
+        }
+        return is;
     }
 }

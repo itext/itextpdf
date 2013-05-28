@@ -47,6 +47,8 @@ import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.ExceptionConverter;
 import com.itextpdf.text.Rectangle;
+import com.itextpdf.text.log.Counter;
+import com.itextpdf.text.log.CounterFactory;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -87,6 +89,10 @@ public class PdfCopy extends PdfWriter {
         }
     }
 
+    protected static Counter COUNTER = CounterFactory.getCounter(PdfCopy.class);
+    protected Counter getCounter() {
+    	return COUNTER;
+    }
     protected HashMap<RefKey, IndirectReferences> indirects;
     protected HashMap<PdfReader, HashMap<RefKey, IndirectReferences>> indirectMap;
     protected HashMap<PdfObject, PdfObject> parentObjects;
@@ -159,7 +165,7 @@ public class PdfCopy extends PdfWriter {
         public boolean equals(Object o) {
             if (!(o instanceof ImportedPage)) return false;
             ImportedPage other = (ImportedPage)o;
-            return this.pageNumber == other.pageNumber && this.reader.equals(reader);
+            return this.pageNumber == other.pageNumber && this.reader.equals(other.reader);
         }
         @Override
         public String toString() {
@@ -898,7 +904,7 @@ public class PdfCopy extends PdfWriter {
             indirectObjects.remove(new PdfCopy.RefKey(iobj.number, iobj.generation));
         HashSet<RefKey> inactives = new HashSet<RefKey>();
         for(Map.Entry<RefKey, PdfIndirectObject> entry: indirectObjects.entrySet()) {
-            if (entry.getValue() != null) body.write(entry.getValue(), entry.getValue().number);
+            if (entry.getValue() != null) body.write(entry.getValue(), entry.getValue().number, entry.getValue().generation);
             else inactives.add(entry.getKey());
         }
         ArrayList<PdfBody.PdfCrossReference> pdfCrossReferences = new ArrayList<PdfBody.PdfCrossReference>(body.xrefs);

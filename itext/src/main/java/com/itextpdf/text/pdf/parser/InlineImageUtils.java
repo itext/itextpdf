@@ -233,6 +233,12 @@ public final class InlineImageUtils {
                     return 1;
                 }
             }
+            else {
+            	PdfName tempName = colorSpaceDic.getAsName(colorSpaceName);
+            	if (tempName != null) {
+            		return getComponentsPerPixel(tempName, colorSpaceDic);
+            	}
+            }
         }
         
         throw new IllegalArgumentException("Unexpected color space " + colorSpaceName);

@@ -756,6 +756,27 @@ public class TaggedPdfTest {
         compareResults("18");
     }
 
+    @Test
+    public void createTaggedPdf19() throws DocumentException, IOException, ParserConfigurationException, SAXException {
+        initializeDocument("./target/com/itextpdf/test/pdf/TaggedPdfTest/out19.pdf");
+
+        PdfDiv div = new PdfDiv();
+        writer.getDirectContent().openMCBlock(div);
+
+        PdfArtifact artifact = new PdfArtifact();
+        artifact.setType(new PdfString("Rectangle"));
+        writer.getDirectContent().openMCBlock(artifact);
+        writer.getDirectContent().setColorFill(BaseColor.RED);
+        writer.getDirectContent().rectangle(100, 100, 400, 400);
+        writer.getDirectContent().fill();
+        writer.getDirectContent().closeMCBlock(artifact);
+
+        writer.getDirectContent().closeMCBlock(div);
+
+        document.close();
+        compareResults("19");
+    }
+
     private void compareNums(String name, int[] nums) throws IOException {
         PdfReader reader = new PdfReader("./target/com/itextpdf/test/pdf/TaggedPdfTest/out"+ name +".pdf");
         PdfDictionary structTreeRoot = verifyIsDictionary(reader.getCatalog().getDirectObject(PdfName.STRUCTTREEROOT), NO_STRUCT_TREE_ROOT);

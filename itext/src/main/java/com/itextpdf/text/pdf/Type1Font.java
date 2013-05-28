@@ -43,16 +43,17 @@
  */
 package com.itextpdf.text.pdf;
 
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.error_messages.MessageLocalization;
+import com.itextpdf.text.io.StreamUtil;
+import com.itextpdf.text.pdf.fonts.FontsResourceAnchor;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.StringTokenizer;
-
-import com.itextpdf.text.Document;
-import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.error_messages.MessageLocalization;
-import com.itextpdf.text.pdf.fonts.FontsResourceAnchor;
 
 /** Reads a Type1 font
  *
@@ -183,7 +184,7 @@ class Type1Font extends BaseFont
             try {
                 if (resourceAnchor == null)
                     resourceAnchor = new FontsResourceAnchor();
-                is = getResourceStream(RESOURCE_PATH + afmFile + ".afm", resourceAnchor.getClass().getClassLoader());
+                is = StreamUtil.getResourceStream(RESOURCE_PATH + afmFile + ".afm", resourceAnchor.getClass().getClassLoader());
                 if (is == null) {
                     String msg = MessageLocalization.getComposedMessage("1.not.found.as.resource", afmFile);
                     System.err.println(msg);

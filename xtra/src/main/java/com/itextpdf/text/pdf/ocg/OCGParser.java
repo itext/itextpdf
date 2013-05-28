@@ -427,13 +427,13 @@ public class OCGParser {
     		if ("BDC".equals(operator.toString()) && operands.size() > 1 && PdfName.OC.equals(operands.get(0))) {
     			parser.checkMarkedContentStart((PdfName)operands.get(1));
     		}
-    		else if ("EMC".equals(operator.toString())) {
-    			parser.checkMarkedContentEnd();
-    		}
     		else if ("BMC".equals(operator.toString())) {
     			parser.checkMarkedContentStart(null);
     		}
 			parser.process(operator, operands, true);
+			if ("EMC".equals(operator.toString())) {
+    			parser.checkMarkedContentEnd();
+    		}
     	}
     }
 

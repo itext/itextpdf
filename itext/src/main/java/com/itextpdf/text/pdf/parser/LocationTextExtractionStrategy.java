@@ -132,6 +132,25 @@ public class LocationTextExtractionStrategy implements TextExtractionStrategy {
     }
     
     /**
+     * Determines if a space character should be inserted between a previous chunk and the current chunk.
+     * This method is exposed as a callback so subclasses can fine time the algorithm for determining whether a space should be inserted or not.
+     * By default, this method will insert a space if the there is a gap of more than half the font space character width between the end of the
+     * previous chunk and the beginning of the current chunk.  It will also indicate that a space is needed if the starting point of the new chunk 
+     * appears *before* the end of the previous chunk (i.e. overlapping text).
+     * @param chunk the new chunk being evaluated
+     * @param previousChunk the chunk that appeared immediately before the current chunk
+     * @return true if the two chunks represent different words (i.e. should have a space between them).  False otherwise.
+     */
+    protected boolean isChunkAtWordBoundary(TextChunk chunk, TextChunk previousChunk){
+        float dist = chunk.distanceFromEndOf(previousChunk);
+        
+        if (dist < -chunk.getCharSpaceWidth() || dist > chunk.getCharSpaceWidth()/2.0f)
+            return true;
+        
+        return false;
+    }
+    
+    /**
      * Gets text that meets the specified filter
      * If multiple text extractions will be performed for the same page (i.e. for different physical regions of the page), 
      * filtering at this level is more efficient than filtering using {@link FilteredRenderListener} - but not nearly as powerful
@@ -153,14 +172,10 @@ public class LocationTextExtractionStrategy implements TextExtractionStrategy {
                 sb.append(chunk.text);
             } else {
                 if (chunk.sameLine(lastChunk)){
-                    float dist = chunk.distanceFromEndOf(lastChunk);
-                    
-                    if (dist < -chunk.charSpaceWidth)
-                        sb.append(' ');
                     // we only insert a blank space if the trailing character of the previous string wasn't a space, and the leading character of the current string isn't a space
-                    else if (dist > chunk.charSpaceWidth/2.0f && !startsWithSpace(chunk.text) && !endsWithSpace(lastChunk.text))
+                    if (isChunkAtWordBoundary(chunk, lastChunk) && !startsWithSpace(chunk.text) && !endsWithSpace(lastChunk.text))
                         sb.append(' ');
-
+                    
                     sb.append(chunk.text);
                 } else {
                     sb.append('\n');
@@ -270,6 +285,21 @@ public class LocationTextExtractionStrategy implements TextExtractionStrategy {
         public Vector getEndLocation(){
         	return endLocation;
         }
+        
+        /**
+         * @return the text captured by this chunk
+         */
+        public String getText(){
+        	return text;
+        }
+        
+        /**
+         * @return the width of a single space character as rendered by this chunk
+         */
+        public float getCharSpaceWidth() {
+			return charSpaceWidth;
+		}
+        
         private void printDiagnostics(){
             System.out.println("Text (@" + startLocation + " -> " + endLocation + "): " + text);
             System.out.println("orientationMagnitude: " + orientationMagnitude);

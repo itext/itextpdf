@@ -43,6 +43,7 @@
  */
 package com.itextpdf.text.pdf;
 
+import com.itextpdf.awt.geom.AffineTransform;
 import com.itextpdf.text.Rectangle;
 
 /**
@@ -303,5 +304,20 @@ public class PdfRectangle extends NumberArray {
 
     public PdfRectangle rotate() {
         return new PdfRectangle(lly, llx, ury, urx, 0);
+    }
+
+    public PdfRectangle transform(AffineTransform transform) {
+        float[] pts = {llx, lly, urx, ury};
+        transform.transform(pts, 0, pts, 0, 2);
+        float[] dstPts = {pts[0], pts[1], pts[2], pts[3]};
+        if (pts[0] > pts[2]) {
+            dstPts[0] = pts[2];
+            dstPts[2] = pts[0];
+        }
+        if (pts[1] > pts[3]) {
+            dstPts[1] = pts[3];
+            dstPts[3] = pts[1];
+        }
+        return new PdfRectangle(dstPts[0], dstPts[1], dstPts[2], dstPts[3]);
     }
 }

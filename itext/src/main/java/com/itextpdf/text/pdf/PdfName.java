@@ -171,6 +171,11 @@ public class PdfName extends PdfObject implements Comparable<PdfName> {
     public static final PdfName ART = new PdfName("Art");
     /** A name */
     public static final PdfName ARTBOX = new PdfName("ArtBox");
+    /**
+     * A name
+     * @since 5.4.2
+     */
+    public static final PdfName ARTIFACT = new PdfName("Artifact");
     /** A name */
     public static final PdfName ASCENT = new PdfName("Ascent");
     /** A name */
@@ -189,6 +194,11 @@ public class PdfName extends PdfObject implements Comparable<PdfName> {
      * @since 2.1.6
      */
     public static final PdfName ASSETS = new PdfName("Assets");
+    /**
+     * A name
+     * @since 5.4.2
+     */
+    public static final PdfName ATTACHED = new PdfName("Attached");
     /** A name */
     public static final PdfName AUTHEVENT = new PdfName("AuthEvent");
     /** A name */
@@ -402,6 +412,11 @@ public class PdfName extends PdfObject implements Comparable<PdfName> {
      * @since 2.1.6
      */
     public static final PdfName CONDITION = new PdfName("Condition");
+    /**
+     * A name.
+     * @since 5.4.2
+     */
+    public static final PdfName CONFIGS = new PdfName("Configs");
     /**
      * A name.
      * @since 2.1.6
@@ -1249,7 +1264,7 @@ public class PdfName extends PdfObject implements Comparable<PdfName> {
      */
     public static final PdfName OBJ = new PdfName("Obj");
     /**
-     * a name used with Doucment Structure
+     * a name used with Document Structure
      * @since 2.1.5
      */
     public static final PdfName OBJR = new PdfName("OBJR");

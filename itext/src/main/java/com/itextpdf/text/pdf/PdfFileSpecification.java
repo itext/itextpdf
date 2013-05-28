@@ -43,14 +43,15 @@
  */
 package com.itextpdf.text.pdf;
 
+import com.itextpdf.text.error_messages.MessageLocalization;
+import com.itextpdf.text.io.StreamUtil;
+import com.itextpdf.text.pdf.collection.PdfCollectionItem;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import com.itextpdf.text.error_messages.MessageLocalization;
-
-import com.itextpdf.text.pdf.collection.PdfCollectionItem;
 /** Specifies a file or an URL. The file can be extern or embedded.
  *
  * @author Paulo Soares
@@ -184,7 +185,7 @@ public class PdfFileSpecification extends PdfDictionary {
                         in = new URL(filePath).openStream();
                     }
                     else {
-                        in = BaseFont.getResourceStream(filePath);
+                        in = StreamUtil.getResourceStream(filePath);
                         if (in == null)
                             throw new IOException(MessageLocalization.getComposedMessage("1.not.found.as.file.or.resource", filePath));
                     }

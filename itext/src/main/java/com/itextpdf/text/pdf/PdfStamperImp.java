@@ -52,6 +52,9 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 
+import com.itextpdf.text.log.Counter;
+import com.itextpdf.text.log.CounterFactory;
+import com.itextpdf.text.pdf.internal.PdfIsoKeys;
 import org.xml.sax.SAXException;
 
 import com.itextpdf.text.DocumentException;
@@ -94,6 +97,11 @@ class PdfStamperImp extends PdfWriter {
     protected int initialXrefSize;
     protected PdfAction openAction;
 
+    protected Counter COUNTER = CounterFactory.getCounter(PdfStamper.class);
+    protected Counter getCounter() {
+    	return COUNTER;
+    }
+    
     /** Creates new PdfStamperImp.
      * @param reader the read PDF
      * @param os the output destination
@@ -205,6 +213,7 @@ class PdfStamperImp extends PdfWriter {
         		ddict.put(PdfName.OFF, OCProperties.getAsDict(PdfName.D).get(PdfName.OFF));
         		ddict.put(PdfName.AS, OCProperties.getAsDict(PdfName.D).get(PdfName.AS));
             }
+            PdfWriter.checkPdfIsoConformance(this, PdfIsoKeys.PDFISOKEY_LAYER, OCProperties);
         }
         // metadata
         int skipInfo = -1;
@@ -336,7 +345,7 @@ class PdfStamperImp extends PdfWriter {
                 int j = keys[k];
                 PdfObject obj = reader.getPdfObjectRelease(j);
                 if (obj != null && skipInfo != j && j < initialXrefSize) {
-                    addToBody(obj, j, j != rootN);
+                    addToBody(obj, obj.getIndRef(), j != rootN);
                 }
             }
             for (int k = initialXrefSize; k < reader.getXrefSize(); ++k) {
@@ -367,8 +376,15 @@ class PdfStamperImp extends PdfWriter {
             }
             fileID = crypto.getFileID();
         }
-        else
-            fileID = PdfEncryption.createInfoId(PdfEncryption.createDocumentId());
+        else {
+        	PdfArray IDs = reader.trailer.getAsArray(PdfName.ID);
+        	if (IDs != null && IDs.getAsString(0) != null) {
+                fileID = PdfEncryption.createInfoId(IDs.getAsString(0).getBytes());
+        	}
+        	else {
+                fileID = PdfEncryption.createInfoId(PdfEncryption.createDocumentId());
+        	}	
+        }
         PRIndirectReference iRoot = (PRIndirectReference)reader.trailer.get(PdfName.ROOT);
         PdfIndirectReference root = new PdfIndirectReference(0, getNewObjectNumber(reader, iRoot.getNumber(), 0));
         // write the cross-reference table of the body
@@ -391,6 +407,7 @@ class PdfStamperImp extends PdfWriter {
         os.flush();
         if (isCloseStream())
             os.close();
+        getCounter().written(os.getCounter());
     }
 
     void applyRotation(PdfDictionary pageN, ByteBuffer out) {

@@ -46,6 +46,8 @@ package com.itextpdf.text;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.ArrayList;
+
 import com.itextpdf.text.error_messages.MessageLocalization;
 
 /**
@@ -76,11 +78,25 @@ public class Jpeg2000 extends Image {
     InputStream inp;
     int boxLength;
     int boxType;
+    int numOfComps;
+    ArrayList<ColorSpecBox> colorSpecBoxes = null;
+    boolean isJp2 = false;
+    byte[] bpcBoxData;
     
     // Constructors
     
     Jpeg2000(Image image) {
         super(image);
+        if (image instanceof Jpeg2000) {
+            Jpeg2000 jpeg2000 = (Jpeg2000)image;
+            numOfComps = jpeg2000.numOfComps;
+            if (colorSpecBoxes != null)
+                colorSpecBoxes = (ArrayList<ColorSpecBox>)jpeg2000.colorSpecBoxes.clone();
+            isJp2 = jpeg2000.isJp2;
+            if (bpcBoxData != null)
+                bpcBoxData = jpeg2000.bpcBoxData.clone();
+
+        }
     }
 
     /**
@@ -146,7 +162,7 @@ public class Jpeg2000 extends Image {
                 throw new IOException(MessageLocalization.getComposedMessage("unsupported.box.size.eq.eq.0"));
         }
         else if (boxLength == 0) {
-            throw new IOException(MessageLocalization.getComposedMessage("unsupported.box.size.eq.eq.0"));
+            throw new ZeroBoxSizeException(MessageLocalization.getComposedMessage("unsupported.box.size.eq.eq.0"));
         }
     }
     
@@ -167,6 +183,7 @@ public class Jpeg2000 extends Image {
             }
             boxLength = cio_read(4);
             if (boxLength == 0x0000000c) {
+                isJp2 = true;
                 boxType = cio_read(4);
                 if (JP2_JP != boxType) {
                     throw new IOException(MessageLocalization.getComposedMessage("expected.jp.marker"));
@@ -198,7 +215,28 @@ public class Jpeg2000 extends Image {
                 setTop(scaledHeight);
                 scaledWidth = cio_read(4);
                 setRight(scaledWidth);
+                numOfComps = cio_read(2);
                 bpc = -1;
+                bpc = cio_read(1);
+
+                Utilities.skip(inp, 3);
+
+                jp2_read_boxhdr();
+                if (boxType == JP2_BPCC) {
+                    bpcBoxData = new byte[boxLength - 8];
+                    inp.read(bpcBoxData, 0, boxLength - 8);
+                } else if (boxType == JP2_COLR) {
+                    do {
+                        if (colorSpecBoxes == null)
+                            colorSpecBoxes = new ArrayList<ColorSpecBox>();
+                        colorSpecBoxes.add(jp2_read_colr());
+                        try {
+                            jp2_read_boxhdr();
+                        } catch (ZeroBoxSizeException ioe) {
+                            //Probably we have reached the contiguous codestream box which is the last in jpeg2000 and has no length.
+                        }
+                    } while (JP2_COLR == boxType);
+                }
             }
             else if (boxLength == 0xff4fff51) {
                 Utilities.skip(inp, 4);
@@ -227,4 +265,84 @@ public class Jpeg2000 extends Image {
         plainWidth = getWidth();
         plainHeight = getHeight();
     }
+
+    private ColorSpecBox jp2_read_colr() throws IOException {
+        int readBytes = 8;
+        ColorSpecBox colr = new ColorSpecBox();
+        for (int i = 0; i < 3; i++) {
+            colr.add(cio_read(1));
+            readBytes++;
+        }
+        if (colr.getMeth() == 1) {
+            colr.add(cio_read(4));
+            readBytes += 4;
+        } else {
+            colr.add(0);
+        }
+
+        if (boxLength - readBytes > 0) {
+            byte[] colorProfile = new byte[boxLength - readBytes];
+            inp.read(colorProfile, 0, boxLength - readBytes);
+            colr.setColorProfile(colorProfile);
+        }
+        return colr;
+    }
+
+    public int getNumOfComps() {
+        return numOfComps;
+    }
+
+    public byte[] getBpcBoxData() {
+        return bpcBoxData;
+    }
+
+    public ArrayList<ColorSpecBox> getColorSpecBoxes() {
+        return colorSpecBoxes;
+    }
+
+    /**
+     * @return <code>true</code> if the image is JP2, <code>false</code> if a codestream.
+     */
+    public boolean isJp2() {
+        return isJp2;
+    }
+
+    public static class ColorSpecBox extends ArrayList<Integer> {
+        private byte[] colorProfile;
+
+        public int getMeth() {
+            return get(0).intValue();
+        }
+
+        public int getPrec() {
+            return get(1).intValue();
+        }
+
+        public int getApprox() {
+            return get(2).intValue();
+        }
+
+        public int getEnumCs() {
+            return get(3).intValue();
+        }
+
+        public byte[] getColorProfile() {
+            return colorProfile;
+        }
+
+        void setColorProfile(byte[] colorProfile) {
+            this.colorProfile = colorProfile;
+        }
+    }
+
+    private class ZeroBoxSizeException extends IOException {
+        public ZeroBoxSizeException() {
+            super();
+        }
+
+        public ZeroBoxSizeException(String s) {
+            super(s);
+        }
+    }
+
 }

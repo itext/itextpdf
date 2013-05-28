@@ -42,17 +42,12 @@
  * address: sales@itextpdf.com
  */
 package com.itextpdf.text.pdf.codec;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.util.zip.DataFormatException;
-import java.util.zip.DeflaterOutputStream;
-import java.util.zip.Inflater;
-
 import com.itextpdf.text.ExceptionConverter;
 import com.itextpdf.text.Image;
 import com.itextpdf.text.ImgRaw;
 import com.itextpdf.text.Jpeg;
 import com.itextpdf.text.error_messages.MessageLocalization;
+import com.itextpdf.text.exceptions.InvalidImageException;
 import com.itextpdf.text.pdf.ICC_Profile;
 import com.itextpdf.text.pdf.PdfArray;
 import com.itextpdf.text.pdf.PdfDictionary;
@@ -60,6 +55,12 @@ import com.itextpdf.text.pdf.PdfName;
 import com.itextpdf.text.pdf.PdfNumber;
 import com.itextpdf.text.pdf.PdfString;
 import com.itextpdf.text.pdf.RandomAccessFileOrArray;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.zip.DataFormatException;
+import java.util.zip.DeflaterOutputStream;
+import java.util.zip.Inflater;
 
 /** Reads TIFF images
  * @author Paulo Soares
@@ -96,25 +97,8 @@ public class TiffImage {
         }
         return dpi;
     }
-    
-    /** Reads a page from a TIFF image. Direct mode is not used.
-     * @param s the file source
-     * @param page the page to get. The first page is 1
-     * @return the <CODE>Image</CODE>
-     */    
-    public static Image getTiffImage(RandomAccessFileOrArray s, int page) {
-        return getTiffImage(s, page, false);
-    }
-    
-    /** Reads a page from a TIFF image.
-     * @param s the file source
-     * @param page the page to get. The first page is 1
-     * @param direct for single strip, CCITT images, generate the image
-     * by direct byte copying. It's faster but may not work
-     * every time
-     * @return the <CODE>Image</CODE>
-     */    
-    public static Image getTiffImage(RandomAccessFileOrArray s, int page, boolean direct) {
+
+    public static Image getTiffImage(RandomAccessFileOrArray s, boolean handleIncorrectImage, int page, boolean direct) {
         if (page < 1)
             throw new IllegalArgumentException(MessageLocalization.getComposedMessage("the.page.number.must.be.gt.eq.1"));
         try {
@@ -196,10 +180,10 @@ public class TiffImage {
                     TIFFField t4OptionsField = dir.getField(TIFFConstants.TIFFTAG_GROUP3OPTIONS);
                     if (t4OptionsField != null) {
                         tiffT4Options = t4OptionsField.getAsLong(0);
-                    if ((tiffT4Options & TIFFConstants.GROUP3OPT_2DENCODING) != 0)
-                        imagecomp = Image.CCITTG3_2D;
-                    if ((tiffT4Options & TIFFConstants.GROUP3OPT_FILLBITS) != 0)
-                        params |= Image.CCITT_ENCODEDBYTEALIGN;
+                        if ((tiffT4Options & TIFFConstants.GROUP3OPT_2DENCODING) != 0)
+                            imagecomp = Image.CCITTG3_2D;
+                        if ((tiffT4Options & TIFFConstants.GROUP3OPT_FILLBITS) != 0)
+                            params |= Image.CCITT_ENCODEDBYTEALIGN;
                     }
                     break;
                 case TIFFConstants.COMPRESSION_CCITTFAX4:
@@ -225,6 +209,7 @@ public class TiffImage {
                     s.readFully(im);
                     int height = Math.min(rowsStrip, rowsLeft);
                     TIFFFaxDecoder decoder = new TIFFFaxDecoder(fillOrder, w, height);
+                    decoder.setHandleIncorrectImage(handleIncorrectImage);
                     byte outBuf[] = new byte[(w + 7) / 8 * height];
                     switch (compression) {
                         case TIFFConstants.COMPRESSION_CCITTRLEW:
@@ -249,7 +234,14 @@ public class TiffImage {
                             g4.fax4Encode(outBuf, height);
                             break;
                         case TIFFConstants.COMPRESSION_CCITTFAX4:
-                            decoder.decodeT6(outBuf, im, 0, height, tiffT6Options);
+                            try {
+                                decoder.decodeT6(outBuf, im, 0, height, tiffT6Options);
+                            } catch (InvalidImageException e) {
+                                if ( !handleIncorrectImage ) {
+                                    throw e;
+                                }
+                            }
+
                             g4.fax4Encode(outBuf, height);
                             break;
                     }
@@ -279,6 +271,31 @@ public class TiffImage {
         catch (Exception e) {
             throw new ExceptionConverter(e);
         }
+    }
+
+    public static Image getTiffImage(RandomAccessFileOrArray s, boolean handleIncorrectImage, int page) {
+        return getTiffImage(s, handleIncorrectImage, page, false);
+    }
+    
+    /** Reads a page from a TIFF image. Direct mode is not used.
+     * @param s the file source
+     * @param page the page to get. The first page is 1
+     * @return the <CODE>Image</CODE>
+     */    
+    public static Image getTiffImage(RandomAccessFileOrArray s, int page) {
+        return getTiffImage(s, page, false);
+    }
+    
+    /** Reads a page from a TIFF image.
+     * @param s the file source
+     * @param page the page to get. The first page is 1
+     * @param direct for single strip, CCITT images, generate the image
+     * by direct byte copying. It's faster but may not work
+     * every time
+     * @return the <CODE>Image</CODE>
+     */    
+    public static Image getTiffImage(RandomAccessFileOrArray s, int page, boolean direct) {
+        return getTiffImage(s, false, page, direct);
     }
     
     protected static Image getTiffImageColor(TIFFDirectory dir, RandomAccessFileOrArray s) {

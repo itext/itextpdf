@@ -45,6 +45,8 @@ package com.itextpdf.text.pdf;
 
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.error_messages.MessageLocalization;
+import com.itextpdf.text.log.Counter;
+import com.itextpdf.text.log.CounterFactory;
 import com.itextpdf.text.pdf.interfaces.PdfAConformance;
 import com.itextpdf.text.pdf.interfaces.PdfIsoConformance;
 import com.itextpdf.text.pdf.internal.PdfAConformanceImp;
@@ -125,17 +127,14 @@ public class PdfAStamperImp extends PdfStamperImp {
     }
 
     /**
-     * @see PdfStamperImp#checkPdfIsoConformance(int, Object)
-     */
-    protected void checkPdfIsoConformance(int key, Object obj1) {
-        PdfAConformanceImp.checkPdfAConformance(this, key, obj1);
-    }
-
-    /**
      * @see com.itextpdf.text.pdf.PdfStamperImp#getPdfIsoConformance()
      */
     protected PdfIsoConformance getPdfIsoConformance() {
-        return new PdfAConformanceImp();
+        return new PdfAConformanceImp(this);
     }
 
+	protected Counter COUNTER = CounterFactory.getCounter(PdfAStamper.class);
+	protected Counter getCounter() {
+		return COUNTER;
+	}
 }

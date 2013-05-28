@@ -92,6 +92,16 @@ public class SimpleTextExtractionStrategy implements TextExtractionStrategy {
     }
 
     /**
+     * Used to actually append text to the text results.  Subclasses can use this to insert
+     * text that wouldn't normally be included in text parsing (e.g. result of OCR performed against
+     * image content)
+     * @param text the text to append to the text results accumulated so far
+     */
+    protected final void appendTextChunk(CharSequence text){
+    	result.append(text);
+    }
+    
+    /**
      * Captures text using a simplified algorithm for inserting hard returns and spaces
      * @param	renderInfo	render info
      */
@@ -121,12 +131,12 @@ public class SimpleTextExtractionStrategy implements TextExtractionStrategy {
         
         if (hardReturn){
             //System.out.println("<< Hard Return >>");
-            result.append('\n');
+        	appendTextChunk("\n");
         } else if (!firstRender){ 
             if (result.charAt(result.length()-1) != ' ' && renderInfo.getText().length() > 0 && renderInfo.getText().charAt(0) != ' '){ // we only insert a blank space if the trailing character of the previous string wasn't a space, and the leading character of the current string isn't a space
                 float spacing = lastEnd.subtract(start).length();
                 if (spacing > renderInfo.getSingleSpaceWidth()/2f){
-                    result.append(' ');
+                	appendTextChunk(" ");
                     //System.out.println("Inserting implied space before '" + renderInfo.getText() + "'");
                 }
             }
@@ -135,7 +145,7 @@ public class SimpleTextExtractionStrategy implements TextExtractionStrategy {
         }
         
         //System.out.println("[" + renderInfo.getStartPoint() + "]->[" + renderInfo.getEndPoint() + "] " + renderInfo.getText());
-        result.append(renderInfo.getText());
+        appendTextChunk(renderInfo.getText());
 
         lastStart = start;
         lastEnd = end;

@@ -57,6 +57,8 @@ import com.itextpdf.text.pdf.internal.PdfIsoKeys;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * <CODE>PdfContentByte</CODE> is an object containing the user positioned
@@ -109,11 +111,16 @@ public class PdfContentByte {
         protected BaseColor graphicsColorFill = new GrayColor(0);
         protected BaseColor textColorStroke = new GrayColor(0);
         protected BaseColor graphicsColorStroke = new GrayColor(0);
+        protected AffineTransform CTM = new AffineTransform();
 
         GraphicState() {
         }
 
         GraphicState(final GraphicState cp) {
+            copyParameters(cp);
+        }
+
+        void copyParameters(final GraphicState cp) {
             fontDetails = cp.fontDetails;
             colorDetails = cp.colorDetails;
             size = cp.size;
@@ -132,6 +139,11 @@ public class PdfContentByte {
             graphicsColorFill = cp.graphicsColorFill;
             textColorStroke = cp.textColorStroke;
             graphicsColorStroke = cp.graphicsColorStroke;
+            CTM = new AffineTransform(cp.CTM);
+        }
+
+        void restore(final GraphicState restore) {
+            copyParameters(restore);
         }
     }
 
@@ -1455,6 +1467,7 @@ public class PdfContentByte {
         	sanityCheck();
         }
         state = new GraphicState();
+        stateList = new ArrayList<GraphicState>();
     }
 
 
@@ -1548,7 +1561,7 @@ public class PdfContentByte {
         int idx = stateList.size() - 1;
         if (idx < 0)
             throw new IllegalPdfSyntaxException(MessageLocalization.getComposedMessage("unbalanced.save.restore.state.operators"));
-        state = stateList.get(idx);
+        state.restore(stateList.get(idx));
         stateList.remove(idx);
     }
 
@@ -2124,6 +2137,7 @@ public class PdfContentByte {
         if (inText && isTagged()) {
             endText();
         }
+        state.CTM.concatenate(new AffineTransform(a, b, c, d, e, f));
         content.append(a).append(' ').append(b).append(' ').append(c).append(' ');
         content.append(d).append(' ').append(e).append(' ').append(f).append(" cm").append_i(separator);
     }
@@ -2352,6 +2366,9 @@ public class PdfContentByte {
     PdfTemplate createTemplate(final float width, final float height, final PdfName forcedName) {
         checkWriter();
         PdfTemplate template = new PdfTemplate(writer);
+        ArrayList<IAccessibleElement> allMcElements = getMcElements();
+        if (allMcElements != null && allMcElements.size() > 0)
+            template.getMcElements().add(allMcElements.get(allMcElements.size() - 1));
         template.setWidth(width);
         template.setHeight(height);
         writer.addDirectTemplateSimple(template, forcedName);
@@ -2944,6 +2961,15 @@ public class PdfContentByte {
         return cb;
     }
 
+    public PdfContentByte getDuplicate(boolean inheritGraphicState) {
+        PdfContentByte cb = this.getDuplicate();
+        if (inheritGraphicState) {
+            cb.state = state;
+            cb.stateList = stateList;
+        }
+        return cb;
+    }
+
     /**
      * Implements a link to another document.
      * @param filename the filename for the remote document
@@ -3259,12 +3285,20 @@ public class PdfContentByte {
         }
         double matrix[] = new double[6];
         af.getMatrix(matrix);
+        state.CTM.concatenate(af);
         content.append(matrix[0]).append(' ').append(matrix[1]).append(' ').append(matrix[2]).append(' ');
         content.append(matrix[3]).append(' ').append(matrix[4]).append(' ').append(matrix[5]).append(" cm").append_i(separator);
     }
 
     void addAnnotation(final PdfAnnotation annot) {
         writer.addAnnotation(annot);
+    }
+
+    void addAnnotation(final PdfAnnotation annot, boolean applyCTM) {
+        if (applyCTM && state.CTM.getType() != AffineTransform.TYPE_IDENTITY) {
+            annot.applyCTM(state.CTM);
+        }
+        addAnnotation(annot);
     }
 
     /**
@@ -3408,7 +3442,7 @@ public class PdfContentByte {
     	}
     }
 
-protected void openMCBlock(IAccessibleElement element) {
+    public void openMCBlock(IAccessibleElement element) {
         if (isTagged()) {
             if (pdf.openMCDocument) {
                 pdf.openMCDocument = false;
@@ -3441,18 +3475,33 @@ protected void openMCBlock(IAccessibleElement element) {
             IAccessibleElement parent = null;
             if (getMcElements().size() > 0)
                 parent = getMcElements().get(getMcElements().size() - 1);
-            if (parent != null && parent.getRole() == null)
+            if (parent != null && (parent.getRole() == null || PdfName.ARTIFACT.equals(parent.getRole())))
                 element.setRole(null);
             if (element.getRole() != null) {
-                structureElement = pdf.structElements.get(element.getId());
-                if (structureElement == null) {
-                    structureElement = new PdfStructureElement(getParentStructureElement(), element.getRole());
-                    structureElement.writeAttributes(element);
+                if (!PdfName.ARTIFACT.equals(element.getRole())) {
+                    structureElement = pdf.structElements.get(element.getId());
+                    if (structureElement == null) {
+                        structureElement = new PdfStructureElement(getParentStructureElement(), element.getRole());
+                        structureElement.writeAttributes(element);
+                    }
                 }
                 boolean inTextLocal = inText;
                 if (inText)
                     endText();
-                beginMarkedContentSequence(structureElement);
+                if (PdfName.ARTIFACT.equals(element.getRole())) {
+                    HashMap<PdfName, PdfObject> properties = element.getAccessibleAttributes();
+                    PdfDictionary propertiesDict = null;
+                    if (properties == null || properties.isEmpty()) {
+                    } else {
+                        propertiesDict = new PdfDictionary();
+                        for (Map.Entry<PdfName, PdfObject> entry : properties.entrySet()) {
+                            propertiesDict.put(entry.getKey(), entry.getValue());
+                        }
+                    }
+                    beginMarkedContentSequence(element.getRole(), propertiesDict, true);
+                } else {
+                    beginMarkedContentSequence(structureElement);
+                }
                 if (inTextLocal)
                     beginText(true);
             }
@@ -3460,7 +3509,7 @@ protected void openMCBlock(IAccessibleElement element) {
         return structureElement;
     }
 
-    protected void closeMCBlock(IAccessibleElement element) {
+    public void closeMCBlock(IAccessibleElement element) {
         if (isTagged() && element != null/* && element.getRole() != null*/) {
             if (getMcElements().contains(element)) {
                 closeMCBlockInt(element);

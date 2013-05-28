@@ -53,6 +53,8 @@ import java.util.HashSet;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.ExceptionConverter;
+import com.itextpdf.text.log.Counter;
+import com.itextpdf.text.log.CounterFactory;
 
 /**
  * PdfSmartCopy has the same functionality as PdfCopy,
@@ -68,6 +70,11 @@ public class PdfSmartCopy extends PdfCopy {
 	/** the cache with the streams and references. */
     private HashMap<ByteStore, PdfIndirectReference> streamMap = null;
     private final HashSet<PdfObject> serialized = new HashSet<PdfObject>();
+    
+    protected Counter COUNTER = CounterFactory.getCounter(PdfSmartCopy.class);
+    protected Counter getCounter() {
+    	return COUNTER;
+    }
 
     /** Creates a PdfSmartCopy instance. */
     public PdfSmartCopy(Document document, OutputStream os) throws DocumentException {

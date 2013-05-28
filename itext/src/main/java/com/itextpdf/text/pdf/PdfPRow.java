@@ -43,18 +43,18 @@
  */
 package com.itextpdf.text.pdf;
 
+import java.util.HashMap;
+import java.util.UUID;
+
+import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.ExceptionConverter;
 import com.itextpdf.text.Image;
 import com.itextpdf.text.Rectangle;
-import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.log.Logger;
 import com.itextpdf.text.log.LoggerFactory;
 import com.itextpdf.text.pdf.interfaces.IAccessibleElement;
-
-import java.util.HashMap;
-import java.util.UUID;
 
 /**
  * A row in a PdfPTable.
@@ -389,7 +389,7 @@ public class PdfPRow implements IAccessibleElement {
                 }
 				boolean vf = false;
 				if (cell.getHeight() > currentMaxHeight) {
-					if (!img.isScaleToFitLineWhenOverflow()) {
+					if (!img.isScaleToFitHeight()) {
 						continue;
 					}
 					img.scalePercent(100);
@@ -714,7 +714,7 @@ public class PdfPRow implements IAccessibleElement {
 			PdfPCell newCell = new PdfPCell(cell);
 			if (img != null) {
 				float padding = cell.getEffectivePaddingBottom() + cell.getEffectivePaddingTop() + 2;
-				if ((img.isScaleToFitLineWhenOverflow() || img.getScaledHeight() + padding < newHeight)
+				if ((img.isScaleToFitHeight() || img.getScaledHeight() + padding < newHeight)
 				    && newHeight > padding) {
 					newCell.setPhrase(null);
 					allEmpty = false;

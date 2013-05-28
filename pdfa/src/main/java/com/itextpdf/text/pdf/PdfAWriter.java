@@ -47,6 +47,8 @@ import com.itextpdf.text.DocListener;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.error_messages.MessageLocalization;
+import com.itextpdf.text.log.Counter;
+import com.itextpdf.text.log.CounterFactory;
 import com.itextpdf.text.pdf.interfaces.PdfAConformance;
 import com.itextpdf.text.pdf.interfaces.PdfIsoConformance;
 import com.itextpdf.text.pdf.internal.PdfAConformanceImp;
@@ -63,7 +65,7 @@ import java.io.OutputStream;
  * @see PdfWriter
  */
 public class PdfAWriter extends PdfWriter {
-
+	
     /**
      * Use this method to get an instance of the <CODE>PdfWriter</CODE>.
      * @param	document	The <CODE>Document</CODE> that has to be written
@@ -198,16 +200,14 @@ public class PdfAWriter extends PdfWriter {
     }
 
     /**
-     * @see PdfWriter#checkPdfIsoConformance(int, Object)
-     */
-    protected void checkPdfIsoConformance(int key, Object obj1) {
-        PdfAConformanceImp.checkPdfAConformance(this, key, obj1);
-    }
-
-    /**
      * @see com.itextpdf.text.pdf.PdfWriter#getPdfIsoConformance()
      */
     protected PdfIsoConformance getPdfIsoConformance() {
-        return new PdfAConformanceImp();
+        return new PdfAConformanceImp(this);
     }
+
+	protected Counter COUNTER = CounterFactory.getCounter(PdfAWriter.class);
+	protected Counter getCounter() {
+		return COUNTER;
+	}
 }

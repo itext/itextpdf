@@ -70,6 +70,8 @@ import com.itextpdf.text.ImgWMF;
 import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.Version;
 import com.itextpdf.text.error_messages.MessageLocalization;
+import com.itextpdf.text.log.Counter;
+import com.itextpdf.text.log.CounterFactory;
 import com.itextpdf.text.pdf.collection.PdfCollection;
 import com.itextpdf.text.pdf.events.PdfPageEventForwarder;
 import com.itextpdf.text.pdf.interfaces.*;
@@ -92,7 +94,6 @@ public class PdfWriter extends DocWriter implements
 	PdfVersion,
 	PdfDocumentActions,
 	PdfPageActions,
-    PdfIsoConformance,
 	PdfRunDirection,
 	PdfAnnotations {
 
@@ -236,7 +237,7 @@ public class PdfWriter extends DocWriter implements
         }
 
         private static final int OBJSINSTREAM = 200;
-
+        
         // membervariables
 
         /** array containing the cross-reference table of the normal objects. */
@@ -325,7 +326,7 @@ public class PdfWriter extends DocWriter implements
         }
 
         PdfIndirectObject add(final PdfObject object, final boolean inObjStm) throws IOException {
-            return add(object, getIndirectReferenceNumber(), inObjStm);
+            return add(object, getIndirectReferenceNumber(), 0, inObjStm);
         }
 
         /**
@@ -360,18 +361,18 @@ public class PdfWriter extends DocWriter implements
          */
 
         PdfIndirectObject add(final PdfObject object, final PdfIndirectReference ref) throws IOException {
-            return add(object, ref.getNumber());
+            return add(object, ref, true);
         }
 
         PdfIndirectObject add(final PdfObject object, final PdfIndirectReference ref, final boolean inObjStm) throws IOException {
-            return add(object, ref.getNumber(), inObjStm);
+            return add(object, ref.getNumber(), ref.getGeneration(), inObjStm);
         }
 
         PdfIndirectObject add(final PdfObject object, final int refNumber) throws IOException {
-            return add(object, refNumber, true); // to false
+            return add(object, refNumber, 0, true); // to false
         }
 
-        protected PdfIndirectObject add(final PdfObject object, final int refNumber, final boolean inObjStm) throws IOException {
+        protected PdfIndirectObject add(final PdfObject object, final int refNumber, final int generation, final boolean inObjStm) throws IOException {
             if (inObjStm && object.canBeInObjStm() && writer.isFullCompression()) {
                 PdfCrossReference pxref = addToObjStm(object, refNumber);
                 PdfIndirectObject indirect = new PdfIndirectObject(refNumber, object, writer);
@@ -382,14 +383,31 @@ public class PdfWriter extends DocWriter implements
                 return indirect;
             }
             else {
-                PdfIndirectObject indirect = new PdfIndirectObject(refNumber, object, writer);
-                write(indirect, refNumber);
+                PdfIndirectObject indirect;
+                if (writer.isFullCompression()) {
+                	indirect = new PdfIndirectObject(refNumber, object, writer);
+                	write(indirect, refNumber);
+                }
+                else {
+                	indirect = new PdfIndirectObject(refNumber, generation, object, writer);
+                	write(indirect, refNumber, generation);
+                }
                 return indirect;
             }
         }
 
         protected void write(final PdfIndirectObject indirect, final int refNumber) throws IOException {
             PdfCrossReference pxref = new PdfCrossReference(refNumber, position);
+            if (!xrefs.add(pxref)) {
+                xrefs.remove(pxref);
+                xrefs.add(pxref);
+            }
+            indirect.writeTo(writer.getOs());
+            position = writer.getOs().getCounter();
+        }
+
+        protected void write(final PdfIndirectObject indirect, final int refNumber, final int generation) throws IOException {
+            PdfCrossReference pxref = new PdfCrossReference(refNumber, position, generation);
             if (!xrefs.add(pxref)) {
                 xrefs.remove(pxref);
                 xrefs.add(pxref);
@@ -573,6 +591,10 @@ public class PdfWriter extends DocWriter implements
     }
 
 //	ESSENTIALS
+    protected static Counter COUNTER = CounterFactory.getCounter(PdfWriter.class);
+    protected Counter getCounter() {
+    	return COUNTER;
+    }
 
 //	Construct a PdfWriter instance
 
@@ -845,7 +867,7 @@ public class PdfWriter extends DocWriter implements
      * @throws IOException
      */
     public PdfIndirectObject addToBody(final PdfObject object, final int refNumber, final boolean inObjStm) throws IOException {
-        PdfIndirectObject iobj = body.add(object, refNumber, inObjStm);
+        PdfIndirectObject iobj = body.add(object, refNumber, 0, inObjStm);
         return iobj;
     }
 
@@ -1221,6 +1243,8 @@ public class PdfWriter extends DocWriter implements
                 PdfIndirectReference rootRef = root.writePageTree();
                 // make the catalog-object and add it to the body
                 PdfDictionary catalog = getCatalog(rootRef);
+                if (!documentOCG.isEmpty())
+                    PdfWriter.checkPdfIsoConformance(this, PdfIsoKeys.PDFISOKEY_LAYER, OCProperties);
                 // [C9] if there is XMP data to add: add it
                 if (xmpMetadata != null) {
                 	PdfStream xmp = new PdfStream(xmpMetadata);
@@ -1289,6 +1313,7 @@ public class PdfWriter extends DocWriter implements
                 throw new ExceptionConverter(ioe);
             }
         }
+        getCounter().written(os.getCounter());
     }
 
     protected void addXFormsToBody() throws IOException {
@@ -1804,7 +1829,7 @@ public class PdfWriter extends DocWriter implements
 	protected PdfIsoConformance pdfIsoConformance = getPdfIsoConformance();
 
     protected PdfIsoConformance getPdfIsoConformance() {
-        return new PdfXConformanceImp();
+        return new PdfXConformanceImp(this);
     }
 
     /** @see com.itextpdf.text.pdf.interfaces.PdfXConformance#setPDFXConformance(int) */
@@ -2467,7 +2492,7 @@ public class PdfWriter extends DocWriter implements
     PdfObject[] addSimpleProperty(final Object prop, final PdfIndirectReference refi) {
         if (!documentProperties.containsKey(prop)) {
             if (prop instanceof PdfOCG)
-            	PdfWriter.checkPdfIsoConformance(this, PdfIsoKeys.PDFISOKEY_LAYER, null);
+            	PdfWriter.checkPdfIsoConformance(this, PdfIsoKeys.PDFISOKEY_LAYER, prop);
             documentProperties.put(prop, new PdfObject[]{new PdfName("Pr" + (documentProperties.size() + 1)), refi});
         }
         return documentProperties.get(prop);
@@ -2650,6 +2675,13 @@ public class PdfWriter extends DocWriter implements
         PdfDictionary d = new PdfDictionary();
         OCProperties.put(PdfName.D, d);
         d.put(PdfName.ORDER, order);
+        if (docOrder.size() > 0 && (docOrder.get(0) instanceof PdfLayer)) {
+            PdfLayer l = (PdfLayer)docOrder.get(0);
+            PdfString name = l.getAsString(PdfName.NAME);
+            if (name != null) {
+                d.put(PdfName.NAME, name);
+            }
+        }
         PdfArray gr = new PdfArray();
         for (Object element : documentOCG) {
             PdfLayer layer = (PdfLayer)element;
@@ -2670,7 +2702,7 @@ public class PdfWriter extends DocWriter implements
     }
 
     void registerLayer(final PdfOCG layer) {
-        PdfWriter.checkPdfIsoConformance(this, PdfIsoKeys.PDFISOKEY_LAYER, null);
+        PdfWriter.checkPdfIsoConformance(this, PdfIsoKeys.PDFISOKEY_LAYER, layer);
         if (layer instanceof PdfLayer) {
             PdfLayer la = (PdfLayer)layer;
             if (la.getTitle() == null) {
@@ -3281,8 +3313,8 @@ public class PdfWriter extends DocWriter implements
             writer.checkPdfIsoConformance(key, obj1);
     }
 
-    protected void checkPdfIsoConformance(int key, Object obj1) {
-        PdfXConformanceImp.checkPDFXConformance(this, key, obj1);
+    public void checkPdfIsoConformance(int key, Object obj1) {
+        pdfIsoConformance.checkPdfIsoConformance(key, obj1);
     }
 
     private void completeInfoDictionary(PdfDictionary info) {

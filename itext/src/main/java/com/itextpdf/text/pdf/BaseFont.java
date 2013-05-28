@@ -46,7 +46,6 @@ import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.error_messages.MessageLocalization;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.StringTokenizer;
@@ -233,14 +232,14 @@ public abstract class BaseFont {
     public static final int[] CHAR_RANGE_HEBREW = {0, 0x7f, 0x0590, 0x05ff, 0x20a0, 0x20cf, 0xfb1d, 0xfb4f};
     public static final int[] CHAR_RANGE_CYRILLIC = {0, 0x7f, 0x0400, 0x052f, 0x2000, 0x206f, 0x20a0, 0x20cf};
 
-/** if the font has to be embedded */
+    /** if the font has to be embedded */
     public static final boolean EMBEDDED = true;
 
-/** if the font doesn't have to be embedded */
+    /** if the font doesn't have to be embedded */
     public static final boolean NOT_EMBEDDED = false;
-/** if the font has to be cached */
+    /** if the font has to be cached */
     public static final boolean CACHED = true;
-/** if the font doesn't have to be cached */
+    /** if the font doesn't have to be cached */
     public static final boolean NOT_CACHED = false;
 
     /** The path to the font resources. */
@@ -252,22 +251,22 @@ public abstract class BaseFont {
     /** The font type.
      */
     int fontType;
-/** a not defined character in a custom PDF encoding */
+    /** a not defined character in a custom PDF encoding */
     public static final String notdef = ".notdef";
 
-/** table of characters widths for this encoding */
+    /** table of characters widths for this encoding */
     protected int widths[] = new int[256];
 
-/** encoding names */
+    /** encoding names */
     protected String differences[] = new String[256];
-/** same as differences but with the unicode codes */
+    /** same as differences but with the unicode codes */
     protected char unicodeDifferences[] = new char[256];
 
     protected int charBBoxes[][] = new int[256][];
-/** encoding used with this font */
+    /** encoding used with this font */
     protected String encoding;
 
-/** true if the font is to be embedded in the PDF */
+    /** true if the font is to be embedded in the PDF */
     protected boolean embedded;
 
     /**
@@ -276,17 +275,17 @@ public abstract class BaseFont {
      */
     protected int compressionLevel = PdfStream.DEFAULT_COMPRESSION;
 
-/**
- * true if the font must use its built in encoding. In that case the
- * <CODE>encoding</CODE> is only used to map a char to the position inside
- * the font, not to the expected char name.
- */
+    /**
+     * true if the font must use its built in encoding. In that case the
+     * <CODE>encoding</CODE> is only used to map a char to the position inside
+     * the font, not to the expected char name.
+     */
     protected boolean fontSpecific = true;
 
-/** cache for the fonts already used. */
+    /** cache for the fonts already used. */
     protected static HashMap<String, BaseFont> fontCache = new HashMap<String, BaseFont>();
 
-/** list of the 14 built in fonts. */
+    /** list of the 14 built in fonts. */
     protected static final HashMap<String, PdfName> BuiltinFonts14 = new HashMap<String, PdfName>();
 
     /** Forces the output of the width array. Only matters for the 14
@@ -362,7 +361,7 @@ public abstract class BaseFont {
          * Generates the PDF stream for a font.
          * @param contents the content of a stream
          * @param subType the subtype of the font.
-		 * @param compressionLevel	the compression level of the Stream
+         * @param compressionLevel	the compression level of the Stream
          * @throws DocumentException error in the stream compression
          * @since	2.1.3 (replaces the constructor without param compressionLevel)
          */
@@ -395,7 +394,7 @@ public abstract class BaseFont {
      * @since	2.1.1
      */
     public static BaseFont createFont() throws DocumentException, IOException {
-    	return createFont(BaseFont.HELVETICA, BaseFont.WINANSI, BaseFont.NOT_EMBEDDED);
+        return createFont(BaseFont.HELVETICA, BaseFont.WINANSI, BaseFont.NOT_EMBEDDED);
     }
 
     /**
@@ -670,7 +669,7 @@ public abstract class BaseFont {
      * @since	2.1.5
      */
     public static BaseFont createFont(String name, String encoding, boolean embedded, boolean cached, byte ttfAfm[], byte pfb[], boolean noThrow, boolean forceRead) throws DocumentException, IOException {
-    	String nameBase = getBaseName(name);
+        String nameBase = getBaseName(name);
         encoding = normalizeEncoding(encoding);
         boolean isBuiltinFonts14 = BuiltinFonts14.containsKey(name);
         boolean isCJKFont = isBuiltinFonts14 ? false : CJKFont.isCJKFont(nameBase, encoding);
@@ -919,12 +918,12 @@ public abstract class BaseFont {
         return total;
     }
 
-/**
- * Gets the descent of a <CODE>String</CODE> in normalized 1000 units. The descent will always be
- * less than or equal to zero even if all the characters have an higher descent.
- * @param text the <CODE>String</CODE> to get the descent of
- * @return the descent in normalized 1000 units
- */
+    /**
+     * Gets the descent of a <CODE>String</CODE> in normalized 1000 units. The descent will always be
+     * less than or equal to zero even if all the characters have an higher descent.
+     * @param text the <CODE>String</CODE> to get the descent of
+     * @return the descent in normalized 1000 units
+     */
     public int getDescent(String text) {
         int min = 0;
         char chars[] = text.toCharArray();
@@ -936,12 +935,12 @@ public abstract class BaseFont {
         return min;
     }
 
-/**
- * Gets the ascent of a <CODE>String</CODE> in normalized 1000 units. The ascent will always be
- * greater than or equal to zero even if all the characters have a lower ascent.
- * @param text the <CODE>String</CODE> to get the ascent of
- * @return the ascent in normalized 1000 units
- */
+    /**
+     * Gets the ascent of a <CODE>String</CODE> in normalized 1000 units. The ascent will always be
+     * greater than or equal to zero even if all the characters have a lower ascent.
+     * @param text the <CODE>String</CODE> to get the ascent of
+     * @return the ascent in normalized 1000 units
+     */
     public int getAscent(String text) {
         int max = 0;
         char chars[] = text.toCharArray();
@@ -953,25 +952,25 @@ public abstract class BaseFont {
         return max;
     }
 
-/**
- * Gets the descent of a <CODE>String</CODE> in points. The descent will always be
- * less than or equal to zero even if all the characters have an higher descent.
- * @param text the <CODE>String</CODE> to get the descent of
- * @param fontSize the size of the font
- * @return the descent in points
- */
+    /**
+     * Gets the descent of a <CODE>String</CODE> in points. The descent will always be
+     * less than or equal to zero even if all the characters have an higher descent.
+     * @param text the <CODE>String</CODE> to get the descent of
+     * @param fontSize the size of the font
+     * @return the descent in points
+     */
     public float getDescentPoint(String text, float fontSize)
     {
         return getDescent(text) * 0.001f * fontSize;
     }
 
-/**
- * Gets the ascent of a <CODE>String</CODE> in points. The ascent will always be
- * greater than or equal to zero even if all the characters have a lower ascent.
- * @param text the <CODE>String</CODE> to get the ascent of
- * @param fontSize the size of the font
- * @return the ascent in points
- */
+    /**
+     * Gets the ascent of a <CODE>String</CODE> in points. The ascent will always be
+     * greater than or equal to zero even if all the characters have a lower ascent.
+     * @param text the <CODE>String</CODE> to get the ascent of
+     * @param fontSize the size of the font
+     * @return the ascent in points
+     */
     public float getAscentPoint(String text, float fontSize)
     {
         return getAscent(text) * 0.001f * fontSize;
@@ -1357,47 +1356,6 @@ public abstract class BaseFont {
         this.subset = subset;
     }
 
-    /** Gets the font resources.
-     * @param key the full name of the resource
-     * @return the <CODE>InputStream</CODE> to get the resource or
-     * <CODE>null</CODE> if not found
-     */
-    public static InputStream getResourceStream(String key) {
-        return getResourceStream(key, null);
-    }
-
-    /** Gets the font resources.
-     * @param key the full name of the resource
-     * @param loader the ClassLoader to load the resource or null to try the ones available
-     * @return the <CODE>InputStream</CODE> to get the resource or
-     * <CODE>null</CODE> if not found
-     */
-    public static InputStream getResourceStream(String key, ClassLoader loader) {
-        if (key.startsWith("/"))
-            key = key.substring(1);
-        InputStream is = null;
-        if (loader != null) {
-            is = loader.getResourceAsStream(key);
-            if (is != null)
-                return is;
-        }
-        // Try to use Context Class Loader to load the properties file.
-        try {
-            ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
-            if (contextClassLoader != null) {
-                is = contextClassLoader.getResourceAsStream(key);
-            }
-        } catch (Throwable e) {}
-
-        if (is == null) {
-            is = BaseFont.class.getResourceAsStream("/" + key);
-        }
-        if (is == null) {
-            is = ClassLoader.getSystemResourceAsStream(key);
-        }
-        return is;
-    }
-
     /** Gets the Unicode equivalent to a CID.
      * The (inexistent) CID <FF00> is translated as '\n'.
      * It has only meaning with CJK fonts with Identity encoding.
@@ -1575,24 +1533,24 @@ public abstract class BaseFont {
         subsetRanges.add(range);
     }
 
-	/**
-	 * Returns the compression level used for the font streams.
-	 * @return the compression level (0 = best speed, 9 = best compression, -1 is default)
-	 * @since 2.1.3
-	 */
-	public int getCompressionLevel() {
-		return compressionLevel;
-	}
+    /**
+     * Returns the compression level used for the font streams.
+     * @return the compression level (0 = best speed, 9 = best compression, -1 is default)
+     * @since 2.1.3
+     */
+    public int getCompressionLevel() {
+        return compressionLevel;
+    }
 
-	/**
-	 * Sets the compression level to be used for the font streams.
-	 * @param compressionLevel a value between 0 (best speed) and 9 (best compression)
-	 * @since 2.1.3
-	 */
-	public void setCompressionLevel(int compressionLevel) {
-		if (compressionLevel < PdfStream.NO_COMPRESSION || compressionLevel > PdfStream.BEST_COMPRESSION)
-			this.compressionLevel = PdfStream.DEFAULT_COMPRESSION;
-		else
-			this.compressionLevel = compressionLevel;
-	}
+    /**
+     * Sets the compression level to be used for the font streams.
+     * @param compressionLevel a value between 0 (best speed) and 9 (best compression)
+     * @since 2.1.3
+     */
+    public void setCompressionLevel(int compressionLevel) {
+        if (compressionLevel < PdfStream.NO_COMPRESSION || compressionLevel > PdfStream.BEST_COMPRESSION)
+            this.compressionLevel = PdfStream.DEFAULT_COMPRESSION;
+        else
+            this.compressionLevel = compressionLevel;
+    }
 }

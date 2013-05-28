@@ -43,12 +43,15 @@
  */
 package com.itextpdf.text.pdf;
 
-import com.itextpdf.text.*;
+import java.util.ArrayList;
+
+import com.itextpdf.text.Image;
+import com.itextpdf.text.TabStop;
+import com.itextpdf.text.Utilities;
+import com.itextpdf.text.Chunk;
 import com.itextpdf.text.pdf.draw.DrawInterface;
 import com.itextpdf.text.pdf.draw.LineSeparator;
 import com.itextpdf.text.pdf.languages.ArabicLigaturizer;
-
-import java.util.ArrayList;
 
 /** Does all the line bidirectional processing with PdfChunk assembly.
  *
@@ -355,7 +358,7 @@ public class BidiLine {
             ck = detailChunks[currentChar];
             if (ck.isImage() && minY < yLine) {
                 Image img = ck.getImage();
-                if (img.isScaleToFitLineWhenOverflow() && yLine + 2 * descender - img.getScaledHeight() - ck.getImageOffsetY() - img.getSpacingBefore() < minY) {
+                if (img.isScaleToFitHeight() && yLine + 2 * descender - img.getScaledHeight() - ck.getImageOffsetY() - img.getSpacingBefore() < minY) {
                     //float scalePercent = (yLine + 2 * descender - ck.getImageOffsetY() - img.getSpacingBefore() - minY) / img.getHeight() * 100;
             		//img.scalePercent(scalePercent);
                     float scalePercent = (yLine + 2 * descender - ck.getImageOffsetY() - img.getSpacingBefore() - minY) / img.getHeight();
