@@ -13,7 +13,7 @@ import java.security.PrivateKey;
 import java.security.Security;
 import java.security.cert.Certificate;
 
-public class XmlDSigKS extends XmlDSigTests {
+public class XmlDSigKSTest extends XmlDSigTests {
 
     public static final String KEYSTORE = "./src/test/resources/com/itextpdf/text/signature/rsa-ks/ks/";
     public static final char[] PASSWORD = "password".toCharArray();

@@ -3,13 +3,12 @@ package com.itextpdf.text.pdf.security;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.pdf.XmlSignatureAppearance;
-import com.sun.org.apache.xml.internal.security.utils.Base64;
-import org.jcp.xml.dsig.internal.dom.DOMReference;
-import org.jcp.xml.dsig.internal.dom.DOMSignedInfo;
-import org.jcp.xml.dsig.internal.dom.DOMXMLSignature;
-import org.jcp.xml.dsig.internal.dom.DOMXMLSignatureFactory;
-import org.jcp.xml.dsig.internal.dom.DOMUtils;
-import org.jcp.xml.dsig.internal.dom.DOMKeyInfoFactory;
+import org.apache.xml.security.utils.Base64;
+import org.apache.jcp.xml.dsig.internal.dom.DOMReference;
+import org.apache.jcp.xml.dsig.internal.dom.DOMSignedInfo;
+import org.apache.jcp.xml.dsig.internal.dom.DOMXMLSignature;
+import org.apache.jcp.xml.dsig.internal.dom.DOMUtils;
+import org.apache.jcp.xml.dsig.internal.dom.DOMKeyInfoFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -85,7 +84,8 @@ public class MakeXmlSignature {
         if (!externalSignature.getHashAlgorithm().equals("SHA1"))
             throw new UnsupportedOperationException(MessageLocalization.getComposedMessage("support.only.sha1.hash.algorithm"));
 
-        XMLSignatureFactory fac = DOMXMLSignatureFactory.getInstance();
+        XMLSignatureFactory fac = XMLSignatureFactory.getInstance
+                        ("DOM", new org.apache.jcp.xml.dsig.internal.dom.XMLDSigRI());
         DigestMethod digestMethodSHA1 = fac.newDigestMethod(DigestMethod.SHA1, null);
 
         Document doc = xmlLocator.getDocument();
@@ -95,12 +95,11 @@ public class MakeXmlSignature {
 
         // Create the Reference
         XpathConstructor xpathConstructor = sap.getXpathConstructor();
-        if (xpathConstructor != null && !xpathConstructor.getXpathExpression().isEmpty()) {
+        if (xpathConstructor != null && xpathConstructor.getXpathExpression().length() > 0) {
             XPathFilter2ParameterSpec xpath2Spec = new XPathFilter2ParameterSpec(Collections.singletonList(new XPathType(xpathConstructor.getXpathExpression(), XPathType.Filter.INTERSECT)));
             transforms.add(fac.newTransform(Transform.XPATH2, xpath2Spec));
         }
-        DOMReference reference = (DOMReference)fac.newReference("", digestMethodSHA1,
-                transforms, null, null);
+        DOMReference reference = (DOMReference)fac.newReference("", digestMethodSHA1, transforms, null, null);
 
         String signatureMethod;
         if (externalSignature.getEncryptionAlgorithm().equals("RSA"))
