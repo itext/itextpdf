@@ -162,7 +162,7 @@ public class Jpeg2000 extends Image {
                 throw new IOException(MessageLocalization.getComposedMessage("unsupported.box.size.eq.eq.0"));
         }
         else if (boxLength == 0) {
-            throw new IOException(MessageLocalization.getComposedMessage("unsupported.box.size.eq.eq.0"), new ZeroBoxSize());
+            throw new ZeroBoxSizeException(MessageLocalization.getComposedMessage("unsupported.box.size.eq.eq.0"));
         }
     }
     
@@ -232,11 +232,8 @@ public class Jpeg2000 extends Image {
                         colorSpecBoxes.add(jp2_read_colr());
                         try {
                             jp2_read_boxhdr();
-                        } catch (IOException ioe) {
+                        } catch (ZeroBoxSizeException ioe) {
                             //Probably we have reached the contiguous codestream box which is the last in jpeg2000 and has no length.
-                            if (!(ioe.getCause() instanceof ZeroBoxSize)) {
-                                throw ioe;
-                            }
                         }
                     } while (JP2_COLR == boxType);
                 }
@@ -338,8 +335,14 @@ public class Jpeg2000 extends Image {
         }
     }
 
-    private class ZeroBoxSize extends Throwable {
+    private class ZeroBoxSizeException extends IOException {
+        public ZeroBoxSizeException() {
+            super();
+        }
 
+        public ZeroBoxSizeException(String s) {
+            super(s);
+        }
     }
 
 }

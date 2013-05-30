@@ -32,8 +32,6 @@ public class XfaXmlLocator implements XmlLocator {
             throw new DocumentException(e);
         } catch (SAXException e) {
             throw new DocumentException(e);
-        } catch (IOException e) {
-            throw new IOException(e);
         }
     }
 

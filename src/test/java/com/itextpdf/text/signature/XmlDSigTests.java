@@ -4,7 +4,7 @@ import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.pdf.*;
 import com.itextpdf.text.pdf.security.*;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.jcp.xml.dsig.internal.dom.DOMKeyInfoFactory;
+import org.apache.jcp.xml.dsig.internal.dom.DOMKeyInfoFactory;
 import org.xml.sax.SAXException;
 
 import javax.xml.crypto.URIReferenceException;
