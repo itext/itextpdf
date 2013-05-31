@@ -5,7 +5,6 @@ import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import junit.framework.Assert;
 import org.junit.Test;
-import org.junit.Ignore;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -68,7 +67,6 @@ public class PdfAFileStructureTest {
         The xref keyword and the cross reference subsection header shall be separated by a single EOL marker.
      */
     @Test
-    @Ignore
     public void crossReferenceTable() throws DocumentException, IOException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         Document document = new Document();
