@@ -43,11 +43,11 @@
  */
 package com.itextpdf.text.pdf;
 
-import java.io.IOException;
-
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.ExceptionConverter;
 import com.itextpdf.text.Rectangle;
+
+import java.io.IOException;
 
 /**
  * Creates a radio or a check field.
@@ -374,7 +374,7 @@ public class RadioCheckField extends BaseField {
             if ((options & REQUIRED) != 0)
                 field.setFieldFlags(PdfFormField.FF_REQUIRED);
             field.setValueAsName(checked ? onValue : "Off");
-            setCheckType(TYPE_CHECK);
+            setCheckType(checkType);
         }
         if (text != null)
             field.setMKNormalCaption(text);
