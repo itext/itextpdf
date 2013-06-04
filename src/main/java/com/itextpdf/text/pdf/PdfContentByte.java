@@ -1542,6 +1542,7 @@ public class PdfContentByte {
      * <CODE>restoreState</CODE> must be balanced.
      */
     public void saveState() {
+        PdfWriter.checkPdfIsoConformance(writer, PdfIsoKeys.PDFISOKEY_CANVAS, "q");
         if (inText && isTagged()) {
             endText();
         }
@@ -1554,6 +1555,7 @@ public class PdfContentByte {
      * <CODE>restoreState</CODE> must be balanced.
      */
     public void restoreState() {
+        PdfWriter.checkPdfIsoConformance(writer, PdfIsoKeys.PDFISOKEY_CANVAS, "Q");
         if (inText && isTagged()) {
             endText();
         }

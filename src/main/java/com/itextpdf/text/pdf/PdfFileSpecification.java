@@ -46,11 +46,9 @@ package com.itextpdf.text.pdf;
 import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.io.StreamUtil;
 import com.itextpdf.text.pdf.collection.PdfCollectionItem;
+import com.itextpdf.text.pdf.internal.PdfIsoKeys;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.URL;
 /** Specifies a file or an URL. The file can be extern or embedded.
  *
@@ -303,4 +301,11 @@ public class PdfFileSpecification extends PdfDictionary {
     public void addCollectionItem(PdfCollectionItem ci) {
     	put(PdfName.CI, ci);
     }
+
+    @Override
+    public void toPdf(final PdfWriter writer, final OutputStream os) throws IOException {
+        PdfWriter.checkPdfIsoConformance(writer, PdfIsoKeys.PDFISOKEY_FILESPEC, this);
+        super.toPdf(writer, os);
+    }
+
 }

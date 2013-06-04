@@ -43,6 +43,8 @@
  */
 package com.itextpdf.text.pdf;
 
+import com.itextpdf.text.pdf.internal.PdfIsoKeys;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -159,6 +161,7 @@ public class PdfArray extends PdfObject implements Iterable<PdfObject> {
      */
     @Override
     public void toPdf(final PdfWriter writer, final OutputStream os) throws IOException {
+        PdfWriter.checkPdfIsoConformance(writer, PdfIsoKeys.PDFISOKEY_OBJECT, this);
         os.write('[');
 
         Iterator<PdfObject> i = arrayList.iterator();

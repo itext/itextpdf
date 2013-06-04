@@ -42,6 +42,8 @@
  * address: sales@itextpdf.com
  */
 package com.itextpdf.text.pdf;
+import com.itextpdf.text.pdf.internal.PdfIsoKeys;
+
 import java.io.IOException;
 import java.io.OutputStream;
 
@@ -167,8 +169,10 @@ public abstract class PdfObject {
      * @throws IOException
      */
     public void toPdf(PdfWriter writer, OutputStream os) throws IOException {
-        if (bytes != null)
+        if (bytes != null) {
+            PdfWriter.checkPdfIsoConformance(writer, PdfIsoKeys.PDFISOKEY_OBJECT, this);
             os.write(bytes);
+        }
     }
 
     /**

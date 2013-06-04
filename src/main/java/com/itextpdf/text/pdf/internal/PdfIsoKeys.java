@@ -58,4 +58,14 @@ public class PdfIsoKeys {
     public static final int PDFISOKEY_GSTATE = 6;
     /** A key for an aspect that can be checked for PDF ISO Conformance. */
     public static final int PDFISOKEY_LAYER = 7;
+    /** A key for an aspect that can be checked for PDF ISO Conformance. */
+    public static final int PDFISOKEY_TRAILER = 8;
+    /** A key for an aspect that can be checked for PDF ISO Conformance. */
+    public static final int PDFISOKEY_STREAM = 9;
+    /** A key for an aspect that can be checked for PDF ISO Conformance. */
+    public static final int PDFISOKEY_FILESPEC = 10;
+    /** A key for an aspect that can be checked for PDF ISO Conformance. */
+    public static final int PDFISOKEY_OBJECT = 11;
+    /** A key for an aspect that can be checked for PDF ISO Conformance. */
+    public static final int PDFISOKEY_CANVAS = 12;
 }
