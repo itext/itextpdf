@@ -54,6 +54,16 @@ abstract public class PdfAChecker {
 
     abstract protected void checkLayer(PdfWriter writer, int key, Object obj1);
 
+    abstract protected void checkTrailer(PdfWriter writer, int key, Object obj1);
+
+    abstract protected void checkStream(PdfWriter writer, int key, Object obj1);
+
+    abstract protected void checkFileSpec(PdfWriter writer, int key, Object obj1);
+
+    abstract protected void checkPdfObject(PdfWriter writer, int key, Object obj1);
+
+    abstract protected void checkCanvas(PdfWriter writer, int key, Object obj1);
+
     void checkPdfAConformance(PdfWriter writer, int key, Object obj1) {
         if (writer == null || !writer.isPdfIso())
             return;
@@ -69,6 +79,22 @@ abstract public class PdfAChecker {
                 break;
             case PdfIsoKeys.PDFISOKEY_LAYER:
                 checkLayer(writer, key, obj1);
+                break;
+            case PdfIsoKeys.PDFISOKEY_TRAILER:
+                checkTrailer(writer, key, obj1);
+                break;
+            case PdfIsoKeys.PDFISOKEY_STREAM:
+                checkStream(writer, key, obj1);
+                break;
+            case PdfIsoKeys.PDFISOKEY_FILESPEC:
+                checkFileSpec(writer, key, obj1);
+                break;
+            case PdfIsoKeys.PDFISOKEY_OBJECT:
+                checkPdfObject(writer, key, obj1);
+                break;
+            case PdfIsoKeys.PDFISOKEY_CANVAS:
+                checkCanvas(writer, key, obj1);
+                break;
             default:
                 break;
         }

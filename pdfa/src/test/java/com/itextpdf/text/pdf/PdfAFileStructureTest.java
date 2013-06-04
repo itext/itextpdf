@@ -63,24 +63,6 @@ public class PdfAFileStructureTest {
     }
 
     /*
-        In a cross reference subsection header the starting object number and the range shall be separated by a single SPACE character (20h).
-        The xref keyword and the cross reference subsection header shall be separated by a single EOL marker.
-     */
-    @Test
-    public void crossReferenceTable() throws DocumentException, IOException {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        Document document = new Document();
-        PdfWriter.getInstance(document, baos);
-        document.open();
-        document.add(new Chunk("Hello World"));
-        document.close();
-
-        byte[] bytes = baos.toByteArray();
-        String str = new String(bytes, 643, 8);
-        Assert.assertEquals("xref\n0 7", str);
-    }
-
-    /*
         Hexadecimal strings shall contain an even number of non-white-space characters, each in the range 0 to 9, A to F or a to f.
      */
     @Test

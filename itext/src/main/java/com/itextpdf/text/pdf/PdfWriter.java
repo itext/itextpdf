@@ -580,6 +580,7 @@ public class PdfWriter extends DocWriter implements
          */
         @Override
         public void toPdf(final PdfWriter writer, final OutputStream os) throws IOException {
+            PdfWriter.checkPdfIsoConformance(writer, PdfIsoKeys.PDFISOKEY_TRAILER, this);
             os.write(getISOBytes("trailer\n"));
             super.toPdf(null, os);
             os.write('\n');

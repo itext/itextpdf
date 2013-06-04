@@ -43,6 +43,8 @@
  */
 package com.itextpdf.text.pdf;
 
+import com.itextpdf.text.pdf.internal.PdfIsoKeys;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.HashMap;
@@ -131,6 +133,7 @@ public class PdfDictionary extends PdfObject {
      */
     @Override
     public void toPdf(final PdfWriter writer, final OutputStream os) throws IOException {
+        PdfWriter.checkPdfIsoConformance(writer, PdfIsoKeys.PDFISOKEY_OBJECT, this);
         os.write('<');
         os.write('<');
         // loop over all the object-pairs in the HashMap
