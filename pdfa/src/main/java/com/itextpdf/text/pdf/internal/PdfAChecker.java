@@ -64,6 +64,8 @@ abstract public class PdfAChecker {
 
     abstract protected void checkCanvas(PdfWriter writer, int key, Object obj1);
 
+    abstract protected void checkColor(PdfWriter writer, int key, Object obj1);
+
     void checkPdfAConformance(PdfWriter writer, int key, Object obj1) {
         if (writer == null || !writer.isPdfIso())
             return;
@@ -94,6 +96,11 @@ abstract public class PdfAChecker {
                 break;
             case PdfIsoKeys.PDFISOKEY_CANVAS:
                 checkCanvas(writer, key, obj1);
+                break;
+            case PdfIsoKeys.PDFISOKEY_COLOR:
+            case PdfIsoKeys.PDFISOKEY_CMYK:
+            case PdfIsoKeys.PDFISOKEY_RGB:
+                checkColor(writer, key, obj1);
                 break;
             default:
                 break;

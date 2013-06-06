@@ -43,6 +43,7 @@
  */
 package com.itextpdf.text.pdf.internal;
 
+import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.pdf.*;
 
@@ -54,6 +55,8 @@ public class PdfA1Checker extends PdfAChecker {
     public final int maxDictionaryLength = 4095;
     public final int maxGsStackDepth = 28;
     protected int gsStackDepth = 0;
+    protected boolean rgbUsed = false;
+    protected boolean cmykUsed = false;
 
     @Override
     protected void checkFont(PdfWriter writer, int key, Object obj1) {
@@ -101,6 +104,20 @@ public class PdfA1Checker extends PdfAChecker {
         v = 0.0;
         if (obj != null && (v = ((PdfNumber) obj).doubleValue()) != 1.0)
             throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("transparency.is.not.allowed.ca.eq.1", String.valueOf(v)));
+
+        if (gs.contains(PdfName.TR)) {
+            throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("an.extgstate.dictionary.shall.not.contain.the.tr.key"));
+        }
+        PdfName tr2 = gs.getAsName(PdfName.TR2);
+        if (tr2 != null && !tr2.equals(PdfName.DEFAULT)) {
+            throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("an.extgstate.dictionary.shall.not.contain.the.TR2.key.with.a.value.other.than.default"));
+        }
+        PdfName ri = gs.getAsName(PdfName.RI);
+        if (ri != null && !(PdfName.RELATIVECOLORIMETRIC.equals(ri) || PdfName.ABSOLUTECOLORIMETRIC.equals(ri) || PdfName.PERCEPTUAL.equals(ri) || PdfName.SATURATION.equals(ri))) {
+            throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("1.value.of.ri.key.is.not.allowed", ri.toString()));
+        }
+
+
     }
 
     @Override
@@ -128,6 +145,38 @@ public class PdfA1Checker extends PdfAChecker {
             if (stream.contains(PdfName.LZWDECODE)) {
                 throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("lzwdecode.filter.is.not.permitted"));
             }
+
+            if (PdfName.IMAGE.equals(stream.getAsName(PdfName.SUBTYPE))) {
+                if (stream.contains(PdfName.ALTERNATES)) {
+                    throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("an.image.dictionary.shall.not.contain.alternates.key"));
+                }
+                if (stream.contains(PdfName.OPI)) {
+                    throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("an.image.dictionary.shall.not.contain.opi.key"));
+                }
+                PdfBoolean interpolate = stream.getAsBoolean(PdfName.INTERPOLATE);
+                if (interpolate != null && interpolate.booleanValue() == true) {
+                    throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("the.value.of.interpolate.key.shall.not.be.true"));
+                }
+                PdfName intent = stream.getAsName(PdfName.INTENT);
+                if (intent != null && !(PdfName.RELATIVECOLORIMETRIC.equals(intent) || PdfName.ABSOLUTECOLORIMETRIC.equals(intent) || PdfName.PERCEPTUAL.equals(intent) || PdfName.SATURATION.equals(intent))) {
+                    throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("1.value.of.intent.key.is.not.allowed", intent.toString()));
+                }
+            }
+
+            if (PdfName.FORM.equals(stream.getAsName(PdfName.SUBTYPE))) {
+                if (stream.contains(PdfName.OPI)) {
+                    throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("a.form.xobject.dictionary.shall.not.contain.opi.key"));
+                }
+                if (stream.contains(PdfName.PS)) {
+                    throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("a.form.xobject..dictionary.shall.not.contain.ps.key"));
+                }
+            }
+
+            if (PdfName.PS.equals(stream.getAsName(PdfName.SUBTYPE))) {
+                throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("postscript.xobjects.are.not.allowed"));
+            }
+
+
         }
     }
 
@@ -175,6 +224,51 @@ public class PdfA1Checker extends PdfAChecker {
             } else if ("Q".equals(obj1)) {
                 gsStackDepth--;
             }
+        }
+    }
+
+    @Override
+    protected void checkColor(PdfWriter writer, int key, Object obj1) {
+        switch (key) {
+            case PdfIsoKeys.PDFISOKEY_COLOR:
+                if (obj1 instanceof ExtendedColor) {
+                    ExtendedColor ec = (ExtendedColor) obj1;
+                    switch (ec.getType()) {
+                        case ExtendedColor.TYPE_CMYK:
+                            checkColor(writer, PdfIsoKeys.PDFISOKEY_CMYK, obj1);
+                            break;
+                        case ExtendedColor.TYPE_GRAY:
+                            return;
+                        case ExtendedColor.TYPE_RGB:
+                            checkColor(writer, PdfIsoKeys.PDFISOKEY_RGB, obj1);
+                        case ExtendedColor.TYPE_SEPARATION:
+                            SpotColor sc = (SpotColor) ec;
+                            checkColor(writer, PdfIsoKeys.PDFISOKEY_COLOR, sc.getPdfSpotColor().getAlternativeCS());
+                            break;
+                        case ExtendedColor.TYPE_SHADING:
+                            ShadingColor xc = (ShadingColor) ec;
+                            checkColor(writer, PdfIsoKeys.PDFISOKEY_COLOR, xc.getPdfShadingPattern().getShading().getColorSpace());
+                            break;
+                        case ExtendedColor.TYPE_PATTERN:
+                            PatternColor pc = (PatternColor) ec;
+                            checkColor(writer, PdfIsoKeys.PDFISOKEY_COLOR, pc.getPainter().getDefaultColor());
+                            break;
+                    }
+                } else if (obj1 instanceof BaseColor)
+                    checkColor(writer, PdfIsoKeys.PDFISOKEY_RGB, obj1);
+                break;
+            case PdfIsoKeys.PDFISOKEY_CMYK:
+                if (rgbUsed) {
+                    throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("devicergb.and.devicecmyk.colorspaces.cannot.be.used.both.in.one.file"));
+                }
+                cmykUsed = true;
+                break;
+            case PdfIsoKeys.PDFISOKEY_RGB:
+                if (cmykUsed) {
+                    throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("devicergb.and.devicecmyk.colorspaces.cannot.be.used.both.in.one.file"));
+                }
+                rgbUsed = true;
+                break;
         }
     }
 
