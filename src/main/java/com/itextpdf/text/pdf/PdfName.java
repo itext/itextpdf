@@ -146,6 +146,11 @@ public class PdfName extends PdfObject implements Comparable<PdfName> {
     public static final PdfName ALTERNATE = new PdfName("Alternate");
     /**
      * A name.
+     * @since 5.4.3
+     */
+    public static final PdfName ALTERNATES = new PdfName("Alternates");
+    /**
+     * A name.
      * @since 5.0.2
      */
     public static final PdfName AND = new PdfName("And");
@@ -1306,6 +1311,10 @@ public class PdfName extends PdfObject implements Comparable<PdfName> {
     public static final PdfName OP = new PdfName("OP");
     /** A name */
     public static final PdfName op = new PdfName("op");
+    /** A name
+     * @since 5.4.3
+     */
+    public static final PdfName OPI = new PdfName("OPI");
     /** A name */
     public static final PdfName OPM = new PdfName("OPM");
     /** A name */
@@ -1831,6 +1840,11 @@ public class PdfName extends PdfObject implements Comparable<PdfName> {
      * @since 5.3.5
      */
     public static final PdfName TR = new PdfName("TR");
+    /**
+     * A name
+     * @since 5.4.3
+     */
+    public static final PdfName TR2 = new PdfName("TR2");
     /** A name */
     public static final PdfName TEXT = new PdfName("Text");
     /**
