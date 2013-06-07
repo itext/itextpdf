@@ -86,8 +86,23 @@ public class PdfA1Checker extends PdfAChecker {
     @Override
     protected void checkImage(PdfWriter writer, int key, Object obj1) {
         PdfImage image = (PdfImage) obj1;
-        if (image.get(PdfName.SMASK) != null)
+        if (image.get(PdfName.SMASK) != null && !PdfName.NONE.equals(image.getAsName(PdfName.SMASK)))
             throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("the.smask.key.is.not.allowed.in.images"));
+        if (image.contains(PdfName.ALTERNATES)) {
+            throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("an.image.dictionary.shall.not.contain.alternates.key"));
+        }
+        if (image.contains(PdfName.OPI)) {
+            throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("an.image.dictionary.shall.not.contain.opi.key"));
+        }
+        PdfBoolean interpolate = image.getAsBoolean(PdfName.INTERPOLATE);
+        if (interpolate != null && interpolate.booleanValue() == true) {
+            throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("the.value.of.interpolate.key.shall.not.be.true"));
+        }
+        PdfName intent = image.getAsName(PdfName.INTENT);
+        if (intent != null && !(PdfName.RELATIVECOLORIMETRIC.equals(intent) || PdfName.ABSOLUTECOLORIMETRIC.equals(intent) || PdfName.PERCEPTUAL.equals(intent) || PdfName.SATURATION.equals(intent))) {
+            throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("1.value.of.intent.key.is.not.allowed", intent.toString()));
+        }
+
     }
 
     @Override
@@ -116,6 +131,8 @@ public class PdfA1Checker extends PdfAChecker {
         if (ri != null && !(PdfName.RELATIVECOLORIMETRIC.equals(ri) || PdfName.ABSOLUTECOLORIMETRIC.equals(ri) || PdfName.PERCEPTUAL.equals(ri) || PdfName.SATURATION.equals(ri))) {
             throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("1.value.of.ri.key.is.not.allowed", ri.toString()));
         }
+        if (gs.get(PdfName.SMASK) != null && !PdfName.NONE.equals(gs.getAsName(PdfName.SMASK)))
+            throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("the.smask.key.is.not.allowed.in.extgstate"));
 
 
     }
@@ -146,29 +163,19 @@ public class PdfA1Checker extends PdfAChecker {
                 throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("lzwdecode.filter.is.not.permitted"));
             }
 
-            if (PdfName.IMAGE.equals(stream.getAsName(PdfName.SUBTYPE))) {
-                if (stream.contains(PdfName.ALTERNATES)) {
-                    throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("an.image.dictionary.shall.not.contain.alternates.key"));
-                }
-                if (stream.contains(PdfName.OPI)) {
-                    throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("an.image.dictionary.shall.not.contain.opi.key"));
-                }
-                PdfBoolean interpolate = stream.getAsBoolean(PdfName.INTERPOLATE);
-                if (interpolate != null && interpolate.booleanValue() == true) {
-                    throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("the.value.of.interpolate.key.shall.not.be.true"));
-                }
-                PdfName intent = stream.getAsName(PdfName.INTENT);
-                if (intent != null && !(PdfName.RELATIVECOLORIMETRIC.equals(intent) || PdfName.ABSOLUTECOLORIMETRIC.equals(intent) || PdfName.PERCEPTUAL.equals(intent) || PdfName.SATURATION.equals(intent))) {
-                    throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("1.value.of.intent.key.is.not.allowed", intent.toString()));
-                }
-            }
-
             if (PdfName.FORM.equals(stream.getAsName(PdfName.SUBTYPE))) {
                 if (stream.contains(PdfName.OPI)) {
                     throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("a.form.xobject.dictionary.shall.not.contain.opi.key"));
                 }
                 if (stream.contains(PdfName.PS)) {
                     throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("a.form.xobject..dictionary.shall.not.contain.ps.key"));
+                }
+                PdfDictionary group = stream.getAsDict(PdfName.GROUP);
+                if (group != null) {
+                    PdfName s = group.getAsName(PdfName.S);
+                    if (PdfName.TRANSPARENCY.equals(s)) {
+                        throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("a.group.object.with.an.s.key.with.a.value.of.transparency.shall.not.be.included.in.a.form.xobject"));
+                    }
                 }
             }
 

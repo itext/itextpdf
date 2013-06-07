@@ -457,8 +457,107 @@ public class PdfA1CheckerTest {
         document.close();
         if (!exceptionThrown)
             Assert.fail("PdfAConformanceException should be thrown.");
-
     }
+
+    @Test
+    public void transparencyCheckTest1() throws DocumentException, IOException {
+        Document document = new Document();
+        PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream("./target/transparencyCheckTest1.pdf"), PdfAConformanceLevel.PDF_A_1A);
+        writer.createXmpMetadata();
+        document.open();
+
+        Font font = FontFactory.getFont("./src/test/resources/com/itextpdf/text/pdf/FreeMonoBold.ttf", BaseFont.WINANSI, BaseFont.EMBEDDED, 12);
+        document.add(new Paragraph("Hello World", font));
+        ICC_Profile icc = ICC_Profile.getInstance(new FileInputStream("./src/test/resources/com/itextpdf/text/pdf/sRGB Color Space Profile.icm"));
+        writer.setOutputIntents("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", icc);
+
+        PdfContentByte canvas = writer.getDirectContent();
+        PdfTemplate template = PdfTemplate.createTemplate(writer, 100, 100);
+        PdfTransparencyGroup group = new PdfTransparencyGroup();
+        template.setGroup(group);
+        canvas.addTemplate(template, 100, 100);
+
+        boolean exceptionThrown = false;
+        try {
+            document.close();
+        } catch (PdfAConformanceException e) {
+            if (((PdfFormXObject)e.getObject()).getAsDict(PdfName.GROUP) == group) {
+                exceptionThrown = true;
+            }
+        }
+        if (!exceptionThrown)
+            Assert.fail("PdfAConformanceException should be thrown.");
+    }
+
+    @Test
+    public void transparencyCheckTest2() throws DocumentException, IOException {
+        Document document = new Document();
+        PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream("./target/transparencyCheckTest2.pdf"), PdfAConformanceLevel.PDF_A_1A);
+        writer.createXmpMetadata();
+        document.open();
+
+        Font font = FontFactory.getFont("./src/test/resources/com/itextpdf/text/pdf/FreeMonoBold.ttf", BaseFont.WINANSI, BaseFont.EMBEDDED, 12);
+        document.add(new Paragraph("Hello World", font));
+        ICC_Profile icc = ICC_Profile.getInstance(new FileInputStream("./src/test/resources/com/itextpdf/text/pdf/sRGB Color Space Profile.icm"));
+        writer.setOutputIntents("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", icc);
+
+        PdfContentByte canvas = writer.getDirectContent();
+        PdfGState gs = new PdfGState();
+        gs.put(PdfName.SMASK, new PdfName("Test"));
+
+        boolean exceptionThrown = false;
+        try {
+            canvas.setGState(gs);
+        } catch (PdfAConformanceException e) {
+            if (e.getObject() == gs) {
+                exceptionThrown = true;
+            }
+        }
+        document.close();
+        if (!exceptionThrown)
+            Assert.fail("PdfAConformanceException should be thrown.");
+    }
+
+    @Test
+    public void transparencyCheckTest3() throws DocumentException, IOException {
+        Document document = new Document();
+        PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream("./target/transparencyCheckTest3.pdf"), PdfAConformanceLevel.PDF_A_1A);
+        writer.createXmpMetadata();
+        document.open();
+
+        Font font = FontFactory.getFont("./src/test/resources/com/itextpdf/text/pdf/FreeMonoBold.ttf", BaseFont.WINANSI, BaseFont.EMBEDDED, 12);
+        document.add(new Paragraph("Hello World", font));
+        ICC_Profile icc = ICC_Profile.getInstance(new FileInputStream("./src/test/resources/com/itextpdf/text/pdf/sRGB Color Space Profile.icm"));
+        writer.setOutputIntents("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", icc);
+
+        PdfContentByte canvas = writer.getDirectContent();
+        PdfGState gs = new PdfGState();
+        gs.put(PdfName.SMASK, PdfName.NONE);
+
+        canvas.setGState(gs);
+        document.close();
+    }
+
+    @Test
+    public void transparencyCheckTest4() throws DocumentException, IOException {
+        Document document = new Document();
+        PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream("./target/transparencyCheckTest4.pdf"), PdfAConformanceLevel.PDF_A_1A);
+        writer.createXmpMetadata();
+        document.open();
+
+        Font font = FontFactory.getFont("./src/test/resources/com/itextpdf/text/pdf/FreeMonoBold.ttf", BaseFont.WINANSI, BaseFont.EMBEDDED, 12);
+        document.add(new Paragraph("Hello World", font));
+        ICC_Profile icc = ICC_Profile.getInstance(new FileInputStream("./src/test/resources/com/itextpdf/text/pdf/sRGB Color Space Profile.icm"));
+        writer.setOutputIntents("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", icc);
+
+        PdfContentByte canvas = writer.getDirectContent();
+        PdfGState gs = new PdfGState();
+
+        canvas.setGState(gs);
+        document.close();
+    }
+
+
 
 
 }
