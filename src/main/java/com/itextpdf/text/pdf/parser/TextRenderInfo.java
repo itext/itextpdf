@@ -127,7 +127,8 @@ public class TextRenderInfo {
         if (checkTheTopmostLevelOnly) {
             if (markedContentInfos instanceof ArrayList) {
                 ArrayList<MarkedContentInfo> mci = (ArrayList<MarkedContentInfo>)markedContentInfos;
-                return mci.size() > 0 && mci.get(mci.size() - 1).getMcid() == mcid;
+                MarkedContentInfo info = mci.size() > 0 ? mci.get(mci.size() - 1) : null;
+                return (info != null && info.hasMcid()) ? info.getMcid() == mcid : false;
             }
         } else {
             for (MarkedContentInfo info : markedContentInfos) {
