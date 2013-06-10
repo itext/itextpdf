@@ -2705,6 +2705,8 @@ public class AcroFields {
             else
                 widgets.put(key, button.get(key));
             merged.put(key, button.get(key));
+            markUsed(values);
+            markUsed(widgets);
         }
         return true;
     }
