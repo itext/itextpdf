@@ -44,11 +44,19 @@
 package com.itextpdf.text.pdf.internal;
 
 import com.itextpdf.text.BaseColor;
+import com.itextpdf.text.ExceptionConverter;
 import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.pdf.*;
 
+import java.io.UnsupportedEncodingException;
+import java.util.Arrays;
+import java.util.HashSet;
+
 public class PdfA1Checker extends PdfAChecker {
 
+    static private HashSet<PdfName> allowedAnnotTypes = new HashSet<PdfName>(Arrays.asList(new PdfName[]{PdfName.TEXT, PdfName.LINK, PdfName.FREETEXT,
+            PdfName.LINE, PdfName.SQUARE, PdfName.CIRCLE, PdfName.HIGHLIGHT, PdfName.UNDERLINE, PdfName.SQUIGGLY, PdfName.STRIKEOUT, PdfName.STAMP,
+            PdfName.INK, PdfName.POPUP, PdfName.WIDGET, PdfName.PRINTERMARK, PdfName.TRAPNET}));
     public final double maxRealValue = 32767;
     public final int maxStringLength = 65535;
     public final int maxArrayLength = 8191;
@@ -57,6 +65,10 @@ public class PdfA1Checker extends PdfAChecker {
     protected int gsStackDepth = 0;
     protected boolean rgbUsed = false;
     protected boolean cmykUsed = false;
+
+    static boolean checkFlag(int flags, int flag) {
+        return (flags & flag) != 0;
+    }
 
     @Override
     protected void checkFont(PdfWriter writer, int key, Object obj1) {
@@ -276,6 +288,58 @@ public class PdfA1Checker extends PdfAChecker {
                 }
                 rgbUsed = true;
                 break;
+        }
+    }
+
+    @Override
+    protected void checkAnnotation(PdfWriter writer, int key, Object obj1) {
+        if (obj1 instanceof PdfAnnotation) {
+            PdfAnnotation annot = (PdfAnnotation) obj1;
+            PdfObject obj = annot.get(PdfName.SUBTYPE);
+            if (obj != null && !allowedAnnotTypes.contains(obj)) {
+                throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("annotation.type.1.not.allowed", obj.toString()));
+            }
+            PdfNumber ca = annot.getAsNumber(PdfName.CA);
+            if (ca != null && ca.floatValue() != 1.0) {
+                throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("an.annotation.dictionary.shall.not.contain.the.ca.key.with.a.value.other.than.1"));
+            }
+            PdfNumber f = annot.getAsNumber(PdfName.F);
+            if (f == null) {
+                throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("an.annotation.dictionary.shall.contain.the.f.key"));
+            }
+            int flags = f.intValue();
+            if (checkFlag(flags, PdfAnnotation.FLAGS_PRINT) == false || checkFlag(flags, PdfAnnotation.FLAGS_HIDDEN) == true ||
+                    checkFlag(flags, PdfAnnotation.FLAGS_INVISIBLE) == true || checkFlag(flags, PdfAnnotation.FLAGS_NOVIEW) == true) {
+                throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("the.f.keys.print.flag.bit.shall.be.set.to.1.and.its.hidden.invisible.and.noview.flag.bits.shall.be.set.to.0"));
+            }
+            if (PdfName.TEXT.equals(annot.getAsName(PdfName.SUBTYPE))) {
+                if (checkFlag(flags, PdfAnnotation.FLAGS_NOZOOM) == false || checkFlag(flags, PdfAnnotation.FLAGS_NOROTATE) == false) {
+                    throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("text.annotations.should.set.the.nozoom.and.norotate.flag.bits.of.the.f.key.to.1"));
+                }
+            }
+            if (annot.contains(PdfName.C) || annot.contains(PdfName.IC)) {
+                ICC_Profile colorProfile = ((PdfAWriter)writer).getColorProfile();
+                String cs = "";
+                try {
+                    cs = new String(colorProfile.getData(), 16, 4, "US-ASCII");
+                } catch (UnsupportedEncodingException e) {
+                    throw new ExceptionConverter(e);
+                }
+                if (!"RGB".equalsIgnoreCase(cs)) {
+                    throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("destoutputprofile.in.the.pdfa1.outputintent.dictionary.shall.be.rgb"));
+                }
+            }
+            PdfDictionary ap = annot.getAsDict(PdfName.AP);
+            if (ap != null) {
+                if (ap.contains(PdfName.R) || ap.contains(PdfName.D)) {
+                    throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("appearance.dictionary.shall.contain.only.the.n.key.with.stream.value"));
+                }
+                PdfStream n = ap.getAsStream(PdfName.N);
+                if (n == null) {
+                    throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("appearance.dictionary.shall.contain.only.the.n.key.with.stream.value"));
+                }
+            }
+
         }
     }
 

@@ -65,7 +65,9 @@ import java.io.OutputStream;
  * @see PdfWriter
  */
 public class PdfAWriter extends PdfWriter {
-	
+
+    protected ICC_Profile colorProfile;
+
     /**
      * Use this method to get an instance of the <CODE>PdfWriter</CODE>.
      * @param	document	The <CODE>Document</CODE> that has to be written
@@ -141,6 +143,7 @@ public class PdfAWriter extends PdfWriter {
                 d.put(PdfName.S, PdfName.GTS_PDFA1);
             }
         }
+        this.colorProfile = colorProfile;
     }
 
     /**
@@ -156,6 +159,10 @@ public class PdfAWriter extends PdfWriter {
      */
     public boolean isPdfIso() {
         return pdfIsoConformance.isPdfIso();
+    }
+
+    public ICC_Profile getColorProfile() {
+        return colorProfile;
     }
 
     /**

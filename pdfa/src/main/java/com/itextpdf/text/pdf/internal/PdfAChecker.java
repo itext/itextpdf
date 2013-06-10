@@ -66,6 +66,8 @@ abstract public class PdfAChecker {
 
     abstract protected void checkColor(PdfWriter writer, int key, Object obj1);
 
+    abstract protected void checkAnnotation(PdfWriter writer, int key, Object obj1);
+
     void checkPdfAConformance(PdfWriter writer, int key, Object obj1) {
         if (writer == null || !writer.isPdfIso())
             return;
@@ -101,6 +103,9 @@ abstract public class PdfAChecker {
             case PdfIsoKeys.PDFISOKEY_CMYK:
             case PdfIsoKeys.PDFISOKEY_RGB:
                 checkColor(writer, key, obj1);
+                break;
+            case PdfIsoKeys.PDFISOKEY_ANNOTATION:
+                checkAnnotation(writer, key, obj1);
                 break;
             default:
                 break;

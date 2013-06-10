@@ -948,6 +948,11 @@ public class PdfName extends PdfObject implements Comparable<PdfName> {
     public static final PdfName HOFFSET = new PdfName("HOffset");
     /** A name */
     public static final PdfName I = new PdfName("I");
+    /**
+     * A name.
+     * @since 5.4.3
+     */
+    public static final PdfName IC = new PdfName("IC");
     /** A name */
     public static final PdfName ICCBASED = new PdfName("ICCBased");
     /** A name */
@@ -1470,6 +1475,11 @@ public class PdfName extends PdfObject implements Comparable<PdfName> {
     public static final PdfName PRINTAREA = new PdfName("PrintArea");
     /** A name */
     public static final PdfName PRINTCLIP = new PdfName("PrintClip");
+    /**
+     * A name
+     * @since 5.4.3
+     */
+    public static final PdfName PRINTERMARK = new PdfName("PrinterMark");
     /** A name */
     public static final PdfName PRINTPAGERANGE = new PdfName("PrintPageRange");
     /** A name */
@@ -1953,6 +1963,11 @@ public class PdfName extends PdfObject implements Comparable<PdfName> {
      * @since 2.1.6
      */
     public static final PdfName TRANSPARENT = new PdfName("Transparent");
+    /**
+     * A name
+     * @since 5.4.3
+     */
+    public static final PdfName TRAPNET = new PdfName("TrapNet");
     /** A name */
     public static final PdfName TRAPPED = new PdfName("Trapped");
     /** A name */
