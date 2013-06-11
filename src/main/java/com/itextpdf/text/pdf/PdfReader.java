@@ -350,13 +350,70 @@ public class PdfReader implements PdfViewerPreferences {
      * @param raf the document location
      * @param ownerPassword the password or <CODE>null</CODE> for no password
      * @throws IOException on error
+     * @deprecated Use the constructor that takes a RandomAccessSource
      */
     public PdfReader(final RandomAccessFileOrArray raf, final byte ownerPassword[]) throws IOException {
         this(
         		raf.getByteSource(),
-    			
     			true,
     			ownerPassword,
+    			null,
+    			null,
+    			null,
+    			false
+        		
+        );
+    }
+
+    /**
+     * Reads and parses a pdf document.
+     * @param raf the document location
+     * @throws IOException on error
+     */
+    public PdfReader(final RandomAccessSource ras) throws IOException {
+        this(
+        		ras,
+    			false,
+    			null,
+    			null,
+    			null,
+    			null,
+    			false
+        		
+        );
+    }
+
+    /**
+     * Reads and parses a pdf document.
+     * @param raf the document location
+     * @param partialRead if true, the reader is opened in partial mode (PDF is parsed on demand), if false, the entire PDF is parsed into memory as the reader opens
+     * @param ownerPassword the password or <CODE>null</CODE> for no password
+     * @throws IOException on error
+     */
+    public PdfReader(final RandomAccessSource ras, boolean partialRead, final byte ownerPassword[]) throws IOException {
+        this(
+        		ras,
+    			partialRead,
+    			ownerPassword,
+    			null,
+    			null,
+    			null,
+    			false
+        		
+        );
+    }
+
+    /**
+     * Reads and parses a pdf document.
+     * @param raf the document location
+     * @param partialRead if true, the reader is opened in partial mode (PDF is parsed on demand), if false, the entire PDF is parsed into memory as the reader opens
+     * @throws IOException on error
+     */
+    public PdfReader(final RandomAccessSource ras, boolean partialRead) throws IOException {
+        this(
+        		ras,
+    			partialRead,
+    			null,
     			null,
     			null,
     			null,
