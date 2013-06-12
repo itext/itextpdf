@@ -68,6 +68,10 @@ abstract public class PdfAChecker {
 
     abstract protected void checkAnnotation(PdfWriter writer, int key, Object obj1);
 
+    abstract protected void checkAction(PdfWriter writer, int key, Object obj1);
+
+    abstract protected void checkForm(PdfWriter writer, int key, Object obj1);
+
     void checkPdfAConformance(PdfWriter writer, int key, Object obj1) {
         if (writer == null || !writer.isPdfIso())
             return;
@@ -106,6 +110,12 @@ abstract public class PdfAChecker {
                 break;
             case PdfIsoKeys.PDFISOKEY_ANNOTATION:
                 checkAnnotation(writer, key, obj1);
+                break;
+            case PdfIsoKeys.PDFISOKEY_ACTION:
+                checkAction(writer, key, obj1);
+                break;
+            case PdfIsoKeys.PDFISOKEY_FORM:
+                checkForm(writer, key, obj1);
                 break;
             default:
                 break;

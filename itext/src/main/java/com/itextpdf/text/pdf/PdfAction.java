@@ -44,11 +44,13 @@
 package com.itextpdf.text.pdf;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.net.URL;
 import java.util.ArrayList;
 
 import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.pdf.collection.PdfTargetDictionary;
+import com.itextpdf.text.pdf.internal.PdfIsoKeys;
 
 /**
  * A <CODE>PdfAction</CODE> defines an action that can be triggered from a PDF file.
@@ -584,4 +586,11 @@ public class PdfAction extends PdfDictionary {
             action.put(PdfName.PRESERVERB, PdfBoolean.PDFFALSE);
         return action;
     }
+
+    @Override
+    public void toPdf(final PdfWriter writer, final OutputStream os) throws IOException {
+        PdfWriter.checkPdfIsoConformance(writer, PdfIsoKeys.PDFISOKEY_ACTION, this);
+        super.toPdf(writer, os);
+    }
+
 }

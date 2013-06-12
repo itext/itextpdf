@@ -43,6 +43,11 @@
  */
 package com.itextpdf.text.pdf;
 
+import com.itextpdf.text.pdf.internal.PdfIsoKeys;
+
+import java.io.IOException;
+import java.io.OutputStream;
+
 /** The graphic state dictionary.
  *
  * @author Paulo Soares
@@ -154,5 +159,11 @@ public class PdfGState extends PdfDictionary {
      */
     public void setRenderingIntent(PdfName ri) {
     	put(PdfName.RI, ri);
+    }
+
+    @Override
+    public void toPdf(final PdfWriter writer, final OutputStream os) throws IOException {
+        PdfWriter.checkPdfIsoConformance(writer, PdfIsoKeys.PDFISOKEY_GSTATE, this);
+        super.toPdf(writer, os);
     }
 }

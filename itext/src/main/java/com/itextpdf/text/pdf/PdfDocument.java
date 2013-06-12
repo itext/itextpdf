@@ -2286,7 +2286,6 @@ public class PdfDocument extends Document {
     }
 
     void addAnnotation(final PdfAnnotation annot) {
-        PdfWriter.checkPdfIsoConformance(writer, PdfIsoKeys.PDFISOKEY_ANNOTATION, annot);
         pageEmpty = false;
         annotationsImp.addAnnotation(annot);
     }

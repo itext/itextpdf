@@ -35,22 +35,21 @@ public class PdfA2CheckerTest {
         canvas.rectangle(200, 200, 100, 100);
         canvas.fill();
         canvas.restoreState();
+        canvas.saveState();
+        gs = new PdfGState();
+        gs.setBlendMode(new PdfName("UnknownBM"));
+        canvas.setGState(gs);
+        canvas.rectangle(300, 300, 100, 100);
+        canvas.fill();
+        canvas.restoreState();
 
         boolean exception = false;
         try {
-            canvas.saveState();
-            gs = new PdfGState();
-            gs.setBlendMode(new PdfName("UnknownBM"));
-            canvas.setGState(gs);
-            canvas.rectangle(300, 300, 100, 100);
-            canvas.fill();
-            canvas.restoreState();
+            document.close();
         } catch (PdfAConformanceException pdface) {
             exception = true;
         }
 
-        if (!exception)
-            document.close();
         if (!exception)
             Assert.fail("PdfAConformance exception should be thrown on unknown blend mode.");
 

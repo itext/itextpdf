@@ -70,4 +70,8 @@ public class PdfIsoKeys {
     public static final int PDFISOKEY_CANVAS = 12;
     /** A key for an aspect that can be checked for PDF ISO Conformance. */
     public static final int PDFISOKEY_ANNOTATION = 13;
+    /** A key for an aspect that can be checked for PDF ISO Conformance. */
+    public static final int PDFISOKEY_ACTION = 14;
+    /** A key for an aspect that can be checked for PDF ISO Conformance. */
+    public static final int PDFISOKEY_FORM = 15;
 }
