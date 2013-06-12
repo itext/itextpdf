@@ -44,6 +44,7 @@
 package com.itextpdf.text.pdf;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.HashSet;
 
@@ -51,6 +52,8 @@ import com.itextpdf.awt.geom.AffineTransform;
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.error_messages.MessageLocalization;
+import com.itextpdf.text.pdf.internal.PdfIsoKeys;
+
 /**
  * A <CODE>PdfAnnotation</CODE> is a note that is associated with a page.
  *
@@ -948,5 +951,13 @@ public class PdfAnnotation extends PdfDictionary {
     		buf.append(parameters);
     		return buf.toString();
     	}
+
     }
+
+    @Override
+    public void toPdf(final PdfWriter writer, final OutputStream os) throws IOException {
+        PdfWriter.checkPdfIsoConformance(writer, PdfIsoKeys.PDFISOKEY_ANNOTATION, this);
+        super.toPdf(writer, os);
+    }
+
 }

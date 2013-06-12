@@ -107,12 +107,12 @@ public class RadioCheckField extends BaseField {
     /** A field with the symbol star */
     public static final int TYPE_STAR = 6;
     
-    private static String typeChars[] = {"4", "l", "8", "u", "n", "H"};
+    protected static String typeChars[] = {"4", "l", "8", "u", "n", "H"};
     
     /**
      * Holds value of property checkType.
      */
-    private int checkType;
+    protected int checkType;
     
     /**
      * Holds value of property onValue.

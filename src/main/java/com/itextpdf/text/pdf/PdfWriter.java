@@ -2481,7 +2481,6 @@ public class PdfWriter extends DocWriter implements
 
     PdfObject[] addSimpleExtGState(final PdfDictionary gstate) {
         if (!documentExtGState.containsKey(gstate)) {
-            PdfWriter.checkPdfIsoConformance(this, PdfIsoKeys.PDFISOKEY_GSTATE, gstate);
             documentExtGState.put(gstate, new PdfObject[]{new PdfName("GS" + (documentExtGState.size() + 1)), getPdfIndirectReference()});
         }
         return documentExtGState.get(gstate);

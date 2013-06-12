@@ -242,6 +242,7 @@ missing.startcharmetrics.in.1=Missing StartCharMetrics in {1}
 missing.tag.s.for.ojpeg.compression=Missing tag(s) for OJPEG compression.
 multicolumntext.has.no.columns=MultiColumnText has no columns
 name.end.tag.out.of.place=Name end tag out of place.
+named.action.type.1.not.allowed=Named action type {1} not allowed.
 nested.tags.are.not.allowed=Nested tags are not allowed.
 no.compatible.encryption.found=No compatible encryption found
 no.error.just.an.old.style.table=No error, just an old style table
