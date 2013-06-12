@@ -129,6 +129,12 @@ public class PdfSignatureAppearance {
     
     // signature info
 
+    /** The caption for the reason for signing. */
+    private String reasonCaption = "Reason: ";
+
+    /** The caption for the location of signing. */
+    private String locationCaption = "Location: ";
+
     /** The reason for signing. */
     private String reason;
 
@@ -155,6 +161,14 @@ public class PdfSignatureAppearance {
     }
 
     /**
+     * Sets the caption for signing reason.
+     * @param reasonCaption the signing reason caption
+     */
+    public void setReasonCaption(String reasonCaption) {
+        this.reasonCaption = reasonCaption;
+    }
+
+    /**
      * Gets the signing location.
      * @return the signing location
      */
@@ -168,6 +182,14 @@ public class PdfSignatureAppearance {
      */
     public void setLocation(String location) {
         this.location = location;
+    }
+
+    /**
+     * Sets the caption for the signing location.
+     * @param locationCaption the signing location caption
+     */
+    public void setLocationCaption(String locationCaption) {
+        this.locationCaption = locationCaption;
     }
 
     /** The contact name of the signer. */
@@ -843,9 +865,9 @@ public class PdfSignatureAppearance {
                 SimpleDateFormat sd = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss z");
                 buf.append("Date: ").append(sd.format(signDate.getTime()));
                 if (reason != null)
-                    buf.append('\n').append("Reason: ").append(reason);
+                    buf.append('\n').append(reasonCaption).append(reason);
                 if (location != null)
-                    buf.append('\n').append("Location: ").append(location);
+                    buf.append('\n').append(locationCaption).append(location);
                 text = buf.toString();
             }
             else
