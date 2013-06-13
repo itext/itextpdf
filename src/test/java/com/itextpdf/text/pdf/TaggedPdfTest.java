@@ -1,6 +1,7 @@
 package com.itextpdf.text.pdf;
 
 import com.itextpdf.text.*;
+import com.itextpdf.text.pdf.internal.PdfVersionImp;
 import com.itextpdf.text.pdf.parser.*;
 import com.itextpdf.text.xml.XMLUtil;
 import org.junit.After;
@@ -62,6 +63,7 @@ public class TaggedPdfTest {
         Document.compress = false;
         document = new Document();
         writer = PdfWriter.getInstance(document, new FileOutputStream(path));
+        writer.setPdfVersion('7');
         writer.setTagged();
         document.open();
 

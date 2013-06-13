@@ -204,6 +204,8 @@ public class PdfStructureElement extends PdfDictionary implements IPdfStructureE
     }
 
     public void writeAttributes(final IAccessibleElement element) {
+        if (top.getWriter().getPdfVersion().getVersion() < PdfWriter.VERSION_1_7)
+            return;
         if (element instanceof ListItem) {
             writeAttributes((ListItem)element);
         } else if (element instanceof Paragraph) {
