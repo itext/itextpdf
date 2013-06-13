@@ -130,9 +130,7 @@ public class PdfAStamperImp extends PdfStamperImp {
      * @see PdfStamperImp#getXmpWriter(java.io.ByteArrayOutputStream, com.itextpdf.text.pdf.PdfDictionary)
      */
     protected XmpWriter getXmpWriter(ByteArrayOutputStream baos, PdfDictionary info) throws IOException {
-        if (xmpWriter == null)
-            xmpWriter = new PdfAXmpWriter(baos, info, ((PdfAConformance) pdfIsoConformance).getConformanceLevel());
-        return xmpWriter;
+        return new PdfAXmpWriter(baos, info, ((PdfAConformance) pdfIsoConformance).getConformanceLevel());
     }
 
     /**
