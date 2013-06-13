@@ -3300,12 +3300,8 @@ public class PdfWriter extends DocWriter implements
         return ttfUnicodeWriter;
     }
 
-    protected XmpWriter xmpWriter = null;
-
     protected XmpWriter getXmpWriter(ByteArrayOutputStream baos, PdfDictionary info) throws IOException {
-        if (xmpWriter == null)
-            xmpWriter = new XmpWriter(baos, info);
-        return xmpWriter;
+        return new XmpWriter(baos, info);
     }
 
     public static void checkPdfIsoConformance(PdfWriter writer, int key, Object obj1) {
