@@ -305,7 +305,7 @@ public class PdfDictionary extends PdfObject {
      * @return <CODE>true</CODE> if it is, otherwise <CODE>false</CODE>.
      */
     public boolean isFont() {
-        return FONT.equals(dictionaryType);
+        return checkType(FONT);
     }
 
     /**
@@ -314,7 +314,7 @@ public class PdfDictionary extends PdfObject {
      * @return <CODE>true</CODE> if it is, otherwise <CODE>false</CODE>.
      */
     public boolean isPage() {
-        return PAGE.equals(dictionaryType);
+        return checkType(PAGE);
     }
 
     /**
@@ -323,7 +323,7 @@ public class PdfDictionary extends PdfObject {
      * @return <CODE>true</CODE> if it is, otherwise <CODE>false</CODE>.
      */
     public boolean isPages() {
-        return PAGES.equals(dictionaryType);
+        return checkType(PAGES);
     }
 
     /**
@@ -332,7 +332,7 @@ public class PdfDictionary extends PdfObject {
      * @return <CODE>true</CODE> if it is, otherwise <CODE>false</CODE>.
      */
     public boolean isCatalog() {
-        return CATALOG.equals(dictionaryType);
+        return checkType(CATALOG);
     }
 
     /**
@@ -341,7 +341,20 @@ public class PdfDictionary extends PdfObject {
      * @return <CODE>true</CODE> if it is, otherwise <CODE>false</CODE>.
      */
     public boolean isOutlineTree() {
-        return OUTLINES.equals(dictionaryType);
+        return checkType(OUTLINES);
+    }
+    
+    /**
+     * Checks the type of the dictionary.
+     * @param type the type you're looking for
+     * @return true if the type of the dictionary corresponds with the type you're looking for
+     */
+    public boolean checkType(PdfName type) {
+    	if (type == null)
+    		return false;
+    	if (dictionaryType == null)
+    		dictionaryType = getAsName(PdfName.TYPE);
+    	return type.equals(dictionaryType);
     }
 
     // OTHER METHODS
