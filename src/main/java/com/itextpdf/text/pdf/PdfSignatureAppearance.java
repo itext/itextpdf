@@ -110,9 +110,6 @@ public class PdfSignatureAppearance {
     /** The certification level */
     private int certificationLevel = NOT_CERTIFIED;
 
-    /** Former appearance state */
-    private PdfDictionary formerAppearance;
-
     /**
      * Sets the document type to certified instead of simply signed.
      * @param certificationLevel the values can be: <code>NOT_CERTIFIED</code>, <code>CERTIFIED_NO_CHANGES_ALLOWED</code>,
@@ -508,11 +505,6 @@ public class PdfSignatureAppearance {
         if (rotation != 0)
             pageRect.normalize();
         rect = new Rectangle(this.pageRect.getWidth(), this.pageRect.getHeight());
-
-        // load existing signature appearance into formerAppearance
-        Map<String, AcroFields.Item> itemMap = af.getFields();
-        formerAppearance = itemMap.get(fieldName).getWidget(0).getAsDict(PdfName.AP);
-        // TODO widget idx: in case of multiple widgets, specification doesn't prohibit this (michael demey, June 14, 2013)
     }
 
 	/*
@@ -845,21 +837,7 @@ public class PdfSignatureAppearance {
         }
 
         if (app[0] == null) {
-            if ( formerAppearance != null ) {
-                try {
-                    PRStream n = (PRStream) formerAppearance.getDirectObject(PdfName.N);
-                    byte[] decodedBytes = PdfReader.decodeBytes(PdfReader.getStreamBytesRaw(n), n);
-                    PdfTemplate t = app[0] = new PdfTemplate(writer);
-                    t.setBoundingBox(rect);
-                    t.setLiteral(new String(decodedBytes));
-                    writer.addDirectTemplateSimple(t, new PdfName("n0"));
-                } catch (IOException e) { // thrown by PdfReader.getStreamBytesRaw()
-                    // fall back to a blank N0
-                    createBlankN0();
-                }
-            } else {
-                createBlankN0();
-            }
+            createBlankN0();
         }
         if (app[1] == null && !acro6Layers) {
             PdfTemplate t = app[1] = new PdfTemplate(writer);
