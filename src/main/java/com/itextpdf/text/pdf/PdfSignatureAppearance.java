@@ -55,6 +55,7 @@ import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.io.RASInputStream;
 import com.itextpdf.text.io.RandomAccessSource;
 import com.itextpdf.text.io.RandomAccessSourceFactory;
+import com.itextpdf.text.pdf.AcroFields.Item;
 import com.itextpdf.text.pdf.security.CertificateInfo;
 import com.itextpdf.text.pdf.security.CertificateInfo.X500Name;
 
@@ -620,6 +621,16 @@ public class PdfSignatureAppearance {
         }
         return t;
     }
+    
+    /** Indicates if we need to reuse the existing appearance as layer 0. */
+    private boolean reuseAppearance = false;
+    
+    /**
+     * Indicates that the existing appearances needs to be reused as layer 0.
+     */
+    public void setReuseAppearance(boolean reuseAppearance) {
+    	this.reuseAppearance = reuseAppearance;
+    }
 
     // layer 1
 
@@ -836,7 +847,7 @@ public class PdfSignatureAppearance {
             return t;
         }
 
-        if (app[0] == null) {
+        if (app[0] == null && !reuseAppearance) {
             createBlankN0();
         }
         if (app[1] == null && !acro6Layers) {
@@ -1060,7 +1071,22 @@ public class PdfSignatureAppearance {
                 frm.concatCTM(-1, 0, 0, -1, rect.getWidth(), rect.getHeight());
             else if (rotation == 270)
                 frm.concatCTM(0, -1, 1, 0, 0, rect.getWidth());
-            frm.addTemplate(app[0], 0, 0);
+            if (reuseAppearance) {
+                AcroFields af = writer.getAcroFields();
+                PdfIndirectReference ref = af.getNormalAppearance(getFieldName());
+                if (ref != null) {
+                	frm.addTemplateReference(ref, new PdfName("n0"), 1, 0, 0, 1, 0, 0);
+                }
+                else {
+                	reuseAppearance = false;
+                    if (app[0] == null) {
+                        createBlankN0();
+                    }
+                }
+            }
+            if (!reuseAppearance) {
+            	frm.addTemplate(app[0], 0, 0);
+            }
             if (!acro6Layers)
                 frm.addTemplate(app[1], scale, 0, 0, scale, x, y);
             frm.addTemplate(app[2], 0, 0);

@@ -2227,6 +2227,29 @@ public class AcroFields {
         PdfDictionary merged = item.getMerged(0);
         return merged.getAsDict(PdfName.V);
     }
+    
+    /**
+     * Gets a reference to the normal appearance of a field and marks the XObject stream as used.
+     *
+     * @param name the field name
+     * @return a reference to the /N entry of the /AP dictionary or <CODE>null</CODE> if the field is not found
+     */
+    public PdfIndirectReference getNormalAppearance(String name) {
+        getSignatureNames();
+        name = getTranslatedFieldName(name);
+        Item item = fields.get(name);
+        if (item == null)
+        	return null;
+        PdfDictionary merged = item.getMerged(0);
+        PdfDictionary ap = merged.getAsDict(PdfName.AP);
+        if (ap == null)
+        	return null;
+        PdfIndirectReference ref = ap.getAsIndirectObject(PdfName.N);
+        if (ref == null)
+        	return null;
+        markUsed(ap.getAsStream(PdfName.N));
+        return ref;
+    }
 
     /**
      * Checks is the signature covers the entire document or just part of it.
