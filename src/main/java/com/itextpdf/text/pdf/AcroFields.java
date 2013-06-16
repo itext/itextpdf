@@ -2229,7 +2229,7 @@ public class AcroFields {
     }
     
     /**
-     * Gets a reference to the normal appearance of a field and marks the XObject stream as used.
+     * Gets a reference to the normal appearance of a field.
      *
      * @param name the field name
      * @return a reference to the /N entry of the /AP dictionary or <CODE>null</CODE> if the field is not found
@@ -2247,7 +2247,6 @@ public class AcroFields {
         PdfIndirectReference ref = ap.getAsIndirectObject(PdfName.N);
         if (ref == null)
         	return null;
-        markUsed(ap.getAsStream(PdfName.N));
         return ref;
     }
 
