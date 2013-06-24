@@ -11,6 +11,7 @@
 1.is.not.a.true.type.file={1} is not a true type file.
 1.is.not.a.ttf.otf.or.ttc.font.file={1} is not a TTF, OTF or TTC font file.
 1.is.not.a.valid.jpeg.file={1} is not a valid JPEG-file.
+1.is.not.a.valid.name.for.checkbox.appearance={1} is not a valid name for a checkbox appearance (should be Off or Yes)
 1.is.not.a.valid.number.2={1} is not a valid number - {2}
 1.is.not.a.valid.page.size.format.2={1} is not a valid page size format: {2}
 1.is.not.a.valid.placeable.windows.metafile={1} is not a valid placeable windows metafile.

@@ -46,6 +46,7 @@ package com.itextpdf.text.pdf;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.ExceptionConverter;
 import com.itextpdf.text.Rectangle;
+import com.itextpdf.text.error_messages.MessageLocalization;
 
 import java.io.IOException;
 
@@ -368,6 +369,9 @@ public class RadioCheckField extends BaseField {
             field = PdfFormField.createCheckBox(writer);
         field.setWidget(box, PdfAnnotation.HIGHLIGHT_INVERT);
         if (!isRadio) {
+        	if (!"Yes".equals(onValue)) {
+        		throw new DocumentException(MessageLocalization.getComposedMessage("1.is.not.a.valid.name.for.checkbox.appearance", onValue));
+        	}
             field.setFieldName(fieldName);
             if ((options & READ_ONLY) != 0)
                 field.setFieldFlags(PdfFormField.FF_READ_ONLY);
