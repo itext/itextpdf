@@ -62,6 +62,12 @@ public class PdfDeveloperExtension {
 	/** An instance of this class for Adobe 1.7 Extension level 3. */
 	public static final PdfDeveloperExtension ADOBE_1_7_EXTENSIONLEVEL3 =
 		new PdfDeveloperExtension(PdfName.ADBE, PdfWriter.PDF_VERSION_1_7, 3);
+	/** An instance of this class for ETSI 1.7 Extension level 2. */
+	public static final PdfDeveloperExtension ESIC_1_7_EXTENSIONLEVEL2 =
+		new PdfDeveloperExtension(PdfName.ESIC, PdfWriter.PDF_VERSION_1_7, 2);
+	/** An instance of this class for ETSI 1.7 Extension level 5. */
+	public static final PdfDeveloperExtension ESIC_1_7_EXTENSIONLEVEL5 =
+		new PdfDeveloperExtension(PdfName.ESIC, PdfWriter.PDF_VERSION_1_7, 5);
 	
 	/** The prefix used in the Extensions dictionary added to the Catalog. */
 	protected PdfName prefix;
