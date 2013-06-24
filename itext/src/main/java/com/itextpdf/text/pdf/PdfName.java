@@ -666,6 +666,8 @@ public class PdfName extends PdfObject implements Comparable<PdfName> {
      * @since 5.1.0
      */
     public static final PdfName EPSG = new PdfName("EPSG");
+    /** A name */
+    public static final PdfName ESIC = new PdfName("ESIC");
     /** A name
      * @since 5.1.3
      */

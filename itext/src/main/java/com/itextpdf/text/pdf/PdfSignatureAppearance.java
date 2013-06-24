@@ -261,7 +261,16 @@ public class PdfSignatureAppearance {
     /** The signing certificate */
     private Certificate signCertificate;
 
-
+    // Developer extenstion
+    
+    /**
+     * Adds the appropriate developer extension.
+     */
+	public void addDeveloperExtension(final PdfDeveloperExtension de) {
+		writer.addDeveloperExtension(de);
+	}
+    
+    
     // Crypto dictionary
 
     /** The crypto dictionary */

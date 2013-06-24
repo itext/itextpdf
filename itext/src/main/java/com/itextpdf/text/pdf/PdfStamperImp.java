@@ -171,6 +171,7 @@ class PdfStamperImp extends PdfWriter {
         	flatFreeTextFields();
         addFieldResources();
         PdfDictionary catalog = reader.getCatalog();
+        getPdfVersion().addToCatalog(catalog);
         PdfDictionary acroForm = (PdfDictionary)PdfReader.getPdfObject(catalog.get(PdfName.ACROFORM), reader.getCatalog());
         if (acroFields != null && acroFields.getXfa().isChanged()) {
             markUsed(acroForm);
