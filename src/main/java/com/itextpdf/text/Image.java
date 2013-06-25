@@ -55,21 +55,7 @@ import com.itextpdf.awt.PdfGraphics2D;
 import com.itextpdf.text.api.Indentable;
 import com.itextpdf.text.api.Spaceable;
 import com.itextpdf.text.error_messages.MessageLocalization;
-import com.itextpdf.text.pdf.ICC_Profile;
-import com.itextpdf.text.pdf.PRIndirectReference;
-import com.itextpdf.text.pdf.PdfArray;
-import com.itextpdf.text.pdf.PdfContentByte;
-import com.itextpdf.text.pdf.PdfDictionary;
-import com.itextpdf.text.pdf.PdfIndirectReference;
-import com.itextpdf.text.pdf.PdfName;
-import com.itextpdf.text.pdf.PdfNumber;
-import com.itextpdf.text.pdf.PdfOCG;
-import com.itextpdf.text.pdf.PdfObject;
-import com.itextpdf.text.pdf.PdfReader;
-import com.itextpdf.text.pdf.PdfStream;
-import com.itextpdf.text.pdf.PdfTemplate;
-import com.itextpdf.text.pdf.PdfWriter;
-import com.itextpdf.text.pdf.RandomAccessFileOrArray;
+import com.itextpdf.text.pdf.*;
 import com.itextpdf.text.pdf.codec.BmpImage;
 import com.itextpdf.text.pdf.codec.CCITTG4Encoder;
 import com.itextpdf.text.pdf.codec.GifImage;
@@ -77,6 +63,7 @@ import com.itextpdf.text.pdf.codec.JBIG2Image;
 import com.itextpdf.text.pdf.codec.PngImage;
 import com.itextpdf.text.pdf.codec.TiffImage;
 import com.itextpdf.text.pdf.interfaces.IAccessibleElement;
+import com.itextpdf.text.pdf.interfaces.IAlternateDescription;
 
 /**
  * An <CODE>Image</CODE> is the representation of a graphic element (JPEG, PNG
@@ -86,7 +73,7 @@ import com.itextpdf.text.pdf.interfaces.IAccessibleElement;
  * @see Rectangle
  */
 
-public abstract class Image extends Rectangle implements Indentable, Spaceable, IAccessibleElement {
+public abstract class Image extends Rectangle implements Indentable, Spaceable, IAccessibleElement, IAlternateDescription {
 
 	// static final membervariables
 
@@ -915,6 +902,7 @@ public abstract class Image extends Rectangle implements Indentable, Spaceable, 
 
 	public void setAlt(final String alt) {
 		this.alt = alt;
+        setAccessibleAttribute(PdfName.ALT, new PdfString(alt));
 	}
 
 	/**

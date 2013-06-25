@@ -44,10 +44,15 @@
 package com.itextpdf.text.pdf;
 
 import com.itextpdf.text.*;
+import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.pdf.interfaces.IAccessibleElement;
 import com.itextpdf.text.pdf.interfaces.IPdfStructureElement;
+import com.itextpdf.text.pdf.internal.PdfIsoKeys;
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 
 /**
@@ -68,7 +73,7 @@ public class PdfStructureElement extends PdfDictionary implements IPdfStructureE
      */
     private PdfIndirectReference reference;
 
-    private int pageMark;
+    private PdfName structureType;
 
     /**
      * Creates a new instance of PdfStructureElement.
@@ -112,7 +117,20 @@ public class PdfStructureElement extends PdfDictionary implements IPdfStructureE
         }
     }
 
+    public PdfName getStructureType() {
+        return structureType;
+    }
+
     private void init(PdfDictionary parent, PdfName structureType) {
+        if (!Arrays.asList(top.getWriter().getStandardStructElems()).contains(structureType)) {
+            PdfDictionary roleMap = top.getAsDict(PdfName.ROLEMAP);
+            if (roleMap == null || !roleMap.contains(structureType))
+                throw new ExceptionConverter(new DocumentException(MessageLocalization.getComposedMessage("unknown.structure.element.role.1", structureType.toString())));
+            else
+                this.structureType = roleMap.getAsName(structureType);
+        } else {
+            this.structureType = structureType;
+        }
         PdfObject kido = parent.get(PdfName.K);
         PdfArray kids = null;
         if (kido == null) {
@@ -325,9 +343,6 @@ public class PdfStructureElement extends PdfDictionary implements IPdfStructureE
             }
             PdfRectangle rect = new PdfRectangle(image, image.getRotation());
             this.setAttribute(PdfName.BBOX, rect);
-            if (image.getAlt() != null){
-                put(PdfName.ALT, new PdfString(image.getAlt()));
-            }
             if (image.getBackgroundColor() != null){
                 BaseColor color = image.getBackgroundColor();
                 this.setAttribute(PdfName.BACKGROUNDCOLOR, new PdfArray(new float[] {color.getRed()/255f, color.getGreen()/255f, color.getBlue()/255f}) );
@@ -636,4 +651,11 @@ public class PdfStructureElement extends PdfDictionary implements IPdfStructureE
                 this.setAttribute(PdfName.TEXTALIGN, align);
         }
     }
+
+    @Override
+    public void toPdf(final PdfWriter writer, final OutputStream os) throws IOException {
+        PdfWriter.checkPdfIsoConformance(writer, PdfIsoKeys.PDFISOKEY_STRUCTELEM, this);
+        super.toPdf(writer, os);
+    }
+
 }

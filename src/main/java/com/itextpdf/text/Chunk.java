@@ -1085,4 +1085,20 @@ public class Chunk implements Element, IAccessibleElement {
         this.id = id;
     }
 
+    public String getTextExpansion() {
+        PdfObject o = getAccessibleAttribute(PdfName.E);
+        if (o instanceof PdfString)
+            return ((PdfString)o).toUnicodeString();
+        return null;
+    }
+
+    /**
+     * Sets the textual expansion of the abbreviation or acronym.
+     * It is highly recommend to set textuual expansion when generating PDF/UA documents.
+     * @param value
+     */
+    public void setTextExpansion(String value) {
+        setAccessibleAttribute(PdfName.E, new PdfString(value));
+    }
+
 }

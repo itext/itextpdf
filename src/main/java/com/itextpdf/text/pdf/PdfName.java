@@ -1538,6 +1538,11 @@ public class PdfName extends PdfObject implements Comparable<PdfName> {
     public static final PdfName R2L = new PdfName("R2L");
     /** A name */
     public static final PdfName RANGE = new PdfName("Range");
+    /**
+     * A name
+     * @since 5.4.3
+     */
+    public static final PdfName RB = new PdfName("RB");
     /** A name */
     public static final PdfName RBGROUPS = new PdfName("RBGroups");
     /** A name */
@@ -1665,6 +1670,11 @@ public class PdfName extends PdfObject implements Comparable<PdfName> {
      * @since 5.4.0
      */
     public static final PdfName ROWSPAN = new PdfName("RowSpan");
+    /**
+     * A name
+     * @since 5.4.3
+     */
+    public static final PdfName RP = new PdfName("RP");
     /**
      * A name
      * @since 5.1.0
@@ -2176,6 +2186,11 @@ public class PdfName extends PdfObject implements Comparable<PdfName> {
     public static final PdfName WP = new PdfName("WP");
     /** A name of an encoding */
     public static final PdfName WS = new PdfName("WS");
+    /**
+     * A name
+     * @since 5.4.3
+     */
+    public static final PdfName WT = new PdfName("WT");
     /** A name */
     public static final PdfName X = new PdfName("X");
     /**
