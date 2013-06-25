@@ -208,22 +208,28 @@ public class PdfReader implements PdfViewerPreferences {
      * @throws IOException on error
      */
     public PdfReader(final String filename, final byte ownerPassword[]) throws IOException {
-    	
+        this(filename, ownerPassword, false);   	
+    }
+
+
+    /** Reads and parses a PDF document.
+     * @param filename the file name of the document
+     * @param ownerPassword the password to read the document
+     * @throws IOException on error
+     */
+    public PdfReader(final String filename, final byte ownerPassword[], boolean partial) throws IOException {
         this(
         		new RandomAccessSourceFactory()
     			.setForceRead(false)
     			.setUsePlainRandomAccess(Document.plainRandomAccess)
     			.createBestSource(filename),
-    			
-    			false,
+    			partial,
     			ownerPassword,
     			null,
     			null,
     			null,
-    			true
-        		
-        );   	
-    	
+    			true	
+        );
     }
 
     /** Reads and parses a PDF document.
@@ -357,63 +363,6 @@ public class PdfReader implements PdfViewerPreferences {
         		raf.getByteSource(),
     			true,
     			ownerPassword,
-    			null,
-    			null,
-    			null,
-    			false
-        		
-        );
-    }
-
-    /**
-     * Reads and parses a pdf document.
-     * @param raf the document location
-     * @throws IOException on error
-     */
-    public PdfReader(final RandomAccessSource ras) throws IOException {
-        this(
-        		ras,
-    			false,
-    			null,
-    			null,
-    			null,
-    			null,
-    			false
-        		
-        );
-    }
-
-    /**
-     * Reads and parses a pdf document.
-     * @param raf the document location
-     * @param partialRead if true, the reader is opened in partial mode (PDF is parsed on demand), if false, the entire PDF is parsed into memory as the reader opens
-     * @param ownerPassword the password or <CODE>null</CODE> for no password
-     * @throws IOException on error
-     */
-    public PdfReader(final RandomAccessSource ras, boolean partialRead, final byte ownerPassword[]) throws IOException {
-        this(
-        		ras,
-    			partialRead,
-    			ownerPassword,
-    			null,
-    			null,
-    			null,
-    			false
-        		
-        );
-    }
-
-    /**
-     * Reads and parses a pdf document.
-     * @param raf the document location
-     * @param partialRead if true, the reader is opened in partial mode (PDF is parsed on demand), if false, the entire PDF is parsed into memory as the reader opens
-     * @throws IOException on error
-     */
-    public PdfReader(final RandomAccessSource ras, boolean partialRead) throws IOException {
-        this(
-        		ras,
-    			partialRead,
-    			null,
     			null,
     			null,
     			null,
