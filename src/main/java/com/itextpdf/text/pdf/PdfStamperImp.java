@@ -736,15 +736,7 @@ class PdfStamperImp extends PdfWriter {
         Rectangle media = new Rectangle(mediabox);
         int rotation = media.getRotation() % 360;
         PdfDictionary page = new PdfDictionary(PdfName.PAGE);
-        PdfDictionary resources = new PdfDictionary();
-        PdfArray procset = new PdfArray();
-        procset.add(PdfName.PDF);
-        procset.add(PdfName.TEXT);
-        procset.add(PdfName.IMAGEB);
-        procset.add(PdfName.IMAGEC);
-        procset.add(PdfName.IMAGEI);
-        resources.put(PdfName.PROCSET, procset);
-        page.put(PdfName.RESOURCES, resources);
+        page.put(PdfName.RESOURCES, new PdfDictionary());
         page.put(PdfName.ROTATE, new PdfNumber(rotation));
         page.put(PdfName.MEDIABOX, new PdfRectangle(media, rotation));
         PRIndirectReference pref = reader.addPdfObject(page);
