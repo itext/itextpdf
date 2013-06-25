@@ -26,7 +26,7 @@ public class PdfAWriterTest {
         PdfAWriter writer = null;
         try {
             document = new Document();
-            writer = PdfAWriter.getInstance(document, new FileOutputStream("./target/testCreatePdfA_1.pdf"), PdfAConformanceLevel.PDF_A_1A);
+            writer = PdfAWriter.getInstance(document, new FileOutputStream("./target/testCreatePdfA_1.pdf"), PdfAConformanceLevel.PDF_A_1B);
             writer.createXmpMetadata();
             document.open();
             Font font = FontFactory.getFont("./src/test/resources/com/itextpdf/text/pdf/FreeMonoBold.ttf", BaseFont.WINANSI, BaseFont.EMBEDDED, 12);
@@ -64,7 +64,7 @@ public class PdfAWriterTest {
     @Test
     public void testPdfAStamper1() throws DocumentException, IOException {
         Document document = new Document();
-        PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream("./target/testPdfAStamper.pdf"), PdfAConformanceLevel.PDF_A_1A);
+        PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream("./target/testPdfAStamper.pdf"), PdfAConformanceLevel.PDF_A_1B);
         writer.createXmpMetadata();
         document.open();
         Font font = FontFactory.getFont("./src/test/resources/com/itextpdf/text/pdf/FreeMonoBold.ttf", BaseFont.WINANSI, BaseFont.EMBEDDED, 12);
@@ -74,7 +74,7 @@ public class PdfAWriterTest {
         document.close();
 
         PdfReader reader = new PdfReader("./target/testPdfAStamper.pdf");
-        PdfAStamper stamper = new PdfAStamper(reader, new FileOutputStream("./target/testPdfAStamper_.pdf"), PdfAConformanceLevel.PDF_A_1A);
+        PdfAStamper stamper = new PdfAStamper(reader, new FileOutputStream("./target/testPdfAStamper_.pdf"), PdfAConformanceLevel.PDF_A_1B);
         stamper.close();
         reader.close();
     }
@@ -82,7 +82,7 @@ public class PdfAWriterTest {
     @Test
     public void testPdfAStamper2() throws DocumentException, IOException {
         Document document = new Document();
-        PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream("./target/testPdfAStamper.pdf"), PdfAConformanceLevel.PDF_A_2A);
+        PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream("./target/testPdfAStamper.pdf"), PdfAConformanceLevel.PDF_A_2B);
         writer.createXmpMetadata();
         document.open();
         Font font = FontFactory.getFont("./src/test/resources/com/itextpdf/text/pdf/FreeMonoBold.ttf", BaseFont.WINANSI, BaseFont.EMBEDDED, 12);
@@ -94,7 +94,7 @@ public class PdfAWriterTest {
         PdfReader reader = new PdfReader("./target/testPdfAStamper.pdf");
         boolean exceptionThrown = false;
         try {
-            PdfAStamper stamper = new PdfAStamper(reader, new FileOutputStream("./target/testPdfAStamper_.pdf"), PdfAConformanceLevel.PDF_A_1A);
+            PdfAStamper stamper = new PdfAStamper(reader, new FileOutputStream("./target/testPdfAStamper_.pdf"), PdfAConformanceLevel.PDF_A_1B);
             stamper.close();
         } catch (PdfAConformanceException e) {
             exceptionThrown = true;

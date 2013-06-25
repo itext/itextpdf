@@ -157,7 +157,7 @@ public class PdfAStamperImp extends PdfStamperImp {
         } catch (Throwable e) {
             throw new PdfAConformanceException(MessageLocalization.getComposedMessage("only.pdfa.documents.can.be.opened.in.PdfAStamper"));
         }
-        if (pdfaidConformance == null || !"a".equalsIgnoreCase(pdfaidConformance.getValue()) || pdfaidPart == null) {
+        if (pdfaidConformance == null || pdfaidPart == null) {
             throw new PdfAConformanceException(MessageLocalization.getComposedMessage("only.pdfa.documents.can.be.opened.in.PdfAStamper"));
         }
         switch (((PdfAConformance) pdfIsoConformance).getConformanceLevel()) {

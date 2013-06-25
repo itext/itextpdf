@@ -43,9 +43,17 @@
  */
 package com.itextpdf.text.pdf.internal;
 
+import com.itextpdf.text.pdf.PdfAConformanceLevel;
 import com.itextpdf.text.pdf.PdfWriter;
 
 abstract public class PdfAChecker {
+
+    protected PdfAConformanceLevel conformanceLevel;
+
+    PdfAChecker(PdfAConformanceLevel conformanceLevel) {
+        this.conformanceLevel = conformanceLevel;
+    }
+
     abstract protected void checkFont(PdfWriter writer, int key, Object obj1);
 
     abstract protected void checkImage(PdfWriter writer, int key, Object obj1);
@@ -71,6 +79,8 @@ abstract public class PdfAChecker {
     abstract protected void checkAction(PdfWriter writer, int key, Object obj1);
 
     abstract protected void checkForm(PdfWriter writer, int key, Object obj1);
+
+    abstract protected void checkStructElem(PdfWriter writer, int key, Object obj1);
 
     void checkPdfAConformance(PdfWriter writer, int key, Object obj1) {
         if (writer == null || !writer.isPdfIso())
@@ -116,6 +126,10 @@ abstract public class PdfAChecker {
                 break;
             case PdfIsoKeys.PDFISOKEY_FORM:
                 checkForm(writer, key, obj1);
+                break;
+            case PdfIsoKeys.PDFISOKEY_STRUCTELEM:
+                if (PdfAConformanceLevel.checkStructure(conformanceLevel))
+                    checkStructElem(writer, key, obj1);
                 break;
             default:
                 break;

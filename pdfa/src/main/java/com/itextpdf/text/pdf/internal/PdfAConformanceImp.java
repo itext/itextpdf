@@ -85,20 +85,20 @@ public class PdfAConformanceImp implements PdfAConformance {
         switch (this.conformanceLevel) {
             case PDF_A_1A:
             case PDF_A_1B:
-                pdfAChecker = new PdfA1Checker();
+                pdfAChecker = new PdfA1Checker(conformanceLevel);
                 break;
             case PDF_A_2A:
             case PDF_A_2B:
             case PDF_A_2U:
-                pdfAChecker = new PdfA2Checker();
+                pdfAChecker = new PdfA2Checker(conformanceLevel);
                 break;
             case PDF_A_3A:
             case PDF_A_3B:
             case PDF_A_3U:
-                pdfAChecker = new PdfA3Checker();
+                pdfAChecker = new PdfA3Checker(conformanceLevel);
                 break;
             default:
-                pdfAChecker = new PdfA1Checker();
+                pdfAChecker = new PdfA1Checker(conformanceLevel);
                 break;
         }
     }

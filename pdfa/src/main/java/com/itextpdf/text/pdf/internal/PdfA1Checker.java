@@ -63,6 +63,8 @@ public class PdfA1Checker extends PdfAChecker {
             PdfName.FIRSTPAGE, PdfName.LASTPAGE}));
     static private HashSet<PdfName> restrictedActions = new HashSet<PdfName>(Arrays.asList(new PdfName[]{PdfName.LAUNCH, PdfName.SOUND,
             PdfName.MOVIE, PdfName.RESETFORM, PdfName.IMPORTDATA, PdfName.JAVASCRIPT}));
+    static private HashSet<PdfName> contentAnnotations = new HashSet<PdfName>(Arrays.asList(new PdfName[]{PdfName.TEXT, PdfName.LINK, PdfName.FREETEXT,
+            PdfName.LINE, PdfName.SQUARE, PdfName.CIRCLE, PdfName.STAMP, PdfName.INK, PdfName.POPUP, PdfName.WIDGET}));
     public final double maxRealValue = 32767;
     public final int maxStringLength = 65535;
     public final int maxArrayLength = 8191;
@@ -71,7 +73,10 @@ public class PdfA1Checker extends PdfAChecker {
     protected int gsStackDepth = 0;
     protected boolean rgbUsed = false;
     protected boolean cmykUsed = false;
-    protected boolean checkCatalog = false;
+
+    PdfA1Checker(PdfAConformanceLevel conformanceLevel) {
+        super(conformanceLevel);
+    }
 
     static boolean checkFlag(int flags, int flag) {
         return (flags & flag) != 0;
@@ -165,7 +170,6 @@ public class PdfA1Checker extends PdfAChecker {
             if (trailer.get(PdfName.ENCRYPT) != null) {
                 throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("keyword.encrypt.shall.not.be.used.in.the.trailer.dictionary"));
             }
-            checkCatalog = true;
         }
     }
 
@@ -233,11 +237,20 @@ public class PdfA1Checker extends PdfAChecker {
             if (dictionary.size() > maxDictionaryLength) {
                 throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("pdf.dictionary.is.out.of.bounds"));
             }
-            if (checkCatalog && PdfName.CATALOG.equals(dictionary.getAsName(PdfName.TYPE))) {
-                checkCatalog = false;
+            if (PdfName.CATALOG.equals(dictionary.getAsName(PdfName.TYPE))) {
                 if (dictionary.contains(PdfName.AA)) {
                     throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("the.document.catalog.dictionary.shall.not.include.an.aa.entry"));
                 }
+                if (PdfAConformanceLevel.checkStructure(conformanceLevel)) {
+                    PdfDictionary markInfo = dictionary.getAsDict(PdfName.MARKINFO);
+                    if (markInfo == null || markInfo.getAsBoolean(PdfName.MARKED) == null || markInfo.getAsBoolean(PdfName.MARKED).booleanValue() == false) {
+                        throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("document.catalog.dictionary.shall.include.a.markinfo.dictionary.whose.entry.marked.shall.have.a.value.of.true"));
+                    }
+                    if (!dictionary.contains(PdfName.LANG)) {
+                        throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("document.catalog.dictionary.should.contain.lang.entry"));
+                    }
+                }
+
             }
         }
     }
@@ -308,9 +321,9 @@ public class PdfA1Checker extends PdfAChecker {
         }
         if (obj1 instanceof PdfAnnotation) {
             PdfAnnotation annot = (PdfAnnotation) obj1;
-            PdfObject obj = annot.get(PdfName.SUBTYPE);
-            if (obj != null && !allowedAnnotTypes.contains(obj)) {
-                throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("annotation.type.1.not.allowed", obj.toString()));
+            PdfObject subtype = annot.get(PdfName.SUBTYPE);
+            if (subtype != null && !allowedAnnotTypes.contains(subtype)) {
+                throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("annotation.type.1.not.allowed", subtype.toString()));
             }
             PdfNumber ca = annot.getAsNumber(PdfName.CA);
             if (ca != null && ca.floatValue() != 1.0) {
@@ -356,6 +369,11 @@ public class PdfA1Checker extends PdfAChecker {
             if (PdfName.WIDGET.equals(annot.getAsName(PdfName.SUBTYPE)) && (annot.contains(PdfName.AA) || annot.contains(PdfName.A))) {
                 throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("widget.annotation.dictionary.or.field.dictionary.shall.not.include.a.or.aa.entry"));
             }
+            if (PdfAConformanceLevel.checkStructure(conformanceLevel)) {
+                if (contentAnnotations.contains(subtype) && !annot.contains(PdfName.CONTENTS)) {
+                    throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("annotation.of.type.1.should.have.contents.key", subtype.toString()));
+                }
+            }
         }
     }
 
@@ -386,6 +404,22 @@ public class PdfA1Checker extends PdfAChecker {
             PdfBoolean needAppearances = form.getAsBoolean(PdfName.NEEDAPPEARANCES);
             if (needAppearances != null && needAppearances.booleanValue()) {
                 throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("needappearances.flag.of.the.interactive.form.dictionary.shall.either.not.be.present.or.shall.be.false"));
+            }
+        }
+    }
+
+    @Override
+    protected void checkStructElem(PdfWriter writer, int key, Object obj1) {
+        if (obj1 instanceof PdfStructureElement) {
+            PdfStructureElement structElem = (PdfStructureElement) obj1;
+            PdfName role = structElem.getStructureType();
+            if (PdfName.FIGURE.equals(role) || PdfName.FORMULA.equals(role) || PdfName.FORM.equals(role)) {
+                PdfObject o = structElem.getAttribute(PdfName.ALT);
+                if (o instanceof PdfString && o.toString().length() > 0) {
+
+                } else {
+                    throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("alt.entry.should.specify.alternate.description.for.1.element", role.toString()));
+                }
             }
         }
     }

@@ -59,7 +59,7 @@ public class PdfA2CheckerTest {
     public void imageCheckTest1() throws IOException, DocumentException {
         FileOutputStream fos = new FileOutputStream("./target/imageCheckTest1.pdf");
         Document document = new Document();
-        PdfWriter writer = PdfAWriter.getInstance(document, fos, PdfAConformanceLevel.PDF_A_2A);
+        PdfWriter writer = PdfAWriter.getInstance(document, fos, PdfAConformanceLevel.PDF_A_2B);
         document.open();
 
         String[] pdfaErrors = new String[9];
@@ -90,7 +90,7 @@ public class PdfA2CheckerTest {
     public void imageCheckTest2() throws IOException, DocumentException {
         FileOutputStream fos = new FileOutputStream("./target/imageCheckTest2.pdf");
         Document document = new Document();
-        PdfWriter writer = PdfAWriter.getInstance(document, fos, PdfAConformanceLevel.PDF_A_2A);
+        PdfWriter writer = PdfAWriter.getInstance(document, fos, PdfAConformanceLevel.PDF_A_2B);
         document.open();
 
         ArrayList<String> pdfaErrors = new ArrayList<String>();
@@ -135,7 +135,7 @@ public class PdfA2CheckerTest {
     public void layerCheckTest1() throws IOException, DocumentException {
         FileOutputStream fos = new FileOutputStream("./target/layerCheckTest1.pdf");
         Document document = new Document();
-        PdfWriter writer = PdfAWriter.getInstance(document, fos, PdfAConformanceLevel.PDF_A_2A);
+        PdfWriter writer = PdfAWriter.getInstance(document, fos, PdfAConformanceLevel.PDF_A_2B);
         writer.setViewerPreferences(PdfWriter.PageModeUseOC);
         writer.setPdfVersion(PdfWriter.VERSION_1_5);
         document.open();
@@ -157,7 +157,7 @@ public class PdfA2CheckerTest {
     public void layerCheckTest2() throws IOException, DocumentException {
         FileOutputStream fos = new FileOutputStream("./target/layerCheckTest2.pdf");
         Document document = new Document();
-        PdfWriter writer = PdfAWriter.getInstance(document, fos, PdfAConformanceLevel.PDF_A_2A);
+        PdfWriter writer = PdfAWriter.getInstance(document, fos, PdfAConformanceLevel.PDF_A_2B);
         writer.setViewerPreferences(PdfWriter.PageModeUseOC);
         writer.setPdfVersion(PdfWriter.VERSION_1_5);
         document.open();

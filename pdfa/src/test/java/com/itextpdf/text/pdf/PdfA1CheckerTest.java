@@ -4,9 +4,7 @@ import com.itextpdf.text.*;
 import junit.framework.Assert;
 import org.junit.Test;
 
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 
 public class PdfA1CheckerTest {
 
@@ -757,6 +755,58 @@ public class PdfA1CheckerTest {
     }
 
     @Test
+    public void annotationCheckTest8() throws DocumentException, IOException {
+        Document document = new Document();
+        PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream("./target/annotationCheckTest8.pdf"), PdfAConformanceLevel.PDF_A_1A);
+        writer.createXmpMetadata();
+        document.open();
+
+        Font font = FontFactory.getFont("./src/test/resources/com/itextpdf/text/pdf/FreeMonoBold.ttf", BaseFont.WINANSI, BaseFont.EMBEDDED, 12);
+        document.add(new Paragraph("Hello World", font));
+        ICC_Profile icc = ICC_Profile.getInstance(new FileInputStream("./src/test/resources/com/itextpdf/text/pdf/sRGB Color Space Profile.icm"));
+        writer.setOutputIntents("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", icc);
+
+        PdfAnnotation annot = new PdfAnnotation(writer, new Rectangle(100, 100, 200, 200));
+        annot.put(PdfName.SUBTYPE, PdfName.STAMP);
+        annot.put(PdfName.F, new PdfNumber(PdfAnnotation.FLAGS_PRINT));
+        PdfContentByte canvas = writer.getDirectContent();
+        canvas.addAnnotation(annot);
+        boolean exceptionThrown = false;
+        try {
+            document.close();
+        } catch (PdfAConformanceException e) {
+            if (e.getObject() == annot && e.getLocalizedMessage().contains("Contents")) {
+                exceptionThrown = true;
+            }
+        }
+        if (!exceptionThrown)
+            Assert.fail("PdfAConformanceException should be thrown.");
+    }
+
+    @Test
+    public void annotationCheckTest9() throws DocumentException, IOException {
+        Document document = new Document();
+        PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream("./target/annotationCheckTest9.pdf"), PdfAConformanceLevel.PDF_A_1A);
+        writer.createXmpMetadata();
+        writer.setTagged();
+        document.open();
+        document.addLanguage("en-US");
+
+        Font font = FontFactory.getFont("./src/test/resources/com/itextpdf/text/pdf/FreeMonoBold.ttf", BaseFont.WINANSI, BaseFont.EMBEDDED, 12);
+        document.add(new Paragraph("Hello World", font));
+        ICC_Profile icc = ICC_Profile.getInstance(new FileInputStream("./src/test/resources/com/itextpdf/text/pdf/sRGB Color Space Profile.icm"));
+        writer.setOutputIntents("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", icc);
+
+        PdfAnnotation annot = new PdfAnnotation(writer, new Rectangle(100, 100, 200, 200));
+        annot.put(PdfName.SUBTYPE, PdfName.STAMP);
+        annot.put(PdfName.F, new PdfNumber(PdfAnnotation.FLAGS_PRINT));
+        annot.put(PdfName.CONTENTS, new PdfString("Hello World"));
+        PdfContentByte canvas = writer.getDirectContent();
+        canvas.addAnnotation(annot);
+        document.close();
+    }
+
+    @Test
     public void fieldCheckTest1() throws DocumentException, IOException {
         String LANGUAGES[] = new String[] {"Russian", "English", "Dutch", "French"};
         Document document = new Document();
@@ -943,6 +993,133 @@ public class PdfA1CheckerTest {
         if (!exceptionThrown)
             Assert.fail("PdfAConformanceException should be thrown.");
     }
+
+    @Test
+    public void markInfoCheckTest1() throws DocumentException, IOException {
+        Document document = new Document();
+        PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream("./target/markInfoCheckTest1.pdf"), PdfAConformanceLevel.PDF_A_1A);
+        writer.setTagged();
+        writer.createXmpMetadata();
+        document.open();
+        document.addLanguage("en-us");
+
+
+        Font font = FontFactory.getFont("./src/test/resources/com/itextpdf/text/pdf/FreeMonoBold.ttf", BaseFont.WINANSI, BaseFont.EMBEDDED, 72);
+        Chunk c = new Chunk("Document Header", font);
+        c.setRole(null);
+        Paragraph h1 = new Paragraph(c);
+        h1.setRole(PdfName.H1);
+        document.add(h1);
+
+        document.add(new Paragraph("Hello World Hello World Hello World Hello World Hello World Hello World Hello World Hello World Hello World Hello World Hello World Hello World Hello World Hello World Hello World", font));
+        ICC_Profile icc = ICC_Profile.getInstance(new FileInputStream("./src/test/resources/com/itextpdf/text/pdf/sRGB Color Space Profile.icm"));
+        writer.setOutputIntents("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", icc);
+
+        document.close();
+    }
+
+    @Test
+    public void markInfoCheckTest2() throws DocumentException, IOException {
+        Document document = new Document();
+        PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream("./target/markInfoCheckTest2.pdf"), PdfAConformanceLevel.PDF_A_1A);
+        writer.createXmpMetadata();
+        document.open();
+
+        Font font = FontFactory.getFont("./src/test/resources/com/itextpdf/text/pdf/FreeMonoBold.ttf", BaseFont.WINANSI, BaseFont.EMBEDDED, 12);
+        document.add(new Paragraph("Hello World", font));
+        ICC_Profile icc = ICC_Profile.getInstance(new FileInputStream("./src/test/resources/com/itextpdf/text/pdf/sRGB Color Space Profile.icm"));
+        writer.setOutputIntents("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", icc);
+
+        boolean exceptionThrown = false;
+        try {
+            document.close();
+        } catch (PdfAConformanceException e) {
+            if (e.getLocalizedMessage().contains("markinfo") || e.getLocalizedMessage().contains("MarkInfo"))
+                exceptionThrown = true;
+        }
+        if (!exceptionThrown)
+            Assert.fail("PdfAConformanceException should be thrown.");
+    }
+
+    @Test
+    public void roleMapCheckTest1() throws DocumentException, IOException {
+        Document document = new Document();
+        PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream("./target/roleMapCheckTest1.pdf"), PdfAConformanceLevel.PDF_A_1A);
+        writer.setTagged();
+        writer.createXmpMetadata();
+        document.open();
+        ICC_Profile icc = ICC_Profile.getInstance(new FileInputStream("./src/test/resources/com/itextpdf/text/pdf/sRGB Color Space Profile.icm"));
+        writer.setOutputIntents("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", icc);
+
+        Font font = FontFactory.getFont("./src/test/resources/com/itextpdf/text/pdf/FreeMonoBold.ttf", BaseFont.WINANSI, BaseFont.EMBEDDED, 72);
+        Paragraph p = new Paragraph("Hello World", font);
+        p.setRole(new PdfName("HW"));
+
+        boolean exceptionThrown = false;
+        try {
+            document.add(p);
+        } catch (DocumentException e) {
+            if (e.getMessage().contains("/HW")) {
+                exceptionThrown = true;
+            }
+        }
+        if (!exceptionThrown) {
+            Assert.fail("DocumentException should be thrown");
+        }
+    }
+
+    @Test
+    public void roleMapCheckTest2() throws DocumentException, IOException {
+        Document document = new Document();
+        PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream("./target/roleMapCheckTest2.pdf"), PdfAConformanceLevel.PDF_A_1A);
+        writer.setTagged();
+        writer.createXmpMetadata();
+        document.open();
+        document.addLanguage("en-us");
+        ICC_Profile icc = ICC_Profile.getInstance(new FileInputStream("./src/test/resources/com/itextpdf/text/pdf/sRGB Color Space Profile.icm"));
+        writer.setOutputIntents("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", icc);
+
+        Font font = FontFactory.getFont("./src/test/resources/com/itextpdf/text/pdf/FreeMonoBold.ttf", BaseFont.WINANSI, BaseFont.EMBEDDED, 72);
+        Paragraph p = new Paragraph("Hello World", font);
+        p.setRole(new PdfName("HW"));
+        writer.getStructureTreeRoot().mapRole(new PdfName("HW"), PdfName.P);
+
+        document.add(p);
+        document.close();
+    }
+
+    @Test
+    public void roleMapCheckTest3() throws DocumentException, IOException {
+        Document document = new Document();
+        PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream("./target/roleMapCheckTest3.pdf"), PdfAConformanceLevel.PDF_A_1A);
+        writer.setTagged();
+        writer.createXmpMetadata();
+        document.open();
+        ICC_Profile icc = ICC_Profile.getInstance(new FileInputStream("./src/test/resources/com/itextpdf/text/pdf/sRGB Color Space Profile.icm"));
+        writer.setOutputIntents("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", icc);
+
+        Font font = FontFactory.getFont("./src/test/resources/com/itextpdf/text/pdf/FreeMonoBold.ttf", BaseFont.WINANSI, BaseFont.EMBEDDED, 72);
+        Paragraph p = new Paragraph("Hello World", font);
+        p.setRole(new PdfName("HW"));
+        writer.getStructureTreeRoot().mapRole(new PdfName("HW"), PdfName.P);
+
+        document.add(p);
+
+        boolean exceptionThrown = false;
+        try {
+            document.close();
+        } catch (PdfAConformanceException e) {
+            if (e.getObject().toString().contains("/Catalog")) {
+                exceptionThrown = true;
+            }
+        }
+        if (!exceptionThrown) {
+            Assert.fail("PdfAConformanceException should be thrown");
+        }
+
+
+    }
+
 
 
 

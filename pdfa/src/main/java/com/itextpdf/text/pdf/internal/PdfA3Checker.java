@@ -43,5 +43,13 @@
  */
 package com.itextpdf.text.pdf.internal;
 
+import com.itextpdf.text.pdf.PdfAConformanceLevel;
+
 public class PdfA3Checker extends PdfA2Checker {
+
+    PdfA3Checker(PdfAConformanceLevel conformanceLevel) {
+        super(conformanceLevel);
+    }
+
+
 }

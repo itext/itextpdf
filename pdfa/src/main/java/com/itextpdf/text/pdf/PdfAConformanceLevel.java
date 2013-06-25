@@ -85,5 +85,10 @@ public enum PdfAConformanceLevel {
     /**
      * PDF/A-3u
      */
-    PDF_A_3U
+    PDF_A_3U;
+
+    public static boolean checkStructure(PdfAConformanceLevel conformanceLevel) {
+        return conformanceLevel == PDF_A_1A || conformanceLevel == PDF_A_2A || conformanceLevel == PDF_A_3A;
+    }
+
 }
