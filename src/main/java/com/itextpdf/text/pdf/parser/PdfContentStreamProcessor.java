@@ -51,10 +51,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 
+import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.ExceptionConverter;
 import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.io.RandomAccessSourceFactory;
+import com.itextpdf.text.pdf.CMYKColor;
 import com.itextpdf.text.pdf.CMapAwareDocumentFont;
+import com.itextpdf.text.pdf.GrayColor;
 import com.itextpdf.text.pdf.PRIndirectReference;
 import com.itextpdf.text.pdf.PRTokeniser;
 import com.itextpdf.text.pdf.PdfArray;
@@ -170,6 +173,18 @@ public class PdfContentStreamProcessor {
 
         registerContentOperator("q", new PushGraphicsState());
         registerContentOperator("Q", new PopGraphicsState());
+        registerContentOperator("g", new SetGrayFill());
+        registerContentOperator("G", new SetGrayStroke());
+        registerContentOperator("rg", new SetRGBFill());
+        registerContentOperator("RG", new SetRGBStroke());
+        registerContentOperator("k", new SetCMYKFill());
+        registerContentOperator("K", new SetCMYKStroke());
+        registerContentOperator("cs", new SetColorSpaceFill());
+        registerContentOperator("CS", new SetColorSpaceStroke());
+        registerContentOperator("sc", new SetColorFill());
+        registerContentOperator("SC", new SetColorStroke());
+        registerContentOperator("scn", new SetColorFill());
+        registerContentOperator("SCN", new SetColorStroke());
         registerContentOperator("cm", new ModifyCurrentTransformationMatrix());
         registerContentOperator("gs", new ProcessGraphicsStateResource());
 
@@ -713,6 +728,131 @@ public class PdfContentStreamProcessor {
             Matrix matrix = new Matrix(a, b, c, d, e, f);
             GraphicsState gs = processor.gsStack.peek();
             gs.ctm = matrix.multiply(gs.ctm);
+        }
+    }
+    
+    /**
+     * Gets a color based on a list of operands.
+     */
+    private static BaseColor getColor(PdfName colorSpace, List<PdfObject> operands) {
+    	if (PdfName.DEVICEGRAY.equals(colorSpace)) {
+    		return getColor(1, operands);
+    	}
+    	if (PdfName.DEVICERGB.equals(colorSpace)) {
+    		return getColor(3, operands);
+    	}
+    	if (PdfName.DEVICECMYK.equals(colorSpace)) {
+    		return getColor(4, operands);
+    	}
+    	return null;
+    }
+    
+    /**
+     * Gets a color based on a list of operands.
+     */
+    private static BaseColor getColor(int nOperands, List<PdfObject> operands) {
+    	float[] c = new float[nOperands];
+    	for (int i = 0; i < nOperands; i++) {
+    		c[i] = ((PdfNumber)operands.get(0)).floatValue();
+    	}
+    	switch (nOperands) {
+    	case 1:
+    		return new GrayColor(c[0]);
+    	case 3:
+    		return new BaseColor(c[0], c[1], c[2]);
+    	case 4:
+    		return new CMYKColor(c[0], c[1], c[2], c[3]);
+    	}
+    	return null;
+    }
+    
+    /**
+     * A content operator implementation (g).
+     */
+    private static class SetGrayFill implements ContentOperator{
+        public void invoke(PdfContentStreamProcessor processor, PdfLiteral operator, ArrayList<PdfObject> operands) {
+            processor.gs().fillColor = getColor(1, operands);
+        }
+    }
+    
+    /**
+     * A content operator implementation (G).
+     */
+    private static class SetGrayStroke implements ContentOperator{
+        public void invoke(PdfContentStreamProcessor processor, PdfLiteral operator, ArrayList<PdfObject> operands) {
+            processor.gs().strokeColor = getColor(1, operands);
+        }
+    }
+    
+    /**
+     * A content operator implementation (rg).
+     */
+    private static class SetRGBFill implements ContentOperator{
+        public void invoke(PdfContentStreamProcessor processor, PdfLiteral operator, ArrayList<PdfObject> operands) {
+            processor.gs().fillColor = getColor(3, operands);
+        }
+    }
+    
+    /**
+     * A content operator implementation (RG).
+     */
+    private static class SetRGBStroke implements ContentOperator{
+        public void invoke(PdfContentStreamProcessor processor, PdfLiteral operator, ArrayList<PdfObject> operands) {
+            processor.gs().strokeColor = getColor(3, operands);
+        }
+    }
+    
+    /**
+     * A content operator implementation (rg).
+     */
+    private static class SetCMYKFill implements ContentOperator{
+        public void invoke(PdfContentStreamProcessor processor, PdfLiteral operator, ArrayList<PdfObject> operands) {
+            processor.gs().fillColor = getColor(4, operands);
+        }
+    }
+    
+    /**
+     * A content operator implementation (RG).
+     */
+    private static class SetCMYKStroke implements ContentOperator{
+        public void invoke(PdfContentStreamProcessor processor, PdfLiteral operator, ArrayList<PdfObject> operands) {
+            processor.gs().strokeColor = getColor(4, operands);
+        }
+    }
+
+    /**
+     * A content operator implementation (CS).
+     */
+    private static class SetColorSpaceFill implements ContentOperator{
+		public void invoke(PdfContentStreamProcessor processor, PdfLiteral operator, ArrayList<PdfObject> operands) {
+			processor.gs().colorSpaceFill = (PdfName)operands.get(0);		
+		}
+    }
+
+    /**
+     * A content operator implementation (cs).
+     */
+    private static class SetColorSpaceStroke implements ContentOperator{
+		public void invoke(PdfContentStreamProcessor processor, PdfLiteral operator, ArrayList<PdfObject> operands) {
+			processor.gs().colorSpaceStroke = (PdfName)operands.get(0);		
+		}
+    }
+    
+    /**
+     * A content operator implementation (sc / scn).
+     */
+    private static class SetColorFill implements ContentOperator{
+        public void invoke(PdfContentStreamProcessor processor, PdfLiteral operator, ArrayList<PdfObject> operands) {
+            processor.gs().fillColor = getColor(processor.gs().colorSpaceFill, operands);
+        }
+    }
+    
+    /**
+     * A content operator implementation (SC / SCN).
+     */
+    private static class SetColorStroke implements ContentOperator{
+        public void invoke(PdfContentStreamProcessor processor, PdfLiteral operator, ArrayList<PdfObject> operands) {
+            processor.gs().strokeColor = getColor(processor.gs().colorSpaceStroke, operands);
         }
     }
 

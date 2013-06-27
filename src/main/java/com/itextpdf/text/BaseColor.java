@@ -209,6 +209,6 @@ public class BaseColor {
      */
     @Override
     public String toString() {
-        return "Color value["+value+"]";
+        return "Color value["+Integer.toString(value, 16)+"]";
     }
 }
