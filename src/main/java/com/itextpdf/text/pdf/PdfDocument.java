@@ -303,6 +303,8 @@ public class PdfDocument extends Document {
 
     protected boolean openMCDocument = false;
 
+    protected HashMap<Object, Integer> structParentIndices = new HashMap<Object, Integer>();
+
     /**
      * Adds a <CODE>PdfWriter</CODE> to the <CODE>PdfDocument</CODE>.
      *
@@ -962,7 +964,7 @@ public class PdfDocument extends Document {
 
         	// [F12] we add tag info
         	if (isTagged(writer))
-        		page.put(PdfName.STRUCTPARENTS, new PdfNumber(writer.getCurrentPageNumber() - 1));
+        		page.put(PdfName.STRUCTPARENTS, new PdfNumber(getStructParentIndex(writer.getCurrentPage())));
 
             if (text.size() > textEmptySize || isTagged(writer))
         		text.endText();
@@ -1539,6 +1541,8 @@ public class PdfDocument extends Document {
                         }
                         text.addAnnotation(annot, true);
                         if (isTagged(writer) && chunk.accessibleElement != null) {
+                            int structParent = getStructParentIndex(annot);
+                            annot.put(PdfName.STRUCTPARENT, new PdfNumber(structParent));
                             PdfStructureElement strucElem = structElements.get(chunk.accessibleElement.getId());
                             if (strucElem != null) {
                                 PdfArray kArray = strucElem.getAsArray(PdfName.K);
@@ -1554,6 +1558,7 @@ public class PdfDocument extends Document {
                                 dict.put(PdfName.TYPE, PdfName.OBJR);
                                 dict.put(PdfName.OBJ, annot.getIndirectReference());
                                 kArray.add(dict);
+                                writer.getStructureTreeRoot().setPageMark(structParent, strucElem.getReference());
                             }
 
                         }
@@ -2467,6 +2472,15 @@ public class PdfDocument extends Document {
 			currentHeight += tmpHeight;
 		}
 	}
+
+    public int getStructParentIndex(Object obj) {
+        Integer i = structParentIndices.get(obj);
+        if (i == null) {
+            i = new Integer(structParentIndices.size());
+            structParentIndices.put(obj, i);
+        }
+        return i.intValue();
+    }
 
     /** This is the image that could not be shown on a previous page. */
     protected Image imageWait = null;

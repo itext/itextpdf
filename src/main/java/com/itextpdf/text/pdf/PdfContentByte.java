@@ -3341,10 +3341,10 @@ public class PdfContentByte {
                 dic.put(PdfName.MCID, new PdfNumber(mark));
                 ar.add(dic);
             }
-            struc.setPageMark(writer.getPageNumber() - 1, -1);
+            struc.setPageMark(pdf.getStructParentIndex(writer.getCurrentPage()), -1);
         }
         else {
-            struc.setPageMark(writer.getPageNumber() - 1, mark);
+            struc.setPageMark(pdf.getStructParentIndex(writer.getCurrentPage()), mark);
             struc.put(PdfName.PG, writer.getCurrentPage());
         }
         pdf.incMarkPoint();

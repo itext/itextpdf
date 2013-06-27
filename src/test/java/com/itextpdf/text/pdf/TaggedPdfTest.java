@@ -611,8 +611,8 @@ public class TaggedPdfTest {
         p.add(new Chunk(" for more details."));
         document.add(p);
         document.close();
-        int[] nums = new int[]{5} ;
-        compareNums("13", nums);
+//        int[] nums = new int[]{5, 1} ;
+//        compareNums("13", nums);
         compareResults("13");
     }
 

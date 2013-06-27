@@ -47,6 +47,7 @@ import com.itextpdf.text.pdf.interfaces.IPdfStructureElement;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -78,7 +79,10 @@ public class PdfStructureTreeRoot extends PdfDictionary implements IPdfStructure
         numTree = new HashMap<Integer, PdfIndirectReference>();
         for (Integer i: parentTree.keySet()) {
             PdfArray ar = (PdfArray)parentTree.get(i);
-            numTree.put(i, writer.addToBody(ar).getIndirectReference());
+            if (ar.size() == 1)
+                numTree.put(i, ar.getAsIndirectObject(0));
+            else
+                numTree.put(i, writer.addToBody(ar).getIndirectReference());
         }
     }
 

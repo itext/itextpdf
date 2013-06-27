@@ -547,7 +547,7 @@ public class PdfArray extends PdfObject implements Iterable<PdfObject> {
     public PdfIndirectReference getAsIndirectObject(final int idx) {
         PdfIndirectReference ref = null;
         PdfObject orig = getPdfObject(idx); // not getDirect this time.
-        if (orig != null && orig.isIndirect())
+        if (orig instanceof PdfIndirectReference)
             ref = (PdfIndirectReference) orig;
         return ref;
     }
