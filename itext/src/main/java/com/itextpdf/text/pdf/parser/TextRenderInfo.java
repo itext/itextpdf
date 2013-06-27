@@ -47,6 +47,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.pdf.BaseFont;
 import com.itextpdf.text.pdf.DocumentFont;
 
@@ -275,6 +276,23 @@ public class TextRenderInfo {
      */
     public int getTextRenderMode(){
         return gs.renderMode;
+    }
+    
+    /**
+     * Returns the current fill color.
+     * @param a BaseColor
+     */
+    public BaseColor getFillColor() {
+    	return gs.fillColor;
+    }
+
+    
+    /**
+     * Returns the current stroke color.
+     * @param a BaseColor
+     */
+    public BaseColor getStrokeColor() {
+    	return gs.strokeColor;
     }
     
     /**
