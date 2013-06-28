@@ -29,7 +29,7 @@ import java.security.Security;
 import java.security.cert.Certificate;
 import java.util.Collections;
 
-public class XmlDSigTests {
+public class XmlDSigTest {
 
 
     protected BouncyCastleProvider provider;

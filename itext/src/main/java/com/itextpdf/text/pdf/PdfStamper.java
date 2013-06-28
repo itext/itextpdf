@@ -743,8 +743,7 @@ public class PdfStamper
     }
 
     public static PdfStamper createXmlSignature(final PdfReader reader, final OutputStream os) throws IOException, DocumentException {
-        PdfStamper stp;
-        stp = new PdfStamper(reader, os);
+        PdfStamper stp = new PdfStamper(reader, os);
         stp.sigXmlApp = new XmlSignatureAppearance(stp.stamper);
         //stp.sigApp.setSigout(bout);
         //stp.sigApp.setOriginalout(os);

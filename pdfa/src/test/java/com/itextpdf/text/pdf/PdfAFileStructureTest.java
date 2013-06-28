@@ -9,13 +9,6 @@ import org.junit.Test;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-/**
- * Created with IntelliJ IDEA.
- * User: chin
- * Date: 5/2/13
- * Time: 3:42 PM
- * To change this template use File | Settings | File Templates.
- */
 public class PdfAFileStructureTest {
 
 
