@@ -150,6 +150,13 @@ public class PdfSmartCopy extends PdfCopy {
         super.freeReader(reader);
     }
 
+    @Override
+    public void addPage(PdfImportedPage iPage) throws IOException, BadPdfFormatException {
+        if (currentPdfReaderInstance.getReader() != reader)
+            serialized.clear();
+        super.addPage(iPage);
+    }
+
     static class ByteStore {
         private final byte[] b;
         private final int hash;
