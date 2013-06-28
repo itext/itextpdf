@@ -87,7 +87,7 @@ public class XfaXpathConstructor implements XpathConstructor {
     }
 
     /**
-     * Construct for Xpath2 expression. Depends from selected xdp package.
+     * Construct for XPath expression. Depends from selected xdp package.
      * @param xdpPackage
      */
     public XfaXpathConstructor(XdpPackage xdpPackage) {
@@ -140,7 +140,7 @@ public class XfaXpathConstructor implements XpathConstructor {
     private String xpathExpression;
 
     /**
-     * Get XPath2 expression
+     * Get XPath expression
      */
     public String getXpathExpression() {
         return xpathExpression;

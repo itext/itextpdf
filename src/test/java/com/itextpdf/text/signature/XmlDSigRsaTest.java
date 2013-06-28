@@ -15,7 +15,7 @@ import java.security.PublicKey;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 
-public class XmlDSigRsaTest extends XmlDSigTests {
+public class XmlDSigRsaTest extends XmlDSigTest {
 
     public static final String KeyPairStore = "./src/test/resources/com/itextpdf/text/signature/rsa/";
     public static final String Src = "./src/test/resources/com/itextpdf/text/signature/xfa.pdf";
