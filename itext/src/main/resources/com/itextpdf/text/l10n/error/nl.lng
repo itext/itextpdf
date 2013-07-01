@@ -337,6 +337,7 @@ invalid.structparent=Ongeldige StructParent.
 table.1.does.not.exist.in.2=Tabel '{1}' bestaat niet in {2}
 tag.1.not.allowed=Tag {1} niet toegelaten.
 tagging.must.be.set.before.opening.the.document=Tagging moet bepaald worden voor het document geopend is.
+template.with.tagged.could.not.be.used.more.than.once=Template with tagged content could not be used more than once.
 text.annotations.should.set.the.nozoom.and.norotate.flag.bits.of.the.f.key.to.1=Text annotations should set the NoZoom and NoRotate flag bits of the F key to 1.
 text.cannot.be.null=Text mag niet null zijn.
 the.array.must.contain.string.or.pdfannotation=De array moet een String of een PdfAnnotation bevatten.

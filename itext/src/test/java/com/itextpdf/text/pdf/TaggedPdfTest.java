@@ -779,6 +779,110 @@ public class TaggedPdfTest {
         compareResults("19");
     }
 
+    @Test
+    public void createTaggedPdf20() throws DocumentException, IOException, ParserConfigurationException, SAXException {
+        initializeDocument("./target/com/itextpdf/test/pdf/TaggedPdfTest/out20.pdf");
+
+        Paragraph paragraph = new Paragraph();
+        paragraph.getFont().setColor(BaseColor.RED);
+        Chunk c = new Chunk("Hello ");
+        paragraph.add(c);
+        c = new Chunk("  world\n\n");
+        paragraph.add(c);
+
+        ColumnText columnText = new ColumnText(writer.getDirectContent());
+        columnText.setSimpleColumn(36, 36, 250, 800);
+        columnText.addElement(paragraph);
+        columnText.go();
+
+        PdfTemplate template = writer.getDirectContent().createTemplate(PageSize.A4.getWidth(), PageSize.A4.getHeight());
+        writer.getDirectContent().addTemplate(template, 0, 0, true);
+
+        columnText = new ColumnText(template);
+        columnText.setSimpleColumn(36, 36, 250, 750);
+        columnText.addText(new Phrase(new Chunk("Hello word \n")));
+        columnText.go();
+
+        document.newPage();
+
+        paragraph = new Paragraph();
+        paragraph.getFont().setColor(BaseColor.RED);
+        c = new Chunk("Hello ");
+        paragraph.add(c);
+        c = new Chunk("  world\n");
+        paragraph.add(c);
+
+        columnText = new ColumnText(template);
+        columnText.setSimpleColumn(36, 36, 250, 700);
+        columnText.addElement(paragraph);
+        columnText.go();
+
+        template = writer.getDirectContent().createTemplate(PageSize.A4.getWidth(), PageSize.A4.getHeight());
+        writer.getDirectContent().addTemplate(template, 0, 0, true);
+
+        paragraph = new Paragraph();
+        paragraph.getFont().setColor(BaseColor.GREEN);
+        c = new Chunk("Hello ");
+        paragraph.add(c);
+        c = new Chunk("  world\n");
+        paragraph.add(c);
+
+        columnText = new ColumnText(template);
+        columnText.setSimpleColumn(36, 36, 250, 800);
+        columnText.addElement(paragraph);
+        columnText.go();
+
+        paragraph = new Paragraph();
+        paragraph.getFont().setColor(BaseColor.BLUE);
+        c = new Chunk("Hello ");
+        paragraph.add(c);
+        c = new Chunk("  world\n");
+        paragraph.add(c);
+
+        template = writer.getDirectContent().createTemplate(PageSize.A4.getWidth(), PageSize.A4.getHeight());
+
+        columnText = new ColumnText(template);
+        columnText.setSimpleColumn(36, 36, 250, 650);
+        columnText.addElement(paragraph);
+        columnText.go();
+
+        writer.getDirectContent().addTemplate(template, 0, 100);
+
+        writer.getDirectContent().addTemplate(template, 0, 50);
+
+        writer.getDirectContent().addTemplate(template, 0, 0);
+
+        document.close();
+        compareResults("20");
+    }
+
+    @Test
+    public void createTaggedPdf21() throws DocumentException, IOException, ParserConfigurationException, SAXException  {
+        try {
+            initializeDocument("./target/com/itextpdf/test/pdf/TaggedPdfTest/out21.pdf");
+
+            PdfTemplate template = writer.getDirectContent().createTemplate(PageSize.A4.getWidth(), PageSize.A4.getHeight());
+
+            writer.getDirectContent().addTemplate(template, 0, 0, true);
+
+            ColumnText columnText = new ColumnText(template);
+            columnText.setSimpleColumn(36, 36, 250, 750);
+            columnText.addText(new Phrase("Hello word \n\n"));
+            columnText.go();
+
+            document.newPage();
+            writer.getDirectContent().addTemplate(template, 0, 0);
+
+            document.close();
+        } catch (Exception conformExc) {
+            junit.framework.Assert.assertEquals("Template with tagged content could not be used more than once.", conformExc.getMessage());
+            return;
+        } finally {
+            document.close();
+        }
+        junit.framework.Assert.fail("Expected error: 'Template with tagged content could not be used more than once.");
+    }
+
     private void compareNums(String name, int[] nums) throws IOException {
         PdfReader reader = new PdfReader("./target/com/itextpdf/test/pdf/TaggedPdfTest/out"+ name +".pdf");
         PdfDictionary structTreeRoot = verifyIsDictionary(reader.getCatalog().getDirectObject(PdfName.STRUCTTREEROOT), NO_STRUCT_TREE_ROOT);
