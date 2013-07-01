@@ -303,7 +303,9 @@ public class PdfDocument extends Document {
 
     protected boolean openMCDocument = false;
 
-    protected HashMap<Object, Integer> structParentIndices = new HashMap<Object, Integer>();
+    protected HashMap<Object, int[]> structParentIndices = new HashMap<Object, int[]>();
+
+    protected HashMap<Object, Integer> markPoints = new HashMap<Object, Integer>();
 
     /**
      * Adds a <CODE>PdfWriter</CODE> to the <CODE>PdfDocument</CODE>.
@@ -1126,7 +1128,6 @@ public class PdfDocument extends Document {
             graphics = new PdfContentByte(writer);
         }
 
-    	markPoint = 0;
         setNewPageSizeAndMargins();
         imageEnd = -1;
         indentation.imageIndentRight = 0;
@@ -2301,17 +2302,6 @@ public class PdfDocument extends Document {
     }
 
 //	[F12] tagged PDF
-
-    protected int markPoint;
-
-	int getMarkPoint() {
-	    return markPoint;
-	}
-
-	void incMarkPoint() {
-	    ++markPoint;
-	}
-
 //	[U1] page sizes
 
     /** This is the size of the next page. */
@@ -2474,12 +2464,34 @@ public class PdfDocument extends Document {
 	}
 
     public int getStructParentIndex(Object obj) {
-        Integer i = structParentIndices.get(obj);
+        int[] i = structParentIndices.get(obj);
         if (i == null) {
-            i = new Integer(structParentIndices.size());
+            i = new int[]{structParentIndices.size(), 0};
             structParentIndices.put(obj, i);
         }
-        return i.intValue();
+        return i[0];
+    }
+
+    public int getNextMarkPoint(Object obj) {
+        int[] i = structParentIndices.get(obj);
+        if (i == null) {
+            i = new int[]{structParentIndices.size(), 0};
+            structParentIndices.put(obj, i);
+        }
+        int markPoint = i[1];
+        i[1]++;
+        return markPoint;
+    }
+
+    public int[] getStructParentIndexAndNextMarkPoint(Object obj) {
+        int[] i = structParentIndices.get(obj);
+        if (i == null) {
+            i = new int[]{structParentIndices.size(), 0};
+            structParentIndices.put(obj, i);
+        }
+        int markPoint = i[1];
+        i[1]++;
+        return new int[] {i[0], markPoint};
     }
 
     /** This is the image that could not be shown on a previous page. */
