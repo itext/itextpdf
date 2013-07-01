@@ -1,0 +1,18 @@
+<Document>
+
+
+
+
+
+<P color="[1, 0, 0]"><Span>Hello   world
+</Span>
+</P>
+<Span>Hello word</Span>
+<P color="[1, 0, 0]"><Span>Hello   world</Span>
+</P>
+<P color="[0, 1, 0]"><Span>Hello   world</Span>
+</P>
+<Figure>Hello   world</Figure>
+<Figure>Hello   world</Figure>
+<Figure>Hello   world</Figure>
+</Document>
