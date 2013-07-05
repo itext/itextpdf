@@ -104,6 +104,7 @@ import javax.crypto.SecretKey;
 import org.bouncycastle.asn1.ASN1InputStream;
 import org.bouncycastle.asn1.ASN1Primitive;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+import org.bouncycastle.asn1.ASN1Set;
 import org.bouncycastle.asn1.DEROctetString;
 import org.bouncycastle.asn1.DEROutputStream;
 import org.bouncycastle.asn1.DERSet;
@@ -245,7 +246,8 @@ public class PdfPublicKeySecurityHandler {
         AlgorithmIdentifier algorithmidentifier = new AlgorithmIdentifier(new ASN1ObjectIdentifier(s), derobject);
         EncryptedContentInfo encryptedcontentinfo =
             new EncryptedContentInfo(PKCSObjectIdentifiers.data, algorithmidentifier, deroctetstring);
-        EnvelopedData env = new EnvelopedData(null, derset, encryptedcontentinfo, null);
+        ASN1Set set = null;
+        EnvelopedData env = new EnvelopedData(null, derset, encryptedcontentinfo, set);
         ContentInfo contentinfo =
             new ContentInfo(PKCSObjectIdentifiers.envelopedData, env);
         return contentinfo.toASN1Primitive();
