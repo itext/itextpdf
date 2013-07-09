@@ -391,7 +391,9 @@ public class RadioCheckField extends BaseField {
         field.setAppearance(PdfAnnotation.APPEARANCE_NORMAL, "Off", tpoff);
         field.setAppearanceState(checked ? onValue : "Off");
         PdfAppearance da = (PdfAppearance)tpon.getDuplicate();
-        da.setFontAndSize(getRealFont(), fontSize);
+        BaseFont realFont = getRealFont();
+        if (realFont != null)
+            da.setFontAndSize(getRealFont(), fontSize);
         if (textColor == null)
             da.setGrayFill(0);
         else
