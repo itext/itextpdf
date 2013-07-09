@@ -808,7 +808,7 @@ public class PdfA1CheckerTest {
 
     @Test
     public void fieldCheckTest1() throws DocumentException, IOException {
-        String LANGUAGES[] = new String[] {"Russian", "English", "Dutch", "French"};
+        String LANGUAGES[] = new String[] {"Russian", "English", "Dutch", "French", "Spanish", "German"};
         Document document = new Document();
         PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream("./target/fieldCheckTest1.pdf"), PdfAConformanceLevel.PDF_A_1B);
         document.open();
@@ -831,10 +831,10 @@ public class PdfA1CheckerTest {
                     40, 806 - i * 40, 60, 788 - i * 40);
             radio = new PdfARadioCheckField(
                     writer, rect, null, LANGUAGES[i]);
-            radio.setFont(font.getBaseFont());
             radio.setBorderColor(GrayColor.GRAYBLACK);
             radio.setBackgroundColor(GrayColor.GRAYWHITE);
-            radio.setCheckType(RadioCheckField.TYPE_CIRCLE);
+            radio.setCheckType(i+1);
+            radio.setChecked(true);
             field = radio.getRadioField();
             radiogroup.addKid(field);
             ColumnText.showTextAligned(canvas, Element.ALIGN_LEFT,
@@ -867,7 +867,6 @@ public class PdfA1CheckerTest {
         PdfFormField radiofield;
         for (int page = 0; page < LANGUAGES.length; ) {
             radio = new PdfARadioCheckField(writer, rect, null, LANGUAGES[page]);
-            radio.setFont(font.getBaseFont());
             radio.setBackgroundColor(new GrayColor(0.8f));
             radiofield = radio.getRadioField();
             radiofield.setPlaceInPage(++page);
