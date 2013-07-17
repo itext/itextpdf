@@ -1,7 +1,7 @@
 package com.itextpdf.text.signature;
 
 import com.itextpdf.text.pdf.XfaXpathConstructor;
-import com.itextpdf.text.pdf.security.*;
+import com.itextpdf.text.pdf.security.DigestAlgorithms;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.Assert;
 import org.junit.Test;
@@ -15,11 +15,11 @@ import java.security.cert.Certificate;
 
 public class XmlDSigKSTest extends XmlDSigTest {
 
-    public static final String KEYSTORE = "./src/test/resources/com/itextpdf/text/signature/rsa-ks/ks/";
+    public static final String KEYSTORE = "./src/test/resources/com/itextpdf/text/signature/ds-ks/ks";
     public static final char[] PASSWORD = "password".toCharArray();
     public static final String Src = "./src/test/resources/com/itextpdf/text/signature/xfa.pdf";
-    public static final String CmpDir = "./src/test/resources/com/itextpdf/text/signature/rsa-ks/";
-    public static final String DestDir = "./target/com/itextpdf/test/signature/rsa-ks/";
+    public static final String CmpDir = "./src/test/resources/com/itextpdf/text/signature/ds-ks/";
+    public static final String DestDir = "./target/com/itextpdf/test/signature/ds-ks/";
 
 
     @Test
@@ -28,7 +28,7 @@ public class XmlDSigKSTest extends XmlDSigTest {
         (new File(DestDir)).mkdirs();
         super.initialize();
 
-        String filename = "xfa.signed.pdf";
+        String filename = "xfa.signed.ds.ks.pdf";
         String output = DestDir + filename;
 
         BouncyCastleProvider provider = new BouncyCastleProvider();
@@ -38,7 +38,7 @@ public class XmlDSigKSTest extends XmlDSigTest {
         String alias = ks.aliases().nextElement();
         PrivateKey pk = (PrivateKey) ks.getKey(alias, PASSWORD);
         Certificate[] chain = ks.getCertificateChain(alias);
-        signWithCertificate(Src, output, pk, chain, DigestAlgorithms.SHA1, provider.getName());
+        signDsWithCertificate(Src, output, pk, chain, DigestAlgorithms.SHA1, provider.getName());
 
         String cmp = saveXmlFromResult(output);
 
@@ -51,17 +51,18 @@ public class XmlDSigKSTest extends XmlDSigTest {
         (new File(DestDir)).mkdirs();
         super.initialize();
 
-        String filename = "xfa.signed.package.pdf";
+        String filename = "xfa.signed.ds.ks.package.pdf";
         String output = DestDir + filename;
 
         BouncyCastleProvider provider = new BouncyCastleProvider();
         Security.addProvider(provider);
         KeyStore ks = KeyStore.getInstance(KeyStore.getDefaultType());
         ks.load(new FileInputStream(KEYSTORE), PASSWORD);
+
         String alias = ks.aliases().nextElement();
         PrivateKey pk = (PrivateKey) ks.getKey(alias, PASSWORD);
         Certificate[] chain = ks.getCertificateChain(alias);
-        signPackageWithCertificate(Src, output, XfaXpathConstructor.XdpPackage.Template, pk, chain, DigestAlgorithms.SHA1, provider.getName());
+        signPackageDsWithCertificate(Src, output, XfaXpathConstructor.XdpPackage.Template, pk, chain, DigestAlgorithms.SHA1, provider.getName());
 
         String cmp = saveXmlFromResult(output);
 

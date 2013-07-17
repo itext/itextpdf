@@ -76,6 +76,7 @@ public class XfaXmlLocator implements XmlLocator {
 
     private PdfStamper stamper;
     private XfaForm xfaForm;
+    private String encoding;
 
     protected void createXfaForm() throws ParserConfigurationException, SAXException, IOException {
         xfaForm = new XfaForm(stamper.getReader());
@@ -113,5 +114,13 @@ public class XfaXmlLocator implements XmlLocator {
         } catch (TransformerException e) {
             throw new DocumentException(e);
         }
+    }
+
+    public String getEncoding() {
+        return encoding;
+    }
+
+    public void setEncoding(String encoding) {
+        this.encoding = encoding;
     }
 }

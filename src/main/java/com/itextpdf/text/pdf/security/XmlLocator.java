@@ -55,5 +55,7 @@ public interface XmlLocator {
 
     org.w3c.dom.Document getDocument();
 
-    void setDocument(org.w3c.dom.Document document) throws TransformerConfigurationException, IOException, DocumentException;
+    void setDocument(org.w3c.dom.Document document) throws IOException, DocumentException;
+
+    String getEncoding();
 }
