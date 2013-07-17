@@ -392,7 +392,10 @@ public class Table extends AbstractTagProcessor {
                     float computedTableHeigt = table.calculateHeights();
                     computedRowHeight = tableHeight - computedTableHeigt;
                 }*/
-				for (HtmlCell cell : row.getContent()) {
+                List<HtmlCell> rowContent = row.getContent();
+                if (rowContent.size() < 1)
+                    continue;
+                for (HtmlCell cell : rowContent) {
 					List<Element> compositeElements = cell.getCompositeElements();
 					if (compositeElements != null) {
 						for (Element baseLevel : compositeElements) {
@@ -524,6 +527,8 @@ public class Table extends AbstractTagProcessor {
 	private void widenLastCell(final List<TableRowElement> tableRows, final float horBorderSpacing) {
 		for (TableRowElement row : tableRows) {
 			List<HtmlCell> cells = row.getContent();
+            if (cells.size() < 1)
+                continue;
 			HtmlCell last = cells.get(cells.size() - 1);
 			last.getCellValues().setLastInRow(true);
 			last.setPaddingRight(last.getPaddingRight() + horBorderSpacing);
