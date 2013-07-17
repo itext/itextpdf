@@ -49,6 +49,9 @@ import com.itextpdf.text.pdf.security.XmlLocator;
 
 import java.io.IOException;
 import java.security.cert.Certificate;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.TimeZone;
 
 public class XmlSignatureAppearance {
 
@@ -65,6 +68,15 @@ public class XmlSignatureAppearance {
     private Certificate signCertificate;
     private XmlLocator xmlLocator;
     private XpathConstructor xpathConstructor;
+
+    /** Holds value of property xades:SigningTime. */
+    private Calendar signDate;
+
+    /** Holds value of property xades:Description. */
+    private String description;
+
+    /** Holds value of property xades:MimeType. */
+    private String mimeType = "text/xml";
 
     public PdfStamperImp getWriter() {
         return writer;
@@ -89,6 +101,40 @@ public class XmlSignatureAppearance {
 
     public Certificate getCertificate() {
         return signCertificate;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public String getMimeType() {
+        return mimeType;
+    }
+
+    public void setMimeType(String mimeType) {
+        this.mimeType = mimeType;
+    }
+
+    /**
+     * Gets the signature date.
+     * @return the signature date
+     */
+    public java.util.Calendar getSignDate() {
+        if (signDate == null)
+            signDate = Calendar.getInstance();
+        return signDate;
+    }
+
+    /**
+     * Sets the signature date.
+     * @param signDate the signature date
+     */
+    public void setSignDate(java.util.Calendar signDate) {
+        this.signDate = signDate;
     }
 
     /**
