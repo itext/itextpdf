@@ -51,14 +51,11 @@ import org.apache.jcp.xml.dsig.internal.dom.DOMReference;
 import org.apache.jcp.xml.dsig.internal.dom.DOMSignedInfo;
 import org.apache.jcp.xml.dsig.internal.dom.DOMXMLSignature;
 import org.apache.jcp.xml.dsig.internal.dom.DOMUtils;
-import org.apache.xml.security.c14n.Canonicalizer;
-
 import org.apache.xml.security.utils.Base64;
-import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.w3c.dom.Document;
 
 import javax.xml.crypto.XMLStructure;
 import javax.xml.crypto.dom.DOMStructure;
@@ -125,7 +122,7 @@ public class MakeXmlSignature {
     }
 
     /**
-     * Signs the xml using the enveloped mode, with optional xpath transform (see XmlSignatureAppearance).
+     * Signs the xml with XmlDSig using the enveloped mode, with optional xpath transform (see XmlSignatureAppearance).
      * @param sap the XmlSignatureAppearance
      * @param externalSignature  the interface providing the actual signing
      * @param keyInfo KeyInfo for verification
@@ -156,7 +153,7 @@ public class MakeXmlSignature {
     }
 
     /**
-     * Signs the xml using the enveloped mode, with optional xpath transform (see XmlSignatureAppearance).
+     * Signs the xml with XmlDSig using the enveloped mode, with optional xpath transform (see XmlSignatureAppearance).
      * @param sap the XmlSignatureAppearance
      * @param externalSignature  the interface providing the actual signing
      * @param chain the certificate chain
@@ -170,7 +167,7 @@ public class MakeXmlSignature {
     }
 
     /**
-     * Signs the xml using the enveloped mode, with optional xpath transform (see XmlSignatureAppearance).
+     * Signs the xml with XmlDSig using the enveloped mode, with optional xpath transform (see XmlSignatureAppearance).
      * @param sap the XmlSignatureAppearance
      * @param externalSignature  the interface providing the actual signing
      * @param publicKey PublicKey for verification
@@ -183,6 +180,15 @@ public class MakeXmlSignature {
         signXmlDSig(sap, externalSignature, generateKeyInfo(publicKey, null));
     }
 
+    /**
+     * Signs the xml with XAdES BES using the enveloped mode, with optional xpath transform (see XmlSignatureAppearance).
+     * @param sap the XmlSignatureAppearance
+     * @param externalSignature  the interface providing the actual signing
+     * @param chain the certificate chain
+     * @throws GeneralSecurityException
+     * @throws IOException
+     * @throws DocumentException
+     */
     public static void signXadesBes(XmlSignatureAppearance sap, ExternalSignature externalSignature, Certificate[] chain)
             throws GeneralSecurityException, DocumentException, IOException {
 
@@ -197,7 +203,7 @@ public class MakeXmlSignature {
         List<Element> signedProperty = new ArrayList<Element>(1);
         XMLObject xmlObject = generateXadesBesObject(fac, sap, signatureId, contentReferenceId, signedPropertiesId, signedProperty);
         Reference contentReference = generateContentReference(fac, sap, contentReferenceId);
-        Reference signedPropertiesReference = generateSignedPropertiesReference(fac, signedProperty.get(0), signedPropertiesId);
+        Reference signedPropertiesReference = generateCustomReference(fac, "#"+signedPropertiesId, SecurityConstants.SignedProperties_Type, null);
 
         List<Reference> references = Arrays.asList(signedPropertiesReference, contentReference);
 
@@ -277,6 +283,7 @@ public class MakeXmlSignature {
         QualifyingProperties.setAttribute("Target", "#"+signatureId);
             Element SignedProperties = doc.createElement(SecurityConstants.XADES_SignedProperties);
             SignedProperties.setAttribute("Id", signedPropertiesId);
+            SignedProperties.setIdAttribute("Id", true);
                 Element SignedSignatureProperties = doc.createElement(SecurityConstants.XADES_SignedSignatureProperties);
                     Element SigningTime = doc.createElement(SecurityConstants.XADES_SigningTime);
                         SimpleDateFormat sdf = new SimpleDateFormat(SecurityConstants.SigningTimeFormat);
@@ -358,34 +365,9 @@ public class MakeXmlSignature {
         return  fac.newReference("", digestMethodSHA1, transforms, null, referenceId);
     }
 
-    private static Reference generateSignedPropertiesReference(XMLSignatureFactory fac, Element signedProperties, String signedPropertiesId) throws GeneralSecurityException {
-
-        String uri = "#" + signedPropertiesId;
-        String type = SecurityConstants.SignedProperties_URI;
-        MessageDigest md = MessageDigest.getInstance(SecurityConstants.SHA1);
-        Element elementNormalized = (Element)signedProperties.cloneNode(true);
-
-        NamedNodeMap attrs = signedProperties.getOwnerDocument().getDocumentElement().getAttributes();
-        for(int i = 0; i < attrs.getLength(); i++) {
-            Node node = attrs.item(i);
-            if (SecurityConstants.XMLNS_URI.equals(node.getNamespaceURI()))
-                elementNormalized.setAttributeNS(SecurityConstants.XMLNS_URI, node.getNodeName(), node.getNodeValue());
-        }
-
-        elementNormalized.setAttributeNS(SecurityConstants.XMLNS_URI, SecurityConstants.XMLNS, SecurityConstants.XMLDSIG_URI);
-        elementNormalized.setAttributeNS(SecurityConstants.XMLNS_URI, SecurityConstants.XMLNS_XADES, SecurityConstants.XADES_132_URI);
-
-
-        byte[] c14nOutputBytes;
-        try {
-            c14nOutputBytes = Canonicalizer.getInstance(Canonicalizer.ALGO_ID_C14N_OMIT_COMMENTS)
-                    .canonicalizeSubtree(elementNormalized);
-        } catch (Exception e) {
-            throw  new GeneralSecurityException(e);
-        }
-
+    private static Reference generateCustomReference(XMLSignatureFactory fac, String uri, String type, String id) throws GeneralSecurityException {
         DigestMethod dsDigestMethod = fac.newDigestMethod(DigestMethod.SHA1, null);
-        return  fac.newReference(uri, dsDigestMethod, null, type, null, md.digest(c14nOutputBytes));
+        return  fac.newReference(uri, dsDigestMethod, null, type, id);
     }
 
     private static void sign(XMLSignatureFactory fac, ExternalSignature externalSignature, XmlLocator locator,
@@ -400,7 +382,6 @@ public class MakeXmlSignature {
             objects = Collections.singletonList(xo);
         DOMXMLSignature signature = (DOMXMLSignature)fac.newXMLSignature(si, ki, objects, signatureId, null);
 
-
         ByteArrayOutputStream byteRange = new ByteArrayOutputStream();
         try {
             signature.marshal(domSignContext.getParent(), domSignContext.getNextSibling(),
@@ -410,10 +391,8 @@ public class MakeXmlSignature {
                 signElement.setAttributeNS(SecurityConstants.XMLNS_URI, SecurityConstants.XMLNS_XADES, SecurityConstants.XADES_132_URI);
 
             List references = si.getReferences();
-            for (int i = 0; i < references.size(); i++) {
-                if (((DOMReference) references.get(i)).getDigestValue() == null)
+            for (int i = 0; i < references.size(); i++)
                     ((DOMReference)references.get(i)).digest(domSignContext);
-            }
             si.canonicalize(domSignContext, byteRange);
 
             Element signValue = findElement(signElement.getChildNodes(), SecurityConstants.SignatureValue);
