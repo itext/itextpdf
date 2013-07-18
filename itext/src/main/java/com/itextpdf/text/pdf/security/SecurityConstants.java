@@ -54,7 +54,7 @@ public class SecurityConstants {
     public static final String XADES_132_URI = "http://uri.etsi.org/01903/v1.3.2#";
 
     public static final String SHA1_URI = "http://www.w3.org/2000/09/xmldsig#sha1";
-    public static final String SignedProperties_URI = "http://uri.etsi.org/01903#SignedProperties";
+    public static final String SignedProperties_Type = "http://uri.etsi.org/01903#SignedProperties";
 
     public static final String DSA = "DSA";
     public static final String RSA = "RSA";

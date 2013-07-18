@@ -41,7 +41,7 @@ public class XmlDSigKSTest extends XmlDSigTest {
         signDsWithCertificate(Src, output, pk, chain, DigestAlgorithms.SHA1, provider.getName());
 
         String cmp = saveXmlFromResult(output);
-
+        Assert.assertTrue("Verification", verifyXmlDSig(cmp));
         Assert.assertTrue(compareXmls(cmp, CmpDir + filename.replace(".pdf", ".xml")));
     }
 
@@ -65,7 +65,7 @@ public class XmlDSigKSTest extends XmlDSigTest {
         signPackageDsWithCertificate(Src, output, XfaXpathConstructor.XdpPackage.Template, pk, chain, DigestAlgorithms.SHA1, provider.getName());
 
         String cmp = saveXmlFromResult(output);
-
+        Assert.assertTrue("Verification", verifyXmlDSig(cmp));
         Assert.assertTrue(compareXmls(cmp, CmpDir + filename.replace(".pdf", ".xml")));
     }
 

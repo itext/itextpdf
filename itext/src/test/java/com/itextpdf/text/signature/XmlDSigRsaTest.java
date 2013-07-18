@@ -68,6 +68,7 @@ public class XmlDSigRsaTest extends XmlDSigTest {
 
         String cmp = saveXmlFromResult(output);
 
+        Assert.assertTrue("Verification", verifyXmlDSig(cmp));
         Assert.assertTrue(compareXmls(cmp, CmpDir + filename.replace(".pdf", ".xml")));
     }
 
@@ -81,6 +82,7 @@ public class XmlDSigRsaTest extends XmlDSigTest {
                 DigestAlgorithms.SHA1, provider.getName());
 
         String cmp = saveXmlFromResult(output);
+        Assert.assertTrue("Verification", verifyXmlDSig(cmp));
         Assert.assertTrue(compareXmls(cmp, CmpDir + filename.replace(".pdf", ".xml")));
     }
 
@@ -92,6 +94,7 @@ public class XmlDSigRsaTest extends XmlDSigTest {
         signPackageDsWithPublicKey(Src, output, XfaXpathConstructor.XdpPackage.Template, keyPair.getPrivate(), keyPair.getPublic(), DigestAlgorithms.SHA1, provider.getName());
 
         String cmp = saveXmlFromResult(output);
+        Assert.assertTrue("Verification", verifyXmlDSig(cmp));
         Assert.assertTrue(compareXmls(cmp, CmpDir + filename.replace(".pdf", ".xml")));
     }
 
@@ -104,6 +107,7 @@ public class XmlDSigRsaTest extends XmlDSigTest {
         signPackageDsWithKeyInfo(Src, output, XfaXpathConstructor.XdpPackage.Template, keyPair.getPrivate(), keyPair.getPublic(), DigestAlgorithms.SHA1, provider.getName());
 
         String cmp = saveXmlFromResult(output);
+        Assert.assertTrue("Verification", verifyXmlDSig(cmp));
         Assert.assertTrue(compareXmls(cmp, CmpDir + filename.replace(".pdf", ".xml")));
     }
 }
