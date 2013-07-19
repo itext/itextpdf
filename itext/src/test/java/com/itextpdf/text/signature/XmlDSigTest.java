@@ -40,7 +40,7 @@ import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.Collections;
 
-public class XmlDSigTest {
+public abstract class XmlDSigTest {
 
 
     protected BouncyCastleProvider provider;
