@@ -46,8 +46,10 @@ package com.itextpdf.text.pdf.events;
 import java.util.ArrayList;
 
 import com.itextpdf.text.pdf.PdfContentByte;
+import com.itextpdf.text.pdf.PdfPRow;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfPTableEvent;
+import com.itextpdf.text.pdf.PdfPTableEventAfterSplit;
 import com.itextpdf.text.pdf.PdfPTableEventSplit;
 
 /**
@@ -57,7 +59,7 @@ import com.itextpdf.text.pdf.PdfPTableEventSplit;
  * the PdfWriter.
  */
 
-public class PdfPTableEventForwarder implements PdfPTableEventSplit {
+public class PdfPTableEventForwarder implements PdfPTableEventAfterSplit {
 
 	/** ArrayList containing all the PageEvents that have to be executed. */
 	protected ArrayList<PdfPTableEvent> events = new ArrayList<PdfPTableEvent>();
@@ -88,5 +90,16 @@ public class PdfPTableEventForwarder implements PdfPTableEventSplit {
 			if (event instanceof PdfPTableEventSplit)
                 ((PdfPTableEventSplit)event).splitTable(table);
 		}
+    }
+    
+    /**
+     * @see com.itextpdf.text.pdf.PdfPTableEventAfterSplit#afterSplitTable(com.itextpdf.text.pdf.PdfPTable, com.itextpdf.text.pdf.PdfPRow, int)
+     * @since iText 5.4.3
+     */
+    public void afterSplitTable(PdfPTable table, PdfPRow startRow, int startIdx) {
+        for (PdfPTableEvent event : events) {
+            if (event instanceof PdfPTableEventAfterSplit)
+                ((PdfPTableEventAfterSplit) event).afterSplitTable(table, startRow, startIdx);
+        }
     }
 }

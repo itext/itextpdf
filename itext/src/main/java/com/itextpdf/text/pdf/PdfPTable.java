@@ -43,18 +43,26 @@
  */
 package com.itextpdf.text.pdf;
 
-import com.itextpdf.text.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Element;
+import com.itextpdf.text.ElementListener;
+import com.itextpdf.text.Image;
+import com.itextpdf.text.LargeElement;
+import com.itextpdf.text.Phrase;
+import com.itextpdf.text.Rectangle;
+import com.itextpdf.text.Chunk;
 import com.itextpdf.text.api.Spaceable;
 import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.log.Logger;
 import com.itextpdf.text.log.LoggerFactory;
 import com.itextpdf.text.pdf.events.PdfPTableEventForwarder;
 import com.itextpdf.text.pdf.interfaces.IAccessibleElement;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
 
 /**
  * This is a table that can be put at an absolute position but can also
@@ -1857,5 +1865,151 @@ public class PdfPTable implements LargeElement, Spaceable, IAccessibleElement {
             footer = new PdfPTableFooter();
         return footer;
     }
+    
+    // Contributed by Deutsche Bahn Systel GmbH (Thorsten Seitz), splitting row spans
+    /**
+     * Gets row index where cell overlapping (rowIdx, colIdx) starts
+     * @param rowIdx
+     * @param colIdx
+     * @return row index
+     * @since iText 5.4.3
+     */
+    public int getCellStartRowIndex(int rowIdx, int colIdx) {
+        int lastRow = rowIdx;
+        while (getRow(lastRow).getCells()[colIdx] == null && lastRow > 0) {
+            --lastRow;
+        }
+        return lastRow;
+    }
 
+    // Contributed by Deutsche Bahn Systel GmbH (Thorsten Seitz), splitting row spans
+    /**
+     * 
+     * @since iText 5.4.3
+     */
+    public static class FittingRows {
+
+        public final int firstRow, lastRow;
+
+        public final float height, completedRowsHeight;
+
+        private final Map<Integer, Float> correctedHeightsForLastRow;
+
+        public FittingRows(int firstRow, int lastRow, float height, float completedRowsHeight,
+                Map<Integer, Float> correctedHeightsForLastRow) {
+            this.firstRow = firstRow;
+            this.lastRow = lastRow;
+            this.height = height;
+            this.completedRowsHeight = completedRowsHeight;
+            this.correctedHeightsForLastRow = correctedHeightsForLastRow;
+        }
+
+        /**
+         *  Correct chosen last fitting row so that the content of all cells with open rowspans will fit on the page,
+         *  i.e. the cell content won't be split.
+         * (Only to be used with splitLate == true)
+         */
+        public void correctLastRowChosen(PdfPTable table, int k) {
+            PdfPRow row = table.getRow(k);
+            Float value = correctedHeightsForLastRow.get(k);
+            if (value != null) {
+                row.setFinalMaxHeights(value);
+                //System.out.printf("corrected chosen last fitting row: %6.0f\n\n", row.getMaxHeights());
+            }
+        }
+    }
+
+    // Contributed by Deutsche Bahn Systel GmbH (Thorsten Seitz), splitting row spans
+    /**
+     * 
+     * @since iText 5.4.3
+     */
+    public static class ColumnMeasurementState {
+        public float height = 0;
+
+        public int rowspan = 1, colspan = 1;
+
+        public void beginCell(PdfPCell cell, float completedRowsHeight, float rowHeight) {
+            rowspan = cell.getRowspan();
+            colspan = cell.getColspan();
+            height = completedRowsHeight + Math.max(cell.getMaxHeight(), rowHeight);
+        }
+
+        public void consumeRowspan(float completedRowsHeight, float rowHeight) {
+        	--rowspan;
+        }
+
+        public boolean cellEnds() {
+            return rowspan == 1;
+        }
+    }
+
+    // Contributed by Deutsche Bahn Systel GmbH (Thorsten Seitz), splitting row spans
+    /**
+     * Determine which rows fit on the page, respecting isSplitLate().
+     * Note: sets max heights of the inspected rows as a side effect,
+     * just like PdfPTable.getRowHeight(int, boolean) does.
+     * Respect row.getMaxHeights() if it has been previously set (which might be independent of the height of
+     * individual cells).
+     * The last row written on the page will be chosen by the caller who might choose not
+     * the calculated one but an earlier one (due to mayNotBreak settings on the rows).
+     * The height of the chosen last row has to be corrected if splitLate == true
+     * by calling FittingRows.correctLastRowChosen() by the caller to avoid splitting the content of
+     * cells with open rowspans.
+     * 
+     * @since iText 5.4.3
+     */
+    public FittingRows getFittingRows(float availableHeight, int startIdx) {
+        assert (getRow(startIdx).getCells()[0] != null); // top left cell of current page may not be null
+        int cols = getNumberOfColumns();
+        ColumnMeasurementState states[] = new ColumnMeasurementState[cols];
+        for (int i = 0; i < cols; ++i) {
+            states[i] = new ColumnMeasurementState();
+        }
+        float completedRowsHeight = 0; // total height of all rows up to k only counting completed cells (with no open
+                                       // rowspans)
+        float totalHeight = 0; // total height needed to display all rows up to k, respecting rowspans
+        Map<Integer, Float> correctedHeightsForLastRow = new HashMap<Integer, Float>();
+        int k;
+        for (k = startIdx; k < size(); ++k) {
+            PdfPRow row = getRow(k);
+            float rowHeight = row.getMaxRowHeightsWithoutCalculating();
+            float maxCompletedRowsHeight = 0;
+            int i = 0;
+            while (i < cols) {
+                PdfPCell cell = row.getCells()[i];
+                ColumnMeasurementState state = states[i];
+                if (cell == null) {
+                    state.consumeRowspan(completedRowsHeight, rowHeight);
+                } else {
+                    state.beginCell(cell, completedRowsHeight, rowHeight);
+                }
+                if (state.cellEnds() && state.height > maxCompletedRowsHeight) {
+                    maxCompletedRowsHeight = state.height;
+                }
+                for (int j = 1; j < state.colspan; ++j) {
+                    states[i + j].height = state.height;
+                }
+                i += state.colspan;
+                //System.out.printf("%6.0f", state.height);
+            }
+            float maxTotalHeight = 0;
+            for (ColumnMeasurementState state : states) {
+                if (state.height > maxTotalHeight) {
+                    maxTotalHeight = state.height;
+                }
+            }
+            row.setFinalMaxHeights(maxCompletedRowsHeight - completedRowsHeight);
+            //System.out.printf(" | %6.0f | %6.0f %6.0f | row: %6.0f\n", rowHeight, maxCompletedRowsHeight, maxTotalHeight, row.getMaxHeights());
+            float remainingHeight = availableHeight - (isSplitLate() ? maxTotalHeight : maxCompletedRowsHeight);
+            if (remainingHeight < 0) {
+                break;
+            }
+            correctedHeightsForLastRow.put(k, maxTotalHeight - completedRowsHeight);
+            completedRowsHeight = maxCompletedRowsHeight;
+            totalHeight = maxTotalHeight;
+        }
+
+        return new FittingRows(startIdx, k - 1, totalHeight, completedRowsHeight, correctedHeightsForLastRow);
+    }
 }
