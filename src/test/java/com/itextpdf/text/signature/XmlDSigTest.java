@@ -40,6 +40,10 @@ import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.Collections;
 
+/**
+ * This class is abstract to prevent old Surefire versions from
+ * running it as a test and failing because it contains no tests.
+ */
 public abstract class XmlDSigTest {
 
 
