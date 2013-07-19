@@ -59,6 +59,9 @@ import com.itextpdf.text.pdf.PdfReader;
 
 /**
  * @author kevin
+ * 
+ * This class is abstract to prevent old Surefire versions from
+ * running it as a test and failing because it contains no tests.
  */
 public abstract class TestResourceUtils {
 
