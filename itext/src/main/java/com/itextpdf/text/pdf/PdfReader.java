@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2012 1T3XT BVBA
+ * Copyright (c) 1998-2013 1T3XT BVBA
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -208,22 +208,28 @@ public class PdfReader implements PdfViewerPreferences {
      * @throws IOException on error
      */
     public PdfReader(final String filename, final byte ownerPassword[]) throws IOException {
-    	
+        this(filename, ownerPassword, false);   	
+    }
+
+
+    /** Reads and parses a PDF document.
+     * @param filename the file name of the document
+     * @param ownerPassword the password to read the document
+     * @throws IOException on error
+     */
+    public PdfReader(final String filename, final byte ownerPassword[], boolean partial) throws IOException {
         this(
         		new RandomAccessSourceFactory()
     			.setForceRead(false)
     			.setUsePlainRandomAccess(Document.plainRandomAccess)
     			.createBestSource(filename),
-    			
-    			false,
+    			partial,
     			ownerPassword,
     			null,
     			null,
     			null,
-    			true
-        		
-        );   	
-    	
+    			true	
+        );
     }
 
     /** Reads and parses a PDF document.
@@ -350,11 +356,11 @@ public class PdfReader implements PdfViewerPreferences {
      * @param raf the document location
      * @param ownerPassword the password or <CODE>null</CODE> for no password
      * @throws IOException on error
+     * @deprecated Use the constructor that takes a RandomAccessSource
      */
     public PdfReader(final RandomAccessFileOrArray raf, final byte ownerPassword[]) throws IOException {
         this(
         		raf.getByteSource(),
-    			
     			true,
     			ownerPassword,
     			null,

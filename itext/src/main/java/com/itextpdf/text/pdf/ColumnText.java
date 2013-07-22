@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2012 1T3XT BVBA
+ * Copyright (c) 1998-2013 1T3XT BVBA
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -52,6 +52,7 @@ import com.itextpdf.text.*;
 import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.log.Logger;
 import com.itextpdf.text.log.LoggerFactory;
+import com.itextpdf.text.pdf.PdfPTable.FittingRows;
 import com.itextpdf.text.pdf.draw.DrawInterface;
 import com.itextpdf.text.pdf.interfaces.IAccessibleElement;
 import com.itextpdf.text.pdf.languages.ArabicLigaturizer;
@@ -1598,12 +1599,11 @@ public class ColumnText {
                 if (!table.isComplete())
                 	yTemp -= footerHeight;
                 // k will be the first row that doesn't fit
-                for (k = rowIdx; k < table.size(); ++k) {
-                    float rowHeight = table.getRowHeight(k);
-                    if (yTemp - rowHeight <= minY)
-                        break;
-                    yTemp -= rowHeight;
-                }
+                // Contributed by Deutsche Bahn Systel GmbH (Thorsten Seitz), splitting row spans
+                FittingRows fittingRows = table.getFittingRows(yTemp - minY, rowIdx);
+                k = fittingRows.lastRow + 1;
+                yTemp -= fittingRows.height;
+                // splitting row spans
 
                 LOGGER.info("Want to split at row " + k);
                 int kTemp = k;
@@ -1616,6 +1616,13 @@ public class ColumnText {
                 	table.setLoopCheck(false);
                 }
                 LOGGER.info("Will split at row " + k);
+
+                // Contributed by Deutsche Bahn Systel GmbH (Thorsten Seitz), splitting row spans
+                if (table.isSplitLate() && k > 0) {
+                    fittingRows.correctLastRowChosen(table, k - 1);
+                }
+                // splitting row spans
+
                 // only for incomplete tables:
                 if (!table.isComplete())
                 	yTemp += footerHeight;
@@ -1637,12 +1644,19 @@ public class ColumnText {
                 	}
                 }
                 // IF ROWS SHOULD NOT BE SPLIT
-                else if (table.isSplitLate() && !table.hasRowspan(k) && rowIdx < k) {
+                // Contributed by Deutsche Bahn Systel GmbH (Thorsten Seitz), splitting row spans
+                //else if (table.isSplitLate() && !table.hasRowspan(k) && rowIdx < k) {
+                else if (table.isSplitLate() && rowIdx < k) {
                 	splittedRow = -1;
                 }
                 // SPLIT ROWS (IF WANTED AND NECESSARY)
                 else if (k < table.size()) {
                 	// we calculate the remaining vertical space
+                    // Contributed by Deutsche Bahn Systel GmbH (Thorsten Seitz), splitting row spans
+                    // correct yTemp to only take completed rows into account
+                    yTemp -= fittingRows.completedRowsHeight - fittingRows.height;
+                    // splitting row spans
+
                     float h = yTemp - minY;
                     // we create a new row with the remaining content
                     PdfPRow newRow = table.getRow(k).splitRow(table, k, h);
@@ -1769,9 +1783,28 @@ public class ColumnText {
                        	PdfPRow splitted = table.getRows().get(k);
                     	splitted.copyRowContent(nt, lastIdx);
                     }
+                    // Contributed by Deutsche Bahn Systel GmbH (Thorsten Seitz), splitting row spans
+                    else if (k > 0 && k < table.size()) {
+                        // continue rowspans on next page
+                        // (as the row was not split there is no content to copy)
+                        PdfPRow row = table.getRow(k);
+                        row.splitRowspans(table, k - 1, nt, lastIdx);
+                    }
+                    // splitting row spans
+
                     // reset the row height of the last row
                     if (table.isExtendLastRow(newPageFollows)) {
                         last.setMaxHeights(rowHeight);
+                    }
+
+                    // Contributed by Deutsche Bahn Systel GmbH (Thorsten Seitz)
+                    // newPageFollows indicates that this table is being split
+                    if (newPageFollows) {
+                        PdfPTableEvent tableEvent = table.getTableEvent();
+                        if (tableEvent instanceof PdfPTableEventAfterSplit) {
+                            PdfPRow row = table.getRow(k);
+                            ((PdfPTableEventAfterSplit)tableEvent).afterSplitTable(table, row, k);
+                        }
                     }
                 }
                 // in simulation mode, we need to take extendLastRow into account

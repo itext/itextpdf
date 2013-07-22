@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2012 1T3XT BVBA
+ * Copyright (c) 1998-2013 1T3XT BVBA
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -58,4 +58,22 @@ public class PdfIsoKeys {
     public static final int PDFISOKEY_GSTATE = 6;
     /** A key for an aspect that can be checked for PDF ISO Conformance. */
     public static final int PDFISOKEY_LAYER = 7;
+    /** A key for an aspect that can be checked for PDF ISO Conformance. */
+    public static final int PDFISOKEY_TRAILER = 8;
+    /** A key for an aspect that can be checked for PDF ISO Conformance. */
+    public static final int PDFISOKEY_STREAM = 9;
+    /** A key for an aspect that can be checked for PDF ISO Conformance. */
+    public static final int PDFISOKEY_FILESPEC = 10;
+    /** A key for an aspect that can be checked for PDF ISO Conformance. */
+    public static final int PDFISOKEY_OBJECT = 11;
+    /** A key for an aspect that can be checked for PDF ISO Conformance. */
+    public static final int PDFISOKEY_CANVAS = 12;
+    /** A key for an aspect that can be checked for PDF ISO Conformance. */
+    public static final int PDFISOKEY_ANNOTATION = 13;
+    /** A key for an aspect that can be checked for PDF ISO Conformance. */
+    public static final int PDFISOKEY_ACTION = 14;
+    /** A key for an aspect that can be checked for PDF ISO Conformance. */
+    public static final int PDFISOKEY_FORM = 15;
+    /** A key for an aspect that can be checked for PDF ISO Conformance. */
+    public static final int PDFISOKEY_STRUCTELEM = 16;
 }

@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2012 1T3XT BVBA
+ * Copyright (c) 1998-2013 1T3XT BVBA
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -45,6 +45,7 @@ package com.itextpdf.text.pdf.security;
 
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Rectangle;
+import com.itextpdf.text.pdf.PdfDeveloperExtension;
 import com.itextpdf.text.pdf.PdfDictionary;
 import com.itextpdf.text.pdf.PdfName;
 import com.itextpdf.text.pdf.PdfSignature;
@@ -74,6 +75,7 @@ public class LtvTimestamp {
      */
     public static void timestamp(PdfSignatureAppearance sap, TSAClient tsa, String signatureName) throws IOException, DocumentException, GeneralSecurityException {
         int contentEstimated = tsa.getTokenSizeEstimate();
+        sap.addDeveloperExtension(PdfDeveloperExtension.ESIC_1_7_EXTENSIONLEVEL5);
         sap.setVisibleSignature(new Rectangle(0,0,0,0), 1, signatureName);
 
         PdfSignature dic = new PdfSignature(PdfName.ADOBE_PPKLITE, PdfName.ETSI_RFC3161);

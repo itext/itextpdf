@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2012 1T3XT BVBA
+ * Copyright (c) 1998-2013 1T3XT BVBA
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -171,6 +171,7 @@ class PdfStamperImp extends PdfWriter {
         	flatFreeTextFields();
         addFieldResources();
         PdfDictionary catalog = reader.getCatalog();
+        getPdfVersion().addToCatalog(catalog);
         PdfDictionary acroForm = (PdfDictionary)PdfReader.getPdfObject(catalog.get(PdfName.ACROFORM), reader.getCatalog());
         if (acroFields != null && acroFields.getXfa().isChanged()) {
             markUsed(acroForm);
@@ -735,15 +736,7 @@ class PdfStamperImp extends PdfWriter {
         Rectangle media = new Rectangle(mediabox);
         int rotation = media.getRotation() % 360;
         PdfDictionary page = new PdfDictionary(PdfName.PAGE);
-        PdfDictionary resources = new PdfDictionary();
-        PdfArray procset = new PdfArray();
-        procset.add(PdfName.PDF);
-        procset.add(PdfName.TEXT);
-        procset.add(PdfName.IMAGEB);
-        procset.add(PdfName.IMAGEC);
-        procset.add(PdfName.IMAGEI);
-        resources.put(PdfName.PROCSET, procset);
-        page.put(PdfName.RESOURCES, resources);
+        page.put(PdfName.RESOURCES, new PdfDictionary());
         page.put(PdfName.ROTATE, new PdfNumber(rotation));
         page.put(PdfName.MEDIABOX, new PdfRectangle(media, rotation));
         PRIndirectReference pref = reader.addPdfObject(page);

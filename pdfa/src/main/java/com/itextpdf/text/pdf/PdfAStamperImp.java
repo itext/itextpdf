@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2012 1T3XT BVBA
+ * Copyright (c) 1998-2013 1T3XT BVBA
  * Authors: Alexander Chingarev, Bruno Lowagie, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -52,6 +52,10 @@ import com.itextpdf.text.pdf.interfaces.PdfIsoConformance;
 import com.itextpdf.text.pdf.internal.PdfAConformanceImp;
 import com.itextpdf.text.xml.xmp.PdfAXmpWriter;
 import com.itextpdf.text.xml.xmp.XmpWriter;
+import com.itextpdf.xmp.XMPConst;
+import com.itextpdf.xmp.XMPMeta;
+import com.itextpdf.xmp.impl.XMPMetaParser;
+import com.itextpdf.xmp.properties.XMPProperty;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -63,11 +67,14 @@ import java.io.OutputStream;
  */
 public class PdfAStamperImp extends PdfStamperImp {
 
+    protected Counter COUNTER = CounterFactory.getCounter(PdfAStamper.class);
+
     /**
      * Creates new PdfStamperImp.
-     * @param reader reads the PDF
-     * @param os the output destination
-     * @param pdfVersion the new pdf version or '\0' to keep the same version as the original document
+     *
+     * @param reader           reads the PDF
+     * @param os               the output destination
+     * @param pdfVersion       the new pdf version or '\0' to keep the same version as the original document
      * @param append
      * @param conformanceLevel PDF/A conformance level of a new PDF document
      * @throws DocumentException on error
@@ -75,8 +82,9 @@ public class PdfAStamperImp extends PdfStamperImp {
      */
     PdfAStamperImp(PdfReader reader, OutputStream os, char pdfVersion, boolean append, PdfAConformanceLevel conformanceLevel) throws DocumentException, IOException {
         super(reader, os, pdfVersion, append);
-        ((PdfAConformance)pdfIsoConformance).setConformanceLevel(conformanceLevel);
+        ((PdfAConformance) pdfIsoConformance).setConformanceLevel(conformanceLevel);
         PdfAWriter.setPdfVersion(this, conformanceLevel);
+        readPdfAInfo();
     }
 
     /**
@@ -102,6 +110,7 @@ public class PdfAStamperImp extends PdfStamperImp {
 
     /**
      * Always throws an exception since PDF/X conformance level cannot be set for PDF/A conformant documents.
+     *
      * @param pdfx
      */
     public void setPDFXConformance(final int pdfx) {
@@ -121,9 +130,7 @@ public class PdfAStamperImp extends PdfStamperImp {
      * @see PdfStamperImp#getXmpWriter(java.io.ByteArrayOutputStream, com.itextpdf.text.pdf.PdfDictionary)
      */
     protected XmpWriter getXmpWriter(ByteArrayOutputStream baos, PdfDictionary info) throws IOException {
-        if (xmpWriter == null)
-            xmpWriter = new PdfAXmpWriter(baos, info, ((PdfAConformance)pdfIsoConformance).getConformanceLevel());
-        return xmpWriter;
+        return new PdfAXmpWriter(baos, info, ((PdfAConformance) pdfIsoConformance).getConformanceLevel());
     }
 
     /**
@@ -133,8 +140,48 @@ public class PdfAStamperImp extends PdfStamperImp {
         return new PdfAConformanceImp(this);
     }
 
-	protected Counter COUNTER = CounterFactory.getCounter(PdfAStamper.class);
-	protected Counter getCounter() {
-		return COUNTER;
-	}
+    protected Counter getCounter() {
+        return COUNTER;
+    }
+
+    private void readPdfAInfo() {
+        byte[] metadata = null;
+        XMPMeta xmpMeta = null;
+        XMPProperty pdfaidConformance = null;
+        XMPProperty pdfaidPart = null;
+        try {
+            metadata = reader.getMetadata();
+            xmpMeta = XMPMetaParser.parse(metadata, null);
+            pdfaidConformance = xmpMeta.getProperty(XMPConst.NS_PDFA_ID, "pdfaid:conformance");
+            pdfaidPart = xmpMeta.getProperty(XMPConst.NS_PDFA_ID, "pdfaid:part");
+        } catch (Throwable e) {
+            throw new PdfAConformanceException(MessageLocalization.getComposedMessage("only.pdfa.documents.can.be.opened.in.PdfAStamper"));
+        }
+        if (pdfaidConformance == null || pdfaidPart == null) {
+            throw new PdfAConformanceException(MessageLocalization.getComposedMessage("only.pdfa.documents.can.be.opened.in.PdfAStamper"));
+        }
+        switch (((PdfAConformance) pdfIsoConformance).getConformanceLevel()) {
+            case PDF_A_1A:
+            case PDF_A_1B:
+                if (!"1".equals(pdfaidPart.getValue())) {
+                    throw new PdfAConformanceException(MessageLocalization.getComposedMessage("only.pdfa.1.documents.can.be.opened.in.PdfAStamper", "1"));
+                }
+                break;
+            case PDF_A_2A:
+            case PDF_A_2B:
+            case PDF_A_2U:
+                if (!"2".equals(pdfaidPart.getValue())) {
+                    throw new PdfAConformanceException(MessageLocalization.getComposedMessage("only.pdfa.1.documents.can.be.opened.in.PdfAStamper", "2"));
+                }
+                break;
+            case PDF_A_3A:
+            case PDF_A_3B:
+            case PDF_A_3U:
+                if (!"3".equals(pdfaidPart.getValue())) {
+                    throw new PdfAConformanceException(MessageLocalization.getComposedMessage("only.pdfa.1.documents.can.be.opened.in.PdfAStamper", "3"));
+                }
+                break;
+        }
+
+    }
 }

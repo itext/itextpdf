@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2012 1T3XT BVBA
+ * Copyright (c) 1998-2013 1T3XT BVBA
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -1083,6 +1083,22 @@ public class Chunk implements Element, IAccessibleElement {
 
     public void setId(final UUID id) {
         this.id = id;
+    }
+
+    public String getTextExpansion() {
+        PdfObject o = getAccessibleAttribute(PdfName.E);
+        if (o instanceof PdfString)
+            return ((PdfString)o).toUnicodeString();
+        return null;
+    }
+
+    /**
+     * Sets the textual expansion of the abbreviation or acronym.
+     * It is highly recommend to set textuual expansion when generating PDF/UA documents.
+     * @param value
+     */
+    public void setTextExpansion(String value) {
+        setAccessibleAttribute(PdfName.E, new PdfString(value));
     }
 
 }

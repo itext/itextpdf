@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2012 1T3XT BVBA
+ * Copyright (c) 1998-2013 1T3XT BVBA
  * Authors: Pavel Alay, Bruno Lowagie, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -55,5 +55,7 @@ public interface XmlLocator {
 
     org.w3c.dom.Document getDocument();
 
-    void setDocument(org.w3c.dom.Document document) throws TransformerConfigurationException, IOException, DocumentException;
+    void setDocument(org.w3c.dom.Document document) throws IOException, DocumentException;
+
+    String getEncoding();
 }

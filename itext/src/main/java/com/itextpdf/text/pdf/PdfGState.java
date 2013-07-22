@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2012 1T3XT BVBA
+ * Copyright (c) 1998-2013 1T3XT BVBA
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -42,6 +42,11 @@
  * address: sales@itextpdf.com
  */
 package com.itextpdf.text.pdf;
+
+import com.itextpdf.text.pdf.internal.PdfIsoKeys;
+
+import java.io.IOException;
+import java.io.OutputStream;
 
 /** The graphic state dictionary.
  *
@@ -154,5 +159,11 @@ public class PdfGState extends PdfDictionary {
      */
     public void setRenderingIntent(PdfName ri) {
     	put(PdfName.RI, ri);
+    }
+
+    @Override
+    public void toPdf(final PdfWriter writer, final OutputStream os) throws IOException {
+        PdfWriter.checkPdfIsoConformance(writer, PdfIsoKeys.PDFISOKEY_GSTATE, this);
+        super.toPdf(writer, os);
     }
 }

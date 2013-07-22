@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2012 1T3XT BVBA
+ * Copyright (c) 1998-2013 1T3XT BVBA
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -42,6 +42,8 @@
  * address: sales@itextpdf.com
  */
 package com.itextpdf.text.pdf;
+
+import com.itextpdf.text.pdf.internal.PdfIsoKeys;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -136,6 +138,7 @@ public class PdfString extends PdfObject {
      * @param os The <CODE>OutputStream</CODE> to write the bytes to.
      */
     public void toPdf(PdfWriter writer, OutputStream os) throws IOException {
+        PdfWriter.checkPdfIsoConformance(writer, PdfIsoKeys.PDFISOKEY_OBJECT, this);
         byte b[] = getBytes();
         PdfEncryption crypto = null;
         if (writer != null)

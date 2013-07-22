@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2012 1T3XT BVBA
+ * Copyright (c) 1998-2013 1T3XT BVBA
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -54,6 +54,7 @@ import com.itextpdf.text.pdf.AcroFields;
 import com.itextpdf.text.pdf.ByteBuffer;
 import com.itextpdf.text.pdf.PdfArray;
 import com.itextpdf.text.pdf.PdfDate;
+import com.itextpdf.text.pdf.PdfDeveloperExtension;
 import com.itextpdf.text.pdf.PdfDictionary;
 import com.itextpdf.text.pdf.PdfName;
 import com.itextpdf.text.pdf.PdfReader;
@@ -122,6 +123,9 @@ public class MakeSignature {
                 estimatedSize += 4192;
         }
         sap.setCertificate(chain[0]);
+        if (sigtype == CryptoStandard.CADES) {
+        	sap.addDeveloperExtension(PdfDeveloperExtension.ESIC_1_7_EXTENSIONLEVEL2);
+        }
         PdfSignature dic = new PdfSignature(PdfName.ADOBE_PPKLITE, sigtype == CryptoStandard.CADES ? PdfName.ETSI_CADES_DETACHED : PdfName.ADBE_PKCS7_DETACHED);
         dic.setReason(sap.getReason());
         dic.setLocation(sap.getLocation());

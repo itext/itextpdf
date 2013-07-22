@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2012 1T3XT BVBA
+ * Copyright (c) 1998-2013 1T3XT BVBA
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -776,7 +776,56 @@ public class PdfPRow implements IAccessibleElement {
 		split.widths = (float[]) widths.clone();
 		return split;
 	}
-	
+    
+    // Contributed by Deutsche Bahn Systel GmbH (Thorsten Seitz), splitting row spans
+    public float getMaxRowHeightsWithoutCalculating() {
+        return maxHeight;
+    }
+    
+    // Contributed by Deutsche Bahn Systel GmbH (Thorsten Seitz), splitting row spans
+    public void setFinalMaxHeights(float maxHeight) {
+        setMaxHeights(maxHeight);
+        calculated = true; // otherwise maxHeight would be recalculated in getter
+    }
+
+    // Contributed by Deutsche Bahn Systel GmbH (Thorsten Seitz), splitting row spans
+    /**
+     * Split rowspan of cells with rowspan on next page by inserting copies with the remaining rowspan
+     * and reducing the previous rowspan appropriately, i.e. if a cell with rowspan 7 gets split after 3 rows
+     * of that rowspan have been laid out, its column on the next page should start with an empty cell
+     * having the same attributes and rowspan 7 - 3 = 4.
+     * 
+     * @since iText 5.4.3
+     */
+    public void splitRowspans(PdfPTable original, int originalIdx, PdfPTable part, int partIdx) {
+        if (original == null || part == null) {
+            return;
+        }
+        int i = 0; 
+        while (i < cells.length) {
+            if (cells[i] == null) {
+                int splittedRowIdx = original.getCellStartRowIndex(originalIdx, i);
+                int copyRowIdx = part.getCellStartRowIndex(partIdx, i);
+                PdfPCell splitted = original.getRow(splittedRowIdx)
+                        .getCells()[i]; // need this to reduce its rowspan
+                PdfPCell copy = part.getRow(copyRowIdx)
+                        .getCells()[i]; // need this for (partially) consumed ColumnText
+                if (splitted != null) {
+                    assert (copy != null); // both null or none
+                    cells[i] = new PdfPCell(copy);
+                    int rowspanOnPreviousPage = partIdx - copyRowIdx + 1;
+                    cells[i].setRowspan(copy.getRowspan() - rowspanOnPreviousPage);
+                    splitted.setRowspan(rowspanOnPreviousPage);
+                    this.calculated = false;
+                }
+                ++i;
+            }
+            else {
+                i += cells[i].getColspan();
+            }
+        }
+    }
+
 	/**
 	 * Returns the array of cells in the row.
 	 * Please be extremely careful with this method.

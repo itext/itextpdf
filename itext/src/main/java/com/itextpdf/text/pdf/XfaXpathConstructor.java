@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2012 1T3XT BVBA
+ * Copyright (c) 1998-2013 1T3XT BVBA
  * Authors: Pavel Alay, Bruno Lowagie, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -87,7 +87,7 @@ public class XfaXpathConstructor implements XpathConstructor {
     }
 
     /**
-     * Construct for Xpath2 expression. Depends from selected xdp package.
+     * Construct for XPath expression. Depends from selected xdp package.
      * @param xdpPackage
      */
     public XfaXpathConstructor(XdpPackage xdpPackage) {
@@ -140,7 +140,7 @@ public class XfaXpathConstructor implements XpathConstructor {
     private String xpathExpression;
 
     /**
-     * Get XPath2 expression
+     * Get XPath expression
      */
     public String getXpathExpression() {
         return xpathExpression;

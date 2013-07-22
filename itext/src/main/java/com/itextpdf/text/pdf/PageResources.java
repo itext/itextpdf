@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2012 1T3XT BVBA
+ * Copyright (c) 1998-2013 1T3XT BVBA
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -164,7 +164,6 @@ class PageResources {
        PdfResources resources = new PdfResources();
         if (originalResources != null)
             resources.putAll(originalResources);
-        resources.put(PdfName.PROCSET, new PdfLiteral("[/PDF /Text /ImageB /ImageC /ImageI]"));
         resources.add(PdfName.FONT, fontDictionary);
         resources.add(PdfName.XOBJECT, xObjectDictionary);
         resources.add(PdfName.COLORSPACE, colorDictionary);

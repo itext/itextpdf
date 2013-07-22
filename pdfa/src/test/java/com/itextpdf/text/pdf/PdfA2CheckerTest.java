@@ -13,8 +13,7 @@ public class PdfA2CheckerTest {
 
     @Test
     public void transparencyCheckTest() throws IOException, DocumentException {
-        File tmpPdf = File.createTempFile("pdfa2_", ".pdf");
-        FileOutputStream fos = new FileOutputStream(tmpPdf);
+        FileOutputStream fos = new FileOutputStream("./target/transparencyCheckTest.pdf");
         Document document = new Document();
         PdfAWriter writer = PdfAWriter.getInstance(document, fos, PdfAConformanceLevel.PDF_A_2A);
         document.open();
@@ -36,23 +35,20 @@ public class PdfA2CheckerTest {
         canvas.rectangle(200, 200, 100, 100);
         canvas.fill();
         canvas.restoreState();
+        canvas.saveState();
+        gs = new PdfGState();
+        gs.setBlendMode(new PdfName("UnknownBM"));
+        canvas.setGState(gs);
+        canvas.rectangle(300, 300, 100, 100);
+        canvas.fill();
+        canvas.restoreState();
 
         boolean exception = false;
         try {
-            canvas.saveState();
-            gs = new PdfGState();
-            gs.setBlendMode(new PdfName("UnknownBM"));
-            canvas.setGState(gs);
-            canvas.rectangle(300, 300, 100, 100);
-            canvas.fill();
-            canvas.restoreState();
+            document.close();
         } catch (PdfAConformanceException pdface) {
             exception = true;
         }
-
-        if (!exception)
-            document.close();
-        tmpPdf.delete();
 
         if (!exception)
             Assert.fail("PdfAConformance exception should be thrown on unknown blend mode.");
@@ -61,10 +57,9 @@ public class PdfA2CheckerTest {
 
     @Test
     public void imageCheckTest1() throws IOException, DocumentException {
-        File tmpPdf = File.createTempFile("pdfa2_", ".pdf");
-        FileOutputStream fos = new FileOutputStream(tmpPdf);
+        FileOutputStream fos = new FileOutputStream("./target/imageCheckTest1.pdf");
         Document document = new Document();
-        PdfWriter writer = PdfAWriter.getInstance(document, fos, PdfAConformanceLevel.PDF_A_2A);
+        PdfWriter writer = PdfAWriter.getInstance(document, fos, PdfAConformanceLevel.PDF_A_2B);
         document.open();
 
         String[] pdfaErrors = new String[9];
@@ -89,15 +84,13 @@ public class PdfA2CheckerTest {
         Assert.assertEquals(null, pdfaErrors[8]);
 
         document.close();
-        tmpPdf.delete();
     }
 
     @Test
     public void imageCheckTest2() throws IOException, DocumentException {
-        File tmpPdf = File.createTempFile("pdfa2_", ".pdf");
-        FileOutputStream fos = new FileOutputStream(tmpPdf);
+        FileOutputStream fos = new FileOutputStream("./target/imageCheckTest2.pdf");
         Document document = new Document();
-        PdfWriter writer = PdfAWriter.getInstance(document, fos, PdfAConformanceLevel.PDF_A_2A);
+        PdfWriter writer = PdfAWriter.getInstance(document, fos, PdfAConformanceLevel.PDF_A_2B);
         document.open();
 
         ArrayList<String> pdfaErrors = new ArrayList<String>();
@@ -136,15 +129,13 @@ public class PdfA2CheckerTest {
         }
 
         document.close();
-        tmpPdf.delete();
     }
 
     @Test
     public void layerCheckTest1() throws IOException, DocumentException {
-        File tmpPdf = File.createTempFile("pdfa2_", ".pdf");
-        FileOutputStream fos = new FileOutputStream(tmpPdf);
+        FileOutputStream fos = new FileOutputStream("./target/layerCheckTest1.pdf");
         Document document = new Document();
-        PdfWriter writer = PdfAWriter.getInstance(document, fos, PdfAConformanceLevel.PDF_A_2A);
+        PdfWriter writer = PdfAWriter.getInstance(document, fos, PdfAConformanceLevel.PDF_A_2B);
         writer.setViewerPreferences(PdfWriter.PageModeUseOC);
         writer.setPdfVersion(PdfWriter.VERSION_1_5);
         document.open();
@@ -160,15 +151,13 @@ public class PdfA2CheckerTest {
         cb.endLayer();
         cb.endText();
         document.close();
-        tmpPdf.delete();
     }
 
     @Test
     public void layerCheckTest2() throws IOException, DocumentException {
-        File tmpPdf = File.createTempFile("pdfa2_", ".pdf");
-        FileOutputStream fos = new FileOutputStream(tmpPdf);
+        FileOutputStream fos = new FileOutputStream("./target/layerCheckTest2.pdf");
         Document document = new Document();
-        PdfWriter writer = PdfAWriter.getInstance(document, fos, PdfAConformanceLevel.PDF_A_2A);
+        PdfWriter writer = PdfAWriter.getInstance(document, fos, PdfAConformanceLevel.PDF_A_2B);
         writer.setViewerPreferences(PdfWriter.PageModeUseOC);
         writer.setPdfVersion(PdfWriter.VERSION_1_5);
         document.open();
@@ -192,7 +181,6 @@ public class PdfA2CheckerTest {
         cb.endLayer();
 
         document.close();
-        tmpPdf.delete();
     }
 
 

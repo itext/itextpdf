@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2012 1T3XT BVBA
+ * Copyright (c) 1998-2013 1T3XT BVBA
  * Authors: Kevin Day, Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -43,7 +43,9 @@
  */
 package com.itextpdf.text.pdf.parser;
 
+import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.pdf.CMapAwareDocumentFont;
+import com.itextpdf.text.pdf.PdfName;
 
 /**
  * Keeps all the parameters of the graphics state.
@@ -70,6 +72,14 @@ public class GraphicsState {
     float rise;
     /** The current knockout value. */
     boolean knockout;
+    /** The current color space for stroke. */
+    PdfName colorSpaceFill;
+    /** The current color space for stroke. */
+    PdfName colorSpaceStroke;
+    /** The current fill color. */
+    BaseColor fillColor;
+    /** The current stroke color. */
+    BaseColor strokeColor;
     
     /**
      * Constructs a new Graphics State object with the default values.
@@ -85,6 +95,10 @@ public class GraphicsState {
         renderMode = 0;
         rise = 0;
         knockout = true;
+        colorSpaceFill = null;
+        colorSpaceStroke = null;
+        fillColor = null;
+        strokeColor = null;
     }
     
     /**
@@ -104,6 +118,10 @@ public class GraphicsState {
         renderMode = source.renderMode;
         rise = source.rise;
         knockout = source.knockout;
+        colorSpaceFill = source.colorSpaceFill;
+        colorSpaceStroke = source.colorSpaceStroke;
+        fillColor = source.fillColor;
+        strokeColor = source.strokeColor;
     }
 
 	/**
@@ -195,4 +213,35 @@ public class GraphicsState {
 	public boolean isKnockout() {
 		return knockout;
 	}
+	
+	/**
+	 * Gets the current color space for fill operations
+	 */
+	public PdfName getColorSpaceFill() {
+		return colorSpaceFill;
+	}
+	
+	/**
+	 * Gets the current color space for stroke operations
+	 */
+	public PdfName getColorSpaceStroke() {
+		return colorSpaceStroke;
+	}
+
+	/**
+	 * Gets the current fill color
+	 * @return a BaseColor
+	 */
+	public BaseColor getFillColor() {
+		return fillColor;
+	}
+
+	/**
+	 * Gets the current stroke color
+	 * @return a BaseColor
+	 */
+	public BaseColor getStrokeColor() {
+		return strokeColor;
+	}
+
 }

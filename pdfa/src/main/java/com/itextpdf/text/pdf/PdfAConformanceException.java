@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2012 1T3XT BVBA
+ * Copyright (c) 1998-2013 1T3XT BVBA
  * Authors: Alexander Chingarev, Bruno Lowagie, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -50,6 +50,7 @@ public class PdfAConformanceException extends PdfIsoConformanceException {
 
     /** Serial version UID. */
 	private static final long serialVersionUID = 194425427686830283L;
+    protected Object object = null;
 
 	/**
      * @see com.itextpdf.text.pdf.PdfIsoConformanceException#PdfIsoConformanceException()
@@ -63,6 +64,15 @@ public class PdfAConformanceException extends PdfIsoConformanceException {
      */
     public PdfAConformanceException(String s) {
         super(s);
+    }
+
+    public PdfAConformanceException(Object object, String message) {
+        super(message);
+        this.object = object;
+    }
+
+    public Object getObject() {
+        return object;
     }
 
 }

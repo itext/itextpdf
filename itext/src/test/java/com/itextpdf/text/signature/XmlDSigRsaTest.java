@@ -15,12 +15,12 @@ import java.security.PublicKey;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 
-public class XmlDSigRsaTest extends XmlDSigTests {
+public class XmlDSigRsaTest extends XmlDSigTest {
 
-    public static final String KeyPairStore = "./src/test/resources/com/itextpdf/text/signature/rsa/";
+    public static final String KeyPairStore = "./src/test/resources/com/itextpdf/text/signature/ds/";
     public static final String Src = "./src/test/resources/com/itextpdf/text/signature/xfa.pdf";
-    public static final String CmpDir = "./src/test/resources/com/itextpdf/text/signature/rsa/";
-    public static final String DestDir = "./target/com/itextpdf/test/signature/rsa/";
+    public static final String CmpDir = "./src/test/resources/com/itextpdf/text/signature/ds/";
+    public static final String DestDir = "./target/com/itextpdf/test/signature/ds/";
 
 
     public static KeyPair loadKeyPair(String path, String algorithm) throws Exception {
@@ -61,49 +61,53 @@ public class XmlDSigRsaTest extends XmlDSigTests {
     @Test
     public void XmlDSigRSAWithPublicKey() throws Exception {
 
-        String filename = "xfa.signed.pk.pdf";
+        String filename = "xfa.signed.ds.pk.pdf";
         String output = DestDir + filename;
-        signWithPublicKey(Src, output, keyPair.getPrivate(), keyPair.getPublic(),
+        signDsWithPublicKey(Src, output, keyPair.getPrivate(), keyPair.getPublic(),
                 DigestAlgorithms.SHA1, provider.getName());
 
         String cmp = saveXmlFromResult(output);
 
+        Assert.assertTrue("Verification", verifyXmlDSig(cmp));
         Assert.assertTrue(compareXmls(cmp, CmpDir + filename.replace(".pdf", ".xml")));
     }
 
     @Test
     public void XmlDSigRSAWithKeyInfo() throws Exception {
 
-        String filename = "xfa.signed.ki.pdf";
+        String filename = "xfa.signed.ds.ki.pdf";
         String output = DestDir + filename;
 
-        signWithKeyInfo(Src, output, keyPair.getPrivate(), keyPair.getPublic(),
+        signDsWithKeyInfo(Src, output, keyPair.getPrivate(), keyPair.getPublic(),
                 DigestAlgorithms.SHA1, provider.getName());
 
         String cmp = saveXmlFromResult(output);
+        Assert.assertTrue("Verification", verifyXmlDSig(cmp));
         Assert.assertTrue(compareXmls(cmp, CmpDir + filename.replace(".pdf", ".xml")));
     }
 
     @Test
     public void XmlDSigRSAWithPublicKeyPackage() throws Exception {
 
-        String filename = "xfa.signed.pk.package.pdf";
+        String filename = "xfa.signed.ds.pk.package.pdf";
         String output = DestDir + filename;
-        signPackageWithPublicKey(Src, output, XfaXpathConstructor.XdpPackage.Template, keyPair.getPrivate(), keyPair.getPublic(), DigestAlgorithms.SHA1, provider.getName());
+        signPackageDsWithPublicKey(Src, output, XfaXpathConstructor.XdpPackage.Template, keyPair.getPrivate(), keyPair.getPublic(), DigestAlgorithms.SHA1, provider.getName());
 
         String cmp = saveXmlFromResult(output);
+        Assert.assertTrue("Verification", verifyXmlDSig(cmp));
         Assert.assertTrue(compareXmls(cmp, CmpDir + filename.replace(".pdf", ".xml")));
     }
 
     @Test
     public void XmlDSigRSAWithKeyInfoPackage() throws Exception {
 
-        String filename = "xfa.signed.ki.package.pdf";
+        String filename = "xfa.signed.ds.ki.package.pdf";
         String output = DestDir + filename;
 
-        signPackageWithKeyInfo(Src, output, XfaXpathConstructor.XdpPackage.Template, keyPair.getPrivate(), keyPair.getPublic(), DigestAlgorithms.SHA1, provider.getName());
+        signPackageDsWithKeyInfo(Src, output, XfaXpathConstructor.XdpPackage.Template, keyPair.getPrivate(), keyPair.getPublic(), DigestAlgorithms.SHA1, provider.getName());
 
         String cmp = saveXmlFromResult(output);
+        Assert.assertTrue("Verification", verifyXmlDSig(cmp));
         Assert.assertTrue(compareXmls(cmp, CmpDir + filename.replace(".pdf", ".xml")));
     }
 }

@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2012 1T3XT BVBA
+ * Copyright (c) 1998-2013 1T3XT BVBA
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -217,18 +217,21 @@ public class PageSize {
 	/**
 	 * This is the letter format
 	 * @since iText 5.0.6
+	 * @deprecated
 	 */
     public static final Rectangle LETTER_LANDSCAPE = new RectangleReadOnly(612, 792, 90);
 
     /**
      * This is the legal format
      * @since iText 5.0.6
+     * @deprecated
      */
     public static final Rectangle LEGAL_LANDSCAPE = new RectangleReadOnly(612, 1008, 90);
 
     /**
      * This is the a4 format
      * @since iText 5.0.6
+     * @deprecated
      */
     public static final Rectangle A4_LANDSCAPE = new RectangleReadOnly(595, 842, 90);
 

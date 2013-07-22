@@ -1,3 +1,46 @@
+/*
+ * $Id: Type1Font.java 5756 2013-04-12 12:39:00Z michaeldemey $
+ *
+ * This file is part of the iText (R) project.
+ * Copyright (c) 1998-2013 1T3XT BVBA
+ * Authors: Bruno Lowagie, Eugene Markovskyi, et al.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License version 3
+ * as published by the Free Software Foundation with the addition of the
+ * following permission added to Section 15 as permitted in Section 7(a):
+ * FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY 1T3XT,
+ * 1T3XT DISCLAIMS THE WARRANTY OF NON INFRINGEMENT OF THIRD PARTY RIGHTS.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program; if not, see http://www.gnu.org/licenses or write to
+ * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA, 02110-1301 USA, or download the license from the following URL:
+ * http://itextpdf.com/terms-of-use/
+ *
+ * The interactive user interfaces in modified source and object code versions
+ * of this program must display Appropriate Legal Notices, as required under
+ * Section 5 of the GNU Affero General Public License.
+ *
+ * In accordance with Section 7(b) of the GNU Affero General Public License,
+ * a covered work must retain the producer line in every PDF that is created
+ * or manipulated using iText.
+ *
+ * You can be released from the requirements of the license by purchasing
+ * a commercial license. Buying such a license is mandatory as soon as you
+ * develop commercial activities involving the iText software without
+ * disclosing the source code of your own applications.
+ * These activities include: offering paid services to customers as an ASP,
+ * serving PDFs on the fly in a web application, shipping iText with a closed
+ * source product.
+ *
+ * For more information, please contact iText Software Corp. at this
+ * address: sales@itextpdf.com
+ */
 package com.itextpdf.text.pdf;
 
 import com.itextpdf.text.error_messages.MessageLocalization;
@@ -15,6 +58,7 @@ public class PdfStructTreeController {
     private PdfDictionary roleMap = null;
     private PdfDictionary sourceRoleMap = null;
     private PdfDictionary sourceClassMap = null;
+    private PdfIndirectReference nullReference = null;
 //    private HashSet<Integer> openedDocuments = new HashSet<Integer>();
 
     public static enum returnType {BELOW, FOUND, ABOVE, NOTFOUND};
@@ -41,11 +85,24 @@ public class PdfStructTreeController {
             throw new BadPdfFormatException(MessageLocalization.getComposedMessage("no.structtreeroot.found"));
         structTreeRoot = (PdfDictionary) obj;
         obj = PdfStructTreeController.getDirectObject(structTreeRoot.get(PdfName.PARENTTREE));
-        if (!obj.isDictionary())
+        if (obj == null || !obj.isDictionary())
             throw new BadPdfFormatException(MessageLocalization.getComposedMessage("the.document.does.not.contain.parenttree"));
         parentTree = (PdfDictionary) obj;
         sourceRoleMap = null;
         sourceClassMap = null;
+        nullReference = null;
+    }
+
+    static public boolean checkTagged(PdfReader reader) {
+        PdfObject obj = reader.getCatalog().get(PdfName.STRUCTTREEROOT);
+        obj = getDirectObject(obj);
+        if ((obj == null) || (!obj.isDictionary()))
+            return false;
+        PdfDictionary structTreeRoot = (PdfDictionary) obj;
+        obj = PdfStructTreeController.getDirectObject(structTreeRoot.get(PdfName.PARENTTREE));
+        if (!obj.isDictionary())
+            return false;
+        return true;
     }
 
     public static PdfObject getDirectObject(PdfObject object) {
@@ -100,7 +157,8 @@ public class PdfStructTreeController {
                 }
             }
         } else {
-            if (pages.size() == 0) return returnType.NOTFOUND;
+            if (pages.size() == 0)
+                return returnType.NOTFOUND;
             return findAndCopyMarks(pages, arrayNumber.intValue(), newArrayNumber);
         }
     }
@@ -117,30 +175,42 @@ public class PdfStructTreeController {
             curNumber = pages.getAsNumber((begin + cur) * 2).intValue();
             if (curNumber == arrayNumber) {
                 PdfObject obj = pages.getPdfObject((begin + cur) * 2 + 1);
+                PdfObject obj1 = obj;
                 while (obj.isIndirect()) obj = PdfReader.getPdfObjectRelease(obj);
-                //invalid Nums
-                if (!obj.isArray()) return returnType.NOTFOUND;
-
-                PdfObject firstNotNullKid = null;
-                for (PdfObject numObj: (PdfArray)obj){
-                    if (numObj.isNull()) continue;
-                    PdfObject res = writer.copyObject(numObj, true, false);
-                    if (firstNotNullKid == null) firstNotNullKid = res;
-                    structureTreeRoot.setPageMark(newArrayNumber, (PdfIndirectReference) res);
-                }
-                //Add kid to structureTreeRoot from structTreeRoot
-                PdfObject structKids = structTreeRoot.get(PdfName.K);
-                if (structKids == null || (!structKids.isArray() && !structKids.isIndirect())) {
-                    // incorrect syntax of tags
-                    addKid(structureTreeRoot, firstNotNullKid);
-                } else {
-                    if (structKids.isIndirect()) {
-                        addKid(structKids);
-                    } else { //structKids.isArray()
-                        for (PdfObject kid: (PdfArray)structKids)
-                            addKid(kid);
+                if (obj.isArray()) {
+                    PdfObject firstNotNullKid = null;
+                    for (PdfObject numObj: (PdfArray)obj){
+                        if (numObj.isNull()) {
+                            if (nullReference == null)
+                                nullReference = writer.addToBody(new PdfNull()).getIndirectReference();
+                            structureTreeRoot.setPageMark(newArrayNumber, nullReference);
+                        } else {
+                            PdfObject res = writer.copyObject(numObj, true, false);
+                            if (firstNotNullKid == null) firstNotNullKid = res;
+                            structureTreeRoot.setPageMark(newArrayNumber, (PdfIndirectReference) res);
+                        }
                     }
-                }
+                    //Add kid to structureTreeRoot from structTreeRoot
+                    PdfObject structKids = structTreeRoot.get(PdfName.K);
+                    if (structKids == null || (!structKids.isArray() && !structKids.isIndirect())) {
+                        // incorrect syntax of tags
+                        addKid(structureTreeRoot, firstNotNullKid);
+                    } else {
+                        if (structKids.isIndirect()) {
+                            addKid(structKids);
+                        } else { //structKids.isArray()
+                            for (PdfObject kid: (PdfArray)structKids)
+                                addKid(kid);
+                        }
+                    }
+                } else if (obj.isDictionary()) {
+                    PdfDictionary k = getKDict((PdfDictionary)obj);
+                    if (k == null)
+                        return returnType.NOTFOUND;
+                    PdfObject res = writer.copyObject(obj1, true, false);
+                    structureTreeRoot.setAnnotationMark(newArrayNumber, (PdfIndirectReference)res);
+                } else
+                    return returnType.NOTFOUND;
                 return returnType.FOUND;
             }
             if (curNumber < arrayNumber) {
@@ -158,6 +228,28 @@ public class PdfStructTreeController {
                 return returnType.NOTFOUND;
             cur /= 2;
         }
+    }
+
+    static PdfDictionary getKDict(PdfDictionary obj) {
+        PdfDictionary k = obj.getAsDict(PdfName.K);
+        if (k != null) {
+            if (PdfName.OBJR.equals(k.getAsName(PdfName.TYPE))) {
+                return k;
+            }
+        } else {
+            PdfArray k1 = obj.getAsArray(PdfName.K);
+            if (k1 == null)
+                return null;
+            for (int i = 0; i < k1.size(); i++) {
+                k = k1.getAsDict(i);
+                if (k != null) {
+                    if (PdfName.OBJR.equals(k.getAsName(PdfName.TYPE))) {
+                        return k;
+                    }
+                }
+            }
+        }
+        return null;
     }
 
     private void addKid(PdfObject obj) throws IOException, BadPdfFormatException {

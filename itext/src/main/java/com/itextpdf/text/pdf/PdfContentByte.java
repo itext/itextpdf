@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2012 1T3XT BVBA
+ * Copyright (c) 1998-2013 1T3XT BVBA
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -50,7 +50,6 @@ import com.itextpdf.text.*;
 import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.exceptions.IllegalPdfSyntaxException;
 import com.itextpdf.text.pdf.interfaces.IAccessibleElement;
-import com.itextpdf.text.pdf.interfaces.IPdfStructureElement;
 import com.itextpdf.text.pdf.internal.PdfAnnotationsImp;
 import com.itextpdf.text.pdf.internal.PdfIsoKeys;
 
@@ -58,7 +57,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * <CODE>PdfContentByte</CODE> is an object containing the user positioned
@@ -1542,6 +1540,7 @@ public class PdfContentByte {
      * <CODE>restoreState</CODE> must be balanced.
      */
     public void saveState() {
+        PdfWriter.checkPdfIsoConformance(writer, PdfIsoKeys.PDFISOKEY_CANVAS, "q");
         if (inText && isTagged()) {
             endText();
         }
@@ -1554,6 +1553,7 @@ public class PdfContentByte {
      * <CODE>restoreState</CODE> must be balanced.
      */
     public void restoreState() {
+        PdfWriter.checkPdfIsoConformance(writer, PdfIsoKeys.PDFISOKEY_CANVAS, "Q");
         if (inText && isTagged()) {
             endText();
         }
@@ -2366,9 +2366,6 @@ public class PdfContentByte {
     PdfTemplate createTemplate(final float width, final float height, final PdfName forcedName) {
         checkWriter();
         PdfTemplate template = new PdfTemplate(writer);
-        ArrayList<IAccessibleElement> allMcElements = getMcElements();
-        if (allMcElements != null && allMcElements.size() > 0)
-            template.getMcElements().add(allMcElements.get(allMcElements.size() - 1));
         template.setWidth(width);
         template.setHeight(height);
         writer.addDirectTemplateSimple(template, forcedName);
@@ -2423,14 +2420,47 @@ public class PdfContentByte {
      * @param f an element of the transformation matrix
      */
     public void addTemplate(final PdfTemplate template, final float a, final float b, final float c, final float d, final float e, final float f) {
-        if (inText && isTagged()) {
-            endText();
-        }
+        addTemplate(template, a, b, c, d, e, f, false);
+    }
+
+    /**
+     * Adds a template to this content.
+     *
+     * @param template the template
+     * @param a an element of the transformation matrix
+     * @param b an element of the transformation matrix
+     * @param c an element of the transformation matrix
+     * @param d an element of the transformation matrix
+     * @param e an element of the transformation matrix
+     * @param f an element of the transformation matrix
+     * @param tagContent <code>true</code> - template content will be tagged(all that will be added after), <code>false</code> - only a Do operator will be tagged.
+     *                   taken into account only if <code>isTagged()</code> - <code>true</code>.
+     */
+    public void addTemplate(final PdfTemplate template, final float a, final float b, final float c, final float d, final float e, final float f, boolean tagContent) {
         checkWriter();
         checkNoPattern(template);
         PdfName name = writer.addDirectTemplateSimple(template, null);
         PageResources prs = getPageResources();
         name = prs.addXObject(name, template.getIndirectReference());
+        if (isTagged()) {
+            if (inText)
+                endText();
+            if (template.isContentTagged() || (template.getPageReference() != null && tagContent)) {
+                throw new RuntimeException(MessageLocalization.getComposedMessage("template.with.tagged.could.not.be.used.more.than.once"));
+            }
+
+            template.setPageReference(writer.getCurrentPage());
+
+            if (tagContent) {
+                template.setContentTagged(true);
+                ArrayList<IAccessibleElement> allMcElements = getMcElements();
+                if (allMcElements != null && allMcElements.size() > 0)
+                    template.getMcElements().add(allMcElements.get(allMcElements.size() - 1));
+            } else {
+                openMCBlock(template);
+            }
+        }
+
         content.append("q ");
         content.append(a).append(' ');
         content.append(b).append(' ');
@@ -2439,6 +2469,11 @@ public class PdfContentByte {
         content.append(e).append(' ');
         content.append(f).append(" cm ");
         content.append(name.getBytes()).append(" Do Q").append_i(separator);
+
+        if (isTagged() && !tagContent) {
+            closeMCBlock(template);
+            template.setId(null);
+        }
     }
 
     /**
@@ -2447,10 +2482,21 @@ public class PdfContentByte {
      * @param transform transform to apply to the template prior to adding it.
      */
     public void addTemplate(final PdfTemplate template, final AffineTransform transform) {
+        addTemplate(template, transform, false);
+    }
+
+    /**
+     * adds a template with the given matrix.
+     * @param template template to add
+     * @param transform transform to apply to the template prior to adding it.
+     * @param tagContent <code>true</code> - template content will be tagged(all that will be added after), <code>false</code> - only a Do operator will be tagged.
+     *                   taken into account only if <code>isTagged()</code> - <code>true</code>.
+     */
+    public void addTemplate(final PdfTemplate template, final AffineTransform transform, boolean tagContent) {
     	double matrix[] = new double[6];
     	transform.getMatrix(matrix);
     	addTemplate(template, (float) matrix[0], (float) matrix[1], (float) matrix[2],
-                (float) matrix[3], (float) matrix[4], (float) matrix[5]);
+                (float) matrix[3], (float) matrix[4], (float) matrix[5], tagContent);
     }
 
     void addTemplateReference(final PdfIndirectReference template, PdfName name, final float a, final float b, final float c, final float d, final float e, final float f) {
@@ -2479,6 +2525,10 @@ public class PdfContentByte {
      */
     public void addTemplate(final PdfTemplate template, final float x, final float y) {
         addTemplate(template, 1, 0, 0, 1, x, y);
+    }
+
+    public void addTemplate(final PdfTemplate template, final float x, final float y, boolean tagContent) {
+        addTemplate(template, 1, 0, 0, 1, x, y, tagContent);
     }
 
     /**
@@ -3320,7 +3370,9 @@ public class PdfContentByte {
      */
     public void beginMarkedContentSequence(final PdfStructureElement struc) {
         PdfObject obj = struc.get(PdfName.K);
-        int mark = pdf.getMarkPoint();
+        int[] structParentMarkPoint = pdf.getStructParentIndexAndNextMarkPoint(getCurrentPage());
+        int structParent = structParentMarkPoint[0];
+        int mark = structParentMarkPoint[1];
         if (obj != null) {
             PdfArray ar = null;
             if (obj.isNumber()) {
@@ -3335,21 +3387,24 @@ public class PdfContentByte {
                 throw new IllegalArgumentException(MessageLocalization.getComposedMessage("unknown.object.at.k.1", obj.getClass().toString()));
             if (ar.getAsNumber(0) != null) {
                 PdfDictionary dic = new PdfDictionary(PdfName.MCR);
-                dic.put(PdfName.PG, writer.getCurrentPage());
+                dic.put(PdfName.PG, getCurrentPage());
                 dic.put(PdfName.MCID, new PdfNumber(mark));
                 ar.add(dic);
             }
-            struc.setPageMark(writer.getPageNumber() - 1, -1);
+            struc.setPageMark(pdf.getStructParentIndex(getCurrentPage()), -1);
         }
         else {
-            struc.setPageMark(writer.getPageNumber() - 1, mark);
-            struc.put(PdfName.PG, writer.getCurrentPage());
+            struc.setPageMark(structParent, mark);
+            struc.put(PdfName.PG, getCurrentPage());
         }
-        pdf.incMarkPoint();
         setMcDepth(getMcDepth() + 1);
         int contentSize = content.size();
         content.append(struc.get(PdfName.S).getBytes()).append(" <</MCID ").append(mark).append(">> BDC").append_i(separator);
         markedContentSize += content.size() - contentSize;
+    }
+
+    protected PdfIndirectReference getCurrentPage() {
+        return writer.getCurrentPage();
     }
 
     /**

@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2012 1T3XT BVBA
+ * Copyright (c) 1998-2013 1T3XT BVBA
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -43,11 +43,14 @@
  */
 package com.itextpdf.text.pdf;
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.HashSet;
 
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.ExceptionConverter;
 import com.itextpdf.text.Rectangle;
+import com.itextpdf.text.pdf.internal.PdfIsoKeys;
 
 /**
  * Each PDF document can contain maximum 1 AcroForm.
@@ -731,4 +734,11 @@ public class PdfAcroForm extends PdfDictionary {
         tp.restoreState();
         field.setAppearance(PdfAnnotation.APPEARANCE_NORMAL, tp);
     }
+
+    @Override
+    public void toPdf(final PdfWriter writer, final OutputStream os) throws IOException {
+        PdfWriter.checkPdfIsoConformance(writer, PdfIsoKeys.PDFISOKEY_FORM, this);
+        super.toPdf(writer, os);
+    }
+
 }

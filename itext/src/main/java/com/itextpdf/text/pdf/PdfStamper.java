@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2012 1T3XT BVBA
+ * Copyright (c) 1998-2013 1T3XT BVBA
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -743,8 +743,7 @@ public class PdfStamper
     }
 
     public static PdfStamper createXmlSignature(final PdfReader reader, final OutputStream os) throws IOException, DocumentException {
-        PdfStamper stp;
-        stp = new PdfStamper(reader, os);
+        PdfStamper stp = new PdfStamper(reader, os);
         stp.sigXmlApp = new XmlSignatureAppearance(stp.stamper);
         //stp.sigApp.setSigout(bout);
         //stp.sigApp.setOriginalout(os);

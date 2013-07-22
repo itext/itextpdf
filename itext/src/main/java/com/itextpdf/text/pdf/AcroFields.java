@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2012 1T3XT BVBA
+ * Copyright (c) 1998-2013 1T3XT BVBA
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -2227,6 +2227,28 @@ public class AcroFields {
         PdfDictionary merged = item.getMerged(0);
         return merged.getAsDict(PdfName.V);
     }
+    
+    /**
+     * Gets a reference to the normal appearance of a field.
+     *
+     * @param name the field name
+     * @return a reference to the /N entry of the /AP dictionary or <CODE>null</CODE> if the field is not found
+     */
+    public PdfIndirectReference getNormalAppearance(String name) {
+        getSignatureNames();
+        name = getTranslatedFieldName(name);
+        Item item = fields.get(name);
+        if (item == null)
+        	return null;
+        PdfDictionary merged = item.getMerged(0);
+        PdfDictionary ap = merged.getAsDict(PdfName.AP);
+        if (ap == null)
+        	return null;
+        PdfIndirectReference ref = ap.getAsIndirectObject(PdfName.N);
+        if (ref == null)
+        	return null;
+        return ref;
+    }
 
     /**
      * Checks is the signature covers the entire document or just part of it.
@@ -2705,6 +2727,8 @@ public class AcroFields {
             else
                 widgets.put(key, button.get(key));
             merged.put(key, button.get(key));
+            markUsed(values);
+            markUsed(widgets);
         }
         return true;
     }

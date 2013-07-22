@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2012 1T3XT BVBA
+ * Copyright (c) 1998-2013 1T3XT BVBA
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -73,6 +73,7 @@ import com.itextpdf.text.log.LoggerFactory;
 import com.itextpdf.text.pdf.AcroFields;
 import com.itextpdf.text.pdf.PRIndirectReference;
 import com.itextpdf.text.pdf.PdfArray;
+import com.itextpdf.text.pdf.PdfDeveloperExtension;
 import com.itextpdf.text.pdf.PdfDictionary;
 import com.itextpdf.text.pdf.PdfIndirectReference;
 import com.itextpdf.text.pdf.PdfName;
@@ -385,7 +386,8 @@ public class LtvVerification {
     }
     
     private void outputDss(PdfDictionary dss, PdfDictionary vrim, PdfArray ocsps, PdfArray crls, PdfArray certs) throws IOException {
-        PdfDictionary catalog = reader.getCatalog();
+        writer.addDeveloperExtension(PdfDeveloperExtension.ESIC_1_7_EXTENSIONLEVEL5);
+    	PdfDictionary catalog = reader.getCatalog();
         stp.markUsed(catalog);
         for (PdfName vkey : validated.keySet()) {
             PdfArray ocsp = new PdfArray();

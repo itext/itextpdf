@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2012 1T3XT BVBA
+ * Copyright (c) 1998-2013 1T3XT BVBA
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -580,6 +580,7 @@ public class PdfWriter extends DocWriter implements
          */
         @Override
         public void toPdf(final PdfWriter writer, final OutputStream os) throws IOException {
+            PdfWriter.checkPdfIsoConformance(writer, PdfIsoKeys.PDFISOKEY_TRAILER, this);
             os.write(getISOBytes("trailer\n"));
             super.toPdf(null, os);
             os.write('\n');
@@ -2480,7 +2481,6 @@ public class PdfWriter extends DocWriter implements
 
     PdfObject[] addSimpleExtGState(final PdfDictionary gstate) {
         if (!documentExtGState.containsKey(gstate)) {
-            PdfWriter.checkPdfIsoConformance(this, PdfIsoKeys.PDFISOKEY_GSTATE, gstate);
             documentExtGState.put(gstate, new PdfObject[]{new PdfName("GS" + (documentExtGState.size() + 1)), getPdfIndirectReference()});
         }
         return documentExtGState.get(gstate);
@@ -2529,6 +2529,8 @@ public class PdfWriter extends DocWriter implements
      * fix xref table due to removed objects.
      */
     protected void flushTaggedObjects() throws IOException {}
+
+    protected void flushAcroFields() throws IOException, BadPdfFormatException {}
 
     /**
      * Gets the structure tree root. If the document is not marked for tagging it will return <CODE>null</CODE>.
@@ -3300,12 +3302,8 @@ public class PdfWriter extends DocWriter implements
         return ttfUnicodeWriter;
     }
 
-    protected XmpWriter xmpWriter = null;
-
     protected XmpWriter getXmpWriter(ByteArrayOutputStream baos, PdfDictionary info) throws IOException {
-        if (xmpWriter == null)
-            xmpWriter = new XmpWriter(baos, info);
-        return xmpWriter;
+        return new XmpWriter(baos, info);
     }
 
     public static void checkPdfIsoConformance(PdfWriter writer, int key, Object obj1) {
@@ -3350,6 +3348,34 @@ public class PdfWriter extends DocWriter implements
                 out.put(PdfName.S, PdfName.GTS_PDFX);
                 extraCatalog.put(PdfName.OUTPUTINTENTS, new PdfArray(out));
             }
+        }
+    }
+
+    static private final PdfName[] standardStructElems_1_4 = new PdfName[] {PdfName.DOCUMENT, PdfName.PART, PdfName.ART,
+            PdfName.SECT, PdfName.DIV, PdfName.BLOCKQUOTE, PdfName.CAPTION, PdfName.TOC, PdfName.TOCI, PdfName.INDEX,
+            PdfName.NONSTRUCT, PdfName.PRIVATE, PdfName.P, PdfName.H, PdfName.H1, PdfName.H2, PdfName.H3, PdfName.H4,
+            PdfName.H5, PdfName.H6, PdfName.L, PdfName.LBL, PdfName.LI, PdfName.LBODY, PdfName.TABLE, PdfName.TR,
+            PdfName.TH, PdfName.TD, PdfName.SPAN, PdfName.QUOTE, PdfName.NOTE, PdfName.REFERENCE, PdfName.BIBENTRY,
+            PdfName.CODE, PdfName.LINK, PdfName.FIGURE, PdfName.FORMULA, PdfName.FORM};
+
+    static private final PdfName[] standardStructElems_1_7 = new PdfName[] {PdfName.DOCUMENT, PdfName.PART, PdfName.ART,
+            PdfName.SECT, PdfName.DIV, PdfName.BLOCKQUOTE, PdfName.CAPTION, PdfName.TOC, PdfName.TOCI, PdfName.INDEX,
+            PdfName.NONSTRUCT, PdfName.PRIVATE, PdfName.P, PdfName.H, PdfName.H1, PdfName.H2, PdfName.H3, PdfName.H4,
+            PdfName.H5, PdfName.H6, PdfName.L, PdfName.LBL, PdfName.LI, PdfName.LBODY, PdfName.TABLE, PdfName.TR,
+            PdfName.TH, PdfName.TD, PdfName.THEAD, PdfName.TBODY, PdfName.TFOOT, PdfName.SPAN, PdfName.QUOTE, PdfName.NOTE,
+            PdfName.REFERENCE, PdfName.BIBENTRY, PdfName.CODE, PdfName.LINK, PdfName.ANNOT, PdfName.RUBY, PdfName.RB, PdfName.RT,
+            PdfName.RP, PdfName.WARICHU, PdfName.WT, PdfName.WP, PdfName.FIGURE, PdfName.FORMULA, PdfName.FORM};
+
+
+    /**
+     * Gets the list of the standard structure element names (roles).
+     * @return
+     */
+    public PdfName[] getStandardStructElems() {
+        if (pdf_version.getVersion() < VERSION_1_7) {
+            return standardStructElems_1_4;
+        } else {
+            return standardStructElems_1_7;
         }
     }
 

@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2012 1T3XT BVBA
+ * Copyright (c) 1998-2013 1T3XT BVBA
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -66,7 +66,7 @@ public final class Version {
 	 * This String contains the version number of this iText release.
 	 * For debugging purposes, we request you NOT to change this constant.
 	 */
-	private String release = "5.4.2";
+	private String release = "5.4.3";
 	
 	/**
 	 * The license key.
@@ -79,7 +79,7 @@ public final class Version {
 	 * 1T3XT requests that you retain the iText producer line
 	 * in every PDF that is created or manipulated using iText.
 	 */
-	private String iTextVersion = iText + " " + release + " \u00a92000-2012 1T3XT BVBA";
+	private String iTextVersion = iText + " " + release + " \u00a92000-2013 1T3XT BVBA";
 
 	/** The iText version instance. */
 	private static Version version = null;

@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2012 1T3XT BVBA
+ * Copyright (c) 1998-2013 1T3XT BVBA
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -246,6 +246,13 @@ public abstract class BaseFont {
     public static final String RESOURCE_PATH = "com/itextpdf/text/pdf/fonts/";
     /** The fake CID code that represents a newline. */
     public static final char CID_NEWLINE = '\u7fff';
+
+	/**
+     * Unicode Character 'PARAGRAPH SEPARATOR' (U+2029)
+	 * Treated as a line feed character in XFA rich and plain text.
+     * @since 5.4.3
+     */
+    public static final char PARAGRAPH_SEPARATOR = '\u2029';
 
     protected ArrayList<int[]> subsetRanges;
     /** The font type.

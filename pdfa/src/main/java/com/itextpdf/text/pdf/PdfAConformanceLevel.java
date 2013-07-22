@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2012 1T3XT BVBA
+ * Copyright (c) 1998-2013 1T3XT BVBA
  * Authors: Alexander Chingarev, Bruno Lowagie, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -85,5 +85,10 @@ public enum PdfAConformanceLevel {
     /**
      * PDF/A-3u
      */
-    PDF_A_3U
+    PDF_A_3U;
+
+    public static boolean checkStructure(PdfAConformanceLevel conformanceLevel) {
+        return conformanceLevel == PDF_A_1A || conformanceLevel == PDF_A_2A || conformanceLevel == PDF_A_3A;
+    }
+
 }

@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2012 1T3XT BVBA
+ * Copyright (c) 1998-2013 1T3XT BVBA
  * Authors: Alexander Chingarev, Bruno Lowagie, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -87,7 +87,7 @@ public class PdfArtifact implements IAccessibleElement {
     }
 
     public PdfString getType() {
-        return accessibleAttributes == null ? null : (PdfString)accessibleAttributes.get(PdfName.TYPE);
+        return accessibleAttributes == null ? null : (PdfString) accessibleAttributes.get(PdfName.TYPE);
     }
 
     public void setType(PdfString type) {
@@ -95,7 +95,7 @@ public class PdfArtifact implements IAccessibleElement {
     }
 
     public PdfArray getBBox() {
-        return accessibleAttributes == null ? null : (PdfArray)accessibleAttributes.get(PdfName.BBOX);
+        return accessibleAttributes == null ? null : (PdfArray) accessibleAttributes.get(PdfName.BBOX);
     }
 
     public void setBBox(PdfArray bbox) {
@@ -103,13 +103,12 @@ public class PdfArtifact implements IAccessibleElement {
     }
 
     public PdfArray getAttached() {
-        return accessibleAttributes == null ? null : (PdfArray)accessibleAttributes.get(PdfName.ATTACHED);
+        return accessibleAttributes == null ? null : (PdfArray) accessibleAttributes.get(PdfName.ATTACHED);
     }
 
     public void setAttached(PdfArray attached) {
         setAccessibleAttribute(PdfName.ATTACHED, attached);
     }
-
 
 
 }

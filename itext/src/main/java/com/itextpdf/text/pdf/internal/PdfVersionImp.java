@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2012 1T3XT BVBA
+ * Copyright (c) 1998-2013 1T3XT BVBA
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -76,6 +76,9 @@ public class PdfVersionImp implements PdfVersion {
 	protected char header_version = PdfWriter.VERSION_1_4;
 	/** The version that will be written to the catalog. */
 	protected PdfName catalog_version = null;
+    /** The version that user can use to get the actual version of PDF document **/
+    protected char version = PdfWriter.VERSION_1_4;
+
 	/**
 	 * The extensions dictionary.
 	 * @since	2.1.6
@@ -86,7 +89,8 @@ public class PdfVersionImp implements PdfVersion {
 	 * @see com.itextpdf.text.pdf.interfaces.PdfVersion#setPdfVersion(char)
 	 */
 	public void setPdfVersion(char version) {
-		if (headerWasWritten || appendmode) {
+		this.version = version;
+        if (headerWasWritten || appendmode) {
 			setPdfVersion(getVersionAsName(version));
 		}
 		else {
@@ -197,4 +201,9 @@ public class PdfVersionImp implements PdfVersion {
 		}
 		extensions.put(de.getPrefix(), de.getDeveloperExtensions());
 	}
+
+    public char getVersion() {
+        return version;
+    }
+
 }

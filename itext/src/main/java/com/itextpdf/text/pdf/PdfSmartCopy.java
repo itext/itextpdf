@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2012 1T3XT BVBA
+ * Copyright (c) 1998-2013 1T3XT BVBA
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -48,7 +48,6 @@ import java.io.OutputStream;
 import java.security.MessageDigest;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
@@ -69,8 +68,8 @@ public class PdfSmartCopy extends PdfCopy {
 
 	/** the cache with the streams and references. */
     private HashMap<ByteStore, PdfIndirectReference> streamMap = null;
-    private final HashSet<PdfObject> serialized = new HashSet<PdfObject>();
-    
+    private final HashMap<RefKey, Integer> serialized = new HashMap<RefKey, Integer>();
+
     protected Counter COUNTER = CounterFactory.getCounter(PdfSmartCopy.class);
     protected Counter getCounter() {
     	return COUNTER;
@@ -145,28 +144,50 @@ public class PdfSmartCopy extends PdfCopy {
         return theRef;
     }
 
+    @Override
+    public void freeReader(PdfReader reader) throws IOException {
+        serialized.clear();
+        super.freeReader(reader);
+    }
+
+    @Override
+    public void addPage(PdfImportedPage iPage) throws IOException, BadPdfFormatException {
+        if (currentPdfReaderInstance.getReader() != reader)
+            serialized.clear();
+        super.addPage(iPage);
+    }
+
     static class ByteStore {
         private final byte[] b;
         private final int hash;
         private MessageDigest md5;
 
-        private void serObject(PdfObject obj, int level, ByteBuffer bb, HashSet<PdfObject> serialized) throws IOException {
+        private void serObject(PdfObject obj, int level, ByteBuffer bb, HashMap<RefKey, Integer> serialized) throws IOException {
             if (level <= 0)
                 return;
             if (obj == null) {
                 bb.append("$Lnull");
                 return;
             }
+            PdfIndirectReference ref = null;
+            ByteBuffer savedBb = null;
+
             if (obj.isIndirect()) {
-                if (serialized.contains(obj))
+                ref = (PdfIndirectReference)obj;
+                RefKey key = new RefKey(ref);
+                if (serialized.containsKey(key)) {
+                    bb.append(serialized.get(key));
                     return;
-                else
-                    serialized.add(obj);
+                }
+                else {
+                    savedBb = bb;
+                    bb = new ByteBuffer();
+                }
             }
             obj = PdfReader.getPdfObject(obj);
             if (obj.isStream()) {
                 bb.append("$B");
-                serDic((PdfDictionary)obj, level - 1, bb, serialized);
+                serDic((PdfDictionary) obj, level - 1, bb, serialized);
                 if (level > 0) {
                     md5.reset();
                     bb.append(md5.digest(PdfReader.getStreamBytesRaw((PRStream)obj)));
@@ -186,9 +207,16 @@ public class PdfSmartCopy extends PdfCopy {
             }
             else
                 bb.append("$L").append(obj.toString());
+
+            if (savedBb != null) {
+                RefKey key = new RefKey(ref);
+                if (!serialized.containsKey(key))
+                    serialized.put(key, calculateHash(bb.getBuffer()));
+                savedBb.append(bb);
+            }
         }
 
-        private void serDic(PdfDictionary dic, int level, ByteBuffer bb, HashSet<PdfObject> serialized) throws IOException {
+        private void serDic(PdfDictionary dic, int level, ByteBuffer bb, HashMap<RefKey, Integer> serialized) throws IOException {
             bb.append("$D");
             if (level <= 0)
                 return;
@@ -200,7 +228,7 @@ public class PdfSmartCopy extends PdfCopy {
             }
         }
 
-        private void serArray(PdfArray array, int level, ByteBuffer bb, HashSet<PdfObject> serialized) throws IOException {
+        private void serArray(PdfArray array, int level, ByteBuffer bb, HashMap<RefKey, Integer> serialized) throws IOException {
             bb.append("$A");
             if (level <= 0)
                 return;
@@ -209,7 +237,7 @@ public class PdfSmartCopy extends PdfCopy {
             }
         }
 
-        ByteStore(PRStream str, HashSet<PdfObject> serialized) throws IOException {
+        ByteStore(PRStream str, HashMap<RefKey, Integer> serialized) throws IOException {
             try {
                 md5 = MessageDigest.getInstance("MD5");
             }
@@ -224,7 +252,7 @@ public class PdfSmartCopy extends PdfCopy {
             md5 = null;
         }
 
-        ByteStore(PdfDictionary dict, HashSet<PdfObject> serialized) throws IOException {
+        ByteStore(PdfDictionary dict, HashMap<RefKey, Integer> serialized) throws IOException {
             try {
                 md5 = MessageDigest.getInstance("MD5");
             }

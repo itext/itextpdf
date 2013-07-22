@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2012 1T3XT BVBA
+ * Copyright (c) 1998-2013 1T3XT BVBA
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -42,6 +42,8 @@
  * address: sales@itextpdf.com
  */
 package com.itextpdf.text.pdf;
+
+import com.itextpdf.text.pdf.internal.PdfIsoKeys;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -159,6 +161,7 @@ public class PdfArray extends PdfObject implements Iterable<PdfObject> {
      */
     @Override
     public void toPdf(final PdfWriter writer, final OutputStream os) throws IOException {
+        PdfWriter.checkPdfIsoConformance(writer, PdfIsoKeys.PDFISOKEY_OBJECT, this);
         os.write('[');
 
         Iterator<PdfObject> i = arrayList.iterator();
@@ -544,7 +547,7 @@ public class PdfArray extends PdfObject implements Iterable<PdfObject> {
     public PdfIndirectReference getAsIndirectObject(final int idx) {
         PdfIndirectReference ref = null;
         PdfObject orig = getPdfObject(idx); // not getDirect this time.
-        if (orig != null && orig.isIndirect())
+        if (orig instanceof PdfIndirectReference)
             ref = (PdfIndirectReference) orig;
         return ref;
     }

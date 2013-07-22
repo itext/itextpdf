@@ -5,18 +5,10 @@ import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import junit.framework.Assert;
 import org.junit.Test;
-import org.junit.Ignore;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-/**
- * Created with IntelliJ IDEA.
- * User: chin
- * Date: 5/2/13
- * Time: 3:42 PM
- * To change this template use File | Settings | File Templates.
- */
 public class PdfAFileStructureTest {
 
 
@@ -61,25 +53,6 @@ public class PdfAFileStructureTest {
         PdfReader reader = new PdfReader(baos.toByteArray());
         Assert.assertNotNull(reader.getTrailer().get(PdfName.ID));
         reader.close();
-    }
-
-    /*
-        In a cross reference subsection header the starting object number and the range shall be separated by a single SPACE character (20h).
-        The xref keyword and the cross reference subsection header shall be separated by a single EOL marker.
-     */
-    @Test
-    @Ignore
-    public void crossReferenceTable() throws DocumentException, IOException {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        Document document = new Document();
-        PdfWriter.getInstance(document, baos);
-        document.open();
-        document.add(new Chunk("Hello World"));
-        document.close();
-
-        byte[] bytes = baos.toByteArray();
-        String str = new String(bytes, 643, 8);
-        Assert.assertEquals("xref\n0 7", str);
     }
 
     /*

@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2012 1T3XT BVBA
+ * Copyright (c) 1998-2013 1T3XT BVBA
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -47,6 +47,7 @@ import com.itextpdf.text.pdf.interfaces.IPdfStructureElement;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -77,8 +78,13 @@ public class PdfStructureTreeRoot extends PdfDictionary implements IPdfStructure
         if (numTree != null) return;
         numTree = new HashMap<Integer, PdfIndirectReference>();
         for (Integer i: parentTree.keySet()) {
-            PdfArray ar = (PdfArray)parentTree.get(i);
-            numTree.put(i, writer.addToBody(ar).getIndirectReference());
+            PdfObject obj = parentTree.get(i);
+            if (obj.isArray()) {
+                PdfArray ar = (PdfArray)obj;
+                numTree.put(i, writer.addToBody(ar).getIndirectReference());
+            } else if (obj instanceof PdfIndirectReference) {
+                numTree.put(i, (PdfIndirectReference)obj);
+            }
         }
     }
 
@@ -141,6 +147,10 @@ public class PdfStructureTreeRoot extends PdfDictionary implements IPdfStructure
             parentTree.put(i, ar);
         }
         ar.add(struc);
+    }
+
+    void setAnnotationMark(int structParentIndex, PdfIndirectReference struc) {
+        parentTree.put(Integer.valueOf(structParentIndex), struc);
     }
 
     private void nodeProcess(PdfDictionary struc, PdfIndirectReference reference) throws IOException {

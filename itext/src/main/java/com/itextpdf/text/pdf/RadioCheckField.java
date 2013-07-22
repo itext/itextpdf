@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2012 1T3XT BVBA
+ * Copyright (c) 1998-2013 1T3XT BVBA
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -43,11 +43,12 @@
  */
 package com.itextpdf.text.pdf;
 
-import java.io.IOException;
-
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.ExceptionConverter;
 import com.itextpdf.text.Rectangle;
+import com.itextpdf.text.error_messages.MessageLocalization;
+
+import java.io.IOException;
 
 /**
  * Creates a radio or a check field.
@@ -107,12 +108,12 @@ public class RadioCheckField extends BaseField {
     /** A field with the symbol star */
     public static final int TYPE_STAR = 6;
     
-    private static String typeChars[] = {"4", "l", "8", "u", "n", "H"};
+    protected static String typeChars[] = {"4", "l", "8", "u", "n", "H"};
     
     /**
      * Holds value of property checkType.
      */
-    private int checkType;
+    protected int checkType;
     
     /**
      * Holds value of property onValue.
@@ -368,13 +369,16 @@ public class RadioCheckField extends BaseField {
             field = PdfFormField.createCheckBox(writer);
         field.setWidget(box, PdfAnnotation.HIGHLIGHT_INVERT);
         if (!isRadio) {
+        	if (!"Yes".equals(onValue)) {
+        		throw new DocumentException(MessageLocalization.getComposedMessage("1.is.not.a.valid.name.for.checkbox.appearance", onValue));
+        	}
             field.setFieldName(fieldName);
             if ((options & READ_ONLY) != 0)
                 field.setFieldFlags(PdfFormField.FF_READ_ONLY);
             if ((options & REQUIRED) != 0)
                 field.setFieldFlags(PdfFormField.FF_REQUIRED);
             field.setValueAsName(checked ? onValue : "Off");
-            setCheckType(TYPE_CHECK);
+            setCheckType(checkType);
         }
         if (text != null)
             field.setMKNormalCaption(text);
@@ -387,7 +391,9 @@ public class RadioCheckField extends BaseField {
         field.setAppearance(PdfAnnotation.APPEARANCE_NORMAL, "Off", tpoff);
         field.setAppearanceState(checked ? onValue : "Off");
         PdfAppearance da = (PdfAppearance)tpon.getDuplicate();
-        da.setFontAndSize(getRealFont(), fontSize);
+        BaseFont realFont = getRealFont();
+        if (realFont != null)
+            da.setFontAndSize(getRealFont(), fontSize);
         if (textColor == null)
             da.setGrayFill(0);
         else

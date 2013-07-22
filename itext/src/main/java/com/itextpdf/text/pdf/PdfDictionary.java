@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2012 1T3XT BVBA
+ * Copyright (c) 1998-2013 1T3XT BVBA
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -42,6 +42,8 @@
  * address: sales@itextpdf.com
  */
 package com.itextpdf.text.pdf;
+
+import com.itextpdf.text.pdf.internal.PdfIsoKeys;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -131,6 +133,7 @@ public class PdfDictionary extends PdfObject {
      */
     @Override
     public void toPdf(final PdfWriter writer, final OutputStream os) throws IOException {
+        PdfWriter.checkPdfIsoConformance(writer, PdfIsoKeys.PDFISOKEY_OBJECT, this);
         os.write('<');
         os.write('<');
         // loop over all the object-pairs in the HashMap
@@ -302,7 +305,7 @@ public class PdfDictionary extends PdfObject {
      * @return <CODE>true</CODE> if it is, otherwise <CODE>false</CODE>.
      */
     public boolean isFont() {
-        return FONT.equals(dictionaryType);
+        return checkType(FONT);
     }
 
     /**
@@ -311,7 +314,7 @@ public class PdfDictionary extends PdfObject {
      * @return <CODE>true</CODE> if it is, otherwise <CODE>false</CODE>.
      */
     public boolean isPage() {
-        return PAGE.equals(dictionaryType);
+        return checkType(PAGE);
     }
 
     /**
@@ -320,7 +323,7 @@ public class PdfDictionary extends PdfObject {
      * @return <CODE>true</CODE> if it is, otherwise <CODE>false</CODE>.
      */
     public boolean isPages() {
-        return PAGES.equals(dictionaryType);
+        return checkType(PAGES);
     }
 
     /**
@@ -329,7 +332,7 @@ public class PdfDictionary extends PdfObject {
      * @return <CODE>true</CODE> if it is, otherwise <CODE>false</CODE>.
      */
     public boolean isCatalog() {
-        return CATALOG.equals(dictionaryType);
+        return checkType(CATALOG);
     }
 
     /**
@@ -338,7 +341,20 @@ public class PdfDictionary extends PdfObject {
      * @return <CODE>true</CODE> if it is, otherwise <CODE>false</CODE>.
      */
     public boolean isOutlineTree() {
-        return OUTLINES.equals(dictionaryType);
+        return checkType(OUTLINES);
+    }
+    
+    /**
+     * Checks the type of the dictionary.
+     * @param type the type you're looking for
+     * @return true if the type of the dictionary corresponds with the type you're looking for
+     */
+    public boolean checkType(PdfName type) {
+    	if (type == null)
+    		return false;
+    	if (dictionaryType == null)
+    		dictionaryType = getAsName(PdfName.TYPE);
+    	return type.equals(dictionaryType);
     }
 
     // OTHER METHODS

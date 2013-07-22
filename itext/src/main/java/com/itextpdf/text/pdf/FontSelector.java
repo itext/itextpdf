@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2012 1T3XT BVBA
+ * Copyright (c) 1998-2013 1T3XT BVBA
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -62,6 +62,7 @@ import com.itextpdf.text.error_messages.MessageLocalization;
 public class FontSelector {
 
     protected ArrayList<Font> fonts = new ArrayList<Font>();
+    protected Font currentFont = null;
 
     /**
      * Adds a <CODE>Font</CODE> to be searched for valid characters.
@@ -84,51 +85,60 @@ public class FontSelector {
      * @return a <CODE>Phrase</CODE> with one or more chunks
      */
     public Phrase process(String text) {
-        int fsize = fonts.size();
-        if (fsize == 0)
+        if (fonts.size() == 0)
             throw new IndexOutOfBoundsException(MessageLocalization.getComposedMessage("no.font.is.defined"));
         char cc[] = text.toCharArray();
         int len = cc.length;
         StringBuffer sb = new StringBuffer();
-        Font font = null;
-        int lastidx = -1;
         Phrase ret = new Phrase();
+        currentFont = null;
         for (int k = 0; k < len; ++k) {
-            char c = cc[k];
-            if (c == '\n' || c == '\r') {
-                sb.append(c);
-                continue;
+            Chunk newChunk = processChar(cc, k, sb);
+            if (newChunk != null) {
+                ret.add(newChunk);
             }
+        }
+        if (sb.length() > 0) {
+            Chunk ck = new Chunk(sb.toString(), currentFont != null ? currentFont : fonts.get(0));
+            ret.add(ck);
+        }
+        return ret;
+    }
+
+    protected Chunk processChar(char[] cc, int k, StringBuffer sb) {
+        Chunk newChunk = null;
+        char c = cc[k];
+        if (c == '\n' || c == '\r') {
+            sb.append(c);
+        } else {
+            Font font = null;
             if (Utilities.isSurrogatePair(cc, k)) {
                 int u = Utilities.convertToUtf32(cc, k);
-                for (int f = 0; f < fsize; ++f) {
+                for (int f = 0; f < fonts.size(); ++f) {
                     font = fonts.get(f);
                     if (font.getBaseFont().charExists(u)) {
-                        if (lastidx != f) {
-                            if (sb.length() > 0 && lastidx != -1) {
-                                Chunk ck = new Chunk(sb.toString(), fonts.get(lastidx));
-                                ret.add(ck);
+                        if (currentFont != font) {
+                            if (sb.length() > 0 && currentFont != null) {
+                                newChunk = new Chunk(sb.toString(), currentFont);
                                 sb.setLength(0);
                             }
-                            lastidx = f;
+                            currentFont = font;
                         }
                         sb.append(c);
                         sb.append(cc[++k]);
                         break;
                     }
                 }
-            }
-            else {
-                for (int f = 0; f < fsize; ++f) {
+            } else {
+                for (int f = 0; f < fonts.size(); ++f) {
                     font = fonts.get(f);
                     if (font.getBaseFont().charExists(c)) {
-                        if (lastidx != f) {
-                            if (sb.length() > 0 && lastidx != -1) {
-                                Chunk ck = new Chunk(sb.toString(), fonts.get(lastidx));
-                                ret.add(ck);
+                        if (currentFont != font) {
+                            if (sb.length() > 0 && currentFont != null) {
+                                newChunk = new Chunk(sb.toString(), currentFont);
                                 sb.setLength(0);
                             }
-                            lastidx = f;
+                            currentFont = font;
                         }
                         sb.append(c);
                         break;
@@ -136,10 +146,6 @@ public class FontSelector {
                 }
             }
         }
-        if (sb.length() > 0) {
-            Chunk ck = new Chunk(sb.toString(), fonts.get(lastidx == -1 ? 0 : lastidx));
-            ret.add(ck);
-        }
-        return ret;
+        return newChunk;
     }
 }

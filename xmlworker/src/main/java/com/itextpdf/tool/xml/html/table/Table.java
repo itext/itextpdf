@@ -1,7 +1,8 @@
 /*
  * $Id$
  *
- * This file is part of the iText (R) project. Copyright (c) 1998-2012 1T3XT
+ * This file is part of the iText (R) project.
+ * Copyright (c) 1998-2013 1T3XT BVBA
  * BVBA Authors: Balder Van Camp, Emiel Ackermann, et al.
  *
  * This program is free software; you can redistribute it and/or modify it under
@@ -392,7 +393,10 @@ public class Table extends AbstractTagProcessor {
                     float computedTableHeigt = table.calculateHeights();
                     computedRowHeight = tableHeight - computedTableHeigt;
                 }*/
-				for (HtmlCell cell : row.getContent()) {
+                List<HtmlCell> rowContent = row.getContent();
+                if (rowContent.size() < 1)
+                    continue;
+                for (HtmlCell cell : rowContent) {
 					List<Element> compositeElements = cell.getCompositeElements();
 					if (compositeElements != null) {
 						for (Element baseLevel : compositeElements) {
@@ -524,6 +528,8 @@ public class Table extends AbstractTagProcessor {
 	private void widenLastCell(final List<TableRowElement> tableRows, final float horBorderSpacing) {
 		for (TableRowElement row : tableRows) {
 			List<HtmlCell> cells = row.getContent();
+            if (cells.size() < 1)
+                continue;
 			HtmlCell last = cells.get(cells.size() - 1);
 			last.getCellValues().setLastInRow(true);
 			last.setPaddingRight(last.getPaddingRight() + horBorderSpacing);

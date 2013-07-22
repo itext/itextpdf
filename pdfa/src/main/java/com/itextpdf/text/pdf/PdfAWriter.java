@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2012 1T3XT BVBA
+ * Copyright (c) 1998-2013 1T3XT BVBA
  * Authors: Alexander Chingarev, Bruno Lowagie, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -65,7 +65,9 @@ import java.io.OutputStream;
  * @see PdfWriter
  */
 public class PdfAWriter extends PdfWriter {
-	
+
+    protected ICC_Profile colorProfile;
+
     /**
      * Use this method to get an instance of the <CODE>PdfWriter</CODE>.
      * @param	document	The <CODE>Document</CODE> that has to be written
@@ -141,6 +143,7 @@ public class PdfAWriter extends PdfWriter {
                 d.put(PdfName.S, PdfName.GTS_PDFA1);
             }
         }
+        this.colorProfile = colorProfile;
     }
 
     /**
@@ -156,6 +159,10 @@ public class PdfAWriter extends PdfWriter {
      */
     public boolean isPdfIso() {
         return pdfIsoConformance.isPdfIso();
+    }
+
+    public ICC_Profile getColorProfile() {
+        return colorProfile;
     }
 
     /**
@@ -194,9 +201,7 @@ public class PdfAWriter extends PdfWriter {
      * @see PdfWriter#getXmpWriter(java.io.ByteArrayOutputStream, com.itextpdf.text.pdf.PdfDictionary)
      */
     protected XmpWriter getXmpWriter(ByteArrayOutputStream baos, PdfDictionary info) throws IOException {
-        if (xmpWriter == null)
-            xmpWriter = new PdfAXmpWriter(baos, info, ((PdfAConformance)pdfIsoConformance).getConformanceLevel());
-        return xmpWriter;
+        return new PdfAXmpWriter(baos, info, ((PdfAConformance)pdfIsoConformance).getConformanceLevel());
     }
 
     /**

@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2012 1T3XT BVBA
+ * Copyright (c) 1998-2013 1T3XT BVBA
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -54,6 +54,8 @@ import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.DocWriter;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.ExceptionConverter;
+import com.itextpdf.text.pdf.interfaces.PdfIsoConformance;
+import com.itextpdf.text.pdf.internal.PdfIsoKeys;
 
 /**
  * <CODE>PdfStream</CODE> is the Pdf stream object.
@@ -306,6 +308,7 @@ public class PdfStream extends PdfDictionary {
         }
         else
             superToPdf(writer, os);
+        PdfWriter.checkPdfIsoConformance(writer, PdfIsoKeys.PDFISOKEY_STREAM, this);
         os.write(STARTSTREAM);
         if (inputStream != null) {
             rawLength = 0;

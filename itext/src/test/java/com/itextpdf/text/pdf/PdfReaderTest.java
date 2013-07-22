@@ -110,9 +110,6 @@ public class PdfReaderTest {
         PdfDictionary pageResFromDict = rdr.getPageResources(rdr.getPageN(1));
         // same size & keys
         assertTrue( pageResFromNum.getKeys().equals(pageResFromDict.getKeys()) );
-
-        //iText-built resource dictionaries always have a "Procset" entry that is an array
-        assertTrue( pageResFromNum.getAsArray(PdfName.PROCSET) != null);
         
         rdr.close();
     }

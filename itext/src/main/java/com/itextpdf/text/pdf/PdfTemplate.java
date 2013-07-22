@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2012 1T3XT BVBA
+ * Copyright (c) 1998-2013 1T3XT BVBA
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -43,14 +43,17 @@
  */
 package com.itextpdf.text.pdf;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.UUID;
 
 import com.itextpdf.text.Rectangle;
+import com.itextpdf.text.pdf.interfaces.IAccessibleElement;
 
 /**
  * Implements the form XObject.
  */
 
-public class PdfTemplate extends PdfContentByte {
+public class PdfTemplate extends PdfContentByte implements IAccessibleElement {
     public static final int TYPE_TEMPLATE = 1;
     public static final int TYPE_IMPORTED = 2;
     public static final int TYPE_PATTERN = 3;
@@ -71,11 +74,19 @@ public class PdfTemplate extends PdfContentByte {
     
     protected PdfOCG layer;
 
+    protected PdfIndirectReference pageReference;
+
+    protected boolean contentTagged = false;
+
 	/**
 	 * A dictionary with additional information
 	 * @since 5.1.0
 	 */
 	private PdfDictionary additional = null;
+
+    protected PdfName role = PdfName.FIGURE;
+    protected HashMap<PdfName, PdfObject> accessibleAttributes = null;
+    private UUID id = null;
 	
     /**
      *Creates a <CODE>PdfTemplate</CODE>.
@@ -123,6 +134,10 @@ public class PdfTemplate extends PdfContentByte {
         template.setHeight(height);
         writer.addDirectTemplateSimple(template, forcedName);
         return template;
+    }
+
+    public boolean isTagged() {
+        return super.isTagged() && contentTagged;
     }
 
     /**
@@ -277,7 +292,7 @@ public class PdfTemplate extends PdfContentByte {
     PageResources getPageResources() {
         return pageResources;
     }
-    
+
     /** Getter for property group.
      * @return Value of property group.
      *
@@ -315,4 +330,59 @@ public class PdfTemplate extends PdfContentByte {
 	public void setAdditional(PdfDictionary additional) {
 		this.additional = additional;
 	}
+
+    public PdfIndirectReference getCurrentPage() {
+        return pageReference == null ? writer.getCurrentPage() : pageReference;
+    }
+
+    public PdfIndirectReference getPageReference() {
+        return pageReference;
+    }
+
+    public void setPageReference(PdfIndirectReference pageReference) {
+        this.pageReference = pageReference;
+    }
+
+    public boolean isContentTagged() {
+        return contentTagged;
+    }
+
+    public void setContentTagged(boolean contentTagged) {
+        this.contentTagged = contentTagged;
+    }
+
+    public PdfObject getAccessibleAttribute(final PdfName key) {
+        if (accessibleAttributes != null)
+            return accessibleAttributes.get(key);
+        else
+            return null;
+    }
+
+    public void setAccessibleAttribute(final PdfName key, final PdfObject value) {
+        if (accessibleAttributes == null)
+            accessibleAttributes = new HashMap<PdfName, PdfObject>();
+        accessibleAttributes.put(key, value);
+    }
+
+    public HashMap<PdfName, PdfObject> getAccessibleAttributes() {
+        return accessibleAttributes;
+    }
+
+    public PdfName getRole() {
+        return role;
+    }
+
+    public void setRole(final PdfName role) {
+        this.role = role;
+    }
+
+    public UUID getId() {
+        if (id == null)
+            id = UUID.randomUUID();
+        return id;
+    }
+
+    public void setId(final UUID id) {
+        this.id = id;
+    }
 }

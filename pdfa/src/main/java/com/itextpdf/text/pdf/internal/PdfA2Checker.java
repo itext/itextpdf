@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2012 1T3XT BVBA
+ * Copyright (c) 1998-2013 1T3XT BVBA
  * Authors: Alexander Chingarev, Bruno Lowagie, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -56,6 +56,10 @@ public class PdfA2Checker extends PdfA1Checker {
     static private HashSet<PdfName> allowedBlendModes = new HashSet<PdfName>(Arrays.asList(new PdfName[]{PdfGState.BM_NORMAL, PdfGState.BM_COMPATIBLE,
             PdfGState.BM_MULTIPLY, PdfGState.BM_SCREEN, PdfGState.BM_OVERLAY, PdfGState.BM_DARKEN, PdfGState.BM_LIGHTEN, PdfGState.BM_COLORDODGE,
             PdfGState.BM_COLORBURN, PdfGState.BM_HARDLIGHT, PdfGState.BM_SOFTLIGHT, PdfGState.BM_DIFFERENCE, PdfGState.BM_EXCLUSION}));
+
+    PdfA2Checker(PdfAConformanceLevel conformanceLevel) {
+        super(conformanceLevel);
+    }
 
     @Override
     protected void checkGState(PdfWriter writer, int key, Object obj1) {
@@ -117,7 +121,7 @@ public class PdfA2Checker extends PdfA1Checker {
         if (obj1 instanceof PdfOCG) {
 
         } else if (obj1 instanceof PdfOCProperties) {
-            PdfOCProperties properties = (PdfOCProperties)obj1;
+            PdfOCProperties properties = (PdfOCProperties) obj1;
             ArrayList<PdfDictionary> configsList = new ArrayList<PdfDictionary>();
             PdfDictionary d = properties.getAsDict(PdfName.D);
             if (d != null)

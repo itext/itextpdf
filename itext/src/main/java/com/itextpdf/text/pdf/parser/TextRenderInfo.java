@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2012 1T3XT BVBA
+ * Copyright (c) 1998-2013 1T3XT BVBA
  * Authors: Kevin Day, Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -47,6 +47,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.pdf.BaseFont;
 import com.itextpdf.text.pdf.DocumentFont;
 
@@ -127,7 +128,8 @@ public class TextRenderInfo {
         if (checkTheTopmostLevelOnly) {
             if (markedContentInfos instanceof ArrayList) {
                 ArrayList<MarkedContentInfo> mci = (ArrayList<MarkedContentInfo>)markedContentInfos;
-                return mci.size() > 0 && mci.get(mci.size() - 1).getMcid() == mcid;
+                MarkedContentInfo info = mci.size() > 0 ? mci.get(mci.size() - 1) : null;
+                return (info != null && info.hasMcid()) ? info.getMcid() == mcid : false;
             }
         } else {
             for (MarkedContentInfo info : markedContentInfos) {
@@ -274,6 +276,23 @@ public class TextRenderInfo {
      */
     public int getTextRenderMode(){
         return gs.renderMode;
+    }
+    
+    /**
+     * Returns the current fill color.
+     * @param a BaseColor
+     */
+    public BaseColor getFillColor() {
+    	return gs.fillColor;
+    }
+
+    
+    /**
+     * Returns the current stroke color.
+     * @param a BaseColor
+     */
+    public BaseColor getStrokeColor() {
+    	return gs.strokeColor;
     }
     
     /**

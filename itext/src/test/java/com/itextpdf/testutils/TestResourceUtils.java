@@ -55,15 +55,15 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
 
-import org.junit.Ignore;
-
 import com.itextpdf.text.pdf.PdfReader;
 
 /**
  * @author kevin
+ * 
+ * This class is abstract to prevent old Surefire versions from
+ * running it as a test and failing because it contains no tests.
  */
-@Ignore
-public final class TestResourceUtils {
+public abstract class TestResourceUtils {
 
     private static final String TESTPREFIX = "itexttest_";
     
