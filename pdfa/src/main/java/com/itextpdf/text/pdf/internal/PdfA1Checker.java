@@ -322,6 +322,9 @@ public class PdfA1Checker extends PdfAChecker {
         if (obj1 instanceof PdfAnnotation) {
             PdfAnnotation annot = (PdfAnnotation) obj1;
             PdfObject subtype = annot.get(PdfName.SUBTYPE);
+            if (subtype == null) {
+                throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("annotation.type.1.not.allowed", "null"));
+            }
             if (subtype != null && !allowedAnnotTypes.contains(subtype)) {
                 throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("annotation.type.1.not.allowed", subtype.toString()));
             }

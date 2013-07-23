@@ -6,7 +6,8 @@ import org.junit.Test;
 
 import java.io.*;
 
-public class PdfA1CheckerTest {
+public class
+        PdfA1CheckerTest {
 
     @Test
     public void trailerCheckTest() throws DocumentException, IOException {
@@ -745,10 +746,8 @@ public class PdfA1CheckerTest {
         writer.setOutputIntents("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", icc);
 
         PdfAnnotation annot = new PdfAnnotation(writer, new Rectangle(100, 100, 200, 200));
-        annot.put(PdfName.F, new PdfNumber(PdfAnnotation.FLAGS_PRINT));
-        PdfTemplate template = new PdfTemplate(writer);
-        template.rectangle(100, 100, 200, 200);
-        annot.setAppearance(PdfAnnotation.APPEARANCE_NORMAL, template);
+        annot.put(PdfName.SUBTYPE, PdfName.TEXT);
+        annot.put(PdfName.F, new PdfNumber(PdfAnnotation.FLAGS_PRINT | PdfAnnotation.FLAGS_NOZOOM | PdfAnnotation.FLAGS_NOROTATE));
         PdfContentByte canvas = writer.getDirectContent();
         canvas.addAnnotation(annot);
         document.close();
