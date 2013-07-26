@@ -281,6 +281,7 @@ public class PdfA1Checker extends PdfAChecker {
                             return;
                         case ExtendedColor.TYPE_RGB:
                             checkColor(writer, PdfIsoKeys.PDFISOKEY_RGB, obj1);
+                            break;
                         case ExtendedColor.TYPE_SEPARATION:
                             SpotColor sc = (SpotColor) ec;
                             checkColor(writer, PdfIsoKeys.PDFISOKEY_COLOR, sc.getPdfSpotColor().getAlternativeCS());
