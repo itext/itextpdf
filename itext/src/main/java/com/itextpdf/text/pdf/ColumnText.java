@@ -1618,7 +1618,7 @@ public class ColumnText {
                 LOGGER.info("Will split at row " + k);
 
                 // Contributed by Deutsche Bahn Systel GmbH (Thorsten Seitz), splitting row spans
-                if (table.isSplitLate()) {
+                if (table.isSplitLate() && k > 0) {
                     fittingRows.correctLastRowChosen(table, k - 1);
                 }
                 // splitting row spans
