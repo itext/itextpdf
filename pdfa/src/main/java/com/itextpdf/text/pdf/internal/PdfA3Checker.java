@@ -44,6 +44,7 @@
 package com.itextpdf.text.pdf.internal;
 
 import com.itextpdf.text.pdf.PdfAConformanceLevel;
+import com.itextpdf.text.pdf.PdfWriter;
 
 public class PdfA3Checker extends PdfA2Checker {
 
@@ -51,5 +52,8 @@ public class PdfA3Checker extends PdfA2Checker {
         super(conformanceLevel);
     }
 
+    protected void checkFileSpec(PdfWriter writer, int key, Object obj1) {
+    	// don't do anything
+    }
 
 }
