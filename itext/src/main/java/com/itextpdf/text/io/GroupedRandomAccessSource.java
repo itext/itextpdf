@@ -1,8 +1,8 @@
 /*
- * $Id: GroupedRandomAccessSource.java 5551 2012-11-21 18:47:14Z trumpetinc $
+ * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2012 1T3XT
+ * Copyright (c) 1998-2013 1T3XT BVBA
  * BVBA Authors: Kevin Day, Bruno Lowagie, et al.
  *
  * This program is free software; you can redistribute it and/or modify it under

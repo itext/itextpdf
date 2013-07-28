@@ -1,8 +1,8 @@
 /*
- * $Id: RAFRandomAccessSource.java 5550 2012-11-21 13:26:06Z blowagie $
+ * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2012 1T3XT
+ * Copyright (c) 1998-2013 1T3XT BVBA
  * BVBA Authors: Kevin Day, Bruno Lowagie, et al.
  *
  * This program is free software; you can redistribute it and/or modify it under
