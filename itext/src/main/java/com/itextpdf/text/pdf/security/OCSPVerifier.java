@@ -52,16 +52,16 @@ import java.util.Date;
 import java.util.Enumeration;
 import java.util.List;
 
-import org.bouncycastle.cert.X509CertificateHolder;
-import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
-import org.bouncycastle.cert.ocsp.BasicOCSPResp;
-import org.bouncycastle.cert.ocsp.CertificateStatus;
-import org.bouncycastle.cert.ocsp.OCSPException;
-import org.bouncycastle.cert.ocsp.SingleResp;
-import org.bouncycastle.operator.ContentVerifierProvider;
-import org.bouncycastle.operator.OperatorCreationException;
-import org.bouncycastle.operator.bc.BcDigestCalculatorProvider;
-import org.bouncycastle.operator.jcajce.JcaContentVerifierProviderBuilder;
+import org.spongycastle.cert.X509CertificateHolder;
+import org.spongycastle.cert.jcajce.JcaX509CertificateConverter;
+import org.spongycastle.cert.ocsp.BasicOCSPResp;
+import org.spongycastle.cert.ocsp.CertificateStatus;
+import org.spongycastle.cert.ocsp.OCSPException;
+import org.spongycastle.cert.ocsp.SingleResp;
+import org.spongycastle.operator.ContentVerifierProvider;
+import org.spongycastle.operator.OperatorCreationException;
+import org.spongycastle.operator.bc.BcDigestCalculatorProvider;
+import org.spongycastle.operator.jcajce.JcaContentVerifierProviderBuilder;
 
 import com.itextpdf.text.log.Logger;
 import com.itextpdf.text.log.LoggerFactory;
