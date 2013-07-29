@@ -53,6 +53,7 @@ import java.security.Key;
 import java.security.MessageDigest;
 import java.security.PrivateKey;
 import java.security.cert.Certificate;
+import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -65,7 +66,11 @@ import java.util.Stack;
 import java.util.zip.InflaterInputStream;
 
 import org.bouncycastle.cms.CMSEnvelopedData;
+import org.bouncycastle.cms.Recipient;
+import org.bouncycastle.cms.RecipientId;
 import org.bouncycastle.cms.RecipientInformation;
+import org.bouncycastle.cms.jcajce.JceKeyTransEnvelopedRecipient;
+import org.bouncycastle.cms.jcajce.JceKeyTransRecipientId;
 
 import com.itextpdf.text.Document;
 import com.itextpdf.text.ExceptionConverter;
@@ -83,6 +88,7 @@ import com.itextpdf.text.log.CounterFactory;
 import com.itextpdf.text.pdf.PRTokeniser.TokenType;
 import com.itextpdf.text.pdf.interfaces.PdfViewerPreferences;
 import com.itextpdf.text.pdf.internal.PdfViewerPreferencesImp;
+
 import org.bouncycastle.cert.X509CertificateHolder;
 
 /** Reads a PDF document.
@@ -129,9 +135,11 @@ public class PdfReader implements PdfViewerPreferences {
     protected char pdfVersion;
     protected PdfEncryption decrypt;
     protected byte password[] = null; //added by ujihara for decryption
-    protected Key certificateKey = null; //added by Aiken Sam for certificate decryption
-    protected Certificate certificate = null; //added by Aiken Sam for certificate decryption
-    protected String certificateKeyProvider = null; //added by Aiken Sam for certificate decryption
+//    protected Key certificateKey = null; //added by Aiken Sam for certificate decryption
+//    protected Certificate certificate = null; //added by Aiken Sam for certificate decryption
+//    protected String certificateKeyProvider = null; //added by Aiken Sam for certificate decryption
+    protected RecipientId cmsRecipientId = null;
+    protected Recipient cmsRecipient = null;
     private boolean ownerPasswordUsed;
     protected ArrayList<PdfString> strings = new ArrayList<PdfString>();
     protected boolean sharedStreams = true;
@@ -170,10 +178,9 @@ public class PdfReader implements PdfViewerPreferences {
      * @param certificateKeyProvider the name of the key provider, or null if no key is required
      * @param closeSourceOnConstructorError if true, the byteSource will be closed if there is an error during construction of this reader
      */
-    private PdfReader(RandomAccessSource byteSource, boolean partialRead, byte ownerPassword[], Certificate certificate, Key certificateKey, String certificateKeyProvider, boolean closeSourceOnConstructorError) throws IOException {
-        this.certificate = certificate;
-        this.certificateKey = certificateKey;
-        this.certificateKeyProvider = certificateKeyProvider;
+    private PdfReader(RandomAccessSource byteSource, boolean partialRead, byte ownerPassword[], RecipientId cmsRecipientId, Recipient cmsRecipient, boolean closeSourceOnConstructorError) throws IOException {
+        this.cmsRecipientId = cmsRecipientId;
+        this.cmsRecipient = cmsRecipient;
         this.password = ownerPassword;
         this.partial = partialRead;
         
@@ -215,9 +222,10 @@ public class PdfReader implements PdfViewerPreferences {
     /** Reads and parses a PDF document.
      * @param filename the file name of the document
      * @param ownerPassword the password to read the document
+     * @param partial indicates if the file needs to be read in partial mode
      * @throws IOException on error
      */
-    public PdfReader(final String filename, final byte ownerPassword[], boolean partial) throws IOException {
+    public PdfReader(final String filename, final byte ownerPassword[], boolean partial) throws IOException {    	
         this(
         		new RandomAccessSourceFactory()
     			.setForceRead(false)
@@ -227,8 +235,7 @@ public class PdfReader implements PdfViewerPreferences {
     			ownerPassword,
     			null,
     			null,
-    			null,
-    			true	
+    			true
         );
     }
 
@@ -253,14 +260,14 @@ public class PdfReader implements PdfViewerPreferences {
     			ownerPassword,
     			null,
     			null,
-    			null,
     			true
         		
         );
 
     }
 
-    /** Reads and parses a PDF document.
+    /** 
+     * Reads and parses a PDF document.
      * @param filename the file name of the document
      * @param certificate the certificate to read the document
      * @param certificateKey the private key of the certificate
@@ -276,17 +283,55 @@ public class PdfReader implements PdfViewerPreferences {
     			
     			false,
     			null,
-    			certificate,
-    			certificateKey,
-    			certificateKeyProvider,
+    			PdfReader.getCMSRecipientId(certificate),
+    			PdfReader.getCMSRecipient(certificateKey, certificateKeyProvider),
     			true
-        		
         );
 
     }
 
+	private static RecipientId getCMSRecipientId(Certificate certificate) {
+		if (certificate != null) {
+			return new JceKeyTransRecipientId( (X509Certificate)certificate);
+		}
+		return null;
+	}
 
-    
+	private static Recipient getCMSRecipient(Key certificateKey, String certificateKeyProvider) {
+		if (certificateKey != null) {
+			JceKeyTransEnvelopedRecipient jceKeyTransRecipient = new JceKeyTransEnvelopedRecipient(	(PrivateKey)certificateKey );
+
+			if (certificateKeyProvider != null) {
+				jceKeyTransRecipient.setProvider(certificateKeyProvider);
+				return jceKeyTransRecipient;
+			}
+		}
+
+		return null;
+	}
+
+
+    /** 
+     * Reads and parses a PDF document.
+     * @param filename the file name of the document
+     * @param cmsRecipientId
+     * @param cmsRecipient
+     * @throws IOException on error
+     */
+    public PdfReader(final String filename, final RecipientId cmsRecipientId, final Recipient cmsRecipient) throws IOException {
+        this(
+        		new RandomAccessSourceFactory()
+    			.setForceRead(false)
+    			.setUsePlainRandomAccess(Document.plainRandomAccess)
+    			.createBestSource(filename),
+    			false,
+    			null,
+    			cmsRecipientId,
+    			cmsRecipient,
+    			true
+        );
+
+    }    
 
     
     /** Reads and parses a PDF document.
@@ -310,7 +355,6 @@ public class PdfReader implements PdfViewerPreferences {
     			ownerPassword,
     			null,
     			null,
-    			null,
     			true
         		
         );
@@ -327,10 +371,8 @@ public class PdfReader implements PdfViewerPreferences {
     public PdfReader(final InputStream is, final byte ownerPassword[]) throws IOException {
         this(
         		new RandomAccessSourceFactory().createSource(is),
-    			
     			false,
     			ownerPassword,
-    			null,
     			null,
     			null,
     			false
@@ -356,14 +398,12 @@ public class PdfReader implements PdfViewerPreferences {
      * @param raf the document location
      * @param ownerPassword the password or <CODE>null</CODE> for no password
      * @throws IOException on error
-     * @deprecated Use the constructor that takes a RandomAccessSource
      */
     public PdfReader(final RandomAccessFileOrArray raf, final byte ownerPassword[]) throws IOException {
         this(
         		raf.getByteSource(),
     			true,
     			ownerPassword,
-    			null,
     			null,
     			null,
     			false
@@ -859,13 +899,13 @@ public class PdfReader implements PdfViewerPreferences {
             default:
             	throw new UnsupportedPdfException(MessageLocalization.getComposedMessage("unknown.encryption.type.v.eq.1", vValue));
             }
-            X509CertificateHolder certHolder;
-            try {
-                certHolder = new X509CertificateHolder(certificate.getEncoded());
-            }
-            catch (Exception f) {
-                throw new ExceptionConverter(f);
-            }
+//            X509CertificateHolder certHolder;
+//            try {
+//                certHolder = new X509CertificateHolder(certificate.getEncoded());
+//            }
+//            catch (Exception f) {
+//                throw new ExceptionConverter(f);
+//            }
             for (int i = 0; i<recipients.size(); i++) {
                 PdfObject recipient = recipients.getPdfObject(i);
                 strings.remove(recipient);
@@ -874,16 +914,21 @@ public class PdfReader implements PdfViewerPreferences {
                 try {
                     data = new CMSEnvelopedData(recipient.getBytes());
 
-                    Iterator<RecipientInformation> recipientCertificatesIt = data.getRecipientInfos().getRecipients().iterator();
-
-                    while (recipientCertificatesIt.hasNext()) {
-                        RecipientInformation recipientInfo = recipientCertificatesIt.next();
-                        
-                        if (recipientInfo.getRID().match(certHolder) && !foundRecipient) {
-                        	envelopedData = PdfEncryptor.getContent(recipientInfo, (PrivateKey)certificateKey, certificateKeyProvider);
-                        	foundRecipient = true;
-                        } 
+                    RecipientInformation recipientInfo = data.getRecipientInfos().get(this.cmsRecipientId);
+                    
+                    if ( recipientInfo != null ){
+                    	envelopedData = recipientInfo.getContent(this.cmsRecipient);
+                    	foundRecipient = true;
                     }
+
+//                    while (recipientCertificatesIt.hasNext()) {
+//                        RecipientInformation recipientInfo = recipientCertificatesIt.next();
+//                        
+//                        if (recipientInfo.getRID().match(certHolder) && !foundRecipient) {
+//                        	envelopedData = PdfEncryptor.getContent(recipientInfo, (PrivateKey)certificateKey, certificateKeyProvider);
+//                        	foundRecipient = true;
+//                        } 
+//                    }
 
                 }
                 catch (Exception f) {
