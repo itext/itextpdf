@@ -359,7 +359,7 @@ public class PdfPKCS7 {
             if (signerInfo.getObjectAt(next) instanceof ASN1TaggedObject) {
                 ASN1TaggedObject tagsig = (ASN1TaggedObject)signerInfo.getObjectAt(next);
                 ASN1Set sseq = ASN1Set.getInstance(tagsig, false);
-                sigAttr = sseq.getEncoded(ASN1Encoding.DER);
+                sigAttr = sseq.getEncoded();
 
                 for (int k = 0; k < sseq.size(); ++k) {
                     ASN1Sequence seq2 = (ASN1Sequence)sseq.getObjectAt(k);
@@ -442,7 +442,12 @@ public class PdfPKCS7 {
             }
             else {
                 if (RSAdata != null || digestAttr != null) {
-                	messageDigest = DigestAlgorithms.getMessageDigest(getHashAlgorithm(), provider);
+                	if (PdfName.ADBE_PKCS7_SHA1.equals(getFilterSubtype())) {
+                		messageDigest = DigestAlgorithms.getMessageDigest("SHA1", provider);
+                	}
+                	else {
+                		messageDigest = DigestAlgorithms.getMessageDigest(getHashAlgorithm(), provider);
+                	}
                 	encContDigest = DigestAlgorithms.getMessageDigest(getHashAlgorithm(), provider);
                 }
                 if (provider == null)
@@ -1041,6 +1046,7 @@ public class PdfPKCS7 {
      * Verify the digest.
      * @throws SignatureException on error
      * @return <CODE>true</CODE> if the signature checks out, <CODE>false</CODE> otherwise
+     * @throws SignatureException 
      */
     public boolean verify() throws SignatureException {
         if (verified)
@@ -1056,7 +1062,6 @@ public class PdfPKCS7 {
             if (sigAttr != null) {
                 final byte [] msgDigestBytes = messageDigest.digest();
                 boolean verifyRSAdata = true;
-                sig.update(sigAttr);
                 // Stefan Santesson fixed a bug, keeping the code backward compatible
                 boolean encContDigestCompare = false;
                 if (RSAdata != null) {
@@ -1066,6 +1071,7 @@ public class PdfPKCS7 {
                 }
                 boolean absentEncContDigestCompare = Arrays.equals(msgDigestBytes, digestAttr);
                 boolean concludingDigestCompare = absentEncContDigestCompare || encContDigestCompare;
+                sig.update(sigAttr);
                 boolean sigVerify = sig.verify(digest);
                 verifyResult = concludingDigestCompare && sigVerify && verifyRSAdata;
             }
