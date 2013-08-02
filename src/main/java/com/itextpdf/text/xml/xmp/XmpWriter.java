@@ -201,6 +201,66 @@ public class XmpWriter {
         }
 	}
 
+    /**
+     * @param schemaNS The namespace URI for the property. Has the same usage as in getProperty.
+     * @param propName The name of the property.
+     *                 Has the same usage as in <code>getProperty()</code>.
+     * @param value    the value for the property (only leaf properties have a value).
+     *                 Arrays and non-leaf levels of structs do not have values.
+     *                 Must be <code>null</code> if the value is not relevant.<br/>
+     *                 The value is automatically detected: Boolean, Integer, Long, Double, XMPDateTime and
+     *                 byte[] are handled, on all other <code>toString()</code> is called.
+     * @throws XMPException Wraps all errors and exceptions that may occur.
+     */
+    public void setProperty(String schemaNS, String propName, Object value) throws XMPException {
+        xmpMeta.setProperty(schemaNS, propName, value);
+    }
+
+    /**
+     * Simplifies the construction of an array by not requiring that you pre-create an empty array.
+     * The array that is assigned is created automatically if it does not yet exist. Each call to
+     * appendArrayItem() appends an item to the array.
+     *
+     * @param schemaNS  The namespace URI for the array.
+     * @param arrayName The name of the array. May be a general path expression, must not be null or
+     *                  the empty string.
+     * @param value     the value of the array item.
+     * @throws XMPException Wraps all errors and exceptions that may occur.
+     */
+    public void appendArrayItem(String schemaNS, String arrayName, String value) throws XMPException {
+        xmpMeta.appendArrayItem(schemaNS, arrayName, new PropertyOptions(PropertyOptions.ARRAY), value, null);
+    }
+
+    /**
+     * Simplifies the construction of an ordered array by not requiring that you pre-create an empty array.
+     * The array that is assigned is created automatically if it does not yet exist. Each call to
+     * appendArrayItem() appends an item to the array.
+     *
+     * @param schemaNS  The namespace URI for the array.
+     * @param arrayName The name of the array. May be a general path expression, must not be null or
+     *                  the empty string.
+     * @param value     the value of the array item.
+     * @throws XMPException Wraps all errors and exceptions that may occur.
+     */
+    public void appendOrderedArrayItem(String schemaNS, String arrayName, String value) throws XMPException {
+        xmpMeta.appendArrayItem(schemaNS, arrayName, new PropertyOptions(PropertyOptions.ARRAY_ORDERED), value, null);
+    }
+
+    /**
+     * Simplifies the construction of an alternate array by not requiring that you pre-create an empty array.
+     * The array that is assigned is created automatically if it does not yet exist. Each call to
+     * appendArrayItem() appends an item to the array.
+     *
+     * @param schemaNS  The namespace URI for the array.
+     * @param arrayName The name of the array. May be a general path expression, must not be null or
+     *                  the empty string.
+     * @param value     the value of the array item.
+     * @throws XMPException Wraps all errors and exceptions that may occur.
+     */
+    public void appendAlternateArrayItem(String schemaNS, String arrayName, String value) throws XMPException {
+        xmpMeta.appendArrayItem(schemaNS, arrayName, new PropertyOptions(PropertyOptions.ARRAY_ALTERNATE), value, null);
+    }
+
 	/**
 	 * Flushes and closes the XmpWriter.
 	 * @throws IOException
