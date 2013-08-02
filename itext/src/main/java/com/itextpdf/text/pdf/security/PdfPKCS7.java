@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2013 1T3XT BVBA
+ * Copyright (c) 1998-2012 1T3XT BVBA
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -53,6 +53,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
+import java.security.PublicKey;
 import java.security.Signature;
 import java.security.SignatureException;
 import java.security.cert.CRL;
@@ -180,12 +181,7 @@ public class PdfPKCS7 {
 
         // initialize the Signature object
         if (privKey != null) {
-            if (provider == null)
-                sig = Signature.getInstance(getDigestAlgorithm());
-            else
-                sig = Signature.getInstance(getDigestAlgorithm(), provider);
-
-            sig.initSign(privKey);
+        	sig = initSignature(privKey);
         }
     }
 
@@ -359,7 +355,9 @@ public class PdfPKCS7 {
             if (signerInfo.getObjectAt(next) instanceof ASN1TaggedObject) {
                 ASN1TaggedObject tagsig = (ASN1TaggedObject)signerInfo.getObjectAt(next);
                 ASN1Set sseq = ASN1Set.getInstance(tagsig, false);
-                sigAttr = sseq.getEncoded(ASN1Encoding.DER);
+                sigAttr = sseq.getEncoded();
+                // maybe not necessary, but we use the following line as fallback:
+                sigAttrDer = sseq.getEncoded(ASN1Encoding.DER);
 
                 for (int k = 0; k < sseq.size(); ++k) {
                     ASN1Sequence seq2 = (ASN1Sequence)sseq.getObjectAt(k);
@@ -442,14 +440,15 @@ public class PdfPKCS7 {
             }
             else {
                 if (RSAdata != null || digestAttr != null) {
-                	messageDigest = DigestAlgorithms.getMessageDigest(getHashAlgorithm(), provider);
+                	if (PdfName.ADBE_PKCS7_SHA1.equals(getFilterSubtype())) {
+                		messageDigest = DigestAlgorithms.getMessageDigest("SHA1", provider);
+                	}
+                	else {
+                		messageDigest = DigestAlgorithms.getMessageDigest(getHashAlgorithm(), provider);
+                	}
                 	encContDigest = DigestAlgorithms.getMessageDigest(getHashAlgorithm(), provider);
                 }
-                if (provider == null)
-                    sig = Signature.getInstance(getDigestAlgorithm());
-                else
-                    sig = Signature.getInstance(getDigestAlgorithm(), provider);
-                sig.initVerify(signCert.getPublicKey());
+                sig = initSignature(signCert.getPublicKey());
             }
         }
         catch (Exception e) {
@@ -670,6 +669,30 @@ public class PdfPKCS7 {
     private byte[] RSAdata;
 
     // Signing functionality.
+    
+    private Signature initSignature(PrivateKey key) throws NoSuchAlgorithmException, NoSuchProviderException, InvalidKeyException {
+    	Signature signature;
+        if (provider == null)
+            signature = Signature.getInstance(getDigestAlgorithm());
+        else
+            signature = Signature.getInstance(getDigestAlgorithm(), provider);
+        signature.initSign(key);
+        return signature;
+    }
+    
+    private Signature initSignature(PublicKey key) throws NoSuchAlgorithmException, NoSuchProviderException, InvalidKeyException {
+    	String digestAlgorithm = getDigestAlgorithm();
+    	if (PdfName.ADBE_X509_RSA_SHA1.equals(getFilterSubtype()))
+    		digestAlgorithm = "SHA1withRSA";
+    	Signature signature;
+        if (provider == null)
+            signature = Signature.getInstance(digestAlgorithm);
+        else
+            signature = Signature.getInstance(digestAlgorithm, provider);
+
+        signature.initVerify(key);
+        return signature;
+    }
     
     /**
      * Update the digest with the specified bytes.
@@ -1021,9 +1044,11 @@ public class PdfPKCS7 {
     /*
      *	DIGITAL SIGNATURE VERIFICATION
      */
-    
+
     /** Signature attributes */
     private byte[] sigAttr;
+    /** Signature attributes (maybe not necessary, but we use it as fallback) */
+    private byte[] sigAttrDer;
     
     /** encrypted digest */
     private MessageDigest encContDigest; // Stefan Santesson
@@ -1041,8 +1066,9 @@ public class PdfPKCS7 {
      * Verify the digest.
      * @throws SignatureException on error
      * @return <CODE>true</CODE> if the signature checks out, <CODE>false</CODE> otherwise
+     * @throws SignatureException
      */
-    public boolean verify() throws SignatureException {
+    public boolean verify() throws GeneralSecurityException {
         if (verified)
             return verifyResult;
         if (isTsp) {
@@ -1053,10 +1079,9 @@ public class PdfPKCS7 {
             verifyResult = Arrays.equals(md, imphashed);
         }
         else {
-            if (sigAttr != null) {
+            if (sigAttr != null || sigAttrDer != null) {
                 final byte [] msgDigestBytes = messageDigest.digest();
                 boolean verifyRSAdata = true;
-                sig.update(sigAttr);
                 // Stefan Santesson fixed a bug, keeping the code backward compatible
                 boolean encContDigestCompare = false;
                 if (RSAdata != null) {
@@ -1066,7 +1091,7 @@ public class PdfPKCS7 {
                 }
                 boolean absentEncContDigestCompare = Arrays.equals(msgDigestBytes, digestAttr);
                 boolean concludingDigestCompare = absentEncContDigestCompare || encContDigestCompare;
-                boolean sigVerify = sig.verify(digest);
+                boolean sigVerify = verifySigAttributes(sigAttr) || verifySigAttributes(sigAttrDer);
                 verifyResult = concludingDigestCompare && sigVerify && verifyRSAdata;
             }
             else {
@@ -1077,6 +1102,12 @@ public class PdfPKCS7 {
         }
         verified = true;
         return verifyResult;
+    }
+    
+    private boolean verifySigAttributes(byte[] attr) throws GeneralSecurityException {
+    	Signature signature = initSignature(signCert.getPublicKey());
+    	signature.update(attr);
+    	return signature.verify(digest);
     }
 
     /**
