@@ -936,6 +936,8 @@ public class PdfPTable implements LargeElement, Spaceable, IAccessibleElement {
      */
     public static void endWritingRows(final PdfContentByte[] canvases) {
         PdfContentByte canvas = canvases[BASECANVAS];
+        PdfArtifact artifact = new PdfArtifact();
+        canvas.openMCBlock(artifact);
         canvas.saveState();
         canvas.add(canvases[BACKGROUNDCANVAS]);
         canvas.restoreState();
@@ -944,6 +946,7 @@ public class PdfPTable implements LargeElement, Spaceable, IAccessibleElement {
         canvas.resetRGBColorStroke();
         canvas.add(canvases[LINECANVAS]);
         canvas.restoreState();
+        canvas.closeMCBlock(artifact);
         canvas.add(canvases[TEXTCANVAS]);
     }
 
