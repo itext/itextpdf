@@ -681,11 +681,14 @@ public class PdfPKCS7 {
     }
     
     private Signature initSignature(PublicKey key) throws NoSuchAlgorithmException, NoSuchProviderException, InvalidKeyException {
+    	String digestAlgorithm = getDigestAlgorithm();
+    	if (PdfName.ADBE_X509_RSA_SHA1.equals(getFilterSubtype()))
+    		digestAlgorithm = "SHA1withRSA";
     	Signature signature;
         if (provider == null)
-            signature = Signature.getInstance(getDigestAlgorithm());
+            signature = Signature.getInstance(digestAlgorithm);
         else
-            signature = Signature.getInstance(getDigestAlgorithm(), provider);
+            signature = Signature.getInstance(digestAlgorithm, provider);
 
         signature.initVerify(key);
         return signature;
