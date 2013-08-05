@@ -54,6 +54,7 @@ import com.itextpdf.text.pdf.PdfName;
 import com.itextpdf.text.pdf.PdfNumber;
 import com.itextpdf.text.pdf.PdfObject;
 import com.itextpdf.text.pdf.PdfReader;
+import com.itextpdf.text.pdf.PdfString;
 import com.itextpdf.text.xml.XMLUtil;
 import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
@@ -290,6 +291,16 @@ public class TaggedPdfReaderTool {
 			PdfDictionary mcr = (PdfDictionary) object;
 			parseTag(tag, mcr.getDirectObject(PdfName.MCID), mcr
 					.getAsDict(PdfName.PG));
+			if (mcr.checkType(PdfName.OBJR)) {
+				PdfDictionary obj = mcr.getAsDict(PdfName.OBJ);
+				if (obj != null && obj.checkType(PdfName.ANNOT)) {
+					out.print(obj.getAsString(PdfName.T));
+					out.print(" = ");
+					PdfString v = obj.getAsString(PdfName.V);
+					if (v != null)
+						out.print(v);
+				}
+			}
 		}
 	}
 
