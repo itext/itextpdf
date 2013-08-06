@@ -43,6 +43,9 @@
  */
 package com.itextpdf.text.pdf;
 
+import com.itextpdf.text.xml.xmp.PdfProperties;
+import com.itextpdf.text.xml.xmp.XmpBasicProperties;
+import com.itextpdf.xmp.*;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -214,14 +217,40 @@ public class CompareTool {
     }
 
     public String compareXmp(){
+        return compareXmp(false);
+    }
+
+    public String compareXmp(boolean ignoreDateAndProducerProperties){
         PdfReader cmpReader = null;
         PdfReader outReader = null;
         try {
             cmpReader = new PdfReader(cmpPdf);
             outReader = new PdfReader(outPdf);
-            if (!compareXmls(cmpReader.getMetadata(), outReader.getMetadata())) {
+            byte[] cmpBytes = cmpReader.getMetadata(), outBytes = outReader.getMetadata();
+            if (ignoreDateAndProducerProperties) {
+                XMPMeta xmpMeta = XMPMetaFactory.parseFromBuffer(cmpBytes);
+
+                XMPUtils.removeProperties(xmpMeta, XMPConst.NS_XMP, XmpBasicProperties.CREATEDATE, true, true);
+                XMPUtils.removeProperties(xmpMeta, XMPConst.NS_XMP, XmpBasicProperties.MODIFYDATE, true, true);
+                XMPUtils.removeProperties(xmpMeta, XMPConst.NS_XMP, XmpBasicProperties.METADATADATE, true, true);
+                XMPUtils.removeProperties(xmpMeta, XMPConst.NS_PDF, PdfProperties.PRODUCER, true, true);
+
+                cmpBytes = XMPMetaFactory.serializeToBuffer(xmpMeta, null);
+
+                xmpMeta = XMPMetaFactory.parseFromBuffer(outBytes);
+                XMPUtils.removeProperties(xmpMeta, XMPConst.NS_XMP, XmpBasicProperties.CREATEDATE, true, true);
+                XMPUtils.removeProperties(xmpMeta, XMPConst.NS_XMP, XmpBasicProperties.MODIFYDATE, true, true);
+                XMPUtils.removeProperties(xmpMeta, XMPConst.NS_XMP, XmpBasicProperties.METADATADATE, true, true);
+                XMPUtils.removeProperties(xmpMeta, XMPConst.NS_PDF, PdfProperties.PRODUCER, true, true);
+
+                outBytes = XMPMetaFactory.serializeToBuffer(xmpMeta, null);
+            }
+
+            if (!compareXmls(cmpBytes, outBytes)) {
                 return "The XMP packages different!!!";
             }
+        } catch (XMPException xmpExc) {
+            return "XMP parsing failure!!!";
         } catch (IOException ioExc) {
             return "XMP parsing failure!!!";
         } catch (ParserConfigurationException parseExc)  {

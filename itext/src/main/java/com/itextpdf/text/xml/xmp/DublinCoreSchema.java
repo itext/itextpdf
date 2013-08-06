@@ -53,6 +53,7 @@ import com.itextpdf.xmp.options.PropertyOptions;
 /**
  * An implementation of an XmpSchema.
  */
+@Deprecated
 public class DublinCoreSchema extends XmpSchema {
 
 	private static final long serialVersionUID = -4551741356374797330L;

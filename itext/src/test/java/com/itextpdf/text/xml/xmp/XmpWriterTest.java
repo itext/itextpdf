@@ -3,10 +3,7 @@ package com.itextpdf.text.xml.xmp;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Paragraph;
-import com.itextpdf.text.pdf.CompareTool;
-import com.itextpdf.text.pdf.PdfReader;
-import com.itextpdf.text.pdf.PdfStamper;
-import com.itextpdf.text.pdf.PdfWriter;
+import com.itextpdf.text.pdf.*;
 import com.itextpdf.xmp.XMPConst;
 import com.itextpdf.xmp.XMPException;
 import com.itextpdf.xmp.options.PropertyOptions;
@@ -39,12 +36,12 @@ public class XmpWriterTest {
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         XmpWriter xmp = new XmpWriter(os);
 
-        xmp.getXmpMeta().appendArrayItem(XMPConst.NS_DC, DublinCoreProperties.SUBJECT, new PropertyOptions(PropertyOptions.ARRAY), "Hello World", null);
-        xmp.getXmpMeta().appendArrayItem(XMPConst.NS_DC, DublinCoreProperties.SUBJECT, new PropertyOptions(PropertyOptions.ARRAY), "XMP & Metadata", null);
-        xmp.getXmpMeta().appendArrayItem(XMPConst.NS_DC, DublinCoreProperties.SUBJECT, new PropertyOptions(PropertyOptions.ARRAY), "Metadata", null);
+        DublinCoreProperties.addSubject(xmp.getXmpMeta(), "Hello World");
+        DublinCoreProperties.addSubject(xmp.getXmpMeta(), "XMP & Metadata");
+        DublinCoreProperties.addSubject(xmp.getXmpMeta(), "Metadata");
 
-        xmp.getXmpMeta().setProperty(XMPConst.NS_PDF, PdfProperties.KEYWORDS, "Hello World, XMP, Metadata");
-        xmp.getXmpMeta().setProperty(XMPConst.NS_PDF, PdfProperties.VERSION, "1.4");
+        PdfProperties.setKeywords(xmp.getXmpMeta(), "Hello World, XMP, Metadata");
+        PdfProperties.setVersion(xmp.getXmpMeta(), "1.4");
 
         xmp.close();
 
@@ -57,7 +54,7 @@ public class XmpWriterTest {
         document.close();
 
         CompareTool ct = new CompareTool(CMP_FOLDER + fileName, OUT_FOLDER + fileName);
-        Assert.assertNull(ct.compareXmp());
+        Assert.assertNull(ct.compareXmp(true));
     }
 
     @Test
@@ -79,8 +76,8 @@ public class XmpWriterTest {
         document.add(new Paragraph("Hello World"));
         // step 5
         document.close();
-        //CompareTool ct = new CompareTool(CMP_FOLDER + fileName, OUT_FOLDER + fileName);
-        //Assert.assertNull(ct.compareXmp());
+        CompareTool ct = new CompareTool(CMP_FOLDER + fileName, OUT_FOLDER + fileName);
+        Assert.assertNull(ct.compareXmp(true));
     }
 
     @Test
@@ -96,8 +93,27 @@ public class XmpWriterTest {
         stamper.close();
         reader.close();
 
-        //CompareTool ct = new CompareTool(CMP_FOLDER + fileName, OUT_FOLDER + fileName);
-        //Assert.assertNull(ct.compareXmp());
+        CompareTool ct = new CompareTool(CMP_FOLDER + fileName, OUT_FOLDER + fileName);
+        Assert.assertNull(ct.compareXmp(true));
+    }
+
+    @Test
+    public void manipulatePdf2Test() throws IOException, DocumentException, XMPException {
+        String fileName = "xmp_metadata_added2.pdf";
+        PdfReader reader = new PdfReader(CMP_FOLDER + "pdf_metadata.pdf");
+        PdfStamper stamper = new PdfStamper(reader, new FileOutputStream(OUT_FOLDER + fileName));
+        stamper.createXmpMetadata();
+        XmpWriter xmp = stamper.getXmpWriter();
+        DublinCoreProperties.addSubject(xmp.getXmpMeta(), "Hello World");
+        DublinCoreProperties.addSubject(xmp.getXmpMeta(), "XMP & Metadata");
+        DublinCoreProperties.addSubject(xmp.getXmpMeta(), "Metadata");
+
+        PdfProperties.setVersion(xmp.getXmpMeta(), "1.4");
+        stamper.close();
+        reader.close();
+
+        CompareTool ct = new CompareTool(CMP_FOLDER + fileName, OUT_FOLDER + fileName);
+        Assert.assertNull(ct.compareXmp(true));
     }
 
     @Test
@@ -129,6 +145,6 @@ public class XmpWriterTest {
         // step 5
         document.close();
         CompareTool ct = new CompareTool(CMP_FOLDER + "xmp_metadata.pdf", OUT_FOLDER + fileName);
-        Assert.assertNull(ct.compareXmp());
+        Assert.assertNull(ct.compareXmp(true));
     }
 }
