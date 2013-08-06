@@ -43,21 +43,6 @@
  */
 package com.itextpdf.text.pdf;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.security.cert.Certificate;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-import java.util.TreeSet;
-
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.DocListener;
 import com.itextpdf.text.DocWriter;
@@ -74,11 +59,34 @@ import com.itextpdf.text.log.Counter;
 import com.itextpdf.text.log.CounterFactory;
 import com.itextpdf.text.pdf.collection.PdfCollection;
 import com.itextpdf.text.pdf.events.PdfPageEventForwarder;
-import com.itextpdf.text.pdf.interfaces.*;
+import com.itextpdf.text.pdf.interfaces.PdfAnnotations;
+import com.itextpdf.text.pdf.interfaces.PdfDocumentActions;
+import com.itextpdf.text.pdf.interfaces.PdfEncryptionSettings;
+import com.itextpdf.text.pdf.interfaces.PdfIsoConformance;
+import com.itextpdf.text.pdf.interfaces.PdfPageActions;
+import com.itextpdf.text.pdf.interfaces.PdfRunDirection;
+import com.itextpdf.text.pdf.interfaces.PdfVersion;
+import com.itextpdf.text.pdf.interfaces.PdfViewerPreferences;
+import com.itextpdf.text.pdf.interfaces.PdfXConformance;
 import com.itextpdf.text.pdf.internal.PdfIsoKeys;
 import com.itextpdf.text.pdf.internal.PdfVersionImp;
 import com.itextpdf.text.pdf.internal.PdfXConformanceImp;
 import com.itextpdf.text.xml.xmp.XmpWriter;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.security.cert.Certificate;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+import java.util.TreeSet;
 
 /**
  * A <CODE>DocWriter</CODE> class for PDF.
@@ -237,7 +245,7 @@ public class PdfWriter extends DocWriter implements
         }
 
         private static final int OBJSINSTREAM = 200;
-        
+
         // membervariables
 
         /** array containing the cross-reference table of the normal objects. */
@@ -2760,6 +2768,37 @@ public class PdfWriter extends DocWriter implements
         return pdf.getBoxSize(boxName);
     }
 
+    /**
+     * Returns the intersection between the crop, trim art or bleed box and the parameter intersectingRectangle.
+     * This method returns null when
+     * - there is no intersection
+     * - any of the above boxes are not defined
+     * - the parameter intersectingRectangle is null
+     *
+     * @param boxName crop, trim, art, bleed
+     * @param intersectingRectangle the rectangle that intersects the rectangle associated to the boxName
+     * @return the intersection of the two rectangles
+     */
+    public Rectangle getBoxSize(final String boxName, final Rectangle intersectingRectangle) {
+        Rectangle pdfRectangle = pdf.getBoxSize(boxName);
+
+        if ( pdfRectangle == null || intersectingRectangle == null ) { // no intersection
+            return null;
+        }
+
+        com.itextpdf.awt.geom.Rectangle boxRect = new com.itextpdf.awt.geom.Rectangle(pdfRectangle);
+        com.itextpdf.awt.geom.Rectangle intRect = new com.itextpdf.awt.geom.Rectangle(intersectingRectangle);
+        com.itextpdf.awt.geom.Rectangle outRect = boxRect.intersection(intRect);
+
+        if ( outRect.isEmpty() ) { // no intersection
+            return null;
+        }
+
+        Rectangle output = new Rectangle((float) outRect.getX(), (float) outRect.getY(), (float) (outRect.getX() + outRect.getWidth()), (float) (outRect.getY() + outRect.getHeight()));
+        output.normalize();
+        return output;
+    }
+
 //  [U2] take care of empty pages
 
     /**
@@ -3289,9 +3328,9 @@ public class PdfWriter extends DocWriter implements
             k = "iText";
     	}
         os.write(getISOBytes(String.format("%%%s-%s\n", k, version.getRelease())));
-    	
+
     }
-     
+
     protected TtfUnicodeWriter ttfUnicodeWriter = null;
 
     protected TtfUnicodeWriter getTtfUnicodeWriter() {
