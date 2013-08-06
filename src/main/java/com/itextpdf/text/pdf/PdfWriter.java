@@ -1255,6 +1255,12 @@ public class PdfWriter extends DocWriter implements
                 if (!documentOCG.isEmpty())
                     PdfWriter.checkPdfIsoConformance(this, PdfIsoKeys.PDFISOKEY_LAYER, OCProperties);
                 // [C9] if there is XMP data to add: add it
+                if (xmpMetadata == null && xmpWriter != null) {
+                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                    xmpWriter.serialize(baos);
+                    xmpWriter.close();
+                    xmpMetadata = baos.toByteArray();
+                }
                 if (xmpMetadata != null) {
                 	PdfStream xmp = new PdfStream(xmpMetadata);
                 	xmp.put(PdfName.TYPE, PdfName.METADATA);
@@ -1803,27 +1809,23 @@ public class PdfWriter extends DocWriter implements
         pdf.setXmpMetadata(xmpMetadata);
     }
 
+    protected XmpWriter xmpWriter = null;
+
+    public XmpWriter getXmpWriter() {
+        return xmpWriter;
+    }
+
     /**
      * Use this method to creates XMP Metadata based
      * on the metadata in the PdfDocument.
      */
     public void createXmpMetadata() {
-        setXmpMetadata(createXmpMetadataBytes());
-    }
-
-    /**
-     * @return an XmpMetadata byte array
-     */
-    private byte[] createXmpMetadataBytes() {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
         try {
-            XmpWriter xmp = getXmpWriter(baos, pdf.getInfo());
-            xmp.close();
-        }
-        catch (IOException ioe) {
+            xmpWriter = createXmpWriter(null, pdf.getInfo());
+            xmpMetadata = null;
+        } catch (IOException ioe) {
             ioe.printStackTrace();
         }
-        return baos.toByteArray();
     }
 
 //  [C10] PDFX Conformance
@@ -3339,7 +3341,11 @@ public class PdfWriter extends DocWriter implements
         return ttfUnicodeWriter;
     }
 
-    protected XmpWriter getXmpWriter(ByteArrayOutputStream baos, PdfDictionary info) throws IOException {
+    protected XmpWriter createXmpWriter(ByteArrayOutputStream baos, PdfDictionary info) throws IOException {
+        return new XmpWriter(baos, info);
+    }
+
+    protected XmpWriter createXmpWriter(ByteArrayOutputStream baos, HashMap<String, String> info) throws IOException {
         return new XmpWriter(baos, info);
     }
 

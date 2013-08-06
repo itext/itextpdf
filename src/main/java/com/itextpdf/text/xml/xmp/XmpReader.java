@@ -65,8 +65,22 @@ import com.itextpdf.text.xml.XmlDomWriter;
  * Allows you to replace the contents of a specific tag.
  * @since 2.1.3
  */
-
+@Deprecated
 public class XmpReader {
+
+
+    /** String used to fill the extra space. */
+    public static final String EXTRASPACE = "                                                                                                   \n";
+
+    /**
+     * Processing Instruction required at the start of an XMP stream
+     */
+    public static final String XPACKET_PI_BEGIN = "<?xpacket begin=\"\uFEFF\" id=\"W5M0MpCehiHzreSzNTczkc9d\"?>\n";
+
+    /**
+     * Processing Instruction required at the end of an XMP stream for XMP streams that can be updated
+     */
+    public static final String XPACKET_PI_END_W = "<?xpacket end=\"w\"?>";
 
     private Document domDocument;
     
@@ -193,15 +207,15 @@ public class XmpReader {
 		XmlDomWriter xw = new XmlDomWriter();
         ByteArrayOutputStream fout = new ByteArrayOutputStream();
         xw.setOutput(fout, null);
-        fout.write(XmpWriter.XPACKET_PI_BEGIN.getBytes("UTF-8"));
+        fout.write(XPACKET_PI_BEGIN.getBytes("UTF-8"));
         fout.flush();
         NodeList xmpmeta = domDocument.getElementsByTagName("x:xmpmeta");
         xw.write(xmpmeta.item(0));
         fout.flush();
 		for (int i = 0; i < 20; i++) {
-			fout.write(XmpWriter.EXTRASPACE.getBytes());
+			fout.write(EXTRASPACE.getBytes());
 		}
-        fout.write(XmpWriter.XPACKET_PI_END_W.getBytes());
+        fout.write(XPACKET_PI_END_W.getBytes());
         fout.close();
         return fout.toByteArray();
 	}

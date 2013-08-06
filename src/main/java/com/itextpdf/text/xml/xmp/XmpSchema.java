@@ -51,6 +51,7 @@ import com.itextpdf.text.xml.XMLUtil;
 /**
  * Abstract superclass of the XmpSchemas supported by iText.
  */
+@Deprecated
 public abstract class XmpSchema extends Properties {
 
 	private static final long serialVersionUID = -176374295948945272L;
