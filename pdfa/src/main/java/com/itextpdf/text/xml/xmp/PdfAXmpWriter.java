@@ -68,7 +68,7 @@ public class PdfAXmpWriter extends XmpWriter {
         try {
             addRdfDescription(conformanceLevel);
         } catch (XMPException xmpExc) {
-            throw new IOException(xmpExc);
+            throw new IOException(xmpExc.getMessage());
         }
     }
 
@@ -84,7 +84,7 @@ public class PdfAXmpWriter extends XmpWriter {
         try {
             addRdfDescription(conformanceLevel);
         } catch (XMPException xmpExc) {
-            throw new IOException(xmpExc);
+            throw new IOException(xmpExc.getMessage());
         }
     }
 
@@ -100,7 +100,7 @@ public class PdfAXmpWriter extends XmpWriter {
         try {
             addRdfDescription(conformanceLevel);
         } catch (XMPException xmpExc) {
-            throw new IOException(xmpExc);
+            throw new IOException(xmpExc.getMessage());
         }
     }
 
