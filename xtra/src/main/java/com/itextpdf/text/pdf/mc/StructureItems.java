@@ -82,9 +82,9 @@ public class StructureItems extends ArrayList<StructureItem> {
 		case PdfObject.DICTIONARY:
 			PdfDictionary dict = (PdfDictionary)object;
 			StructureItem item = new StructureItem(dict);
+			inspectKids(dict.get(PdfName.K));
 			if (item.isRealContent())
 				add(item);
-			inspectKids(dict.get(PdfName.K));
 			break;
 		case PdfObject.ARRAY:
 			PdfArray array = (PdfArray) object;

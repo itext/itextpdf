@@ -52,6 +52,8 @@ import java.util.Map;
 
 import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.io.RandomAccessSourceFactory;
+import com.itextpdf.text.log.Logger;
+import com.itextpdf.text.log.LoggerFactory;
 import com.itextpdf.text.pdf.PRStream;
 import com.itextpdf.text.pdf.PRTokeniser;
 import com.itextpdf.text.pdf.PdfArray;
@@ -67,6 +69,8 @@ import com.itextpdf.text.pdf.PdfStream;
 import com.itextpdf.text.pdf.RandomAccessFileOrArray;
 
 public class MCParser {
+	/** The Logger instance */
+	protected final static Logger LOGGER = LoggerFactory.getLogger(MCParser.class);
 
 	/** Factory that will help us build a RandomAccessSource. */
 	protected RandomAccessSourceFactory factory = new RandomAccessSourceFactory();
@@ -163,18 +167,24 @@ public class MCParser {
     protected void dealWithMcid(PdfNumber mcid) throws IOException {
     	if (mcid == null)
     		return;
+    	LOGGER.info(String.format("Encountered MCID %s in content", mcid));
     	StructureItem item = items.get(0);
     	switch (item.process(mcid.intValue())) {
     	case 0 :
     		items.remove(0);
+    		LOGGER.info("Discovered an object reference.");
     		convertToXObject(item);
     		dealWithMcid(mcid);
     		return;
     	case 1 :
+    		LOGGER.info("Removed structure item from stack.");
     		items.remove(0);
     		return;
     	case 2:
+    		LOGGER.info("Removed MCID from structure item.");
     		return;
+    	default:
+    		LOGGER.warn("MCID not found!");
     	}
     }
 
