@@ -1818,6 +1818,7 @@ public class PdfWriter extends DocWriter implements
     /**
      * Use this method to creates XMP Metadata based
      * on the metadata in the PdfDocument.
+     * @since 5.4.4 just creates XmpWriter instance which will be serialized in close.
      */
     public void createXmpMetadata() {
         try {

@@ -48,6 +48,7 @@ import java.io.OutputStream;
 import java.util.Map;
 
 import com.itextpdf.text.Version;
+import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.pdf.PdfDate;
 import com.itextpdf.text.pdf.PdfDictionary;
 import com.itextpdf.text.pdf.PdfName;
@@ -132,7 +133,7 @@ public class XmpWriter {
                 try {
                     addDocInfoProperty(key, value);
                 } catch (XMPException xmpEcx) {
-                    throw new IOException("XMP metadata updating failure!!!", xmpEcx);
+                    throw new IOException(MessageLocalization.getComposedMessage("xmp.metadata.creation.failure"), xmpEcx);
                 }
             }
         }
@@ -157,7 +158,7 @@ public class XmpWriter {
                 try {
                     addDocInfoProperty(key, value);
                 } catch (XMPException xmpEcx) {
-                    throw new IOException("XMP metadata updating failure!!!", xmpEcx);
+                    throw new IOException(MessageLocalization.getComposedMessage("xmp.metadata.creation.failure"), xmpEcx);
                 }
             }
         }
@@ -198,7 +199,7 @@ public class XmpWriter {
             XMPMeta extMeta = XMPMetaFactory.parseFromString(str);
             XMPUtils.appendProperties(extMeta, xmpMeta, true, true);
         } catch (XMPException xmpExc) {
-            throw new IOException("XMP metadata updating failure!!!", xmpExc);
+            throw new IOException(MessageLocalization.getComposedMessage("xmp.metadata.updating.failure"), xmpExc);
         }
 	}
 
@@ -220,7 +221,7 @@ public class XmpWriter {
             XMPMeta extMeta = XMPMetaFactory.parseFromString(str);
             XMPUtils.appendProperties(extMeta, xmpMeta, true, true);
         } catch (XMPException xmpExc) {
-            throw new IOException("XMP metadata updating failure!!!", xmpExc);
+            throw new IOException(MessageLocalization.getComposedMessage("xmp.metadata.updating.failure"), xmpExc);
         }
 	}
 
@@ -292,7 +293,7 @@ public class XmpWriter {
         try {
             XMPMetaFactory.serialize(xmpMeta, externalOutputStream, serializeOptions);
         } catch (XMPException xmpExc) {
-            throw new IOException("XMP metadata updating failure!!!", xmpExc);
+            throw new IOException(MessageLocalization.getComposedMessage("xmp.metadata.serialization.failure"), xmpExc);
         }
     }
 
@@ -306,7 +307,7 @@ public class XmpWriter {
         try {
             XMPMetaFactory.serialize(xmpMeta, outputStream, serializeOptions);
         } catch (XMPException xmpExc) {
-            throw new IOException("XMP metadata updating failure!!!", xmpExc);
+            throw new IOException(MessageLocalization.getComposedMessage("xmp.metadata.serialization.failure"), xmpExc);
         }
 	}
 

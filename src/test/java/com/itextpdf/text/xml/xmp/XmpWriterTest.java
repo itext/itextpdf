@@ -80,10 +80,6 @@ public class XmpWriterTest {
         Assert.assertNull(ct.compareXmp(true));
     }
 
-    public void pdfStamperTest() throws IOException, DocumentException {
-
-    }
-
     @Test
     public void manipulatePdfTest() throws IOException, DocumentException {
         String fileName = "xmp_metadata_added.pdf";
