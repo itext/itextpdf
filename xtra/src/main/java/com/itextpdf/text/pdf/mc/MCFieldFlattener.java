@@ -71,7 +71,7 @@ public class MCFieldFlattener {
 			reader.setPageContent(i, reader.getPageContent(i));
 			page = reader.getPageN(i);
 			page.remove(PdfName.ANNOTS);
-			parser.parse(page);
+			parser.parse(page, i == n);
 		}
 		reader.removeUnusedObjects();
 	}
