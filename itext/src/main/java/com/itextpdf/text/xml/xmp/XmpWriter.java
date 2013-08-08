@@ -132,8 +132,8 @@ public class XmpWriter {
                 value = ((PdfString) obj).toUnicodeString();
                 try {
                     addDocInfoProperty(key, value);
-                } catch (XMPException xmpEcx) {
-                    throw new IOException(MessageLocalization.getComposedMessage("xmp.metadata.creation.failure"), xmpEcx);
+                } catch (XMPException xmpExc) {
+                    throw new IOException(xmpExc.getMessage());
                 }
             }
         }
@@ -157,8 +157,8 @@ public class XmpWriter {
                     continue;
                 try {
                     addDocInfoProperty(key, value);
-                } catch (XMPException xmpEcx) {
-                    throw new IOException(MessageLocalization.getComposedMessage("xmp.metadata.creation.failure"), xmpEcx);
+                } catch (XMPException xmpExc) {
+                    throw new IOException(xmpExc.getMessage());
                 }
             }
         }
@@ -199,7 +199,7 @@ public class XmpWriter {
             XMPMeta extMeta = XMPMetaFactory.parseFromString(str);
             XMPUtils.appendProperties(extMeta, xmpMeta, true, true);
         } catch (XMPException xmpExc) {
-            throw new IOException(MessageLocalization.getComposedMessage("xmp.metadata.updating.failure"), xmpExc);
+            throw new IOException(xmpExc.getMessage());
         }
 	}
 
@@ -211,7 +211,7 @@ public class XmpWriter {
     @Deprecated
 	public void addRdfDescription(XmpSchema s) throws IOException {
         try {
-            String str = "<rdf:RDF xmlns:rdf=\"" + XMPConst.NS_RDF + "\">"+
+            String str = "<rdf:RDF xmlns:rdf=\"" + XMPConst.NS_RDF + "\">" +
                     "<rdf:Description rdf:about=\"" + xmpMeta.getObjectName() +
                     "\" " +
                     s.getXmlns() +
@@ -221,7 +221,7 @@ public class XmpWriter {
             XMPMeta extMeta = XMPMetaFactory.parseFromString(str);
             XMPUtils.appendProperties(extMeta, xmpMeta, true, true);
         } catch (XMPException xmpExc) {
-            throw new IOException(MessageLocalization.getComposedMessage("xmp.metadata.updating.failure"), xmpExc);
+            throw new IOException(xmpExc.getMessage());
         }
 	}
 
@@ -289,12 +289,8 @@ public class XmpWriter {
      * Flushes and closes the XmpWriter.
      * @throws IOException
      */
-    public void serialize(OutputStream externalOutputStream) throws IOException {
-        try {
-            XMPMetaFactory.serialize(xmpMeta, externalOutputStream, serializeOptions);
-        } catch (XMPException xmpExc) {
-            throw new IOException(MessageLocalization.getComposedMessage("xmp.metadata.serialization.failure"), xmpExc);
-        }
+    public void serialize(OutputStream externalOutputStream) throws XMPException {
+        XMPMetaFactory.serialize(xmpMeta, externalOutputStream, serializeOptions);
     }
 
 	/**
@@ -306,14 +302,15 @@ public class XmpWriter {
             return;
         try {
             XMPMetaFactory.serialize(xmpMeta, outputStream, serializeOptions);
+            outputStream = null;
         } catch (XMPException xmpExc) {
-            throw new IOException(MessageLocalization.getComposedMessage("xmp.metadata.serialization.failure"), xmpExc);
+            throw new IOException(xmpExc.getMessage());
         }
-	}
+    }
 
     public void addDocInfoProperty(Object key, String value) throws XMPException {
         if (key instanceof String)
-            key = new PdfName((String)key);
+            key = new PdfName((String) key);
         if (PdfName.TITLE.equals(key)) {
             xmpMeta.setLocalizedText(XMPConst.NS_DC, DublinCoreProperties.TITLE, XMPConst.X_DEFAULT, XMPConst.X_DEFAULT, value);
         } else if (PdfName.AUTHOR.equals(key)) {

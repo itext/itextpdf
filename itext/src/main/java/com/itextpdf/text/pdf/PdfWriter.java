@@ -72,6 +72,7 @@ import com.itextpdf.text.pdf.internal.PdfIsoKeys;
 import com.itextpdf.text.pdf.internal.PdfVersionImp;
 import com.itextpdf.text.pdf.internal.PdfXConformanceImp;
 import com.itextpdf.text.xml.xmp.XmpWriter;
+import com.itextpdf.xmp.XMPException;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -1256,10 +1257,16 @@ public class PdfWriter extends DocWriter implements
                     PdfWriter.checkPdfIsoConformance(this, PdfIsoKeys.PDFISOKEY_LAYER, OCProperties);
                 // [C9] if there is XMP data to add: add it
                 if (xmpMetadata == null && xmpWriter != null) {
-                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                    xmpWriter.serialize(baos);
-                    xmpWriter.close();
-                    xmpMetadata = baos.toByteArray();
+                    try {
+                        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                        xmpWriter.serialize(baos);
+                    	xmpWriter.close();
+                        xmpMetadata = baos.toByteArray();
+                    } catch (IOException exc) {
+                        xmpWriter = null;
+                    } catch (XMPException exc) {
+                        xmpWriter = null;
+                    }
                 }
                 if (xmpMetadata != null) {
                 	PdfStream xmp = new PdfStream(xmpMetadata);

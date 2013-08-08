@@ -295,6 +295,7 @@ class PdfStamperImp extends PdfWriter {
                 XmpBasicProperties.setModDate(xmpWriter.getXmpMeta(), date.getW3CDate());
                 XmpBasicProperties.setMetaDataDate(xmpWriter.getXmpMeta(), date.getW3CDate());
                 xmpWriter.serialize(baos);
+                xmpWriter.close();
                 xmp = new PdfStream(baos.toByteArray());
             } catch(XMPException exc) {
                 xmpWriter = null;
