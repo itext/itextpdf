@@ -43,19 +43,31 @@
  */
 package com.itextpdf.text.pdf.mc;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import com.itextpdf.text.pdf.PdfArray;
 import com.itextpdf.text.pdf.PdfDictionary;
+import com.itextpdf.text.pdf.PdfIndirectReference;
 import com.itextpdf.text.pdf.PdfName;
+import com.itextpdf.text.pdf.PdfNumber;
+import com.itextpdf.text.pdf.PdfNumberTree;
 import com.itextpdf.text.pdf.PdfObject;
 import com.itextpdf.text.pdf.PdfReader;
+import com.itextpdf.text.pdf.PdfWriter;
 
 /**
  * Creates a list of meaningful StructureItem objects extracted from the
  * Structure Tree of a PDF document.
  */
 public class StructureItems extends ArrayList<StructureItem> {
+	
+	/** The StructTreeRoot dictionary */
+	protected PdfDictionary structTreeRoot;
+	
+	/** The StructParents number tree. */
+	protected HashMap<Integer, PdfObject> parentTree;
 	
 	/**
 	 * Creates a list of StructuredItem objects.
@@ -64,9 +76,11 @@ public class StructureItems extends ArrayList<StructureItem> {
 	public StructureItems(PdfReader reader) {
 		super();
 		PdfDictionary catalog = reader.getCatalog();
-		PdfDictionary structTreeRoot = catalog.getAsDict(PdfName.STRUCTTREEROOT);
+		structTreeRoot = catalog.getAsDict(PdfName.STRUCTTREEROOT);
 		if (structTreeRoot == null)
 			return;
+		parentTree = PdfNumberTree.readTree(structTreeRoot.getAsDict(PdfName.PARENTTREE));
+		structTreeRoot.remove(PdfName.STRUCTPARENTS);
 		inspectKids(structTreeRoot);
 	}
 	
@@ -83,12 +97,12 @@ public class StructureItems extends ArrayList<StructureItem> {
 			return;
 		switch(object.type()) {
 		case PdfObject.DICTIONARY:
-			addStructureItem((PdfDictionary)object);
+			addStructureItem((PdfDictionary)object, structElem.getAsIndirectObject(PdfName.K));
 			break;
 		case PdfObject.ARRAY:
 			PdfArray array = (PdfArray) object;
 			for (int i = 0; i < array.size(); i++) {
-				addStructureItem(array.getAsDict(i));
+				addStructureItem(array.getAsDict(i), array.getAsIndirectObject(i));
 			}
 			break;
 		}
@@ -100,13 +114,39 @@ public class StructureItems extends ArrayList<StructureItem> {
 	 * (if any).
 	 * @param dict
 	 */
-	protected void addStructureItem(PdfDictionary dict) {
+	protected void addStructureItem(PdfDictionary dict, PdfIndirectReference ref) {
 		if (dict == null)
 			return;
-		StructureItem item = new StructureItem(dict);
+		StructureItem item = new StructureItem(dict, ref);
 		inspectKids(dict);
 		if (item.isRealContent())
 			add(item);
+	}
+	
+	/**
+	 * Removes a StructParent from the parent tree.
+	 * @param	PdfNumber	the number to remove
+	 */
+	public void removeFromParentTree(PdfNumber structParent) {
+		parentTree.remove(structParent.intValue());
+	}
+
+	public int processMCID(PdfNumber structParents, StructureItem item) {
+		PdfObject object = parentTree.get(structParents.intValue());
+		PdfArray array = (PdfArray)PdfReader.getPdfObject(object);
+		array.add(item.getRef());
+		return array.size() - 1;
+	}
+	
+	/**
+	 * Returns the number tree with the StructParents.
+	 * @param writer	The writer to which the StructParents have to be written
+	 * @throws IOException 
+	 */
+	public void writeParentTree(PdfWriter writer) throws IOException {
+		if (structTreeRoot == null)
+			return;
+		structTreeRoot.put(PdfName.PARENTTREE, PdfNumberTree.writeTree(parentTree, writer));
 	}
 	
 	/** Serial version UID */

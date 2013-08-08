@@ -48,6 +48,7 @@ import java.util.List;
 
 import com.itextpdf.text.pdf.PdfArray;
 import com.itextpdf.text.pdf.PdfDictionary;
+import com.itextpdf.text.pdf.PdfIndirectReference;
 import com.itextpdf.text.pdf.PdfName;
 import com.itextpdf.text.pdf.PdfNumber;
 import com.itextpdf.text.pdf.PdfObject;
@@ -60,6 +61,8 @@ import com.itextpdf.text.pdf.PdfObject;
 public class StructureItem {
 	/** The structure element of which the properties are stored. */
 	PdfDictionary structElem;
+	/** The reference of the structure element of which the properties are stored. */
+	PdfIndirectReference ref;
 	/** MarkedContent IDs in case we're dealing with an MC sequence on a page. */
 	List<Integer> mcids = new ArrayList<Integer>();
 	/** Object reference in case we're dealing with an object. */
@@ -70,8 +73,9 @@ public class StructureItem {
 	 * The dictionary can be of type StructElem, MCR or OBJR.
 	 * @param dict	the dictionary that needs to be examined
 	 */
-	public StructureItem(PdfDictionary structElem) {
+	public StructureItem(PdfDictionary structElem, PdfIndirectReference ref) {
 		this.structElem = structElem;
+		this.ref = ref;
 		PdfObject object = structElem.getDirectObject(PdfName.K);
 		if (object == null)
 			return;
@@ -138,6 +142,14 @@ public class StructureItem {
 	 */
 	public PdfDictionary getStructElem() {
 		return structElem;
+	}
+	
+	/**
+	 * Returns the structure element's reference.
+	 * @return a dictionary
+	 */
+	public PdfIndirectReference getRef() {
+		return ref;
 	}
 	
 	/**

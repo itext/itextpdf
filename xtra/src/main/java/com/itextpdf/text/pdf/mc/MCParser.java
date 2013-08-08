@@ -89,13 +89,20 @@ public class MCParser {
     protected static ByteArrayOutputStream baos;
 
     /** The list with structure items. */
-    protected List<StructureItem> items;
+    protected StructureItems items;
+    
+    // properties of the page that is being processed
+    
+    /** The reference to the page dictionary */
+    protected PdfIndirectReference pageref;
     
     /** the XObject dictionary of the page that is being processed. */
     protected PdfDictionary xobjects;
     
     /** the StructParents of the page that is being processed. */
     protected PdfNumber structParents;
+    
+    // Keeping track of text state
     
     /** Did we postpone writing a BT operator? */
     protected boolean btWrite = false;
@@ -113,7 +120,7 @@ public class MCParser {
      * Creates an MCParser object.
      * @param items a list of StructureItem objects
      */
-    public MCParser(List<StructureItem> items) {
+    public MCParser(StructureItems items) {
     	populateOperators();
     	this.items = items;
     }
@@ -124,7 +131,8 @@ public class MCParser {
      * @param page a page dictionary
      * @throws IOException
      */
-    public void parse(PdfDictionary page, boolean finalPage) throws IOException {
+    public void parse(PdfDictionary page, PdfIndirectReference pageref, boolean finalPage) throws IOException {
+    	this.pageref = pageref;
     	baos = new ByteArrayOutputStream();
     	structParents = page.getAsNumber(PdfName.STRUCTPARENTS);
     	PdfDictionary resources = page.getAsDict(PdfName.RESOURCES);
@@ -234,8 +242,12 @@ public class MCParser {
     	PdfIndirectReference xobjr = ap.getAsIndirectObject(PdfName.N);
     	if (xobjr == null)
     		return;
+    	int mcid = items.processMCID(structParents, item);
     	item.getStructElem().put(PdfName.S, PdfName.P);
+    	item.getStructElem().put(PdfName.PG, pageref);
+    	item.getStructElem().put(PdfName.K, new PdfNumber(mcid));
     	item.getObjr().put(PdfName.OBJ, xobjr);
+    	items.removeFromParentTree(structParent);
     	PdfName xobj = new PdfName("XObj" + structParent.intValue());
     	LOGGER.info("Creating XObject with name " + xobj);
     	xobjects.put(xobj, xobjr);
@@ -250,6 +262,9 @@ public class MCParser {
     		etExtra = true;
     	}
     	ByteBuffer buf = new ByteBuffer();
+    	buf.append("/P <</MCID ");
+    	buf.append(mcid);
+    	buf.append(">> BDC\n");
     	buf.append("q 1 0 0 1 ");
     	buf.append(rect.getLeft());
     	buf.append(" ");
@@ -257,6 +272,7 @@ public class MCParser {
     	buf.append(" cm ");
     	buf.append(xobj.getBytes());
     	buf.append(" Do Q\n");
+    	buf.append("EMC\n");
     	buf.flush();
     	buf.writeTo(baos);
     	if (inText)

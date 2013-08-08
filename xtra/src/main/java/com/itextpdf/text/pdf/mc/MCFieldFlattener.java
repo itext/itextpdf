@@ -44,10 +44,13 @@
 package com.itextpdf.text.pdf.mc;
 
 import java.io.IOException;
+import java.io.OutputStream;
 
+import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.pdf.PdfDictionary;
 import com.itextpdf.text.pdf.PdfName;
 import com.itextpdf.text.pdf.PdfReader;
+import com.itextpdf.text.pdf.PdfStamper;
 
 /**
  * Removes all interactivity from an AcroForm, maintaining the
@@ -60,19 +63,24 @@ public class MCFieldFlattener {
 	 * Processes a properly tagged PDF form.
 	 * @param reader the PdfReader instance holding the PDF
 	 * @throws IOException
+	 * @throws DocumentException 
 	 */
-	public void process(PdfReader reader) throws IOException {
+	public void process(PdfReader reader, OutputStream os) throws IOException, DocumentException {
 		int n = reader.getNumberOfPages();
 		PdfDictionary catalog = reader.getCatalog();
 		catalog.remove(PdfName.ACROFORM);
-		MCParser parser = new MCParser(new StructureItems(reader));
+		StructureItems items = new StructureItems(reader);
+		MCParser parser = new MCParser(items);
 		PdfDictionary page;
 		for (int i = 1; i <= n; i++) {
 			reader.setPageContent(i, reader.getPageContent(i));
 			page = reader.getPageN(i);
 			page.remove(PdfName.ANNOTS);
-			parser.parse(page, i == n);
+			parser.parse(page, reader.getPageOrigRef(i), i == n);
 		}
 		reader.removeUnusedObjects();
+		PdfStamper stamper = new PdfStamper(reader, os);
+		items.writeParentTree(stamper.getWriter());
+		stamper.close();
 	}
 }
