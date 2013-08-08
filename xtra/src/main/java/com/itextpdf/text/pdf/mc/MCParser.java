@@ -255,6 +255,9 @@ public class MCParser {
     	if (!PdfName.BTN.equals(dict.get(PdfName.FT)))
     		attribute.put(PdfName.ROLE, PdfName.TV);
     	attribute.put(PdfName.DESC, description);
+    	PdfString t = structElem.getAsString(PdfName.T);
+    	if (t == null || t.toString().trim().length() == 0)
+    		structElem.put(PdfName.T, dict.getAsString(PdfName.T));
     	structElem.put(PdfName.A, attribute);
     	structElem.put(PdfName.S, PdfName.P);
     	structElem.put(PdfName.PG, pageref);
