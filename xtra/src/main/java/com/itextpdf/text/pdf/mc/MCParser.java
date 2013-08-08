@@ -67,6 +67,7 @@ import com.itextpdf.text.pdf.PdfNumber;
 import com.itextpdf.text.pdf.PdfObject;
 import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.PdfStream;
+import com.itextpdf.text.pdf.PdfString;
 import com.itextpdf.text.pdf.RandomAccessFileOrArray;
 
 public class MCParser {
@@ -226,6 +227,9 @@ public class MCParser {
      * @throws IOException
      */
     protected void convertToXObject(StructureItem item) throws IOException {
+    	PdfDictionary structElem = item.getStructElem();
+    	if (structElem == null)
+    		return;
     	PdfDictionary dict = item.getObj();
     	if (dict == null || !dict.checkType(PdfName.ANNOT))
     		return;
@@ -242,11 +246,21 @@ public class MCParser {
     	PdfIndirectReference xobjr = ap.getAsIndirectObject(PdfName.N);
     	if (xobjr == null)
     		return;
+    	PdfDictionary attribute = new PdfDictionary();
+    	attribute.put(PdfName.O, PdfName.PRINTFIELD);
+    	PdfString description = dict.getAsString(PdfName.TU);
+    	if (description == null)
+    		description = dict.getAsString(PdfName.T);
+    	// TODO: what if the field is a button?
+    	if (!PdfName.BTN.equals(dict.get(PdfName.FT)))
+    		attribute.put(PdfName.ROLE, PdfName.TV);
+    	attribute.put(PdfName.DESC, description);
+    	structElem.put(PdfName.A, attribute);
+    	structElem.put(PdfName.S, PdfName.P);
+    	structElem.put(PdfName.PG, pageref);
     	int mcid = items.processMCID(structParents, item);
 		LOGGER.info("Using MCID " + mcid);
-    	item.getStructElem().put(PdfName.S, PdfName.P);
-    	item.getStructElem().put(PdfName.PG, pageref);
-    	item.getStructElem().put(PdfName.K, new PdfNumber(mcid));
+    	structElem.put(PdfName.K, new PdfNumber(mcid));
     	item.getObjr().put(PdfName.OBJ, xobjr);
     	items.removeFromParentTree(structParent);
     	PdfName xobj = new PdfName("XObj" + structParent.intValue());

@@ -1488,6 +1488,8 @@ public class PdfName extends PdfObject implements Comparable<PdfName> {
      */
     public static final PdfName PRINTERMARK = new PdfName("PrinterMark");
     /** A name */
+    public static final PdfName PRINTFIELD = new PdfName("PrintField");
+    /** A name */
     public static final PdfName PRINTPAGERANGE = new PdfName("PrintPageRange");
     /** A name */
     public static final PdfName PRINTSCALING = new PdfName("PrintScaling");
@@ -1652,6 +1654,8 @@ public class PdfName extends PdfObject implements Comparable<PdfName> {
      * @since 5.1.0
      */
     public static final PdfName RL = new PdfName("RL");
+    /** A name */
+    public static final PdfName ROLE = new PdfName("Role");
     /** A name */
     public static final PdfName ROLEMAP = new PdfName("RoleMap");
     /** A name */
@@ -2003,6 +2007,8 @@ public class PdfName extends PdfObject implements Comparable<PdfName> {
     public static final PdfName TTL = new PdfName("Ttl");
     /** A name */
     public static final PdfName TU = new PdfName("TU");
+    /** A name */
+    public static final PdfName TV = new PdfName("tv");
     /** A name */
     public static final PdfName TWOCOLUMNLEFT = new PdfName("TwoColumnLeft");
     /** A name */
