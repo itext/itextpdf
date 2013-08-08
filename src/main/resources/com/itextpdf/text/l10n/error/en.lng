@@ -491,6 +491,3 @@ the.color.space.1.is.not.supported=The color space {1} is not supported.
 the.color.depth.1.is.not.supported=The color depth {1} is not supported.
 N.value.1.is.not.supported=N value {1} is not supported
 Decoding.can't.happen.on.this.type.of.stream.(.1.)=Decoding can't happen on this type of stream ({1})
-xmp.metadata.creation.failure=XMP metadata creation failure.
-xmp.metadata.serialization.failure=XMP metadata serialization failure.
-xmp.metadata.updating.failure=XMP metadata updating failure.
