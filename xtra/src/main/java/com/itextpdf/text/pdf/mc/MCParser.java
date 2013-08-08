@@ -243,6 +243,7 @@ public class MCParser {
     	if (xobjr == null)
     		return;
     	int mcid = items.processMCID(structParents, item);
+		LOGGER.info("Using MCID " + mcid);
     	item.getStructElem().put(PdfName.S, PdfName.P);
     	item.getStructElem().put(PdfName.PG, pageref);
     	item.getStructElem().put(PdfName.K, new PdfNumber(mcid));
