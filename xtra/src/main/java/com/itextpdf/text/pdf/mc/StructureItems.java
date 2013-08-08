@@ -67,32 +67,46 @@ public class StructureItems extends ArrayList<StructureItem> {
 		PdfDictionary structTreeRoot = catalog.getAsDict(PdfName.STRUCTTREEROOT);
 		if (structTreeRoot == null)
 			return;
-		inspectKids(structTreeRoot.getDirectObject(PdfName.K));
+		inspectKids(structTreeRoot);
 	}
 	
 	/**
-	 * Inspects the value of a K entry and stores all
-	 * meaningful StructureItem objects that are encountered.
-	 * @param object the value of a K-entry
+	 * Inspects the value of the K entry of a structure element
+	 * and stores all meaningful StructureItem objects that are encountered.
+	 * @param structElem a structure element
 	 */
-	protected void inspectKids(PdfObject object) {
+	protected void inspectKids(PdfDictionary structElem) {
+		if (structElem == null)
+			return;
+		PdfObject object = structElem.getDirectObject(PdfName.K);
 		if (object == null)
 			return;
 		switch(object.type()) {
 		case PdfObject.DICTIONARY:
-			PdfDictionary dict = (PdfDictionary)object;
-			StructureItem item = new StructureItem(dict);
-			inspectKids(dict.get(PdfName.K));
-			if (item.isRealContent())
-				add(item);
+			addStructureItem((PdfDictionary)object);
 			break;
 		case PdfObject.ARRAY:
 			PdfArray array = (PdfArray) object;
 			for (int i = 0; i < array.size(); i++) {
-				inspectKids(array.getDirectObject(i));
+				addStructureItem(array.getAsDict(i));
 			}
 			break;
 		}
+	}
+	
+	/**
+	 * Looks at a kid of a structure item, adds it as a
+	 * structure item (if necessary) and inspects its kids
+	 * (if any).
+	 * @param dict
+	 */
+	protected void addStructureItem(PdfDictionary dict) {
+		if (dict == null)
+			return;
+		StructureItem item = new StructureItem(dict);
+		inspectKids(dict);
+		if (item.isRealContent())
+			add(item);
 	}
 	
 	/** Serial version UID */

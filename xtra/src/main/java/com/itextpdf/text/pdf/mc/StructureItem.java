@@ -58,7 +58,8 @@ import com.itextpdf.text.pdf.PdfObject;
  * reference.
  */
 public class StructureItem {
-	
+	/** The structure element of which the properties are stored. */
+	PdfDictionary structElem;
 	/** MarkedContent IDs in case we're dealing with an MC sequence on a page. */
 	List<Integer> mcids = new ArrayList<Integer>();
 	/** Object reference in case we're dealing with an object. */
@@ -69,21 +70,17 @@ public class StructureItem {
 	 * The dictionary can be of type StructElem, MCR or OBJR.
 	 * @param dict	the dictionary that needs to be examined
 	 */
-	public StructureItem(PdfDictionary dict) {
-		if (dict.checkType(PdfName.MCR)) {
-			mcids.add(dict.getAsNumber(PdfName.MCID).intValue());
-		}
-		else if (dict.checkType(PdfName.OBJR)) {
-			objr = dict;
-		}
-		else {
-			inspectKids(dict.getDirectObject(PdfName.K));
-		}
+	public StructureItem(PdfDictionary structElem) {
+		this.structElem = structElem;
+		PdfObject object = structElem.getDirectObject(PdfName.K);
+		if (object == null)
+			return;
+		inspectKids(object);
 	}
 	
 	/**
 	 * Inspects the value of a K entry and stores all MCIDs
-	 * that are encountered.
+	 * or object references that are encountered.
 	 * @param object the value of a K-entry
 	 */
 	protected void inspectKids(PdfObject object) {
@@ -97,6 +94,15 @@ public class StructureItem {
 			PdfArray array = (PdfArray)object;
 			for (int i = 0; i < array.size(); i++) {
 				inspectKids(array.getDirectObject(i));
+			}
+			break;
+		case PdfObject.DICTIONARY:
+			PdfDictionary dict = (PdfDictionary)object;
+			if (dict.checkType(PdfName.MCR)) {
+				mcids.add(dict.getAsNumber(PdfName.MCID).intValue());
+			}
+			else if (dict.checkType(PdfName.OBJR)) {
+				objr = dict;
 			}
 		}
 	}
@@ -125,7 +131,23 @@ public class StructureItem {
 			return 0;
 		return -1;
 	}
-
+	
+	/**
+	 * Returns the structure element.
+	 * @return a dictionary
+	 */
+	public PdfDictionary getStructElem() {
+		return structElem;
+	}
+	
+	/**
+	 * Returns the OBJR dictionary (if present).
+	 * @return a dictionary of type OBJR or null
+	 */
+	public PdfDictionary getObjr() {
+		return objr;
+	}
+	
 	/**
 	 * Returns the object referred to by the OBJR dictionary.
 	 * Note that this method returns a dictionary which means
@@ -137,14 +159,6 @@ public class StructureItem {
 		if (objr == null)
 			return null;
 		return objr.getAsDict(PdfName.OBJ);
-	}
-	
-	/**
-	 * Returns the OBJR dictionary (if present).
-	 * @return a dictionary of type OBJR or null
-	 */
-	public PdfDictionary getObjr() {
-		return objr;
 	}
 	
 	/**

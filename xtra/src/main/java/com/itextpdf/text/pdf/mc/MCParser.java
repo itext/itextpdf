@@ -54,6 +54,7 @@ import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.io.RandomAccessSourceFactory;
 import com.itextpdf.text.log.Logger;
 import com.itextpdf.text.log.LoggerFactory;
+import com.itextpdf.text.pdf.ByteBuffer;
 import com.itextpdf.text.pdf.PRStream;
 import com.itextpdf.text.pdf.PRTokeniser;
 import com.itextpdf.text.pdf.PdfArray;
@@ -93,6 +94,9 @@ public class MCParser {
     /** the XObject dictionary of the page that is being processed. */
     protected PdfDictionary xobjects;
     
+    /** the StructParents of the page that is being processed. */
+    protected PdfNumber structParents;
+    
     /** Did we postpone writing a BT operator? */
     protected boolean btWrite = false;
     
@@ -122,6 +126,7 @@ public class MCParser {
      */
     public void parse(PdfDictionary page, boolean finalPage) throws IOException {
     	baos = new ByteArrayOutputStream();
+    	structParents = page.getAsNumber(PdfName.STRUCTPARENTS);
     	PdfDictionary resources = page.getAsDict(PdfName.RESOURCES);
     	xobjects = resources.getAsDict(PdfName.XOBJECT);
     	if (xobjects == null) {
@@ -229,6 +234,7 @@ public class MCParser {
     	PdfIndirectReference xobjr = ap.getAsIndirectObject(PdfName.N);
     	if (xobjr == null)
     		return;
+    	item.getStructElem().put(PdfName.S, PdfName.P);
     	item.getObjr().put(PdfName.OBJ, xobjr);
     	PdfName xobj = new PdfName("XObj" + structParent.intValue());
     	LOGGER.info("Creating XObject with name " + xobj);
@@ -243,13 +249,16 @@ public class MCParser {
     		baos.write("ET\n".getBytes());
     		etExtra = true;
     	}
-    	baos.write("q 1 0 0 1 ".getBytes());
-    	baos.write(String.valueOf(rect.getLeft()).getBytes());
-    	baos.write(" ".getBytes());
-    	baos.write(String.valueOf(rect.getBottom()).getBytes());
-    	baos.write(" cm ".getBytes());
-    	xobj.toPdf(null, baos);
-    	baos.write(" Do Q\n".getBytes());
+    	ByteBuffer buf = new ByteBuffer();
+    	buf.append("q 1 0 0 1 ");
+    	buf.append(rect.getLeft());
+    	buf.append(" ");
+    	buf.append(rect.getBottom());
+    	buf.append(" cm ");
+    	buf.append(xobj.getBytes());
+    	buf.append(" Do Q\n");
+    	buf.flush();
+    	buf.writeTo(baos);
     	if (inText)
     		btWrite = true;
     }
