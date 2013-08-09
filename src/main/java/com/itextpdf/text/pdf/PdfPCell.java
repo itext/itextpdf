@@ -120,7 +120,7 @@ public class PdfPCell extends Rectangle implements IAccessibleElement {
 
     protected PdfName role = PdfName.TD;
     protected HashMap<PdfName, PdfObject> accessibleAttributes = null;
-    protected UUID id = UUID.randomUUID();
+    protected AccessibleElementId id = new AccessibleElementId();
     
     protected ArrayList<PdfPHeaderCell> headers = null;
 
@@ -1030,11 +1030,11 @@ public class PdfPCell extends Rectangle implements IAccessibleElement {
         this.role = role;
     }
 
-    public UUID getId() {
+    public AccessibleElementId getId() {
         return id;
     }
 
-    public void setId(final UUID id) {
+    public void setId(final AccessibleElementId id) {
         this.id = id;
     }
 

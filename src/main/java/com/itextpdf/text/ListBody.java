@@ -53,7 +53,7 @@ import java.util.UUID;
 public class ListBody implements IAccessibleElement {
 
     protected PdfName role = PdfName.LBODY;
-    private UUID id = null;
+    private AccessibleElementId id = null;
     protected HashMap<PdfName, PdfObject> accessibleAttributes = null;
     protected ListItem parentItem = null;
 
@@ -86,13 +86,13 @@ public class ListBody implements IAccessibleElement {
         this.role = role;
     }
 
-    public UUID getId() {
+    public AccessibleElementId getId() {
         if (id == null)
-            id = UUID.randomUUID();
+            id = new AccessibleElementId();
         return id;
     }
 
-    public void setId(final UUID id) {
+    public void setId(final AccessibleElementId id) {
         this.id = id;
     }
 

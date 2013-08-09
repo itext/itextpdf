@@ -170,7 +170,7 @@ public class Document implements DocListener, IAccessibleElement {
 
     protected PdfName role = PdfName.DOCUMENT;
     protected HashMap<PdfName, PdfObject> accessibleAttributes = null;
-    protected UUID id = UUID.randomUUID();
+    protected AccessibleElementId id = new AccessibleElementId();
 
     // constructor
 
@@ -842,11 +842,11 @@ public class Document implements DocListener, IAccessibleElement {
         this.role = role;
     }
 
-    public UUID getId() {
+    public AccessibleElementId getId() {
         return id;
     }
 
-    public void setId(final UUID id) {
+    public void setId(final AccessibleElementId id) {
         this.id = id;
     }
 

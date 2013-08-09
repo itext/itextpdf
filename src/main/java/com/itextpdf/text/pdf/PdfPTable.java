@@ -49,14 +49,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.Element;
-import com.itextpdf.text.ElementListener;
-import com.itextpdf.text.Image;
-import com.itextpdf.text.LargeElement;
-import com.itextpdf.text.Phrase;
-import com.itextpdf.text.Rectangle;
-import com.itextpdf.text.Chunk;
+import com.itextpdf.text.*;
 import com.itextpdf.text.api.Spaceable;
 import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.log.Logger;
@@ -206,7 +199,7 @@ public class PdfPTable implements LargeElement, Spaceable, IAccessibleElement {
 
     protected PdfName role = PdfName.TABLE;
     protected HashMap<PdfName, PdfObject> accessibleAttributes = null;
-    protected UUID id = UUID.randomUUID();
+    protected AccessibleElementId id = new AccessibleElementId();
     private PdfPTableHeader header = null;
     private PdfPTableBody body = null;
     private PdfPTableFooter footer = null;
@@ -635,7 +628,7 @@ public class PdfPTable implements LargeElement, Spaceable, IAccessibleElement {
     public void addCell(final PdfPTable table) {
         defaultCell.setTable(table);
         PdfPCell newCell = addCell(defaultCell);
-        newCell.id = UUID.randomUUID();
+        newCell.id = new AccessibleElementId();
         defaultCell.setTable(null);
     }
 
@@ -648,7 +641,7 @@ public class PdfPTable implements LargeElement, Spaceable, IAccessibleElement {
     public void addCell(final Image image) {
         defaultCell.setImage(image);
         PdfPCell newCell = addCell(defaultCell);
-        newCell.id = UUID.randomUUID();
+        newCell.id = new AccessibleElementId();
         defaultCell.setImage(null);
     }
 
@@ -660,7 +653,7 @@ public class PdfPTable implements LargeElement, Spaceable, IAccessibleElement {
     public void addCell(final Phrase phrase) {
         defaultCell.setPhrase(phrase);
         PdfPCell newCell = addCell(defaultCell);
-        newCell.id = UUID.randomUUID();
+        newCell.id = new AccessibleElementId();
         defaultCell.setPhrase(null);
     }
 
@@ -1843,11 +1836,11 @@ public class PdfPTable implements LargeElement, Spaceable, IAccessibleElement {
         this.role = role;
     }
 
-    public UUID getId() {
+    public AccessibleElementId getId() {
         return id;
     }
 
-    public void setId(final UUID id) {
+    public void setId(final AccessibleElementId id) {
         this.id = id;
     }
 
