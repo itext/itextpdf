@@ -45,6 +45,7 @@ package com.itextpdf.text.pdf.mc;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 
 import com.itextpdf.text.pdf.PdfArray;
@@ -146,6 +147,10 @@ public class StructureItems extends ArrayList<StructureItem> {
 	public void writeParentTree(PdfWriter writer) throws IOException {
 		if (structTreeRoot == null)
 			return;
+        Integer numbers[] = new Integer[parentTree.size()];
+        numbers = parentTree.keySet().toArray(numbers);
+        Arrays.sort(numbers);
+        structTreeRoot.put(PdfName.PARENTTREENEXTKEY, new PdfNumber(numbers[numbers.length - 1] + 1));
 		structTreeRoot.put(PdfName.PARENTTREE, PdfNumberTree.writeTree(parentTree, writer));
 	}
 	
