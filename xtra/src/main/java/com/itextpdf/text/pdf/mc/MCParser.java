@@ -50,7 +50,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Rectangle;
+import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.io.RandomAccessSourceFactory;
 import com.itextpdf.text.log.Logger;
 import com.itextpdf.text.log.LoggerFactory;
@@ -60,6 +62,7 @@ import com.itextpdf.text.pdf.PRTokeniser;
 import com.itextpdf.text.pdf.PdfArray;
 import com.itextpdf.text.pdf.PdfContentParser;
 import com.itextpdf.text.pdf.PdfDictionary;
+import com.itextpdf.text.pdf.PdfFormField;
 import com.itextpdf.text.pdf.PdfIndirectReference;
 import com.itextpdf.text.pdf.PdfLiteral;
 import com.itextpdf.text.pdf.PdfName;
@@ -70,15 +73,25 @@ import com.itextpdf.text.pdf.PdfStream;
 import com.itextpdf.text.pdf.PdfString;
 import com.itextpdf.text.pdf.RandomAccessFileOrArray;
 
+/**
+ * This class will parse page content streams and add Do operators
+ * in a marked-content sequence for every field that needs to be
+ * flattened.
+ * 
+ * DISCLAIMER:
+ * - This won't work with documents that have marked-content sequences inside XObjects
+ * - This won't work with pages in which the CTM is changed
+ * - This won't work for form fields with more than one widget annotation
+ */
 public class MCParser {
+	
+	// static final constants
+	
 	/** The Logger instance */
 	protected final static Logger LOGGER = LoggerFactory.getLogger(MCParser.class);
 
 	/** Factory that will help us build a RandomAccessSource. */
-	protected RandomAccessSourceFactory factory = new RandomAccessSourceFactory();
-    
-	/** A map with all supported operators operators (PDF syntax). */
-    protected static Map<String, PdfOperator> operators = null;
+	protected final static RandomAccessSourceFactory RASFACTORY = new RandomAccessSourceFactory();
 	
 	/** Constant used for the default operator. */
     public static final String DEFAULTOPERATOR = "DefaultOperator";
@@ -86,8 +99,13 @@ public class MCParser {
     /** A new line operator */
     public static final PdfLiteral TSTAR = new PdfLiteral("T*");
     
+    // variables needed when parsing
+    
+	/** A map with all supported operators operators (PDF syntax). */
+    protected Map<String, PdfOperator> operators = null;
+    
     /** The OutputStream of this worker object. */
-    protected static ByteArrayOutputStream baos;
+    protected ByteArrayOutputStream baos;
 
     /** The list with structure items. */
     protected StructureItems items;
@@ -127,15 +145,20 @@ public class MCParser {
     }
     
     /**
-     * Parses the content of a page, replacing appearances of annotations
-     * with Form XObjects.
-     * @param page a page dictionary
+     * Parses the content of a page, inserting the normal (/N) appearances (/AP)
+     * of annotations into the content stream as Form XObjects.
+     * @param page		a page dictionary
+     * @param pageref	the reference to the page dictionary
+     * @param finalPage	indicates whether the page being processed is the final page in the document
      * @throws IOException
+     * @throws DocumentException 
      */
-    public void parse(PdfDictionary page, PdfIndirectReference pageref, boolean finalPage) throws IOException {
+    public void parse(PdfDictionary page, PdfIndirectReference pageref, boolean finalPage) throws IOException, DocumentException {
     	this.pageref = pageref;
     	baos = new ByteArrayOutputStream();
     	structParents = page.getAsNumber(PdfName.STRUCTPARENTS);
+    	if (structParents == null)
+    		throw new DocumentException(MessageLocalization.getComposedMessage("can.t.read.document.structure"));
     	PdfDictionary resources = page.getAsDict(PdfName.RESOURCES);
     	xobjects = resources.getAsDict(PdfName.XOBJECT);
     	if (xobjects == null) {
@@ -144,7 +167,7 @@ public class MCParser {
     	}
 		PRStream stream = (PRStream)page.getAsStream(PdfName.CONTENTS);
 		byte[] contentBytes = PdfReader.getStreamBytes(stream);
-        PRTokeniser tokeniser = new PRTokeniser(new RandomAccessFileOrArray(factory.createSource(contentBytes)));
+        PRTokeniser tokeniser = new PRTokeniser(new RandomAccessFileOrArray(RASFACTORY.createSource(contentBytes)));
         PdfContentParser ps = new PdfContentParser(tokeniser);
         ArrayList<PdfObject> operands = new ArrayList<PdfObject>();
         while (ps.parse(operands).size() > 0){
@@ -167,8 +190,9 @@ public class MCParser {
      * @param operator	the operator
      * @param operands	the operator's operands
      * @throws IOException
+     * @throws DocumentException 
      */
-    protected void processOperator(PdfLiteral operator, List<PdfObject> operands) throws IOException {
+    protected void processOperator(PdfLiteral operator, List<PdfObject> operands) throws IOException, DocumentException {
         PdfOperator op = operators.get(operator.toString());
         if (op == null)
             op = operators.get(DEFAULTOPERATOR);
@@ -185,8 +209,9 @@ public class MCParser {
     		text = new StringBuffer();
     		btWrite = true;
     	}
-    	else
+    	else {
     		etExtra = false;
+    	}
     	this.inText = inText;
     }
     
@@ -196,8 +221,9 @@ public class MCParser {
      * necessary.
      * @param mcid	the MCID that was encountered in the content stream
      * @throws IOException
+     * @throws DocumentException 
      */
-    protected void dealWithMcid(PdfNumber mcid) throws IOException {
+    protected void dealWithMcid(PdfNumber mcid) throws IOException, DocumentException {
     	if (mcid == null)
     		return;
     	LOGGER.info(String.format("Encountered MCID %s in content", mcid));
@@ -223,10 +249,11 @@ public class MCParser {
 
     /**
      * Converts an annotation structure item to a Form XObject annotation.
-     * @param item the structure item
+     * @param item	the structure item
      * @throws IOException
+     * @throws DocumentException 
      */
-    protected void convertToXObject(StructureItem item) throws IOException {
+    protected void convertToXObject(StructureItem item) throws IOException, DocumentException {
     	PdfDictionary structElem = item.getStructElem();
     	if (structElem == null)
     		return;
@@ -242,43 +269,63 @@ public class MCParser {
     	PdfStream stream = ap.getAsStream(PdfName.N);
     	if (stream == null)
     		return;
-    	stream.put(PdfName.STRUCTPARENT, structParent);
     	PdfIndirectReference xobjr = ap.getAsIndirectObject(PdfName.N);
     	if (xobjr == null)
     		return;
+    	// replacing the attribute entry by a PrintField attribute
     	PdfDictionary attribute = new PdfDictionary();
     	attribute.put(PdfName.O, PdfName.PRINTFIELD);
     	PdfString description = dict.getAsString(PdfName.TU);
     	if (description == null)
     		description = dict.getAsString(PdfName.T);
-    	// TODO: what if the field is a button?
-    	if (!PdfName.BTN.equals(dict.get(PdfName.FT)))
+    	if (PdfName.BTN.equals(dict.get(PdfName.FT))) {
+    		PdfNumber fflags = dict.getAsNumber(PdfName.FF);
+    		if (fflags != null) {
+    			int ff = fflags.intValue();
+                if ((ff & PdfFormField.FF_PUSHBUTTON) != 0)
+                    attribute.put(PdfName.ROLE, PdfName.PB);
+                // I don't think the condition below will ever be true
+                if ((ff & PdfFormField.FF_RADIO) != 0)
+                    attribute.put(PdfName.ROLE, PdfName.rb);
+                else
+                    attribute.put(PdfName.ROLE, PdfName.CB);
+    		}
+    	}
+    	else {
     		attribute.put(PdfName.ROLE, PdfName.TV);
+    	}
     	attribute.put(PdfName.DESC, description);
+    	// Updating the values of the StructElem dictionary
     	PdfString t = structElem.getAsString(PdfName.T);
     	if (t == null || t.toString().trim().length() == 0)
     		structElem.put(PdfName.T, dict.getAsString(PdfName.T));
     	structElem.put(PdfName.A, attribute);
     	structElem.put(PdfName.S, PdfName.P);
     	structElem.put(PdfName.PG, pageref);
+    	// Defining a new MCID
     	int mcid = items.processMCID(structParents, item);
 		LOGGER.info("Using MCID " + mcid);
     	structElem.put(PdfName.K, new PdfNumber(mcid));
-    	item.getObjr().put(PdfName.OBJ, xobjr);
+    	//item.getObjr().put(PdfName.OBJ, xobjr);
     	items.removeFromParentTree(structParent);
     	PdfName xobj = new PdfName("XObj" + structParent.intValue());
     	LOGGER.info("Creating XObject with name " + xobj);
     	xobjects.put(xobj, xobjr);
     	PdfArray array = dict.getAsArray(PdfName.RECT);
+    	// Getting the position of the annotation
     	Rectangle rect = new Rectangle(
     			array.getAsNumber(0).floatValue(), array.getAsNumber(1).floatValue(),
     			array.getAsNumber(2).floatValue(), array.getAsNumber(3).floatValue());
     	rect.normalize();
+    	// A Do operator is forbidden inside a text block
     	if (inText && !btWrite) {
     		LOGGER.debug("Introducing extra ET");
     		baos.write("ET\n".getBytes());
     		etExtra = true;
     	}
+    	// Writing the marked-content sequence with the Do operator
+    	// Note that the position assumes that the CTM wasn't changed in the graphics state
+    	// TODO: do the math if the CTM did change!
     	ByteBuffer buf = new ByteBuffer();
     	buf.append("/P <</MCID ");
     	buf.append(mcid);
@@ -293,6 +340,7 @@ public class MCParser {
     	buf.append("EMC\n");
     	buf.flush();
     	buf.writeTo(baos);
+    	// if we were inside a text block, we've introduced an ET, so we'll need to write a BT
     	if (inText)
     		btWrite = true;
     }
@@ -312,7 +360,7 @@ public class MCParser {
     }
     
     /**
-     * Adds an operator and its operands (if any) to baos.
+     * Adds an operator and its operands (if any) to baos, keeping track of the text state.
      * @param operator	the operator
      * @param operands	its operands
      * @throws IOException
@@ -351,13 +399,13 @@ public class MCParser {
      */
     protected void checkBT() throws IOException {
     	if (btWrite) {
-    		LOGGER.debug("BT written");
     		baos.write("BT ".getBytes());
     		if (etExtra) {
     			baos.write(text.toString().getBytes());
     			etExtra = false;
     			text = new StringBuffer();
     		}
+    		LOGGER.debug("BT written");
     	}
     	btWrite = false;
     }
@@ -405,7 +453,7 @@ public class MCParser {
     	 * @param operands	its operands
     	 * @throws IOException
     	 */
-    	public void process(MCParser parser, PdfLiteral operator, List<PdfObject> operands) throws IOException;
+    	public void process(MCParser parser, PdfLiteral operator, List<PdfObject> operands) throws DocumentException, IOException;
     }
 
 
@@ -429,10 +477,11 @@ public class MCParser {
     private static class BeginMarkedContentDictionaryOperator implements PdfOperator {
 
 		/**
+		 * @throws DocumentException 
 		 * @see com.itextpdf.text.pdf.ocg.OCGParser.PdfOperator#process(com.itextpdf.text.pdf.ocg.OCGParser, com.itextpdf.text.pdf.PdfLiteral, java.util.List)
 		 */
     	public void process(MCParser parser, PdfLiteral operator,
-    			List<PdfObject> operands) throws IOException {
+    			List<PdfObject> operands) throws IOException, DocumentException {
     		if ("BDC".equals(operator.toString())) {
     			if (operands.get(1).isDictionary()) {
     				PdfDictionary dict = (PdfDictionary)operands.get(1);

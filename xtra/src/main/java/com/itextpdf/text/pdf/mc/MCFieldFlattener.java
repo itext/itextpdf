@@ -54,14 +54,16 @@ import com.itextpdf.text.pdf.PdfStamper;
 
 /**
  * Removes all interactivity from an AcroForm, maintaining the
- * structure tree. Use this class only if the form is properly
- * tagged.
+ * structure tree.
+ * 
+ * DISCLAIMER: Use this class only if the form is properly tagged.
  */
 public class MCFieldFlattener {
 
 	/**
 	 * Processes a properly tagged PDF form.
 	 * @param reader the PdfReader instance holding the PDF
+	 * @param os	the OutputStream to which the flattened file will be written
 	 * @throws IOException
 	 * @throws DocumentException 
 	 */

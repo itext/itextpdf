@@ -48,6 +48,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.pdf.PdfArray;
 import com.itextpdf.text.pdf.PdfDictionary;
 import com.itextpdf.text.pdf.PdfIndirectReference;
@@ -67,19 +69,20 @@ public class StructureItems extends ArrayList<StructureItem> {
 	/** The StructTreeRoot dictionary */
 	protected PdfDictionary structTreeRoot;
 	
-	/** The StructParents number tree. */
+	/** The StructParents number tree values. */
 	protected HashMap<Integer, PdfObject> parentTree;
 	
 	/**
 	 * Creates a list of StructuredItem objects.
 	 * @param reader the reader holding the PDF to examine
 	 */
-	public StructureItems(PdfReader reader) {
+	public StructureItems(PdfReader reader)
+		throws DocumentException {
 		super();
 		PdfDictionary catalog = reader.getCatalog();
 		structTreeRoot = catalog.getAsDict(PdfName.STRUCTTREEROOT);
 		if (structTreeRoot == null)
-			return;
+			throw new DocumentException(MessageLocalization.getComposedMessage("can.t.read.document.structure"));
 		parentTree = PdfNumberTree.readTree(structTreeRoot.getAsDict(PdfName.PARENTTREE));
 		structTreeRoot.remove(PdfName.STRUCTPARENTS);
 		inspectKids(structTreeRoot);
@@ -113,7 +116,9 @@ public class StructureItems extends ArrayList<StructureItem> {
 	 * Looks at a kid of a structure item, adds it as a
 	 * structure item (if necessary) and inspects its kids
 	 * (if any).
-	 * @param dict
+	 * @param dict	the dictionary that needs to be examined
+	 * @param ref	the reference to this dictionary
+	 * @throws DocumentException
 	 */
 	protected void addStructureItem(PdfDictionary dict, PdfIndirectReference ref) {
 		if (dict == null)
@@ -132,15 +137,29 @@ public class StructureItems extends ArrayList<StructureItem> {
 		parentTree.remove(structParent.intValue());
 	}
 
-	public int processMCID(PdfNumber structParents, StructureItem item) {
+	/**
+	 * Creates a new MCID in the parent tree of the page
+	 * and returns that new MCID so that it can be used
+	 * in the content stream
+	 * @param structParents	the StructParents entry in the page dictionary
+	 * @param item	the item for which we need a new MCID
+	 * @return	a new MCID
+	 * @throws DocumentException
+	 */
+	public int processMCID(PdfNumber structParents, StructureItem item)
+			throws DocumentException {
+		PdfIndirectReference ref = item.getRef();
+		if (ref == null)
+			throw new DocumentException(MessageLocalization.getComposedMessage("can.t.read.document.structure"));
 		PdfObject object = parentTree.get(structParents.intValue());
 		PdfArray array = (PdfArray)PdfReader.getPdfObject(object);
+		// We could try reusing null values in the array
 		array.add(item.getRef());
 		return array.size() - 1;
 	}
 	
 	/**
-	 * Returns the number tree with the StructParents.
+	 * Writes the altered parent tree to a PdfWriter and updates the StructTreeRoot entry.
 	 * @param writer	The writer to which the StructParents have to be written
 	 * @throws IOException 
 	 */

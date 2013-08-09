@@ -69,9 +69,10 @@ public class StructureItem {
 	PdfDictionary objr;
 	
 	/**
-	 * Creates a structure item based on a dictionary.
-	 * The dictionary can be of type StructElem, MCR or OBJR.
-	 * @param dict	the dictionary that needs to be examined
+	 * Creates a structure item based on a StructElem dictionary
+	 * and its reference.
+	 * @param dict	the StructElem dictionary that needs to be examined
+	 * @param ref	the indirect reference to that dictionary
 	 */
 	public StructureItem(PdfDictionary structElem, PdfIndirectReference ref) {
 		this.structElem = structElem;
@@ -120,11 +121,12 @@ public class StructureItem {
 	}
 
 	/**
-	 * Processes a MCID.
+	 * Processes an MCID.
 	 * @param mcid the MCID
 	 * @return 0 in case there's an OBJR dictionary,
-	 *         1 in case all MCIDs are now encountered
-	 *         2 in case there are still MCIDs to process.
+	 *         1 in case all MCIDs are now encountered,
+	 *         2 in case there are still MCIDs to process,
+	 *         -1 in case no MCID or OBJR was found.
 	 */
 	public int process(int mcid) {
 		if (mcids.contains(mcid)) {
@@ -138,7 +140,7 @@ public class StructureItem {
 	
 	/**
 	 * Returns the structure element.
-	 * @return a dictionary
+	 * @return a StructElem dictionary
 	 */
 	public PdfDictionary getStructElem() {
 		return structElem;
@@ -146,7 +148,7 @@ public class StructureItem {
 	
 	/**
 	 * Returns the structure element's reference.
-	 * @return a dictionary
+	 * @return an indirect reference to a StructElem dictionary
 	 */
 	public PdfIndirectReference getRef() {
 		return ref;
@@ -163,8 +165,8 @@ public class StructureItem {
 	/**
 	 * Returns the object referred to by the OBJR dictionary.
 	 * Note that this method returns a dictionary which means
-	 * that only the stream dictionary will be passed in case
-	 * of an XObject.
+	 * that in case the object is a stream, only the stream
+	 * dictionary will be returned.
 	 * @return the object referred to by OBJR as a dictionary
 	 */
 	public PdfDictionary getObj() {
