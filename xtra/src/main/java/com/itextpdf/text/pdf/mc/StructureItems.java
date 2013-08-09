@@ -50,6 +50,8 @@ import java.util.HashMap;
 
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.error_messages.MessageLocalization;
+import com.itextpdf.text.log.Logger;
+import com.itextpdf.text.log.LoggerFactory;
 import com.itextpdf.text.pdf.PdfArray;
 import com.itextpdf.text.pdf.PdfDictionary;
 import com.itextpdf.text.pdf.PdfIndirectReference;
@@ -61,10 +63,13 @@ import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.PdfWriter;
 
 /**
- * Creates a list of meaningful StructureItem objects extracted from the
+ * Creates a list of StructureItem objects extracted from the
  * Structure Tree of a PDF document.
  */
 public class StructureItems extends ArrayList<StructureItem> {
+
+	/** The Logger instance */
+	protected final static Logger LOGGER = LoggerFactory.getLogger(StructureItems.class);
 	
 	/** The StructTreeRoot dictionary */
 	protected PdfDictionary structTreeRoot;
@@ -85,48 +90,77 @@ public class StructureItems extends ArrayList<StructureItem> {
 			throw new DocumentException(MessageLocalization.getComposedMessage("can.t.read.document.structure"));
 		parentTree = PdfNumberTree.readTree(structTreeRoot.getAsDict(PdfName.PARENTTREE));
 		structTreeRoot.remove(PdfName.STRUCTPARENTS);
-		inspectKids(structTreeRoot);
-	}
-	
-	/**
-	 * Inspects the value of the K entry of a structure element
-	 * and stores all meaningful StructureItem objects that are encountered.
-	 * @param structElem a structure element
-	 */
-	protected void inspectKids(PdfDictionary structElem) {
-		if (structElem == null)
-			return;
-		PdfObject object = structElem.getDirectObject(PdfName.K);
+		PdfObject object = structTreeRoot.getDirectObject(PdfName.K);
 		if (object == null)
 			return;
 		switch(object.type()) {
 		case PdfObject.DICTIONARY:
-			addStructureItem((PdfDictionary)object, structElem.getAsIndirectObject(PdfName.K));
+			LOGGER.info("StructTreeRoot refers to dictionary");
+			addStructureItems((PdfDictionary)object, structTreeRoot.getAsIndirectObject(PdfName.K));
 			break;
 		case PdfObject.ARRAY:
+			LOGGER.info("StructTreeRoot refers to array");
 			PdfArray array = (PdfArray) object;
 			for (int i = 0; i < array.size(); i++) {
-				addStructureItem(array.getAsDict(i), array.getAsIndirectObject(i));
+				addStructureItems(array.getAsDict(i), array.getAsIndirectObject(i));
 			}
 			break;
 		}
 	}
 	
 	/**
-	 * Looks at a kid of a structure item, adds it as a
-	 * structure item (if necessary) and inspects its kids
-	 * (if any).
-	 * @param dict	the dictionary that needs to be examined
-	 * @param ref	the reference to this dictionary
+	 * Looks at a StructElem dictionary, and processes its kids.
+	 * @param dict	the StructElem dictionary that needs to be examined
+	 * @param ref	the reference to the StructElem dictionary
 	 * @throws DocumentException
 	 */
-	protected void addStructureItem(PdfDictionary dict, PdfIndirectReference ref) {
-		if (dict == null)
+	protected void addStructureItems(PdfDictionary structElem, PdfIndirectReference ref) {
+		LOGGER.info(String.format("addStructureItems(%s, %s)", structElem, ref));
+		if (structElem == null)
 			return;
-		StructureItem item = new StructureItem(dict, ref);
-		inspectKids(dict);
-		if (item.isRealContent())
+		addStructureItem(structElem, ref, structElem.getDirectObject(PdfName.K));
+	}
+	
+	/**
+	 * Processes the kids object of a StructElem dictionary.
+	 * This kids object can be a number (MCID), another StructElem dictionary,
+	 * an MCR dictionary, an OBJR dictionary, or an array of the above.
+	 * @param structElem	the StructElem dictionary
+	 * @param ref			the reference to the StructElem dictionary
+	 * @param object		the kids object
+	 */
+	protected void addStructureItem(PdfDictionary structElem, PdfIndirectReference ref, PdfObject object) {
+		LOGGER.info(String.format("addStructureItem(%s, %s, %s)", structElem, ref, object));
+		if (object == null)
+			return;
+		StructureItem item;
+		switch(object.type()) {
+		case PdfObject.NUMBER:
+			item = new StructureMCID((PdfNumber) object);
 			add(item);
+			LOGGER.info("Added " + item);
+			break;
+		case PdfObject.ARRAY:
+			PdfArray array = (PdfArray)object;
+			for (int i = 0; i < array.size(); i++) {
+				addStructureItem(null, array.getAsIndirectObject(i), array.getDirectObject(i));
+			}
+			break;
+		case PdfObject.DICTIONARY:
+			PdfDictionary dict = (PdfDictionary)object;
+			if (dict.checkType(PdfName.MCR)) {
+				item = new StructureMCID(dict);
+				add(item);
+				LOGGER.info("Added " + item);
+			} else if (dict.checkType(PdfName.OBJR)) {
+				item = new StructureObject(structElem, ref, dict);
+				add(item);
+				LOGGER.info("Added " + item);
+			}
+			else {
+				addStructureItems(dict, ref);
+			}
+		}
 	}
 	
 	/**
@@ -146,15 +180,14 @@ public class StructureItems extends ArrayList<StructureItem> {
 	 * @return	a new MCID
 	 * @throws DocumentException
 	 */
-	public int processMCID(PdfNumber structParents, StructureItem item)
+	public int processMCID(PdfNumber structParents, PdfIndirectReference ref)
 			throws DocumentException {
-		PdfIndirectReference ref = item.getRef();
 		if (ref == null)
 			throw new DocumentException(MessageLocalization.getComposedMessage("can.t.read.document.structure"));
 		PdfObject object = parentTree.get(structParents.intValue());
 		PdfArray array = (PdfArray)PdfReader.getPdfObject(object);
-		// We could try reusing null values in the array
-		array.add(item.getRef());
+		// TODO: We could try reusing null values in the array
+		array.add(ref);
 		return array.size() - 1;
 	}
 	

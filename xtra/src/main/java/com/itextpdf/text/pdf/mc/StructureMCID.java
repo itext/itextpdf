@@ -1,5 +1,5 @@
 /*
- * $Id$
+ * $Id: StructureMCID.java 5952 2013-08-09 13:38:28Z blowagie $
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2013 1T3XT BVBA
@@ -43,16 +43,59 @@
  */
 package com.itextpdf.text.pdf.mc;
 
+import com.itextpdf.text.pdf.PdfDictionary;
+import com.itextpdf.text.pdf.PdfName;
+import com.itextpdf.text.pdf.PdfNumber;
+
 /**
- * The StructureItem interface is implemented by StructureMCID and StructureObject.
+ * Object that stores an item that is part of the document structure.
+ * It can refer to a Marked Content sequence in a page or an object
+ * reference (in this case the subclass StructureObject is used).
  */
-public interface StructureItem {
+public class StructureMCID implements StructureItem {
+	
+	/** The mcid of the structure element. */
+	protected int mcid = -1;
+	
+	/**
+	 * Empty constructor to create a StructureMCID.
+	 */
+	protected StructureMCID() {
+	}
+	
+	/**
+	 * Creates a StructureMCID using an MCID.
+	 * @param obj	an MCID
+	 */
+	public StructureMCID(PdfNumber mcid) {
+		this.mcid = mcid.intValue();
+	}
+	
+	/**
+	 * Creates a StructurItem using an MCR dictionary.
+	 * @param dict	an MCR dictionary
+	 */
+	public StructureMCID(PdfDictionary mcr) {
+		mcid = mcr.getAsNumber(PdfName.MCID).intValue();
+	}
 
 	/**
-	 * Checks if an MCID corresponds with the MCID stored in the StructureItem.
-	 * @return  0 in case there's no MCID (in case of a StructureObject)
-	 * 		    1 in case the MCID matches
-	 * 		   -1 in case there's no match. This shouldn't happen, but... not all forms are correctly tagged
+	 * Checks if the MCID in this object corresponds with the stored number
+	 * @param mcid the MCID
+	 * @return 1 in case the MCIDs corresponds with obj,
+	 *         -1 in case the MCID doesn't correspond
 	 */
-	public int checkMCID(int mcid);
+	public int checkMCID(int mcid) {
+		if (this.mcid == mcid)
+			return 1;
+		return -1;
+	}
+	
+	/**
+	 * Creates a String representation of the object.
+	 * @see java.lang.Object#toString()
+	 */
+	public String toString() {
+		return "MCID: " + mcid;
+	}
 }

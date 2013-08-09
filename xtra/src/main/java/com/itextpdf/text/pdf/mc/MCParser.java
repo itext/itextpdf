@@ -154,6 +154,7 @@ public class MCParser {
      * @throws DocumentException 
      */
     public void parse(PdfDictionary page, PdfIndirectReference pageref, boolean finalPage) throws IOException, DocumentException {
+    	LOGGER.info("Parsing page with reference " + pageref);
     	this.pageref = pageref;
     	baos = new ByteArrayOutputStream();
     	structParents = page.getAsNumber(PdfName.STRUCTPARENTS);
@@ -177,7 +178,8 @@ public class MCParser {
         if (finalPage) {
         	LOGGER.info(String.format("There are %d items left for processing", items.size()));
         	for (StructureItem item : items) {
-        		convertToXObject(item);
+        		if (item instanceof StructureObject)
+        			convertToXObject((StructureObject)item);
         	}
         }
         baos.flush();
@@ -228,22 +230,34 @@ public class MCParser {
     		return;
     	LOGGER.info(String.format("Encountered MCID %s in content", mcid));
     	StructureItem item = items.get(0);
-    	switch (item.process(mcid.intValue())) {
+    	switch (item.checkMCID(mcid.intValue())) {
     	case 0 :
+    		StructureObject obj = (StructureObject)item;
     		items.remove(0);
-    		LOGGER.info(String.format("Discovered %s as an object reference", item.getObj()));
-    		convertToXObject(item);
+    		LOGGER.info(String.format("Discovered %s as an object reference", obj.getObj()));
+    		convertToXObject(obj);
     		dealWithMcid(mcid);
     		return;
     	case 1 :
     		LOGGER.info("Removed structure item from stack.");
     		items.remove(0);
     		return;
-    	case 2:
-    		LOGGER.info("Removed MCID from structure item.");
-    		return;
     	default:
-    		LOGGER.warn("MCID not found!");
+    		LOGGER.warn("MCID not found! There's probably an error in your form!");
+    		int check;
+    		for (int i = 1; i < items.size(); i++) {
+    			item = items.get(i);
+    			check = item.checkMCID(mcid.intValue());
+    			switch (check) {
+    			case 1:
+    	    		LOGGER.info("Removed structure item from stack.");
+    				items.remove(i);
+    				return;
+    			case 0:
+    				break;
+    			}
+    		}
+    		throw new DocumentException(MessageLocalization.getComposedMessage("can.t.read.document.structure"));
     	}
     }
 
@@ -253,7 +267,7 @@ public class MCParser {
      * @throws IOException
      * @throws DocumentException 
      */
-    protected void convertToXObject(StructureItem item) throws IOException, DocumentException {
+    protected void convertToXObject(StructureObject item) throws IOException, DocumentException {
     	PdfDictionary structElem = item.getStructElem();
     	if (structElem == null)
     		return;
@@ -303,7 +317,7 @@ public class MCParser {
     	structElem.put(PdfName.S, PdfName.P);
     	structElem.put(PdfName.PG, pageref);
     	// Defining a new MCID
-    	int mcid = items.processMCID(structParents, item);
+    	int mcid = items.processMCID(structParents, item.getRef());
 		LOGGER.info("Using MCID " + mcid);
     	structElem.put(PdfName.K, new PdfNumber(mcid));
     	//item.getObjr().put(PdfName.OBJ, xobjr);
