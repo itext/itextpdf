@@ -43,6 +43,7 @@
  */
 package com.itextpdf.text.pdf;
 
+import com.itextpdf.text.AccessibleElementId;
 import com.itextpdf.text.pdf.interfaces.IAccessibleElement;
 
 import java.util.ArrayList;
@@ -51,7 +52,7 @@ import java.util.UUID;
 
 public class PdfPTableBody implements IAccessibleElement {
 
-    protected UUID id = UUID.randomUUID();
+    protected AccessibleElementId id = new AccessibleElementId();
     protected ArrayList<PdfPRow> rows = null;
     protected PdfName role = PdfName.TBODY;
     protected HashMap<PdfName, PdfObject> accessibleAttributes = null;
@@ -85,11 +86,11 @@ public class PdfPTableBody implements IAccessibleElement {
         this.role = role;
     }
 
-    public UUID getId() {
+    public AccessibleElementId getId() {
         return id;
     }
 
-    public void setId(final UUID id) {
+    public void setId(final AccessibleElementId id) {
         this.id = id;
     }
 

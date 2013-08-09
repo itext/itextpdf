@@ -46,12 +46,7 @@ package com.itextpdf.text.pdf;
 import java.util.HashMap;
 import java.util.UUID;
 
-import com.itextpdf.text.BaseColor;
-import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.Element;
-import com.itextpdf.text.ExceptionConverter;
-import com.itextpdf.text.Image;
-import com.itextpdf.text.Rectangle;
+import com.itextpdf.text.*;
 import com.itextpdf.text.log.Logger;
 import com.itextpdf.text.log.LoggerFactory;
 import com.itextpdf.text.pdf.interfaces.IAccessibleElement;
@@ -94,7 +89,7 @@ public class PdfPRow implements IAccessibleElement {
 
     protected PdfName role = PdfName.TR;
     protected HashMap<PdfName, PdfObject> accessibleAttributes = null;
-    protected UUID id = UUID.randomUUID();
+    protected AccessibleElementId id = new AccessibleElementId();
     
 	/**
 	 * Constructs a new PdfPRow with the cells in the array that was passed
@@ -875,11 +870,11 @@ public class PdfPRow implements IAccessibleElement {
         this.role = role;
     }
 
-    public UUID getId() {
+    public AccessibleElementId getId() {
         return id;
     }
 
-    public void setId(final UUID id) {
+    public void setId(final AccessibleElementId id) {
         this.id = id;
     }
 

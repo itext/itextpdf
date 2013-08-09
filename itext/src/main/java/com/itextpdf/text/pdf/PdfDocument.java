@@ -299,7 +299,7 @@ public class PdfDocument extends Document {
     /** The <CODE>PdfWriter</CODE>. */
     protected PdfWriter writer;
 
-    protected HashMap<UUID, PdfStructureElement> structElements = new HashMap<UUID, PdfStructureElement>();
+    protected HashMap<AccessibleElementId, PdfStructureElement> structElements = new HashMap<AccessibleElementId, PdfStructureElement>();
 
     protected boolean openMCDocument = false;
 
