@@ -316,6 +316,8 @@ public class PdfName extends PdfObject implements Comparable<PdfName> {
     /** A name */
     public static final PdfName CATEGORY = new PdfName("Category");
     /** A name */
+    public static final PdfName CB = new PdfName("cb");
+    /** A name */
     public static final PdfName CCITTFAXDECODE = new PdfName("CCITTFaxDecode");
     /**
      * A name.
@@ -1407,6 +1409,8 @@ public class PdfName extends PdfObject implements Comparable<PdfName> {
     public static final PdfName PATTERN = new PdfName("Pattern");
     /** A name */
     public static final PdfName PATTERNTYPE = new PdfName("PatternType");
+    /** A name */
+    public static final PdfName PB = new PdfName("pb");
     /**
      * A name.
      * @since 2.1.6
@@ -1545,6 +1549,8 @@ public class PdfName extends PdfObject implements Comparable<PdfName> {
      * @since 5.4.3
      */
     public static final PdfName RB = new PdfName("RB");
+    /** A name */
+    public static final PdfName rb = new PdfName("rb");
     /** A name */
     public static final PdfName RBGROUPS = new PdfName("RBGroups");
     /** A name */
