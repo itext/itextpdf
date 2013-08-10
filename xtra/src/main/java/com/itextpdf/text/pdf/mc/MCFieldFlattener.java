@@ -72,6 +72,7 @@ public class MCFieldFlattener {
 	 */
 	public void process(PdfReader reader, OutputStream os) throws IOException, DocumentException {
 		int n = reader.getNumberOfPages();
+		// getting the root dictionary
 		PdfDictionary catalog = reader.getCatalog();
 		// flattening means: remove AcroForm
 		catalog.remove(PdfName.ACROFORM);
@@ -79,13 +80,11 @@ public class MCFieldFlattener {
 		StructureItems items = new StructureItems(reader);
 		MCParser parser = new MCParser(items);
 		// loop over all pages
-		PdfDictionary page;
 		for (int i = 1; i <= n; i++) {
 			// make one stream of a content stream array
 			reader.setPageContent(i, reader.getPageContent(i));
 			// parse page
-			page = reader.getPageN(i);
-			parser.parse(page, reader.getPageOrigRef(i));
+			parser.parse(reader.getPageN(i), reader.getPageOrigRef(i));
 		}
 		reader.removeUnusedObjects();
 		// create flattened file

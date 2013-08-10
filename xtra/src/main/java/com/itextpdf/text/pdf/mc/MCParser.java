@@ -107,6 +107,9 @@ public class MCParser {
     /** The contents of the new content stream of the page. */
     protected ByteArrayOutputStream baos;
     
+    /** The page dictionary */
+    protected PdfDictionary page;
+    
     /** The reference to the page dictionary */
     protected PdfIndirectReference pageref;
     
@@ -189,6 +192,7 @@ public class MCParser {
     	LOGGER.info("Parsing page with reference " + pageref);
     	// initializing member variables
     	baos = new ByteArrayOutputStream();
+    	this.page = page;
     	this.pageref = pageref;
     	structParents = page.getAsNumber(PdfName.STRUCTPARENTS);
     	if (structParents == null)
@@ -218,6 +222,17 @@ public class MCParser {
         	if (item instanceof StructureObject) {
         		convertToXObject((StructureObject)item);
         		items.remove(0);
+        	}
+        }
+        if (annots.size() == 0) {
+        	page.remove(PdfName.ANNOTS);
+        }
+        else {
+        	PdfDictionary annot;
+        	for (int i = 0; i < annots.size(); i++) {
+        		annot = annots.getAsDict(i);
+        		if (annot.getAsNumber(PdfName.STRUCTPARENT) == null)
+        			throw new DocumentException(MessageLocalization.getComposedMessage("could.not.flatten.file.untagged.annotations.found"));
         	}
         }
         // replacing the content stream
