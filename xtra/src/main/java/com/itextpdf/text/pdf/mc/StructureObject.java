@@ -48,14 +48,21 @@ import com.itextpdf.text.pdf.PdfIndirectReference;
 import com.itextpdf.text.pdf.PdfName;
 import com.itextpdf.text.pdf.PdfObject;
 
-public class StructureObject implements StructureItem {
+/**
+ * A StructureItem that refers to an object from an OBJR dictionary.
+ */
+public class StructureObject extends StructureItem {
 
 	/** The structure element of which the properties are stored. */
-	PdfDictionary structElem;
+	protected PdfDictionary structElem;
 	/** The reference of the structure element of which the properties are stored. */
-	PdfIndirectReference ref;
+	protected PdfIndirectReference ref;
 	/** An object referred to by an OBJR dictionary. */
-	PdfObject obj;
+	protected PdfObject obj;
+	/** The reference to the object. */
+	protected PdfIndirectReference objref;
+	/** The StructParent value of the object. */
+	protected int structParent;
 
 	/**
 	 * Creates a StructureObject for an OBJR dictionary.
@@ -67,15 +74,12 @@ public class StructureObject implements StructureItem {
 		this.structElem = structElem;
 		this.ref = ref;
 		this.obj = dict.getDirectObject(PdfName.OBJ);
-	}
-
-	/**
-	 * Checks if the MCID corresponds with the stored object.
-	 * @param mcid the MCID
-	 * @return 0
-	 */
-	public int checkMCID(int mcid) {
-		return 0;
+		this.objref = dict.getAsIndirectObject(PdfName.OBJ);
+		this.structParent = ((PdfDictionary)obj).getAsNumber(PdfName.STRUCTPARENT).intValue();
+		PdfIndirectReference pg = dict.getAsIndirectObject(PdfName.PG);
+		if (pg == null)
+			pg = structElem.getAsIndirectObject(PdfName.PG);
+		this.pageref = pg.getNumber();
 	}
 	
 	/**
@@ -101,10 +105,29 @@ public class StructureObject implements StructureItem {
 	 * dictionary will be returned.
 	 * @return the object referred to by OBJR as a dictionary
 	 */
-	public PdfDictionary getObj() {
+	public PdfDictionary getObjAsDict() {
 		if (obj.isDictionary())
 			return (PdfDictionary)obj;
 		return null;
+	}
+	
+	/**
+	 * Returns the reference to the object.
+	 * @return	an object reference
+	 */
+	public PdfIndirectReference getObjRef() {
+		return objref;
+	}
+	
+	/**
+	 * Checks if a StructParent corresponds with the StructParent stored in the object.
+	 * @return  1 in case the StructParent matches,
+	 *         -1 in case there's no match.
+	 */
+	public int checkStructParent(int pg, int sp) {
+		if (pg == pageref && sp == structParent)
+			return 1;
+		return -1;
 	}
 	
 	/**
@@ -112,6 +135,6 @@ public class StructureObject implements StructureItem {
 	 * @see java.lang.Object#toString()
 	 */
 	public String toString() {
-		return "OBJR: " + obj;
+		return "StructParent " + structParent + " of object " + obj + " on page with reference " + pageref;
 	}
 }

@@ -56,7 +56,10 @@ import com.itextpdf.text.pdf.PdfStamper;
  * Removes all interactivity from an AcroForm, maintaining the
  * structure tree.
  * 
- * DISCLAIMER: Use this class only if the form is properly tagged.
+ * DISCLAIMER:
+ * - Use this class only if the form is properly tagged.
+ * - This class won't work with pages in which the CTM is changed
+ * - This class may not work for form fields with more than one widget annotation
  */
 public class MCFieldFlattener {
 
@@ -70,17 +73,22 @@ public class MCFieldFlattener {
 	public void process(PdfReader reader, OutputStream os) throws IOException, DocumentException {
 		int n = reader.getNumberOfPages();
 		PdfDictionary catalog = reader.getCatalog();
+		// flattening means: remove AcroForm
 		catalog.remove(PdfName.ACROFORM);
+		// read the structure and create a parser
 		StructureItems items = new StructureItems(reader);
 		MCParser parser = new MCParser(items);
+		// loop over all pages
 		PdfDictionary page;
 		for (int i = 1; i <= n; i++) {
+			// make one stream of a content stream array
 			reader.setPageContent(i, reader.getPageContent(i));
+			// parse page
 			page = reader.getPageN(i);
-			page.remove(PdfName.ANNOTS);
-			parser.parse(page, reader.getPageOrigRef(i), i == n);
+			parser.parse(page, reader.getPageOrigRef(i));
 		}
 		reader.removeUnusedObjects();
+		// create flattened file
 		PdfStamper stamper = new PdfStamper(reader, os);
 		items.writeParentTree(stamper.getWriter());
 		stamper.close();

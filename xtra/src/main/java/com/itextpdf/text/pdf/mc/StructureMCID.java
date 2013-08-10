@@ -44,30 +44,26 @@
 package com.itextpdf.text.pdf.mc;
 
 import com.itextpdf.text.pdf.PdfDictionary;
+import com.itextpdf.text.pdf.PdfIndirectReference;
 import com.itextpdf.text.pdf.PdfName;
 import com.itextpdf.text.pdf.PdfNumber;
 
 /**
  * Object that stores an item that is part of the document structure.
- * It can refer to a Marked Content sequence in a page or an object
+ * It can refer to a marked-content sequence in a page or an object
  * reference (in this case the subclass StructureObject is used).
  */
-public class StructureMCID implements StructureItem {
+public class StructureMCID extends StructureItem {
 	
 	/** The mcid of the structure element. */
 	protected int mcid = -1;
 	
 	/**
-	 * Empty constructor to create a StructureMCID.
-	 */
-	protected StructureMCID() {
-	}
-	
-	/**
 	 * Creates a StructureMCID using an MCID.
 	 * @param obj	an MCID
 	 */
-	public StructureMCID(PdfNumber mcid) {
+	public StructureMCID(PdfIndirectReference pg, PdfNumber mcid) {
+		this.pageref = pg.getNumber();
 		this.mcid = mcid.intValue();
 	}
 	
@@ -77,16 +73,19 @@ public class StructureMCID implements StructureItem {
 	 */
 	public StructureMCID(PdfDictionary mcr) {
 		mcid = mcr.getAsNumber(PdfName.MCID).intValue();
+		pageref = mcr.getAsIndirectObject(PdfName.PG).getNumber();
 	}
-
+	
 	/**
 	 * Checks if the MCID in this object corresponds with the stored number
 	 * @param mcid the MCID
 	 * @return 1 in case the MCIDs corresponds with obj,
 	 *         -1 in case the MCID doesn't correspond
 	 */
-	public int checkMCID(int mcid) {
-		if (this.mcid == mcid)
+	public int checkMCID(int pg, int mcid) {
+		if (pageref == -1)
+			throw new RuntimeException();
+		if (pg == pageref && this.mcid == mcid)
 			return 1;
 		return -1;
 	}
@@ -96,6 +95,6 @@ public class StructureMCID implements StructureItem {
 	 * @see java.lang.Object#toString()
 	 */
 	public String toString() {
-		return "MCID: " + mcid;
+		return "MCID " + mcid + " on page with reference " + pageref;
 	}
 }
