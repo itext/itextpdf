@@ -736,7 +736,15 @@ public class PdfDocument extends Document {
                 case Element.IMGRAW:
                 case Element.IMGTEMPLATE: {
                     //carriageReturn(); suggestion by Marc Campforts
+                    if (isTagged(writer)) {
+                        flushLines();
+                        text.openMCBlock((Image)element);
+                    }
                     add((Image) element);
+                    if (isTagged(writer)) {
+                        flushLines();
+                        text.closeMCBlock((Image)element);
+                    }
                     break;
                 }
                 case Element.YMARK: {
