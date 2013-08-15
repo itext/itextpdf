@@ -58,7 +58,6 @@ public class PdfStructTreeController {
     private PdfDictionary roleMap = null;
     private PdfDictionary sourceRoleMap = null;
     private PdfDictionary sourceClassMap = null;
-    private PdfIndirectReference nullReference = null;
 //    private HashSet<Integer> openedDocuments = new HashSet<Integer>();
 
     public static enum returnType {BELOW, FOUND, ABOVE, NOTFOUND};
@@ -85,24 +84,11 @@ public class PdfStructTreeController {
             throw new BadPdfFormatException(MessageLocalization.getComposedMessage("no.structtreeroot.found"));
         structTreeRoot = (PdfDictionary) obj;
         obj = PdfStructTreeController.getDirectObject(structTreeRoot.get(PdfName.PARENTTREE));
-        if (obj == null || !obj.isDictionary())
+        if (!obj.isDictionary())
             throw new BadPdfFormatException(MessageLocalization.getComposedMessage("the.document.does.not.contain.parenttree"));
         parentTree = (PdfDictionary) obj;
         sourceRoleMap = null;
         sourceClassMap = null;
-        nullReference = null;
-    }
-
-    static public boolean checkTagged(PdfReader reader) {
-        PdfObject obj = reader.getCatalog().get(PdfName.STRUCTTREEROOT);
-        obj = getDirectObject(obj);
-        if ((obj == null) || (!obj.isDictionary()))
-            return false;
-        PdfDictionary structTreeRoot = (PdfDictionary) obj;
-        obj = PdfStructTreeController.getDirectObject(structTreeRoot.get(PdfName.PARENTTREE));
-        if (!obj.isDictionary())
-            return false;
-        return true;
     }
 
     public static PdfObject getDirectObject(PdfObject object) {
@@ -180,15 +166,10 @@ public class PdfStructTreeController {
                 if (obj.isArray()) {
                     PdfObject firstNotNullKid = null;
                     for (PdfObject numObj: (PdfArray)obj){
-                        if (numObj.isNull()) {
-                            if (nullReference == null)
-                                nullReference = writer.addToBody(new PdfNull()).getIndirectReference();
-                            structureTreeRoot.setPageMark(newArrayNumber, nullReference);
-                        } else {
-                            PdfObject res = writer.copyObject(numObj, true, false);
-                            if (firstNotNullKid == null) firstNotNullKid = res;
-                            structureTreeRoot.setPageMark(newArrayNumber, (PdfIndirectReference) res);
-                        }
+                        if (numObj.isNull()) continue;
+                        PdfObject res = writer.copyObject(numObj, true, false);
+                        if (firstNotNullKid == null) firstNotNullKid = res;
+                        structureTreeRoot.setPageMark(newArrayNumber, (PdfIndirectReference) res);
                     }
                     //Add kid to structureTreeRoot from structTreeRoot
                     PdfObject structKids = structTreeRoot.get(PdfName.K);
