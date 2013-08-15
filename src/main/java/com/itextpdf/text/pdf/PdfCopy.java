@@ -451,10 +451,10 @@ public class PdfCopy extends PdfWriter {
         for (Object element : in.getKeys()) {
             PdfName key = (PdfName)element;
             PdfObject value = in.get(key);
-            if (structTreeController != null && structTreeController.reader != null && key.equals(PdfName.STRUCTPARENTS)) {
-                out.put(key, new PdfNumber(currentStructArrayNumber));
-                structTreeController.copyStructTreeForPage((PdfNumber)value, currentStructArrayNumber++);
-                continue;
+            if (structTreeController != null && structTreeController.reader != null && (key.equals(PdfName.STRUCTPARENTS) || key.equals(PdfName.STRUCTPARENT))) {
+                    out.put(key, new PdfNumber(currentStructArrayNumber));
+                    structTreeController.copyStructTreeForPage((PdfNumber)value, currentStructArrayNumber++);
+                    continue;
             }
             if (type != null && PdfName.PAGE.equals(type)) {
                 if (!key.equals(PdfName.B) && !key.equals(PdfName.PARENT)) {
@@ -696,16 +696,33 @@ public class PdfCopy extends PdfWriter {
         HashMap<Integer, PdfIndirectReference> numTree = structureTreeRoot.getNumTree();
         HashSet<PdfCopy.RefKey> activeKeys = new HashSet<PdfCopy.RefKey>();
         ArrayList<PdfIndirectReference> actives = new ArrayList<PdfIndirectReference>();
-        if (pageReferences.size() == numTree.size()) {
-            //from end, because some objects can appear on several pages because of MCR (out16.pdf)
-            for (int i = numTree.size() - 1; i >= 0; --i) {
-                PdfIndirectReference currNum = numTree.get(i);
-                PdfCopy.RefKey numKey = new PdfCopy.RefKey(currNum);
+        int pageRefIndex = 0;
+        //from end, because some objects can appear on several pages because of MCR (out16.pdf)
+        for (int i = numTree.size() - 1; i >= 0; --i) {
+            PdfIndirectReference currNum = numTree.get(i);
+            PdfCopy.RefKey numKey = new PdfCopy.RefKey(currNum);
+            PdfObject obj = indirectObjects.get(numKey).object;
+            if (obj.isDictionary()) {
+                boolean addActiveKeys = false;
+                if (pageReferences.contains(((PdfDictionary)obj).get(PdfName.PG))) {
+                    addActiveKeys = true;
+                } else {
+                    PdfDictionary k = PdfStructTreeController.getKDict((PdfDictionary)obj);
+                    if (k != null && pageReferences.contains(k.get(PdfName.PG))) {
+                        addActiveKeys = true;
+                    }
+                }
+                if (addActiveKeys) {
+                    activeKeys.add(numKey);
+                    actives.add(currNum);
+                } else {
+                    numTree.remove(i);
+                }
+            } else if (obj.isArray()) {
                 activeKeys.add(numKey);
                 actives.add(currNum);
-                PdfObject obj = indirectObjects.get(numKey).object;
                 PdfArray currNums = (PdfArray)obj;
-                PdfIndirectReference currPage = pageReferences.get(i);
+                PdfIndirectReference currPage = pageReferences.get(pageRefIndex++);
                 actives.add(currPage);
                 activeKeys.add(new RefKey(currPage));
                 PdfIndirectReference prevKid = null;
@@ -733,7 +750,7 @@ public class PdfCopy extends PdfWriter {
                     prevKid = currKid;
                 }
             }
-        } else return;//invalid tagged document -> flush all objects
+        }
 
         HashSet<PdfName> activeClassMaps = new HashSet<PdfName>();
         //collect all active objects from current active set (include kids, classmap, attributes)

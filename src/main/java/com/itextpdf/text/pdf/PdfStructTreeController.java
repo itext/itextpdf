@@ -143,7 +143,8 @@ public class PdfStructTreeController {
                 }
             }
         } else {
-            if (pages.size() == 0) return returnType.NOTFOUND;
+            if (pages.size() == 0)
+                return returnType.NOTFOUND;
             return findAndCopyMarks(pages, arrayNumber.intValue(), newArrayNumber);
         }
     }
@@ -160,30 +161,37 @@ public class PdfStructTreeController {
             curNumber = pages.getAsNumber((begin + cur) * 2).intValue();
             if (curNumber == arrayNumber) {
                 PdfObject obj = pages.getPdfObject((begin + cur) * 2 + 1);
+                PdfObject obj1 = obj;
                 while (obj.isIndirect()) obj = PdfReader.getPdfObjectRelease(obj);
-                //invalid Nums
-                if (!obj.isArray()) return returnType.NOTFOUND;
-
-                PdfObject firstNotNullKid = null;
-                for (PdfObject numObj: (PdfArray)obj){
-                    if (numObj.isNull()) continue;
-                    PdfObject res = writer.copyObject(numObj, true, false);
-                    if (firstNotNullKid == null) firstNotNullKid = res;
-                    structureTreeRoot.setPageMark(newArrayNumber, (PdfIndirectReference) res);
-                }
-                //Add kid to structureTreeRoot from structTreeRoot
-                PdfObject structKids = structTreeRoot.get(PdfName.K);
-                if (structKids == null || (!structKids.isArray() && !structKids.isIndirect())) {
-                    // incorrect syntax of tags
-                    addKid(structureTreeRoot, firstNotNullKid);
-                } else {
-                    if (structKids.isIndirect()) {
-                        addKid(structKids);
-                    } else { //structKids.isArray()
-                        for (PdfObject kid: (PdfArray)structKids)
-                            addKid(kid);
+                if (obj.isArray()) {
+                    PdfObject firstNotNullKid = null;
+                    for (PdfObject numObj: (PdfArray)obj){
+                        if (numObj.isNull()) continue;
+                        PdfObject res = writer.copyObject(numObj, true, false);
+                        if (firstNotNullKid == null) firstNotNullKid = res;
+                        structureTreeRoot.setPageMark(newArrayNumber, (PdfIndirectReference) res);
                     }
-                }
+                    //Add kid to structureTreeRoot from structTreeRoot
+                    PdfObject structKids = structTreeRoot.get(PdfName.K);
+                    if (structKids == null || (!structKids.isArray() && !structKids.isIndirect())) {
+                        // incorrect syntax of tags
+                        addKid(structureTreeRoot, firstNotNullKid);
+                    } else {
+                        if (structKids.isIndirect()) {
+                            addKid(structKids);
+                        } else { //structKids.isArray()
+                            for (PdfObject kid: (PdfArray)structKids)
+                                addKid(kid);
+                        }
+                    }
+                } else if (obj.isDictionary()) {
+                    PdfDictionary k = getKDict((PdfDictionary)obj);
+                    if (k == null)
+                        return returnType.NOTFOUND;
+                    PdfObject res = writer.copyObject(obj1, true, false);
+                    structureTreeRoot.setAnnotationMark(newArrayNumber, (PdfIndirectReference)res);
+                } else
+                    return returnType.NOTFOUND;
                 return returnType.FOUND;
             }
             if (curNumber < arrayNumber) {
@@ -201,6 +209,28 @@ public class PdfStructTreeController {
                 return returnType.NOTFOUND;
             cur /= 2;
         }
+    }
+
+    static PdfDictionary getKDict(PdfDictionary obj) {
+        PdfDictionary k = obj.getAsDict(PdfName.K);
+        if (k != null) {
+            if (PdfName.OBJR.equals(k.getAsName(PdfName.TYPE))) {
+                return k;
+            }
+        } else {
+            PdfArray k1 = obj.getAsArray(PdfName.K);
+            if (k1 == null)
+                return null;
+            for (int i = 0; i < k1.size(); i++) {
+                k = k1.getAsDict(i);
+                if (k != null) {
+                    if (PdfName.OBJR.equals(k.getAsName(PdfName.TYPE))) {
+                        return k;
+                    }
+                }
+            }
+        }
+        return null;
     }
 
     private void addKid(PdfObject obj) throws IOException, BadPdfFormatException {

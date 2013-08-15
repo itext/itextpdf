@@ -32,6 +32,7 @@ public class TaggedPdfCopyTest {
     public static final String SOURCE12 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/1/source12.pdf";
     public static final String SOURCE16 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/1/source16.pdf";
     public static final String SOURCE17 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/1/source17.pdf";
+    public static final String SOURCE18 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/1/source18.pdf";
     public static final String SOURCE22 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/2/source22.pdf";
     public static final String SOURCE32 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/3/source32.pdf";
     public static final String SOURCE42 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/4/source42.pdf";
@@ -118,7 +119,7 @@ public class TaggedPdfCopyTest {
     public void pdfMergeTest() throws IOException, DocumentException {
         initializeDocument("-merge");
 
-        int n = 4;
+        int n = 14;
         PdfReader reader1 = new PdfReader(SOURCE11);
         copy.addPage(copy.getImportedPage(reader1, 76, true));
         copy.addPage(copy.getImportedPage(reader1, 83, true));
@@ -135,9 +136,9 @@ public class TaggedPdfCopyTest {
         verifyIsDictionary(obj, NO_PARENT_TREE);
 
         PdfArray array = ((PdfDictionary)obj).getAsArray(PdfName.NUMS);
-        int[] nums = new int[] {30, 32, 39, 80};
+        int[] nums = new int[] {30, 0, 32, 39, 0, 0, 0, 0, 0, 0, 0, 0, 0, 80};
         for (int i = 0; i < n; ++i)
-            verifyArraySize(PdfStructTreeController.getDirectObject(array.getPdfObject(i*2+1)), nums[i], "Nums of page "+(i+1));
+            verifyArraySize(PdfStructTreeController.getDirectObject(array.getPdfObject(i*2+1)), nums[i], "Nums of page "+(i+1), true);
 
         PdfDictionary ClassMap = verifyIsDictionary(PdfStructTreeController.getDirectObject(structTreeRoot.get(PdfName.CLASSMAP)), NO_CLASS_MAP);
         PdfDictionary CM31 = verifyIsDictionary(PdfStructTreeController.getDirectObject(ClassMap.get(new PdfName("CM31"))), "ClassMap does not contain.\"CM31\"");
@@ -161,37 +162,11 @@ public class TaggedPdfCopyTest {
         document.close();
         reader.close();
 
-        reader = new PdfReader(output);
-        PdfDictionary structTreeRoot = verifyIsDictionary(reader.getCatalog().getDirectObject(PdfName.STRUCTTREEROOT), NO_STRUCT_TREE_ROOT);
-        verifyArraySize(structTreeRoot.get(PdfName.K), 5, "Invalid count of kids in StructTreeRoot");
-        PdfObject obj = PdfStructTreeController.getDirectObject(structTreeRoot.get(PdfName.PARENTTREE));
-        verifyIsDictionary(obj, NO_PARENT_TREE);
-        obj = ((PdfDictionary)obj).get(PdfName.KIDS);
-        verifyArraySize(obj, 3, "Invalid nums.");
-        PdfObject numsDict = PdfStructTreeController.getDirectObject(((PdfArray) obj).getPdfObject(0));
-        verifyIsDictionary(numsDict, "nums1");
-        PdfArray arrays[] = new PdfArray[3];
-        arrays[0] = verifyArraySize(((PdfDictionary)numsDict).get(PdfName.NUMS), 128, "nums 1");
-        numsDict = PdfStructTreeController.getDirectObject(((PdfArray) obj).getPdfObject(1));
-        verifyIsDictionary(numsDict, "nums2");
-        arrays[1] = verifyArraySize(((PdfDictionary)numsDict).get(PdfName.NUMS), 128, "nums 2");
-        numsDict = PdfStructTreeController.getDirectObject(((PdfArray) obj).getPdfObject(2));
-        verifyIsDictionary(numsDict, "nums3");
-        arrays[2] = verifyArraySize(((PdfDictionary)numsDict).get(PdfName.NUMS), 4, "nums 3");
-        int[] nums = new int[] {3, 91, 42, 19, 15, 15, 9, 13, 15, 17, 18, 5, 17, 37, 24, 19, 15, 23, 8, 11,
-                17, 11, 13, 29, 18, 12, 11, 9, 14, 26, 17, 22, 30, 15, 21, 28, 22, 24, 22, 20, 21, 17, 24,
-                25, 20, 14, 32, 25, 14, 15, 24, 20, 22, 24, 21, 22, 18, 12, 23, 29, 19, 22, 21, 27, 25, 19,
-                6, 14, 18, 21, 25, 11, 26, 15, 15, 30, 23, 32, 17, 22, 18, 18, 32, 18, 16, 21, 28, 28, 10,
-                18, 13, 23, 17, 19, 24, 29, 25, 34, 26, 24, 28, 27, 21, 23, 23, 23, 10, 10, 10, 9, 16, 20,
-                16, 16, 22, 27, 14, 3, 11, 30, 11, 29, 6, 99, 117, 128, 92, 67, 132, 108};
+        Assert.assertEquals(getCommonNumsCount(SOURCE11), getCommonNumsCount(output));
 
-        //OutputStreamWriter writer = new FileWriter(OUT0+".txt");
-        int k = 0;
-        for (int i = 0; i < arrays.length; ++i)
-            for (int j = 0; j < arrays[i].size() / 2; ++j)
-                verifyArraySize(PdfStructTreeController.getDirectObject(arrays[i].getPdfObject(j*2+1)), nums[k++], "Nums of page "+(i+1));
-        //writer.write(((PdfArray)(PdfStructTreeController.getDirectObject(arrays[i].getPdfObject(j*2+1)))).size()+", ");
-        //writer.close();
+        reader = new PdfReader(output);
+        PdfDictionary structTreeRoot = (PdfDictionary)reader.getCatalog().getDirectObject(PdfName.STRUCTTREEROOT);
+
 
         PdfDictionary ClassMap = verifyIsDictionary(PdfStructTreeController.getDirectObject(structTreeRoot.get(PdfName.CLASSMAP)), NO_CLASS_MAP);
         if (ClassMap.size() != 109) Assert.fail("ClassMap incorrect");
@@ -232,7 +207,7 @@ public class TaggedPdfCopyTest {
         PdfObject obj = PdfStructTreeController.getDirectObject(structTreeRoot.get(PdfName.PARENTTREE));
         verifyIsDictionary(obj, NO_PARENT_TREE);
         PdfArray array = ((PdfDictionary)obj).getAsArray(PdfName.NUMS);
-        verifyArraySize(array, 2, "Nums");
+        verifyArraySize(array, 22, "Nums");
         verifyArraySize(PdfStructTreeController.getDirectObject(array.getPdfObject(1)), 61, "Nums of page 1");
         reader.close();
         compareResults("1");
@@ -339,7 +314,7 @@ public class TaggedPdfCopyTest {
     public void copyTaggedPdf6() throws IOException, DocumentException, ParserConfigurationException, SAXException {
         initializeDocument("6");
         PdfReader reader = new PdfReader(SOURCE11);
-        int n = 8;
+        int n = 12;
         copy.addPage(copy.getImportedPage(reader, 1, true));
         copy.addPage(copy.getImportedPage(reader, 25, true));
         copy.addPage(copy.getImportedPage(reader, 7, true));
@@ -358,9 +333,9 @@ public class TaggedPdfCopyTest {
         verifyIsDictionary(obj, NO_PARENT_TREE);
         PdfArray array = ((PdfDictionary)obj).getAsArray(PdfName.NUMS);
         verifyArraySize(array, n*2, "Nums");
-        int[] nums = new int[] {3, 18, 9, 25, 15, 91, 13, 18};
+        int[] nums = new int[] {3, 0, 18, 9, 0, 25, 15, 91, 0, 0, 13, 18};
         for (int i = 0; i < n; ++i)
-            verifyArraySize(PdfStructTreeController.getDirectObject(array.getPdfObject(i*2+1)), nums[i], "Nums of page "+(i+1));
+            verifyArraySize(PdfStructTreeController.getDirectObject(array.getPdfObject(i*2+1)), nums[i], "Nums of page "+(i+1), true);
 
         PdfDictionary ClassMap = verifyIsDictionary(PdfStructTreeController.getDirectObject(structTreeRoot.get(PdfName.CLASSMAP)), NO_CLASS_MAP);
         if (ClassMap.size() != 27) Assert.fail("ClassMap incorrect");
@@ -422,7 +397,7 @@ public class TaggedPdfCopyTest {
             copy.addPage(copy.getImportedPage(reader, i, true));
         for (int i = 1; i <= n; ++i)
             copy.addPage(copy.getImportedPage(reader, i, true));
-        n *= 4;
+        n = 52;
         document.close();
         reader.close();
 
@@ -433,9 +408,9 @@ public class TaggedPdfCopyTest {
         verifyIsDictionary(obj, NO_PARENT_TREE);
         PdfArray array = ((PdfDictionary)obj).getAsArray(PdfName.NUMS);
         verifyArraySize(array, n*2, "Nums");
-        int[] nums = new int[] {42, 42, 11, 11, 13, 13, 42, 11, 13, 42, 11, 13};
-        for (int i = 0; i < n; ++i)
-            verifyArraySize(PdfStructTreeController.getDirectObject(array.getPdfObject(i*2+1)), nums[i], "Nums of page "+(i+1));
+//        int[] nums = new int[] {42, 42, 11, 11, 13, 13, 42, 11, 13, 42, 11, 13};
+//        for (int i = 0; i < n; ++i)
+//            verifyArraySize(PdfStructTreeController.getDirectObject(array.getPdfObject(i*2+1)), nums[i], "Nums of page "+(i+1));
 
         reader.close();
         compareResults("8");
@@ -447,7 +422,7 @@ public class TaggedPdfCopyTest {
         PdfReader reader4 = new PdfReader(SOURCE4);
         PdfReader reader10 = new PdfReader(SOURCE10);
         PdfReader reader32 = new PdfReader(SOURCE32);
-        int n = 20;
+        int n = 40;
         copy.addPage(copy.getImportedPage(reader4, 1, true));
         copy.addPage(copy.getImportedPage(reader10, 2, true));
         copy.addPage(copy.getImportedPage(reader10, 3, true));
@@ -481,10 +456,10 @@ public class TaggedPdfCopyTest {
         verifyIsDictionary(obj, NO_PARENT_TREE);
         PdfArray array = ((PdfDictionary)obj).getAsArray(PdfName.NUMS);
         verifyArraySize(array, n*2, "Nums");
-        int[] nums = new int[] {7, 87, 128, 26, 135, 83, 7, 135, 83, 116, 26, 128, 74, 16, 11, 38, 51, 61, 7, 26};
+        int[] nums = new int[] {7, 87, 128, 26, 135, 0, 0, 83, 7, 135, 0, 0, 0, 0, 0, 0, 83, 116, 26, 128, 74, 16, 11, 0, 0, 38, 51, 61, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 26};
         for (int i = 0; i < n; ++i)
 //            nums[i] = ((PdfArray)PdfStructTreeController.getDirectObject(array.getPdfObject(i*2+1))).size();
-            verifyArraySize(PdfStructTreeController.getDirectObject(array.getPdfObject(i*2+1)), nums[i], "Nums of page "+(i+1));
+            verifyArraySize(PdfStructTreeController.getDirectObject(array.getPdfObject(i*2+1)), nums[i], "Nums of page "+(i+1), true);
 
         reader.close();
         compareResults("9");
@@ -605,13 +580,59 @@ public class TaggedPdfCopyTest {
 //        compareResults("13");
     }
 
+    @Test
+    public void copyTaggedPdf14() throws IOException, DocumentException {
+        initializeDocument("14");
+        PdfReader reader = new PdfReader(SOURCE11);
+
+        copy.addPage(copy.getImportedPage(reader, 5, true));
+        document.close();
+        reader.close();
+
+        reader = new PdfReader(output);
+        PdfDictionary structTreeRoot = verifyIsDictionary(reader.getCatalog().getDirectObject(PdfName.STRUCTTREEROOT), NO_STRUCT_TREE_ROOT);
+        verifyArraySize(structTreeRoot.get(PdfName.K), 1, "Invalid count of kids in StructTreeRoot");
+        PdfObject obj = PdfStructTreeController.getDirectObject(structTreeRoot.get(PdfName.PARENTTREE));
+        verifyIsDictionary(obj, NO_PARENT_TREE);
+        PdfArray array = ((PdfDictionary)obj).getAsArray(PdfName.NUMS);
+        verifyArraySize(array, 8, "Nums");
+        verifyArraySize(PdfStructTreeController.getDirectObject(array.getPdfObject(1)), 15, "Nums of page 1");
+        reader.close();
+    }
+
+    @Test
+    public void copyTaggedPdf15() throws IOException, DocumentException {
+        initializeDocument("15");
+        PdfReader reader = new PdfReader(SOURCE18);
+
+        for (int i = 1; i <= reader.getNumberOfPages(); i++) {
+            copy.addPage(copy.getImportedPage(reader, i, true));
+        }
+        document.close();
+        reader.close();
+
+        reader = new PdfReader(output);
+        PdfDictionary structTreeRoot = verifyIsDictionary(reader.getCatalog().getDirectObject(PdfName.STRUCTTREEROOT), NO_STRUCT_TREE_ROOT);
+        verifyArraySize(structTreeRoot.get(PdfName.K), 180, "Invalid count of kids in StructTreeRoot");
+        reader.close();
+    }
+
     @After
     public void finalize() {
         Document.compress = true;
     }
 
     private PdfArray verifyArraySize(PdfObject obj, Integer size, String message) {
-        if (obj == null || !obj.isArray()) Assert.fail(message + " is not array");
+        return verifyArraySize(obj, size, message, false);
+    }
+
+    private PdfArray verifyArraySize(PdfObject obj, Integer size, String message, boolean ignoreIfNotArray) {
+        if (!(obj instanceof PdfArray)) {
+            if (ignoreIfNotArray)
+                return null;
+            else
+                Assert.fail(message + " is not array");
+        }
         if (((PdfArray)obj).size() != size)
             Assert.fail(message+" has wrong size");
         return (PdfArray)obj;
@@ -648,6 +669,18 @@ public class TaggedPdfCopyTest {
         return doc2.isEqualNode(doc1);
     }
 
+    private int getCommonNumsCount(String filename) throws IOException {
+        PdfReader reader = new PdfReader(filename);
+        PdfDictionary structTreeRoot = reader.getCatalog().getAsDict(PdfName.STRUCTTREEROOT);
+        PdfArray kids = ((PdfDictionary)PdfStructTreeController.getDirectObject(structTreeRoot.get(PdfName.PARENTTREE))).getAsArray(PdfName.KIDS);
+        int cnt = 0;
+        for (int i = 0; i < kids.size(); i++) {
+            PdfArray nums = kids.getAsDict(i).getAsArray(PdfName.NUMS);
+            cnt += nums.size();
+        }
+        reader.close();
+        return cnt;
+    }
 
 
     static class MyTaggedPdfReaderTool extends TaggedPdfReaderTool {
