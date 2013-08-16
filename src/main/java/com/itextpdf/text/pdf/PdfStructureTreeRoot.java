@@ -81,10 +81,7 @@ public class PdfStructureTreeRoot extends PdfDictionary implements IPdfStructure
             PdfObject obj = parentTree.get(i);
             if (obj.isArray()) {
                 PdfArray ar = (PdfArray)obj;
-                if (ar.size() == 1)
-                    numTree.put(i, ar.getAsIndirectObject(0));
-                else
-                    numTree.put(i, writer.addToBody(ar).getIndirectReference());
+                numTree.put(i, writer.addToBody(ar).getIndirectReference());
             } else if (obj instanceof PdfIndirectReference) {
                 numTree.put(i, (PdfIndirectReference)obj);
             }

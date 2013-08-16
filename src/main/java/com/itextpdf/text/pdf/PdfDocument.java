@@ -1567,7 +1567,7 @@ public class PdfDocument extends Document {
                                 dict.put(PdfName.TYPE, PdfName.OBJR);
                                 dict.put(PdfName.OBJ, annot.getIndirectReference());
                                 kArray.add(dict);
-                                writer.getStructureTreeRoot().setPageMark(structParent, strucElem.getReference());
+                                writer.getStructureTreeRoot().setAnnotationMark(structParent, strucElem.getReference());
                             }
 
                         }
