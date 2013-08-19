@@ -1145,7 +1145,11 @@ public class PdfReader implements PdfViewerPreferences {
 
     protected void readPages() throws IOException {
         catalog = trailer.getAsDict(PdfName.ROOT);
+        if (catalog == null)
+        	throw new InvalidPdfException(MessageLocalization.getComposedMessage("the.document.has.no.catalog.object"));
         rootPages = catalog.getAsDict(PdfName.PAGES);
+        if (rootPages == null)
+        	throw new InvalidPdfException(MessageLocalization.getComposedMessage("the.document.has.no.page.root"));
         pageRefs = new PageRefs(this);
     }
 
