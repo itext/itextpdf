@@ -86,6 +86,7 @@ class PdfCopyFieldsImp extends PdfWriter {
     private ArrayList<String> calculationOrder = new ArrayList<String>();
     private ArrayList<Object> calculationOrderRefs;
     private boolean hasSignature;
+    private boolean needAppearances = false;
 
     protected Counter COUNTER = CounterFactory.getCounter(PdfCopyFields.class);
     protected Counter getCounter() {
@@ -140,7 +141,13 @@ class PdfCopyFieldsImp extends PdfWriter {
         }
         pages2intrefs.put(reader, refs);
         visited.put(reader, new IntHashtable());
-        fields.add(reader.getAcroFields());
+        AcroFields acro = reader.getAcroFields();
+        // when a document with NeedAppearances is encountered, the flag is set
+        // in the resulting document.
+        boolean needapp = !acro.isGenerateAppearances();
+        if (needapp)
+            needAppearances = true;
+        fields.add(acro);
         updateCalculationOrder(reader);
     }
 
@@ -339,6 +346,9 @@ class PdfCopyFieldsImp extends PdfWriter {
         form = new PdfDictionary();
         form.put(PdfName.DR, resources);
         propagate(resources, null, false);
+        if (needAppearances) {
+            form.put(PdfName.NEEDAPPEARANCES, PdfBoolean.PDFTRUE);
+        }
         form.put(PdfName.DA, new PdfString("/Helv 0 Tf 0 g "));
         tabOrder = new HashMap<PdfArray, ArrayList<Integer>>();
         calculationOrderRefs = new ArrayList<Object>(calculationOrder);
