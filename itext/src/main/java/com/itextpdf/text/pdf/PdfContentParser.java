@@ -125,7 +125,7 @@ public class PdfContentParser {
                 if (tokeniser.getTokenType() == TokenType.OTHER && "def".equals(tokeniser.getStringValue()))
                     continue;
                 if (tokeniser.getTokenType() != TokenType.NAME)
-                    throw new IOException(MessageLocalization.getComposedMessage("dictionary.key.is.not.a.name"));
+                    throw new IOException(MessageLocalization.getComposedMessage("dictionary.key.1.is.not.a.name", tokeniser.getStringValue()));
                 PdfName name = new PdfName(tokeniser.getStringValue(), false);
                 PdfObject obj = readPRObject();
                 int type = obj.type();

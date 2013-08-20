@@ -99,6 +99,8 @@ public class PdfReader implements PdfViewerPreferences {
 	 */
 	public static boolean unethicalreading = false;
 	
+	public static boolean debugmode = false;
+	
     static final PdfName pageInhCandidates[] = {
         PdfName.MEDIABOX, PdfName.ROTATE, PdfName.RESOURCES, PdfName.CROPBOX
     };
@@ -1200,8 +1202,13 @@ public class PdfReader implements PdfViewerPreferences {
                 checkPRStreamLength((PRStream)obj);
             }
         }
-        catch (Exception e) {
-            obj = null;
+        catch (IOException e) {
+        	if (debugmode) {
+        		e.printStackTrace();
+        		obj = null;
+        	}
+        	else
+        		throw e;
         }
         if (xref[k2 + 1] > 0) {
             obj = readOneObjStm((PRStream)obj, (int)xref[k2]);
@@ -1295,8 +1302,13 @@ public class PdfReader implements PdfViewerPreferences {
                     streams.add((PRStream)obj);
                 }
             }
-            catch (Exception e) {
-                obj = null;
+            catch (IOException e) {
+            	if (debugmode) {
+            		e.printStackTrace();
+            		obj = null;
+            	}
+            	else
+            		throw e;
             }
             xrefObj.set(k / 2, obj);
         }
@@ -1733,7 +1745,7 @@ public class PdfReader implements PdfViewerPreferences {
             if (tokens.getTokenType() == TokenType.END_DIC)
                 break;
             if (tokens.getTokenType() != TokenType.NAME)
-                tokens.throwError(MessageLocalization.getComposedMessage("dictionary.key.is.not.a.name"));
+                tokens.throwError(MessageLocalization.getComposedMessage("dictionary.key.1.is.not.a.name", tokens.getStringValue()));
             PdfName name = new PdfName(tokens.getStringValue(), false);
             PdfObject obj = readPRObject();
             int type = obj.type();
