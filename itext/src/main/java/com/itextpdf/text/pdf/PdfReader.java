@@ -1353,8 +1353,9 @@ public class PdfReader implements PdfViewerPreferences {
         if (calc) {
             byte tline[] = new byte[16];
             tokens.seek(start);
+            long pos;
             while (true) {
-                long pos = tokens.getFilePointer();
+                pos = tokens.getFilePointer();
                 if (!tokens.readLineSegment(tline))
                     break;
                 if (equalsn(tline, endstream)) {
@@ -1371,6 +1372,12 @@ public class PdfReader implements PdfViewerPreferences {
                     break;
                 }
             }
+            tokens.seek(pos - 2);
+            if (tokens.read() == 13)
+            	streamLength--;
+            tokens.seek(pos - 1);
+            if (tokens.read() == 10)
+            	streamLength--;
         }
         stream.setLength((int)streamLength);
     }
