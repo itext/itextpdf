@@ -2548,6 +2548,8 @@ public class PdfWriter extends DocWriter implements
      */
     protected void flushTaggedObjects() throws IOException {}
 
+    protected void flushAcroFields() throws IOException {}
+
     /**
      * Gets the structure tree root. If the document is not marked for tagging it will return <CODE>null</CODE>.
      * @return the structure tree root

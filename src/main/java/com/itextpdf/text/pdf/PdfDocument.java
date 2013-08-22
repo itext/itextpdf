@@ -832,6 +832,7 @@ public class PdfDocument extends Document {
                 flushFloatingElements();
                 flushLines();
                 writer.getDirectContent().closeMCBlock(this);
+                writer.flushAcroFields();
                 writer.flushTaggedObjects();
                 if (isPageEmpty()) {
                     int pageReferenceCount = writer.pageReferences.size();
@@ -839,7 +840,8 @@ public class PdfDocument extends Document {
                         writer.pageReferences.remove(pageReferenceCount - 1);
                     }
                 }
-            }
+            } else
+                writer.flushAcroFields();
             boolean wasImage = imageWait != null;
             newPage();
             if (imageWait != null || wasImage) newPage();

@@ -84,11 +84,23 @@ public class PdfStructTreeController {
             throw new BadPdfFormatException(MessageLocalization.getComposedMessage("no.structtreeroot.found"));
         structTreeRoot = (PdfDictionary) obj;
         obj = PdfStructTreeController.getDirectObject(structTreeRoot.get(PdfName.PARENTTREE));
-        if (!obj.isDictionary())
+        if (obj == null || !obj.isDictionary())
             throw new BadPdfFormatException(MessageLocalization.getComposedMessage("the.document.does.not.contain.parenttree"));
         parentTree = (PdfDictionary) obj;
         sourceRoleMap = null;
         sourceClassMap = null;
+    }
+
+    static public boolean checkTagged(PdfReader reader) {
+        PdfObject obj = reader.getCatalog().get(PdfName.STRUCTTREEROOT);
+        obj = getDirectObject(obj);
+        if ((obj == null) || (!obj.isDictionary()))
+            return false;
+        PdfDictionary structTreeRoot = (PdfDictionary) obj;
+        obj = PdfStructTreeController.getDirectObject(structTreeRoot.get(PdfName.PARENTTREE));
+        if (!obj.isDictionary())
+            return false;
+        return true;
     }
 
     public static PdfObject getDirectObject(PdfObject object) {

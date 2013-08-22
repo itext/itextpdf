@@ -20,6 +20,7 @@
 1.is.not.a.valid.ttf.or.otf.file={1} is geen geldige TTF of OTF file.
 1.is.not.an.acceptable.value.for.the.field.2={1} is geen geldige waarde voor het veld {2}
 1.is.not.an.afm.or.pfm.font.file={1} is geen AFM of PFM font file.
+1.method.cannot.be.used.in.mergeFields.mode.please.use.addDocument={1} method cannot be used in mergeFields mode, please use addDocument.
 1.must.have.8.bits.per.component={1} moet 8 bits per component bevatten.
 1.near.line.2.column.3={1} in lijn {2}, kolom {3}
 1.not.found.as.file.or.resource={1} niet gevonden als bron of bronbestand.
@@ -122,6 +123,7 @@ dimensions.of.a.cell.are.attributed.automagically.see.the.faq=De afmetingen van 
 dimensions.of.a.cell.can.t.be.calculated.see.the.faq=De afmetingen van een Cell kunnen niet berekend worden. Zie de FAQ.
 dimensions.of.a.table.can.t.be.calculated.see.the.faq=Dimensies van een Table object kunnen niet berekend worden. Zie de FAQ.
 directory.number.too.large=Directory nummer te groot.
+document.1.has.already.been.added=Document {1} has already been added.
 document.already.pre.closed=Het Document is als gesloten (preclosed).
 document.catalog.dictionary.shall.include.a.markinfo.dictionary.whose.entry.marked.shall.have.a.value.of.true=Document catalog dictionary moet een MarkInfo dictionary bevatten waarvan het Marked veld de waarde true moet hebben.
 document.catalog.dictionary.should.contain.lang.entry=Document catalog dictionary mag geen Lang veld bevatten.
