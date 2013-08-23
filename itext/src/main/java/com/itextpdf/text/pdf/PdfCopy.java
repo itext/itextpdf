@@ -122,7 +122,7 @@ public class PdfCopy extends PdfWriter {
 
     protected boolean mergeFields = false;
     private boolean hasSignature;
-    private PdfDictionary form;
+    private PdfIndirectReference form;
     private HashMap<PdfArray, ArrayList<Integer>> tabOrder;
     private ArrayList<Object> calculationOrderRefs;
     private PdfDictionary resources;
@@ -782,12 +782,11 @@ public class PdfCopy extends PdfWriter {
         }
         if (mergeFields && object.isDictionary()) {
             PdfNumber annotId = ((PdfDictionary)object).getAsNumber(PdfCopy.annotId);
-            if (formBranching) {
-                mergedSet.add(indObj);
-                if (annotId != null)
+            if (annotId != null) {
+                if (formBranching) {
                     mergedMap.put(annotId.intValue(), indObj);
-            } else {
-                if (annotId != null) {
+                    mergedSet.add(indObj);
+                } else {
                     unmergedMap.put(annotId.intValue(), indObj);
                     unmergedSet.add(indObj);
                 }
@@ -816,7 +815,7 @@ public class PdfCopy extends PdfWriter {
     }
 
     @Override
-    protected void flushAcroFields() throws IOException {
+    protected void flushAcroFields() throws IOException, BadPdfFormatException {
         if (mergeFields) {
             try {
                 for (PdfReader reader : indirectMap.keySet()) {
@@ -893,6 +892,9 @@ public class PdfCopy extends PdfWriter {
             }
         }
 
+        if (mergeFields)
+            actives.add(form);
+
         HashSet<PdfName> activeClassMaps = new HashSet<PdfName>();
         //collect all active objects from current active set (include kids, classmap, attributes)
         findActives(actives, activeKeys, activeClassMaps);
@@ -904,7 +906,7 @@ public class PdfCopy extends PdfWriter {
         fixStructureTreeRoot(activeKeys, activeClassMaps);
 
         for(Map.Entry<RefKey, PdfIndirectObject> entry: indirectObjects.entrySet()) {
-            if (!activeKeys.contains(entry.getKey()) && !(mergeFields && mergedSet.contains(entry.getValue()))) {
+            if (!activeKeys.contains(entry.getKey())) {
                 entry.setValue(null);
             }
             else {
@@ -1303,14 +1305,33 @@ public class PdfCopy extends PdfWriter {
         }
     }
 
-    private void createAcroForms() throws IOException {
+    private PdfObject propagate(PdfObject obj) throws IOException {
+        if (obj == null) {
+            return new PdfNull();
+        } else if (obj.isArray()) {
+            PdfArray a = (PdfArray)obj;
+            for (int i = 0; i < a.size(); i++) {
+                a.set(i, propagate(a.getPdfObject(i)));
+            }
+            return a;
+        } else if (obj.isDictionary() || obj.isStream()) {
+            PdfDictionary d = (PdfDictionary)obj;
+            for (PdfName key : d.getKeys()) {
+                d.put(key, propagate(d.get(key)));
+            }
+            return d;
+        } else if (obj.isIndirect()) {
+            obj = PdfReader.getPdfObject(obj);
+            return addToBody(propagate(obj)).getIndirectReference();
+        } else
+            return obj;
+    }
+
+    private void createAcroForms() throws IOException, BadPdfFormatException {
         if (fieldTree.isEmpty())
             return;
-        form = new PdfDictionary();
-        form.put(PdfName.DR, resources);
-
-        //recursively assigns new references to resources
-//        propagate(resources, null, false);
+        PdfDictionary form = new PdfDictionary();
+        form.put(PdfName.DR, propagate(resources));
 
         form.put(PdfName.DA, new PdfString("/Helv 0 Tf 0 g "));
         tabOrder = new HashMap<PdfArray, ArrayList<Integer>>();
@@ -1326,6 +1347,7 @@ public class PdfCopy extends PdfWriter {
         }
         if (co.size() > 0)
             form.put(PdfName.CO, co);
+        this.form = addToBody(form).getIndirectReference();
     }
 
     private void updateReferences(PdfObject obj) {
@@ -1491,8 +1513,8 @@ public class PdfCopy extends PdfWriter {
             PdfDictionary theCat = pdf.getCatalog(rootObj);
             buildStructTreeRootForTagged(theCat);
             if (form != null && mergeFields)  {
-                PdfIndirectReference ref = addToBody(form).getIndirectReference();
-                theCat.put(PdfName.ACROFORM, ref);
+//                PdfIndirectReference ref = addToBody(form).getIndirectReference();
+                theCat.put(PdfName.ACROFORM, form);
             } else  if (fieldArray == null) {
                 if (acroForm != null) theCat.put(PdfName.ACROFORM, acroForm);
             }
