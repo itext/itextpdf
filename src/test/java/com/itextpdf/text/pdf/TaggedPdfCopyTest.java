@@ -4,10 +4,7 @@ import com.itextpdf.text.*;
 import com.itextpdf.text.error_messages.MessageLocalization;
 
 import com.itextpdf.text.pdf.parser.*;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -39,6 +36,10 @@ public class TaggedPdfCopyTest {
     public static final String SOURCE51 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/5/source51.pdf";
     public static final String SOURCE52 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/5/source52.pdf";
     public static final String SOURCE53 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/5/source53.pdf";
+    public static final String SOURCE61 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/6/source61.pdf";
+    public static final String SOURCE62 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/6/source62.pdf";
+    public static final String SOURCE63 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/6/source63.pdf";
+    public static final String SOURCE64 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/6/source64.pdf";
 
     public static final String OUT = "./target/com/itextpdf/test/pdf/TaggedPdfCopyTest/out";
 
@@ -136,7 +137,7 @@ public class TaggedPdfCopyTest {
         verifyIsDictionary(obj, NO_PARENT_TREE);
 
         PdfArray array = ((PdfDictionary)obj).getAsArray(PdfName.NUMS);
-        int[] nums = new int[] {30, 0, 32, 39, 0, 0, 0, 0, 0, 0, 0, 0, 0, 80};
+        int[] nums = new int[] {44, 0, 65, 42, 0, 0, 0, 0, 0, 0, 0, 0, 0, 81};
         for (int i = 0; i < n; ++i)
             verifyArraySize(PdfStructTreeController.getDirectObject(array.getPdfObject(i*2+1)), nums[i], "Nums of page "+(i+1), true);
 
@@ -333,7 +334,7 @@ public class TaggedPdfCopyTest {
         verifyIsDictionary(obj, NO_PARENT_TREE);
         PdfArray array = ((PdfDictionary)obj).getAsArray(PdfName.NUMS);
         verifyArraySize(array, n*2, "Nums");
-        int[] nums = new int[] {3, 0, 18, 9, 0, 25, 15, 91, 0, 0, 13, 18};
+        int[] nums = new int[] {5, 0, 33, 12, 0, 48, 35, 182, 0, 0, 17, 37};
         for (int i = 0; i < n; ++i)
             verifyArraySize(PdfStructTreeController.getDirectObject(array.getPdfObject(i*2+1)), nums[i], "Nums of page "+(i+1), true);
 
@@ -456,7 +457,7 @@ public class TaggedPdfCopyTest {
         verifyIsDictionary(obj, NO_PARENT_TREE);
         PdfArray array = ((PdfDictionary)obj).getAsArray(PdfName.NUMS);
         verifyArraySize(array, n*2, "Nums");
-        int[] nums = new int[] {7, 87, 128, 26, 135, 0, 0, 83, 7, 135, 0, 0, 0, 0, 0, 0, 83, 116, 26, 128, 74, 16, 11, 0, 0, 38, 51, 61, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 26};
+        int[] nums = new int[] {7, 87, 128, 26, 135, 0, 0, 83, 7, 135, 0, 0, 0, 0, 0, 0, 83, 116, 26, 128, 74, 16, 12, 0, 0, 38, 54, 61, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 26};
         for (int i = 0; i < n; ++i)
 //            nums[i] = ((PdfArray)PdfStructTreeController.getDirectObject(array.getPdfObject(i*2+1))).size();
             verifyArraySize(PdfStructTreeController.getDirectObject(array.getPdfObject(i*2+1)), nums[i], "Nums of page "+(i+1), true);
@@ -596,24 +597,79 @@ public class TaggedPdfCopyTest {
         verifyIsDictionary(obj, NO_PARENT_TREE);
         PdfArray array = ((PdfDictionary)obj).getAsArray(PdfName.NUMS);
         verifyArraySize(array, 8, "Nums");
-        verifyArraySize(PdfStructTreeController.getDirectObject(array.getPdfObject(1)), 15, "Nums of page 1");
+        verifyArraySize(PdfStructTreeController.getDirectObject(array.getPdfObject(1)), 20, "Nums of page 1");
         reader.close();
     }
 
     @Test
     public void copyTaggedPdf15() throws IOException, DocumentException {
         initializeDocument("15");
-        PdfReader reader = new PdfReader(SOURCE18);
+        copy.setMergeFields();
 
-        for (int i = 1; i <= reader.getNumberOfPages(); i++) {
-            copy.addPage(copy.getImportedPage(reader, i, true));
-        }
+        PdfReader reader1 = new PdfReader(SOURCE61);
+        PdfReader reader2 = new PdfReader(SOURCE62);
+        copy.addDocument(reader1);
+        copy.addDocument(reader2);
         document.close();
-        reader.close();
+        reader1.close();
+        reader2.close();
 
-        reader = new PdfReader(output);
-        PdfDictionary structTreeRoot = verifyIsDictionary(reader.getCatalog().getDirectObject(PdfName.STRUCTTREEROOT), NO_STRUCT_TREE_ROOT);
-        verifyArraySize(structTreeRoot.get(PdfName.K), 180, "Invalid count of kids in StructTreeRoot");
+        PdfReader reader = new PdfReader(output);
+        PdfDictionary catalog = reader.getCatalog();
+        PdfDictionary structTreeRoot = catalog.getAsDict(PdfName.STRUCTTREEROOT);
+        PdfDictionary structParent = structTreeRoot.getAsDict(PdfName.PARENTTREE);
+        PdfArray nums = structParent.getAsArray(PdfName.NUMS);
+        PdfDictionary acroForm = catalog.getAsDict(PdfName.ACROFORM);
+        PdfDictionary fonts = acroForm.getAsDict(PdfName.DR).getAsDict(PdfName.FONT);
+
+        Assert.assertEquals(new PdfName("Helvetica"), fonts.getAsDict(new PdfName("Helv")).getAsName(PdfName.BASEFONT));
+        Assert.assertEquals(new PdfName("ZapfDingbats"), fonts.getAsDict(new PdfName("ZaDb")).getAsName(PdfName.BASEFONT));
+        Assert.assertEquals(new PdfName("ArialMT"), fonts.getAsDict(new PdfName("ArialMT")).getAsName(PdfName.BASEFONT));
+        Assert.assertEquals(new PdfName("CourierStd"), fonts.getAsDict(new PdfName("CourierStd")).getAsName(PdfName.BASEFONT));
+
+        Assert.assertEquals(1, nums.getAsNumber(2).intValue());
+        Assert.assertEquals(4, nums.getAsNumber(8).intValue());
+
+        Assert.assertEquals(acroForm.getAsArray(PdfName.FIELDS).getAsIndirectObject(0).getNumber(), nums.getAsDict(3).getAsDict(PdfName.K).getAsIndirectObject(PdfName.OBJ).getNumber());
+        Assert.assertEquals(acroForm.getAsArray(PdfName.FIELDS).getAsIndirectObject(2).getNumber(), nums.getAsDict(9).getAsDict(PdfName.K).getAsIndirectObject(PdfName.OBJ).getNumber());
+        Assert.assertEquals(acroForm.getAsArray(PdfName.FIELDS).getAsDict(1).getAsArray(PdfName.KIDS).getAsIndirectObject(0).getNumber(), nums.getAsDict(5).getAsDict(PdfName.K).getAsIndirectObject(PdfName.OBJ).getNumber());
+        Assert.assertEquals(acroForm.getAsArray(PdfName.FIELDS).getAsDict(1).getAsArray(PdfName.KIDS).getAsIndirectObject(1).getNumber(), nums.getAsDict(11).getAsDict(PdfName.K).getAsIndirectObject(PdfName.OBJ).getNumber());
+
+        Assert.assertEquals(1, acroForm.getAsArray(PdfName.FIELDS).getAsDict(0).getAsNumber(PdfName.STRUCTPARENT).intValue());
+        Assert.assertEquals(2, acroForm.getAsArray(PdfName.FIELDS).getAsDict(1).getAsArray(PdfName.KIDS).getAsDict(0).getAsNumber(PdfName.STRUCTPARENT).intValue());
+        Assert.assertEquals(4, acroForm.getAsArray(PdfName.FIELDS).getAsDict(2).getAsNumber(PdfName.STRUCTPARENT).intValue());
+        Assert.assertEquals(5, acroForm.getAsArray(PdfName.FIELDS).getAsDict(1).getAsArray(PdfName.KIDS).getAsDict(1).getAsNumber(PdfName.STRUCTPARENT).intValue());
+
+        reader.close();
+    }
+
+    @Test
+    @Ignore
+    public void copyTaggedPdf16() throws IOException, DocumentException {
+        initializeDocument("16");
+        copy.setMergeFields();
+
+        PdfReader reader1 = new PdfReader(SOURCE63);
+        PdfReader reader2 = new PdfReader(SOURCE64);
+        copy.addDocument(reader1);
+        copy.addDocument(reader2);
+        document.close();
+        reader1.close();
+        reader2.close();
+
+        PdfReader reader = new PdfReader(output);
+        PdfDictionary catalog = reader.getCatalog();
+        PdfDictionary structTreeRoot = catalog.getAsDict(PdfName.STRUCTTREEROOT);
+        PdfDictionary structParent = structTreeRoot.getAsDict(PdfName.PARENTTREE);
+        PdfArray nums = structParent.getAsArray(PdfName.NUMS);
+        PdfDictionary acroForm = catalog.getAsDict(PdfName.ACROFORM);
+        PdfDictionary fonts = acroForm.getAsDict(PdfName.DR).getAsDict(PdfName.FONT);
+
+        Assert.assertEquals(new PdfName("Helvetica"), fonts.getAsDict(new PdfName("Helv")).getAsName(PdfName.BASEFONT));
+        Assert.assertEquals(new PdfName("Courier"), fonts.getAsDict(new PdfName("Cour")).getAsName(PdfName.BASEFONT));
+        Assert.assertEquals(new PdfName("Times-Bold"), fonts.getAsDict(new PdfName("TiBo")).getAsName(PdfName.BASEFONT));
+        Assert.assertEquals(new PdfName("ZapfDingbats"), fonts.getAsDict(new PdfName("ZaDb")).getAsName(PdfName.BASEFONT));
+
         reader.close();
     }
 

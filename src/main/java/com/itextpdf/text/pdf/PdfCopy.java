@@ -96,7 +96,6 @@ public class PdfCopy extends PdfWriter {
     protected HashMap<PdfObject, PdfObject> parentObjects;
     protected HashSet<PdfObject> disableIndirects;
     protected PdfReader reader;
-    protected PdfIndirectReference acroForm;
     protected int[] namePtr = {0};
     /** Holds value of property rotateContents. */
     private boolean rotateContents = true;
@@ -117,12 +116,12 @@ public class PdfCopy extends PdfWriter {
     //for correct update of kids in StructTreeRootController
     protected boolean updateRootKids = false;
 
-    static private PdfName annotId = new PdfName("annotId");
+    static private PdfName annotId = new PdfName("iTextAnnotId");
     static private int annotIdCnt = 0;
 
     protected boolean mergeFields = false;
     private boolean hasSignature;
-    private PdfIndirectReference form;
+    private PdfIndirectReference acroForm;
     private HashMap<PdfArray, ArrayList<Integer>> tabOrder;
     private ArrayList<Object> calculationOrderRefs;
     private PdfDictionary resources;
@@ -651,14 +650,6 @@ public class PdfCopy extends PdfWriter {
         if (indirects == null) {
             indirects = new HashMap<RefKey, IndirectReferences>();
             indirectMap.put(reader,indirects);
-            PdfDictionary catalog = reader.getCatalog();
-            PRIndirectReference ref = null;
-            PdfObject o = catalog.get(PdfName.ACROFORM);
-            if (o == null || o.type() != PdfObject.INDIRECT)
-                return;
-            ref = (PRIndirectReference)o;
-            if (acroForm == null) acroForm = body.getPdfIndirectReference();
-            indirects.put(new RefKey(ref), new IndirectReferences(acroForm));
         }
     }
     /**
@@ -893,7 +884,7 @@ public class PdfCopy extends PdfWriter {
         }
 
         if (mergeFields)
-            actives.add(form);
+            actives.add(acroForm);
 
         HashSet<PdfName> activeClassMaps = new HashSet<PdfName>();
         //collect all active objects from current active set (include kids, classmap, attributes)
@@ -1347,7 +1338,7 @@ public class PdfCopy extends PdfWriter {
         }
         if (co.size() > 0)
             form.put(PdfName.CO, co);
-        this.form = addToBody(form).getIndirectReference();
+        this.acroForm = addToBody(form).getIndirectReference();
     }
 
     private void updateReferences(PdfObject obj) {
@@ -1433,7 +1424,7 @@ public class PdfCopy extends PdfWriter {
                     }
                     dic.put(PdfName.KIDS, kids);
                 }
-                arr.add(ind);
+                    arr.add(ind);
                 addToBody(dic, ind, true);
             }
         }
@@ -1470,39 +1461,6 @@ public class PdfCopy extends PdfWriter {
         }
     }
 
-    /**
-     * Copy the acroform for an input document. Note that you can only have one,
-     * we make no effort to merge them.
-     * @param reader The reader of the input file that is being copied
-     * @throws IOException, BadPdfFormatException
-     */
-    public void copyAcroForm(PdfReader reader) throws IOException, BadPdfFormatException {
-        setFromReader(reader);
-
-        PdfDictionary catalog = reader.getCatalog();
-        PRIndirectReference hisRef = null;
-        PdfObject o = catalog.get(PdfName.ACROFORM);
-        if (o != null && o.type() == PdfObject.INDIRECT)
-            hisRef = (PRIndirectReference)o;
-        if (hisRef == null) return; // bugfix by John Englar
-        RefKey key = new RefKey(hisRef);
-        PdfIndirectReference myRef;
-        IndirectReferences iRef = indirects.get(key);
-        if (iRef != null) {
-            acroForm = myRef = iRef.getRef();
-        }
-        else {
-            acroForm = myRef = body.getPdfIndirectReference();
-            iRef = new IndirectReferences(myRef);
-            indirects.put(key, iRef);
-        }
-        if (! iRef.getCopied()) {
-            iRef.setCopied();
-            PdfDictionary theForm = copyDictionary((PdfDictionary)PdfReader.getPdfObject(hisRef));
-            addToBody(theForm, myRef);
-        }
-    }
-
     /*
      * the getCatalog method is part of PdfWriter.
      * we wrap this so that we can extend it
@@ -1512,14 +1470,11 @@ public class PdfCopy extends PdfWriter {
         try {
             PdfDictionary theCat = pdf.getCatalog(rootObj);
             buildStructTreeRootForTagged(theCat);
-            if (form != null && mergeFields)  {
-//                PdfIndirectReference ref = addToBody(form).getIndirectReference();
-                theCat.put(PdfName.ACROFORM, form);
-            } else  if (fieldArray == null) {
-                if (acroForm != null) theCat.put(PdfName.ACROFORM, acroForm);
-            }
-            else
+            if (fieldArray != null) {
                 addFieldResources(theCat);
+            } else if (mergeFields && acroForm != null) {
+                theCat.put(PdfName.ACROFORM, acroForm);
+            }
             return theCat;
         }
         catch (IOException e) {
