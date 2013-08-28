@@ -173,10 +173,10 @@ public class PdfCopy extends PdfWriter {
         PdfReader reader;
         PdfArray mergedFields;
 
-        ImportedPage(PdfReader reader, int pageNumber, boolean keepPageDic) {
+        ImportedPage(PdfReader reader, int pageNumber, boolean keepFields) {
             this.pageNumber = pageNumber;
             this.reader = reader;
-            if (keepPageDic) {
+            if (keepFields) {
                 mergedFields = new PdfArray();
             }
         }
