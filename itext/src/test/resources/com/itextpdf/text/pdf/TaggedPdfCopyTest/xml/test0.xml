@@ -274,6 +274,8 @@
 To avoid injury, read all operating instructions in this guide and safety 
 information in the Important Product Information Guide at www.apple.com/ 
 support/manuals/iphone before using iPhone. </P>
+<P><Link></Link>
+</P>
 <Sect><H2>What You Need </H2>
 <P>To use iPhone, you need:
 
@@ -335,6 +337,9 @@ USB 2.0 port on your computer.
 </P>
 </Sect>
 <P></P>
+<Sect><P><Link></Link>
+</P>
+</Sect>
 <Sect><P>3 Follow the onscreen instructions in iTunes to activate iPhone and sync iPhone with </P>
 <P>your contacts, calendars, email accounts, and bookmarks on your computer.
 
@@ -414,6 +419,9 @@ USB 2.0 port on your computer. </P>
 The following sections provide an overview of each of the iPhone settings panes. 
 For more information, open iTunes and choose Help &gt; iTunes Help. </P>
 <P></P>
+</Sect>
+<Sect><P><Link></Link>
+</P>
 </Sect>
 <Sect><P>Chapter 1 Activating and Setting Up iPhone </P>
 <P>9 </P>
@@ -893,6 +901,8 @@ formats: </P>
 
 See &#8220;Keyboard&#8221; on page 98 for information about turning on keyboards for different 
 languages and other keyboard settings. </P>
+<P><Link></Link>
+</P>
 <H3>Entering Text </H3>
 <P>Start by typing with just your index finger. As you get more proficient, you can type 
 more quickly using two thumbs. </P>
@@ -953,7 +963,9 @@ on the side of iPhone adjust the audio volume. Otherwise, the buttons control th
 volume for the ringer, alerts, and other sound effects. 
 WARNING: For important information about avoiding hearing loss, see the Important 
 Product Information Guide at www.apple.com/support/manuals/iphone. </P>
-<Sect><P>To adjust the volume, use the buttons on the side of iPhone.
+<Sect><P><Link></Link>
+</P>
+<P>To adjust the volume, use the buttons on the side of iPhone.
 </P>
 <P>Volume 
 up 
@@ -1203,9 +1215,15 @@ calls on iPhone. Or you can make a call the &#8220;old-fashioned&#8221; way, by 
 on the keypad. </P>
 <P>Call someone in your contacts list 
 Tap Contacts and choose a contact, then tap the phone number you want to call. </P>
+<Table><TR><TH><Link></Link>
+</TH>
+</TR>
+</Table>
 <P>Call someone in your favorites list 
 Tap Favorites and choose a contact. </P>
-<P><P>Chapter 3 Phone </P>
+<P>
+<Link></Link>
+<P>Chapter 3 Phone </P>
 </P>
 <P>30 </P>
 <P>
@@ -2259,6 +2277,9 @@ another folder. </P>
 </Sect>
 </Sect>
 </Sect>
+<Sect><P><Link></Link>
+</P>
+</Sect>
 <Sect><P>Chapter 5 Safari </P>
 <P>57 </P>
 <P>Edit a bookmark or bookmark folder </P>
@@ -2364,6 +2385,8 @@ iPod.&#8221;Then add the converted video to iPhone. </P>
 <P>The high-resolution multi-touch display makes listening to songs on iPhone as much a 
 visual experience as a musical one. You can scroll through your playlists, or use Cover 
 Flow to browse through your album art. </P>
+<P><Link></Link>
+</P>
 <Sect><P>WARNING: For important information about avoiding hearing loss, see the Important 
 Product Information Guide at www.apple.com/support/manuals/iphone. </P>
 <H3>Playing Songs, Audiobooks, and Podcasts </H3>
@@ -2654,6 +2677,9 @@ purchase separately at
 www.apple.com/ipodstore. </Link>
 </P>
 </Sect>
+<Sect><P><Link></Link>
+</P>
+</Sect>
 </Sect>
 <Sect><Sect><P>Chapter 6 iPod </P>
 <P>66 </P>
@@ -2910,7 +2936,10 @@ or Photos. Photos synced from your computer can be viewed in Photos. </P>
 </Sect>
 <P>Tap Camera, then tap . Or from the Home screen choose Photos &gt; Camera Roll. </P>
 </Sect>
-<Sect><Sect><P>Chapter 7 Applications </P>
+<Sect><Sect><P><Link></Link>
+</P>
+</Sect>
+<Sect><P>Chapter 7 Applications </P>
 <P>74 </P>
 </Sect>
 <Sect><P>. Tap a picture in the Camera Roll album, then tap </P>
@@ -3724,7 +3753,10 @@ briefly. </P>
 <P>Choose General &gt; International &gt; Region Format, and choose your region. </P>
 </Sect>
 </Sect>
-<Sect><Sect><P>Chapter 8 Settings </P>
+<Sect><Sect><P><Link></Link>
+</P>
+</Sect>
+<Sect><P>Chapter 8 Settings </P>
 <P>97 </P>
 </Sect>
 <Sect><Sect><H3>Auto-Lock </H3>
@@ -3947,7 +3979,13 @@ turn call waiting on or off, change your password, and other things. </P>
 &#194; To display first name first or last name first, tap Display Order. </P>
 </Sect>
 </Sect>
-<Sect><Sect><P>Chapter 8 Settings </P>
+<Sect><Sect><P><Link></Link>
+</P>
+</Sect>
+<Sect><P><Link></Link>
+</P>
+</Sect>
+<Sect><P>Chapter 8 Settings </P>
 <P>102 </P>
 </Sect>
 <Sect><Sect><H3>Call Forwarding </H3>
@@ -4101,6 +4139,8 @@ Tap Lock Volume Limit to assign a code to prevent the setting from being changed
 audiobooks) and videos (including rented movies), and only when headphones,
 
 earphones, or speakers are connected to the headphones port on iPhone.
+</P>
+<P><Link></Link>
 </P>
 <P>WARNING: For important information about avoiding hearing loss, see the Important 
 Product Information Guide at www.apple.com/support/manuals/iphone. </P>
@@ -4349,6 +4389,14 @@ your SIM&#8217;s PIN if the SIM is locked. </P>
 carrier for a Personal Unlocking Key (PUK) to enable your SIM card again.
 </P>
 <P>&#194;	 Restart your computer and reconnect iPhone to your computer. </P>
+<P><Link></Link>
+</P>
+</Sect>
+<Sect><P>
+<Link></Link>
+<Span><Link></Link>
+</Span>
+</P>
 </Sect>
 <Sect><P>Appendix A Tips and Troubleshooting </P>
 <P>115 </P>
@@ -4444,6 +4492,16 @@ disconnect iPhone from the accessory or turn off airplane mode. </P>
 <P>The accessory you attached will not work with iPhone. </P>
 </Sect>
 <P>. resume playback. Or from the Home screen tap iPod, tap Now Playing, then tap </P>
+</Sect>
+<Sect><P>
+<Link></Link>
+<Link></Link>
+</P>
+</Sect>
+<Sect><P><Link></Link>
+</P>
+<P><Link></Link>
+</P>
 </Sect>
 <Sect><P>Appendix A Tips and Troubleshooting </P>
 <P>117 </P>
@@ -4543,6 +4601,10 @@ If you can&#8217;t access the iTunes Wi-Fi Music Store
 To use the iTunes Wi-Fi Music Store, iPhone must join a Wi-Fi network that is connected 
 to the Internet. For information about joining a Wi-Fi network, see page 25. The iTunes 
 Wi-Fi Music Store is not available in all countries. </P>
+<P><Link></Link>
+</P>
+<P><Link></Link>
+</P>
 </Sect>
 <P>Appendix A Tips and Troubleshooting </P>
 <P>119 </P>
@@ -4621,6 +4683,15 @@ increase readability. See &#8220;Set a minimum font size for messages&#8221; on 
 you need to dial a number, iPhone&#8217;s large numeric keypad makes it easy. See &#8220;Dial a </Link>
 <Link>
 call&#8221; on page 30. </Link>
+</P>
+</Sect>
+<Sect><P><Link></Link>
+</P>
+</Sect>
+<Sect><P><Link></Link>
+</P>
+</Sect>
+<Sect><P><Link></Link>
 </P>
 </Sect>
 </Sect>
@@ -4786,7 +4857,8 @@ uses only.
 </P>
 <P>Index
 </P>
-<P><Span><P>124 </P>
+<P><Span><Link></Link>
+<P>124 </P>
 <Link>12-hour time 96
 </Link>
 </Span>
@@ -5704,7 +5776,8 @@ getting help 122
 </Link>
 </Span>
 </P>
-<P><P>Index </P>
+<P><Link></Link>
+<P>Index </P>
 </P>
 <P>126 </P>
 <P><Link>getting started 5 </Link>
@@ -6190,7 +6263,45 @@ bookmarking location 83
 </P>
 <P>
 
-<Span><P>Index </P>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<Span><Link></Link>
+<P>Index </P>
 </Span>
 <P>127 </P>
 <Span><P>current approximate location 81, 83
@@ -6261,6 +6372,82 @@ See also iPod
 
 muting a call 30
 </P>
+</Span>
+<Link></Link>
+<Span><Link></Link>
+</Span>
+<Span><Link></Link>
+</Span>
+<Span><Link></Link>
+</Span>
+<Span><Link></Link>
+</Span>
+<Span><Link></Link>
+</Span>
+<Span><Link></Link>
+</Span>
+<Span><Link></Link>
+</Span>
+<Span><Link></Link>
+</Span>
+<Span><Link></Link>
+</Span>
+<Span><Link>
+<Link></Link>
+</Link>
+</Span>
+<Link></Link>
+<Span><Link>
+<Link></Link>
+</Link>
+</Span>
+<Link></Link>
+<Link></Link>
+<Span><Link></Link>
+</Span>
+<Span><Link></Link>
+</Span>
+<Span><Link></Link>
+</Span>
+<Span><Link></Link>
+</Span>
+<Span><Link></Link>
+</Span>
+<Link></Link>
+<Span><Link>
+<Link></Link>
+</Link>
+</Span>
+<Span><Link></Link>
+</Span>
+<Span><Link></Link>
+</Span>
+<Span><Link></Link>
+</Span>
+<Span><Link></Link>
+</Span>
+<Span><Link></Link>
+</Span>
+<Span><Link>
+<Link></Link>
+</Link>
+</Span>
+<Span><Link></Link>
+</Span>
+<Span><Link></Link>
+</Span>
+<Span><Link></Link>
+</Span>
+<Span><Link></Link>
+</Span>
+<Span><Link></Link>
+</Span>
+<Link></Link>
+<Span><Link></Link>
+</Span>
+<Span><Link></Link>
+</Span>
+<Span><Link></Link>
 </Span>
 </P>
 <H2>N </H2>
@@ -6880,7 +7067,8 @@ opening webpages 52, </Link>
 55
 </Link>
 </P>
-<P><P>plug-ins 104
+<P><Link></Link>
+<P>plug-ins 104
 
 pop-ups 104
 
@@ -6990,7 +7178,147 @@ Photos 76, 106
 resetting 99
 </P>
 </P>
-<P><Span><P>Index </P>
+<P><Link></Link>
+</P>
+<P><Link></Link>
+</P>
+<P><Link></Link>
+</P>
+<P><Link></Link>
+</P>
+<P><Link></Link>
+</P>
+<P><Link></Link>
+</P>
+<P><Link></Link>
+</P>
+<P><Link></Link>
+</P>
+<P><Span><Link></Link>
+</Span>
+<Link></Link>
+</P>
+<P><Link></Link>
+</P>
+<P><Span><Link></Link>
+</Span>
+<Span><Link></Link>
+</Span>
+<Span><Link></Link>
+</Span>
+</P>
+<P><Link></Link>
+</P>
+<P><Link></Link>
+</P>
+<P><Link></Link>
+</P>
+<P><Link></Link>
+</P>
+<P>
+<Span><Link></Link>
+</Span>
+<Span><Link></Link>
+</Span>
+</P>
+<P>
+
+<Span><Link></Link>
+</Span>
+<Span><Link></Link>
+</Span>
+<Span><Link></Link>
+</Span>
+</P>
+<P><Link></Link>
+</P>
+<P><Span><Link></Link>
+</Span>
+</P>
+<P><Link>
+<Link></Link>
+</Link>
+</P>
+<P><Link></Link>
+</P>
+<P>
+
+
+<Span><Link></Link>
+</Span>
+<Span><Link></Link>
+</Span>
+<Link></Link>
+<Span><Link></Link>
+</Span>
+</P>
+<P><Link></Link>
+</P>
+<P><Link></Link>
+</P>
+<P><Span><Link>
+<Link></Link>
+</Link>
+</Span>
+<Span><Link>
+<Link></Link>
+</Link>
+</Span>
+</P>
+<P><Link></Link>
+</P>
+<P><Span><Link></Link>
+</Span>
+<Link></Link>
+</P>
+<P><Link></Link>
+</P>
+<P><Span><Link></Link>
+</Span>
+<Link></Link>
+</P>
+<P><Link>
+<Link></Link>
+</Link>
+</P>
+<P><Link></Link>
+</P>
+<P><Link></Link>
+</P>
+<P><Span><Link>
+<Link></Link>
+</Link>
+</Span>
+<Link></Link>
+</P>
+<P><Link></Link>
+</P>
+<P><Link></Link>
+</P>
+<P><Link></Link>
+</P>
+<P><Link></Link>
+</P>
+<P><Link></Link>
+</P>
+<P><Span><Link>
+<Link></Link>
+</Link>
+</Span>
+<Link></Link>
+</P>
+<P><Link></Link>
+</P>
+<P><Link></Link>
+</P>
+<P><Link>
+<Link></Link>
+</Link>
+</P>
+<P><Link></Link>
+</P>
+<P><Span><Link></Link>
+<P>Index </P>
 </Span>
 <P>129 </P>
 <Span><Link>restoring 106

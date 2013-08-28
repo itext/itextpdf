@@ -78,11 +78,13 @@ public class PdfStructureTreeRoot extends PdfDictionary implements IPdfStructure
         if (numTree != null) return;
         numTree = new HashMap<Integer, PdfIndirectReference>();
         for (Integer i: parentTree.keySet()) {
-            PdfArray ar = (PdfArray)parentTree.get(i);
-            if (ar.size() == 1)
-                numTree.put(i, ar.getAsIndirectObject(0));
-            else
+            PdfObject obj = parentTree.get(i);
+            if (obj.isArray()) {
+                PdfArray ar = (PdfArray)obj;
                 numTree.put(i, writer.addToBody(ar).getIndirectReference());
+            } else if (obj instanceof PdfIndirectReference) {
+                numTree.put(i, (PdfIndirectReference)obj);
+            }
         }
     }
 
@@ -145,6 +147,10 @@ public class PdfStructureTreeRoot extends PdfDictionary implements IPdfStructure
             parentTree.put(i, ar);
         }
         ar.add(struc);
+    }
+
+    void setAnnotationMark(int structParentIndex, PdfIndirectReference struc) {
+        parentTree.put(Integer.valueOf(structParentIndex), struc);
     }
 
     private void nodeProcess(PdfDictionary struc, PdfIndirectReference reference) throws IOException {

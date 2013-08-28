@@ -20,6 +20,7 @@
 1.is.not.a.valid.ttf.or.otf.file={1} is not a valid TTF or OTF file.
 1.is.not.an.acceptable.value.for.the.field.2={1} is not an acceptable value for the field {2}
 1.is.not.an.afm.or.pfm.font.file={1} is not an AFM or PFM font file.
+1.method.cannot.be.used.in.mergeFields.mode.please.use.addDocument={1} method cannot be used in mergeFields mode, please use addDocument.
 1.must.have.8.bits.per.component={1} must have 8 bits per component.
 1.near.line.2.column.3={1} near line {2}, column {3}
 1.not.found.as.file.or.resource={1} not found as file or resource.
@@ -122,6 +123,7 @@ dimensions.of.a.cell.are.attributed.automagically.see.the.faq=Dimensions of a Ce
 dimensions.of.a.cell.can.t.be.calculated.see.the.faq=Dimensions of a Cell can't be calculated. See the FAQ.
 dimensions.of.a.table.can.t.be.calculated.see.the.faq=Dimensions of a Table can't be calculated. See the FAQ.
 directory.number.too.large=Directory number too large.
+document.1.has.already.been.added=Document {1} has already been added.
 document.already.pre.closed=Document already pre closed.
 document.catalog.dictionary.shall.include.a.markinfo.dictionary.whose.entry.marked.shall.have.a.value.of.true=Document catalog dictionary shall include a MarkInfo dictionary whose entry Marked shall have a value of true.
 document.catalog.dictionary.should.contain.lang.entry=Document catalog dictionary should contain Lang entry.
