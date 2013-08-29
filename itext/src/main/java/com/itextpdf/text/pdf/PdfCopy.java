@@ -832,7 +832,7 @@ public class PdfCopy extends PdfWriter {
         ArrayList<PdfIndirectReference> actives = new ArrayList<PdfIndirectReference>();
         int pageRefIndex = 0;
 
-        if (mergeFields) {
+        if (mergeFields && acroForm != null) {
             actives.add(acroForm);
             activeKeys.add(new RefKey(acroForm));
         }
