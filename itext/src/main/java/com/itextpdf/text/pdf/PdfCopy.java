@@ -277,16 +277,14 @@ public class PdfCopy extends PdfWriter {
             throw new IllegalArgumentException(MessageLocalization.getComposedMessage("1.method.cannot.be.used.in.mergeFields.mode.please.use.addDocument", "getImportedPage"));
         }
         updateRootKids = false;
-        if (mergeFields && !keepTaggedPdfStructure) {
-            ImportedPage newPage = new ImportedPage(reader, pageNumber, mergeFields);
-            importedPages.add(newPage);
-            if (structTreeController != null)
-                structTreeController.setReader(reader);
+        if (!keepTaggedPdfStructure) {
+            if (mergeFields) {
+                ImportedPage newPage = new ImportedPage(reader, pageNumber, mergeFields);
+                importedPages.add(newPage);
+            }
             return getImportedPageImpl(reader, pageNumber);
-
         } else if (!keepTaggedPdfStructure) {
             return getImportedPage(reader, pageNumber);
-
         }
         else {
             if (structTreeController != null) {
@@ -295,7 +293,6 @@ public class PdfCopy extends PdfWriter {
             } else {
                 structTreeController = new PdfStructTreeController(reader, this);
             }
-
             ImportedPage newPage = new ImportedPage(reader, pageNumber, mergeFields);
             switch (checkStructureTreeRootKids(newPage)) {
                 case -1: //-1 - clear , update
@@ -385,7 +382,7 @@ public class PdfCopy extends PdfWriter {
         if (currentPdfReaderInstance != null) {
             if (currentPdfReaderInstance.getReader() != reader) {
 
-// TODO: Removed - the user should be responsible for closing all PdfReaders.  But, this could cause a lot of memory leaks in code out there that hasn't been properly closing things - maybe add a finalizer to PdfReader that calls PdfReader#close() ??            	
+// TODO: Removed - the user should be responsible for closing all PdfReaders.  But, this could cause a lot of memory leaks in code out there that hasn't been properly closing things - maybe add a finalizer to PdfReader that calls PdfReader#close() ??
 //             	  try {
 //                    currentPdfReaderInstance.getReader().close();
 //                    currentPdfReaderInstance.getReaderFile().close();
@@ -494,7 +491,7 @@ public class PdfCopy extends PdfWriter {
                 }
                 return null;
             }
-                
+
             PdfName structType = in.getAsName(PdfName.S);
             structTreeController.addRole(structType);
             structTreeController.addClass(in);
@@ -698,7 +695,7 @@ public class PdfCopy extends PdfWriter {
      * Adds a blank page.
      * @param	rect The page dimension
      * @param	rotation The rotation angle in degrees
-     * @throws DocumentException 
+     * @throws DocumentException
      * @since	2.1.5
      */
     public void addPage(Rectangle rect, int rotation) throws DocumentException {
@@ -834,6 +831,16 @@ public class PdfCopy extends PdfWriter {
         HashSet<PdfCopy.RefKey> activeKeys = new HashSet<PdfCopy.RefKey>();
         ArrayList<PdfIndirectReference> actives = new ArrayList<PdfIndirectReference>();
         int pageRefIndex = 0;
+
+        if (mergeFields) {
+            actives.add(acroForm);
+            activeKeys.add(new RefKey(acroForm));
+        }
+        for (PdfIndirectReference page : pageReferences) {
+            actives.add(page);
+            activeKeys.add(new RefKey(page));
+        }
+
         //from end, because some objects can appear on several pages because of MCR (out16.pdf)
         for (int i = numTree.size() - 1; i >= 0; --i) {
             PdfIndirectReference currNum = numTree.get(i);
@@ -888,9 +895,6 @@ public class PdfCopy extends PdfWriter {
                 }
             }
         }
-
-        if (mergeFields)
-            actives.add(acroForm);
 
         HashSet<PdfName> activeClassMaps = new HashSet<PdfName>();
         //collect all active objects from current active set (include kids, classmap, attributes)
