@@ -30,6 +30,7 @@ public class TaggedPdfCopyTest {
     public static final String SOURCE16 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/1/source16.pdf";
     public static final String SOURCE17 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/1/source17.pdf";
     public static final String SOURCE18 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/1/source18.pdf";
+    public static final String SOURCE19 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/1/source19.pdf";
     public static final String SOURCE22 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/2/source22.pdf";
     public static final String SOURCE32 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/3/source32.pdf";
     public static final String SOURCE42 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/4/source42.pdf";
@@ -670,6 +671,25 @@ public class TaggedPdfCopyTest {
         Assert.assertEquals(new PdfName("Times-Bold"), fonts.getAsDict(new PdfName("TiBo")).getAsName(PdfName.BASEFONT));
         Assert.assertEquals(new PdfName("ZapfDingbats"), fonts.getAsDict(new PdfName("ZaDb")).getAsName(PdfName.BASEFONT));
 
+        reader.close();
+    }
+
+    @Test
+    public void copyTaggedPdf17() throws IOException, DocumentException {
+        initializeDocument("17");
+
+        PdfReader reader1 = new PdfReader(SOURCE10);
+        PdfReader reader2 = new PdfReader(SOURCE19);
+        copy.addPage(copy.getImportedPage(reader1, 1, true));
+        copy.addPage(copy.getImportedPage(reader2, 1, false));
+        document.close();
+        reader1.close();
+        reader2.close();
+
+        PdfReader reader = new PdfReader(output);
+        Assert.assertEquals(2, reader.getNumberOfPages());
+        Assert.assertNotNull(reader.getPageN(1));
+        Assert.assertNotNull(reader.getPageN(2));
         reader.close();
     }
 
