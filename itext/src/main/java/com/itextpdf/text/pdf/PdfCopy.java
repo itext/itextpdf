@@ -499,13 +499,19 @@ public class PdfCopy extends PdfWriter {
             structTreeController.addRole(structType);
             structTreeController.addClass(in);
         }
-
+        if (structTreeController != null && structTreeController.reader != null && (in.contains(PdfName.STRUCTPARENTS) || in.contains(PdfName.STRUCTPARENT))) {
+            PdfName key = PdfName.STRUCTPARENT;
+            if (in.contains(PdfName.STRUCTPARENTS)) {
+                key = PdfName.STRUCTPARENTS;
+            }
+            PdfObject value = in.get(key);
+            out.put(key, new PdfNumber(currentStructArrayNumber));
+            structTreeController.copyStructTreeForPage((PdfNumber) value, currentStructArrayNumber++);
+        }
         for (Object element : in.getKeys()) {
             PdfName key = (PdfName)element;
             PdfObject value = in.get(key);
             if (structTreeController != null && structTreeController.reader != null && (key.equals(PdfName.STRUCTPARENTS) || key.equals(PdfName.STRUCTPARENT))) {
-                    out.put(key, new PdfNumber(currentStructArrayNumber));
-                    structTreeController.copyStructTreeForPage((PdfNumber) value, currentStructArrayNumber++);
                     continue;
             }
             if (PdfName.PAGE.equals(type)) {
