@@ -60,6 +60,7 @@ import com.itextpdf.text.pdf.interfaces.PdfViewerPreferences;
  * PdfCopy.
  * @author  Paulo Soares
  */
+@Deprecated
 public class PdfCopyFields
 	implements PdfViewerPreferences, PdfEncryptionSettings {
 

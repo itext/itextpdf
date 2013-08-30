@@ -65,10 +65,11 @@ import com.itextpdf.text.pdf.AcroFields.Item;
  *
  * @author  psoares
  */
+@Deprecated
 class PdfCopyFieldsImp extends PdfWriter {
 
-    protected static final PdfName iTextTag = new PdfName("_iTextTag_");
-    protected static final Integer zero = Integer.valueOf(0);
+    private static final PdfName iTextTag = new PdfName("_iTextTag_");
+    private static final Integer zero = Integer.valueOf(0);
     ArrayList<PdfReader> readers = new ArrayList<PdfReader>();
     HashMap<PdfReader, IntHashtable> readers2intrefs = new HashMap<PdfReader, IntHashtable>();
     HashMap<PdfReader, IntHashtable> pages2intrefs = new HashMap<PdfReader, IntHashtable>();
@@ -151,7 +152,7 @@ class PdfCopyFieldsImp extends PdfWriter {
         updateCalculationOrder(reader);
     }
 
-    protected static String getCOName(PdfReader reader, PRIndirectReference ref) {
+    private static String getCOName(PdfReader reader, PRIndirectReference ref) {
         String name = "";
         while (ref != null) {
             PdfObject obj = PdfReader.getPdfObject(ref);

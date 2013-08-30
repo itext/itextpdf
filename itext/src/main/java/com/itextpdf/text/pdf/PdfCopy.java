@@ -133,6 +133,9 @@ public class PdfCopy extends PdfWriter {
     private HashMap<Integer, PdfIndirectObject> mergedMap;
     private HashSet<PdfIndirectObject> mergedSet;
     private boolean mergeFieldsInternalCall = false;
+    private static final PdfName iTextTag = new PdfName("_iTextTag_");
+    private static final Integer zero = Integer.valueOf(0);
+
 
     /**
      * A key to allow us to hash indirect references
@@ -1178,7 +1181,7 @@ public class PdfCopy extends PdfWriter {
             PdfObject obj = co.getPdfObject(k);
             if (obj == null || !obj.isIndirect())
                 continue;
-            String name = PdfCopyFieldsImp.getCOName(reader, (PRIndirectReference)obj);
+            String name = getCOName(reader, (PRIndirectReference) obj);
             if (af.getFieldItem(name) == null)
                 continue;
             name = "." + name;
@@ -1186,6 +1189,24 @@ public class PdfCopy extends PdfWriter {
                 continue;
             calculationOrder.add(name);
         }
+    }
+
+    private static String getCOName(PdfReader reader, PRIndirectReference ref) {
+        String name = "";
+        while (ref != null) {
+            PdfObject obj = PdfReader.getPdfObject(ref);
+            if (obj == null || obj.type() != PdfObject.DICTIONARY)
+                break;
+            PdfDictionary dic = (PdfDictionary)obj;
+            PdfString t = dic.getAsString(PdfName.T);
+            if (t != null) {
+                name = t.toUnicodeString()+ "." + name;
+            }
+            ref = (PRIndirectReference)dic.get(PdfName.PARENT);
+        }
+        if (name.endsWith("."))
+            name = name.substring(0, name.length() - 1);
+        return name;
     }
 
     private void mergeFields() {
@@ -1248,7 +1269,7 @@ public class PdfCopy extends PdfWriter {
                         hasSignature = true;
                     for (Object element : merged.getKeys()) {
                         PdfName key = (PdfName)element;
-                        if (PdfCopyFieldsImp.fieldKeys.containsKey(key))
+                        if (fieldKeys.contains(key))
                             field.put(key, merged.get(key));
                     }
                     ArrayList<Object> list = new ArrayList<Object>();
@@ -1298,10 +1319,10 @@ public class PdfCopy extends PdfWriter {
             PdfDictionary widget = new PdfDictionary();
             for (Object element : merged.getKeys()) {
                 PdfName key = (PdfName)element;
-                if (PdfCopyFieldsImp.widgetKeys.containsKey(key) || annotId.equals(key) || PdfName.TYPE.equals(key))
+                if (widgetKeys.contains(key))
                     widget.put(key, merged.get(key));
             }
-            widget.put(PdfCopyFieldsImp.iTextTag, new PdfNumber(item.getTabOrder(k).intValue() + 1));
+            widget.put(iTextTag, new PdfNumber(item.getTabOrder(k).intValue() + 1));
             list.add(widget);
         }
     }
@@ -1412,8 +1433,8 @@ public class PdfCopy extends PdfWriter {
                     dic.mergeDifferent((PdfDictionary)list.get(2));
                     int page = ((Integer)list.get(1)).intValue();
                     PdfArray annots = importedPages.get(page - 1).mergedFields;
-                    PdfNumber nn = (PdfNumber)dic.get(PdfCopyFieldsImp.iTextTag);
-                    dic.remove(PdfCopyFieldsImp.iTextTag);
+                    PdfNumber nn = (PdfNumber)dic.get(iTextTag);
+                    dic.remove(iTextTag);
                     dic.put(PdfName.TYPE, PdfName.ANNOT);
                     adjustTabOrder(annots, ind, nn);
                 }
@@ -1425,8 +1446,8 @@ public class PdfCopy extends PdfWriter {
                         PdfDictionary widget = new PdfDictionary();
                         widget.merge((PdfDictionary)list.get(k + 1));
                         widget.put(PdfName.PARENT, ind);
-                        PdfNumber nn = (PdfNumber)widget.get(PdfCopyFieldsImp.iTextTag);
-                        widget.remove(PdfCopyFieldsImp.iTextTag);
+                        PdfNumber nn = (PdfNumber)widget.get(iTextTag);
+                        widget.remove(iTextTag);
                         widget.put(PdfName.TYPE, PdfName.ANNOT);
                         PdfIndirectReference wref = addToBody(widget, getPdfIndirectReference(), true).getIndirectReference();
                         adjustTabOrder(annots, wref, nn);
@@ -1448,7 +1469,7 @@ public class PdfCopy extends PdfWriter {
             t = new ArrayList<Integer>();
             int size = annots.size() - 1;
             for (int k = 0; k < size; ++k) {
-                t.add(PdfCopyFieldsImp.zero);
+                t.add(zero);
             }
             t.add(Integer.valueOf(v));
             tabOrder.put(annots, t);
@@ -1586,6 +1607,47 @@ public class PdfCopy extends PdfWriter {
 //            }
 //        }
         super.freeReader(reader);
+    }
+
+    protected static final HashSet<PdfName> widgetKeys = new HashSet<PdfName>();
+    protected static final HashSet<PdfName> fieldKeys = new HashSet<PdfName>();
+    static {
+        widgetKeys.add(PdfName.SUBTYPE);
+        widgetKeys.add(PdfName.CONTENTS);
+        widgetKeys.add(PdfName.RECT);
+        widgetKeys.add(PdfName.NM);
+        widgetKeys.add(PdfName.M);
+        widgetKeys.add(PdfName.F);
+        widgetKeys.add(PdfName.BS);
+        widgetKeys.add(PdfName.BORDER);
+        widgetKeys.add(PdfName.AP);
+        widgetKeys.add(PdfName.AS);
+        widgetKeys.add(PdfName.C);
+        widgetKeys.add(PdfName.A);
+        widgetKeys.add(PdfName.STRUCTPARENT);
+        widgetKeys.add(PdfName.OC);
+        widgetKeys.add(PdfName.H);
+        widgetKeys.add(PdfName.MK);
+        widgetKeys.add(PdfName.DA);
+        widgetKeys.add(PdfName.Q);
+        widgetKeys.add(PdfName.P);
+        widgetKeys.add(PdfName.TYPE);
+        widgetKeys.add(annotId);
+        fieldKeys.add(PdfName.AA);
+        fieldKeys.add(PdfName.FT);
+        fieldKeys.add(PdfName.TU);
+        fieldKeys.add(PdfName.TM);
+        fieldKeys.add(PdfName.FF);
+        fieldKeys.add(PdfName.V);
+        fieldKeys.add(PdfName.DV);
+        fieldKeys.add(PdfName.DS);
+        fieldKeys.add(PdfName.RV);
+        fieldKeys.add(PdfName.OPT);
+        fieldKeys.add(PdfName.MAXLEN);
+        fieldKeys.add(PdfName.TI);
+        fieldKeys.add(PdfName.I);
+        fieldKeys.add(PdfName.LOCK);
+        fieldKeys.add(PdfName.SV);
     }
 
     /**
