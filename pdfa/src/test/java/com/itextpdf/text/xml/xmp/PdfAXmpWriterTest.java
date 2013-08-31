@@ -8,7 +8,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.*;
-import java.util.HashMap;
 
 public class PdfAXmpWriterTest {
     public static final String OUT_FOLDER = "./target/com/itextpdf/text/xml/xmp/";
