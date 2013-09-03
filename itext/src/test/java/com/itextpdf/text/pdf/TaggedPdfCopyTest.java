@@ -125,11 +125,11 @@ public class TaggedPdfCopyTest {
         PdfReader reader1 = new PdfReader(SOURCE11);
         copy.addPage(copy.getImportedPage(reader1, 76, true));
         copy.addPage(copy.getImportedPage(reader1, 83, true));
-        reader1.close();
         PdfReader reader2 = new PdfReader(SOURCE32);
         copy.addPage(copy.getImportedPage(reader2, 69, true));
         copy.addPage(copy.getImportedPage(reader2, 267, true));
         document.close();
+        reader1.close();
         reader2.close();
         PdfReader reader = new PdfReader(output);
         PdfDictionary structTreeRoot = verifyIsDictionary(reader.getCatalog().getDirectObject(PdfName.STRUCTTREEROOT), NO_STRUCT_TREE_ROOT);
@@ -714,6 +714,25 @@ public class TaggedPdfCopyTest {
 
         reader1.close();
         reader2.close();
+    }
+
+    @Test
+    public void copyTaggedPdf19() throws IOException, DocumentException {
+        initializeDocument("19");
+
+        PdfReader reader = new PdfReader(SOURCE18);
+        copy.addPage(copy.getImportedPage(reader, 1, true));
+
+        document.close();
+        reader.close();
+
+        reader = new PdfReader(output);
+
+        PdfDictionary page1 = reader.getPageN(1);
+        PdfDictionary t1_0 = page1.getAsDict(PdfName.RESOURCES).getAsDict(PdfName.XOBJECT).getAsStream(new PdfName("Fm0")).getAsDict(PdfName.RESOURCES).getAsDict(PdfName.FONT).getAsDict(new PdfName("T1_0"));
+        Assert.assertNotNull(t1_0);
+
+        reader.close();
     }
 
     @After

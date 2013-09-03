@@ -111,8 +111,6 @@ public class PdfCopy extends PdfWriter {
     protected ArrayList<PdfIndirectObject> savedObjects;
     //imported pages from getImportedPage(PdfReader, int, boolean)
     protected ArrayList<ImportedPage> importedPages;
-    //for correct cleaning of indirects in getImportedPage(), to avoid cleaning of streams
-    protected HashSet<RefKey> streams;
     //for correct update of kids in StructTreeRootController
     protected boolean updateRootKids = false;
 
@@ -212,7 +210,6 @@ public class PdfCopy extends PdfWriter {
         indirectObjects = new HashMap<RefKey, PdfIndirectObject>();
         savedObjects = new ArrayList<PdfIndirectObject>();
         importedPages = new ArrayList<ImportedPage>();
-        streams = new HashSet<RefKey>();
     }
 
     /**
@@ -325,10 +322,9 @@ public class PdfCopy extends PdfWriter {
             RefKey key = new RefKey(iRef);
             PdfIndirectObject iobj = indirectObjects.get(key);
             if (iobj == null) {
-                if (!streams.contains(key))
-                    forDelete.add(entry.getKey());
+                forDelete.add(entry.getKey());
             }
-            else if (iobj.object.isArray() || iobj.object.isDictionary()) {
+            else if (iobj.object.isArray() || iobj.object.isDictionary() || iobj.object.isDictionary()) {
                 forDelete.add(entry.getKey());
             }
         }
@@ -764,7 +760,7 @@ public class PdfCopy extends PdfWriter {
             updateReferences(object);
         }
         PdfIndirectObject indObj;
-        if ((tagged || mergeFields) && indirectObjects != null && (object.isArray() || object.isDictionary())) {
+        if ((tagged || mergeFields) && indirectObjects != null && (object.isArray() || object.isDictionary() || object.isStream())) {
             RefKey key = new RefKey(ref);
             PdfIndirectObject obj = indirectObjects.get(key);
             if (obj == null) {
@@ -773,8 +769,6 @@ public class PdfCopy extends PdfWriter {
             }
             indObj =  obj;
         } else {
-            if ((tagged || mergeFields) && object.isStream())
-                streams.add(new RefKey(ref));
             indObj = super.addToBody(object, ref);
         }
         if (mergeFields && object.isDictionary()) {
@@ -1002,6 +996,7 @@ public class PdfCopy extends PdfWriter {
                     findActivesFromArray((PdfArray)iobj.object, actives, activeKeys, activeClassMaps);
                     break;
                 case PdfObject.DICTIONARY:
+                case PdfObject.STREAM:
                     findActivesFromDict((PdfDictionary)iobj.object, actives, activeKeys, activeClassMaps);
                     break;
             }
@@ -1029,6 +1024,7 @@ public class PdfCopy extends PdfWriter {
                     findActivesFromArray((PdfArray)obj, actives, activeKeys, activeClassMaps);
                     break;
                 case PdfObject.DICTIONARY:
+                case PdfObject.STREAM:
                     findActivesFromDict((PdfDictionary)obj, actives, activeKeys, activeClassMaps);
                     break;
             }
@@ -1057,6 +1053,7 @@ public class PdfCopy extends PdfWriter {
                     findActivesFromArray((PdfArray)obj, actives, activeKeys, activeClassMaps);
                     break;
                 case PdfObject.DICTIONARY:
+                case PdfObject.STREAM:
                     findActivesFromDict((PdfDictionary)obj, actives, activeKeys, activeClassMaps);
                     break;
             }
