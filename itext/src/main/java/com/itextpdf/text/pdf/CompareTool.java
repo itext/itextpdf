@@ -46,6 +46,7 @@ package com.itextpdf.text.pdf;
 import com.itextpdf.text.xml.xmp.PdfProperties;
 import com.itextpdf.text.xml.xmp.XmpBasicProperties;
 import com.itextpdf.xmp.*;
+import com.itextpdf.xmp.options.SerializeOptions;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -235,7 +236,7 @@ public class CompareTool {
                 XMPUtils.removeProperties(xmpMeta, XMPConst.NS_XMP, XmpBasicProperties.METADATADATE, true, true);
                 XMPUtils.removeProperties(xmpMeta, XMPConst.NS_PDF, PdfProperties.PRODUCER, true, true);
 
-                cmpBytes = XMPMetaFactory.serializeToBuffer(xmpMeta, null);
+                cmpBytes = XMPMetaFactory.serializeToBuffer(xmpMeta, new SerializeOptions(SerializeOptions.SORT));
 
                 xmpMeta = XMPMetaFactory.parseFromBuffer(outBytes);
                 XMPUtils.removeProperties(xmpMeta, XMPConst.NS_XMP, XmpBasicProperties.CREATEDATE, true, true);
@@ -243,7 +244,7 @@ public class CompareTool {
                 XMPUtils.removeProperties(xmpMeta, XMPConst.NS_XMP, XmpBasicProperties.METADATADATE, true, true);
                 XMPUtils.removeProperties(xmpMeta, XMPConst.NS_PDF, PdfProperties.PRODUCER, true, true);
 
-                outBytes = XMPMetaFactory.serializeToBuffer(xmpMeta, null);
+                outBytes = XMPMetaFactory.serializeToBuffer(xmpMeta, new SerializeOptions(SerializeOptions.SORT));
             }
 
             if (!compareXmls(cmpBytes, outBytes)) {
