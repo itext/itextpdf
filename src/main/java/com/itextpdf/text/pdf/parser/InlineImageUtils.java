@@ -303,9 +303,13 @@ public final class InlineImageUtils {
             bytes[i] = (byte)ch;
         }
         PdfObject ei = ps.readPRObject();
-        if (!ei.toString().equals("EI"))
-            throw new InlineImageParseException("EI not found after end of image data");
-        
+        if (!ei.toString().equals("EI")) {
+            // Some PDF producers seem to add another non-whitespace character after the image data.
+            // Let's try to handle that case here.
+            PdfObject ei2 = ps.readPRObject();
+            if (!ei2.toString().equals("EI"))
+                throw new InlineImageParseException("EI not found after end of image data");
+        }
         return bytes;
     }
     
