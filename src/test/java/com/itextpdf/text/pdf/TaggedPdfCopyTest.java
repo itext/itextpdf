@@ -41,6 +41,9 @@ public class TaggedPdfCopyTest {
     public static final String SOURCE62 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/6/source62.pdf";
     public static final String SOURCE63 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/6/source63.pdf";
     public static final String SOURCE64 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/6/source64.pdf";
+    public static final String SOURCE_AC =  "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/1/ac.pdf";
+    public static final String SOURCE_RH =  "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/1/rh.pdf";
+
 
     public static final String OUT = "./target/com/itextpdf/test/pdf/TaggedPdfCopyTest/out";
 
@@ -733,6 +736,28 @@ public class TaggedPdfCopyTest {
         Assert.assertNotNull(t1_0);
 
         reader.close();
+    }
+
+    @Test
+    public void copyTaggedPdf20() throws IOException, DocumentException {
+        initializeDocument("20");
+
+        copy.setMergeFields();
+        PdfReader reader1 = new PdfReader(SOURCE_AC);
+        PdfReader reader2 = new PdfReader(SOURCE_RH);
+
+        copy.addPage(copy.getImportedPage(reader1, 1, true));
+        copy.addPage(copy.getImportedPage(reader2, 1, true));
+        copy.addPage(copy.getImportedPage(reader1, 2, true));
+        copy.addPage(copy.getImportedPage(reader2, 2, true));
+        copy.addPage(copy.getImportedPage(reader1, 1, true));
+        copy.addPage(copy.getImportedPage(reader1, 2, true));
+        copy.addPage(copy.getImportedPage(reader2, 1, true));
+        copy.addPage(copy.getImportedPage(reader2, 2, true));
+
+        document.close();
+        reader1.close();
+        reader2.close();
     }
 
     @After
