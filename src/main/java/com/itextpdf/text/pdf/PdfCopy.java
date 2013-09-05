@@ -652,24 +652,18 @@ public class PdfCopy extends PdfWriter {
      * @throws IOException, BadPdfFormatException
      */
     public void addPage(PdfImportedPage iPage) throws IOException, BadPdfFormatException {
+        addPage(iPage, true);
+    }
+
+    private void addPage(PdfImportedPage iPage, boolean assignAnnotIds) throws IOException, BadPdfFormatException {
         int pageNum = setFromIPage(iPage);
         if (mergeFields) {
+            if (assignAnnotIds) {
+                assignAnnotIds(reader);
+            }
             if (!readers.contains(reader)) {
                 reader.consolidateNamedDestinations();
                 reader.shuffleSubsetNames();
-                for (int i = 1; i <= reader.getNumberOfPages(); i++) {
-                    PdfDictionary page = reader.getPageNRelease(i);
-                    if (page != null && page.contains(PdfName.ANNOTS)) {
-                        PdfArray annots = page.getAsArray(PdfName.ANNOTS);
-                        if (annots != null) {
-                            for (int j = 0; j < annots.size(); j++) {
-                                PdfDictionary annot = annots.getAsDict(j);
-                                if (annot != null)
-                                    annot.put(annotId, new PdfNumber(++annotIdCnt));
-                            }
-                        }
-                    }
-                }
                 updateCalculationOrder(reader);
                 readers.add(reader);
             }
@@ -731,9 +725,28 @@ public class PdfCopy extends PdfWriter {
         }
         if (!reader.isOpenedWithFullPermissions())
             throw new BadPasswordException(MessageLocalization.getComposedMessage("pdfreader.not.opened.with.owner.password"));
+        assignAnnotIds(reader);
         boolean tagged = PdfStructTreeController.checkTagged(reader);
         for (int i = 1; i <= reader.getNumberOfPages(); i++) {
-            addPage(getImportedPage(reader, i, tagged && this.tagged));
+            addPage(getImportedPage(reader, i, tagged && this.tagged), false);
+        }
+    }
+
+    private void assignAnnotIds(PdfReader reader) {
+        if (mergeFields) {
+            for (int i = 1; i <= reader.getNumberOfPages(); i++) {
+                PdfDictionary page = reader.getPageNRelease(i);
+                if (page != null && page.contains(PdfName.ANNOTS)) {
+                    PdfArray annots = page.getAsArray(PdfName.ANNOTS);
+                    if (annots != null) {
+                        for (int j = 0; j < annots.size(); j++) {
+                            PdfDictionary annot = annots.getAsDict(j);
+                            if (annot != null)
+                                annot.put(annotId, new PdfNumber(++annotIdCnt));
+                        }
+                    }
+                }
+            }
         }
     }
 
