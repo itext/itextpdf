@@ -132,6 +132,10 @@ public class AcroFields {
     private ArrayList<BaseFont> substitutionFonts;
 
     AcroFields(PdfReader reader, PdfWriter writer) {
+        this(reader, writer, 0);
+    }
+
+    AcroFields(PdfReader reader, PdfWriter writer, int pageNum) {
         this.reader = reader;
         this.writer = writer;
         try {
@@ -143,10 +147,14 @@ public class AcroFields {
         if (writer instanceof PdfStamperImp) {
             append = ((PdfStamperImp)writer).isAppend();
         }
-        fill();
+        fill(pageNum);
     }
 
     void fill() {
+        fill(0);
+    }
+
+    void fill(int pageNum) {
         fields = new HashMap<String, Item>();
         PdfDictionary top = (PdfDictionary)PdfReader.getPdfObjectRelease(reader.getCatalog().get(PdfName.ACROFORM));
         if (top == null)
@@ -159,7 +167,11 @@ public class AcroFields {
         PdfArray arrfds = (PdfArray)PdfReader.getPdfObjectRelease(top.get(PdfName.FIELDS));
         if (arrfds == null || arrfds.size() == 0)
             return;
-        for (int k = 1; k <= reader.getNumberOfPages(); ++k) {
+        int firstPage = 1;
+        int lastPage = reader.getNumberOfPages();
+        if (pageNum != 0)
+            firstPage = lastPage = pageNum;
+        for (int k = firstPage; k <= lastPage; ++k) {
             PdfDictionary page = reader.getPageNRelease(k);
             PdfArray annots = (PdfArray)PdfReader.getPdfObjectRelease(page.get(PdfName.ANNOTS), page);
             if (annots == null)
