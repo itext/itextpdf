@@ -390,6 +390,11 @@ public class PdfName extends PdfObject implements Comparable<PdfName> {
     public static final PdfName COLORS = new PdfName("Colors");
     /** A name */
     public static final PdfName COLORSPACE = new PdfName("ColorSpace");
+    /** 
+     * A name
+     * @since 5.4.4 
+     */
+    public static final PdfName COLORTRANSFORM = new PdfName("ColorTransform");
     /** A name */
     public static final PdfName COLLECTION = new PdfName("Collection");
     /** A name */
