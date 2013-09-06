@@ -183,6 +183,11 @@ public class PdfImage extends PdfStream {
             switch(image.type()) {
                 case Image.JPEG:
                     put(PdfName.FILTER, PdfName.DCTDECODE);
+                    if (image.getColorTransform() == 0) {
+                        PdfDictionary decodeparms = new PdfDictionary();
+                        decodeparms.put(PdfName.COLORTRANSFORM, new PdfNumber(0));
+                        put(PdfName.DECODEPARMS, decodeparms);
+                    }
                     switch(image.getColorspace()) {
                         case 1:
                             put(PdfName.COLORSPACE, PdfName.DEVICEGRAY);
