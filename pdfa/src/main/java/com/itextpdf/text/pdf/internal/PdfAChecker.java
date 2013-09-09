@@ -128,7 +128,7 @@ abstract public class PdfAChecker {
                 checkForm(writer, key, obj1);
                 break;
             case PdfIsoKeys.PDFISOKEY_STRUCTELEM:
-                if (PdfAConformanceLevel.checkStructure(conformanceLevel))
+                if (checkStructure(conformanceLevel))
                     checkStructElem(writer, key, obj1);
                 break;
             default:
@@ -136,4 +136,9 @@ abstract public class PdfAChecker {
         }
     }
 
+    public static boolean checkStructure(PdfAConformanceLevel conformanceLevel) {
+        return conformanceLevel == PdfAConformanceLevel.PDF_A_1A
+                || conformanceLevel == PdfAConformanceLevel.PDF_A_2A
+                || conformanceLevel == PdfAConformanceLevel.PDF_A_3A;
+    }
 }
