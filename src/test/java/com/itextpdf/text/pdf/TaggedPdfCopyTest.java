@@ -41,9 +41,6 @@ public class TaggedPdfCopyTest {
     public static final String SOURCE62 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/6/source62.pdf";
     public static final String SOURCE63 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/6/source63.pdf";
     public static final String SOURCE64 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/6/source64.pdf";
-    public static final String SOURCE_AC =  "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/1/ac.pdf";
-    public static final String SOURCE_RH =  "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/1/rh.pdf";
-
 
     public static final String OUT = "./target/com/itextpdf/test/pdf/TaggedPdfCopyTest/out";
 
@@ -693,7 +690,6 @@ public class TaggedPdfCopyTest {
         Assert.assertEquals(2, reader.getNumberOfPages());
         Assert.assertNotNull(reader.getPageN(1));
         Assert.assertNotNull(reader.getPageN(2));
-        verifyIfAnnotsHaveCorrectStructParent(reader);
         reader.close();
     }
 
@@ -708,19 +704,16 @@ public class TaggedPdfCopyTest {
         copy.addDocument(reader1);
         copy.addDocument(reader2);
         document.close();
-        reader1.close();
-        reader2.close();
 
         PdfReader reader = new PdfReader(output);
         Assert.assertEquals(reader1.getNumberOfPages() + reader2.getNumberOfPages(), reader.getNumberOfPages());
         for (int i = 1; i <= reader.getNumberOfPages(); i++) {
             Assert.assertNotNull(reader.getPageN(i));
         }
-
-        verifyIfAnnotsHaveCorrectStructParent(reader);
-
         reader.close();
 
+        reader1.close();
+        reader2.close();
     }
 
     @Test
@@ -739,38 +732,7 @@ public class TaggedPdfCopyTest {
         PdfDictionary t1_0 = page1.getAsDict(PdfName.RESOURCES).getAsDict(PdfName.XOBJECT).getAsStream(new PdfName("Fm0")).getAsDict(PdfName.RESOURCES).getAsDict(PdfName.FONT).getAsDict(new PdfName("T1_0"));
         Assert.assertNotNull(t1_0);
 
-        verifyIfAnnotsHaveCorrectStructParent(reader);
-
         reader.close();
-    }
-
-    @Test
-    public void copyTaggedPdf20() throws IOException, DocumentException {
-        initializeDocument("20");
-
-        copy.setMergeFields();
-        PdfReader reader1 = new PdfReader(SOURCE_AC);
-        PdfReader reader2 = new PdfReader(SOURCE_RH);
-
-        copy.addPage(copy.getImportedPage(reader1, 1, true));
-        copy.addPage(copy.getImportedPage(reader2, 1, true));
-        copy.addPage(copy.getImportedPage(reader1, 2, true));
-        copy.addPage(copy.getImportedPage(reader2, 2, true));
-        copy.addPage(copy.getImportedPage(reader1, 1, true));
-        copy.addPage(copy.getImportedPage(reader1, 2, true));
-        copy.addPage(copy.getImportedPage(reader2, 1, true));
-        copy.addPage(copy.getImportedPage(reader2, 2, true));
-
-        document.close();
-        reader1.close();
-        reader2.close();
-
-        PdfReader reader = new PdfReader(output);
-
-        verifyIfAnnotsHaveCorrectStructParent(reader);
-
-        reader.close();
-
     }
 
     @After
@@ -780,34 +742,6 @@ public class TaggedPdfCopyTest {
 
     private PdfArray verifyArraySize(PdfObject obj, Integer size, String message) {
         return verifyArraySize(obj, size, message, false);
-    }
-
-    private void verifyIfAnnotsHaveCorrectStructParent(PdfReader reader) {
-        PdfArray nums = reader.getCatalog().getAsDict(PdfName.STRUCTTREEROOT).getAsDict(PdfName.PARENTTREE).getAsArray(PdfName.NUMS);
-        for (int i = 0; i < nums.size();) {
-            int structParent = nums.getAsNumber(i).intValue();
-            i++;
-            PdfDictionary dict = nums.getAsDict(i);
-            i++;
-            if (dict != null) {
-                PdfDictionary kDict = dict.getAsDict(PdfName.K);
-                if (kDict == null) {
-                    PdfArray kArray = dict.getAsArray(PdfName.K);
-                    boolean structParentFound = false;
-                    for (int k = 0; k < kArray.size(); k++) {
-                        PdfDictionary kElem = kArray.getAsDict(k);
-                        if (kElem != null && structParent == kElem.getAsDict(PdfName.OBJ).getAsNumber(PdfName.STRUCTPARENT).intValue()) {
-                            structParentFound = true;
-                        }
-                    }
-                    if (!structParentFound) {
-                        Assert.fail(String.format("ParentTree element %s does not have corresponding StructParent element", structParent));
-                    }
-                } else {
-                    Assert.assertEquals(structParent, kDict.getAsDict(PdfName.OBJ).getAsNumber(PdfName.STRUCTPARENT).intValue());
-                }
-            }
-        }
     }
 
     private PdfArray verifyArraySize(PdfObject obj, Integer size, String message, boolean ignoreIfNotArray) {

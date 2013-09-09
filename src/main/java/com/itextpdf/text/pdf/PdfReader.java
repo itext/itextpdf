@@ -3343,10 +3343,6 @@ public class PdfReader implements PdfViewerPreferences {
         return new AcroFields(this, null);
     }
 
-    public AcroFields getAcroFields(int pageNum) {
-        return new AcroFields(this, null, pageNum);
-    }
-
     /**
      * Gets the global document JavaScript.
      * @param file the document file
