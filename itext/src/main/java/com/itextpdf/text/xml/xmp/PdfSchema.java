@@ -48,6 +48,7 @@ import com.itextpdf.text.Version;
 /**
  * An implementation of an XmpSchema.
  */
+@Deprecated
 public class PdfSchema extends XmpSchema {
 
 	private static final long serialVersionUID = -1541148669123992185L;

@@ -46,7 +46,6 @@ package com.itextpdf.text;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.UUID;
 import java.util.HashMap;
 import java.util.List;
 
@@ -790,11 +789,11 @@ public class Section extends ArrayList<Element> implements TextElementArray, Lar
         title.setRole(role);
     }
 
-    public UUID getId() {
+    public AccessibleElementId getId() {
         return title.getId();
     }
 
-    public void setId(final UUID id) {
+    public void setId(final AccessibleElementId id) {
         title.setId(id);
     }
 

@@ -474,6 +474,9 @@ public class TiffImage {
                     jpeg = jpegwithtables;
                 }
                 img = new Jpeg(jpeg);
+                if (photometric == TIFFConstants.PHOTOMETRIC_RGB) {
+                    img.setColorTransform(0);
+                }
             } 
             else {
                 for (int k = 0; k < offset.length; ++k) {

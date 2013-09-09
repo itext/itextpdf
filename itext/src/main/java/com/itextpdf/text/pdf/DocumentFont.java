@@ -49,10 +49,9 @@ import java.util.Map;
 
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.ExceptionConverter;
+import com.itextpdf.text.Utilities;
 import com.itextpdf.text.io.RandomAccessSourceFactory;
-import com.itextpdf.text.pdf.fonts.cmaps.CMapParserEx;
-import com.itextpdf.text.pdf.fonts.cmaps.CMapToUnicode;
-import com.itextpdf.text.pdf.fonts.cmaps.CidLocationFromByte;
+import com.itextpdf.text.pdf.fonts.cmaps.*;
 
 /**
  *
@@ -77,6 +76,8 @@ public class DocumentFont extends BaseFont {
     private float urx = 100;
     private float ury = 900;
     protected boolean isType0 = false;
+    protected int defaultWidth = 1000;
+    private IntHashtable hMetrics;
     protected String cjkEncoding;
     protected String uniMap;
 
@@ -123,7 +124,7 @@ public class DocumentFont extends BaseFont {
         fontType = FONT_TYPE_DOCUMENT;
         PdfName baseFont = font.getAsName(PdfName.BASEFONT);
         fontName = baseFont != null ? PdfName.decodeName(baseFont.toString()) : "Unspecified Font Name";
-            PdfName subType = font.getAsName(PdfName.SUBTYPE);
+        PdfName subType = font.getAsName(PdfName.SUBTYPE);
         if (PdfName.TYPE1.equals(subType) || PdfName.TRUETYPE.equals(subType))
             doType1TT();
         else {
@@ -140,11 +141,22 @@ public class DocumentFont extends BaseFont {
                     }
                     cjkEncoding = enc;
                     uniMap = ((CJKFont)cjkMirror).getUniMap();
-                    return;
                 }
-                if (PdfName.TYPE0.equals(subType) && enc.equals("Identity-H")) {
-                    processType0(font);
+                if (PdfName.TYPE0.equals(subType)) {
                     isType0 = true;
+                    if (!enc.equals("Identity-H") && cjkMirror != null) {
+                        PdfArray df = (PdfArray) PdfReader.getPdfObjectRelease(font.get(PdfName.DESCENDANTFONTS));
+                        PdfDictionary cidft = (PdfDictionary) PdfReader.getPdfObjectRelease(df.getPdfObject(0));
+                        PdfNumber dwo = (PdfNumber) PdfReader.getPdfObjectRelease(cidft.get(PdfName.DW));
+                        if (dwo != null)
+                            defaultWidth = dwo.intValue();
+                        hMetrics = readWidths((PdfArray) PdfReader.getPdfObjectRelease(cidft.get(PdfName.W)));
+
+                        PdfDictionary fontDesc = (PdfDictionary) PdfReader.getPdfObjectRelease(cidft.get(PdfName.FONTDESCRIPTOR));
+                        fillFontDesc(fontDesc);
+                    } else {
+                        processType0(font);
+                    }
                 }
             }
         }
@@ -638,36 +650,64 @@ public class DocumentFont extends BaseFont {
      */
     @Override
     public int getWidth(int char1) {
+        if (isType0) {
+            if(hMetrics != null && cjkMirror != null && !cjkMirror.isVertical()) {
+                int c = cjkMirror.getCidCode(char1);
+                int v = hMetrics.get(c);
+                if (v > 0)
+                    return v;
+                else
+                    return defaultWidth;
+            } else {
+                int[] ws = metrics.get(Integer.valueOf(char1));
+                if (ws != null)
+                    return ws[1];
+                else
+                    return 0;
+            }
+        }
         if (cjkMirror != null)
             return cjkMirror.getWidth(char1);
-        else if (isType0) {
-            int[] ws = metrics.get(Integer.valueOf(char1));
-            if (ws != null)
-                return ws[1];
-            else
-                return 0;
-        }
-        else
-            return super.getWidth(char1);
+        return super.getWidth(char1);
     }
 
     @Override
     public int getWidth(String text) {
-        if (cjkMirror != null)
-            return cjkMirror.getWidth(text);
-        else if (isType0) {
-            char[] chars = text.toCharArray();
-            int len = chars.length;
+        if (isType0) {
             int total = 0;
-            for (int k = 0; k < len; ++k) {
-                int[] ws = metrics.get(Integer.valueOf(chars[k]));
-                if (ws != null)
-                    total += ws[1];
+            if(hMetrics != null && cjkMirror != null && !cjkMirror.isVertical()) {
+                if (((CJKFont)cjkMirror).isIdentity()) {
+                    for (int k = 0; k < text.length(); ++k) {
+                        total += getWidth(text.charAt(k));
+                    }
+                }
+                else {
+                    for (int k = 0; k < text.length(); ++k) {
+                        int val;
+                        if (Utilities.isSurrogatePair(text, k)) {
+                            val = Utilities.convertToUtf32(text, k);
+                            k++;
+                        }
+                        else {
+                            val = text.charAt(k);
+                        }
+                        total += getWidth(val);
+                    }
+                }
+            } else {
+                char[] chars = text.toCharArray();
+                int len = chars.length;
+                for (int k = 0; k < len; ++k) {
+                    int[] ws = metrics.get(Integer.valueOf(chars[k]));
+                    if (ws != null)
+                        total += ws[1];
+                }
             }
             return total;
         }
-        else
-            return super.getWidth(text);
+        if (cjkMirror != null)
+            return cjkMirror.getWidth(text);
+        return super.getWidth(text);
     }
 
     @Override

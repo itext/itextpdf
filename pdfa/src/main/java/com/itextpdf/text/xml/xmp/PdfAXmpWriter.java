@@ -44,6 +44,8 @@
 package com.itextpdf.text.xml.xmp;
 
 import com.itextpdf.text.pdf.*;
+import com.itextpdf.xmp.XMPConst;
+import com.itextpdf.xmp.XMPException;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -58,13 +60,32 @@ public class PdfAXmpWriter extends XmpWriter {
     /**
      * Creates and XMP writer that adds info about the PDF/A conformance level.
      * @param os
+     * @param conformanceLevel
+     * @throws IOException
+     */
+    public PdfAXmpWriter(OutputStream os, PdfAConformanceLevel conformanceLevel) throws IOException {
+        super(os);
+        try {
+            addRdfDescription(conformanceLevel);
+        } catch (XMPException xmpExc) {
+            throw new IOException(xmpExc.getMessage());
+        }
+    }
+
+    /**
+     * Creates and XMP writer that adds info about the PDF/A conformance level.
+     * @param os
      * @param info
      * @param conformanceLevel
      * @throws IOException
      */
     public PdfAXmpWriter(OutputStream os, PdfDictionary info, PdfAConformanceLevel conformanceLevel) throws IOException {
         super(os, info);
-        addRdfDescription(conformanceLevel);
+        try {
+            addRdfDescription(conformanceLevel);
+        } catch (XMPException xmpExc) {
+            throw new IOException(xmpExc.getMessage());
+        }
     }
 
     /**
@@ -76,7 +97,11 @@ public class PdfAXmpWriter extends XmpWriter {
      */
     public PdfAXmpWriter(OutputStream os, Map<String, String> info, PdfAConformanceLevel conformanceLevel) throws IOException {
         super(os, info);
-        addRdfDescription(conformanceLevel);
+        try {
+            addRdfDescription(conformanceLevel);
+        } catch (XMPException xmpExc) {
+            throw new IOException(xmpExc.getMessage());
+        }
     }
 
     /**
@@ -84,45 +109,42 @@ public class PdfAXmpWriter extends XmpWriter {
      * @param conformanceLevel
      * @throws IOException
      */
-    private void addRdfDescription(PdfAConformanceLevel conformanceLevel) throws IOException {
-        PdfASchema schema = new PdfASchema();
+    private void addRdfDescription(PdfAConformanceLevel conformanceLevel) throws XMPException {
         switch (conformanceLevel) {
             case PDF_A_1A:
-                schema.addPart("1");
-                schema.addConformance("A");
+                xmpMeta.setProperty(XMPConst.NS_PDFA_ID, PdfAProperties.PART, "1");
+                xmpMeta.setProperty(XMPConst.NS_PDFA_ID, PdfAProperties.CONFORMANCE, "A");
                 break;
             case PDF_A_1B:
-                schema.addPart("1");
-                schema.addConformance("B");
+                xmpMeta.setProperty(XMPConst.NS_PDFA_ID, PdfAProperties.PART, "1");
+                xmpMeta.setProperty(XMPConst.NS_PDFA_ID, PdfAProperties.CONFORMANCE, "B");
                 break;
             case PDF_A_2A:
-                schema.addPart("2");
-                schema.addConformance("A");
+                xmpMeta.setProperty(XMPConst.NS_PDFA_ID, PdfAProperties.PART, "2");
+                xmpMeta.setProperty(XMPConst.NS_PDFA_ID, PdfAProperties.CONFORMANCE, "A");
                 break;
             case PDF_A_2B:
-                schema.addPart("2");
-                schema.addConformance("B");
+                xmpMeta.setProperty(XMPConst.NS_PDFA_ID, PdfAProperties.PART, "2");
+                xmpMeta.setProperty(XMPConst.NS_PDFA_ID, PdfAProperties.CONFORMANCE, "B");
                 break;
             case PDF_A_2U:
-                schema.addPart("2");
-                schema.addConformance("U");
+                xmpMeta.setProperty(XMPConst.NS_PDFA_ID, PdfAProperties.PART, "2");
+                xmpMeta.setProperty(XMPConst.NS_PDFA_ID, PdfAProperties.CONFORMANCE, "U");
                 break;
             case PDF_A_3A:
-                schema.addPart("3");
-                schema.addConformance("A");
+                xmpMeta.setProperty(XMPConst.NS_PDFA_ID, PdfAProperties.PART, "3");
+                xmpMeta.setProperty(XMPConst.NS_PDFA_ID, PdfAProperties.CONFORMANCE, "A");
                 break;
             case PDF_A_3B:
-                schema.addPart("3");
-                schema.addConformance("B");
+                xmpMeta.setProperty(XMPConst.NS_PDFA_ID, PdfAProperties.PART, "3");
+                xmpMeta.setProperty(XMPConst.NS_PDFA_ID, PdfAProperties.CONFORMANCE, "B");
                 break;
             case PDF_A_3U:
-                schema.addPart("3");
-                schema.addConformance("U");
+                xmpMeta.setProperty(XMPConst.NS_PDFA_ID, PdfAProperties.PART, "3");
+                xmpMeta.setProperty(XMPConst.NS_PDFA_ID, PdfAProperties.CONFORMANCE, "U");
                 break;
             default:
                 break;
         }
-        super.addRdfDescription(schema);
     }
-
 }

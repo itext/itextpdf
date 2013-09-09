@@ -52,7 +52,6 @@ import com.itextpdf.text.pdf.internal.PdfIsoKeys;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 
 /**
@@ -122,7 +121,7 @@ public class PdfStructureElement extends PdfDictionary implements IPdfStructureE
     }
 
     private void init(PdfDictionary parent, PdfName structureType) {
-        if (!Arrays.asList(top.getWriter().getStandardStructElems()).contains(structureType)) {
+        if (!top.getWriter().getStandardStructElems().contains(structureType)) {
             PdfDictionary roleMap = top.getAsDict(PdfName.ROLEMAP);
             if (roleMap == null || !roleMap.contains(structureType))
                 throw new ExceptionConverter(new DocumentException(MessageLocalization.getComposedMessage("unknown.structure.element.role.1", structureType.toString())));

@@ -43,10 +43,10 @@
  */
 package com.itextpdf.text;
 
-import java.util.List;
-import java.util.ArrayList;
-
 import com.itextpdf.text.pdf.GrayColor;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A <CODE>Rectangle</CODE> is the representation of a geometric figure.
@@ -205,6 +205,14 @@ public class Rectangle implements Element {
 		this(rect.llx, rect.lly, rect.urx, rect.ury);
 		cloneNonPositionParameters(rect);
 	}
+
+    /**
+     * Constructs a <CODE>Rectangle</CODE>-object based on a <CODE>com.itextpdf.awt.geom.Rectangle</CODE> object
+     * @param rect com.itextpdf.awt.geom.Rectangle
+     */
+    public Rectangle(com.itextpdf.awt.geom.Rectangle rect) {
+        this((float) rect.getX(),(float) rect.getY(),(float) (rect.getX() + rect.getWidth()),(float) (rect.getY() + rect.getHeight()));
+    }
 
 	// IMPLEMENTATION OF THE ELEMENT INTERFACE:e
 
@@ -909,4 +917,16 @@ public class Rectangle implements Element {
 		return buf.toString();
 	}
 
+    @Override
+    public boolean equals(Object obj) {
+        if ( obj instanceof Rectangle ) {
+            Rectangle other = (Rectangle) obj;
+            // should we normalize here?
+            // normalization changes the structure and coordinates of the rectangle, so I'm inclined not to call normalize()
+            // but it needs to be considered ~ Michaël D.
+            return other.llx == this.llx && other.lly == this.lly && other.urx == this.urx && other.ury == this.ury && other.rotation == this.rotation;
+        } else {
+            return false;
+        }
+    }
 }

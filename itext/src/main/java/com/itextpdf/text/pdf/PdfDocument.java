@@ -51,7 +51,6 @@ import com.itextpdf.text.pdf.collection.PdfCollection;
 import com.itextpdf.text.pdf.draw.DrawInterface;
 import com.itextpdf.text.pdf.interfaces.IAccessibleElement;
 import com.itextpdf.text.pdf.internal.PdfAnnotationsImp;
-import com.itextpdf.text.pdf.internal.PdfIsoKeys;
 import com.itextpdf.text.pdf.internal.PdfViewerPreferencesImp;
 
 import java.io.IOException;
@@ -299,7 +298,7 @@ public class PdfDocument extends Document {
     /** The <CODE>PdfWriter</CODE>. */
     protected PdfWriter writer;
 
-    protected HashMap<UUID, PdfStructureElement> structElements = new HashMap<UUID, PdfStructureElement>();
+    protected HashMap<AccessibleElementId, PdfStructureElement> structElements = new HashMap<AccessibleElementId, PdfStructureElement>();
 
     protected boolean openMCDocument = false;
 
@@ -736,7 +735,15 @@ public class PdfDocument extends Document {
                 case Element.IMGRAW:
                 case Element.IMGTEMPLATE: {
                     //carriageReturn(); suggestion by Marc Campforts
+                    if (isTagged(writer)) {
+                        flushLines();
+                        text.openMCBlock((Image)element);
+                    }
                     add((Image) element);
+                    if (isTagged(writer)) {
+                        flushLines();
+                        text.closeMCBlock((Image)element);
+                    }
                     break;
                 }
                 case Element.YMARK: {

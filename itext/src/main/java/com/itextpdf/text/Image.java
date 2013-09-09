@@ -49,13 +49,27 @@ import java.lang.reflect.Constructor;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
-import java.util.UUID;
 
 import com.itextpdf.awt.PdfGraphics2D;
 import com.itextpdf.text.api.Indentable;
 import com.itextpdf.text.api.Spaceable;
 import com.itextpdf.text.error_messages.MessageLocalization;
-import com.itextpdf.text.pdf.*;
+import com.itextpdf.text.pdf.ICC_Profile;
+import com.itextpdf.text.pdf.PRIndirectReference;
+import com.itextpdf.text.pdf.PdfArray;
+import com.itextpdf.text.pdf.PdfContentByte;
+import com.itextpdf.text.pdf.PdfDictionary;
+import com.itextpdf.text.pdf.PdfIndirectReference;
+import com.itextpdf.text.pdf.PdfName;
+import com.itextpdf.text.pdf.PdfNumber;
+import com.itextpdf.text.pdf.PdfOCG;
+import com.itextpdf.text.pdf.PdfObject;
+import com.itextpdf.text.pdf.PdfReader;
+import com.itextpdf.text.pdf.PdfStream;
+import com.itextpdf.text.pdf.PdfString;
+import com.itextpdf.text.pdf.PdfTemplate;
+import com.itextpdf.text.pdf.PdfWriter;
+import com.itextpdf.text.pdf.RandomAccessFileOrArray;
 import com.itextpdf.text.pdf.codec.BmpImage;
 import com.itextpdf.text.pdf.codec.CCITTG4Encoder;
 import com.itextpdf.text.pdf.codec.GifImage;
@@ -204,7 +218,7 @@ public abstract class Image extends Rectangle implements Indentable, Spaceable, 
 
     protected PdfName role = PdfName.FIGURE;
     protected HashMap<PdfName, PdfObject> accessibleAttributes = null;
-    private UUID id = null;
+    private AccessibleElementId id = null;
 
 
 	// image from file or URL
@@ -1632,7 +1646,17 @@ public abstract class Image extends Rectangle implements Indentable, Spaceable, 
 	public int getColorspace() {
 		return colorspace;
 	}
+	
+	protected int colortransform = 1;
 
+    public void setColorTransform(int c) {
+        colortransform = c;
+    }
+
+    public int getColorTransform() {
+	    return colortransform;
+	}
+	
 	/** Image color inversion */
 	protected boolean invert = false;
 
@@ -1911,13 +1935,13 @@ public abstract class Image extends Rectangle implements Indentable, Spaceable, 
         this.role = role;
     }
 
-    public UUID getId() {
+    public AccessibleElementId getId() {
         if (id == null)
-            id = UUID.randomUUID();
+            id = new AccessibleElementId();
         return id;
     }
 
-    public void setId(final UUID id) {
+    public void setId(final AccessibleElementId id) {
         this.id = id;
     }
 

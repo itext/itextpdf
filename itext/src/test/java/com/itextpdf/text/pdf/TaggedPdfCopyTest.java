@@ -694,6 +694,29 @@ public class TaggedPdfCopyTest {
     }
 
     @Test
+    public void copyTaggedPdf18() throws IOException, DocumentException {
+        initializeDocument("18");
+
+        copy.setMergeFields();
+
+        PdfReader reader1 = new PdfReader(SOURCE10);
+        PdfReader reader2 = new PdfReader(SOURCE19);
+        copy.addDocument(reader1);
+        copy.addDocument(reader2);
+        document.close();
+
+        PdfReader reader = new PdfReader(output);
+        Assert.assertEquals(reader1.getNumberOfPages() + reader2.getNumberOfPages(), reader.getNumberOfPages());
+        for (int i = 1; i <= reader.getNumberOfPages(); i++) {
+            Assert.assertNotNull(reader.getPageN(i));
+        }
+        reader.close();
+
+        reader1.close();
+        reader2.close();
+    }
+
+    @Test
     public void copyTaggedPdf19() throws IOException, DocumentException {
         initializeDocument("19");
 

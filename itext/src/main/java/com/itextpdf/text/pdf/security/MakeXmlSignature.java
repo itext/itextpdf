@@ -177,7 +177,7 @@ public class MakeXmlSignature {
      */
     public static void signXmlDSig(XmlSignatureAppearance sap, ExternalSignature externalSignature, PublicKey publicKey)
             throws GeneralSecurityException, DocumentException, IOException {
-        signXmlDSig(sap, externalSignature, generateKeyInfo(publicKey, null));
+        signXmlDSig(sap, externalSignature, generateKeyInfo(publicKey));
     }
 
     /**
@@ -200,8 +200,7 @@ public class MakeXmlSignature {
         XMLSignatureFactory fac = createSignatureFactory();
 
         KeyInfo keyInfo = generateKeyInfo(chain, sap);
-        List<Element> signedProperty = new ArrayList<Element>(1);
-        XMLObject xmlObject = generateXadesBesObject(fac, sap, signatureId, contentReferenceId, signedPropertiesId, signedProperty);
+        XMLObject xmlObject = generateXadesBesObject(fac, sap, signatureId, contentReferenceId, signedPropertiesId);
         Reference contentReference = generateContentReference(fac, sap, contentReferenceId);
         Reference signedPropertiesReference = generateCustomReference(fac, "#"+signedPropertiesId, SecurityConstants.SignedProperties_Type, null);
 
@@ -221,7 +220,6 @@ public class MakeXmlSignature {
         sign(fac, externalSignature, sap.getXmlLocator(), signedInfo, xmlObject, keyInfo, signatureId);
 
         sap.close();
-
     }
 
     private static void verifyArguments(XmlSignatureAppearance sap, ExternalSignature externalSignature)
@@ -257,10 +255,10 @@ public class MakeXmlSignature {
         return kif.newKeyInfo(Collections.singletonList(x509d));
     }
 
-    private static KeyInfo generateKeyInfo(PublicKey publicKey, String keyInfoId) throws GeneralSecurityException {
+    private static KeyInfo generateKeyInfo(PublicKey publicKey) throws GeneralSecurityException {
         KeyInfoFactory kif = new DOMKeyInfoFactory();
         KeyValue kv = kif.newKeyValue(publicKey);
-        return kif.newKeyInfo(Collections.singletonList(kv), keyInfoId);
+        return kif.newKeyInfo(Collections.singletonList(kv));
     }
 
     private static String getRandomId() {
@@ -272,7 +270,7 @@ public class MakeXmlSignature {
     }
 
     private static XMLObject generateXadesBesObject(XMLSignatureFactory fac, XmlSignatureAppearance sap,
-        String signatureId, String contentReferenceId, String signedPropertiesId, List<Element> signedProperty) throws GeneralSecurityException {
+        String signatureId, String contentReferenceId, String signedPropertiesId) throws GeneralSecurityException {
 
         MessageDigest md = MessageDigest.getInstance(SecurityConstants.SHA1);
         Certificate cert = sap.getCertificate();
@@ -336,7 +334,6 @@ public class MakeXmlSignature {
             SignedProperties.appendChild(SignedDataObjectProperties);
         QualifyingProperties.appendChild(SignedProperties);
 
-        signedProperty.add(SignedProperties);
         XMLStructure content = new DOMStructure(QualifyingProperties);
         return fac.newXMLObject(Collections.singletonList(content), null, null, null);
     }

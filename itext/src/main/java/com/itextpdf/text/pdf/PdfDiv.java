@@ -101,7 +101,7 @@ public class PdfDiv implements Element, Spaceable, IAccessibleElement {
 
     protected PdfName role = PdfName.DIV;
     protected HashMap<PdfName, PdfObject> accessibleAttributes = null;
-    protected UUID id = UUID.randomUUID();
+    protected AccessibleElementId id = new AccessibleElementId();
 
     public float getContentWidth() {
         return contentWidth;
@@ -544,11 +544,11 @@ public class PdfDiv implements Element, Spaceable, IAccessibleElement {
         this.role = role;
     }
 
-    public UUID getId() {
+    public AccessibleElementId getId() {
         return id;
     }
 
-    public void setId(final UUID id) {
+    public void setId(final AccessibleElementId id) {
         this.id = id;
     }
 

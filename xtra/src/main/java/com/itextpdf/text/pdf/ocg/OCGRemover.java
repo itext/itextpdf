@@ -70,6 +70,8 @@ public class OCGRemover {
 	 */
 	public void removeLayers(PdfReader reader, String... layers) throws IOException {
 		int n = reader.getNumberOfPages();
+		for (int i = 1; i <= n; i++)
+			reader.setPageContent(i, reader.getPageContent(i));
 		Set<String> ocgs = new HashSet<String>();
     	for (int i = 0; i < layers.length; i++) {
     		ocgs.add(layers[i]);
@@ -85,15 +87,17 @@ public class OCGRemover {
 		}
 		PdfDictionary root = reader.getCatalog();
 		PdfDictionary ocproperties = root.getAsDict(PdfName.OCPROPERTIES);
-		removeOCGsFromArray(ocproperties, PdfName.OCGS, ocgs);
-		PdfDictionary d = ocproperties.getAsDict(PdfName.D);
-		if (d != null) {
-			removeOCGsFromArray(d, PdfName.ON, ocgs);
-			removeOCGsFromArray(d, PdfName.OFF, ocgs);
-			removeOCGsFromArray(d, PdfName.LOCKED, ocgs);
-			removeOCGsFromArray(d, PdfName.RBGROUPS, ocgs);
-			removeOCGsFromArray(d, PdfName.ORDER, ocgs);
-			removeOCGsFromArray(d, PdfName.AS, ocgs);
+		if (ocproperties != null) {
+			removeOCGsFromArray(ocproperties, PdfName.OCGS, ocgs);
+			PdfDictionary d = ocproperties.getAsDict(PdfName.D);
+			if (d != null) {
+				removeOCGsFromArray(d, PdfName.ON, ocgs);
+				removeOCGsFromArray(d, PdfName.OFF, ocgs);
+				removeOCGsFromArray(d, PdfName.LOCKED, ocgs);
+				removeOCGsFromArray(d, PdfName.RBGROUPS, ocgs);
+				removeOCGsFromArray(d, PdfName.ORDER, ocgs);
+				removeOCGsFromArray(d, PdfName.AS, ocgs);
+			}
 		}
 		reader.removeUnusedObjects();
 	}

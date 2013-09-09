@@ -65,10 +65,11 @@ import com.itextpdf.text.pdf.AcroFields.Item;
  *
  * @author  psoares
  */
+@Deprecated
 class PdfCopyFieldsImp extends PdfWriter {
 
-    protected static final PdfName iTextTag = new PdfName("_iTextTag_");
-    protected static final Integer zero = Integer.valueOf(0);
+    private static final PdfName iTextTag = new PdfName("_iTextTag_");
+    private static final Integer zero = Integer.valueOf(0);
     ArrayList<PdfReader> readers = new ArrayList<PdfReader>();
     HashMap<PdfReader, IntHashtable> readers2intrefs = new HashMap<PdfReader, IntHashtable>();
     HashMap<PdfReader, IntHashtable> pages2intrefs = new HashMap<PdfReader, IntHashtable>();
@@ -86,6 +87,7 @@ class PdfCopyFieldsImp extends PdfWriter {
     private ArrayList<String> calculationOrder = new ArrayList<String>();
     private ArrayList<Object> calculationOrderRefs;
     private boolean hasSignature;
+    private boolean needAppearances = false;
 
     protected Counter COUNTER = CounterFactory.getCounter(PdfCopyFields.class);
     protected Counter getCounter() {
@@ -140,11 +142,17 @@ class PdfCopyFieldsImp extends PdfWriter {
         }
         pages2intrefs.put(reader, refs);
         visited.put(reader, new IntHashtable());
-        fields.add(reader.getAcroFields());
+        AcroFields acro = reader.getAcroFields();
+        // when a document with NeedAppearances is encountered, the flag is set
+        // in the resulting document.
+        boolean needapp = !acro.isGenerateAppearances();
+        if (needapp)
+            needAppearances = true;
+        fields.add(acro);
         updateCalculationOrder(reader);
     }
 
-    protected static String getCOName(PdfReader reader, PRIndirectReference ref) {
+    private static String getCOName(PdfReader reader, PRIndirectReference ref) {
         String name = "";
         while (ref != null) {
             PdfObject obj = PdfReader.getPdfObject(ref);
@@ -339,6 +347,9 @@ class PdfCopyFieldsImp extends PdfWriter {
         form = new PdfDictionary();
         form.put(PdfName.DR, resources);
         propagate(resources, null, false);
+        if (needAppearances) {
+            form.put(PdfName.NEEDAPPEARANCES, PdfBoolean.PDFTRUE);
+        }
         form.put(PdfName.DA, new PdfString("/Helv 0 Tf 0 g "));
         tabOrder = new HashMap<PdfArray, ArrayList<Integer>>();
         calculationOrderRefs = new ArrayList<Object>(calculationOrder);

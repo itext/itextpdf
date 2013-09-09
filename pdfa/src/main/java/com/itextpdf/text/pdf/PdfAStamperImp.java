@@ -60,6 +60,7 @@ import com.itextpdf.xmp.properties.XMPProperty;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.HashMap;
 
 /**
  * Extension to PdfStamperImp that will attempt to keep a file
@@ -127,9 +128,13 @@ public class PdfAStamperImp extends PdfStamperImp {
     }
 
     /**
-     * @see PdfStamperImp#getXmpWriter(java.io.ByteArrayOutputStream, com.itextpdf.text.pdf.PdfDictionary)
+     * @see PdfStamperImp#createXmpWriter(java.io.ByteArrayOutputStream, com.itextpdf.text.pdf.PdfDictionary)
      */
-    protected XmpWriter getXmpWriter(ByteArrayOutputStream baos, PdfDictionary info) throws IOException {
+    protected XmpWriter createXmpWriter(ByteArrayOutputStream baos, PdfDictionary info) throws IOException {
+        return new PdfAXmpWriter(baos, info, ((PdfAConformance) pdfIsoConformance).getConformanceLevel());
+    }
+
+    protected XmpWriter createXmpWriter(ByteArrayOutputStream baos, HashMap<String, String> info) throws IOException {
         return new PdfAXmpWriter(baos, info, ((PdfAConformance) pdfIsoConformance).getConformanceLevel());
     }
 

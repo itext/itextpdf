@@ -48,6 +48,7 @@ import java.util.Properties;
 
 import com.itextpdf.text.xml.XMLUtil;
 
+@Deprecated
 public class LangAlt extends Properties {
 
 	/** A serial version id. */

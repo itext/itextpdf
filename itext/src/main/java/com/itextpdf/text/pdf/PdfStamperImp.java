@@ -55,7 +55,9 @@ import java.util.Map;
 import com.itextpdf.text.log.Counter;
 import com.itextpdf.text.log.CounterFactory;
 import com.itextpdf.text.pdf.internal.PdfIsoKeys;
-import org.xml.sax.SAXException;
+import com.itextpdf.text.xml.xmp.PdfProperties;
+import com.itextpdf.text.xml.xmp.XmpBasicProperties;
+import com.itextpdf.xmp.XMPException;
 
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.ExceptionConverter;
@@ -68,8 +70,10 @@ import com.itextpdf.text.pdf.AcroFields.Item;
 import com.itextpdf.text.pdf.collection.PdfCollection;
 import com.itextpdf.text.pdf.interfaces.PdfViewerPreferences;
 import com.itextpdf.text.pdf.internal.PdfViewerPreferencesImp;
-import com.itextpdf.text.xml.xmp.XmpReader;
 import com.itextpdf.text.xml.xmp.XmpWriter;
+import com.itextpdf.xmp.XMPMeta;
+import com.itextpdf.xmp.XMPMetaFactory;
+import com.itextpdf.xmp.options.SerializeOptions;
 
 class PdfStamperImp extends PdfWriter {
     HashMap<PdfReader, IntHashtable> readers2intrefs = new HashMap<PdfReader, IntHashtable>();
@@ -281,44 +285,47 @@ class PdfStamperImp extends PdfWriter {
             altMetadata = PdfReader.getStreamBytesRaw((PRStream)xmpo);
             PdfReader.killIndirect(catalog.get(PdfName.METADATA));
         }
+        PdfStream xmp = null;
         if (xmpMetadata != null) {
         	altMetadata = xmpMetadata;
+        } else if (xmpWriter != null) {
+            try {
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                PdfProperties.setProducer(xmpWriter.getXmpMeta(), producer);
+                XmpBasicProperties.setModDate(xmpWriter.getXmpMeta(), date.getW3CDate());
+                XmpBasicProperties.setMetaDataDate(xmpWriter.getXmpMeta(), date.getW3CDate());
+                xmpWriter.serialize(baos);
+                xmpWriter.close();
+                xmp = new PdfStream(baos.toByteArray());
+            } catch(XMPException exc) {
+                xmpWriter = null;
+            }
         }
-        if (altMetadata != null) {
-        	PdfStream xmp;
+        if (xmp == null && altMetadata != null) {
         	try {
-        		XmpReader xmpr;
-        		if (moreInfo == null || xmpMetadata != null) {
-	        		xmpr = new XmpReader(altMetadata);
-	        		if (!(xmpr.replaceNode("http://ns.adobe.com/pdf/1.3/", "Producer", producer)
-	        				|| xmpr.replaceDescriptionAttribute("http://ns.adobe.com/pdf/1.3/", "Producer", producer)))
-	        			xmpr.add("rdf:Description", "http://ns.adobe.com/pdf/1.3/", "Producer", producer);
-	        		if (!(xmpr.replaceNode("http://ns.adobe.com/xap/1.0/", "ModifyDate", date.getW3CDate())
-	        				|| xmpr.replaceDescriptionAttribute("http://ns.adobe.com/xap/1.0/", "ModifyDate", date.getW3CDate())))
-	        			xmpr.add("rdf:Description", "http://ns.adobe.com/xap/1.0/", "ModifyDate", date.getW3CDate());
-	        		if (!(xmpr.replaceNode("http://ns.adobe.com/xap/1.0/", "MetadataDate", date.getW3CDate())
-	        				|| xmpr.replaceDescriptionAttribute("http://ns.adobe.com/xap/1.0/", "MetadataDate", date.getW3CDate()))) {
-	        		}
-        		}
-        		else {
-                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                    try {
-                        XmpWriter xmpw = getXmpWriter(baos, newInfo);
-                        xmpw.close();
-                    }
-                    catch (IOException ioe) {
-                        ioe.printStackTrace();
-                    }
-	        		xmpr = new XmpReader(baos.toByteArray());
-        		}
-            	xmp = new PdfStream(xmpr.serializeDoc());
-        	}
-        	catch(SAXException e) {
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                if (moreInfo == null || xmpMetadata != null) {
+                    XMPMeta xmpMeta = XMPMetaFactory.parseFromBuffer(altMetadata);
+
+                    PdfProperties.setProducer(xmpMeta, producer);
+                    XmpBasicProperties.setModDate(xmpMeta, date.getW3CDate());
+                    XmpBasicProperties.setMetaDataDate(xmpMeta, date.getW3CDate());
+
+                    SerializeOptions serializeOptions = new SerializeOptions();
+                    serializeOptions.setPadding(2000);
+                    XMPMetaFactory.serialize(xmpMeta, baos, serializeOptions);
+                } else {
+                    XmpWriter xmpw = createXmpWriter(baos, newInfo);
+                    xmpw.close();
+                }
+                xmp = new PdfStream(baos.toByteArray());
+        	} catch(XMPException e) {
+        		xmp = new PdfStream(altMetadata);
+        	} catch(IOException e) {
         		xmp = new PdfStream(altMetadata);
         	}
-        	catch(IOException e) {
-        		xmp = new PdfStream(altMetadata);
-        	}
+        }
+        if (xmp != null) {
         	xmp.put(PdfName.TYPE, PdfName.METADATA);
         	xmp.put(PdfName.SUBTYPE, PdfName.XML);
         	if (crypto != null && !crypto.isMetadataEncrypted()) {
@@ -874,6 +881,8 @@ class PdfStamperImp extends PdfWriter {
                 if (ff != null)
                     flags = ff.intValue();
                 int page = item.getPage(k).intValue();
+                if (page < 1)
+                	continue;
                 PdfDictionary appDic = merged.getAsDict(PdfName.AP);
                 if (appDic != null && (flags & PdfFormField.FLAGS_PRINT) != 0 && (flags & PdfFormField.FLAGS_HIDDEN) == 0) {
                     PdfObject obj = appDic.get(PdfName.N);
@@ -1735,6 +1744,15 @@ class PdfStamperImp extends PdfWriter {
 			map.put(key, layer);
     	}
     	return map;
+    }
+
+    public void createXmpMetadata() {
+        try {
+            xmpWriter = createXmpWriter(null, reader.getInfo());
+            xmpMetadata = null;
+        } catch (IOException ioe) {
+            ioe.printStackTrace();
+        }
     }
 
     static class PageStamp {
