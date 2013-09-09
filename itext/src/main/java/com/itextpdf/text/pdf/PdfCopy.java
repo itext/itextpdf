@@ -130,9 +130,9 @@ public class PdfCopy extends PdfWriter {
     private HashSet<PdfIndirectObject> unmergedSet;
     private HashMap<Integer, PdfIndirectObject> mergedMap;
     private HashSet<PdfIndirectObject> mergedSet;
+    private boolean mergeFieldsInternalCall = false;
     private static final PdfName iTextTag = new PdfName("_iTextTag_");
     private static final Integer zero = Integer.valueOf(0);
-    private HashSet<PdfReader> readers;
 
 
     /**
@@ -248,7 +248,6 @@ public class PdfCopy extends PdfWriter {
         unmergedSet = new HashSet<PdfIndirectObject>();
         mergedMap = new HashMap<Integer, PdfIndirectObject>();
         mergedSet = new HashSet<PdfIndirectObject>();
-        readers = new HashSet<PdfReader>();
     }
 
     /**
@@ -259,6 +258,9 @@ public class PdfCopy extends PdfWriter {
      */
     @Override
     public PdfImportedPage getImportedPage(PdfReader reader, int pageNumber) {
+        if (mergeFields && !mergeFieldsInternalCall) {
+            throw new IllegalArgumentException(MessageLocalization.getComposedMessage("1.method.cannot.be.used.in.mergeFields.mode.please.use.addDocument", "getImportedPage"));
+        }
         if (mergeFields) {
             ImportedPage newPage = new ImportedPage(reader, pageNumber, mergeFields);
             importedPages.add(newPage);
@@ -271,6 +273,9 @@ public class PdfCopy extends PdfWriter {
     }
 
     public PdfImportedPage getImportedPage(PdfReader reader, int pageNumber, boolean keepTaggedPdfStructure) throws BadPdfFormatException {
+        if (mergeFields && !mergeFieldsInternalCall) {
+            throw new IllegalArgumentException(MessageLocalization.getComposedMessage("1.method.cannot.be.used.in.mergeFields.mode.please.use.addDocument", "getImportedPage"));
+        }
         updateRootKids = false;
         if (!keepTaggedPdfStructure) {
             if (mergeFields) {
@@ -278,7 +283,10 @@ public class PdfCopy extends PdfWriter {
                 importedPages.add(newPage);
             }
             return getImportedPageImpl(reader, pageNumber);
-        } else {
+        } else if (!keepTaggedPdfStructure) {
+            return getImportedPage(reader, pageNumber);
+        }
+        else {
             if (structTreeController != null) {
                 if (reader != structTreeController.reader)
                     structTreeController.setReader(reader);
@@ -652,24 +660,11 @@ public class PdfCopy extends PdfWriter {
      * @throws IOException, BadPdfFormatException
      */
     public void addPage(PdfImportedPage iPage) throws IOException, BadPdfFormatException {
-        addPage(iPage, true);
-    }
-
-    private void addPage(PdfImportedPage iPage, boolean assignAnnotIds) throws IOException, BadPdfFormatException {
-        int pageNum = setFromIPage(iPage);
-        if (mergeFields) {
-            if (assignAnnotIds) {
-                assignAnnotIds(reader);
-            }
-            if (!readers.contains(reader)) {
-                reader.consolidateNamedDestinations();
-                reader.shuffleSubsetNames();
-                updateCalculationOrder(reader);
-                readers.add(reader);
-            }
-            fields.add(reader.getAcroFields(iPage.getPageNumber()));
+        if (mergeFields && !mergeFieldsInternalCall) {
+            throw new IllegalArgumentException(MessageLocalization.getComposedMessage("1.method.cannot.be.used.in.mergeFields.mode.please.use.addDocument", "addPage"));
         }
 
+        int pageNum = setFromIPage(iPage);
         PdfDictionary thePage = reader.getPageN(pageNum);
         PRIndirectReference origRef = reader.getPageOrigRef(pageNum);
         reader.releasePage(pageNum);
@@ -703,6 +698,9 @@ public class PdfCopy extends PdfWriter {
      * @since	2.1.5
      */
     public void addPage(Rectangle rect, int rotation) throws DocumentException {
+        if (mergeFields && !mergeFieldsInternalCall) {
+            throw new IllegalArgumentException(MessageLocalization.getComposedMessage("1.method.cannot.be.used.in.mergeFields.mode.please.use.addDocument", "addPage"));
+        }
         PdfRectangle mediabox = new PdfRectangle(rect, rotation);
     	PageResources resources = new PageResources();
     	PdfPage page = new PdfPage(mediabox, new HashMap<String, PdfRectangle>(), resources.getResources(), 0);
@@ -725,15 +723,9 @@ public class PdfCopy extends PdfWriter {
         }
         if (!reader.isOpenedWithFullPermissions())
             throw new BadPasswordException(MessageLocalization.getComposedMessage("pdfreader.not.opened.with.owner.password"));
-        assignAnnotIds(reader);
-        boolean tagged = PdfStructTreeController.checkTagged(reader);
-        for (int i = 1; i <= reader.getNumberOfPages(); i++) {
-            addPage(getImportedPage(reader, i, tagged && this.tagged), false);
-        }
-    }
-
-    private void assignAnnotIds(PdfReader reader) {
         if (mergeFields) {
+            reader.consolidateNamedDestinations();
+            reader.shuffleSubsetNames();
             for (int i = 1; i <= reader.getNumberOfPages(); i++) {
                 PdfDictionary page = reader.getPageNRelease(i);
                 if (page != null && page.contains(PdfName.ANNOTS)) {
@@ -747,7 +739,15 @@ public class PdfCopy extends PdfWriter {
                     }
                 }
             }
+            fields.add(reader.getAcroFields());
+            updateCalculationOrder(reader);
         }
+        boolean tagged = PdfStructTreeController.checkTagged(reader);
+        mergeFieldsInternalCall = true;
+        for (int i = 1; i <= reader.getNumberOfPages(); i++) {
+            addPage(getImportedPage(reader, i, tagged && this.tagged));
+        }
+        mergeFieldsInternalCall = false;
     }
 
     @Override
@@ -1178,7 +1178,7 @@ public class PdfCopy extends PdfWriter {
             PdfObject obj = co.getPdfObject(k);
             if (obj == null || !obj.isIndirect())
                 continue;
-            String name = getCOName((PRIndirectReference) obj);
+            String name = getCOName(reader, (PRIndirectReference) obj);
             if (af.getFieldItem(name) == null)
                 continue;
             name = "." + name;
@@ -1188,7 +1188,7 @@ public class PdfCopy extends PdfWriter {
         }
     }
 
-    private static String getCOName(PRIndirectReference ref) {
+    private static String getCOName(PdfReader reader, PRIndirectReference ref) {
         String name = "";
         while (ref != null) {
             PdfObject obj = PdfReader.getPdfObject(ref);
@@ -1213,7 +1213,7 @@ public class PdfCopy extends PdfWriter {
             Map<String, AcroFields.Item> fd = af.getFields();
             addPageOffsetToField(fd, pageOffset);
             mergeWithMaster(fd);
-            pageOffset += 1;
+            pageOffset += af.reader.getNumberOfPages();
         }
     }
 
@@ -1222,7 +1222,8 @@ public class PdfCopy extends PdfWriter {
             return;
         for (AcroFields.Item item: fd.values()) {
             for (int k = 0; k < item.size(); ++k) {
-                item.forcePage(k, pageOffset);
+                int p = item.getPage(k).intValue();
+                item.forcePage(k, p + pageOffset);
             }
         }
     }
@@ -1565,6 +1566,7 @@ public class PdfCopy extends PdfWriter {
     @Override
     public void close() {
         if (open) {
+            PdfReaderInstance ri = currentPdfReaderInstance;
             pdf.close();
             super.close();
 // Users are responsible for closing PdfReaderw            
@@ -1717,7 +1719,7 @@ public class PdfCopy extends PdfWriter {
         public void alterContents() throws IOException {
             if (over == null && under == null)
                 return;
-            PdfArray ar;
+            PdfArray ar = null;
             PdfObject content = PdfReader.getPdfObject(pageN.get(PdfName.CONTENTS), pageN);
             if (content == null) {
                 ar = new PdfArray();
@@ -1829,7 +1831,7 @@ public class PdfCopy extends PdfWriter {
                     }
                     if (annot.isAnnotation()) {
                         PdfObject pdfobj = PdfReader.getPdfObject(pageN.get(PdfName.ANNOTS), pageN);
-                        PdfArray annots;
+                        PdfArray annots = null;
                         if (pdfobj == null || !pdfobj.isArray()) {
                             annots = new PdfArray();
                             pageN.put(PdfName.ANNOTS, annots);
