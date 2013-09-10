@@ -1202,7 +1202,7 @@ public class PdfCopy extends PdfWriter {
             ref = (PRIndirectReference)dic.get(PdfName.PARENT);
         }
         if (name.endsWith("."))
-            name = name.substring(0, name.length() - 1);
+            name = name.substring(0, name.length() - 2);
         return name;
     }
 
