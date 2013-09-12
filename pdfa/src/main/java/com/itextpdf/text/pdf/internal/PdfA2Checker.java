@@ -51,7 +51,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 
-public class PdfA2Checker extends PdfA1Checker {
+public class PdfA2Checker extends PdfAChecker {
 
     static private HashSet<PdfName> allowedBlendModes = new HashSet<PdfName>(Arrays.asList(new PdfName[]{PdfGState.BM_NORMAL, PdfGState.BM_COMPATIBLE,
             PdfGState.BM_MULTIPLY, PdfGState.BM_SCREEN, PdfGState.BM_OVERLAY, PdfGState.BM_DARKEN, PdfGState.BM_LIGHTEN, PdfGState.BM_COLORDODGE,
@@ -59,6 +59,11 @@ public class PdfA2Checker extends PdfA1Checker {
 
     PdfA2Checker(PdfAConformanceLevel conformanceLevel) {
         super(conformanceLevel);
+    }
+
+    @Override
+    protected void checkFont(PdfWriter writer, int key, Object obj1) {
+        //To change body of implemented methods use File | Settings | File Templates.
     }
 
     @Override
@@ -168,6 +173,56 @@ public class PdfA2Checker extends PdfA1Checker {
         } else {
 
         }
+    }
+
+    @Override
+    protected void checkTrailer(PdfWriter writer, int key, Object obj1) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    protected void checkStream(PdfWriter writer, int key, Object obj1) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    protected void checkFileSpec(PdfWriter writer, int key, Object obj1) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    protected void checkPdfObject(PdfWriter writer, int key, Object obj1) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    protected void checkCanvas(PdfWriter writer, int key, Object obj1) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    protected void checkColor(PdfWriter writer, int key, Object obj1) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    protected void checkAnnotation(PdfWriter writer, int key, Object obj1) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    protected void checkAction(PdfWriter writer, int key, Object obj1) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    protected void checkForm(PdfWriter writer, int key, Object obj1) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    protected void checkStructElem(PdfWriter writer, int key, Object obj1) {
+        //To change body of implemented methods use File | Settings | File Templates.
     }
 
     private void fillOrderRecursively(PdfArray orderArray, HashSet<PdfObject> order) {
