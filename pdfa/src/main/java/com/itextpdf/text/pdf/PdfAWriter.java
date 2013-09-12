@@ -198,10 +198,6 @@ public class PdfAWriter extends PdfWriter {
         return ttfUnicodeWriter;
     }
 
-    public XmpWriter getXmpWriter(ByteArrayOutputStream baos) throws IOException {
-        return xmpWriter = new PdfAXmpWriter(baos, ((PdfAConformance)pdfIsoConformance).getConformanceLevel());
-    }
-
     /**
      * @see PdfWriter#createXmpWriter(java.io.ByteArrayOutputStream, com.itextpdf.text.pdf.PdfDictionary)
      */
