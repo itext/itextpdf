@@ -60,7 +60,7 @@ public class StructureMCID extends StructureItem {
 	
 	/**
 	 * Creates a StructureMCID using an MCID.
-	 * @param obj	an MCID
+	 * @param mcid	an MCID
 	 */
 	public StructureMCID(PdfIndirectReference pg, PdfNumber mcid) {
 		this.pageref = pg.getNumber();
@@ -69,7 +69,7 @@ public class StructureMCID extends StructureItem {
 	
 	/**
 	 * Creates a StructurItem using an MCR dictionary.
-	 * @param dict	an MCR dictionary
+	 * @param mcr	an MCR dictionary
 	 */
 	public StructureMCID(PdfDictionary mcr) {
 		mcid = mcr.getAsNumber(PdfName.MCID).intValue();

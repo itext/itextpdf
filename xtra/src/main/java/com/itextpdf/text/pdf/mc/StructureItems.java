@@ -62,6 +62,7 @@ import com.itextpdf.text.pdf.PdfObject;
 import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.PdfWriter;
 
+
 /**
  * Creates a list of StructureItem objects extracted from the
  * Structure Tree of a PDF document.
@@ -112,7 +113,7 @@ public class StructureItems extends ArrayList<StructureItem> {
 	
 	/**
 	 * Looks at a StructElem dictionary, and processes it.
-	 * @param dict	the StructElem dictionary that needs to be examined
+	 * @param structElem the StructElem dictionary that needs to be examined
 	 * @param ref	the reference to the StructElem dictionary
 	 * @throws DocumentException
 	 */
@@ -162,12 +163,13 @@ public class StructureItems extends ArrayList<StructureItem> {
 			else {
 				processStructElems(dict, ref);
 			}
+            break;
 		}
 	}
 	
 	/**
 	 * Removes a StructParent from the parent tree.
-	 * @param	PdfNumber	the number to remove
+	 * @param	structParent	the number to remove
 	 */
 	public void removeFromParentTree(PdfNumber structParent) {
 		parentTree.remove(structParent.intValue());
@@ -178,7 +180,7 @@ public class StructureItems extends ArrayList<StructureItem> {
 	 * and returns that new MCID so that it can be used
 	 * in the content stream
 	 * @param structParents	the StructParents entry in the page dictionary
-	 * @param item	the item for which we need a new MCID
+	 * @param ref the item for which we need a new MCID
 	 * @return	a new MCID
 	 * @throws DocumentException
 	 */

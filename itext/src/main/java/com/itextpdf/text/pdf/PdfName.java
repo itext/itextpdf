@@ -68,7 +68,8 @@ import java.util.Map;
  * @see		BadPdfFormatException
  */
 
-public class PdfName extends PdfObject implements Comparable<PdfName> {
+public class
+        PdfName extends PdfObject implements Comparable<PdfName> {
 
     // CLASS CONSTANTS (a variety of standard names used in PDF))
     /**
@@ -315,7 +316,10 @@ public class PdfName extends PdfObject implements Comparable<PdfName> {
     public static final PdfName CATALOG = new PdfName("Catalog");
     /** A name */
     public static final PdfName CATEGORY = new PdfName("Category");
-    /** A name */
+    /**
+     * A name
+     * @since 5.4.4
+     */
     public static final PdfName CB = new PdfName("cb");
     /** A name */
     public static final PdfName CCITTFAXDECODE = new PdfName("CCITTFaxDecode");
@@ -1417,7 +1421,10 @@ public class PdfName extends PdfObject implements Comparable<PdfName> {
     public static final PdfName PATTERN = new PdfName("Pattern");
     /** A name */
     public static final PdfName PATTERNTYPE = new PdfName("PatternType");
-    /** A name */
+    /**
+     * A name
+     * @since 5.4.4
+     */
     public static final PdfName PB = new PdfName("pb");
     /**
      * A name.
@@ -1499,7 +1506,10 @@ public class PdfName extends PdfObject implements Comparable<PdfName> {
      * @since 5.4.3
      */
     public static final PdfName PRINTERMARK = new PdfName("PrinterMark");
-    /** A name */
+    /**
+     * A name
+     * @since 5.4.4
+     */
     public static final PdfName PRINTFIELD = new PdfName("PrintField");
     /** A name */
     public static final PdfName PRINTPAGERANGE = new PdfName("PrintPageRange");
@@ -1557,7 +1567,10 @@ public class PdfName extends PdfObject implements Comparable<PdfName> {
      * @since 5.4.3
      */
     public static final PdfName RB = new PdfName("RB");
-    /** A name */
+    /**
+     * A name
+     * @since 5.4.4
+     */
     public static final PdfName rb = new PdfName("rb");
     /** A name */
     public static final PdfName RBGROUPS = new PdfName("RBGroups");
@@ -1668,7 +1681,10 @@ public class PdfName extends PdfObject implements Comparable<PdfName> {
      * @since 5.1.0
      */
     public static final PdfName RL = new PdfName("RL");
-    /** A name */
+    /**
+     * A name
+     * @since 5.4.4
+     */
     public static final PdfName ROLE = new PdfName("Role");
     /** A name */
     public static final PdfName ROLEMAP = new PdfName("RoleMap");
@@ -2021,7 +2037,10 @@ public class PdfName extends PdfObject implements Comparable<PdfName> {
     public static final PdfName TTL = new PdfName("Ttl");
     /** A name */
     public static final PdfName TU = new PdfName("TU");
-    /** A name */
+    /**
+     * A name
+     * @since 5.4.4
+     */
     public static final PdfName TV = new PdfName("tv");
     /** A name */
     public static final PdfName TWOCOLUMNLEFT = new PdfName("TwoColumnLeft");
