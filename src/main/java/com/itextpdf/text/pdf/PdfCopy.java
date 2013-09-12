@@ -283,35 +283,31 @@ public class PdfCopy extends PdfWriter {
                 importedPages.add(newPage);
             }
             return getImportedPageImpl(reader, pageNumber);
-        } else if (!keepTaggedPdfStructure) {
-            return getImportedPage(reader, pageNumber);
         }
-        else {
-            if (structTreeController != null) {
-                if (reader != structTreeController.reader)
-                    structTreeController.setReader(reader);
-            } else {
-                structTreeController = new PdfStructTreeController(reader, this);
-            }
-            ImportedPage newPage = new ImportedPage(reader, pageNumber, mergeFields);
-            switch (checkStructureTreeRootKids(newPage)) {
-                case -1: //-1 - clear , update
-                    clearIndirects(reader);
-                    updateRootKids = true;
-                    break;
-                case 0: //0 - not clear, not update
-                    updateRootKids = false;
-                    break;
-                case 1: //1 - not clear, update
-                    updateRootKids = true;
-                    break;
-            }
-            importedPages.add(newPage);
+        if (structTreeController != null) {
+            if (reader != structTreeController.reader)
+                structTreeController.setReader(reader);
+        } else {
+            structTreeController = new PdfStructTreeController(reader, this);
+        }
+        ImportedPage newPage = new ImportedPage(reader, pageNumber, mergeFields);
+        switch (checkStructureTreeRootKids(newPage)) {
+            case -1: //-1 - clear , update
+                clearIndirects(reader);
+                updateRootKids = true;
+                break;
+            case 0: //0 - not clear, not update
+                updateRootKids = false;
+                break;
+            case 1: //1 - not clear, update
+                updateRootKids = true;
+                break;
+        }
+        importedPages.add(newPage);
 
-            disableIndirects.clear();
-            parentObjects.clear();
-            return getImportedPageImpl(reader, pageNumber);
-        }
+        disableIndirects.clear();
+        parentObjects.clear();
+        return getImportedPageImpl(reader, pageNumber);
     }
 
     private void clearIndirects(PdfReader reader) {
