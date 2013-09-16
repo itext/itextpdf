@@ -48,10 +48,10 @@ import java.io.OutputStream;
 import java.security.PrivateKey;
 import java.util.HashMap;
 
-import org.bouncycastle.cms.CMSException;
-import org.bouncycastle.cms.Recipient;
-import org.bouncycastle.cms.RecipientInformation;
-import org.bouncycastle.cms.jcajce.JceKeyTransEnvelopedRecipient;
+import org.spongycastle.cms.CMSException;
+import org.spongycastle.cms.Recipient;
+import org.spongycastle.cms.RecipientInformation;
+import org.spongycastle.cms.jcajce.JceKeyTransEnvelopedRecipient;
 
 import com.itextpdf.text.DocumentException;
 

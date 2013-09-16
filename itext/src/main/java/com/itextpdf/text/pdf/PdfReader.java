@@ -64,8 +64,8 @@ import java.util.Set;
 import java.util.Stack;
 import java.util.zip.InflaterInputStream;
 
-import org.bouncycastle.cms.CMSEnvelopedData;
-import org.bouncycastle.cms.RecipientInformation;
+import org.spongycastle.cms.CMSEnvelopedData;
+import org.spongycastle.cms.RecipientInformation;
 
 import com.itextpdf.text.Document;
 import com.itextpdf.text.ExceptionConverter;
@@ -83,7 +83,7 @@ import com.itextpdf.text.log.CounterFactory;
 import com.itextpdf.text.pdf.PRTokeniser.TokenType;
 import com.itextpdf.text.pdf.interfaces.PdfViewerPreferences;
 import com.itextpdf.text.pdf.internal.PdfViewerPreferencesImp;
-import org.bouncycastle.cert.X509CertificateHolder;
+import org.spongycastle.cert.X509CertificateHolder;
 
 /**
  * Reads a PDF document.

@@ -43,10 +43,10 @@
  */
 package com.itextpdf.text.pdf.crypto;
 
-import org.bouncycastle.crypto.BlockCipher;
-import org.bouncycastle.crypto.engines.AESFastEngine;
-import org.bouncycastle.crypto.modes.CBCBlockCipher;
-import org.bouncycastle.crypto.params.KeyParameter;
+import org.spongycastle.crypto.BlockCipher;
+import org.spongycastle.crypto.engines.AESFastEngine;
+import org.spongycastle.crypto.modes.CBCBlockCipher;
+import org.spongycastle.crypto.params.KeyParameter;
 
 /**
  * Creates an AES Cipher with CBC and no padding.

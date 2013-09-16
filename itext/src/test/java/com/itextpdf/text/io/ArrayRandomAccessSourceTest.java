@@ -9,7 +9,7 @@ import java.util.Random;
 import junit.framework.Assert;
 import junit.framework.AssertionFailedError;
 
-import org.bouncycastle.util.Arrays;
+import org.spongycastle.util.Arrays;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
