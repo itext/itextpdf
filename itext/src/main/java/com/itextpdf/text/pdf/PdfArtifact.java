@@ -43,6 +43,7 @@
  */
 package com.itextpdf.text.pdf;
 
+import com.itextpdf.text.AccessibleElementId;
 import com.itextpdf.text.pdf.interfaces.IAccessibleElement;
 
 import java.util.HashMap;
@@ -52,7 +53,7 @@ public class PdfArtifact implements IAccessibleElement {
 
     protected PdfName role = PdfName.ARTIFACT;
     protected HashMap<PdfName, PdfObject> accessibleAttributes = null;
-    protected UUID id = UUID.randomUUID();
+    protected AccessibleElementId id = new AccessibleElementId();
 
     public PdfObject getAccessibleAttribute(final PdfName key) {
         if (accessibleAttributes != null)
@@ -78,11 +79,11 @@ public class PdfArtifact implements IAccessibleElement {
     public void setRole(final PdfName role) {
     }
 
-    public UUID getId() {
+    public AccessibleElementId getId() {
         return id;
     }
 
-    public void setId(final UUID id) {
+    public void setId(final AccessibleElementId id) {
         this.id = id;
     }
 

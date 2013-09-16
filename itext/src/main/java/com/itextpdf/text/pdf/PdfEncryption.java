@@ -551,9 +551,11 @@ public class PdfEncryption {
 			keySize = 16;
 	}
 
-	public static PdfObject createInfoId(byte id[]) {
+	public static PdfObject createInfoId(byte id[]) throws IOException {
 		ByteBuffer buf = new ByteBuffer(90);
 		buf.append('[').append('<');
+		if (id.length != 16)
+			id = createDocumentId();
 		for (int k = 0; k < 16; ++k)
 			buf.appendHex(id[k]);
 		buf.append('>').append('<');
@@ -561,6 +563,7 @@ public class PdfEncryption {
 		for (int k = 0; k < 16; ++k)
 			buf.appendHex(id[k]);
 		buf.append('>').append(']');
+		buf.close();
 		return new PdfLiteral(buf.toByteArray());
 	}
 
@@ -730,7 +733,7 @@ public class PdfEncryption {
 		return dic;
 	}
 
-	public PdfObject getFileID() {
+	public PdfObject getFileID() throws IOException {
 		return createInfoId(documentID);
 	}
 

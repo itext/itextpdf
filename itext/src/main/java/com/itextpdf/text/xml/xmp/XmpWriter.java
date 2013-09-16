@@ -45,14 +45,18 @@ package com.itextpdf.text.xml.xmp;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.util.Map;
 
+import com.itextpdf.text.Version;
+import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.pdf.PdfDate;
 import com.itextpdf.text.pdf.PdfDictionary;
 import com.itextpdf.text.pdf.PdfName;
 import com.itextpdf.text.pdf.PdfObject;
 import com.itextpdf.text.pdf.PdfString;
+import com.itextpdf.xmp.*;
+import com.itextpdf.xmp.options.PropertyOptions;
+import com.itextpdf.xmp.options.SerializeOptions;
 
 /**
  * With this class you can create an Xmp Stream that can be used for adding
@@ -70,38 +74,9 @@ public class XmpWriter {
 	/** A possible charset for the XMP. */
 	public static final String UTF16LE = "UTF-16LE";
 
-	/** String used to fill the extra space. */
-	public static final String EXTRASPACE = "                                                                                                   \n";
-
-	/** You can add some extra space in the XMP packet; 1 unit in this variable represents 100 spaces and a newline. */
-	protected int extraSpace;
-
-	/** The writer to which you can write bytes for the XMP stream. */
-	protected OutputStreamWriter writer;
-
-	/** The about string that goes into the rdf:Description tags. */
-	protected String about;
-
-	/**
-	 * Processing Instruction required at the start of an XMP stream
-	 * @since iText 2.1.6
-	 */
-	public static final String XPACKET_PI_BEGIN = "<?xpacket begin=\"\uFEFF\" id=\"W5M0MpCehiHzreSzNTczkc9d\"?>\n";
-
-	/**
-	 * Processing Instruction required at the end of an XMP stream for XMP streams that can be updated
-	 * @since iText 2.1.6
-	 */
-	public static final String XPACKET_PI_END_W = "<?xpacket end=\"w\"?>";
-
-	/**
-	 * Processing Instruction required at the end of an XMP stream for XMP streams that are read only
-	 * @since iText 2.1.6
-	 */
-	public static final String XPACKET_PI_END_R = "<?xpacket end=\"r\"?>";
-
-	/** The end attribute. */
-	protected char end = 'w';
+    protected XMPMeta xmpMeta;
+    protected OutputStream outputStream;
+    protected SerializeOptions serializeOptions;
 
 	/**
 	 * Creates an XmpWriter.
@@ -111,12 +86,20 @@ public class XmpWriter {
 	 * @throws IOException
 	 */
 	public XmpWriter(OutputStream os, String utfEncoding, int extraSpace) throws IOException {
-		this.extraSpace = extraSpace;
-		writer = new OutputStreamWriter(os, utfEncoding);
-		writer.write(XPACKET_PI_BEGIN);
-		writer.write("<x:xmpmeta xmlns:x=\"adobe:ns:meta/\">\n");
-		writer.write("<rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\">\n");
-		about = "";
+        outputStream = os;
+        serializeOptions = new SerializeOptions();
+        if (UTF16BE.equals(utfEncoding) || UTF16.equals(utfEncoding))
+            serializeOptions.setEncodeUTF16BE(true);
+        else if (UTF16LE.equals(utfEncoding))
+            serializeOptions.setEncodeUTF16LE(true);
+        serializeOptions.setPadding(extraSpace);
+        xmpMeta = XMPMetaFactory.create();
+        xmpMeta.setObjectName(XMPConst.TAG_XMPMETA);
+        xmpMeta.setObjectName("");
+        try {
+            xmpMeta.setProperty(XMPConst.NS_DC, DublinCoreProperties.FORMAT, "application/pdf");
+            xmpMeta.setProperty(XMPConst.NS_PDF, PdfProperties.PRODUCER, Version.getInstance().getVersion());
+        } catch (XMPException xmpExc) {}
 	}
 
 	/**
@@ -125,122 +108,8 @@ public class XmpWriter {
 	 * @throws IOException
 	 */
 	public XmpWriter(OutputStream os) throws IOException {
-		this(os, UTF8, 20);
+		this(os, UTF8, 2000);
 	}
-
-	/** Sets the XMP to read-only */
-	public void setReadOnly() {
-		end = 'r';
-	}
-
-	/**
-	 * @param about The about to set.
-	 */
-	public void setAbout(String about) {
-		this.about = about;
-	}
-
-	/**
-	 * Adds an rdf:Description.
-	 * @param xmlns
-	 * @param content
-	 * @throws IOException
-	 */
-	public void addRdfDescription(String xmlns, String content) throws IOException {
-		writer.write("<rdf:Description rdf:about=\"");
-		writer.write(about);
-		writer.write("\" ");
-		writer.write(xmlns);
-		writer.write(">");
-		writer.write(content);
-		writer.write("</rdf:Description>\n");
-	}
-
-	/**
-	 * Adds an rdf:Description.
-	 * @param s
-	 * @throws IOException
-	 */
-	public void addRdfDescription(XmpSchema s) throws IOException {
-		writer.write("<rdf:Description rdf:about=\"");
-		writer.write(about);
-		writer.write("\" ");
-		writer.write(s.getXmlns());
-		writer.write(">");
-		writer.write(s.toString());
-		writer.write("</rdf:Description>\n");
-	}
-
-	/**
-	 * Flushes and closes the XmpWriter.
-	 * @throws IOException
-	 */
-	public void close() throws IOException {
-		writer.write("</rdf:RDF>");
-		writer.write("</x:xmpmeta>\n");
-		for (int i = 0; i < extraSpace; i++) {
-			writer.write(EXTRASPACE);
-		}
-		writer.write(end == 'r' ? XPACKET_PI_END_R : XPACKET_PI_END_W);
-		writer.flush();
-		writer.close();
-	}
-
-    /**
-     * @deprecated
-     * @param os
-     * @param info
-     * @param PdfXConformance
-     * @throws IOException
-     */
-    public XmpWriter(OutputStream os, PdfDictionary info, int PdfXConformance) throws IOException {
-        this(os, info);
-        if (info != null) {
-        	DublinCoreSchema dc = new DublinCoreSchema();
-        	PdfSchema p = new PdfSchema();
-        	XmpBasicSchema basic = new XmpBasicSchema();
-        	PdfName key;
-        	PdfObject obj;
-        	String value;
-        	for (PdfName pdfName : info.getKeys()) {
-        		key = pdfName;
-        		obj = info.get(key);
-        		if (obj == null)
-        			continue;
-        		if (!obj.isString())
-        			continue;
-        		value = ((PdfString)obj).toUnicodeString();
-        		if (PdfName.TITLE.equals(key)) {
-        			dc.addTitle(new LangAlt(value));
-        		}
-        		if (PdfName.AUTHOR.equals(key)) {
-        			dc.addAuthor(value);
-        		}
-        		if (PdfName.SUBJECT.equals(key)) {
-        			dc.addSubject(value);
-        			dc.addDescription(new LangAlt(value));
-        		}
-        		if (PdfName.KEYWORDS.equals(key)) {
-        			p.addKeywords(value);
-        		}
-        		if (PdfName.CREATOR.equals(key)) {
-        			basic.addCreatorTool(value);
-        		}
-        		if (PdfName.PRODUCER.equals(key)) {
-        			p.addProducer(value);
-        		}
-        		if (PdfName.CREATIONDATE.equals(key)) {
-        			basic.addCreateDate(PdfDate.getW3CDate(obj.toString()));
-        		}
-        		if (PdfName.MODDATE.equals(key)) {
-        			basic.addModDate(PdfDate.getW3CDate(obj.toString()));
-        		}
-        	}
-        	if (dc.size() > 0) addRdfDescription(dc);
-        	if (p.size() > 0) addRdfDescription(p);
-        	if (basic.size() > 0) addRdfDescription(basic);
-        }
-    }
 
     /**
      * @param os
@@ -250,49 +119,23 @@ public class XmpWriter {
     public XmpWriter(OutputStream os, PdfDictionary info) throws IOException {
         this(os);
         if (info != null) {
-        	DublinCoreSchema dc = new DublinCoreSchema();
-        	PdfSchema p = new PdfSchema();
-        	XmpBasicSchema basic = new XmpBasicSchema();
-        	PdfName key;
-        	PdfObject obj;
-        	String value;
-        	for (PdfName pdfName : info.getKeys()) {
-        		key = pdfName;
-        		obj = info.get(key);
-        		if (obj == null)
-        			continue;
-        		if (!obj.isString())
-        			continue;
-        		value = ((PdfString)obj).toUnicodeString();
-        		if (PdfName.TITLE.equals(key)) {
-        			dc.addTitle(new LangAlt(value));
+            PdfName key;
+            PdfObject obj;
+            String value;
+            for (PdfName pdfName : info.getKeys()) {
+                key = pdfName;
+                obj = info.get(key);
+                if (obj == null)
+                    continue;
+                if (!obj.isString())
+                    continue;
+                value = ((PdfString) obj).toUnicodeString();
+                try {
+                    addDocInfoProperty(key, value);
+                } catch (XMPException xmpExc) {
+                    throw new IOException(xmpExc.getMessage());
                 }
-        		if (PdfName.AUTHOR.equals(key)) {
-        			dc.addAuthor(value);
-        		}
-        		if (PdfName.SUBJECT.equals(key)) {
-        			dc.addSubject(value);
-        			dc.addDescription(new LangAlt(value));
-        		}
-        		if (PdfName.KEYWORDS.equals(key)) {
-        			p.addKeywords(value);
-        		}
-        		if (PdfName.CREATOR.equals(key)) {
-        			basic.addCreatorTool(value);
-        		}
-        		if (PdfName.PRODUCER.equals(key)) {
-        			p.addProducer(value);
-        		}
-        		if (PdfName.CREATIONDATE.equals(key)) {
-        			basic.addCreateDate(PdfDate.getW3CDate(obj.toString()));
-        		}
-        		if (PdfName.MODDATE.equals(key)) {
-        			basic.addModDate(PdfDate.getW3CDate(obj.toString()));
-        		}
-        	}
-        	if (dc.size() > 0) addRdfDescription(dc);
-        	if (p.size() > 0) addRdfDescription(p);
-        	if (basic.size() > 0) addRdfDescription(basic);
+            }
         }
     }
 
@@ -305,45 +148,186 @@ public class XmpWriter {
     public XmpWriter(OutputStream os, Map<String, String> info) throws IOException {
         this(os);
         if (info != null) {
-        	DublinCoreSchema dc = new DublinCoreSchema();
-        	PdfSchema p = new PdfSchema();
-        	XmpBasicSchema basic = new XmpBasicSchema();
-        	String key;
-        	String value;
-        	for (Map.Entry<String, String> entry: info.entrySet()) {
-        		key = entry.getKey();
-        		value = entry.getValue();
-        		if (value == null)
-        			continue;
-        		if ("Title".equals(key)) {
-        			dc.addTitle(new LangAlt(value));
-        		}
-        		if ("Author".equals(key)) {
-        			dc.addAuthor(value);
-        		}
-        		if ("Subject".equals(key)) {
-        			dc.addSubject(value);
-        			dc.addDescription(new LangAlt(value));
-        		}
-        		if ("Keywords".equals(key)) {
-        			p.addKeywords(value);
-        		}
-        		if ("Creator".equals(key)) {
-        			basic.addCreatorTool(value);
-        		}
-        		if ("Producer".equals(key)) {
-        			p.addProducer(value);
-        		}
-        		if ("CreationDate".equals(key)) {
-        			basic.addCreateDate(PdfDate.getW3CDate(value));
-        		}
-        		if ("ModDate".equals(key)) {
-        			basic.addModDate(PdfDate.getW3CDate(value));
-        		}
-        	}
-        	if (dc.size() > 0) addRdfDescription(dc);
-        	if (p.size() > 0) addRdfDescription(p);
-        	if (basic.size() > 0) addRdfDescription(basic);
+            String key;
+            String value;
+            for (Map.Entry<String, String> entry : info.entrySet()) {
+                key = entry.getKey();
+                value = entry.getValue();
+                if (value == null)
+                    continue;
+                try {
+                    addDocInfoProperty(key, value);
+                } catch (XMPException xmpExc) {
+                    throw new IOException(xmpExc.getMessage());
+                }
+            }
+        }
+    }
+
+    public XMPMeta getXmpMeta() {
+        return xmpMeta;
+    }
+
+    /** Sets the XMP to read-only */
+	public void setReadOnly() {
+        serializeOptions.setReadOnlyPacket(true);
+	}
+
+	/**
+	 * @param about The about to set.
+	 */
+	public void setAbout(String about) {
+        xmpMeta.setObjectName(about);
+	}
+
+	/**
+	 * Adds an rdf:Description.
+	 * @param xmlns
+	 * @param content
+	 * @throws IOException
+	 */
+    @Deprecated
+	public void addRdfDescription(String xmlns, String content) throws IOException {
+        try {
+            String str = "<rdf:RDF xmlns:rdf=\"" + XMPConst.NS_RDF + "\">" +
+                    "<rdf:Description rdf:about=\"" + xmpMeta.getObjectName() +
+                    "\" " +
+                    xmlns +
+                    ">" +
+                    content +
+                    "</rdf:Description></rdf:RDF>\n";
+            XMPMeta extMeta = XMPMetaFactory.parseFromString(str);
+            XMPUtils.appendProperties(extMeta, xmpMeta, true, true);
+        } catch (XMPException xmpExc) {
+            throw new IOException(xmpExc.getMessage());
+        }
+	}
+
+	/**
+	 * Adds an rdf:Description.
+	 * @param s
+	 * @throws IOException
+	 */
+    @Deprecated
+	public void addRdfDescription(XmpSchema s) throws IOException {
+        try {
+            String str = "<rdf:RDF xmlns:rdf=\"" + XMPConst.NS_RDF + "\">" +
+                    "<rdf:Description rdf:about=\"" + xmpMeta.getObjectName() +
+                    "\" " +
+                    s.getXmlns() +
+                    ">" +
+                    s.toString() +
+                    "</rdf:Description></rdf:RDF>\n";
+            XMPMeta extMeta = XMPMetaFactory.parseFromString(str);
+            XMPUtils.appendProperties(extMeta, xmpMeta, true, true);
+        } catch (XMPException xmpExc) {
+            throw new IOException(xmpExc.getMessage());
+        }
+	}
+
+    /**
+     * @param schemaNS The namespace URI for the property. Has the same usage as in getProperty.
+     * @param propName The name of the property.
+     *                 Has the same usage as in <code>getProperty()</code>.
+     * @param value    the value for the property (only leaf properties have a value).
+     *                 Arrays and non-leaf levels of structs do not have values.
+     *                 Must be <code>null</code> if the value is not relevant.<br/>
+     *                 The value is automatically detected: Boolean, Integer, Long, Double, XMPDateTime and
+     *                 byte[] are handled, on all other <code>toString()</code> is called.
+     * @throws XMPException Wraps all errors and exceptions that may occur.
+     */
+    public void setProperty(String schemaNS, String propName, Object value) throws XMPException {
+        xmpMeta.setProperty(schemaNS, propName, value);
+    }
+
+    /**
+     * Simplifies the construction of an array by not requiring that you pre-create an empty array.
+     * The array that is assigned is created automatically if it does not yet exist. Each call to
+     * appendArrayItem() appends an item to the array.
+     *
+     * @param schemaNS  The namespace URI for the array.
+     * @param arrayName The name of the array. May be a general path expression, must not be null or
+     *                  the empty string.
+     * @param value     the value of the array item.
+     * @throws XMPException Wraps all errors and exceptions that may occur.
+     */
+    public void appendArrayItem(String schemaNS, String arrayName, String value) throws XMPException {
+        xmpMeta.appendArrayItem(schemaNS, arrayName, new PropertyOptions(PropertyOptions.ARRAY), value, null);
+    }
+
+    /**
+     * Simplifies the construction of an ordered array by not requiring that you pre-create an empty array.
+     * The array that is assigned is created automatically if it does not yet exist. Each call to
+     * appendArrayItem() appends an item to the array.
+     *
+     * @param schemaNS  The namespace URI for the array.
+     * @param arrayName The name of the array. May be a general path expression, must not be null or
+     *                  the empty string.
+     * @param value     the value of the array item.
+     * @throws XMPException Wraps all errors and exceptions that may occur.
+     */
+    public void appendOrderedArrayItem(String schemaNS, String arrayName, String value) throws XMPException {
+        xmpMeta.appendArrayItem(schemaNS, arrayName, new PropertyOptions(PropertyOptions.ARRAY_ORDERED), value, null);
+    }
+
+    /**
+     * Simplifies the construction of an alternate array by not requiring that you pre-create an empty array.
+     * The array that is assigned is created automatically if it does not yet exist. Each call to
+     * appendArrayItem() appends an item to the array.
+     *
+     * @param schemaNS  The namespace URI for the array.
+     * @param arrayName The name of the array. May be a general path expression, must not be null or
+     *                  the empty string.
+     * @param value     the value of the array item.
+     * @throws XMPException Wraps all errors and exceptions that may occur.
+     */
+    public void appendAlternateArrayItem(String schemaNS, String arrayName, String value) throws XMPException {
+        xmpMeta.appendArrayItem(schemaNS, arrayName, new PropertyOptions(PropertyOptions.ARRAY_ALTERNATE), value, null);
+    }
+
+    /**
+     * Flushes and closes the XmpWriter.
+     * @throws IOException
+     */
+    public void serialize(OutputStream externalOutputStream) throws XMPException {
+        XMPMetaFactory.serialize(xmpMeta, externalOutputStream, serializeOptions);
+    }
+
+	/**
+	 * Flushes and closes the XmpWriter.
+	 * @throws IOException
+	 */
+	public void close() throws IOException {
+        if (outputStream == null)
+            return;
+        try {
+            XMPMetaFactory.serialize(xmpMeta, outputStream, serializeOptions);
+            outputStream = null;
+        } catch (XMPException xmpExc) {
+            throw new IOException(xmpExc.getMessage());
+        }
+    }
+
+    public void addDocInfoProperty(Object key, String value) throws XMPException {
+        if (key instanceof String)
+            key = new PdfName((String) key);
+        if (PdfName.TITLE.equals(key)) {
+            xmpMeta.setLocalizedText(XMPConst.NS_DC, DublinCoreProperties.TITLE, XMPConst.X_DEFAULT, XMPConst.X_DEFAULT, value);
+        } else if (PdfName.AUTHOR.equals(key)) {
+            xmpMeta.appendArrayItem(XMPConst.NS_DC, DublinCoreProperties.CREATOR, new PropertyOptions(PropertyOptions.ARRAY_ORDERED), value, null);
+        } else if (PdfName.SUBJECT.equals(key)) {
+            xmpMeta.appendArrayItem(XMPConst.NS_DC, DublinCoreProperties.SUBJECT, new PropertyOptions(PropertyOptions.ARRAY), value, null);
+            xmpMeta.setLocalizedText(XMPConst.NS_DC, DublinCoreProperties.DESCRIPTION, XMPConst.X_DEFAULT, XMPConst.X_DEFAULT, value);
+        } else if (PdfName.KEYWORDS.equals(key)) {
+            xmpMeta.setProperty(XMPConst.NS_PDF, PdfProperties.KEYWORDS, value);
+        } else if (PdfName.PRODUCER.equals(key)) {
+            xmpMeta.setProperty(XMPConst.NS_PDF, PdfProperties.PRODUCER, value);
+        } else if (PdfName.CREATOR.equals(key)) {
+            xmpMeta.setProperty(XMPConst.NS_XMP, XmpBasicProperties.CREATORTOOL, value);
+        } else if (PdfName.CREATIONDATE.equals(key)) {
+            xmpMeta.setProperty(XMPConst.NS_XMP, XmpBasicProperties.CREATEDATE, PdfDate.getW3CDate(value));
+        } else if (PdfName.MODDATE.equals(key)) {
+            xmpMeta.setProperty(XMPConst.NS_XMP, XmpBasicProperties.MODIFYDATE, PdfDate.getW3CDate(value));
         }
     }
 }

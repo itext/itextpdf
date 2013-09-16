@@ -9,7 +9,7 @@
   <artifactId>itextg</artifactId>
   <packaging>jar</packaging>
   <name>iText, a Free Java-PDF library</name>
-  <version>5.4.3</version>
+  <version>5.4.4</version>
   <description>iText, a free Java-PDF library</description>
   <url>http://www.itextpdf.com/</url>
   <mailingLists>

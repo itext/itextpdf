@@ -273,6 +273,8 @@ public class OCGParser {
     		mc_balance++;
     		return;
     	}
+    	if (properties == null)
+    		return;
     	PdfDictionary ocdict = properties.getAsDict(ocref);
     	if (ocdict == null)
     		return;

@@ -102,18 +102,19 @@ public class PdfImage extends PdfStream {
             put(PdfName.INTERPOLATE, PdfBoolean.PDFTRUE);
         InputStream is = null;
         try {
+        	// deal with transparency
+            int transparency[] = image.getTransparency();
+            if (transparency != null && !image.isMask() && maskRef == null) {
+                StringBuilder s = new StringBuilder("[");
+                for (int k = 0; k < transparency.length; ++k)
+                    s.append(transparency[k]).append(" ");
+                s.append("]");
+                put(PdfName.MASK, new PdfLiteral(s.toString()));
+            }
             // Raw Image data
             if (image.isImgRaw()) {
                 // will also have the CCITT parameters
                 int colorspace = image.getColorspace();
-                int transparency[] = image.getTransparency();
-                if (transparency != null && !image.isMask() && maskRef == null) {
-                    StringBuilder s = new StringBuilder("[");
-                    for (int k = 0; k < transparency.length; ++k)
-                        s.append(transparency[k]).append(" ");
-                    s.append("]");
-                    put(PdfName.MASK, new PdfLiteral(s.toString()));
-                }
                 bytes = image.getRawData();
                 put(PdfName.LENGTH, new PdfNumber(bytes.length));
                 int bpc = image.getBpc();
@@ -183,6 +184,11 @@ public class PdfImage extends PdfStream {
             switch(image.type()) {
                 case Image.JPEG:
                     put(PdfName.FILTER, PdfName.DCTDECODE);
+                    if (image.getColorTransform() == 0) {
+                        PdfDictionary decodeparms = new PdfDictionary();
+                        decodeparms.put(PdfName.COLORTRANSFORM, new PdfNumber(0));
+                        put(PdfName.DECODEPARMS, decodeparms);
+                    }
                     switch(image.getColorspace()) {
                         case 1:
                             put(PdfName.COLORSPACE, PdfName.DEVICEGRAY);

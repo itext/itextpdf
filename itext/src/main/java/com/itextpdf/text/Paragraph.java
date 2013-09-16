@@ -109,7 +109,7 @@ public class Paragraph extends Phrase implements Indentable, Spaceable, IAccessi
 
     protected PdfName role = PdfName.P;
     protected HashMap<PdfName, PdfObject> accessibleAttributes = null;
-    private UUID id = null;
+    private AccessibleElementId id = null;
 
     // constructors
 
@@ -581,13 +581,13 @@ public class Paragraph extends Phrase implements Indentable, Spaceable, IAccessi
         this.role = role;
     }
 
-    public UUID getId() {
+    public AccessibleElementId getId() {
         if (id == null)
-            id = UUID.randomUUID();
+            id = new AccessibleElementId();
         return id;
     }
 
-    public void setId(final UUID id) {
+    public void setId(final AccessibleElementId id) {
         this.id = id;
     }
 

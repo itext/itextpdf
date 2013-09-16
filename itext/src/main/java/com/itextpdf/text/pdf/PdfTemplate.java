@@ -46,6 +46,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.UUID;
 
+import com.itextpdf.text.AccessibleElementId;
 import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.pdf.interfaces.IAccessibleElement;
 
@@ -86,7 +87,7 @@ public class PdfTemplate extends PdfContentByte implements IAccessibleElement {
 
     protected PdfName role = PdfName.FIGURE;
     protected HashMap<PdfName, PdfObject> accessibleAttributes = null;
-    private UUID id = null;
+    private AccessibleElementId id = null;
 	
     /**
      *Creates a <CODE>PdfTemplate</CODE>.
@@ -376,13 +377,13 @@ public class PdfTemplate extends PdfContentByte implements IAccessibleElement {
         this.role = role;
     }
 
-    public UUID getId() {
+    public AccessibleElementId getId() {
         if (id == null)
-            id = UUID.randomUUID();
+            id = new AccessibleElementId();
         return id;
     }
 
-    public void setId(final UUID id) {
+    public void setId(final AccessibleElementId id) {
         this.id = id;
     }
 }

@@ -43,6 +43,15 @@
  */
 package com.itextpdf.text.pdf;
 
+import com.itextpdf.text.xml.xmp.PdfProperties;
+import com.itextpdf.text.xml.xmp.XmpBasicProperties;
+import com.itextpdf.xmp.*;
+import com.itextpdf.xmp.options.SerializeOptions;
+import org.xml.sax.SAXException;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.*;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -206,6 +215,74 @@ public class CompareTool {
     public String compare(String outPdf, String cmpPdf, String outPath, String differenceImage) throws IOException, InterruptedException {
         init(outPdf, cmpPdf);
         return compare(outPath, differenceImage);
+    }
+
+    public String compareXmp(){
+        return compareXmp(false);
+    }
+
+    public String compareXmp(boolean ignoreDateAndProducerProperties){
+        PdfReader cmpReader = null;
+        PdfReader outReader = null;
+        try {
+            cmpReader = new PdfReader(cmpPdf);
+            outReader = new PdfReader(outPdf);
+            byte[] cmpBytes = cmpReader.getMetadata(), outBytes = outReader.getMetadata();
+            if (ignoreDateAndProducerProperties) {
+                XMPMeta xmpMeta = XMPMetaFactory.parseFromBuffer(cmpBytes);
+
+                XMPUtils.removeProperties(xmpMeta, XMPConst.NS_XMP, XmpBasicProperties.CREATEDATE, true, true);
+                XMPUtils.removeProperties(xmpMeta, XMPConst.NS_XMP, XmpBasicProperties.MODIFYDATE, true, true);
+                XMPUtils.removeProperties(xmpMeta, XMPConst.NS_XMP, XmpBasicProperties.METADATADATE, true, true);
+                XMPUtils.removeProperties(xmpMeta, XMPConst.NS_PDF, PdfProperties.PRODUCER, true, true);
+
+                cmpBytes = XMPMetaFactory.serializeToBuffer(xmpMeta, new SerializeOptions(SerializeOptions.SORT));
+
+                xmpMeta = XMPMetaFactory.parseFromBuffer(outBytes);
+                XMPUtils.removeProperties(xmpMeta, XMPConst.NS_XMP, XmpBasicProperties.CREATEDATE, true, true);
+                XMPUtils.removeProperties(xmpMeta, XMPConst.NS_XMP, XmpBasicProperties.MODIFYDATE, true, true);
+                XMPUtils.removeProperties(xmpMeta, XMPConst.NS_XMP, XmpBasicProperties.METADATADATE, true, true);
+                XMPUtils.removeProperties(xmpMeta, XMPConst.NS_PDF, PdfProperties.PRODUCER, true, true);
+
+                outBytes = XMPMetaFactory.serializeToBuffer(xmpMeta, new SerializeOptions(SerializeOptions.SORT));
+            }
+
+            if (!compareXmls(cmpBytes, outBytes)) {
+                return "The XMP packages different!!!";
+            }
+        } catch (XMPException xmpExc) {
+            return "XMP parsing failure!!!";
+        } catch (IOException ioExc) {
+            return "XMP parsing failure!!!";
+        } catch (ParserConfigurationException parseExc)  {
+            return "XMP parsing failure!!!";
+        } catch (SAXException parseExc)  {
+            return "XMP parsing failure!!!";
+        }
+        finally {
+            if (cmpReader != null)
+                cmpReader.close();
+            if (outReader != null)
+                outReader.close();
+        }
+        return null;
+    }
+
+    public boolean compareXmls(byte[] xml1, byte[] xml2) throws ParserConfigurationException, SAXException, IOException {
+        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+        dbf.setNamespaceAware(true);
+        dbf.setCoalescing(true);
+        dbf.setIgnoringElementContentWhitespace(true);
+        dbf.setIgnoringComments(true);
+        DocumentBuilder db = dbf.newDocumentBuilder();
+
+        org.w3c.dom.Document doc1 = db.parse(new ByteArrayInputStream(xml1));
+        doc1.normalizeDocument();
+
+        org.w3c.dom.Document doc2 = db.parse(new ByteArrayInputStream(xml2));
+        doc2.normalizeDocument();
+
+        return doc2.isEqualNode(doc1);
     }
 
     private void init(String outPdf, String cmpPdf) {

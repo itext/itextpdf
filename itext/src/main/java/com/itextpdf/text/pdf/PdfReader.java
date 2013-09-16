@@ -85,7 +85,8 @@ import com.itextpdf.text.pdf.interfaces.PdfViewerPreferences;
 import com.itextpdf.text.pdf.internal.PdfViewerPreferencesImp;
 import org.spongycastle.cert.X509CertificateHolder;
 
-/** Reads a PDF document.
+/**
+ * Reads a PDF document.
  * @author Paulo Soares
  * @author Kazuya Ujihara
  */
@@ -97,6 +98,8 @@ public class PdfReader implements PdfViewerPreferences {
 	 * @since 5.0.2
 	 */
 	public static boolean unethicalreading = false;
+	
+	public static boolean debugmode = false;
 	
     static final PdfName pageInhCandidates[] = {
         PdfName.MEDIABOX, PdfName.ROTATE, PdfName.RESOURCES, PdfName.CROPBOX
@@ -176,7 +179,6 @@ public class PdfReader implements PdfViewerPreferences {
         this.certificateKeyProvider = certificateKeyProvider;
         this.password = ownerPassword;
         this.partial = partialRead;
-        
         try{
         
 	        tokens = getOffsetTokeniser(byteSource);
@@ -194,7 +196,8 @@ public class PdfReader implements PdfViewerPreferences {
 		getCounter().read(fileLength);
     }
     
-    /** Reads and parses a PDF document.
+    /**
+     * Reads and parses a PDF document.
      * @param filename the file name of the document
      * @throws IOException on error
      */
@@ -202,7 +205,8 @@ public class PdfReader implements PdfViewerPreferences {
         this(filename, null);
     }
 
-    /** Reads and parses a PDF document.
+    /**
+     * Reads and parses a PDF document.
      * @param filename the file name of the document
      * @param ownerPassword the password to read the document
      * @throws IOException on error
@@ -212,9 +216,11 @@ public class PdfReader implements PdfViewerPreferences {
     }
 
 
-    /** Reads and parses a PDF document.
+    /**
+     * Reads and parses a PDF document.
      * @param filename the file name of the document
      * @param ownerPassword the password to read the document
+     * @param partial indicates if the reader needs to read the document only partially
      * @throws IOException on error
      */
     public PdfReader(final String filename, final byte ownerPassword[], boolean partial) throws IOException {
@@ -232,7 +238,8 @@ public class PdfReader implements PdfViewerPreferences {
         );
     }
 
-    /** Reads and parses a PDF document.
+    /**
+     * Reads and parses a PDF document.
      * @param pdfIn the byte array with the document
      * @throws IOException on error
      */
@@ -240,7 +247,8 @@ public class PdfReader implements PdfViewerPreferences {
         this(pdfIn, null);
     }
 
-    /** Reads and parses a PDF document.
+    /**
+     * Reads and parses a PDF document.
      * @param pdfIn the byte array with the document
      * @param ownerPassword the password to read the document
      * @throws IOException on error
@@ -248,19 +256,18 @@ public class PdfReader implements PdfViewerPreferences {
     public PdfReader(final byte pdfIn[], final byte ownerPassword[]) throws IOException {
         this(
         		new RandomAccessSourceFactory().createSource(pdfIn),
-    			
     			false,
     			ownerPassword,
     			null,
     			null,
     			null,
     			true
-        		
         );
 
     }
 
-    /** Reads and parses a PDF document.
+    /**
+     * Reads and parses a PDF document.
      * @param filename the file name of the document
      * @param certificate the certificate to read the document
      * @param certificateKey the private key of the certificate
@@ -273,7 +280,6 @@ public class PdfReader implements PdfViewerPreferences {
     			.setForceRead(false)
     			.setUsePlainRandomAccess(Document.plainRandomAccess)
     			.createBestSource(filename),
-    			
     			false,
     			null,
     			certificate,
@@ -289,7 +295,8 @@ public class PdfReader implements PdfViewerPreferences {
     
 
     
-    /** Reads and parses a PDF document.
+    /**
+     * Reads and parses a PDF document.
      * @param url the URL of the document
      * @throws IOException on error
      */
@@ -297,7 +304,8 @@ public class PdfReader implements PdfViewerPreferences {
         this(url, null);
     }
 
-    /** Reads and parses a PDF document.
+    /**
+     * Reads and parses a PDF document.
      * @param url the URL of the document
      * @param ownerPassword the password to read the document
      * @throws IOException on error
@@ -305,14 +313,12 @@ public class PdfReader implements PdfViewerPreferences {
     public PdfReader(final URL url, final byte ownerPassword[]) throws IOException {
         this(
         		new RandomAccessSourceFactory().createSource(url),
-    			
     			false,
     			ownerPassword,
     			null,
     			null,
     			null,
     			true
-        		
         );
 
     }
@@ -327,14 +333,12 @@ public class PdfReader implements PdfViewerPreferences {
     public PdfReader(final InputStream is, final byte ownerPassword[]) throws IOException {
         this(
         		new RandomAccessSourceFactory().createSource(is),
-    			
     			false,
     			ownerPassword,
     			null,
     			null,
     			null,
     			false
-        		
         );
     	
     }
@@ -356,7 +360,6 @@ public class PdfReader implements PdfViewerPreferences {
      * @param raf the document location
      * @param ownerPassword the password or <CODE>null</CODE> for no password
      * @throws IOException on error
-     * @deprecated Use the constructor that takes a RandomAccessSource
      */
     public PdfReader(final RandomAccessFileOrArray raf, final byte ownerPassword[]) throws IOException {
         this(
@@ -367,7 +370,6 @@ public class PdfReader implements PdfViewerPreferences {
     			null,
     			null,
     			false
-        		
         );
     }
 
@@ -445,7 +447,8 @@ public class PdfReader implements PdfViewerPreferences {
         return pageRefs.size();
     }
 
-    /** Returns the document's catalog. This dictionary is not a copy,
+    /**
+     * Returns the document's catalog. This dictionary is not a copy,
      * any changes will be reflected in the catalog.
      * @return the document's catalog
      */
@@ -453,7 +456,8 @@ public class PdfReader implements PdfViewerPreferences {
         return catalog;
     }
 
-    /** Returns the document's acroform, if it has one.
+    /**
+     * Returns the document's acroform, if it has one.
      * @return the document's acroform
      */
     public PRAcroForm getAcroForm() {
@@ -573,7 +577,8 @@ public class PdfReader implements PdfViewerPreferences {
         return getNormalizedRectangle(box);
     }
 
-    /** Returns the content of the document information dictionary as a <CODE>HashMap</CODE>
+    /**
+     * Returns the content of the document information dictionary as a <CODE>HashMap</CODE>
      * of <CODE>String</CODE>.
      * @return content of the document information dictionary
      */
@@ -663,7 +668,6 @@ public class PdfReader implements PdfViewerPreferences {
                 throw new InvalidPdfException(MessageLocalization.getComposedMessage("rebuild.failed.1.original.message.2", ne.getMessage(), e.getMessage()));
             }
         }
-
         strings.clear();
         readPages();
         //eliminateSharedStreams();
@@ -1143,7 +1147,11 @@ public class PdfReader implements PdfViewerPreferences {
 
     protected void readPages() throws IOException {
         catalog = trailer.getAsDict(PdfName.ROOT);
+        if (catalog == null)
+        	throw new InvalidPdfException(MessageLocalization.getComposedMessage("the.document.has.no.catalog.object"));
         rootPages = catalog.getAsDict(PdfName.PAGES);
+        if (rootPages == null)
+        	throw new InvalidPdfException(MessageLocalization.getComposedMessage("the.document.has.no.page.root"));
         pageRefs = new PageRefs(this);
     }
 
@@ -1194,8 +1202,13 @@ public class PdfReader implements PdfViewerPreferences {
                 checkPRStreamLength((PRStream)obj);
             }
         }
-        catch (Exception e) {
-            obj = null;
+        catch (IOException e) {
+        	if (debugmode) {
+        		e.printStackTrace();
+        		obj = null;
+        	}
+        	else
+        		throw e;
         }
         if (xref[k2 + 1] > 0) {
             obj = readOneObjStm((PRStream)obj, (int)xref[k2]);
@@ -1289,8 +1302,13 @@ public class PdfReader implements PdfViewerPreferences {
                     streams.add((PRStream)obj);
                 }
             }
-            catch (Exception e) {
-                obj = null;
+            catch (IOException e) {
+            	if (debugmode) {
+            		e.printStackTrace();
+            		obj = null;
+            	}
+            	else
+            		throw e;
             }
             xrefObj.set(k / 2, obj);
         }
@@ -1335,8 +1353,9 @@ public class PdfReader implements PdfViewerPreferences {
         if (calc) {
             byte tline[] = new byte[16];
             tokens.seek(start);
+            long pos;
             while (true) {
-                long pos = tokens.getFilePointer();
+                pos = tokens.getFilePointer();
                 if (!tokens.readLineSegment(tline))
                     break;
                 if (equalsn(tline, endstream)) {
@@ -1353,6 +1372,12 @@ public class PdfReader implements PdfViewerPreferences {
                     break;
                 }
             }
+            tokens.seek(pos - 2);
+            if (tokens.read() == 13)
+            	streamLength--;
+            tokens.seek(pos - 1);
+            if (tokens.read() == 10)
+            	streamLength--;
         }
         stream.setLength((int)streamLength);
     }
@@ -1727,7 +1752,7 @@ public class PdfReader implements PdfViewerPreferences {
             if (tokens.getTokenType() == TokenType.END_DIC)
                 break;
             if (tokens.getTokenType() != TokenType.NAME)
-                tokens.throwError(MessageLocalization.getComposedMessage("dictionary.key.is.not.a.name"));
+                tokens.throwError(MessageLocalization.getComposedMessage("dictionary.key.1.is.not.a.name", tokens.getStringValue()));
             PdfName name = new PdfName(tokens.getStringValue(), false);
             PdfObject obj = readPRObject();
             int type = obj.type();
@@ -3282,7 +3307,8 @@ public class PdfReader implements PdfViewerPreferences {
         }
     }
 
-    /** Removes all the unreachable objects.
+    /**
+     * Removes all the unreachable objects.
      * @return the number of indirect objects removed
      */
     public int removeUnusedObjects() {

@@ -753,7 +753,7 @@ public class PdfContentStreamProcessor {
     private static BaseColor getColor(int nOperands, List<PdfObject> operands) {
     	float[] c = new float[nOperands];
     	for (int i = 0; i < nOperands; i++) {
-    		c[i] = ((PdfNumber)operands.get(0)).floatValue();
+    		c[i] = ((PdfNumber)operands.get(i)).floatValue();
     	}
     	switch (nOperands) {
     	case 1:

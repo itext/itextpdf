@@ -56,15 +56,15 @@ public class PdfA1Checker extends PdfAChecker {
 
     static final PdfName setState = new PdfName("SetState");
     static final PdfName noOp = new PdfName("NoOp");
-    static private HashSet<PdfName> allowedAnnotTypes = new HashSet<PdfName>(Arrays.asList(new PdfName[]{PdfName.TEXT, PdfName.LINK, PdfName.FREETEXT,
+    static private HashSet<PdfName> allowedAnnotTypes = new HashSet<PdfName>(Arrays.asList(PdfName.TEXT, PdfName.LINK, PdfName.FREETEXT,
             PdfName.LINE, PdfName.SQUARE, PdfName.CIRCLE, PdfName.HIGHLIGHT, PdfName.UNDERLINE, PdfName.SQUIGGLY, PdfName.STRIKEOUT, PdfName.STAMP,
-            PdfName.INK, PdfName.POPUP, PdfName.WIDGET, PdfName.PRINTERMARK, PdfName.TRAPNET}));
-    static private HashSet<PdfName> allowedNamedActions = new HashSet<PdfName>(Arrays.asList(new PdfName[]{PdfName.NEXTPAGE, PdfName.PREVPAGE,
-            PdfName.FIRSTPAGE, PdfName.LASTPAGE}));
-    static private HashSet<PdfName> restrictedActions = new HashSet<PdfName>(Arrays.asList(new PdfName[]{PdfName.LAUNCH, PdfName.SOUND,
-            PdfName.MOVIE, PdfName.RESETFORM, PdfName.IMPORTDATA, PdfName.JAVASCRIPT}));
-    static private HashSet<PdfName> contentAnnotations = new HashSet<PdfName>(Arrays.asList(new PdfName[]{PdfName.TEXT, PdfName.LINK, PdfName.FREETEXT,
-            PdfName.LINE, PdfName.SQUARE, PdfName.CIRCLE, PdfName.STAMP, PdfName.INK, PdfName.POPUP, PdfName.WIDGET}));
+            PdfName.INK, PdfName.POPUP, PdfName.WIDGET, PdfName.PRINTERMARK, PdfName.TRAPNET));
+    static private HashSet<PdfName> allowedNamedActions = new HashSet<PdfName>(Arrays.asList(PdfName.NEXTPAGE, PdfName.PREVPAGE,
+            PdfName.FIRSTPAGE, PdfName.LASTPAGE));
+    static private HashSet<PdfName> restrictedActions = new HashSet<PdfName>(Arrays.asList(PdfName.LAUNCH, PdfName.SOUND,
+            PdfName.MOVIE, PdfName.RESETFORM, PdfName.IMPORTDATA, PdfName.JAVASCRIPT));
+    static private HashSet<PdfName> contentAnnotations = new HashSet<PdfName>(Arrays.asList(PdfName.TEXT, PdfName.LINK, PdfName.FREETEXT,
+            PdfName.LINE, PdfName.SQUARE, PdfName.CIRCLE, PdfName.STAMP, PdfName.INK, PdfName.POPUP, PdfName.WIDGET));
     public final double maxRealValue = 32767;
     public final int maxStringLength = 65535;
     public final int maxArrayLength = 8191;
@@ -119,7 +119,7 @@ public class PdfA1Checker extends PdfAChecker {
             throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("an.image.dictionary.shall.not.contain.opi.key"));
         }
         PdfBoolean interpolate = image.getAsBoolean(PdfName.INTERPOLATE);
-        if (interpolate != null && interpolate.booleanValue() == true) {
+        if (interpolate != null && interpolate.booleanValue()) {
             throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("the.value.of.interpolate.key.shall.not.be.true"));
         }
         PdfName intent = image.getAsName(PdfName.INTENT);
@@ -241,7 +241,7 @@ public class PdfA1Checker extends PdfAChecker {
                 if (dictionary.contains(PdfName.AA)) {
                     throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("the.document.catalog.dictionary.shall.not.include.an.aa.entry"));
                 }
-                if (PdfAConformanceLevel.checkStructure(conformanceLevel)) {
+                if (checkStructure(conformanceLevel)) {
                     PdfDictionary markInfo = dictionary.getAsDict(PdfName.MARKINFO);
                     if (markInfo == null || markInfo.getAsBoolean(PdfName.MARKED) == null || markInfo.getAsBoolean(PdfName.MARKED).booleanValue() == false) {
                         throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("document.catalog.dictionary.shall.include.a.markinfo.dictionary.whose.entry.marked.shall.have.a.value.of.true"));
@@ -373,7 +373,7 @@ public class PdfA1Checker extends PdfAChecker {
             if (PdfName.WIDGET.equals(annot.getAsName(PdfName.SUBTYPE)) && (annot.contains(PdfName.AA) || annot.contains(PdfName.A))) {
                 throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("widget.annotation.dictionary.or.field.dictionary.shall.not.include.a.or.aa.entry"));
             }
-            if (PdfAConformanceLevel.checkStructure(conformanceLevel)) {
+            if (checkStructure(conformanceLevel)) {
                 if (contentAnnotations.contains(subtype) && !annot.contains(PdfName.CONTENTS)) {
                     throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("annotation.of.type.1.should.have.contents.key", subtype.toString()));
                 }

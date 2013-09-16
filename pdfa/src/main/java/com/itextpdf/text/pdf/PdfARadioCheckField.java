@@ -44,7 +44,6 @@
 package com.itextpdf.text.pdf;
 
 import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.ExceptionConverter;
 import com.itextpdf.text.Rectangle;
 
 import java.io.IOException;
@@ -53,7 +52,7 @@ public class PdfARadioCheckField extends RadioCheckField {
 
     private static final PdfName off = new PdfName("Off");
 
-    protected static String check = "0.8 0 0 0.8 0.3 0.5 cm 0 0 m\n" +
+    protected static final String check = "0.8 0 0 0.8 0.3 0.5 cm 0 0 m\n" +
             "0.066 -0.026 l\n" +
             "0.137 -0.15 l\n" +
             "0.259 0.081 0.46 0.391 0.553 0.461 c\n" +
@@ -66,7 +65,7 @@ public class PdfARadioCheckField extends RadioCheckField {
             "f\n";
 
 
-    protected static String circle = "1 0 0 1 0.86 0.5 cm 0 0 m\n" +
+    protected static final String circle = "1 0 0 1 0.86 0.5 cm 0 0 m\n" +
             "0 0.204 -0.166 0.371 -0.371 0.371 c\n" +
             "-0.575 0.371 -0.741 0.204 -0.741 0 c\n" +
             "-0.741 -0.204 -0.575 -0.371 -0.371 -0.371 c\n" +
@@ -74,7 +73,7 @@ public class PdfARadioCheckField extends RadioCheckField {
             "f\n";
 
 
-    protected static String cross = "1 0 0 1 0.85 0.8 cm 0 0 m\n" +
+    protected static final String cross = "1 0 0 1 0.85 0.8 cm 0 0 m\n" +
             "-0.172 -0.027 l\n" +
             "-0.332 -0.184 l\n" +
             "-0.443 -0.019 l\n" +
@@ -95,17 +94,17 @@ public class PdfARadioCheckField extends RadioCheckField {
             "h\n" +
             "f\n";
 
-    protected static String diamond = "1 0 0 1 0.55 0.12 cm 0 0 m\n" +
+    protected static final String diamond = "1 0 0 1 0.55 0.12 cm 0 0 m\n" +
             "0.376 0.376 l\n" +
             "0 0.751 l\n" +
             "-0.376 0.376 l\n" +
             "h\n" +
             "f\n";
 
-    protected static String square = "1 0 0 1 0.885 0.835 cm 0 0 -0.669 -0.67 re\n" +
+    protected static final String square = "1 0 0 1 0.885 0.835 cm 0 0 -0.669 -0.67 re\n" +
             "f\n";
 
-    protected static String star = "0.95 0 0 0.95 0.9 0.6 cm 0 0 m\n" +
+    protected static final String star = "0.95 0 0 0.95 0.9 0.6 cm 0 0 m\n" +
             "-0.291 0 l\n" +
             "-0.381 0.277 l\n" +
             "-0.47 0 l\n" +
@@ -187,6 +186,4 @@ public class PdfARadioCheckField extends RadioCheckField {
     protected BaseFont getRealFont() throws IOException, DocumentException {
         return null;
     }
-
-
 }

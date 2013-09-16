@@ -46,6 +46,7 @@ package com.itextpdf.text.xml.xmp;
 /**
  * An implementation of an XmpSchema.
  */
+@Deprecated
 public class PdfASchema extends XmpSchema {
     
     private static final long serialVersionUID = 5300646133692948168L;

@@ -43,21 +43,6 @@
  */
 package com.itextpdf.text.pdf;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.security.cert.Certificate;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-import java.util.TreeSet;
-
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.DocListener;
 import com.itextpdf.text.DocWriter;
@@ -74,11 +59,35 @@ import com.itextpdf.text.log.Counter;
 import com.itextpdf.text.log.CounterFactory;
 import com.itextpdf.text.pdf.collection.PdfCollection;
 import com.itextpdf.text.pdf.events.PdfPageEventForwarder;
-import com.itextpdf.text.pdf.interfaces.*;
+import com.itextpdf.text.pdf.interfaces.PdfAnnotations;
+import com.itextpdf.text.pdf.interfaces.PdfDocumentActions;
+import com.itextpdf.text.pdf.interfaces.PdfEncryptionSettings;
+import com.itextpdf.text.pdf.interfaces.PdfIsoConformance;
+import com.itextpdf.text.pdf.interfaces.PdfPageActions;
+import com.itextpdf.text.pdf.interfaces.PdfRunDirection;
+import com.itextpdf.text.pdf.interfaces.PdfVersion;
+import com.itextpdf.text.pdf.interfaces.PdfViewerPreferences;
+import com.itextpdf.text.pdf.interfaces.PdfXConformance;
 import com.itextpdf.text.pdf.internal.PdfIsoKeys;
 import com.itextpdf.text.pdf.internal.PdfVersionImp;
 import com.itextpdf.text.pdf.internal.PdfXConformanceImp;
 import com.itextpdf.text.xml.xmp.XmpWriter;
+import com.itextpdf.xmp.XMPException;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.security.cert.Certificate;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+import java.util.TreeSet;
 
 /**
  * A <CODE>DocWriter</CODE> class for PDF.
@@ -237,7 +246,7 @@ public class PdfWriter extends DocWriter implements
         }
 
         private static final int OBJSINSTREAM = 200;
-        
+
         // membervariables
 
         /** array containing the cross-reference table of the normal objects. */
@@ -1247,6 +1256,18 @@ public class PdfWriter extends DocWriter implements
                 if (!documentOCG.isEmpty())
                     PdfWriter.checkPdfIsoConformance(this, PdfIsoKeys.PDFISOKEY_LAYER, OCProperties);
                 // [C9] if there is XMP data to add: add it
+                if (xmpMetadata == null && xmpWriter != null) {
+                    try {
+                        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                        xmpWriter.serialize(baos);
+                    	xmpWriter.close();
+                        xmpMetadata = baos.toByteArray();
+                    } catch (IOException exc) {
+                        xmpWriter = null;
+                    } catch (XMPException exc) {
+                        xmpWriter = null;
+                    }
+                }
                 if (xmpMetadata != null) {
                 	PdfStream xmp = new PdfStream(xmpMetadata);
                 	xmp.put(PdfName.TYPE, PdfName.METADATA);
@@ -1795,27 +1816,24 @@ public class PdfWriter extends DocWriter implements
         pdf.setXmpMetadata(xmpMetadata);
     }
 
-    /**
-     * Use this method to creates XMP Metadata based
-     * on the metadata in the PdfDocument.
-     */
-    public void createXmpMetadata() {
-        setXmpMetadata(createXmpMetadataBytes());
+    protected XmpWriter xmpWriter = null;
+
+    public XmpWriter getXmpWriter() {
+        return xmpWriter;
     }
 
     /**
-     * @return an XmpMetadata byte array
+     * Use this method to creates XMP Metadata based
+     * on the metadata in the PdfDocument.
+     * @since 5.4.4 just creates XmpWriter instance which will be serialized in close.
      */
-    private byte[] createXmpMetadataBytes() {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    public void createXmpMetadata() {
         try {
-            XmpWriter xmp = getXmpWriter(baos, pdf.getInfo());
-            xmp.close();
-        }
-        catch (IOException ioe) {
+            xmpWriter = createXmpWriter(null, pdf.getInfo());
+            xmpMetadata = null;
+        } catch (IOException ioe) {
             ioe.printStackTrace();
         }
-        return baos.toByteArray();
     }
 
 //  [C10] PDFX Conformance
@@ -2762,6 +2780,37 @@ public class PdfWriter extends DocWriter implements
         return pdf.getBoxSize(boxName);
     }
 
+    /**
+     * Returns the intersection between the crop, trim art or bleed box and the parameter intersectingRectangle.
+     * This method returns null when
+     * - there is no intersection
+     * - any of the above boxes are not defined
+     * - the parameter intersectingRectangle is null
+     *
+     * @param boxName crop, trim, art, bleed
+     * @param intersectingRectangle the rectangle that intersects the rectangle associated to the boxName
+     * @return the intersection of the two rectangles
+     */
+    public Rectangle getBoxSize(final String boxName, final Rectangle intersectingRectangle) {
+        Rectangle pdfRectangle = pdf.getBoxSize(boxName);
+
+        if ( pdfRectangle == null || intersectingRectangle == null ) { // no intersection
+            return null;
+        }
+
+        com.itextpdf.awt.geom.Rectangle boxRect = new com.itextpdf.awt.geom.Rectangle(pdfRectangle);
+        com.itextpdf.awt.geom.Rectangle intRect = new com.itextpdf.awt.geom.Rectangle(intersectingRectangle);
+        com.itextpdf.awt.geom.Rectangle outRect = boxRect.intersection(intRect);
+
+        if ( outRect.isEmpty() ) { // no intersection
+            return null;
+        }
+
+        Rectangle output = new Rectangle((float) outRect.getX(), (float) outRect.getY(), (float) (outRect.getX() + outRect.getWidth()), (float) (outRect.getY() + outRect.getHeight()));
+        output.normalize();
+        return output;
+    }
+
 //  [U2] take care of empty pages
 
     /**
@@ -3291,9 +3340,9 @@ public class PdfWriter extends DocWriter implements
             k = "iText";
     	}
         os.write(getISOBytes(String.format("%%%s-%s\n", k, version.getRelease())));
-    	
+
     }
-     
+
     protected TtfUnicodeWriter ttfUnicodeWriter = null;
 
     protected TtfUnicodeWriter getTtfUnicodeWriter() {
@@ -3302,7 +3351,11 @@ public class PdfWriter extends DocWriter implements
         return ttfUnicodeWriter;
     }
 
-    protected XmpWriter getXmpWriter(ByteArrayOutputStream baos, PdfDictionary info) throws IOException {
+    protected XmpWriter createXmpWriter(ByteArrayOutputStream baos, PdfDictionary info) throws IOException {
+        return new XmpWriter(baos, info);
+    }
+
+    protected XmpWriter createXmpWriter(ByteArrayOutputStream baos, HashMap<String, String> info) throws IOException {
         return new XmpWriter(baos, info);
     }
 
@@ -3351,27 +3404,27 @@ public class PdfWriter extends DocWriter implements
         }
     }
 
-    static private final PdfName[] standardStructElems_1_4 = new PdfName[] {PdfName.DOCUMENT, PdfName.PART, PdfName.ART,
+    static private final List<PdfName> standardStructElems_1_4 = Arrays.asList (PdfName.DOCUMENT, PdfName.PART, PdfName.ART,
             PdfName.SECT, PdfName.DIV, PdfName.BLOCKQUOTE, PdfName.CAPTION, PdfName.TOC, PdfName.TOCI, PdfName.INDEX,
             PdfName.NONSTRUCT, PdfName.PRIVATE, PdfName.P, PdfName.H, PdfName.H1, PdfName.H2, PdfName.H3, PdfName.H4,
             PdfName.H5, PdfName.H6, PdfName.L, PdfName.LBL, PdfName.LI, PdfName.LBODY, PdfName.TABLE, PdfName.TR,
             PdfName.TH, PdfName.TD, PdfName.SPAN, PdfName.QUOTE, PdfName.NOTE, PdfName.REFERENCE, PdfName.BIBENTRY,
-            PdfName.CODE, PdfName.LINK, PdfName.FIGURE, PdfName.FORMULA, PdfName.FORM};
+            PdfName.CODE, PdfName.LINK, PdfName.FIGURE, PdfName.FORMULA, PdfName.FORM);
 
-    static private final PdfName[] standardStructElems_1_7 = new PdfName[] {PdfName.DOCUMENT, PdfName.PART, PdfName.ART,
+    static private final List<PdfName> standardStructElems_1_7 = Arrays.asList(PdfName.DOCUMENT, PdfName.PART, PdfName.ART,
             PdfName.SECT, PdfName.DIV, PdfName.BLOCKQUOTE, PdfName.CAPTION, PdfName.TOC, PdfName.TOCI, PdfName.INDEX,
             PdfName.NONSTRUCT, PdfName.PRIVATE, PdfName.P, PdfName.H, PdfName.H1, PdfName.H2, PdfName.H3, PdfName.H4,
             PdfName.H5, PdfName.H6, PdfName.L, PdfName.LBL, PdfName.LI, PdfName.LBODY, PdfName.TABLE, PdfName.TR,
             PdfName.TH, PdfName.TD, PdfName.THEAD, PdfName.TBODY, PdfName.TFOOT, PdfName.SPAN, PdfName.QUOTE, PdfName.NOTE,
             PdfName.REFERENCE, PdfName.BIBENTRY, PdfName.CODE, PdfName.LINK, PdfName.ANNOT, PdfName.RUBY, PdfName.RB, PdfName.RT,
-            PdfName.RP, PdfName.WARICHU, PdfName.WT, PdfName.WP, PdfName.FIGURE, PdfName.FORMULA, PdfName.FORM};
+            PdfName.RP, PdfName.WARICHU, PdfName.WT, PdfName.WP, PdfName.FIGURE, PdfName.FORMULA, PdfName.FORM);
 
 
     /**
      * Gets the list of the standard structure element names (roles).
      * @return
      */
-    public PdfName[] getStandardStructElems() {
+    public List<PdfName> getStandardStructElems() {
         if (pdf_version.getVersion() < VERSION_1_7) {
             return standardStructElems_1_4;
         } else {

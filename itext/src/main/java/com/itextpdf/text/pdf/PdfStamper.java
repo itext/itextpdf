@@ -61,6 +61,7 @@ import com.itextpdf.text.pdf.collection.PdfCollection;
 import com.itextpdf.text.pdf.interfaces.PdfEncryptionSettings;
 import com.itextpdf.text.pdf.interfaces.PdfViewerPreferences;
 import com.itextpdf.text.pdf.security.LtvVerification;
+import com.itextpdf.text.xml.xmp.XmpWriter;
 
 /** Applies extra content to the pages of a PDF document.
  * This extra content can be all the objects allowed in PdfContentByte
@@ -549,6 +550,14 @@ public class PdfStamper
      */
     public void setXmpMetadata(final byte[] xmp) {
         stamper.setXmpMetadata(xmp);
+    }
+
+    public void createXmpMetadata() {
+        stamper.createXmpMetadata();
+    }
+
+    public XmpWriter getXmpWriter() {
+        return stamper.getXmpWriter();
     }
 
     /**

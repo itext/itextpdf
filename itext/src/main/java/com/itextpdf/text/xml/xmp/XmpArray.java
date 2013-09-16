@@ -50,6 +50,7 @@ import com.itextpdf.text.xml.XMLUtil;
 /**
  * StringBuffer to construct an XMP array.
  */
+@Deprecated
 public class XmpArray extends ArrayList<String> {
 
 	private static final long serialVersionUID = 5722854116328732742L;

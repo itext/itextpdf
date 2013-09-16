@@ -47,7 +47,6 @@ import com.itextpdf.text.api.Indentable;
 import com.itextpdf.text.factories.RomanAlphabetFactory;
 import com.itextpdf.text.pdf.PdfName;
 import com.itextpdf.text.pdf.PdfObject;
-import com.itextpdf.text.pdf.PdfStructureElement;
 import com.itextpdf.text.pdf.interfaces.IAccessibleElement;
 
 import java.util.ArrayList;
@@ -156,7 +155,7 @@ public class List implements TextElementArray, Indentable, IAccessibleElement {
 
     protected PdfName role = PdfName.L;
     protected HashMap<PdfName, PdfObject> accessibleAttributes = null;
-    private UUID id = null;
+    private AccessibleElementId id = null;
 
     // constructors
 
@@ -648,13 +647,13 @@ public class List implements TextElementArray, Indentable, IAccessibleElement {
         this.role = role;
     }
 
-    public UUID getId() {
+    public AccessibleElementId getId() {
         if (id == null)
-            id = UUID.randomUUID();
+            id = new AccessibleElementId();
         return id;
     }
 
-    public void setId(final UUID id) {
+    public void setId(final AccessibleElementId id) {
         this.id = id;
     }
 
