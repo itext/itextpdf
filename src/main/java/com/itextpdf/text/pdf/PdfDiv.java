@@ -273,9 +273,6 @@ public class PdfDiv implements Element, Spaceable, IAccessibleElement {
     }
 
     public void addElement(Element element) {
-        if (element instanceof PdfPTable) {
-            ((PdfPTable)element).setSplitLate(false);
-        }
         content.add(element);
     }
 
@@ -475,23 +472,9 @@ public class PdfDiv implements Element, Spaceable, IAccessibleElement {
         int status = ColumnText.NO_MORE_TEXT;
 
         if (!content.isEmpty()) {
-            FloatLayout  floatLayout = null;
             if (this.floatLayout == null) {
-                ArrayList<Element> floatingElements = new ArrayList<Element>();
-                floatingElements.addAll(content);
-                if (simulate) {
-                    floatLayout = new FloatLayout(floatingElements, useAscender);
-                } else {
-                    floatLayout = this.floatLayout = new FloatLayout(floatingElements, useAscender);
-                }
-            } else {
-                if (simulate) {
-                    ArrayList<Element> floatingElements = new ArrayList<Element>();
-                    floatingElements.addAll(this.floatLayout.content);
-                    floatLayout = new FloatLayout(floatingElements, useAscender);
-                } else {
-                    floatLayout = this.floatLayout;
-                }
+                ArrayList<Element> floatingElements = new ArrayList<Element>(content);
+                floatLayout = new FloatLayout(floatingElements, useAscender);
             }
 
             floatLayout.setSimpleColumn(leftX, minY, rightX, yLine);
