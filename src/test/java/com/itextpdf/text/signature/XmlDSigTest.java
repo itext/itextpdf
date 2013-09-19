@@ -54,7 +54,7 @@ public abstract class XmlDSigTest {
         Security.addProvider(provider);
     }
 
-    protected void signXadesBesWithCertificate(String src, String dest, PrivateKey pk, Certificate[] chain, String digestAlgorithm, String provider) throws GeneralSecurityException, IOException, DocumentException, TransformException {
+    protected void signXadesWithCertificate(String src, String dest, PrivateKey pk, Certificate[] chain, String digestAlgorithm, String provider, boolean includeSignaturePolicy) throws GeneralSecurityException, IOException, DocumentException, TransformException {
 
         // Creating the reader and the stamper
         PdfReader reader = new PdfReader(src);
@@ -67,7 +67,7 @@ public abstract class XmlDSigTest {
         // Creating the signature
         ExternalSignature pks = new PrivateKeySignature(pk, digestAlgorithm, provider);
         //MakeXmlSignature.signXadesBes(appearance, pks, chain);
-        MakeXmlSignature.signXadesBes(appearance, pks, chain);
+        MakeXmlSignature.signXades(appearance, pks, chain, includeSignaturePolicy);
     }
 
     protected void signDsWithCertificate(String src, String dest, PrivateKey pk, Certificate[] chain, String digestAlgorithm, String provider) throws GeneralSecurityException, IOException, DocumentException, TransformException {
@@ -121,7 +121,7 @@ public abstract class XmlDSigTest {
         MakeXmlSignature.signXmlDSig(appearance, pks, publicKey);
     }
 
-    protected void signPackageXadesBesWithCertificate(String src, String dest, XfaXpathConstructor.XdpPackage xdpPackage, PrivateKey pk, Certificate[] chain, String digestAlgorithm, String provider) throws GeneralSecurityException, IOException, DocumentException {
+    protected void signPackageXadesWithCertificate(String src, String dest, XfaXpathConstructor.XdpPackage xdpPackage, PrivateKey pk, Certificate[] chain, String digestAlgorithm, String provider, boolean includeSignaturePolicy) throws GeneralSecurityException, IOException, DocumentException {
 
         // Creating the reader and the stamper
         PdfReader reader = new PdfReader(src);
@@ -137,7 +137,7 @@ public abstract class XmlDSigTest {
         // Creating the signature
         ExternalSignature pks = new PrivateKeySignature(pk, digestAlgorithm, provider);
 
-        MakeXmlSignature.signXadesBes(appearance, pks, chain);
+        MakeXmlSignature.signXades(appearance, pks, chain, includeSignaturePolicy);
     }
 
     protected void signPackageDsWithCertificate(String src, String dest, XfaXpathConstructor.XdpPackage xdpPackage, PrivateKey pk, Certificate[] chain, String digestAlgorithm, String provider) throws GeneralSecurityException, IOException, DocumentException {

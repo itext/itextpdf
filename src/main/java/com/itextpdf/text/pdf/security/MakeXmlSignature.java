@@ -51,6 +51,7 @@ import org.apache.jcp.xml.dsig.internal.dom.DOMReference;
 import org.apache.jcp.xml.dsig.internal.dom.DOMSignedInfo;
 import org.apache.jcp.xml.dsig.internal.dom.DOMXMLSignature;
 import org.apache.jcp.xml.dsig.internal.dom.DOMUtils;
+import org.apache.xml.security.c14n.Canonicalizer;
 import org.apache.xml.security.utils.Base64;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -94,6 +95,11 @@ import java.util.UUID;
  * Class that signs your XML.
  */
 public class MakeXmlSignature {
+
+    static
+    {
+        org.apache.xml.security.Init.init();
+    }
 
     /**
      * Empty class for key simulation
@@ -185,14 +191,23 @@ public class MakeXmlSignature {
      * @param sap the XmlSignatureAppearance
      * @param externalSignature  the interface providing the actual signing
      * @param chain the certificate chain
+     * @param includeSignaturePolicy if true SignaturePolicyIdentifier will be included (XAdES-EPES)
      * @throws GeneralSecurityException
      * @throws IOException
      * @throws DocumentException
      */
-    public static void signXadesBes(XmlSignatureAppearance sap, ExternalSignature externalSignature, Certificate[] chain)
+    public static void signXades(XmlSignatureAppearance sap, ExternalSignature externalSignature, Certificate[] chain,
+                                 boolean includeSignaturePolicy)
             throws GeneralSecurityException, DocumentException, IOException {
 
         verifyArguments(sap, externalSignature);
+
+        String signatureMethod = null;
+        if (externalSignature.getEncryptionAlgorithm().equals(SecurityConstants.RSA))
+            signatureMethod = SignatureMethod.RSA_SHA1;
+        else if (externalSignature.getEncryptionAlgorithm().equals(SecurityConstants.DSA))
+            signatureMethod = SignatureMethod.DSA_SHA1;
+
         String contentReferenceId = SecurityConstants.Reference_ + getRandomId();
         String signedPropertiesId = SecurityConstants.SignedProperties_ + getRandomId();
         String signatureId = SecurityConstants.Signature_ + getRandomId();
@@ -200,17 +215,22 @@ public class MakeXmlSignature {
         XMLSignatureFactory fac = createSignatureFactory();
 
         KeyInfo keyInfo = generateKeyInfo(chain, sap);
-        XMLObject xmlObject = generateXadesBesObject(fac, sap, signatureId, contentReferenceId, signedPropertiesId);
+        String[] signaturePolicy = null;
+        if (includeSignaturePolicy) {
+            signaturePolicy = new String[2];
+            if (signatureMethod.equals(SignatureMethod.RSA_SHA1)) {
+                signaturePolicy[0] = SecurityConstants.OID_RSA_SHA1;
+                signaturePolicy[1] = SecurityConstants.OID_RSA_SHA1_DESC;
+            } else {
+                signaturePolicy[0] = SecurityConstants.OID_DSA_SHA1;
+                signaturePolicy[1] = SecurityConstants.OID_DSA_SHA1_DESC;
+            }
+        }
+        XMLObject xmlObject = generateXadesObject(fac, sap, signatureId, contentReferenceId, signedPropertiesId, signaturePolicy);
         Reference contentReference = generateContentReference(fac, sap, contentReferenceId);
         Reference signedPropertiesReference = generateCustomReference(fac, "#"+signedPropertiesId, SecurityConstants.SignedProperties_Type, null);
 
         List<Reference> references = Arrays.asList(signedPropertiesReference, contentReference);
-
-        String signatureMethod = null;
-        if (externalSignature.getEncryptionAlgorithm().equals(SecurityConstants.RSA))
-            signatureMethod = SignatureMethod.RSA_SHA1;
-        else if (externalSignature.getEncryptionAlgorithm().equals(SecurityConstants.DSA))
-            signatureMethod = SignatureMethod.DSA_SHA1;
 
         // Create the SignedInfo
         DOMSignedInfo signedInfo = (DOMSignedInfo)fac.newSignedInfo(
@@ -220,6 +240,34 @@ public class MakeXmlSignature {
         sign(fac, externalSignature, sap.getXmlLocator(), signedInfo, xmlObject, keyInfo, signatureId);
 
         sap.close();
+    }
+
+    /**
+     * Signs the xml with XAdES BES using the enveloped mode, with optional xpath transform (see XmlSignatureAppearance).
+     * @param sap the XmlSignatureAppearance
+     * @param externalSignature  the interface providing the actual signing
+     * @param chain the certificate chain
+     * @throws GeneralSecurityException
+     * @throws IOException
+     * @throws DocumentException
+     */
+    public static void signXadesBes(XmlSignatureAppearance sap, ExternalSignature externalSignature, Certificate[] chain)
+            throws GeneralSecurityException, DocumentException, IOException {
+        signXades(sap, externalSignature, chain, false);
+    }
+
+    /**
+     * Signs the xml with XAdES BES using the enveloped mode, with optional xpath transform (see XmlSignatureAppearance).
+     * @param sap the XmlSignatureAppearance
+     * @param externalSignature  the interface providing the actual signing
+     * @param chain the certificate chain
+     * @throws GeneralSecurityException
+     * @throws IOException
+     * @throws DocumentException
+     */
+    public static void signXadesEpes(XmlSignatureAppearance sap, ExternalSignature externalSignature, Certificate[] chain)
+            throws GeneralSecurityException, DocumentException, IOException {
+        signXades(sap, externalSignature, chain, true);
     }
 
     private static void verifyArguments(XmlSignatureAppearance sap, ExternalSignature externalSignature)
@@ -269,8 +317,9 @@ public class MakeXmlSignature {
         return XMLSignatureFactory.getInstance("DOM", new org.apache.jcp.xml.dsig.internal.dom.XMLDSigRI());
     }
 
-    private static XMLObject generateXadesBesObject(XMLSignatureFactory fac, XmlSignatureAppearance sap,
-        String signatureId, String contentReferenceId, String signedPropertiesId) throws GeneralSecurityException {
+    private static XMLObject generateXadesObject(XMLSignatureFactory fac, XmlSignatureAppearance sap,
+            String signatureId, String contentReferenceId, String signedPropertiesId, String[] signaturePolicy)
+            throws GeneralSecurityException {
 
         MessageDigest md = MessageDigest.getInstance(SecurityConstants.SHA1);
         Certificate cert = sap.getCertificate();
@@ -311,6 +360,31 @@ public class MakeXmlSignature {
                         }
                     SigningCertificate.appendChild(Cert);
                 SignedSignatureProperties.appendChild(SigningCertificate);
+                if (signaturePolicy != null) {
+                    Element SignaturePolicyIdentifier = doc.createElement(SecurityConstants.XADES_SignaturePolicyIdentifier);
+                        Element SignaturePolicyId = doc.createElement(SecurityConstants.XADES_SignaturePolicyId);
+                            Element SigPolicyId = doc.createElement(SecurityConstants.XADES_SigPolicyId);
+                                Element Identifier = doc.createElement(SecurityConstants.XADES_Identifier);
+                                Identifier.appendChild(doc.createTextNode(signaturePolicy[0]));
+                                Identifier.setAttribute(SecurityConstants.Qualifier, SecurityConstants.OIDAsURN);
+                            SigPolicyId.appendChild(Identifier);
+                    //ANSI X9.57 DSA signature generated with SHA-1 hash (DSA x9.30)
+                                Element Description = doc.createElement(SecurityConstants.XADES_Description);
+                                Description.appendChild(doc.createTextNode(signaturePolicy[1]));
+                            SigPolicyId.appendChild(Description);
+                        SignaturePolicyId.appendChild(SigPolicyId);
+                            Element SigPolicyHash = doc.createElement(SecurityConstants.XADES_SigPolicyHash);
+                                DigestMethod = doc.createElementNS(SecurityConstants.XMLDSIG_URI, SecurityConstants.DigestMethod);
+                                DigestMethod.setAttribute(SecurityConstants.Algorithm, SecurityConstants.SHA1_URI);
+                            SigPolicyHash.appendChild(DigestMethod);
+                                DigestValue = doc.createElementNS(SecurityConstants.XMLDSIG_URI, SecurityConstants.DigestValue);
+                                byte[] policyIdContent = getByteArrayOfNode(SigPolicyId);
+                                DigestValue.appendChild(doc.createTextNode(Base64.encode(md.digest(policyIdContent))));
+                            SigPolicyHash.appendChild(DigestValue);
+                        SignaturePolicyId.appendChild(SigPolicyHash);
+                    SignaturePolicyIdentifier.appendChild(SignaturePolicyId);
+                SignedSignatureProperties.appendChild(SignaturePolicyIdentifier);
+                }
                 SignedProperties.appendChild(SignedSignatureProperties);
                 Element SignedDataObjectProperties = doc.createElement(SecurityConstants.XADES_SignedDataObjectProperties);
                     Element DataObjectFormat = doc.createElement(SecurityConstants.XADES_DataObjectFormat);
@@ -402,5 +476,15 @@ public class MakeXmlSignature {
         } catch (Exception e) {
             throw new DocumentException(e);
         }
+    }
+
+    private static byte[] getByteArrayOfNode(Node node) {
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        try {
+            Canonicalizer canonicalizer = Canonicalizer.getInstance(Canonicalizer.ALGO_ID_C14N_OMIT_COMMENTS);
+            stream.write(canonicalizer.canonicalizeSubtree(node));
+        } catch (Exception e) {
+        }
+        return stream.toByteArray();
     }
 }
