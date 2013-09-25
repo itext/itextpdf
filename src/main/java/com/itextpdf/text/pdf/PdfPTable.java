@@ -751,8 +751,9 @@ public class PdfPTable implements LargeElement, Spaceable, IAccessibleElement {
         float yPosStart = yPos;
 
         PdfPTableBody currentBlock = null;
-        for (int k = rowStart; k < rowEnd; ++k) {
-            PdfPRow row = rows.get(k);
+        List<PdfPRow> rows = getRows(rowStart, rowEnd);
+        int k = rowStart;
+        for (PdfPRow row : rows) {
             if (getHeader().rows != null && getHeader().rows.contains(row) && currentBlock == null) {
                 currentBlock = openTableBlock(getHeader(), canvases[TEXTCANVAS]);
             } else if (getBody().rows != null && getBody().rows.contains(row) && currentBlock == null) {
@@ -771,12 +772,13 @@ public class PdfPTable implements LargeElement, Spaceable, IAccessibleElement {
             } else if (getFooter().rows != null && getFooter().rows.contains(row) && (k == rowEnd - 1 || !getFooter().rows.contains(rows.get(k + 1)))) {
                 currentBlock = closeTableBlock(getFooter(), canvases[TEXTCANVAS]);
             }
+            k++;
         }
 
         if (tableEvent != null && colStart == 0 && colEnd == totalCols) {
             float heights[] = new float[rowEnd - rowStart + 1];
             heights[0] = yPosStart;
-            for (int k = rowStart; k < rowEnd; ++k) {
+            for (k = rowStart; k < rowEnd; ++k) {
                 PdfPRow row = rows.get(k);
                 float hr = 0;
                 if (row != null)

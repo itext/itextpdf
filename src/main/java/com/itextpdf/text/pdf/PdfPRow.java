@@ -357,7 +357,6 @@ public class PdfPRow implements IAccessibleElement {
                 canvases[PdfPTable.TEXTCANVAS].openMCBlock(cell);
             }
 			float currentMaxHeight = maxHeight + extraHeights[k];
-			
 			writeBorderAndBackground(xPos, yPos, currentMaxHeight, cell, canvases);
 
 			Image img = cell.getImage();
