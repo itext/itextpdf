@@ -47,7 +47,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.UUID;
 
 import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.pdf.PdfName;
