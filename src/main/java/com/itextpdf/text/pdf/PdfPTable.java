@@ -755,7 +755,7 @@ public class PdfPTable implements LargeElement, Spaceable, IAccessibleElement {
         	getFittingRows(Float.MAX_VALUE, rowStart);
         List<PdfPRow> rows = getRows(rowStart, rowEnd);
         int k = rowStart;
-        for (PdfPRow row :rows) {
+        for (PdfPRow row : rows) {
             if (getHeader().rows != null && getHeader().rows.contains(row) && currentBlock == null) {
                 currentBlock = openTableBlock(getHeader(), canvases[TEXTCANVAS]);
             } else if (getBody().rows != null && getBody().rows.contains(row) && currentBlock == null) {
