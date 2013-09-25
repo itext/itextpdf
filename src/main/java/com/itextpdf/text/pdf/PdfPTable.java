@@ -47,7 +47,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 import com.itextpdf.text.*;
 import com.itextpdf.text.api.Spaceable;
@@ -196,6 +195,7 @@ public class PdfPTable implements LargeElement, Spaceable, IAccessibleElement {
     protected boolean rowCompleted = true;
 
     protected boolean loopCheck = true;
+    protected boolean rowsNotChecked = true;
 
     protected PdfName role = PdfName.TABLE;
     protected HashMap<PdfName, PdfObject> accessibleAttributes = null;
@@ -751,6 +751,8 @@ public class PdfPTable implements LargeElement, Spaceable, IAccessibleElement {
         float yPosStart = yPos;
 
         PdfPTableBody currentBlock = null;
+        if (rowsNotChecked)
+        	getFittingRows(Float.MAX_VALUE, rowStart);
         List<PdfPRow> rows = getRows(rowStart, rowEnd);
         int k = rowStart;
         for (PdfPRow row : rows) {
@@ -764,6 +766,7 @@ public class PdfPTable implements LargeElement, Spaceable, IAccessibleElement {
             if (row != null) {
                 row.writeCells(colStart, colEnd, xPos, yPos, canvases, reusable);
                 yPos -= row.getMaxHeights();
+                LOGGER.info(String.format("Deducting %s resulting in %s", row.getMaxHeights(), yPos));
             }
             if (getHeader().rows != null && getHeader().rows.contains(row) && (k == rowEnd - 1 || !getHeader().rows.contains(rows.get(k + 1)))) {
                 currentBlock = closeTableBlock(getHeader(), canvases[TEXTCANVAS]);
@@ -1958,6 +1961,7 @@ public class PdfPTable implements LargeElement, Spaceable, IAccessibleElement {
      * @since iText 5.4.3
      */
     public FittingRows getFittingRows(float availableHeight, int startIdx) {
+    	LOGGER.info(String.format("get fitting rows %s starting with %s", availableHeight, startIdx));
         assert (getRow(startIdx).getCells()[0] != null); // top left cell of current page may not be null
         int cols = getNumberOfColumns();
         ColumnMeasurementState states[] = new ColumnMeasurementState[cols];
@@ -1989,7 +1993,7 @@ public class PdfPTable implements LargeElement, Spaceable, IAccessibleElement {
                     states[i + j].height = state.height;
                 }
                 i += state.colspan;
-                //System.out.printf("%6.0f", state.height);
+                LOGGER.info(String.format("%6.0f", state.height));
             }
             float maxTotalHeight = 0;
             for (ColumnMeasurementState state : states) {
@@ -1998,7 +2002,7 @@ public class PdfPTable implements LargeElement, Spaceable, IAccessibleElement {
                 }
             }
             row.setFinalMaxHeights(maxCompletedRowsHeight - completedRowsHeight);
-            //System.out.printf(" | %6.0f | %6.0f %6.0f | row: %6.0f\n", rowHeight, maxCompletedRowsHeight, maxTotalHeight, row.getMaxHeights());
+            LOGGER.info(String.format(" | %6.0f | %6.0f %6.0f | row: %6.0f\n", rowHeight, maxCompletedRowsHeight, maxTotalHeight, row.getMaxHeights()));
             float remainingHeight = availableHeight - (isSplitLate() ? maxTotalHeight : maxCompletedRowsHeight);
             if (remainingHeight < 0) {
                 break;
@@ -2007,7 +2011,7 @@ public class PdfPTable implements LargeElement, Spaceable, IAccessibleElement {
             completedRowsHeight = maxCompletedRowsHeight;
             totalHeight = maxTotalHeight;
         }
-
+        rowsNotChecked = false;
         return new FittingRows(startIdx, k - 1, totalHeight, completedRowsHeight, correctedHeightsForLastRow);
     }
 }

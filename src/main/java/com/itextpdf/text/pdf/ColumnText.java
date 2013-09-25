@@ -1600,6 +1600,7 @@ public class ColumnText {
                 	yTemp -= footerHeight;
                 // k will be the first row that doesn't fit
                 // Contributed by Deutsche Bahn Systel GmbH (Thorsten Seitz), splitting row spans
+                LOGGER.info("Table and k = " + k);
                 FittingRows fittingRows = table.getFittingRows(yTemp - minY, rowIdx);
                 k = fittingRows.lastRow + 1;
                 yTemp -= fittingRows.height;
@@ -1619,6 +1620,7 @@ public class ColumnText {
 
                 // Contributed by Deutsche Bahn Systel GmbH (Thorsten Seitz), splitting row spans
                 if (table.isSplitLate() && k > 0) {
+                	LOGGER.info("Correcting row " + (k - 1));
                     fittingRows.correctLastRowChosen(table, k - 1);
                 }
                 // splitting row spans
