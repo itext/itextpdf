@@ -47,7 +47,6 @@ import com.itextpdf.text.AccessibleElementId;
 import com.itextpdf.text.pdf.interfaces.IAccessibleElement;
 
 import java.util.HashMap;
-import java.util.UUID;
 
 public class PdfArtifact implements IAccessibleElement {
 
