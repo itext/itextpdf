@@ -98,6 +98,8 @@ public class PdfDiv implements Element, Spaceable, IAccessibleElement {
 
     private FloatLayout floatLayout = null;
 
+    private float yLine;
+
     protected PdfName role = PdfName.DIV;
     protected HashMap<PdfName, PdfObject> accessibleAttributes = null;
     protected AccessibleElementId id = new AccessibleElementId();
@@ -148,6 +150,10 @@ public class PdfDiv implements Element, Spaceable, IAccessibleElement {
 
     public void setBackgroundColor(BaseColor backgroundColor) {
         this.backgroundColor = backgroundColor;
+    }
+
+    public float getYLine() {
+        return yLine;
     }
 
     private BaseColor backgroundColor = null;
@@ -385,7 +391,7 @@ public class PdfDiv implements Element, Spaceable, IAccessibleElement {
         float maxY = Math.max(lly, ury);
         float minY = Math.min(lly, ury);
         float rightX = Math.max(llx, urx);
-        float yLine = maxY;
+        yLine = maxY;
         boolean contentCutByFixedHeight = false;
 
         if (width != null && width > 0) {
