@@ -272,6 +272,7 @@ not.a.valid.pkcs.7.object.not.a.sequence=Not a valid PKCS#7 object - not a seque
 not.a.valid.pkcs.7.object.not.signed.data=Not a valid PKCS#7 object - not signed data
 not.all.annotations.could.be.added.to.the.document.the.document.doesn.t.have.enough.pages=Not all annotations could be added to the document (the document doesn't have enough pages).
 not.colorized.typed3.fonts.only.accept.mask.images=Not colorized Typed3 fonts only accept mask images.
+not.identity.crypt.filter.is.not.permitted=Not Identity Crypt filter is not permitted.
 null.outpustream=null OutpuStream
 number.of.entries.in.this.xref.subsection.not.found=Number of entries in this xref subsection not found
 object.number.of.the.first.object.in.this.xref.subsection.not.found=Object number of the first object in this xref subsection not found
@@ -392,6 +393,7 @@ the.number.of.booleans.in.this.array.doesn.t.correspond.with.the.number.of.field
 the.number.of.columns.in.pdfptable.constructor.must.be.greater.than.zero=The number of columns in PdfPTable constructor must be greater than zero.
 the.number.of.colour.channels.in.the.jpeg2000.data.shall.be.123=The number of colour channels in the JPEG2000 data shall be 1, 2 or 3.
 the.original.document.was.reused.read.it.again.from.file=The original document was reused. Read it again from file.
+the.page.less.3.units.nor.greater.14400.in.either.direction=The size of any of the page boundaries shall not be less than 3 units in either direction, nor shall it be greater than 14 400 units in either direction.
 the.page.number.must.be.gt.eq.1=The page number must be >= 1.
 the.page.size.must.be.smaller.than.14400.by.14400.its.1.by.2=The page size must be smaller than 14400 by 14400. It's {1} by {2}.
 the.parent.has.already.another.function=The parent has already another function.

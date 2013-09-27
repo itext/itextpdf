@@ -272,6 +272,7 @@ not.a.valid.pkcs.7.object.not.a.sequence=Geen geldig PKCS#7 object - geen sequen
 not.a.valid.pkcs.7.object.not.signed.data=Geen geldig PKCS#7 object - niet gesigneerde data
 not.all.annotations.could.be.added.to.the.document.the.document.doesn.t.have.enough.pages=Niet alle annotaties konden toegevoegd worden (het document had niet genoeg pagina's).
 not.colorized.typed3.fonts.only.accept.mask.images=Kleurloze Type 3 fonts accepteren enkel mask images.
+not.identity.crypt.filter.is.not.permitted=Not Identity Crypt filter is not permitted.
 null.outpustream=OutpuStream null
 number.of.entries.in.this.xref.subsection.not.found=Het aantal entries in deze xref subsectie niet gevonden
 object.number.of.the.first.object.in.this.xref.subsection.not.found=Object number van het eerste object in deze xref subsectie niet gevonden
@@ -392,6 +393,7 @@ the.number.of.booleans.in.this.array.doesn.t.correspond.with.the.number.of.field
 the.number.of.columns.in.pdfptable.constructor.must.be.greater.than.zero=Het aantal kolommen in de PdfPTable constructor moet groter zijn dan nul.
 the.number.of.colour.channels.in.the.jpeg2000.data.shall.be.123=Het aantal colour channels in de JPEG2000 data moet 1, 2 of 3 zijn.
 the.original.document.was.reused.read.it.again.from.file=Het originele document werd herbruikt. Lees het opnieuw in van het bestand.
+the.page.less.3.units.nor.greater.14400.in.either.direction=The size of any of the page boundaries shall not be less than 3 units in either direction, nor shall it be greater than 14 400 units in either direction.
 the.page.number.must.be.gt.eq.1=Het paginanummer moet groter dan of gelijk zijn aan 1.
 the.page.size.must.be.smaller.than.14400.by.14400.its.1.by.2=De pagina grote moet kleiner zijn dan 14400 bij 14400. Het is {1} bij {2}.
 the.parent.has.already.another.function=De parent heeft al een andere functie.
