@@ -58,6 +58,8 @@ abstract public class PdfAChecker {
 
     abstract protected void checkImage(PdfWriter writer, int key, Object obj1);
 
+    abstract protected void checkInlineImage(PdfWriter writer, int key, Object obj1);
+
     abstract protected void checkGState(PdfWriter writer, int key, Object obj1);
 
     abstract protected void checkLayer(PdfWriter writer, int key, Object obj1);
@@ -130,6 +132,9 @@ abstract public class PdfAChecker {
             case PdfIsoKeys.PDFISOKEY_STRUCTELEM:
                 if (checkStructure(conformanceLevel))
                     checkStructElem(writer, key, obj1);
+                break;
+            case PdfIsoKeys.PDFISOKEY_INLINE_IMAGE:
+                checkInlineImage(writer, key, obj1);
                 break;
             default:
                 break;

@@ -63,13 +63,13 @@ public class PdfA1Checker extends PdfAChecker {
             PdfName.FIRSTPAGE, PdfName.LASTPAGE));
     static private HashSet<PdfName> restrictedActions = new HashSet<PdfName>(Arrays.asList(PdfName.LAUNCH, PdfName.SOUND,
             PdfName.MOVIE, PdfName.RESETFORM, PdfName.IMPORTDATA, PdfName.JAVASCRIPT));
-    static private HashSet<PdfName> contentAnnotations = new HashSet<PdfName>(Arrays.asList(PdfName.TEXT, PdfName.LINK, PdfName.FREETEXT,
+    static public final HashSet<PdfName> contentAnnotations = new HashSet<PdfName>(Arrays.asList(PdfName.TEXT, PdfName.LINK, PdfName.FREETEXT,
             PdfName.LINE, PdfName.SQUARE, PdfName.CIRCLE, PdfName.STAMP, PdfName.INK, PdfName.POPUP, PdfName.WIDGET));
-    public final double maxRealValue = 32767;
-    public final int maxStringLength = 65535;
-    public final int maxArrayLength = 8191;
-    public final int maxDictionaryLength = 4095;
-    public final int maxGsStackDepth = 28;
+    static public final double maxRealValue = 32767;
+    static public final int maxStringLength = 65535;
+    static public final int maxArrayLength = 8191;
+    static public final int maxDictionaryLength = 4095;
+    static public final int maxGsStackDepth = 28;
     protected int gsStackDepth = 0;
     protected boolean rgbUsed = false;
     protected boolean cmykUsed = false;
@@ -129,6 +129,9 @@ public class PdfA1Checker extends PdfAChecker {
     }
 
     @Override
+    protected void checkInlineImage(PdfWriter writer, int key, Object obj1) {}
+
+    @Override
     protected void checkGState(PdfWriter writer, int key, Object obj1) {
         PdfDictionary gs = (PdfDictionary) obj1;
         PdfObject obj = gs.get(PdfName.BM);
@@ -180,8 +183,16 @@ public class PdfA1Checker extends PdfAChecker {
             if (stream.contains(PdfName.F) || stream.contains(PdfName.FFILTER) || stream.contains(PdfName.FDECODEPARMS)) {
                 throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("stream.object.dictionary.shall.not.contain.the.f.ffilter.or.fdecodeparams.keys"));
             }
-            if (stream.contains(PdfName.LZWDECODE)) {
-                throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("lzwdecode.filter.is.not.permitted"));
+
+            PdfObject filter = stream.getDirectObject(PdfName.FILTER);
+            if (filter instanceof PdfName) {
+                if (filter.equals(PdfName.LZWDECODE))
+                    throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("lzwdecode.filter.is.not.permitted"));
+            } else if (filter instanceof PdfArray) {
+                for (PdfObject f : ((PdfArray) filter)) {
+                    if (f.equals(PdfName.LZWDECODE))
+                        throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("lzwdecode.filter.is.not.permitted"));
+                }
             }
 
             if (PdfName.FORM.equals(stream.getAsName(PdfName.SUBTYPE))) {
@@ -319,6 +330,9 @@ public class PdfA1Checker extends PdfAChecker {
             PdfFormField field = (PdfFormField) obj1;
             if (!field.contains(PdfName.SUBTYPE))
                 return;
+            if (field.contains(PdfName.AA) || field.contains(PdfName.A)) {
+                throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("widget.annotation.dictionary.or.field.dictionary.shall.not.include.a.or.aa.entry"));
+            }
         }
         if (obj1 instanceof PdfAnnotation) {
             PdfAnnotation annot = (PdfAnnotation) obj1;

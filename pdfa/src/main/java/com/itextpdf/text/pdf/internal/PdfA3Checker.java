@@ -63,6 +63,11 @@ public class PdfA3Checker extends PdfAChecker {
     }
 
     @Override
+    protected void checkInlineImage(PdfWriter writer, int key, Object obj1) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
     protected void checkGState(PdfWriter writer, int key, Object obj1) {
         //To change body of implemented methods use File | Settings | File Templates.
     }
