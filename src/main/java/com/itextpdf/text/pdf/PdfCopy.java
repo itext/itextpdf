@@ -738,10 +738,10 @@ public class PdfCopy extends PdfWriter {
             fields.add(reader.getAcroFields());
             updateCalculationOrder(reader);
         }
-        boolean tagged = PdfStructTreeController.checkTagged(reader);
+        boolean tagged = this.tagged && PdfStructTreeController.checkTagged(reader);
         mergeFieldsInternalCall = true;
         for (int i = 1; i <= reader.getNumberOfPages(); i++) {
-            addPage(getImportedPage(reader, i, tagged && this.tagged));
+            addPage(getImportedPage(reader, i, tagged));
         }
         mergeFieldsInternalCall = false;
     }
