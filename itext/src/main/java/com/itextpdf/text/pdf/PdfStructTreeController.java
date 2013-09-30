@@ -96,11 +96,11 @@ public class PdfStructTreeController {
     static public boolean checkTagged(PdfReader reader) {
         PdfObject obj = reader.getCatalog().get(PdfName.STRUCTTREEROOT);
         obj = getDirectObject(obj);
-        if ((obj == null) || (!obj.isDictionary()))
+        if (obj == null || !obj.isDictionary())
             return false;
         PdfDictionary structTreeRoot = (PdfDictionary) obj;
         obj = PdfStructTreeController.getDirectObject(structTreeRoot.get(PdfName.PARENTTREE));
-        if (!obj.isDictionary())
+        if (obj == null || !obj.isDictionary())
             return false;
         return true;
     }
