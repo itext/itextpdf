@@ -1359,6 +1359,7 @@ public class PdfContentByte {
                     		pimage.put(PdfName.DECODEPARMS, decodeparms);
                     	}
                     }
+                    PdfWriter.checkPdfIsoConformance(writer, PdfIsoKeys.PDFISOKEY_INLINE_IMAGE, pimage);
                     for (Object element : pimage.getKeys()) {
                         PdfName key = (PdfName)element;
                         PdfObject value = pimage.get(key);
