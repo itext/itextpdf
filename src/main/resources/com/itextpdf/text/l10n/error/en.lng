@@ -160,6 +160,7 @@ file.header.flags.bits.2.7.not.0=file header flags bits 2-7 not 0
 file.header.idstring.not.good.at.byte.1=file header idstring not good at byte {1}
 file.is.not.a.valid.png=File is not a valid PNG.
 file.position.0.cross.reference.entry.in.this.xref.subsection=File position 0 cross-reference entry in this xref subsection
+file.specification.dictionary.shall.contain.f.uf.and.desc.entries=The file specification dictionary for an embedded file shall contain the F and UF keys and should contain the Desc key.
 filter.ccittfaxdecode.is.only.supported.for.images=Filter CCITTFaxDecode is only supported for images
 first.scanline.must.be.1d.encoded=First scanline must be 1D encoded.
 font.1.with.2.encoding.is.not.a.cjk.font=Font '{1}' with '{2}' encoding is not a CJK font.
@@ -368,6 +369,7 @@ the.document.catalog.dictionary.shall.not.include.alternatepresentation.names.en
 the.document.catalog.dictionary.shall.not.include.a.needrendering.entry=The document catalog dictionary shall not include NeedRendering entry.
 the.document.catalog.dictionary.shall.not.include.a.requirements.entry=The document catalog dictionary shall not include Requirements entry.
 the.document.catalog.dictionary.shall.not.include.acroform.xfa.entry=The document catalog dictionary shall not contains a XFA entry in the AcroForm entry.
+the.document.catalog.dictionary.shall.not.include.embeddedfiles.names.entry=The document catalog dictionary shall not contains an EmbeddedFiles entry in the Names entry.
 the.document.does.not.contain.parenttree=The document does not contain ParentTree.
 the.document.has.been.closed.you.can.t.add.any.elements=The document has been closed. You can't add any Elements.
 the.document.has.no.catalog.object=The document has no catalog object (meaning: it's an invalid PDF).
