@@ -54,12 +54,12 @@ import java.util.HashSet;
 
 public class PdfA1Checker extends PdfAChecker {
 
-    static final PdfName setState = new PdfName("SetState");
-    static final PdfName noOp = new PdfName("NoOp");
+    static public final PdfName setState = new PdfName("SetState");
+    static public final PdfName noOp = new PdfName("NoOp");
     static private HashSet<PdfName> allowedAnnotTypes = new HashSet<PdfName>(Arrays.asList(PdfName.TEXT, PdfName.LINK, PdfName.FREETEXT,
             PdfName.LINE, PdfName.SQUARE, PdfName.CIRCLE, PdfName.HIGHLIGHT, PdfName.UNDERLINE, PdfName.SQUIGGLY, PdfName.STRIKEOUT, PdfName.STAMP,
             PdfName.INK, PdfName.POPUP, PdfName.WIDGET, PdfName.PRINTERMARK, PdfName.TRAPNET));
-    static private HashSet<PdfName> allowedNamedActions = new HashSet<PdfName>(Arrays.asList(PdfName.NEXTPAGE, PdfName.PREVPAGE,
+    static public final HashSet<PdfName> allowedNamedActions = new HashSet<PdfName>(Arrays.asList(PdfName.NEXTPAGE, PdfName.PREVPAGE,
             PdfName.FIRSTPAGE, PdfName.LASTPAGE));
     static private HashSet<PdfName> restrictedActions = new HashSet<PdfName>(Arrays.asList(PdfName.LAUNCH, PdfName.SOUND,
             PdfName.MOVIE, PdfName.RESETFORM, PdfName.IMPORTDATA, PdfName.JAVASCRIPT));
@@ -248,7 +248,8 @@ public class PdfA1Checker extends PdfAChecker {
             if (dictionary.size() > maxDictionaryLength) {
                 throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("pdf.dictionary.is.out.of.bounds"));
             }
-            if (PdfName.CATALOG.equals(dictionary.getAsName(PdfName.TYPE))) {
+            PdfName type = dictionary.getAsName(PdfName.TYPE);
+            if (PdfName.CATALOG.equals(type)) {
                 if (dictionary.contains(PdfName.AA)) {
                     throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("the.document.catalog.dictionary.shall.not.include.an.aa.entry"));
                 }
@@ -262,6 +263,11 @@ public class PdfA1Checker extends PdfAChecker {
                     }
                 }
 
+            }
+            if (PdfName.PAGE.equals(type)) {
+                if (dictionary.contains(PdfName.AA)) {
+                    throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("page.dictionary.shall.not.include.aa.entry"));
+                }
             }
         }
     }

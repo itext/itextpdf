@@ -59,6 +59,9 @@ public class PdfA2Checker extends PdfAChecker {
             PdfGState.BM_MULTIPLY, PdfGState.BM_SCREEN, PdfGState.BM_OVERLAY, PdfGState.BM_DARKEN, PdfGState.BM_LIGHTEN, PdfGState.BM_COLORDODGE,
             PdfGState.BM_COLORBURN, PdfGState.BM_HARDLIGHT, PdfGState.BM_SOFTLIGHT, PdfGState.BM_DIFFERENCE, PdfGState.BM_EXCLUSION}));
 
+    static private final HashSet<PdfName> restrictedActions = new HashSet<PdfName>(Arrays.asList(PdfName.LAUNCH, PdfName.SOUND,
+            PdfName.MOVIE, PdfName.RESETFORM, PdfName.IMPORTDATA, PdfName.HIDE, PdfName.SETOCGSTATE, PdfName.RENDITION, PdfName.TRANS, PdfName.GOTO3DVIEW, PdfName.JAVASCRIPT));
+
     static final int maxPageSize = 14400;
     static final int minPageSize = 3;
 
@@ -324,10 +327,34 @@ public class PdfA2Checker extends PdfAChecker {
             }
         }  else if (obj1 instanceof PdfDictionary) {
             PdfDictionary dictionary = (PdfDictionary) obj1;
-            if (PdfName.CATALOG.equals(dictionary.getAsName(PdfName.TYPE))) {
+            PdfName type = dictionary.getAsName(PdfName.TYPE);
+            if (PdfName.CATALOG.equals(type)) {
                 if (dictionary.contains(PdfName.AA)) {
                     throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("the.document.catalog.dictionary.shall.not.include.an.aa.entry"));
                 }
+
+                if (dictionary.contains(PdfName.REQUIREMENTS)) {
+                    throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("the.document.catalog.dictionary.shall.not.include.a.requirements.entry"));
+                }
+
+                if (dictionary.contains(PdfName.NEEDRENDERING)) {
+                    throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("the.document.catalog.dictionary.shall.not.include.a.needrendering.entry"));
+                }
+
+                if (dictionary.contains(PdfName.ACROFORM)) {
+                    PdfDictionary acroForm = dictionary.getAsDict(PdfName.ACROFORM);
+                    if (acroForm != null && acroForm.contains(PdfName.XFA)) {
+                        throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("the.document.catalog.dictionary.shall.not.include.acroform.xfa.entry"));
+                    }
+                }
+
+                if (dictionary.contains(PdfName.NAMES)) {
+                    PdfDictionary names = dictionary.getAsDict(PdfName.NAMES);
+                    if (names != null && names.contains(PdfName.ALTERNATEPRESENTATION)) {
+                        throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("the.document.catalog.dictionary.shall.not.include.alternatepresentation.names.entry"));
+                    }
+                }
+
                 if (checkStructure(conformanceLevel)) {
                     PdfDictionary markInfo = dictionary.getAsDict(PdfName.MARKINFO);
                     if (markInfo == null || markInfo.getAsBoolean(PdfName.MARKED) == null || markInfo.getAsBoolean(PdfName.MARKED).booleanValue() == false) {
@@ -339,19 +366,24 @@ public class PdfA2Checker extends PdfAChecker {
                 }
 
             }
-        } else if (obj1 instanceof PdfPage) {
-            PdfName[] boxNames = new PdfName[] {PdfName.MEDIABOX, PdfName.CROPBOX, PdfName.TRIMBOX, PdfName.ARTBOX, PdfName.BLEEDBOX};
-            for (PdfName boxName: boxNames) {
-                PdfObject box = ((PdfPage)obj1).getDirectObject(boxName);
-                if (box instanceof PdfRectangle) {
-                    float width = ((PdfRectangle)box).width();
-                    float height = ((PdfRectangle)box).height();
-                    if (width < minPageSize || width > maxPageSize || height < minPageSize || height > maxPageSize)
-                        throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("the.page.less.3.units.nor.greater.14400.in.either.direction"));
+            if (PdfName.PAGE.equals(type)) {
+                PdfName[] boxNames = new PdfName[] {PdfName.MEDIABOX, PdfName.CROPBOX, PdfName.TRIMBOX, PdfName.ARTBOX, PdfName.BLEEDBOX};
+                for (PdfName boxName: boxNames) {
+                    PdfObject box = dictionary.getDirectObject(boxName);
+                    if (box instanceof PdfRectangle) {
+                        float width = ((PdfRectangle)box).width();
+                        float height = ((PdfRectangle)box).height();
+                        if (width < minPageSize || width > maxPageSize || height < minPageSize || height > maxPageSize)
+                            throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("the.page.less.3.units.nor.greater.14400.in.either.direction"));
+                    }
                 }
-            }
-            if (((PdfPage)obj1).contains(PdfName.AA)) {
-                throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("page.dictionary.shall.not.include.aa.entry"));
+                if (dictionary.contains(PdfName.AA)) {
+                    throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("page.dictionary.shall.not.include.aa.entry"));
+                }
+
+                if (dictionary.contains(PdfName.PRESSTEPS)) {
+                    throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("page.dictionary.shall.not.include.pressteps.entry"));
+                }
             }
         }
     }
@@ -400,7 +432,22 @@ public class PdfA2Checker extends PdfAChecker {
 
     @Override
     protected void checkAction(PdfWriter writer, int key, Object obj1) {
-        //To change body of implemented methods use File | Settings | File Templates.
+        if (obj1 instanceof PdfAction) {
+            PdfAction action = (PdfAction) obj1;
+            PdfName s = action.getAsName(PdfName.S);
+            if (PdfA1Checker.setState.equals(s) || PdfA1Checker.noOp.equals(s)) {
+                throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("deprecated.setstate.and.noop.actions.are.not.allowed"));
+            }
+            if (restrictedActions.contains(s)) {
+                throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("launch.sound.movie.resetform.importdata.and.javascript.actions.are.not.allowed"));
+            }
+            if (PdfName.NAMED.equals(s)) {
+                PdfName n = action.getAsName(PdfName.N);
+                if (n != null && !PdfA1Checker.allowedNamedActions.contains(n)) {
+                    throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("named.action.type.1.not.allowed", n.toString()));
+                }
+            }
+        }
     }
 
     @Override

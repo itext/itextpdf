@@ -146,6 +146,11 @@ public class
     /** A name */
     public static final PdfName ALTERNATE = new PdfName("Alternate");
     /**
+     * A name
+     * @since 5.4.5
+     */
+    public static final PdfName ALTERNATEPRESENTATION = new PdfName("AlternatePresentations");
+    /**
      * A name.
      * @since 5.4.3
      */
@@ -868,6 +873,11 @@ public class
     public static final PdfName GLITTER = new PdfName("Glitter");
     /** A name of an attribute. */
     public static final PdfName GOTO = new PdfName("GoTo");
+    /**
+     * A name
+     * @since 5.4.5
+     */
+    public static final PdfName GOTO3DVIEW= new PdfName("GoTo3DView");
     /** A name of an attribute. */
     public static final PdfName GOTOE = new PdfName("GoToE");
     /** A name of an attribute. */
@@ -1251,6 +1261,11 @@ public class
     public static final PdfName NEAR = new PdfName("Near");
     /** A name */
     public static final PdfName NEEDAPPEARANCES = new PdfName("NeedAppearances");
+    /**
+     * A name.
+     * @since 5.4.5
+     */
+    public static final PdfName NEEDRENDERING= new PdfName("NeedsRendering");
     /** A name */
     public static final PdfName NEWWINDOW = new PdfName("NewWindow");
     /** A name */
@@ -1491,6 +1506,11 @@ public class
     public static final PdfName PRESENTATION = new PdfName("Presentation");
     /** A name */
     public static final PdfName PRESERVERB = new PdfName("PreserveRB");
+    /**
+     * A name.
+     * @since 5.4.5
+     */
+    public static final PdfName PRESSTEPS = new PdfName("PresSteps");
     /** A name */
     public static final PdfName PREV = new PdfName("Prev");
     /** A name */
@@ -1604,6 +1624,7 @@ public class
     public static final PdfName RESETFORM = new PdfName("ResetForm");
     /** A name */
     public static final PdfName RESOURCES = new PdfName("Resources");
+    public static final PdfName REQUIREMENTS = new PdfName("Requirements");
     /** A name */
     public static final PdfName RI = new PdfName("RI");
     /**
