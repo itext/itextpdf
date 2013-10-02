@@ -305,7 +305,13 @@ public class PdfA2Checker extends PdfAChecker {
 
     @Override
     protected void checkFileSpec(PdfWriter writer, int key, Object obj1) {
-        //To change body of implemented methods use File | Settings | File Templates.
+        if (obj1 instanceof PdfFileSpecification) {
+            PdfDictionary fileSpec = (PdfFileSpecification)obj1;
+            if (fileSpec.contains(PdfName.EF) &&
+                    (!fileSpec.contains(PdfName.UF) || !fileSpec.contains(PdfName.F))) {
+                throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("file.specification.dictionary.shall.contain.f.uf.and.desc.entries"));
+            }
+        }
     }
 
     @Override
@@ -467,7 +473,7 @@ public class PdfA2Checker extends PdfAChecker {
             PdfStructureElement structElem = (PdfStructureElement) obj1;
             PdfName role = structElem.getStructureType();
             if (PdfName.FIGURE.equals(role) || PdfName.FORMULA.equals(role) || PdfName.FORM.equals(role)) {
-                PdfObject o = structElem.getAttribute(PdfName.ALT);
+                PdfObject o = structElem.get(PdfName.ALT);
                 if (o instanceof PdfString && o.toString().length() > 0) {
 
                 } else {

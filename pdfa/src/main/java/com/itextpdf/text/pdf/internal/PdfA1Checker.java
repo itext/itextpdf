@@ -253,6 +253,14 @@ public class PdfA1Checker extends PdfAChecker {
                 if (dictionary.contains(PdfName.AA)) {
                     throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("the.document.catalog.dictionary.shall.not.include.an.aa.entry"));
                 }
+
+                if (dictionary.contains(PdfName.NAMES)) {
+                    PdfDictionary names = dictionary.getAsDict(PdfName.NAMES);
+                    if (names != null && names.contains(PdfName.EMBEDDEDFILES)) {
+                        throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("the.document.catalog.dictionary.shall.not.include.embeddedfiles.names.entry"));
+                    }
+                }
+
                 if (checkStructure(conformanceLevel)) {
                     PdfDictionary markInfo = dictionary.getAsDict(PdfName.MARKINFO);
                     if (markInfo == null || markInfo.getAsBoolean(PdfName.MARKED) == null || markInfo.getAsBoolean(PdfName.MARKED).booleanValue() == false) {
@@ -438,7 +446,7 @@ public class PdfA1Checker extends PdfAChecker {
             PdfStructureElement structElem = (PdfStructureElement) obj1;
             PdfName role = structElem.getStructureType();
             if (PdfName.FIGURE.equals(role) || PdfName.FORMULA.equals(role) || PdfName.FORM.equals(role)) {
-                PdfObject o = structElem.getAttribute(PdfName.ALT);
+                PdfObject o = structElem.get(PdfName.ALT);
                 if (o instanceof PdfString && o.toString().length() > 0) {
 
                 } else {
