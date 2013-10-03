@@ -55,16 +55,19 @@ import java.util.HashSet;
 
 public class PdfA2Checker extends PdfAChecker {
 
-    static private HashSet<PdfName> allowedBlendModes = new HashSet<PdfName>(Arrays.asList(new PdfName[]{PdfGState.BM_NORMAL, PdfGState.BM_COMPATIBLE,
+    static public final HashSet<PdfName> allowedBlendModes = new HashSet<PdfName>(Arrays.asList(new PdfName[]{PdfGState.BM_NORMAL, PdfGState.BM_COMPATIBLE,
             PdfGState.BM_MULTIPLY, PdfGState.BM_SCREEN, PdfGState.BM_OVERLAY, PdfGState.BM_DARKEN, PdfGState.BM_LIGHTEN, PdfGState.BM_COLORDODGE,
             PdfGState.BM_COLORBURN, PdfGState.BM_HARDLIGHT, PdfGState.BM_SOFTLIGHT, PdfGState.BM_DIFFERENCE, PdfGState.BM_EXCLUSION}));
 
-    static private final HashSet<PdfName> restrictedActions = new HashSet<PdfName>(Arrays.asList(PdfName.LAUNCH, PdfName.SOUND,
+    static public final HashSet<PdfName> restrictedActions = new HashSet<PdfName>(Arrays.asList(PdfName.LAUNCH, PdfName.SOUND,
             PdfName.MOVIE, PdfName.RESETFORM, PdfName.IMPORTDATA, PdfName.HIDE, PdfName.SETOCGSTATE, PdfName.RENDITION, PdfName.TRANS, PdfName.GOTO3DVIEW, PdfName.JAVASCRIPT));
+
+    static public final PdfName DIGESTLOCATION = new PdfName("DigestLocation");
+    static public final PdfName DIGESTMETHOD = new PdfName("DigestMethod");
+    static public final PdfName DIGESTVALUE = new PdfName("DigestValue");
 
     static final int maxPageSize = 14400;
     static final int minPageSize = 3;
-
     protected int gsStackDepth = 0;
 
     PdfA2Checker(PdfAConformanceLevel conformanceLevel) {
@@ -358,6 +361,32 @@ public class PdfA2Checker extends PdfAChecker {
                     PdfDictionary names = dictionary.getAsDict(PdfName.NAMES);
                     if (names != null && names.contains(PdfName.ALTERNATEPRESENTATION)) {
                         throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("the.document.catalog.dictionary.shall.not.include.alternatepresentation.names.entry"));
+                    }
+                }
+
+
+                PdfDictionary permissions = dictionary.getAsDict(PdfName.PERMS);
+                if (permissions != null) {
+                    for (PdfName dictKey : permissions.getKeys()) {
+                        if (PdfName.DOCMDP.equals(dictKey)) {
+                            PdfDictionary signatureDict = permissions.getAsDict(PdfName.DOCMDP);
+                            if (signatureDict != null) {
+                                PdfArray references = signatureDict.getAsArray(PdfName.REFERENCE);
+                                if (references != null) {
+                                    for (int i = 0; i < references.length(); i++) {
+                                        PdfDictionary referenceDict = references.getAsDict(i);
+                                        if (referenceDict.contains(DIGESTLOCATION)
+                                                || referenceDict.contains(DIGESTMETHOD)
+                                                    || referenceDict.contains(DIGESTVALUE)) {
+                                            throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("signature.references.dictionary.shall.not.contain.digestlocation.digestmethod.digestvalue"));
+                                        }
+                                    }
+                                }
+                            }
+                        } else if (PdfName.UR3.equals(dictKey)){}
+                        else {
+                            throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("no.keys.other.than.UR3.and.DocMDP.shall.be.present.in.a.permissions.dictionary"));
+                        }
                     }
                 }
 
