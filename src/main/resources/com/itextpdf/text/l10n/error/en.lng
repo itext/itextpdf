@@ -264,6 +264,7 @@ no.compatible.encryption.found=No compatible encryption found
 no.error.just.an.old.style.table=No error, just an old style table
 no.font.is.defined=No font is defined.
 no.glyphs.defined.for.type3.font=No glyphs defined for Type3 font
+no.keys.other.than.UR3.and.DocMDP.shall.be.present.in.a.permissions.dictionary=No keys other than UR3 and DocMDP shall be present in a permissions dictionary.
 no.structtreeroot.found=No StructTreeRoot found, this probably isn't a tagged PDF document!
 no.valid.column.line.found=No valid column line found.
 no.valid.encryption.mode=No valid encryption mode
@@ -335,6 +336,7 @@ row.coordinate.of.location.must.be.gt.eq.0=row coordinate of location must be >=
 scanline.must.begin.with.eol.code.word=Scanline must begin with EOL code word.
 separations.patterns.and.shadings.are.not.allowed.in.mk.dictionary=Separations, patterns and shadings are not allowed in MK dictionary.
 setelement.position.already.taken=setElement - position already taken
+signature.references.dictionary.shall.not.contain.digestlocation.digestmethod.digestvalue=The Signature References dictionary shall not contain the keys DigestLocation, DigestMethod, and DigestValue.
 start.marker.missing.in.1=Start marker missing in {1}
 startxref.is.not.followed.by.a.number=startxref is not followed by a number.
 startxref.not.found=startxref not found.
