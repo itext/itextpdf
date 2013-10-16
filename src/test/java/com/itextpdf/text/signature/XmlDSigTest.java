@@ -251,9 +251,7 @@ public abstract class XmlDSigTest {
 
         XMLSignature signature =
                 fac.unmarshalXMLSignature(valContext);
-        boolean coreValidity = signature.validate(valContext);
-
-        return coreValidity;
+        return signature.validate(valContext);
     }
 
     /**

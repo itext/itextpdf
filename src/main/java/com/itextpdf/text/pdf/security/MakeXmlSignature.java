@@ -46,12 +46,7 @@ package com.itextpdf.text.pdf.security;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.pdf.XmlSignatureAppearance;
-import org.apache.jcp.xml.dsig.internal.dom.DOMKeyInfoFactory;
-import org.apache.jcp.xml.dsig.internal.dom.DOMReference;
-import org.apache.jcp.xml.dsig.internal.dom.DOMSignedInfo;
-import org.apache.jcp.xml.dsig.internal.dom.DOMXMLSignature;
-import org.apache.jcp.xml.dsig.internal.dom.DOMUtils;
-import org.apache.xml.security.c14n.Canonicalizer;
+import org.apache.jcp.xml.dsig.internal.dom.*;
 import org.apache.xml.security.utils.Base64;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -60,13 +55,7 @@ import org.w3c.dom.NodeList;
 
 import javax.xml.crypto.XMLStructure;
 import javax.xml.crypto.dom.DOMStructure;
-import javax.xml.crypto.dsig.CanonicalizationMethod;
-import javax.xml.crypto.dsig.Reference;
-import javax.xml.crypto.dsig.SignatureMethod;
-import javax.xml.crypto.dsig.XMLObject;
-import javax.xml.crypto.dsig.XMLSignatureFactory;
-import javax.xml.crypto.dsig.DigestMethod;
-import javax.xml.crypto.dsig.Transform;
+import javax.xml.crypto.dsig.*;
 import javax.xml.crypto.dsig.dom.DOMSignContext;
 import javax.xml.crypto.dsig.keyinfo.KeyInfo;
 import javax.xml.crypto.dsig.keyinfo.KeyInfoFactory;
@@ -76,8 +65,12 @@ import javax.xml.crypto.dsig.spec.C14NMethodParameterSpec;
 import javax.xml.crypto.dsig.spec.TransformParameterSpec;
 import javax.xml.crypto.dsig.spec.XPathFilter2ParameterSpec;
 import javax.xml.crypto.dsig.spec.XPathType;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import java.io.*;
 import java.security.GeneralSecurityException;
 import java.security.Key;
 import java.security.MessageDigest;
@@ -85,21 +78,12 @@ import java.security.PublicKey;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Class that signs your XML.
  */
 public class MakeXmlSignature {
-
-    static
-    {
-        org.apache.xml.security.Init.init();
-    }
 
     /**
      * Empty class for key simulation
@@ -326,21 +310,21 @@ public class MakeXmlSignature {
 
         org.w3c.dom.Document doc = sap.getXmlLocator().getDocument();
 
-        Element QualifyingProperties = doc.createElement(SecurityConstants.XADES_QualifyingProperties);
+        Element QualifyingProperties = doc.createElementNS(SecurityConstants.XADES_132_URI, SecurityConstants.XADES_QualifyingProperties);
         QualifyingProperties.setAttribute("Target", "#"+signatureId);
-            Element SignedProperties = doc.createElement(SecurityConstants.XADES_SignedProperties);
+            Element SignedProperties = doc.createElementNS(SecurityConstants.XADES_132_URI, SecurityConstants.XADES_SignedProperties);
             SignedProperties.setAttribute("Id", signedPropertiesId);
             SignedProperties.setIdAttribute("Id", true);
-                Element SignedSignatureProperties = doc.createElement(SecurityConstants.XADES_SignedSignatureProperties);
-                    Element SigningTime = doc.createElement(SecurityConstants.XADES_SigningTime);
+                Element SignedSignatureProperties = doc.createElementNS(SecurityConstants.XADES_132_URI, SecurityConstants.XADES_SignedSignatureProperties);
+                    Element SigningTime = doc.createElementNS(SecurityConstants.XADES_132_URI, SecurityConstants.XADES_SigningTime);
                         SimpleDateFormat sdf = new SimpleDateFormat(SecurityConstants.SigningTimeFormat);
                         String result = sdf.format(sap.getSignDate().getTime());
                         result = result.substring(0, result.length()-2).concat(":").concat(result.substring(result.length()-2));
                     SigningTime.appendChild(doc.createTextNode(result));
                 SignedSignatureProperties.appendChild(SigningTime);
-                    Element SigningCertificate = doc.createElement(SecurityConstants.XADES_SigningCertificate);
-                        Element Cert = doc.createElement(SecurityConstants.XADES_Cert);
-                            Element CertDigest = doc.createElement(SecurityConstants.XADES_CertDigest);
+                    Element SigningCertificate = doc.createElementNS(SecurityConstants.XADES_132_URI, SecurityConstants.XADES_SigningCertificate);
+                        Element Cert = doc.createElementNS(SecurityConstants.XADES_132_URI, SecurityConstants.XADES_Cert);
+                            Element CertDigest = doc.createElementNS(SecurityConstants.XADES_132_URI, SecurityConstants.XADES_CertDigest);
                                 Element DigestMethod = doc.createElementNS(SecurityConstants.XMLDSIG_URI, SecurityConstants.DigestMethod);
                                 DigestMethod.setAttribute(SecurityConstants.Algorithm, SecurityConstants.SHA1_URI);
                             CertDigest.appendChild(DigestMethod);
@@ -349,7 +333,7 @@ public class MakeXmlSignature {
                             CertDigest.appendChild(DigestValue);
                         Cert.appendChild(CertDigest);
                         if (cert instanceof X509Certificate) {
-                            Element IssueSerial = doc.createElement(SecurityConstants.XADES_IssuerSerial);
+                            Element IssueSerial = doc.createElementNS(SecurityConstants.XADES_132_URI, SecurityConstants.XADES_IssuerSerial);
                                 Element X509IssuerName = doc.createElementNS(SecurityConstants.XMLDSIG_URI, SecurityConstants.X509IssuerName);
                                 X509IssuerName.appendChild(doc.createTextNode(getX509IssuerName((X509Certificate)cert)));
                             IssueSerial.appendChild(X509IssuerName);
@@ -361,19 +345,19 @@ public class MakeXmlSignature {
                     SigningCertificate.appendChild(Cert);
                 SignedSignatureProperties.appendChild(SigningCertificate);
                 if (signaturePolicy != null) {
-                    Element SignaturePolicyIdentifier = doc.createElement(SecurityConstants.XADES_SignaturePolicyIdentifier);
-                        Element SignaturePolicyId = doc.createElement(SecurityConstants.XADES_SignaturePolicyId);
-                            Element SigPolicyId = doc.createElement(SecurityConstants.XADES_SigPolicyId);
-                                Element Identifier = doc.createElement(SecurityConstants.XADES_Identifier);
+                    Element SignaturePolicyIdentifier = doc.createElementNS(SecurityConstants.XADES_132_URI, SecurityConstants.XADES_SignaturePolicyIdentifier);
+                        Element SignaturePolicyId = doc.createElementNS(SecurityConstants.XADES_132_URI, SecurityConstants.XADES_SignaturePolicyId);
+                            Element SigPolicyId = doc.createElementNS(SecurityConstants.XADES_132_URI, SecurityConstants.XADES_SigPolicyId);
+                                Element Identifier = doc.createElementNS(SecurityConstants.XADES_132_URI, SecurityConstants.XADES_Identifier);
                                 Identifier.appendChild(doc.createTextNode(signaturePolicy[0]));
                                 Identifier.setAttribute(SecurityConstants.Qualifier, SecurityConstants.OIDAsURN);
                             SigPolicyId.appendChild(Identifier);
                     //ANSI X9.57 DSA signature generated with SHA-1 hash (DSA x9.30)
-                                Element Description = doc.createElement(SecurityConstants.XADES_Description);
+                                Element Description = doc.createElementNS(SecurityConstants.XADES_132_URI, SecurityConstants.XADES_Description);
                                 Description.appendChild(doc.createTextNode(signaturePolicy[1]));
                             SigPolicyId.appendChild(Description);
                         SignaturePolicyId.appendChild(SigPolicyId);
-                            Element SigPolicyHash = doc.createElement(SecurityConstants.XADES_SigPolicyHash);
+                            Element SigPolicyHash = doc.createElementNS(SecurityConstants.XADES_132_URI, SecurityConstants.XADES_SigPolicyHash);
                                 DigestMethod = doc.createElementNS(SecurityConstants.XMLDSIG_URI, SecurityConstants.DigestMethod);
                                 DigestMethod.setAttribute(SecurityConstants.Algorithm, SecurityConstants.SHA1_URI);
                             SigPolicyHash.appendChild(DigestMethod);
@@ -481,8 +465,11 @@ public class MakeXmlSignature {
     private static byte[] getByteArrayOfNode(Node node) {
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         try {
-            Canonicalizer canonicalizer = Canonicalizer.getInstance(Canonicalizer.ALGO_ID_C14N_OMIT_COMMENTS);
-            stream.write(canonicalizer.canonicalizeSubtree(node));
+            StreamResult xmlOutput = new StreamResult(new StringWriter());
+            Transformer transformer = TransformerFactory.newInstance().newTransformer();
+            transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+            transformer.transform(new DOMSource(node), xmlOutput);
+            return xmlOutput.getWriter().toString().getBytes();
         } catch (Exception e) {
         }
         return stream.toByteArray();
