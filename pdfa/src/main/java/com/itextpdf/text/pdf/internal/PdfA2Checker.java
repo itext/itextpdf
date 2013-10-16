@@ -43,12 +43,10 @@
  */
 package com.itextpdf.text.pdf.internal;
 
-import com.itextpdf.text.ExceptionConverter;
 import com.itextpdf.text.Jpeg2000;
 import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.pdf.*;
 
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -105,6 +103,12 @@ public class PdfA2Checker extends PdfAChecker {
         PdfObject obj = gs.get(PdfName.BM);
         if (obj != null && !allowedBlendModes.contains(obj)) {
             throw new PdfAConformanceException(MessageLocalization.getComposedMessage("blend.mode.1.not.allowed", obj.toString()));
+        }
+        if (gs.contains(PdfName.TR)) {
+            throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("an.extgstate.dictionary.shall.not.contain.the.tr.key"));
+        }
+        if (gs.contains(PdfName.HTP)) {
+            throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("an.extgstate.dictionary.shall.not.contain.the.htp.key"));
         }
     }
 
@@ -418,6 +422,17 @@ public class PdfA2Checker extends PdfAChecker {
 
                 if (dictionary.contains(PdfName.PRESSTEPS)) {
                     throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("page.dictionary.shall.not.include.pressteps.entry"));
+                }
+            }
+            PdfObject obj2 = dictionary.get(PdfName.HALFTONETYPE);
+            if (obj2 != null && obj2.isNumber()) {
+                PdfNumber number = (PdfNumber)obj2;
+                if (number.intValue() != 1 || number.intValue() != 5) {
+                    throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("an.extgstate.dictionary.shall.contain.the.halftonetype.key.of.value.1.or.5"));
+                }
+
+                if (dictionary.contains(PdfName.HALFTONENAME)) {
+                    throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("an.extgstate.dictionary.shall.not.contain.the.halftonename.key"));
                 }
             }
         }

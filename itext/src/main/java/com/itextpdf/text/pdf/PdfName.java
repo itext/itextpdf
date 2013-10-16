@@ -927,7 +927,17 @@ public class
      * @since 2.1.6
      */
     public static final PdfName H6 = new PdfName("H6");
-
+    /**
+     * A name
+     * @since 5.4.5
+     */
+    public static final PdfName HALFTONENAME = new PdfName("HalftoneName");
+    /**
+     * A name
+     * @since 5.4.5
+     */
+    public static final PdfName HALFTONETYPE = new PdfName("HalftoneType");
+    /**
     /**
      * A name.
      * @since 2.1.6
@@ -968,14 +978,24 @@ public class
     /** A name */
     public static final PdfName HIGHLIGHT = new PdfName("Highlight");
     /**
-     * A name.
+     * A name
      * @since 2.1.6
      */
     public static final PdfName HOFFSET = new PdfName("HOffset");
+    /**
+     * A name
+     * @since 5.4.5
+     */
+    public static final PdfName HT = new PdfName("HT");
+    /**
+     * A name
+     * @since 5.4.5
+     */
+    public static final PdfName HTP = new PdfName("HTP");
     /** A name */
     public static final PdfName I = new PdfName("I");
     /**
-     * A name.
+     * A name
      * @since 5.4.3
      */
     public static final PdfName IC = new PdfName("IC");

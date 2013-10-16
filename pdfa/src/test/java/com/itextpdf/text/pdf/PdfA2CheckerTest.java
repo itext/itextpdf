@@ -4,7 +4,6 @@ import com.itextpdf.text.*;
 import junit.framework.Assert;
 import org.junit.Test;
 
-import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -183,5 +182,86 @@ public class PdfA2CheckerTest {
         document.close();
     }
 
+    @Test
+    public void egsCheckTest1() throws DocumentException, IOException {
+        Document document = new Document();
+        PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream("./target/egsCheckTest4.pdf"), PdfAConformanceLevel.PDF_A_2A);
+        writer.createXmpMetadata();
+        document.open();
 
+        Font font = FontFactory.getFont("./src/test/resources/com/itextpdf/text/pdf/FreeMonoBold.ttf", BaseFont.WINANSI, BaseFont.EMBEDDED, 12);
+        document.add(new Paragraph("Hello World", font));
+
+        PdfContentByte canvas = writer.getDirectContent();
+        PdfGState gs = new PdfGState();
+        gs.put(PdfName.TR, new PdfName("Test"));
+        gs.put(PdfName.HTP, new PdfName("Test"));
+        canvas.setGState(gs);
+
+        boolean exceptionThrown = false;
+        try {
+            document.close();
+        } catch (PdfAConformanceException e) {
+            if (e.getObject() == gs) {
+                exceptionThrown = true;
+            }
+        }
+        if (!exceptionThrown)
+            Assert.fail("PdfAConformanceException should be thrown.");
+    }
+
+    @Test
+    public void egsCheckTest2() throws DocumentException, IOException {
+        Document document = new Document();
+        PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream("./target/egsCheckTest4.pdf"), PdfAConformanceLevel.PDF_A_2A);
+        writer.createXmpMetadata();
+        document.open();
+
+        Font font = FontFactory.getFont("./src/test/resources/com/itextpdf/text/pdf/FreeMonoBold.ttf", BaseFont.WINANSI, BaseFont.EMBEDDED, 12);
+        document.add(new Paragraph("Hello World", font));
+
+        PdfContentByte canvas = writer.getDirectContent();
+        PdfGState gs = new PdfGState();
+        PdfDictionary dict = new PdfDictionary();
+        dict.put(PdfName.HALFTONETYPE, new PdfNumber(6));
+        gs.put(PdfName.HT, dict);
+        canvas.setGState(gs);
+
+        boolean exceptionThrown = false;
+        try {
+            document.close();
+        } catch (PdfAConformanceException e) {
+            exceptionThrown = true;
+        }
+        if (!exceptionThrown)
+            Assert.fail("PdfAConformanceException should be thrown.");
+    }
+
+    @Test
+    public void egsCheckTest3() throws DocumentException, IOException {
+        Document document = new Document();
+        PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream("./target/egsCheckTest4.pdf"), PdfAConformanceLevel.PDF_A_2A);
+        writer.createXmpMetadata();
+        document.open();
+
+        Font font = FontFactory.getFont("./src/test/resources/com/itextpdf/text/pdf/FreeMonoBold.ttf", BaseFont.WINANSI, BaseFont.EMBEDDED, 12);
+        document.add(new Paragraph("Hello World", font));
+
+        PdfContentByte canvas = writer.getDirectContent();
+        PdfGState gs = new PdfGState();
+        PdfDictionary dict = new PdfDictionary();
+        dict.put(PdfName.HALFTONETYPE, new PdfNumber(5));
+        dict.put(PdfName.HALFTONENAME, new PdfName("Test"));
+        gs.put(PdfName.HT, dict);
+        canvas.setGState(gs);
+
+        boolean exceptionThrown = false;
+        try {
+            document.close();
+        } catch (PdfAConformanceException e) {
+            exceptionThrown = true;
+        }
+        if (!exceptionThrown)
+            Assert.fail("PdfAConformanceException should be thrown.");
+    }
 }
