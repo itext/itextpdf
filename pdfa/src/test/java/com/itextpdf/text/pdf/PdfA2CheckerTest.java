@@ -4,6 +4,7 @@ import com.itextpdf.text.*;
 import junit.framework.Assert;
 import org.junit.Test;
 
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -263,5 +264,60 @@ public class PdfA2CheckerTest {
         }
         if (!exceptionThrown)
             Assert.fail("PdfAConformanceException should be thrown.");
+    }
+
+    @Test
+    public void canvasCheckTest1() throws DocumentException, IOException {
+        Document document = new Document();
+        PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream("./target/canvasCheckTest1.pdf"), PdfAConformanceLevel.PDF_A_1B);
+        writer.createXmpMetadata();
+        document.open();
+
+        Font font = FontFactory.getFont("./src/test/resources/com/itextpdf/text/pdf/FreeMonoBold.ttf", BaseFont.WINANSI, BaseFont.EMBEDDED, 12);
+        document.add(new Paragraph("Hello World", font));
+        ICC_Profile icc = ICC_Profile.getInstance(new FileInputStream("./src/test/resources/com/itextpdf/text/pdf/sRGB Color Space Profile.icm"));
+        writer.setOutputIntents("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", icc);
+
+        PdfContentByte canvas = writer.getDirectContent();
+        boolean exceptionThrown = false;
+        try {
+            for (int i = 0; i < 29; i++) {
+                canvas.saveState();
+            }
+        } catch (PdfAConformanceException e) {
+            if ("q".equals(e.getObject())) {
+                exceptionThrown = true;
+            }
+        }
+        if (!exceptionThrown)
+            Assert.fail("PdfAConformanceException should be thrown.");
+        for (int i = 0; i < 28; i++) {
+            canvas.restoreState();
+        }
+
+        document.close();
+
+    }
+
+    @Test
+    public void canvasCheckTest2() throws DocumentException, IOException {
+        Document document = new Document();
+        PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream("./target/canvasCheckTestt2.pdf"), PdfAConformanceLevel.PDF_A_1B);
+        writer.createXmpMetadata();
+        document.open();
+
+        Font font = FontFactory.getFont("./src/test/resources/com/itextpdf/text/pdf/FreeMonoBold.ttf", BaseFont.WINANSI, BaseFont.EMBEDDED, 12);
+        document.add(new Paragraph("Hello World", font));
+        ICC_Profile icc = ICC_Profile.getInstance(new FileInputStream("./src/test/resources/com/itextpdf/text/pdf/sRGB Color Space Profile.icm"));
+        writer.setOutputIntents("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", icc);
+
+        PdfContentByte canvas = writer.getDirectContent();
+        for (int i = 0; i < 28; i++) {
+            canvas.saveState();
+        }
+        for (int i = 0; i < 28; i++) {
+            canvas.restoreState();
+        }
+        document.close();
     }
 }
