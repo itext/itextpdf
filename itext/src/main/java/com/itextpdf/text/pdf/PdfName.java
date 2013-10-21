@@ -174,6 +174,8 @@ public class
     /** A name */
     public static final PdfName AP = new PdfName("AP");
     /** A name */
+    public static final PdfName APP = new PdfName("App");
+    /** A name */
     public static final PdfName APPDEFAULT = new PdfName("AppDefault");
     /**
      * A name
@@ -1571,6 +1573,8 @@ public class
      * @since 5.1.0
      */
     public static final PdfName PROJCS = new PdfName("PROJCS");
+    /** A name */
+    public static final PdfName PROP_BUILD = new PdfName("Prop_Build");
     /** A name */
     public static final PdfName PROPERTIES = new PdfName("Properties");
     /** A name */
