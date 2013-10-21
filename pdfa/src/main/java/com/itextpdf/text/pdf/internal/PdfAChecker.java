@@ -84,6 +84,8 @@ abstract public class PdfAChecker {
 
     abstract protected void checkStructElem(PdfWriter writer, int key, Object obj1);
 
+    abstract protected void checkOutputIntent(PdfWriter writer, int key, Object obj1);
+
     void checkPdfAConformance(PdfWriter writer, int key, Object obj1) {
         if (writer == null || !writer.isPdfIso())
             return;
@@ -135,6 +137,9 @@ abstract public class PdfAChecker {
                 break;
             case PdfIsoKeys.PDFISOKEY_INLINE_IMAGE:
                 checkInlineImage(writer, key, obj1);
+                break;
+            case PdfIsoKeys.PDFISOKEY_OUTPUTINTENT:
+                checkOutputIntent(writer, key, obj1);
                 break;
             default:
                 break;

@@ -43,10 +43,13 @@
  */
 package com.itextpdf.text.pdf.internal;
 
+import com.itextpdf.text.BaseColor;
+import com.itextpdf.text.ExceptionConverter;
 import com.itextpdf.text.Jpeg2000;
 import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.pdf.*;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -67,6 +70,9 @@ public class PdfA2Checker extends PdfAChecker {
     static final int maxPageSize = 14400;
     static final int minPageSize = 3;
     protected int gsStackDepth = 0;
+    protected boolean rgbUsed = false;
+    protected boolean cmykUsed = false;
+    protected boolean grayUsed = false;
 
     PdfA2Checker(PdfAConformanceLevel conformanceLevel) {
         super(conformanceLevel);
@@ -404,8 +410,44 @@ public class PdfA2Checker extends PdfAChecker {
                     }
                 }
 
-            }
-            if (PdfName.PAGE.equals(type)) {
+                PdfObject outputIntents = dictionary.getAsArray(PdfName.OUTPUTINTENTS);
+                boolean pdfa1OutputIntentFound = false;
+                if (outputIntents != null && ((PdfArray) outputIntents).size() > 0) {
+                    PdfObject iccProfileStream = null;
+                    for (int i = 0; i < ((PdfArray) outputIntents).size(); i++) {
+                        PdfDictionary outputIntentDictionary = ((PdfArray) outputIntents).getAsDict(i);
+                        PdfName gts = outputIntentDictionary.getAsName(PdfName.S);
+                        if (PdfName.GTS_PDFA1.equals(gts)) {
+                            if (pdfa1OutputIntentFound)
+                                throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("a.pdfa.file.may.have.only.one.pdfa.outputintent"));
+                            pdfa1OutputIntentFound = true;
+                        }
+                        if (outputIntentDictionary != null) {
+                            PdfObject destOutputIntent = outputIntentDictionary.get(PdfName.DESTOUTPUTPROFILE);
+                            if (destOutputIntent != null) {
+                                if (iccProfileStream == null)
+                                    iccProfileStream = destOutputIntent;
+                                else if (iccProfileStream.getIndRef() != iccProfileStream.getIndRef())
+                                    throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("if.outputintents.array.more.than.one.entry.the.same.indirect.object"));
+                            } else if (PdfName.GTS_PDFA1.equals(gts))
+                                throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("outputintent.shall.have.gtspdfa1.and.destoutputintent"));
+                        }
+                    }
+                }
+
+                if (!pdfa1OutputIntentFound) {
+                    if (rgbUsed && writer.getDefaultColorspace().get(PdfName.DEFAULTRGB) == null) {
+                        throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("devicergb.shall.only.be.used.if.defaultrgb.pdfa.or.outputintent"));
+                    }
+                    if (cmykUsed && writer.getDefaultColorspace().get(PdfName.DEFAULTCMYK) == null) {
+                        throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("devicecmyk.shall.only.be.used.if.defaultcmyk.pdfa.or.outputintent"));
+                    }
+                    if (grayUsed && writer.getDefaultColorspace().get(PdfName.DEFAULTGRAY) == null) {
+                        throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("devicegray.shall.only.be.used.if.defaultgray.pdfa.or.outputintent"));
+                    }
+                }
+
+            } else if (PdfName.PAGE.equals(type)) {
                 PdfName[] boxNames = new PdfName[] {PdfName.MEDIABOX, PdfName.CROPBOX, PdfName.TRIMBOX, PdfName.ARTBOX, PdfName.BLEEDBOX};
                 for (PdfName boxName: boxNames) {
                     PdfObject box = dictionary.getDirectObject(boxName);
@@ -422,6 +464,38 @@ public class PdfA2Checker extends PdfAChecker {
 
                 if (dictionary.contains(PdfName.PRESSTEPS)) {
                     throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("page.dictionary.shall.not.include.pressteps.entry"));
+                }
+            } else if (PdfName.OUTPUTINTENT.equals(type)) {
+                PdfName gts = dictionary.getAsName(PdfName.S);
+                if (PdfName.GTS_PDFA1.equals(gts)) {
+                    PdfObject iccProfileStream = dictionary.get(PdfName.DESTOUTPUTPROFILE);
+                    String inputColorSpace = "";
+                    String deviceClass = "";
+                    if (iccProfileStream != null) {
+                        ICC_Profile icc_profile = writer.getColorProfile();
+                        try {
+                            inputColorSpace = new String(icc_profile.getData(), 16, 4, "US-ASCII");
+                            deviceClass = new String(icc_profile.getData(), 12, 4, "US-ASCII");
+                        } catch (UnsupportedEncodingException e) {
+                            throw new ExceptionConverter(e);
+                        }
+                    }
+                    if (!"prtr".equals(deviceClass) && !"mntr".equals(deviceClass))
+                        throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("outputintent.shall.be.prtr.or.mntr"));
+                    if ("RGB ".equals(inputColorSpace)) {
+                        if (cmykUsed && writer.getDefaultColorspace().get(PdfName.DEFAULTCMYK) == null)
+                            throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("devicecmyk.shall.only.be.used.if.defaultcmyk.pdfa.or.outputintent"));
+                    } else if ("CMYK".equals(inputColorSpace)) {
+                        if (rgbUsed && writer.getDefaultColorspace().get(PdfName.DEFAULTRGB) == null)
+                            throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("devicergb.shall.only.be.used.if.defaultrgb.pdfa.or.outputintent"));
+                    } else if ("GRAY".equals(inputColorSpace)) {
+                        if (rgbUsed && writer.getDefaultColorspace().get(PdfName.DEFAULTRGB) == null)
+                            throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("devicergb.shall.only.be.used.if.defaultrgb.pdfa.or.outputintent"));
+                        if (cmykUsed && writer.getDefaultColorspace().get(PdfName.DEFAULTCMYK) == null)
+                            throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("devicecmyk.shall.only.be.used.if.defaultcmyk.pdfa.or.outputintent"));
+                    } else {
+                        throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("outputintent.shall.have.colourspace.gray.rgb.or.cmyk"));
+                    }
                 }
             }
             PdfObject obj2 = dictionary.get(PdfName.HALFTONETYPE);
@@ -452,7 +526,46 @@ public class PdfA2Checker extends PdfAChecker {
 
     @Override
     protected void checkColor(PdfWriter writer, int key, Object obj1) {
-        //To change body of implemented methods use File | Settings | File Templates.
+        switch (key) {
+            case PdfIsoKeys.PDFISOKEY_COLOR:
+                if (obj1 instanceof ExtendedColor) {
+                    ExtendedColor ec = (ExtendedColor) obj1;
+                    switch (ec.getType()) {
+                        case ExtendedColor.TYPE_CMYK:
+                            checkColor(writer, PdfIsoKeys.PDFISOKEY_CMYK, obj1);
+                            break;
+                        case ExtendedColor.TYPE_GRAY:
+                            checkColor(writer, PdfIsoKeys.PDFISOKEY_GRAY, obj1);
+                            return;
+                        case ExtendedColor.TYPE_RGB:
+                            checkColor(writer, PdfIsoKeys.PDFISOKEY_RGB, obj1);
+                            break;
+                        case ExtendedColor.TYPE_SEPARATION:
+                            SpotColor sc = (SpotColor) ec;
+                            checkColor(writer, PdfIsoKeys.PDFISOKEY_COLOR, sc.getPdfSpotColor().getAlternativeCS());
+                            break;
+                        case ExtendedColor.TYPE_SHADING:
+                            ShadingColor xc = (ShadingColor) ec;
+                            checkColor(writer, PdfIsoKeys.PDFISOKEY_COLOR, xc.getPdfShadingPattern().getShading().getColorSpace());
+                            break;
+                        case ExtendedColor.TYPE_PATTERN:
+                            PatternColor pc = (PatternColor) ec;
+                            checkColor(writer, PdfIsoKeys.PDFISOKEY_COLOR, pc.getPainter().getDefaultColor());
+                            break;
+                    }
+                } else if (obj1 instanceof BaseColor)
+                    checkColor(writer, PdfIsoKeys.PDFISOKEY_RGB, obj1);
+                break;
+            case PdfIsoKeys.PDFISOKEY_CMYK:
+                cmykUsed = true;
+                break;
+            case PdfIsoKeys.PDFISOKEY_RGB:
+                rgbUsed = true;
+                break;
+            case PdfIsoKeys.PDFISOKEY_GRAY:
+                grayUsed = true;
+                break;
+        }
     }
 
     @Override
@@ -527,6 +640,12 @@ public class PdfA2Checker extends PdfAChecker {
         }
     }
 
+    @Override
+    protected void checkOutputIntent(PdfWriter writer, int key, Object obj1) {
+       if (writer instanceof PdfAStamperImp && writer.getColorProfile() != null)
+           throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("outputintent.shall.not.be.updated"));
+    }
+
     private void fillOrderRecursively(PdfArray orderArray, HashSet<PdfObject> order) {
         for (int i = 0; i < orderArray.size(); i++) {
             PdfArray orderChild = orderArray.getAsArray(i);
@@ -537,5 +656,4 @@ public class PdfA2Checker extends PdfAChecker {
             }
         }
     }
-
 }

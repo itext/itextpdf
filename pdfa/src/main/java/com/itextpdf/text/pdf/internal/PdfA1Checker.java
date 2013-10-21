@@ -73,6 +73,7 @@ public class PdfA1Checker extends PdfAChecker {
     protected int gsStackDepth = 0;
     protected boolean rgbUsed = false;
     protected boolean cmykUsed = false;
+    protected boolean grayUsed = false;
 
     PdfA1Checker(PdfAConformanceLevel conformanceLevel) {
         super(conformanceLevel);
@@ -271,10 +272,58 @@ public class PdfA1Checker extends PdfAChecker {
                     }
                 }
 
-            }
-            if (PdfName.PAGE.equals(type)) {
+                PdfObject outputIntents = dictionary.getAsArray(PdfName.OUTPUTINTENTS);
+                boolean pdfa1OutputIntentFound = false;
+                if (outputIntents != null && ((PdfArray) outputIntents).size() > 0) {
+                    for (int i = 0; i < ((PdfArray) outputIntents).size(); i++) {
+                        PdfDictionary outputIntentDictionary = ((PdfArray) outputIntents).getAsDict(i);
+                        PdfName gts = outputIntentDictionary.getAsName(PdfName.S);
+                        if (PdfName.GTS_PDFA1.equals(gts)) {
+                            if (pdfa1OutputIntentFound)
+                                throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("a.pdfa.file.may.have.only.one.pdfa.outputintent"));
+                            pdfa1OutputIntentFound = true;
+                        }
+                        if (outputIntentDictionary != null) {
+                            PdfObject destOutputIntent = outputIntentDictionary.get(PdfName.DESTOUTPUTPROFILE);
+                            if (destOutputIntent == null && PdfName.GTS_PDFA1.equals(gts))
+                                throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("outputintent.shall.have.gtspdfa1.and.destoutputintent"));
+                        }
+                    }
+                }
+
+                if ((rgbUsed || cmykUsed || grayUsed) && !pdfa1OutputIntentFound) {
+                    throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("if.device.rgb.cmyk.gray.used.in.file.that.file.shall.contain.pdfa.outputintent"));
+                }
+            } else if (PdfName.PAGE.equals(type)) {
                 if (dictionary.contains(PdfName.AA)) {
                     throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("page.dictionary.shall.not.include.aa.entry"));
+                }
+            } else if (PdfName.OUTPUTINTENT.equals(type)) {
+                PdfObject iccProfileStream = dictionary.get(PdfName.DESTOUTPUTPROFILE);
+                String inputColorSpace = "";
+                if (iccProfileStream != null) {
+                    ICC_Profile icc_profile = writer.getColorProfile();
+                    try {
+                        inputColorSpace = new String(icc_profile.getData(), 16, 4, "US-ASCII");
+                    } catch (UnsupportedEncodingException e) {
+                        throw new ExceptionConverter(e);
+                    }
+                }
+                PdfName gts = dictionary.getAsName(PdfName.S);
+                if (!PdfName.GTS_PDFA1.equals(gts)) {
+                    throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("outputintent.shall.have.gtspdfa1.and.destoutputintent"));
+                }
+                if ("RGB ".equals(inputColorSpace)) {
+                    if (cmykUsed)
+                        throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("devicecmyk.may.be.used.only.if.the.file.has.a.cmyk.pdfa.outputIntent"));
+                } else if ("CMYK".equals(inputColorSpace)) {
+                    if (rgbUsed)
+                        throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("devicergb.may.be.used.only.if.the.file.has.a.rgb.pdfa.outputIntent"));
+                } else {
+                    if (cmykUsed)
+                        throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("devicecmyk.may.be.used.only.if.the.file.has.a.cmyk.pdfa.outputIntent"));
+                    if (rgbUsed)
+                        throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("devicergb.may.be.used.only.if.the.file.has.a.rgb.pdfa.outputIntent"));
                 }
             }
         }
@@ -303,6 +352,7 @@ public class PdfA1Checker extends PdfAChecker {
                             checkColor(writer, PdfIsoKeys.PDFISOKEY_CMYK, obj1);
                             break;
                         case ExtendedColor.TYPE_GRAY:
+                            checkColor(writer, PdfIsoKeys.PDFISOKEY_GRAY, obj1);
                             return;
                         case ExtendedColor.TYPE_RGB:
                             checkColor(writer, PdfIsoKeys.PDFISOKEY_RGB, obj1);
@@ -334,6 +384,9 @@ public class PdfA1Checker extends PdfAChecker {
                     throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("devicergb.and.devicecmyk.colorspaces.cannot.be.used.both.in.one.file"));
                 }
                 rgbUsed = true;
+                break;
+            case PdfIsoKeys.PDFISOKEY_GRAY:
+                grayUsed = true;
                 break;
         }
     }
@@ -456,5 +509,9 @@ public class PdfA1Checker extends PdfAChecker {
         }
     }
 
-
+    @Override
+    protected void checkOutputIntent(PdfWriter writer, int key, Object obj1) {
+        if (writer instanceof PdfAStamperImp && writer.getColorProfile() != null)
+            throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("outputintent.shall.not.be.updated"));
+    }
 }
