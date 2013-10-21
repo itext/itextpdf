@@ -156,6 +156,30 @@ class PdfStamperImp extends PdfWriter {
                 fullCompression = false;
         }
         initialXrefSize = reader.getXrefSize();
+        readColorProfile();
+    }
+
+    protected void readColorProfile() {
+        PdfObject outputIntents = reader.getCatalog().getAsArray(PdfName.OUTPUTINTENTS);
+        if (outputIntents != null && ((PdfArray) outputIntents).size() > 0) {
+            PdfStream iccProfileStream = null;
+            for (int i = 0; i < ((PdfArray) outputIntents).size(); i++) {
+                PdfDictionary outputIntentDictionary = ((PdfArray) outputIntents).getAsDict(i);
+                if (outputIntentDictionary != null) {
+                    iccProfileStream = outputIntentDictionary.getAsStream(PdfName.DESTOUTPUTPROFILE);
+                    if (iccProfileStream != null)
+                        break;
+                }
+            }
+
+            if (iccProfileStream instanceof PRStream) {
+                try {
+                    colorProfile = ICC_Profile.getInstance(PdfReader.getStreamBytes((PRStream)iccProfileStream));
+                } catch(IOException exc) {
+                    throw new ExceptionConverter(exc);
+                }
+            }
+        }
     }
 
     protected void setViewerPreferences() {
@@ -194,6 +218,10 @@ class PdfStamperImp extends PdfWriter {
         setOutlines();
         setJavaScript();
         addFileAttachments();
+        // [C11] Output Intents
+        if (extraCatalog != null) {
+            catalog.mergeDifferent(extraCatalog);
+        }
         if (openAction != null) {
             catalog.put(PdfName.OPENACTION, openAction);
         }

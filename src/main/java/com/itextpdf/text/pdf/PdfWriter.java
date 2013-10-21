@@ -782,6 +782,12 @@ public class PdfWriter extends DocWriter implements
     /** body of the PDF document */
     protected PdfBody body;
 
+    protected ICC_Profile colorProfile;
+
+    public ICC_Profile getColorProfile() {
+        return colorProfile;
+    }
+
     /**
      * Adds the local destinations to the body of the document.
      * @param desto the <CODE>HashMap</CODE> containing the destinations
@@ -1904,6 +1910,7 @@ public class PdfWriter extends DocWriter implements
      * @throws IOException on error
      */
     public void setOutputIntents(final String outputConditionIdentifier, final String outputCondition, final String registryName, final String info, final ICC_Profile colorProfile) throws IOException {
+        PdfWriter.checkPdfIsoConformance(this, PdfIsoKeys.PDFISOKEY_OUTPUTINTENT, colorProfile);
         getExtraCatalog();
         PdfDictionary out = new PdfDictionary(PdfName.OUTPUTINTENT);
         if (outputCondition != null)
@@ -1922,6 +1929,7 @@ public class PdfWriter extends DocWriter implements
         out.put(PdfName.S, PdfName.GTS_PDFX);
 
         extraCatalog.put(PdfName.OUTPUTINTENTS, new PdfArray(out));
+        this.colorProfile = colorProfile;
     }
 
    /**
