@@ -316,6 +316,11 @@ public class
     public static final PdfName CAPHEIGHT = new PdfName("CapHeight");
     /**
      * A name
+     * @since 5.4.5
+     */
+    public static final PdfName CARET = new PdfName("Caret");
+    /**
+     * A name
      * @since 2.1.6
      */
     public static final PdfName CAPTION = new PdfName("Caption");
@@ -2235,6 +2240,11 @@ public class
      * @since 2.1.6
      */
     public static final PdfName WARICHU = new PdfName("Warichu");
+    /**
+     * A name
+     * @since 5.4.5
+     */
+    public static final PdfName WATERMARK = new PdfName("Watermark");
     /** A name of an attribute. */
     public static final PdfName WC = new PdfName("WC");
     /** A name of an attribute. */
