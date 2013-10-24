@@ -165,9 +165,9 @@ public class PdfAStamperImp extends PdfStamperImp {
     }
 
     /**
-     * @see com.itextpdf.text.pdf.PdfStamperImp#getPdfIsoConformance()
+     * @see com.itextpdf.text.pdf.PdfStamperImp#initPdfIsoConformance()
      */
-    protected PdfIsoConformance getPdfIsoConformance() {
+    protected PdfIsoConformance initPdfIsoConformance() {
         return new PdfAConformanceImp(this);
     }
 

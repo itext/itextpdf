@@ -56,15 +56,27 @@ public class PdfA1Checker extends PdfAChecker {
 
     static public final PdfName setState = new PdfName("SetState");
     static public final PdfName noOp = new PdfName("NoOp");
-    static private HashSet<PdfName> allowedAnnotTypes = new HashSet<PdfName>(Arrays.asList(PdfName.TEXT, PdfName.LINK, PdfName.FREETEXT,
-            PdfName.LINE, PdfName.SQUARE, PdfName.CIRCLE, PdfName.HIGHLIGHT, PdfName.UNDERLINE, PdfName.SQUIGGLY, PdfName.STRIKEOUT, PdfName.STAMP,
-            PdfName.INK, PdfName.POPUP, PdfName.WIDGET, PdfName.PRINTERMARK, PdfName.TRAPNET));
-    static public final HashSet<PdfName> allowedNamedActions = new HashSet<PdfName>(Arrays.asList(PdfName.NEXTPAGE, PdfName.PREVPAGE,
-            PdfName.FIRSTPAGE, PdfName.LASTPAGE));
+
+    static private HashSet<PdfName> allowedAnnotTypes = new HashSet<PdfName>(Arrays.asList(PdfName.TEXT, PdfName.LINK,
+            PdfName.FREETEXT, PdfName.LINE, PdfName.SQUARE, PdfName.CIRCLE, PdfName.POLYGON, PdfName.POLYLINE,
+            PdfName.HIGHLIGHT, PdfName.UNDERLINE, PdfName.SQUIGGLY, PdfName.STRIKEOUT, PdfName.STAMP, PdfName.CARET,
+            PdfName.INK, PdfName.POPUP, PdfName.FILEATTACHMENT, PdfName.WIDGET, PdfName.PRINTERMARK, PdfName.TRAPNET,
+            PdfName.WATERMARK));
+
+    static public final HashSet<PdfName> allowedNamedActions = new HashSet<PdfName>(Arrays.asList(PdfName.NEXTPAGE,
+            PdfName.PREVPAGE, PdfName.FIRSTPAGE, PdfName.LASTPAGE));
+
     static private HashSet<PdfName> restrictedActions = new HashSet<PdfName>(Arrays.asList(PdfName.LAUNCH, PdfName.SOUND,
             PdfName.MOVIE, PdfName.RESETFORM, PdfName.IMPORTDATA, PdfName.JAVASCRIPT));
-    static public final HashSet<PdfName> contentAnnotations = new HashSet<PdfName>(Arrays.asList(PdfName.TEXT, PdfName.LINK, PdfName.FREETEXT,
-            PdfName.LINE, PdfName.SQUARE, PdfName.CIRCLE, PdfName.STAMP, PdfName.INK, PdfName.POPUP, PdfName.WIDGET));
+
+    static public final HashSet<PdfName> contentAnnotations = new HashSet<PdfName>(Arrays.asList(PdfName.TEXT,
+            PdfName.LINK, PdfName.FREETEXT, PdfName.LINE, PdfName.SQUARE, PdfName.CIRCLE, PdfName.STAMP,
+            PdfName.INK, PdfName.POPUP, PdfName.WIDGET));
+
+    static private final HashSet<PdfName> keysForCheck = new HashSet<PdfName>(Arrays.asList(PdfName.FONTDESCRIPTOR,
+            PdfName.FONTFILE, PdfName.FONTFILE2, PdfName.FONTFILE3, PdfName.FILTER, PdfName.GROUP, PdfName.S,
+            PdfName.EMBEDDEDFILES, PdfName.MARKED, PdfName.DESTOUTPUTPROFILE));
+
     static public final double maxRealValue = 32767;
     static public final int maxStringLength = 65535;
     static public final int maxArrayLength = 8191;
@@ -79,8 +91,9 @@ public class PdfA1Checker extends PdfAChecker {
         super(conformanceLevel);
     }
 
-    static boolean checkFlag(int flags, int flag) {
-        return (flags & flag) != 0;
+    @Override
+    protected HashSet<PdfName> initKeysForCheck() {
+        return keysForCheck;
     }
 
     @Override
@@ -89,14 +102,14 @@ public class PdfA1Checker extends PdfAChecker {
         if (bf.getFontType() == BaseFont.FONT_TYPE_DOCUMENT) {
             PdfStream prs = null;
             PdfDictionary fontDictionary = ((DocumentFont) bf).getFontDictionary();
-            PdfDictionary fontDescriptor = fontDictionary.getAsDict(PdfName.FONTDESCRIPTOR);
+            PdfDictionary fontDescriptor = getDirectDictionary(fontDictionary.get(PdfName.FONTDESCRIPTOR));
             if (fontDescriptor != null) {
-                prs = fontDescriptor.getAsStream(PdfName.FONTFILE);
+                prs = getDirectStream(fontDescriptor.get(PdfName.FONTFILE));
                 if (prs == null) {
-                    prs = fontDescriptor.getAsStream(PdfName.FONTFILE2);
+                    prs = getDirectStream(fontDescriptor.get(PdfName.FONTFILE2));
                 }
                 if (prs == null) {
-                    prs = fontDescriptor.getAsStream(PdfName.FONTFILE3);
+                    prs = getDirectStream(fontDescriptor.get(PdfName.FONTFILE3));
                 }
             }
             if (prs == null) {
@@ -185,7 +198,7 @@ public class PdfA1Checker extends PdfAChecker {
                 throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("stream.object.dictionary.shall.not.contain.the.f.ffilter.or.fdecodeparams.keys"));
             }
 
-            PdfObject filter = stream.getDirectObject(PdfName.FILTER);
+            PdfObject filter = getDirectObject(stream.get(PdfName.FILTER));
             if (filter instanceof PdfName) {
                 if (filter.equals(PdfName.LZWDECODE))
                     throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("lzwdecode.filter.is.not.permitted"));
@@ -203,7 +216,7 @@ public class PdfA1Checker extends PdfAChecker {
                 if (stream.contains(PdfName.PS)) {
                     throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("a.form.xobject..dictionary.shall.not.contain.ps.key"));
                 }
-                PdfDictionary group = stream.getAsDict(PdfName.GROUP);
+                PdfDictionary group = getDirectDictionary(stream.get(PdfName.GROUP));
                 if (group != null) {
                     PdfName s = group.getAsName(PdfName.S);
                     if (PdfName.TRANSPARENCY.equals(s)) {
@@ -260,14 +273,14 @@ public class PdfA1Checker extends PdfAChecker {
                 }
 
                 if (dictionary.contains(PdfName.NAMES)) {
-                    PdfDictionary names = dictionary.getAsDict(PdfName.NAMES);
+                    PdfDictionary names = getDirectDictionary(dictionary.get(PdfName.NAMES));
                     if (names != null && names.contains(PdfName.EMBEDDEDFILES)) {
                         throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("the.document.catalog.dictionary.shall.not.include.embeddedfiles.names.entry"));
                     }
                 }
 
                 if (checkStructure(conformanceLevel)) {
-                    PdfDictionary markInfo = dictionary.getAsDict(PdfName.MARKINFO);
+                    PdfDictionary markInfo = getDirectDictionary(dictionary.get(PdfName.MARKINFO));
                     if (markInfo == null || markInfo.getAsBoolean(PdfName.MARKED) == null || markInfo.getAsBoolean(PdfName.MARKED).booleanValue() == false) {
                         throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("document.catalog.dictionary.shall.include.a.markinfo.dictionary.whose.entry.marked.shall.have.a.value.of.true"));
                     }
@@ -280,7 +293,7 @@ public class PdfA1Checker extends PdfAChecker {
                 boolean pdfa1OutputIntentFound = false;
                 if (outputIntents != null && ((PdfArray) outputIntents).size() > 0) {
                     for (int i = 0; i < ((PdfArray) outputIntents).size(); i++) {
-                        PdfDictionary outputIntentDictionary = ((PdfArray) outputIntents).getAsDict(i);
+                        PdfDictionary outputIntentDictionary = getDirectDictionary(((PdfArray)outputIntents).getPdfObject(i));
                         PdfName gts = outputIntentDictionary.getAsName(PdfName.S);
                         if (PdfName.GTS_PDFA1.equals(gts)) {
                             if (pdfa1OutputIntentFound)
@@ -444,7 +457,7 @@ public class PdfA1Checker extends PdfAChecker {
                     throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("destoutputprofile.in.the.pdfa1.outputintent.dictionary.shall.be.rgb"));
                 }
             }
-            PdfDictionary ap = annot.getAsDict(PdfName.AP);
+            PdfDictionary ap = getDirectDictionary(annot.get(PdfName.AP));
             if (ap != null) {
                 if (ap.contains(PdfName.R) || ap.contains(PdfName.D)) {
                     throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("appearance.dictionary.shall.contain.only.the.n.key.with.stream.value"));

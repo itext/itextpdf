@@ -1851,9 +1851,9 @@ public class PdfWriter extends DocWriter implements
     public static final int PDFX32002 = 2;
 
     /** Stores the PDF ISO conformance. */
-	protected PdfIsoConformance pdfIsoConformance = getPdfIsoConformance();
+	protected PdfIsoConformance pdfIsoConformance = initPdfIsoConformance();
 
-    protected PdfIsoConformance getPdfIsoConformance() {
+    protected PdfIsoConformance initPdfIsoConformance() {
         return new PdfXConformanceImp(this);
     }
 

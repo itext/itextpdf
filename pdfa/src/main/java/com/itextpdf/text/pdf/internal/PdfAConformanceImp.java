@@ -110,4 +110,7 @@ public class PdfAConformanceImp implements PdfAConformance {
         return true;
     }
 
+    public PdfAChecker getPdfAChecker() {
+        return pdfAChecker;
+    }
 }

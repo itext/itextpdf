@@ -56,12 +56,27 @@ import java.util.HashSet;
 
 public class PdfA2Checker extends PdfAChecker {
 
-    static public final HashSet<PdfName> allowedBlendModes = new HashSet<PdfName>(Arrays.asList(new PdfName[]{PdfGState.BM_NORMAL, PdfGState.BM_COMPATIBLE,
-            PdfGState.BM_MULTIPLY, PdfGState.BM_SCREEN, PdfGState.BM_OVERLAY, PdfGState.BM_DARKEN, PdfGState.BM_LIGHTEN, PdfGState.BM_COLORDODGE,
-            PdfGState.BM_COLORBURN, PdfGState.BM_HARDLIGHT, PdfGState.BM_SOFTLIGHT, PdfGState.BM_DIFFERENCE, PdfGState.BM_EXCLUSION}));
+    static public final HashSet<PdfName> allowedBlendModes = new HashSet<PdfName>(Arrays.asList(PdfGState.BM_NORMAL,
+            PdfGState.BM_COMPATIBLE, PdfGState.BM_MULTIPLY, PdfGState.BM_SCREEN, PdfGState.BM_OVERLAY,
+            PdfGState.BM_DARKEN, PdfGState.BM_LIGHTEN, PdfGState.BM_COLORDODGE, PdfGState.BM_COLORBURN,
+            PdfGState.BM_HARDLIGHT, PdfGState.BM_SOFTLIGHT, PdfGState.BM_DIFFERENCE, PdfGState.BM_EXCLUSION));
 
-    static public final HashSet<PdfName> restrictedActions = new HashSet<PdfName>(Arrays.asList(PdfName.LAUNCH, PdfName.SOUND,
-            PdfName.MOVIE, PdfName.RESETFORM, PdfName.IMPORTDATA, PdfName.HIDE, PdfName.SETOCGSTATE, PdfName.RENDITION, PdfName.TRANS, PdfName.GOTO3DVIEW, PdfName.JAVASCRIPT));
+    static public final HashSet<PdfName> restrictedActions = new HashSet<PdfName>(Arrays.asList(PdfName.LAUNCH,
+            PdfName.SOUND, PdfName.MOVIE, PdfName.RESETFORM, PdfName.IMPORTDATA, PdfName.HIDE, PdfName.SETOCGSTATE,
+            PdfName.RENDITION, PdfName.TRANS, PdfName.GOTO3DVIEW, PdfName.JAVASCRIPT));
+
+    static private HashSet<PdfName> allowedAnnotTypes = new HashSet<PdfName>(Arrays.asList(PdfName.TEXT, PdfName.LINK,
+            PdfName.FREETEXT, PdfName.LINE, PdfName.SQUARE, PdfName.CIRCLE, PdfName.HIGHLIGHT, PdfName.UNDERLINE,
+            PdfName.SQUIGGLY, PdfName.STRIKEOUT, PdfName.STAMP, PdfName.INK, PdfName.POPUP, PdfName.WIDGET,
+            PdfName.PRINTERMARK, PdfName.TRAPNET));
+
+    static public final HashSet<PdfName> contentAnnotations = new HashSet<PdfName>(Arrays.asList(PdfName.TEXT,
+            PdfName.LINK, PdfName.FREETEXT, PdfName.LINE, PdfName.SQUARE, PdfName.CIRCLE, PdfName.STAMP,
+            PdfName.INK, PdfName.POPUP, PdfName.WIDGET));
+
+    static private final HashSet<PdfName> keysForCheck = new HashSet<PdfName>(Arrays.asList(PdfName.AP, PdfName.N,
+            PdfName.R, PdfName.D, PdfName.FONTFILE, PdfName.FONTFILE2, PdfName.FONTFILE3, PdfName.NAME, PdfName.XFA,
+            PdfName.ALTERNATEPRESENTATION, PdfName.DOCMDP, PdfName.REFERENCE, new PdfName("DigestLocation"), new PdfName("DigestMethod"), new PdfName("DigestValue"), PdfName.MARKED, PdfName.S));
 
     static public final PdfName DIGESTLOCATION = new PdfName("DigestLocation");
     static public final PdfName DIGESTMETHOD = new PdfName("DigestMethod");
@@ -79,19 +94,24 @@ public class PdfA2Checker extends PdfAChecker {
     }
 
     @Override
+    protected HashSet<PdfName> initKeysForCheck() {
+        return keysForCheck;
+    }
+
+    @Override
     protected void checkFont(PdfWriter writer, int key, Object obj1) {
         BaseFont bf = (BaseFont) obj1;
         if (bf.getFontType() == BaseFont.FONT_TYPE_DOCUMENT) {
             PdfStream prs = null;
             PdfDictionary fontDictionary = ((DocumentFont) bf).getFontDictionary();
-            PdfDictionary fontDescriptor = fontDictionary.getAsDict(PdfName.FONTDESCRIPTOR);
+            PdfDictionary fontDescriptor = getDirectDictionary(fontDictionary.get(PdfName.FONTDESCRIPTOR));
             if (fontDescriptor != null) {
-                prs = fontDescriptor.getAsStream(PdfName.FONTFILE);
+                prs = getDirectStream(fontDescriptor.get(PdfName.FONTFILE));
                 if (prs == null) {
-                    prs = fontDescriptor.getAsStream(PdfName.FONTFILE2);
+                    prs = getDirectStream(fontDescriptor.get(PdfName.FONTFILE2));
                 }
                 if (prs == null) {
-                    prs = fontDescriptor.getAsStream(PdfName.FONTFILE3);
+                    prs = getDirectStream(fontDescriptor.get(PdfName.FONTFILE3));
                 }
             }
             if (prs == null) {
@@ -205,13 +225,13 @@ public class PdfA2Checker extends PdfAChecker {
         } else if (obj1 instanceof PdfOCProperties) {
             PdfOCProperties properties = (PdfOCProperties) obj1;
             ArrayList<PdfDictionary> configsList = new ArrayList<PdfDictionary>();
-            PdfDictionary d = properties.getAsDict(PdfName.D);
+            PdfDictionary d = getDirectDictionary(properties.get(PdfName.D));
             if (d != null)
                 configsList.add(d);
             PdfArray configs = properties.getAsArray(PdfName.CONFIGS);
             if (configs != null) {
                 for (int i = 0; i < configs.size(); i++) {
-                    PdfDictionary config = configs.getAsDict(i);
+                    PdfDictionary config = getDirectDictionary(configs.getPdfObject(i));
                     if (config != null)
                         configsList.add(config);
                 }
@@ -275,7 +295,7 @@ public class PdfA2Checker extends PdfAChecker {
                 if (filter.equals(PdfName.LZWDECODE))
                     throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("lzwdecode.filter.is.not.permitted"));
                 if (filter.equals(PdfName.CRYPT)) {
-                    PdfDictionary decodeParams = stream.getAsDict(PdfName.DECODEPARMS);
+                    PdfDictionary decodeParams = getDirectDictionary(stream.get(PdfName.DECODEPARMS));
                     if (decodeParams != null) {
                         PdfString cryptFilterName = decodeParams.getAsString(PdfName.NAME);
                         if (cryptFilterName != null && !cryptFilterName.equals(PdfName.IDENTITY)) {
@@ -289,9 +309,9 @@ public class PdfA2Checker extends PdfAChecker {
                     if (f.equals(PdfName.LZWDECODE))
                         throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("lzwdecode.filter.is.not.permitted"));
                     if (f.equals(PdfName.CRYPT)) {
-                        PdfArray decodeParams = stream.getAsArray(PdfName.DECODEPARMS);
+                        PdfArray decodeParams = getDirectArray(stream.get(PdfName.DECODEPARMS));
                         if (decodeParams != null && i < decodeParams.size()) {
-                            PdfDictionary decodeParam = decodeParams.getAsDict(i);
+                            PdfDictionary decodeParam = getDirectDictionary(decodeParams.getPdfObject(i));
                             PdfString cryptFilterName = decodeParam.getAsString(PdfName.NAME);
                             if (cryptFilterName != null && !cryptFilterName.equals(PdfName.IDENTITY)) {
                                 throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("not.identity.crypt.filter.is.not.permitted"));
@@ -364,30 +384,30 @@ public class PdfA2Checker extends PdfAChecker {
                 }
 
                 if (dictionary.contains(PdfName.ACROFORM)) {
-                    PdfDictionary acroForm = dictionary.getAsDict(PdfName.ACROFORM);
+                    PdfDictionary acroForm = getDirectDictionary(dictionary.get(PdfName.ACROFORM));
                     if (acroForm != null && acroForm.contains(PdfName.XFA)) {
                         throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("the.document.catalog.dictionary.shall.not.include.acroform.xfa.entry"));
                     }
                 }
 
                 if (dictionary.contains(PdfName.NAMES)) {
-                    PdfDictionary names = dictionary.getAsDict(PdfName.NAMES);
+                    PdfDictionary names = getDirectDictionary(dictionary.get(PdfName.NAMES));
                     if (names != null && names.contains(PdfName.ALTERNATEPRESENTATION)) {
                         throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("the.document.catalog.dictionary.shall.not.include.alternatepresentation.names.entry"));
                     }
                 }
 
 
-                PdfDictionary permissions = dictionary.getAsDict(PdfName.PERMS);
+                PdfDictionary permissions = getDirectDictionary(dictionary.get(PdfName.PERMS));
                 if (permissions != null) {
                     for (PdfName dictKey : permissions.getKeys()) {
                         if (PdfName.DOCMDP.equals(dictKey)) {
-                            PdfDictionary signatureDict = permissions.getAsDict(PdfName.DOCMDP);
+                            PdfDictionary signatureDict = getDirectDictionary(permissions.get(PdfName.DOCMDP));
                             if (signatureDict != null) {
                                 PdfArray references = signatureDict.getAsArray(PdfName.REFERENCE);
                                 if (references != null) {
                                     for (int i = 0; i < references.length(); i++) {
-                                        PdfDictionary referenceDict = references.getAsDict(i);
+                                        PdfDictionary referenceDict = getDirectDictionary(references.getPdfObject(i));
                                         if (referenceDict.contains(DIGESTLOCATION)
                                                 || referenceDict.contains(DIGESTMETHOD)
                                                     || referenceDict.contains(DIGESTVALUE)) {
@@ -404,7 +424,7 @@ public class PdfA2Checker extends PdfAChecker {
                 }
 
                 if (checkStructure(conformanceLevel)) {
-                    PdfDictionary markInfo = dictionary.getAsDict(PdfName.MARKINFO);
+                    PdfDictionary markInfo = getDirectDictionary(dictionary.get(PdfName.MARKINFO));
                     if (markInfo == null || markInfo.getAsBoolean(PdfName.MARKED) == null || markInfo.getAsBoolean(PdfName.MARKED).booleanValue() == false) {
                         throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("document.catalog.dictionary.shall.include.a.markinfo.dictionary.whose.entry.marked.shall.have.a.value.of.true"));
                     }
@@ -418,7 +438,7 @@ public class PdfA2Checker extends PdfAChecker {
                 if (outputIntents != null && ((PdfArray) outputIntents).size() > 0) {
                     PdfObject iccProfileStream = null;
                     for (int i = 0; i < ((PdfArray) outputIntents).size(); i++) {
-                        PdfDictionary outputIntentDictionary = ((PdfArray) outputIntents).getAsDict(i);
+                        PdfDictionary outputIntentDictionary = getDirectDictionary(((PdfArray) outputIntents).getPdfObject(i));
                         PdfName gts = outputIntentDictionary.getAsName(PdfName.S);
                         if (PdfName.GTS_PDFA1.equals(gts)) {
                             if (pdfa1OutputIntentFound)
@@ -584,14 +604,72 @@ public class PdfA2Checker extends PdfAChecker {
         if (obj1 instanceof PdfAnnotation) {
             PdfAnnotation annot = (PdfAnnotation) obj1;
             PdfObject subtype = annot.get(PdfName.SUBTYPE);
+            if (subtype == null) {
+                throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("annotation.type.1.not.allowed", "null"));
+            }
+            if (subtype != null && !allowedAnnotTypes.contains(subtype)) {
+                throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("annotation.type.1.not.allowed", subtype.toString()));
+            }
+
+            if (!PdfName.POPUP.equals(annot.getAsName(PdfName.SUBTYPE))) {
+                PdfNumber f = annot.getAsNumber(PdfName.F);
+                if (f == null) {
+                    throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("an.annotation.dictionary.shall.contain.the.f.key"));
+                }
+                int flags = f.intValue();
+                if (checkFlag(flags, PdfAnnotation.FLAGS_PRINT) == false
+                        || checkFlag(flags, PdfAnnotation.FLAGS_HIDDEN) == true
+                        || checkFlag(flags, PdfAnnotation.FLAGS_INVISIBLE) == true
+                        || checkFlag(flags, PdfAnnotation.FLAGS_NOVIEW) == true
+                        || checkFlag(flags, PdfAnnotation.FLAGS_TOGGLENOVIEW) == true) {
+                    throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("the.f.keys.print.flag.bit.shall.be.set.to.1.and.its.hidden.invisible.noview.and.togglenoview.flag.bits.shall.be.set.to.0"));
+                }
+                if (PdfName.TEXT.equals(annot.getAsName(PdfName.SUBTYPE))) {
+
+                    if (checkFlag(flags, PdfAnnotation.FLAGS_NOZOOM) == false || checkFlag(flags, PdfAnnotation.FLAGS_NOROTATE) == false) {
+                        throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("text.annotations.should.set.the.nozoom.and.norotate.flag.bits.of.the.f.key.to.1"));
+                    }
+                }
+            }
+
             if (PdfName.WIDGET.equals(annot.getAsName(PdfName.SUBTYPE)) && (annot.contains(PdfName.AA) || annot.contains(PdfName.A))) {
                 throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("widget.annotation.dictionary.or.field.dictionary.shall.not.include.a.or.aa.entry"));
             }
-
             if (checkStructure(conformanceLevel)) {
-                if (PdfA1Checker.contentAnnotations.contains(subtype) && !annot.contains(PdfName.CONTENTS)) {
+                if (contentAnnotations.contains(subtype) && !annot.contains(PdfName.CONTENTS)) {
                     throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("annotation.of.type.1.should.have.contents.key", subtype.toString()));
                 }
+            }
+
+            PdfDictionary ap = getDirectDictionary(annot.get(PdfName.AP));
+            if (ap != null) {
+                if (ap.contains(PdfName.R) || ap.contains(PdfName.D)) {
+                    throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("appearance.dictionary.shall.contain.only.the.n.key.with.stream.value"));
+                }
+                PdfObject n = getDirectObject(ap.get(PdfName.N));
+                if (PdfName.WIDGET.equals(annot.getAsName(PdfName.SUBTYPE)) && new PdfName("Btn").equals(annot.getAsName(PdfName.FT))) {
+                    if (n == null || !n.isDictionary())
+                        throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("appearance.dictionary.of.widget.subtype.and.btn.filled.type.shall.contain.only.the.n.key.with.dictionary.value"));
+                } else {
+                    if (n == null || !n.isStream())
+                        throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("appearance.dictionary.shall.contain.only.the.n.key.with.stream.value"));
+                }
+            } else {
+                boolean isCorrectRect = false;
+                PdfArray rect = annot.getAsArray(PdfName.RECT);
+                if (rect != null && rect.size() == 4) {
+                    PdfNumber index0 = rect.getAsNumber(0);
+                    PdfNumber index1 = rect.getAsNumber(1);
+                    PdfNumber index2 = rect.getAsNumber(2);
+                    PdfNumber index3 = rect.getAsNumber(3);
+                    if (index0 != null && index1 != null && index2 != null && index3 != null &&
+                        index0.doubleValue() == index2.doubleValue() && index1.doubleValue() == index3.doubleValue())
+                        isCorrectRect = true;
+                }
+                if (!PdfName.POPUP.equals(annot.getAsName(PdfName.SUBTYPE)) &&
+                        !PdfName.LINK.equals(annot.getAsName(PdfName.SUBTYPE)) &&
+                        !isCorrectRect)
+                    throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("every.annotation.shall.have.at.least.one.appearance.dictionary"));
             }
         }
     }

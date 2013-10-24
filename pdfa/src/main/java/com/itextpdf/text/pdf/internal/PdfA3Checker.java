@@ -44,12 +44,20 @@
 package com.itextpdf.text.pdf.internal;
 
 import com.itextpdf.text.pdf.PdfAConformanceLevel;
+import com.itextpdf.text.pdf.PdfName;
 import com.itextpdf.text.pdf.PdfWriter;
+
+import java.util.HashSet;
 
 public class PdfA3Checker extends PdfAChecker {
 
     PdfA3Checker(PdfAConformanceLevel conformanceLevel) {
         super(conformanceLevel);
+    }
+
+    @Override
+    protected HashSet<PdfName> initKeysForCheck() {
+        return new HashSet<PdfName>();
     }
 
     @Override

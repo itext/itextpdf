@@ -255,7 +255,7 @@ public class PdfStructTreeController {
     private void addKid(PdfObject obj) throws IOException, BadPdfFormatException {
         if (!obj.isIndirect()) return;
         PRIndirectReference currRef = (PRIndirectReference)obj;
-        PdfCopy.RefKey key =  new PdfCopy.RefKey(currRef);
+        RefKey key =  new RefKey(currRef);
         if (!writer.indirects.containsKey(key)) {
             writer.copyIndirect(currRef, true, false);
         }

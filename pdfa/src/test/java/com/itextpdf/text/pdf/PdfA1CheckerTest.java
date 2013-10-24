@@ -1,13 +1,22 @@
 package com.itextpdf.text.pdf;
 
 import com.itextpdf.text.*;
+import com.itextpdf.text.error_messages.MessageLocalization;
 import junit.framework.Assert;
 import org.junit.Test;
-import org.w3c.dom.css.RGBColor;
 
-import java.io.*;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 public class PdfA1CheckerTest {
+
+    static {
+        try {
+            MessageLocalization.setLanguage("en", "US");
+        } catch (IOException e) {
+        }
+    }
 
     @Test
     public void metadaCheckTest() throws IOException, DocumentException {
@@ -699,12 +708,13 @@ public class PdfA1CheckerTest {
         try {
             document.close();
         } catch (PdfAConformanceException e) {
-            if (e.getObject() == annot) {
+            if (e.getObject() == annot && e.getMessage()
+                    .equals("Annotation type /Movie not allowed.")) {
                 exceptionThrown = true;
             }
         }
         if (!exceptionThrown)
-            Assert.fail("PdfAConformanceException should be thrown.");
+            Assert.fail("PdfAConformanceException with correct message should be thrown.");
     }
 
     @Test
@@ -720,6 +730,7 @@ public class PdfA1CheckerTest {
         writer.setOutputIntents("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", icc);
 
         PdfAnnotation annot = new PdfAnnotation(writer, new Rectangle(100, 100, 200, 200));
+        annot.put(PdfName.SUBTYPE, PdfName.TEXT);
         annot.put(PdfName.F, new PdfNumber(PdfAnnotation.FLAGS_PRINT));
         annot.put(PdfName.CA, new PdfNumber(0.5));
         PdfContentByte canvas = writer.getDirectContent();
@@ -728,12 +739,13 @@ public class PdfA1CheckerTest {
         try {
             document.close();
         } catch (PdfAConformanceException e) {
-            if (e.getObject() == annot) {
+            if (e.getObject() == annot && e.getMessage()
+                    .equals("An annotation dictionary shall not contain the CA key with a value other than 1.0.")) {
                 exceptionThrown = true;
             }
         }
         if (!exceptionThrown)
-            Assert.fail("PdfAConformanceException should be thrown.");
+            Assert.fail("PdfAConformanceException with correct message should be thrown.");
     }
 
     @Test
@@ -749,6 +761,7 @@ public class PdfA1CheckerTest {
         writer.setOutputIntents("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", icc);
 
         PdfAnnotation annot = new PdfAnnotation(writer, new Rectangle(100, 100, 200, 200));
+        annot.put(PdfName.SUBTYPE, PdfName.TEXT);
         annot.put(PdfName.F, new PdfNumber(0));
         PdfContentByte canvas = writer.getDirectContent();
         canvas.addAnnotation(annot);
@@ -756,12 +769,13 @@ public class PdfA1CheckerTest {
         try {
             document.close();
         } catch (PdfAConformanceException e) {
-            if (e.getObject() == annot) {
+            if (e.getObject() == annot && e.getMessage()
+                    .equals("The F key's Print flag bit shall be set to 1 and its Hidden, Invisible and NoView flag bits shall be set to 0.")) {
                 exceptionThrown = true;
             }
         }
         if (!exceptionThrown)
-            Assert.fail("PdfAConformanceException should be thrown.");
+            Assert.fail("PdfAConformanceException with correct message should be thrown.");
     }
 
     @Test
@@ -777,6 +791,7 @@ public class PdfA1CheckerTest {
         writer.setOutputIntents("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", icc);
 
         PdfAnnotation annot = new PdfAnnotation(writer, new Rectangle(100, 100, 200, 200));
+        annot.put(PdfName.SUBTYPE, PdfName.TEXT);
         annot.put(PdfName.F, new PdfNumber(PdfAnnotation.FLAGS_PRINT & PdfAnnotation.FLAGS_INVISIBLE));
         PdfContentByte canvas = writer.getDirectContent();
         canvas.addAnnotation(annot);
@@ -784,12 +799,13 @@ public class PdfA1CheckerTest {
         try {
             document.close();
         } catch (PdfAConformanceException e) {
-            if (e.getObject() == annot) {
+            if (e.getObject() == annot && e.getMessage()
+                    .equals("The F key's Print flag bit shall be set to 1 and its Hidden, Invisible and NoView flag bits shall be set to 0.")) {
                 exceptionThrown = true;
             }
         }
         if (!exceptionThrown)
-            Assert.fail("PdfAConformanceException should be thrown.");
+            Assert.fail("PdfAConformanceException with correct message should be thrown.");
     }
 
     @Test
@@ -805,6 +821,7 @@ public class PdfA1CheckerTest {
         writer.setOutputIntents("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", icc);
 
         PdfAnnotation annot = new PdfAnnotation(writer, new Rectangle(100, 100, 200, 200));
+        annot.put(PdfName.SUBTYPE, PdfName.WIDGET);
         annot.put(PdfName.F, new PdfNumber(PdfAnnotation.FLAGS_PRINT));
         PdfDictionary ap = new PdfDictionary();
         PdfStream s = new PdfStream("Hello World".getBytes());
@@ -817,12 +834,13 @@ public class PdfA1CheckerTest {
         try {
             document.close();
         } catch (PdfAConformanceException e) {
-            if (e.getObject() == annot) {
+            if (e.getObject() == annot && e.getMessage()
+                    .equals("Appearance dictionary shall contain only the N key with stream value.")) {
                 exceptionThrown = true;
             }
         }
         if (!exceptionThrown)
-            Assert.fail("PdfAConformanceException should be thrown.");
+            Assert.fail("PdfAConformanceException with correct message should be thrown.");
     }
 
     @Test
@@ -838,6 +856,7 @@ public class PdfA1CheckerTest {
         writer.setOutputIntents("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", icc);
 
         PdfAnnotation annot = new PdfAnnotation(writer, new Rectangle(100, 100, 200, 200));
+        annot.put(PdfName.SUBTYPE, PdfName.WIDGET);
         annot.put(PdfName.F, new PdfNumber(PdfAnnotation.FLAGS_PRINT));
         PdfDictionary ap = new PdfDictionary();
         ap.put(PdfName.N, new PdfDictionary());
@@ -848,12 +867,13 @@ public class PdfA1CheckerTest {
         try {
             document.close();
         } catch (PdfAConformanceException e) {
-            if (e.getObject() == annot) {
+            if (e.getObject() == annot && e.getMessage()
+                    .equals("Appearance dictionary shall contain only the N key with stream value.")) {
                 exceptionThrown = true;
             }
         }
         if (!exceptionThrown)
-            Assert.fail("PdfAConformanceException should be thrown.");
+            Assert.fail("PdfAConformanceException with correct message should be thrown.");
     }
 
     @Test
@@ -897,12 +917,13 @@ public class PdfA1CheckerTest {
         try {
             document.close();
         } catch (PdfAConformanceException e) {
-            if (e.getObject() == annot && e.getLocalizedMessage().contains("Contents")) {
+            if (e.getObject() == annot && e.getMessage()
+                    .equals("Annotation of type /Stamp should have Contents key.")) {
                 exceptionThrown = true;
             }
         }
         if (!exceptionThrown)
-            Assert.fail("PdfAConformanceException should be thrown.");
+            Assert.fail("PdfAConformanceException with correct message should be thrown.");
     }
 
     @Test

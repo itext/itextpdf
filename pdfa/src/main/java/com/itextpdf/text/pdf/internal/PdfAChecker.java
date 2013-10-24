@@ -43,15 +43,81 @@
  */
 package com.itextpdf.text.pdf.internal;
 
-import com.itextpdf.text.pdf.PdfAConformanceLevel;
-import com.itextpdf.text.pdf.PdfWriter;
+import com.itextpdf.text.pdf.*;
+
+import java.util.HashMap;
+import java.util.HashSet;
 
 abstract public class PdfAChecker {
 
     protected PdfAConformanceLevel conformanceLevel;
+    protected HashMap<RefKey, PdfObject> cachedObjects = new HashMap<RefKey, PdfObject>();
+    HashSet<PdfName> keysForCheck = initKeysForCheck();
 
     PdfAChecker(PdfAConformanceLevel conformanceLevel) {
         this.conformanceLevel = conformanceLevel;
+    }
+
+    abstract protected HashSet<PdfName> initKeysForCheck();
+
+    public void cacheObject(PdfIndirectReference iref, PdfObject obj) {
+        if (obj.type() == 0) {
+            cachedObjects.put(new RefKey(iref), obj);
+        } else if (obj.isStream() || obj.isDictionary()) {
+            cachedObjects.put(new RefKey(iref), cleverPdfDictionaryClone((PdfDictionary)obj));
+        }
+    }
+
+    protected PdfObject cleverPdfDictionaryClone(PdfDictionary dict) {
+        PdfDictionary newDict;
+        if (dict.isStream())
+            newDict = new PdfStream(new byte[]{});
+        else
+            newDict = new PdfDictionary();
+
+        for (PdfName key : dict.getKeys())
+            if (keysForCheck.contains(key))
+                newDict.put(key, dict.get(key));
+
+        return newDict;
+    }
+
+    protected PdfObject getDirectObject(PdfObject obj) {
+        if (obj == null)
+            return null;
+        //use counter to prevent indirect reference cycling
+        int count = 0;
+        while (obj.type() == 0) {
+            PdfObject tmp = cachedObjects.get(new RefKey((PdfIndirectReference)obj));
+            if (tmp == null)
+                break;
+            obj = tmp;
+            //10 - is max allowed reference chain
+            if (count++ > 10)
+                break;
+        }
+        return obj;
+    }
+
+    protected PdfDictionary getDirectDictionary(PdfObject obj) {
+        obj = getDirectObject(obj);
+        if (obj != null && obj.isDictionary())
+            return (PdfDictionary)obj;
+        return null;
+    }
+
+    protected PdfStream getDirectStream(PdfObject obj) {
+        obj = getDirectObject(obj);
+        if (obj != null && obj.isStream())
+            return (PdfStream)obj;
+        return null;
+    }
+
+    protected PdfArray getDirectArray(PdfObject obj) {
+        obj = getDirectObject(obj);
+        if (obj != null && obj.isArray())
+            return (PdfArray)obj;
+        return null;
     }
 
     abstract protected void checkFont(PdfWriter writer, int key, Object obj1);
@@ -150,5 +216,9 @@ abstract public class PdfAChecker {
         return conformanceLevel == PdfAConformanceLevel.PDF_A_1A
                 || conformanceLevel == PdfAConformanceLevel.PDF_A_2A
                 || conformanceLevel == PdfAConformanceLevel.PDF_A_3A;
+    }
+
+    protected static boolean checkFlag(int flags, int flag) {
+        return (flags & flag) != 0;
     }
 }
