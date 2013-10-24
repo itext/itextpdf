@@ -381,6 +381,7 @@ the.character.1.is.illegal.in.code.39=Het karakter '{1}' is ongeldig in code 39.
 the.cmap.1.does.not.exist.as.a.resource=De cmap {1} bestaat niet als bron.
 the.cmap.1.was.not.found=De Cmap {1} werd niet gevonden.
 the.compression.1.is.not.supported=Compressie {1} wordt niet ondersteund.
+the.document.catalog.dictionary.shall.contain.metadata=The document catalog dictionary of a PDF/A conforming file shall contain the Metadata key
 the.document.catalog.dictionary.shall.not.include.an.aa.entry=De document catalog dictionary mag geen AA veld bevatten.
 the.document.catalog.dictionary.shall.not.include.alternatepresentation.names.entry=The document catalog dictionary shall not contains an AlternatePresentation entry in the Names entry.
 the.document.catalog.dictionary.shall.not.include.a.needrendering.entry=The document catalog dictionary shall not include NeedRendering entry.

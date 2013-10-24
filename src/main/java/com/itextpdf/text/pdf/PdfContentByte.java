@@ -106,9 +106,10 @@ public class PdfContentByte {
         protected float wordSpace = 0;
 
         protected BaseColor textColorFill = new GrayColor(0);
-        protected BaseColor graphicsColorFill = new GrayColor(0);
+        protected BaseColor colorFill = new GrayColor(0);
         protected BaseColor textColorStroke = new GrayColor(0);
-        protected BaseColor graphicsColorStroke = new GrayColor(0);
+        protected BaseColor colorStroke = new GrayColor(0);
+        protected int textRenderMode = TEXT_RENDER_MODE_FILL;
         protected AffineTransform CTM = new AffineTransform();
 
         GraphicState() {
@@ -134,10 +135,11 @@ public class PdfContentByte {
             charSpace = cp.charSpace;
             wordSpace = cp.wordSpace;
             textColorFill = cp.textColorFill;
-            graphicsColorFill = cp.graphicsColorFill;
+            colorFill = cp.colorFill;
             textColorStroke = cp.textColorStroke;
-            graphicsColorStroke = cp.graphicsColorStroke;
+            colorStroke = cp.colorStroke;
             CTM = new AffineTransform(cp.CTM);
+            textRenderMode = cp.textRenderMode;
         }
 
         void restore(final GraphicState restore) {
@@ -583,7 +585,6 @@ public class PdfContentByte {
      * @param   blue    the intensity of blue. A value between 0 and 1
      */
     private void HelperRGB(float red, float green, float blue) {
-    	PdfWriter.checkPdfIsoConformance(writer, PdfIsoKeys.PDFISOKEY_RGB, null);
         if (red < 0)
             red = 0.0f;
         else if (red > 1.0f)
@@ -1116,8 +1117,8 @@ public class PdfContentByte {
             if (isTagged()) {
                 endText();
             } else {
-    		throw new IllegalPdfSyntaxException(MessageLocalization.getComposedMessage("path.construction.operator.inside.text.object"));
-    	}
+    		    throw new IllegalPdfSyntaxException(MessageLocalization.getComposedMessage("path.construction.operator.inside.text.object"));
+    	    }
     	}
         content.append("h").append_i(separator);
     }
@@ -1131,8 +1132,8 @@ public class PdfContentByte {
             if (isTagged()) {
                 endText();
             } else {
-    		throw new IllegalPdfSyntaxException(MessageLocalization.getComposedMessage("path.construction.operator.inside.text.object"));
-    	}
+    		    throw new IllegalPdfSyntaxException(MessageLocalization.getComposedMessage("path.construction.operator.inside.text.object"));
+    	    }
     	}
         content.append("n").append_i(separator);
     }
@@ -1146,9 +1147,10 @@ public class PdfContentByte {
             if (isTagged()) {
                 endText();
             } else {
-    		throw new IllegalPdfSyntaxException(MessageLocalization.getComposedMessage("path.construction.operator.inside.text.object"));
+    		    throw new IllegalPdfSyntaxException(MessageLocalization.getComposedMessage("path.construction.operator.inside.text.object"));
+    	    }
     	}
-    	}
+        PdfWriter.checkPdfIsoConformance(writer, PdfIsoKeys.PDFISOKEY_COLOR, state.colorStroke);
         content.append("S").append_i(separator);
     }
 
@@ -1161,9 +1163,10 @@ public class PdfContentByte {
             if (isTagged()) {
                 endText();
             } else {
-    		throw new IllegalPdfSyntaxException(MessageLocalization.getComposedMessage("path.construction.operator.inside.text.object"));
+    		    throw new IllegalPdfSyntaxException(MessageLocalization.getComposedMessage("path.construction.operator.inside.text.object"));
+    	    }
     	}
-    	}
+        PdfWriter.checkPdfIsoConformance(writer, PdfIsoKeys.PDFISOKEY_COLOR, state.colorStroke);
         content.append("s").append_i(separator);
     }
 
@@ -1176,9 +1179,10 @@ public class PdfContentByte {
             if (isTagged()) {
                 endText();
             } else {
-    		throw new IllegalPdfSyntaxException(MessageLocalization.getComposedMessage("path.construction.operator.inside.text.object"));
+    		    throw new IllegalPdfSyntaxException(MessageLocalization.getComposedMessage("path.construction.operator.inside.text.object"));
+    	    }
     	}
-    	}
+        PdfWriter.checkPdfIsoConformance(writer, PdfIsoKeys.PDFISOKEY_COLOR, state.colorFill);
         content.append("f").append_i(separator);
     }
 
@@ -1191,9 +1195,10 @@ public class PdfContentByte {
             if (isTagged()) {
                 endText();
             } else {
-    		throw new IllegalPdfSyntaxException(MessageLocalization.getComposedMessage("path.construction.operator.inside.text.object"));
+    		    throw new IllegalPdfSyntaxException(MessageLocalization.getComposedMessage("path.construction.operator.inside.text.object"));
+    	    }
     	}
-    	}
+        PdfWriter.checkPdfIsoConformance(writer, PdfIsoKeys.PDFISOKEY_COLOR, state.colorFill);
         content.append("f*").append_i(separator);
     }
 
@@ -1206,9 +1211,11 @@ public class PdfContentByte {
             if (isTagged()) {
                 endText();
             } else {
-    		throw new IllegalPdfSyntaxException(MessageLocalization.getComposedMessage("path.construction.operator.inside.text.object"));
+    		    throw new IllegalPdfSyntaxException(MessageLocalization.getComposedMessage("path.construction.operator.inside.text.object"));
+    	    }
     	}
-    	}
+        PdfWriter.checkPdfIsoConformance(writer, PdfIsoKeys.PDFISOKEY_COLOR, state.colorFill);
+        PdfWriter.checkPdfIsoConformance(writer, PdfIsoKeys.PDFISOKEY_COLOR, state.colorStroke);
         content.append("B").append_i(separator);
     }
 
@@ -1221,9 +1228,11 @@ public class PdfContentByte {
             if (isTagged()) {
                 endText();
             } else {
-    		throw new IllegalPdfSyntaxException(MessageLocalization.getComposedMessage("path.construction.operator.inside.text.object"));
+    		    throw new IllegalPdfSyntaxException(MessageLocalization.getComposedMessage("path.construction.operator.inside.text.object"));
+    	    }
     	}
-    	}
+        PdfWriter.checkPdfIsoConformance(writer, PdfIsoKeys.PDFISOKEY_COLOR, state.colorFill);
+        PdfWriter.checkPdfIsoConformance(writer, PdfIsoKeys.PDFISOKEY_COLOR, state.colorStroke);
         content.append("b").append_i(separator);
     }
 
@@ -1236,9 +1245,11 @@ public class PdfContentByte {
             if (isTagged()) {
                 endText();
             } else {
-    		throw new IllegalPdfSyntaxException(MessageLocalization.getComposedMessage("path.construction.operator.inside.text.object"));
+    		    throw new IllegalPdfSyntaxException(MessageLocalization.getComposedMessage("path.construction.operator.inside.text.object"));
+    	    }
     	}
-    	}
+        PdfWriter.checkPdfIsoConformance(writer, PdfIsoKeys.PDFISOKEY_COLOR, state.colorFill);
+        PdfWriter.checkPdfIsoConformance(writer, PdfIsoKeys.PDFISOKEY_COLOR, state.colorStroke);
         content.append("B*").append_i(separator);
     }
 
@@ -1251,9 +1262,11 @@ public class PdfContentByte {
             if (isTagged()) {
                 endText();
             } else {
-    		throw new IllegalPdfSyntaxException(MessageLocalization.getComposedMessage("path.construction.operator.inside.text.object"));
+    		    throw new IllegalPdfSyntaxException(MessageLocalization.getComposedMessage("path.construction.operator.inside.text.object"));
+    	    }
     	}
-    	}
+        PdfWriter.checkPdfIsoConformance(writer, PdfIsoKeys.PDFISOKEY_COLOR, state.colorFill);
+        PdfWriter.checkPdfIsoConformance(writer, PdfIsoKeys.PDFISOKEY_COLOR, state.colorStroke);
         content.append("b*").append_i(separator);
     }
 
@@ -1651,6 +1664,7 @@ public class PdfContentByte {
         if (!inText && isTagged()) {
             beginText(true);
         }
+        state.textRenderMode = rendering;
         content.append(rendering).append(" Tr").append_i(separator);
     }
 
@@ -1687,6 +1701,7 @@ public class PdfContentByte {
      * @param text the text to write
      */
     public void showText(final String text) {
+        checkTextColor();
         if (!inText && isTagged()) {
             beginText(true);
         }
@@ -1747,6 +1762,7 @@ public class PdfContentByte {
      * @param text the text to write
      */
     public void newlineShowText(final String text) {
+        checkTextColor();
         if (!inText && isTagged()) {
             beginText(true);
         }
@@ -1765,6 +1781,7 @@ public class PdfContentByte {
      * @param text the text to write
      */
     public void newlineShowText(final float wordSpacing, final float charSpacing, final String text) {
+        checkTextColor();
         if (!inText && isTagged()) {
             beginText(true);
         }
@@ -2640,7 +2657,6 @@ public class PdfContentByte {
      * @param color the color
      */
     public void setColorStroke(final BaseColor color) {
-    	PdfWriter.checkPdfIsoConformance(writer, PdfIsoKeys.PDFISOKEY_COLOR, color);
         int type = ExtendedColor.getType(color);
         switch (type) {
             case ExtendedColor.TYPE_GRAY: {
@@ -2677,7 +2693,6 @@ public class PdfContentByte {
      * @param color the color
      */
     public void setColorFill(final BaseColor color) {
-    	PdfWriter.checkPdfIsoConformance(writer, PdfIsoKeys.PDFISOKEY_COLOR, color);
         int type = ExtendedColor.getType(color);
         switch (type) {
             case ExtendedColor.TYPE_GRAY: {
@@ -2932,6 +2947,7 @@ public class PdfContentByte {
      * @param text array of text
      */
     public void showText(final PdfTextArray text) {
+        checkTextColor();
         if (!inText && isTagged()) {
             beginText(true);
         }
@@ -3648,10 +3664,16 @@ public class PdfContentByte {
                 }
             } else {
                 if (fill) {
-                    state.graphicsColorFill = color;
+                    state.colorFill = color;
                 } else {
-                    state.graphicsColorStroke = color;
+                    state.colorStroke = color;
                 }
+            }
+        } else {
+            if (fill) {
+                state.colorFill = color;
+            } else {
+                state.colorStroke = color;
             }
         }
     }
@@ -3676,18 +3698,18 @@ public class PdfContentByte {
     private void restoreColor() throws IOException {
         if (isTagged()) {
             if (inText) {
-                if (!state.textColorFill.equals(state.graphicsColorFill)) {
+                if (!state.textColorFill.equals(state.colorFill)) {
                     restoreColor(state.textColorFill, true);
                 }
-                if (!state.textColorStroke.equals(state.graphicsColorStroke)) {
+                if (!state.textColorStroke.equals(state.colorStroke)) {
                     restoreColor(state.textColorStroke, false);
                 }
             } else {
-                if (!state.textColorFill.equals(state.graphicsColorFill)) {
-                    restoreColor(state.graphicsColorFill, true);
+                if (!state.textColorFill.equals(state.colorFill)) {
+                    restoreColor(state.colorFill, true);
                 }
-                if (!state.textColorStroke.equals(state.graphicsColorStroke)) {
-                    restoreColor(state.graphicsColorStroke, false);
+                if (!state.textColorStroke.equals(state.colorStroke)) {
+                    restoreColor(state.colorStroke, false);
                 }
             }
         }
@@ -3712,6 +3734,25 @@ public class PdfContentByte {
 
     protected boolean getInText() {
         return inText;
+    }
+
+    protected void checkTextColor() {
+        boolean stroke = false;
+        boolean fill = false;
+        if (state.textRenderMode == TEXT_RENDER_MODE_FILL) {
+            fill = true;
+        } else if (state.textRenderMode == TEXT_RENDER_MODE_STROKE) {
+            stroke = true;
+        } else if (state.textRenderMode == TEXT_RENDER_MODE_FILL_STROKE) {
+            fill = true;
+            stroke = true;
+        }
+        if (fill) {
+            PdfWriter.checkPdfIsoConformance(writer, PdfIsoKeys.PDFISOKEY_COLOR, isTagged() ? state.textColorFill : state.colorFill);
+        }
+        if (stroke) {
+            PdfWriter.checkPdfIsoConformance(writer, PdfIsoKeys.PDFISOKEY_COLOR, isTagged() ? state.textColorStroke : state.colorStroke);
+        }
     }
 
     // AWT related methods (remove this if you port to Android / GAE)
