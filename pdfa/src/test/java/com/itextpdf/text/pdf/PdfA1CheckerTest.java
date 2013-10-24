@@ -7,8 +7,37 @@ import org.w3c.dom.css.RGBColor;
 
 import java.io.*;
 
-public class
-        PdfA1CheckerTest {
+public class PdfA1CheckerTest {
+
+    @Test
+    public void metadaCheckTest() throws IOException, DocumentException {
+
+        FileOutputStream fos = new FileOutputStream("./target/metadaPDFA1CheckTest1.pdf");
+        Document document = new Document();
+        PdfWriter writer = PdfAWriter.getInstance(document, fos, PdfAConformanceLevel.PDF_A_1B);
+        document.open();
+        PdfContentByte canvas = writer.getDirectContent();
+
+        canvas.setColorFill(BaseColor.LIGHT_GRAY);
+        canvas.moveTo(writer.getPageSize().getLeft(), writer.getPageSize().getBottom());
+        canvas.lineTo(writer.getPageSize().getRight(), writer.getPageSize().getBottom());
+        canvas.lineTo(writer.getPageSize().getRight(), writer.getPageSize().getTop());
+        canvas.lineTo(writer.getPageSize().getLeft(), writer.getPageSize().getBottom());
+        canvas.fill();
+
+        ICC_Profile icc = ICC_Profile.getInstance(new FileInputStream("./src/test/resources/com/itextpdf/text/pdf/sRGB Color Space Profile.icm"));
+        writer.setOutputIntents("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", icc);
+
+        boolean exceptionThrown = false;
+        try {
+            document.close();
+        } catch (PdfAConformanceException exc) {
+            exceptionThrown = true;
+        }
+
+        if (!exceptionThrown)
+            Assert.fail("PdfAConformance exception should be thrown on unknown blend mode.");
+    }
 
     @Test
     public void trailerCheckTest() throws DocumentException, IOException {
@@ -309,10 +338,18 @@ public class
         boolean exceptionThrown = false;
         try {
             canvas.setColorFill(new CMYKColor(0.1f, 0.1f, 0.1f, 0.1f));
+            canvas.moveTo(writer.getPageSize().getLeft(), writer.getPageSize().getBottom());
+            canvas.lineTo(writer.getPageSize().getRight(), writer.getPageSize().getBottom());
+            canvas.lineTo(writer.getPageSize().getRight(), writer.getPageSize().getTop());
+            canvas.fill();
             canvas.setColorFill(BaseColor.RED);
+            canvas.moveTo(writer.getPageSize().getRight(), writer.getPageSize().getTop());
+            canvas.lineTo(writer.getPageSize().getRight(), writer.getPageSize().getBottom());
+            canvas.lineTo(writer.getPageSize().getLeft(), writer.getPageSize().getBottom());
+            canvas.fill();
             document.close();
         } catch (PdfAConformanceException e) {
-            if (BaseColor.RED == e.getObject()) {
+            if (BaseColor.RED.equals(e.getObject())) {
                 exceptionThrown = true;
             }
         }
@@ -342,7 +379,7 @@ public class
         try {
             document.close();
         } catch (PdfAConformanceException e) {
-            if (BaseColor.RED == e.getObject()) {
+            if (BaseColor.RED.equals(e.getObject())) {
                 exceptionThrown = true;
             }
         }

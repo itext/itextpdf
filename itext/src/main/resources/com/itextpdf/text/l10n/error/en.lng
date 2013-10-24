@@ -382,6 +382,7 @@ the.character.1.is.illegal.in.code.39=The character '{1}' is illegal in code 39.
 the.cmap.1.does.not.exist.as.a.resource=The cmap {1} does not exist as a resource.
 the.cmap.1.was.not.found=The Cmap {1} was not found.
 the.compression.1.is.not.supported=The compression {1} is not supported.
+the.document.catalog.dictionary.shall.contain.metadata=The document catalog dictionary of a PDF/A conforming file shall contain the Metadata key
 the.document.catalog.dictionary.shall.not.include.an.aa.entry=The document catalog dictionary shall not include an AA entry.
 the.document.catalog.dictionary.shall.not.include.alternatepresentation.names.entry=The document catalog dictionary shall not contains an AlternatePresentation entry in the Names entry.
 the.document.catalog.dictionary.shall.not.include.a.needrendering.entry=The document catalog dictionary shall not include NeedRendering entry.

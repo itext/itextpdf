@@ -12,6 +12,36 @@ import java.util.ArrayList;
 public class PdfA2CheckerTest {
 
     @Test
+    public void metadaCheckTest() throws IOException, DocumentException {
+
+        FileOutputStream fos = new FileOutputStream("./target/metadaPDFA2CheckTest1.pdf");
+        Document document = new Document();
+        PdfWriter writer = PdfAWriter.getInstance(document, fos, PdfAConformanceLevel.PDF_A_2B);
+        document.open();
+        PdfContentByte canvas = writer.getDirectContent();
+
+        canvas.setColorFill(BaseColor.LIGHT_GRAY);
+        canvas.moveTo(writer.getPageSize().getLeft(), writer.getPageSize().getBottom());
+        canvas.lineTo(writer.getPageSize().getRight(), writer.getPageSize().getBottom());
+        canvas.lineTo(writer.getPageSize().getRight(), writer.getPageSize().getTop());
+        canvas.lineTo(writer.getPageSize().getLeft(), writer.getPageSize().getBottom());
+        canvas.fill();
+
+        ICC_Profile icc = ICC_Profile.getInstance(new FileInputStream("./src/test/resources/com/itextpdf/text/pdf/sRGB Color Space Profile.icm"));
+        writer.setOutputIntents("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", icc);
+
+        boolean exceptionThrown = false;
+        try {
+            document.close();
+        } catch (PdfAConformanceException exc) {
+            exceptionThrown = true;
+        }
+
+        if (!exceptionThrown)
+            Assert.fail("PdfAConformance exception should be thrown on unknown blend mode.");
+    }
+
+    @Test
     public void transparencyCheckTest() throws IOException, DocumentException {
         FileOutputStream fos = new FileOutputStream("./target/transparencyCheckTest.pdf");
         Document document = new Document();
@@ -60,6 +90,7 @@ public class PdfA2CheckerTest {
         FileOutputStream fos = new FileOutputStream("./target/imageCheckTest1.pdf");
         Document document = new Document();
         PdfWriter writer = PdfAWriter.getInstance(document, fos, PdfAConformanceLevel.PDF_A_2B);
+        writer.createXmpMetadata();
         document.open();
 
         String[] pdfaErrors = new String[9];
@@ -91,6 +122,7 @@ public class PdfA2CheckerTest {
         FileOutputStream fos = new FileOutputStream("./target/imageCheckTest2.pdf");
         Document document = new Document();
         PdfWriter writer = PdfAWriter.getInstance(document, fos, PdfAConformanceLevel.PDF_A_2B);
+        writer.createXmpMetadata();
         document.open();
 
         ArrayList<String> pdfaErrors = new ArrayList<String>();
@@ -136,6 +168,7 @@ public class PdfA2CheckerTest {
         FileOutputStream fos = new FileOutputStream("./target/layerCheckTest1.pdf");
         Document document = new Document();
         PdfWriter writer = PdfAWriter.getInstance(document, fos, PdfAConformanceLevel.PDF_A_2B);
+        writer.createXmpMetadata();
         writer.setViewerPreferences(PdfWriter.PageModeUseOC);
         writer.setPdfVersion(PdfWriter.VERSION_1_5);
         document.open();
@@ -150,6 +183,8 @@ public class PdfA2CheckerTest {
         cb.showTextAligned(Element.ALIGN_LEFT, "Peek-a-Boo!!!", 50, 766, 0);
         cb.endLayer();
         cb.endText();
+        ICC_Profile icc = ICC_Profile.getInstance(new FileInputStream("./src/test/resources/com/itextpdf/text/pdf/sRGB Color Space Profile.icm"));
+        writer.setOutputIntents("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", icc);
         document.close();
     }
 
@@ -158,6 +193,7 @@ public class PdfA2CheckerTest {
         FileOutputStream fos = new FileOutputStream("./target/layerCheckTest2.pdf");
         Document document = new Document();
         PdfWriter writer = PdfAWriter.getInstance(document, fos, PdfAConformanceLevel.PDF_A_2B);
+        writer.createXmpMetadata();
         writer.setViewerPreferences(PdfWriter.PageModeUseOC);
         writer.setPdfVersion(PdfWriter.VERSION_1_5);
         document.open();
@@ -179,7 +215,8 @@ public class PdfA2CheckerTest {
         cb.beginLayer(nested_2);
         ColumnText.showTextAligned(cb, Element.ALIGN_LEFT, new Phrase("nested layer 2", font), 100, 750, 0);
         cb.endLayer();
-
+        ICC_Profile icc = ICC_Profile.getInstance(new FileInputStream("./src/test/resources/com/itextpdf/text/pdf/sRGB Color Space Profile.icm"));
+        writer.setOutputIntents("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", icc);
         document.close();
     }
 
@@ -474,5 +511,86 @@ public class PdfA2CheckerTest {
         if (!exceptionThrown)
             Assert.fail("PdfAConformance exception should be thrown");
 
+    }
+
+    @Test
+    public void colorCheckTest5() throws DocumentException, IOException {
+        Document document = new Document();
+        PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream("./target/pdfa2ColorCheckTest5.pdf"), PdfAConformanceLevel.PDF_A_2B);
+        writer.createXmpMetadata();
+        document.open();
+        boolean exceptionThrown = false;
+        try {
+            Font font = FontFactory.getFont("./src/test/resources/com/itextpdf/text/pdf/FreeMonoBold.ttf", BaseFont.WINANSI, BaseFont.EMBEDDED, 12);
+            document.add(new Paragraph("Hello World", font));
+
+            PdfContentByte canvas = writer.getDirectContent();
+
+            canvas.setColorFill(BaseColor.LIGHT_GRAY);
+            canvas.moveTo(writer.getPageSize().getLeft(), writer.getPageSize().getBottom());
+            canvas.lineTo(writer.getPageSize().getRight(), writer.getPageSize().getBottom());
+            canvas.lineTo(writer.getPageSize().getRight(), writer.getPageSize().getTop());
+            canvas.lineTo(writer.getPageSize().getLeft(), writer.getPageSize().getBottom());
+            canvas.fill();
+
+
+            canvas.setFontAndSize(font.getBaseFont(), 20);
+            canvas.setColorStroke(new CMYKColor(0, 0, 0, 1f));
+            canvas.setTextRenderingMode(PdfContentByte.TEXT_RENDER_MODE_STROKE);
+            canvas.saveState();
+            canvas.setTextRenderingMode(PdfContentByte.TEXT_RENDER_MODE_CLIP);
+            canvas.restoreState();
+            canvas.beginText();
+            canvas.showTextAligned(Element.ALIGN_LEFT, "Hello World", 36, 770, 0);
+            canvas.endText();
+
+            ICC_Profile icc = ICC_Profile.getInstance(new FileInputStream("./src/test/resources/com/itextpdf/text/pdf/sRGB Color Space Profile.icm"));
+            writer.setOutputIntents("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", icc);
+
+            document.close();
+        } catch (PdfAConformanceException e) {
+            exceptionThrown = true;
+        }
+
+        if (!exceptionThrown)
+            Assert.fail("PdfAConformance exception should be thrown");
+
+    }
+
+    @Test
+    public void colorCheckTest6() throws DocumentException, IOException {
+        Document document = new Document();
+        PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream("./target/pdfa2ColorCheckTest6.pdf"), PdfAConformanceLevel.PDF_A_2B);
+        writer.createXmpMetadata();
+        document.open();
+
+        Font font = FontFactory.getFont("./src/test/resources/com/itextpdf/text/pdf/FreeMonoBold.ttf", BaseFont.WINANSI, BaseFont.EMBEDDED, 12);
+        document.add(new Paragraph("Hello World", font));
+
+        PdfContentByte canvas = writer.getDirectContent();
+
+        canvas.setColorFill(BaseColor.LIGHT_GRAY);
+        canvas.moveTo(writer.getPageSize().getLeft(), writer.getPageSize().getBottom());
+        canvas.lineTo(writer.getPageSize().getRight(), writer.getPageSize().getBottom());
+        canvas.lineTo(writer.getPageSize().getRight(), writer.getPageSize().getTop());
+        canvas.lineTo(writer.getPageSize().getLeft(), writer.getPageSize().getBottom());
+        canvas.fill();
+
+
+        canvas.setFontAndSize(font.getBaseFont(), 20);
+        canvas.setColorStroke(new CMYKColor(0, 0, 0, 1f));
+        canvas.setTextRenderingMode(PdfContentByte.TEXT_RENDER_MODE_INVISIBLE);
+        canvas.beginText();
+        canvas.showTextAligned(Element.ALIGN_LEFT, "Hello World", 36, 770, 0);
+        canvas.endText();
+        canvas.setTextRenderingMode(PdfContentByte.TEXT_RENDER_MODE_FILL);
+        canvas.beginText();
+        canvas.showTextAligned(Element.ALIGN_LEFT, "Hello World", 36, 750, 0);
+        canvas.endText();
+
+        ICC_Profile icc = ICC_Profile.getInstance(new FileInputStream("./src/test/resources/com/itextpdf/text/pdf/sRGB Color Space Profile.icm"));
+        writer.setOutputIntents("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", icc);
+
+        document.close();
     }
 }

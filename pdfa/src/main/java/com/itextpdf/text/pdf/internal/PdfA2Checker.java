@@ -348,6 +348,9 @@ public class PdfA2Checker extends PdfAChecker {
             PdfDictionary dictionary = (PdfDictionary) obj1;
             PdfName type = dictionary.getAsName(PdfName.TYPE);
             if (PdfName.CATALOG.equals(type)) {
+                if (!dictionary.contains(PdfName.METADATA)) {
+                    throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("the.document.catalog.dictionary.shall.contain.metadata"));
+                }
                 if (dictionary.contains(PdfName.AA)) {
                     throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("the.document.catalog.dictionary.shall.not.include.an.aa.entry"));
                 }
