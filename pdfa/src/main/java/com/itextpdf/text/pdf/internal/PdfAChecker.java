@@ -52,7 +52,9 @@ abstract public class PdfAChecker {
 
     protected PdfAConformanceLevel conformanceLevel;
     protected HashMap<RefKey, PdfObject> cachedObjects = new HashMap<RefKey, PdfObject>();
-    HashSet<PdfName> keysForCheck = initKeysForCheck();
+    private HashSet<PdfName> keysForCheck = initKeysForCheck();
+    private static byte[] emptyByteArray = new byte[]{};
+
 
     PdfAChecker(PdfAConformanceLevel conformanceLevel) {
         this.conformanceLevel = conformanceLevel;
@@ -63,16 +65,32 @@ abstract public class PdfAChecker {
     public void cacheObject(PdfIndirectReference iref, PdfObject obj) {
         if (obj.type() == 0) {
             cachedObjects.put(new RefKey(iref), obj);
-        } else if (obj.isStream() || obj.isDictionary()) {
+        } else if (obj instanceof PdfDictionary) {
             cachedObjects.put(new RefKey(iref), cleverPdfDictionaryClone((PdfDictionary)obj));
+        } else if (obj.isArray()){
+            cachedObjects.put(new RefKey(iref), cleverPdfArrayClone((PdfArray)obj));
         }
     }
 
-    protected PdfObject cleverPdfDictionaryClone(PdfDictionary dict) {
+    private PdfObject cleverPdfArrayClone(PdfArray array) {
+        PdfArray newArray = new PdfArray();
+        for (int i = 0; i < array.size(); i++) {
+            PdfObject obj = array.getPdfObject(i);
+            if (obj instanceof PdfDictionary)
+                newArray.add(cleverPdfDictionaryClone((PdfDictionary)obj));
+            else
+                newArray.add(obj);
+        }
+
+        return newArray;
+    }
+
+    private PdfObject cleverPdfDictionaryClone(PdfDictionary dict) {
         PdfDictionary newDict;
-        if (dict.isStream())
-            newDict = new PdfStream(new byte[]{});
-        else
+        if (dict.isStream()) {
+            newDict = new PdfStream(emptyByteArray);
+            newDict.remove(PdfName.LENGTH);
+        } else
             newDict = new PdfDictionary();
 
         for (PdfName key : dict.getKeys())

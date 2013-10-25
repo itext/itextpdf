@@ -228,7 +228,7 @@ public class PdfA2Checker extends PdfAChecker {
             PdfDictionary d = getDirectDictionary(properties.get(PdfName.D));
             if (d != null)
                 configsList.add(d);
-            PdfArray configs = properties.getAsArray(PdfName.CONFIGS);
+            PdfArray configs = getDirectArray(properties.get(PdfName.CONFIGS));
             if (configs != null) {
                 for (int i = 0; i < configs.size(); i++) {
                     PdfDictionary config = getDirectDictionary(configs.getPdfObject(i));
@@ -237,7 +237,7 @@ public class PdfA2Checker extends PdfAChecker {
                 }
             }
             HashSet<PdfObject> ocgs = new HashSet<PdfObject>();
-            PdfArray ocgsArray = properties.getAsArray(PdfName.OCGS);
+            PdfArray ocgsArray = getDirectArray(properties.get(PdfName.OCGS));
             if (ocgsArray != null)
                 for (int i = 0; i < ocgsArray.size(); i++)
                     ocgs.add(ocgsArray.getPdfObject(i));
@@ -256,7 +256,7 @@ public class PdfA2Checker extends PdfAChecker {
                 if (config.contains(PdfName.AS)) {
                     throw new PdfAConformanceException(MessageLocalization.getComposedMessage("the.as.key.shall.not.appear.in.any.optional.content.configuration.dictionary"));
                 }
-                PdfArray orderArray = config.getAsArray(PdfName.ORDER);
+                PdfArray orderArray = getDirectArray(config.get(PdfName.ORDER));
                 if (orderArray != null)
                     fillOrderRecursively(orderArray, order);
             }
@@ -404,7 +404,7 @@ public class PdfA2Checker extends PdfAChecker {
                         if (PdfName.DOCMDP.equals(dictKey)) {
                             PdfDictionary signatureDict = getDirectDictionary(permissions.get(PdfName.DOCMDP));
                             if (signatureDict != null) {
-                                PdfArray references = signatureDict.getAsArray(PdfName.REFERENCE);
+                                PdfArray references = getDirectArray(signatureDict.get(PdfName.REFERENCE));
                                 if (references != null) {
                                     for (int i = 0; i < references.length(); i++) {
                                         PdfDictionary referenceDict = getDirectDictionary(references.getPdfObject(i));
@@ -433,12 +433,12 @@ public class PdfA2Checker extends PdfAChecker {
                     }
                 }
 
-                PdfObject outputIntents = dictionary.getAsArray(PdfName.OUTPUTINTENTS);
+                PdfArray outputIntents = getDirectArray(dictionary.get(PdfName.OUTPUTINTENTS));
                 boolean pdfa1OutputIntentFound = false;
-                if (outputIntents != null && ((PdfArray) outputIntents).size() > 0) {
+                if (outputIntents != null && outputIntents.size() > 0) {
                     PdfObject iccProfileStream = null;
-                    for (int i = 0; i < ((PdfArray) outputIntents).size(); i++) {
-                        PdfDictionary outputIntentDictionary = getDirectDictionary(((PdfArray) outputIntents).getPdfObject(i));
+                    for (int i = 0; i < outputIntents.size(); i++) {
+                        PdfDictionary outputIntentDictionary = getDirectDictionary(outputIntents.getPdfObject(i));
                         PdfName gts = outputIntentDictionary.getAsName(PdfName.S);
                         if (PdfName.GTS_PDFA1.equals(gts)) {
                             if (pdfa1OutputIntentFound)
@@ -656,7 +656,7 @@ public class PdfA2Checker extends PdfAChecker {
                 }
             } else {
                 boolean isCorrectRect = false;
-                PdfArray rect = annot.getAsArray(PdfName.RECT);
+                PdfArray rect = getDirectArray(annot.get(PdfName.RECT));
                 if (rect != null && rect.size() == 4) {
                     PdfNumber index0 = rect.getAsNumber(0);
                     PdfNumber index1 = rect.getAsNumber(1);
@@ -729,7 +729,7 @@ public class PdfA2Checker extends PdfAChecker {
 
     private void fillOrderRecursively(PdfArray orderArray, HashSet<PdfObject> order) {
         for (int i = 0; i < orderArray.size(); i++) {
-            PdfArray orderChild = orderArray.getAsArray(i);
+            PdfArray orderChild = getDirectArray(orderArray.getPdfObject(i));
             if (orderChild == null) {
                 order.add(orderArray.getPdfObject(i));
             } else {
