@@ -80,6 +80,9 @@ import com.itextpdf.text.io.RandomAccessSource;
 import com.itextpdf.text.io.RandomAccessSourceFactory;
 import com.itextpdf.text.log.Counter;
 import com.itextpdf.text.log.CounterFactory;
+import com.itextpdf.text.log.Level;
+import com.itextpdf.text.log.Logger;
+import com.itextpdf.text.log.LoggerFactory;
 import com.itextpdf.text.pdf.PRTokeniser.TokenType;
 import com.itextpdf.text.pdf.interfaces.PdfViewerPreferences;
 import com.itextpdf.text.pdf.internal.PdfViewerPreferencesImp;
@@ -100,6 +103,7 @@ public class PdfReader implements PdfViewerPreferences {
 	public static boolean unethicalreading = false;
 	
 	public static boolean debugmode = false;
+	private static final Logger LOGGER = LoggerFactory.getLogger(PdfReader.class);
 	
     static final PdfName pageInhCandidates[] = {
         PdfName.MEDIABOX, PdfName.ROTATE, PdfName.RESOURCES, PdfName.CROPBOX
@@ -1204,7 +1208,8 @@ public class PdfReader implements PdfViewerPreferences {
         }
         catch (IOException e) {
         	if (debugmode) {
-        		e.printStackTrace();
+                if (LOGGER.isLogging(Level.ERROR))
+                    LOGGER.error(e.getMessage(), e);
         		obj = null;
         	}
         	else
@@ -1304,7 +1309,8 @@ public class PdfReader implements PdfViewerPreferences {
             }
             catch (IOException e) {
             	if (debugmode) {
-            		e.printStackTrace();
+                    if (LOGGER.isLogging(Level.ERROR))
+                        LOGGER.error(e.getMessage(), e);
             		obj = null;
             	}
             	else
