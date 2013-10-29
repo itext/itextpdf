@@ -1824,6 +1824,8 @@ public class
     public static final PdfName SIZE = new PdfName("Size");
     /** A name */
     public static final PdfName SMASK = new PdfName("SMask");
+
+    public static final PdfName SMASKINDATA = new PdfName("SMaskInData");
     /** A name */
     public static final PdfName SORT = new PdfName("Sort");
     /**

@@ -70,7 +70,7 @@ public class PdfContentByte {
      * This class keeps the graphic state of the current page
      */
 
-    static class GraphicState {
+    static public class GraphicState {
 
         /** This is the font in use */
         FontDetails fontDetails;
@@ -111,6 +111,7 @@ public class PdfContentByte {
         protected BaseColor colorStroke = new GrayColor(0);
         protected int textRenderMode = TEXT_RENDER_MODE_FILL;
         protected AffineTransform CTM = new AffineTransform();
+        protected PdfObject extGState = null;
 
         GraphicState() {
         }
@@ -140,6 +141,7 @@ public class PdfContentByte {
             colorStroke = cp.colorStroke;
             CTM = new AffineTransform(cp.CTM);
             textRenderMode = cp.textRenderMode;
+            extGState = cp.extGState;
         }
 
         void restore(final GraphicState restore) {
@@ -1151,6 +1153,7 @@ public class PdfContentByte {
     	    }
     	}
         PdfWriter.checkPdfIsoConformance(writer, PdfIsoKeys.PDFISOKEY_COLOR, state.colorStroke);
+        PdfWriter.checkPdfIsoConformance(writer, PdfIsoKeys.PDFISOKEY_GSTATE, state.extGState);
         content.append("S").append_i(separator);
     }
 
@@ -1167,6 +1170,7 @@ public class PdfContentByte {
     	    }
     	}
         PdfWriter.checkPdfIsoConformance(writer, PdfIsoKeys.PDFISOKEY_COLOR, state.colorStroke);
+        PdfWriter.checkPdfIsoConformance(writer, PdfIsoKeys.PDFISOKEY_GSTATE, state.extGState);
         content.append("s").append_i(separator);
     }
 
@@ -1183,6 +1187,7 @@ public class PdfContentByte {
     	    }
     	}
         PdfWriter.checkPdfIsoConformance(writer, PdfIsoKeys.PDFISOKEY_COLOR, state.colorFill);
+        PdfWriter.checkPdfIsoConformance(writer, PdfIsoKeys.PDFISOKEY_GSTATE, state.extGState);
         content.append("f").append_i(separator);
     }
 
@@ -1199,6 +1204,7 @@ public class PdfContentByte {
     	    }
     	}
         PdfWriter.checkPdfIsoConformance(writer, PdfIsoKeys.PDFISOKEY_COLOR, state.colorFill);
+        PdfWriter.checkPdfIsoConformance(writer, PdfIsoKeys.PDFISOKEY_GSTATE, state.extGState);
         content.append("f*").append_i(separator);
     }
 
@@ -1216,6 +1222,7 @@ public class PdfContentByte {
     	}
         PdfWriter.checkPdfIsoConformance(writer, PdfIsoKeys.PDFISOKEY_COLOR, state.colorFill);
         PdfWriter.checkPdfIsoConformance(writer, PdfIsoKeys.PDFISOKEY_COLOR, state.colorStroke);
+        PdfWriter.checkPdfIsoConformance(writer, PdfIsoKeys.PDFISOKEY_GSTATE, state.extGState);
         content.append("B").append_i(separator);
     }
 
@@ -1233,6 +1240,7 @@ public class PdfContentByte {
     	}
         PdfWriter.checkPdfIsoConformance(writer, PdfIsoKeys.PDFISOKEY_COLOR, state.colorFill);
         PdfWriter.checkPdfIsoConformance(writer, PdfIsoKeys.PDFISOKEY_COLOR, state.colorStroke);
+        PdfWriter.checkPdfIsoConformance(writer, PdfIsoKeys.PDFISOKEY_GSTATE, state.extGState);
         content.append("b").append_i(separator);
     }
 
@@ -1250,6 +1258,7 @@ public class PdfContentByte {
     	}
         PdfWriter.checkPdfIsoConformance(writer, PdfIsoKeys.PDFISOKEY_COLOR, state.colorFill);
         PdfWriter.checkPdfIsoConformance(writer, PdfIsoKeys.PDFISOKEY_COLOR, state.colorStroke);
+        PdfWriter.checkPdfIsoConformance(writer, PdfIsoKeys.PDFISOKEY_GSTATE, state.extGState);
         content.append("B*").append_i(separator);
     }
 
@@ -1267,6 +1276,7 @@ public class PdfContentByte {
     	}
         PdfWriter.checkPdfIsoConformance(writer, PdfIsoKeys.PDFISOKEY_COLOR, state.colorFill);
         PdfWriter.checkPdfIsoConformance(writer, PdfIsoKeys.PDFISOKEY_COLOR, state.colorStroke);
+        PdfWriter.checkPdfIsoConformance(writer, PdfIsoKeys.PDFISOKEY_GSTATE, state.extGState);
         content.append("b*").append_i(separator);
     }
 
@@ -1701,7 +1711,7 @@ public class PdfContentByte {
      * @param text the text to write
      */
     public void showText(final String text) {
-        checkTextColor();
+        checkState();
         if (!inText && isTagged()) {
             beginText(true);
         }
@@ -1762,7 +1772,7 @@ public class PdfContentByte {
      * @param text the text to write
      */
     public void newlineShowText(final String text) {
-        checkTextColor();
+        checkState();
         if (!inText && isTagged()) {
             beginText(true);
         }
@@ -1781,7 +1791,7 @@ public class PdfContentByte {
      * @param text the text to write
      */
     public void newlineShowText(final float wordSpacing, final float charSpacing, final String text) {
-        checkTextColor();
+        checkState();
         if (!inText && isTagged()) {
             beginText(true);
         }
@@ -2457,6 +2467,7 @@ public class PdfContentByte {
     public void addTemplate(final PdfTemplate template, final float a, final float b, final float c, final float d, final float e, final float f, boolean tagContent) {
         checkWriter();
         checkNoPattern(template);
+        PdfWriter.checkPdfIsoConformance(writer, PdfIsoKeys.PDFISOKEY_FORM_XOBJ, template);
         PdfName name = writer.addDirectTemplateSimple(template, null);
         PageResources prs = getPageResources();
         name = prs.addXObject(name, template.getIndirectReference());
@@ -2947,7 +2958,7 @@ public class PdfContentByte {
      * @param text array of text
      */
     public void showText(final PdfTextArray text) {
-        checkTextColor();
+        checkState();
         if (!inText && isTagged()) {
             beginText(true);
         }
@@ -3287,6 +3298,7 @@ public class PdfContentByte {
         PdfObject obj[] = writer.addSimpleExtGState(gstate);
         PageResources prs = getPageResources();
         PdfName name = prs.addExtGState((PdfName)obj[0], (PdfIndirectReference)obj[1]);
+        state.extGState = gstate;
         content.append(name.getBytes()).append(" gs").append_i(separator);
     }
 
@@ -3736,7 +3748,7 @@ public class PdfContentByte {
         return inText;
     }
 
-    protected void checkTextColor() {
+    protected void checkState() {
         boolean stroke = false;
         boolean fill = false;
         if (state.textRenderMode == TEXT_RENDER_MODE_FILL) {
@@ -3753,6 +3765,7 @@ public class PdfContentByte {
         if (stroke) {
             PdfWriter.checkPdfIsoConformance(writer, PdfIsoKeys.PDFISOKEY_COLOR, isTagged() ? state.textColorStroke : state.colorStroke);
         }
+        PdfWriter.checkPdfIsoConformance(writer, PdfIsoKeys.PDFISOKEY_GSTATE, state.extGState);
     }
 
     // AWT related methods (remove this if you port to Android / GAE)
