@@ -1,4 +1,4 @@
-# default language English
+﻿# default language English
 1.2.does.not.contain.an.usable.cmap={1} {2} does not contain an usable cmap.
 1.2.is.not.a.ttf.font.file={1} {2} is not a TTF font file.
 1.at.file.pointer.2={1} at file pointer {2}
@@ -334,6 +334,8 @@ pdf.string.is.too.long=PDF string is too long.
 pdfpcells.can.t.have.a.rowspan.gt.1=PdfPCells can't have a rowspan > 1
 pdfreader.not.opened.with.owner.password=PdfReader not opened with owner password
 pdfx.conformance.can.only.be.set.before.opening.the.document=PDFX conformance can only be set before opening the document.
+pdfx.conformance.cannot.be.set.for.PdfAStamperImp.instance=PDFX conformance cannot be set for PdfAStamperImp instance.
+pdfx.conformance.cannot.be.set.for.PdfAWriter.instance=PDFX conformance cannot be set for PdfAWriter instance.
 planar.images.are.not.supported=Planar images are not supported.
 png.filter.unknown=PNG filter unknown.
 postscript.xobjects.are.not.allowed=PostScript XObjects are not allowed.
