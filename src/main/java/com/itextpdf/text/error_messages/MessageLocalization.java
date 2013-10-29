@@ -83,6 +83,10 @@ public final class MessageLocalization {
      * @return the message
      */
     public static String getMessage(String key) {
+        return getMessage(key, true);
+    }
+
+    public static String getMessage(String key, boolean useDefaultLanguageIfMessageNotFound) {
         HashMap<String, String> cl = currentLanguage;
         String val;
         if (cl != null) {
@@ -90,14 +94,16 @@ public final class MessageLocalization {
             if (val != null)
                 return val;
         }
-        cl = defaultLanguage;
-        val = cl.get(key);
-        if (val != null)
-            return val;
+
+        if (useDefaultLanguageIfMessageNotFound) {
+            cl = defaultLanguage;
+        	val = cl.get(key);
+        	if (val != null)
+            	return val;
+        }
+
         return "No message found for " + key;
     }
-
-
 
     /**
      * Get a message with one parameter as an primitive int. The parameter will replace the string
