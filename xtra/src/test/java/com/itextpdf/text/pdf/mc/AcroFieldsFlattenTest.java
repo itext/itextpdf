@@ -6,6 +6,7 @@ import com.itextpdf.text.log.SysoLogger;
 import com.itextpdf.text.pdf.*;
 import com.itextpdf.text.pdf.parser.*;
 import com.itextpdf.text.xml.XMLUtil;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -65,6 +66,10 @@ public class AcroFieldsFlattenTest {
         reader = new PdfReader(OUT_FOLDER + filledAcroFormFileName);
         MCFieldFlattener flattener = new MCFieldFlattener();
         flattener.process(reader, new FileOutputStream(OUT_FOLDER + flattenAcroFormFileName));
+    }
+
+    @After
+    public void tearDown() {
         //compare(OUT_FOLDER + flattenAcroFormFileName, CMP_FOLDER + flattenAcroFormFileName);
     }
 
