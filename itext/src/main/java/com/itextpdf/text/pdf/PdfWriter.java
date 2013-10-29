@@ -1203,6 +1203,8 @@ public class PdfWriter extends DocWriter implements
 
     /** A number referring to the previous Cross-Reference Table. */
     protected long prevxref = 0;
+    /** The original file ID (if present). */
+    protected byte[] originalFileID = null;
 
     /**
      * Signals that the <CODE>Document</CODE> has been opened and that
@@ -1306,13 +1308,15 @@ public class PdfWriter extends DocWriter implements
                 PdfIndirectReference encryption = null;
                 PdfObject fileID = null;
                 body.flushObjStm();
+            	boolean isModified = (originalFileID != null);
                 if (crypto != null) {
                     PdfIndirectObject encryptionObject = addToBody(crypto.getEncryptionDictionary(), false);
                     encryption = encryptionObject.getIndirectReference();
-                    fileID = crypto.getFileID();
+                    fileID = crypto.getFileID(isModified);
                 }
-                else
-                    fileID = PdfEncryption.createInfoId(PdfEncryption.createDocumentId());
+                else {
+                    fileID = PdfEncryption.createInfoId(isModified ? originalFileID : PdfEncryption.createDocumentId(), isModified);
+                }
 
                 // write the cross-reference table of the body
                 body.writeCrossReferenceTable(os, indirectCatalog.getIndirectReference(),

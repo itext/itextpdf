@@ -410,15 +410,15 @@ class PdfStamperImp extends PdfWriter {
                 PdfIndirectObject encryptionObject = addToBody(crypto.getEncryptionDictionary(), false);
                 encryption = encryptionObject.getIndirectReference();
             }
-            fileID = crypto.getFileID();
+            fileID = crypto.getFileID(true);
         }
         else {
         	PdfArray IDs = reader.trailer.getAsArray(PdfName.ID);
         	if (IDs != null && IDs.getAsString(0) != null) {
-                fileID = PdfEncryption.createInfoId(IDs.getAsString(0).getBytes());
+                fileID = PdfEncryption.createInfoId(IDs.getAsString(0).getBytes(), true);
         	}
         	else {
-                fileID = PdfEncryption.createInfoId(PdfEncryption.createDocumentId());
+                fileID = PdfEncryption.createInfoId(PdfEncryption.createDocumentId(), true);
         	}	
         }
         PRIndirectReference iRoot = (PRIndirectReference)reader.trailer.get(PdfName.ROOT);
