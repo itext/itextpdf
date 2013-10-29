@@ -1208,7 +1208,6 @@ public class PdfCopy extends PdfWriter {
             Object obj = map.get(s);
             if (tk.hasMoreTokens()) {
                 if (obj == null) {
-                    obj = new HashMap();
                     map.put(s, obj);
                     map = (HashMap<String, Object>)obj;
                     continue;
@@ -1528,7 +1527,6 @@ public class PdfCopy extends PdfWriter {
     @Override
     public void close() {
         if (open) {
-            PdfReaderInstance ri = currentPdfReaderInstance;
             pdf.close();
             super.close();
 // Users are responsible for closing PdfReaderw            
@@ -1551,6 +1549,9 @@ public class PdfCopy extends PdfWriter {
 
     @Override
     public void freeReader(PdfReader reader) throws IOException {
+    	PdfArray array = reader.trailer.getAsArray(PdfName.ID);
+    	if (array != null)
+    		originalFileID = array.getAsString(0).getBytes();
         indirectMap.remove(reader);
 // TODO: Removed - the user should be responsible for closing all PdfReaders.  But, this could cause a lot of memory leaks in code out there that hasn't been properly closing things - maybe add a finalizer to PdfReader that calls PdfReader#close() ??            	
 //        if (currentPdfReaderInstance != null) {
