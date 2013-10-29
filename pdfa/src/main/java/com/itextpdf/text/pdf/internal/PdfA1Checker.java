@@ -143,36 +143,43 @@ public class PdfA1Checker extends PdfAChecker {
     }
 
     @Override
+    protected void checkFormXObj(PdfWriter writer, int key, Object obj1) {
+        //For PDF/A-1 it is enough to check a form xObject at the addToBody... only.
+    }
+
+    @Override
     protected void checkInlineImage(PdfWriter writer, int key, Object obj1) {}
 
     @Override
     protected void checkGState(PdfWriter writer, int key, Object obj1) {
-        PdfDictionary gs = (PdfDictionary) obj1;
-        PdfObject obj = gs.get(PdfName.BM);
-        if (obj != null && !PdfGState.BM_NORMAL.equals(obj) && !PdfGState.BM_COMPATIBLE.equals(obj))
-            throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("blend.mode.1.not.allowed", obj.toString()));
-        obj = gs.get(PdfName.CA);
-        double v = 0.0;
-        if (obj != null && (v = ((PdfNumber) obj).doubleValue()) != 1.0)
-            throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("transparency.is.not.allowed.ca.eq.1", String.valueOf(v)));
-        obj = gs.get(PdfName.ca);
-        v = 0.0;
-        if (obj != null && (v = ((PdfNumber) obj).doubleValue()) != 1.0)
-            throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("transparency.is.not.allowed.ca.eq.1", String.valueOf(v)));
+        if (obj1 instanceof PdfDictionary) {
+            PdfDictionary gs = (PdfDictionary) obj1;
+            PdfObject obj = gs.get(PdfName.BM);
+            if (obj != null && !PdfGState.BM_NORMAL.equals(obj) && !PdfGState.BM_COMPATIBLE.equals(obj))
+                throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("blend.mode.1.not.allowed", obj.toString()));
+            obj = gs.get(PdfName.CA);
+            double v = 0.0;
+            if (obj != null && (v = ((PdfNumber) obj).doubleValue()) != 1.0)
+                throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("transparency.is.not.allowed.ca.eq.1", String.valueOf(v)));
+            obj = gs.get(PdfName.ca);
+            v = 0.0;
+            if (obj != null && (v = ((PdfNumber) obj).doubleValue()) != 1.0)
+                throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("transparency.is.not.allowed.ca.eq.1", String.valueOf(v)));
 
-        if (gs.contains(PdfName.TR)) {
-            throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("an.extgstate.dictionary.shall.not.contain.the.tr.key"));
+            if (gs.contains(PdfName.TR)) {
+                throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("an.extgstate.dictionary.shall.not.contain.the.tr.key"));
+            }
+            PdfName tr2 = gs.getAsName(PdfName.TR2);
+            if (tr2 != null && !tr2.equals(PdfName.DEFAULT)) {
+                throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("an.extgstate.dictionary.shall.not.contain.the.TR2.key.with.a.value.other.than.default"));
+            }
+            PdfName ri = gs.getAsName(PdfName.RI);
+            if (ri != null && !(PdfName.RELATIVECOLORIMETRIC.equals(ri) || PdfName.ABSOLUTECOLORIMETRIC.equals(ri) || PdfName.PERCEPTUAL.equals(ri) || PdfName.SATURATION.equals(ri))) {
+                throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("1.value.of.ri.key.is.not.allowed", ri.toString()));
+            }
+            if (gs.get(PdfName.SMASK) != null && !PdfName.NONE.equals(gs.getAsName(PdfName.SMASK)))
+                throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("the.smask.key.is.not.allowed.in.extgstate"));
         }
-        PdfName tr2 = gs.getAsName(PdfName.TR2);
-        if (tr2 != null && !tr2.equals(PdfName.DEFAULT)) {
-            throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("an.extgstate.dictionary.shall.not.contain.the.TR2.key.with.a.value.other.than.default"));
-        }
-        PdfName ri = gs.getAsName(PdfName.RI);
-        if (ri != null && !(PdfName.RELATIVECOLORIMETRIC.equals(ri) || PdfName.ABSOLUTECOLORIMETRIC.equals(ri) || PdfName.PERCEPTUAL.equals(ri) || PdfName.SATURATION.equals(ri))) {
-            throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("1.value.of.ri.key.is.not.allowed", ri.toString()));
-        }
-        if (gs.get(PdfName.SMASK) != null && !PdfName.NONE.equals(gs.getAsName(PdfName.SMASK)))
-            throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("the.smask.key.is.not.allowed.in.extgstate"));
     }
 
     @Override

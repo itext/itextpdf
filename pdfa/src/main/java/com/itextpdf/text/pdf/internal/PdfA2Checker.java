@@ -88,6 +88,8 @@ public class PdfA2Checker extends PdfAChecker {
     protected boolean rgbUsed = false;
     protected boolean cmykUsed = false;
     protected boolean grayUsed = false;
+    protected boolean transparencyWithoutPageGroupDetected = false;
+    protected boolean transparencyDetectedOnThePage = false;
 
     PdfA2Checker(PdfAConformanceLevel conformanceLevel) {
         super(conformanceLevel);
@@ -125,22 +127,70 @@ public class PdfA2Checker extends PdfAChecker {
 
     @Override
     protected void checkGState(PdfWriter writer, int key, Object obj1) {
-        PdfDictionary gs = (PdfDictionary) obj1;
-        PdfObject obj = gs.get(PdfName.BM);
-        if (obj != null && !allowedBlendModes.contains(obj)) {
-            throw new PdfAConformanceException(MessageLocalization.getComposedMessage("blend.mode.1.not.allowed", obj.toString()));
-        }
-        if (gs.contains(PdfName.TR)) {
-            throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("an.extgstate.dictionary.shall.not.contain.the.tr.key"));
-        }
-        if (gs.contains(PdfName.HTP)) {
-            throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("an.extgstate.dictionary.shall.not.contain.the.htp.key"));
+        if (obj1 instanceof PdfObject) {
+            PdfDictionary gs = getDirectDictionary((PdfObject)obj1);
+            PdfObject obj = gs.get(PdfName.BM);
+            if (obj != null) {
+                if (!allowedBlendModes.contains(obj))
+                    throw new PdfAConformanceException(MessageLocalization.getComposedMessage("blend.mode.1.not.allowed", obj.toString()));
+                if (!PdfGState.BM_NORMAL.equals(obj))
+                    transparencyDetectedOnThePage = true;
+            }
+
+            PdfNumber ca  = gs.getAsNumber(PdfName.ca);
+            if (ca != null && ca.floatValue() < 1f) {
+                transparencyDetectedOnThePage = true;
+            }
+
+            ca = gs.getAsNumber(PdfName.CA);
+            if (ca != null && ca.floatValue() < 1f) {
+                transparencyDetectedOnThePage = true;
+            }
+
+            PdfDictionary smask = getDirectDictionary(gs.get(PdfName.SMASK));
+            if (smask != null) {
+                transparencyDetectedOnThePage = true;
+            }
+
+            if (gs.contains(PdfName.TR)) {
+                throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("an.extgstate.dictionary.shall.not.contain.the.tr.key"));
+            }
+
+            PdfName tr2 = gs.getAsName(PdfName.TR2);
+            if (tr2 != null && !tr2.equals(PdfName.DEFAULT)) {
+                throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("an.extgstate.dictionary.shall.not.contain.the.TR2.key.with.a.value.other.than.default"));
+            }
+
+            if (gs.contains(PdfName.HTP)) {
+                throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("an.extgstate.dictionary.shall.not.contain.the.htp.key"));
+            }
+
+            PdfDictionary halfTone = getDirectDictionary(gs.get(PdfName.HT));
+            if (halfTone != null) {
+                if (halfTone.contains(PdfName.HALFTONENAME))
+                    throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("halftones.shall.not.contains.halftonename"));
+
+                PdfNumber halftoneType = halfTone.getAsNumber(PdfName.HALFTONETYPE);
+                if (halftoneType == null || (halftoneType.intValue() != 1 && halftoneType.intValue() != 5))
+                    throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("all.halftones.shall.have.halftonetype.1.or.5"));
+            }
+            PdfName ri = gs.getAsName(PdfName.RI);
+            if (ri != null && !(PdfName.RELATIVECOLORIMETRIC.equals(ri) || PdfName.ABSOLUTECOLORIMETRIC.equals(ri) || PdfName.PERCEPTUAL.equals(ri) || PdfName.SATURATION.equals(ri))) {
+                throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("1.value.of.ri.key.is.not.allowed", ri.toString()));
+            }
         }
     }
 
     @Override
     protected void checkImage(PdfWriter writer, int key, Object obj1) {
         PdfImage pdfImage = (PdfImage) obj1;
+        if (getDirectStream(pdfImage.get(PdfName.SMASK)) != null) {
+            transparencyDetectedOnThePage = true;
+        }
+        PdfNumber smaskInData = pdfImage.getAsNumber(PdfName.SMASKINDATA) ;
+        if (smaskInData != null && smaskInData.floatValue() > 0) {
+            transparencyDetectedOnThePage = true;
+        }
         if (pdfImage.contains(PdfName.OPI)) {
             throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("an.image.dictionary.shall.not.contain.opi.key"));
         }
@@ -187,6 +237,15 @@ public class PdfA2Checker extends PdfAChecker {
                     }
                 }
 
+            }
+        }
+    }
+
+    @Override
+    protected void checkFormXObj(PdfWriter writer, int key, Object obj1) {
+        if (obj1 instanceof PdfTemplate) {
+            if (((PdfTemplate)obj1).getGroup() != null) {
+                transparencyDetectedOnThePage = true;
             }
         }
     }
@@ -468,8 +527,10 @@ public class PdfA2Checker extends PdfAChecker {
                     if (grayUsed && writer.getDefaultColorspace().get(PdfName.DEFAULTGRAY) == null) {
                         throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("devicegray.shall.only.be.used.if.defaultgray.pdfa.or.outputintent"));
                     }
+                    if (transparencyWithoutPageGroupDetected) {
+                        throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("if.the.document.not.contain.outputintent.transparencygroup.shall.comtain.cs.key"));
+                    }
                 }
-
             } else if (PdfName.PAGE.equals(type)) {
                 PdfName[] boxNames = new PdfName[] {PdfName.MEDIABOX, PdfName.CROPBOX, PdfName.TRIMBOX, PdfName.ARTBOX, PdfName.BLEEDBOX};
                 for (PdfName boxName: boxNames) {
@@ -488,6 +549,23 @@ public class PdfA2Checker extends PdfAChecker {
                 if (dictionary.contains(PdfName.PRESSTEPS)) {
                     throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("page.dictionary.shall.not.include.pressteps.entry"));
                 }
+
+                if (transparencyDetectedOnThePage) {
+                    PdfDictionary group = getDirectDictionary(dictionary.get(PdfName.GROUP));
+                    if (group == null || !PdfName.TRANSPARENCY.equals(group.getAsName(PdfName.S)) || !group.contains(PdfName.CS)) {
+                        transparencyWithoutPageGroupDetected = true;
+                    } else {
+                        PdfName csName = group.getAsName(PdfName.CS);
+                        if (PdfName.DEVICERGB.equals(csName))
+                            rgbUsed = true;
+                        if (PdfName.DEVICEGRAY.equals(csName))
+                            grayUsed = true;
+                        if (PdfName.DEVICECMYK.equals(csName))
+                            cmykUsed = true;
+                    }
+                }
+                transparencyDetectedOnThePage = false;
+
             } else if (PdfName.OUTPUTINTENT.equals(type)) {
                 PdfName gts = dictionary.getAsName(PdfName.S);
                 if (PdfName.GTS_PDFA1.equals(gts)) {

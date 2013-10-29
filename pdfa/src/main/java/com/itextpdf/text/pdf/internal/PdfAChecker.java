@@ -144,6 +144,8 @@ abstract public class PdfAChecker {
 
     abstract protected void checkInlineImage(PdfWriter writer, int key, Object obj1);
 
+    abstract protected void checkFormXObj(PdfWriter writer, int key, Object obj1);
+
     abstract protected void checkGState(PdfWriter writer, int key, Object obj1);
 
     abstract protected void checkLayer(PdfWriter writer, int key, Object obj1);
@@ -224,6 +226,9 @@ abstract public class PdfAChecker {
                 break;
             case PdfIsoKeys.PDFISOKEY_OUTPUTINTENT:
                 checkOutputIntent(writer, key, obj1);
+                break;
+            case PdfIsoKeys.PDFISOKEY_FORM_XOBJ:
+                checkFormXObj(writer, key, obj1);
                 break;
             default:
                 break;
