@@ -385,7 +385,7 @@ public class PdfA2Checker extends PdfAChecker {
                     throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("a.form.xobject.dictionary.shall.not.contain.opi.key"));
                 }
                 if (stream.contains(PdfName.PS)) {
-                    throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("a.form.xobject..dictionary.shall.not.contain.ps.key"));
+                    throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("a.form.xobject.dictionary.shall.not.contain.ps.key"));
                 }
             }
 

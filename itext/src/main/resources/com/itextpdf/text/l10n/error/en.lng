@@ -1,4 +1,4 @@
-# default language English
+﻿# default language English
 1.2.does.not.contain.an.usable.cmap={1} {2} does not contain an usable cmap.
 1.2.is.not.a.ttf.font.file={1} {2} is not a TTF font file.
 1.at.file.pointer.2={1} at file pointer {2}
@@ -124,7 +124,7 @@ crypt.filter.is.not.permitted.inline.image=Crypt filter is not permitted for inl
 defaultcryptfilter.not.found.encryption=/DefaultCryptFilter not found (encryption)
 deprecated.setstate.and.noop.actions.are.not.allowed=Deprecated set-state and no-op actions are not allowed.
 destination.end.tag.out.of.place=Destination end tag out of place.
-destoutputprofile.in.the.pdfa1.outputintent.dictionaryshall.be.rgb=DestOutputProfile in the PDF/A-1 OutputIntent dictionary shall be RGB.
+destoutputprofile.in.the.pdfa1.outputintent.dictionary.shall.be.rgb=DestOutputProfile in the PDF/A-1 OutputIntent dictionary shall be RGB.
 devicecmyk.may.be.used.only.if.the.file.has.a.cmyk.pdfa.outputIntent=DeviceCMYK may be used only if the file has a PDF/A OutputIntent that uses a CMYK colour space.
 devicecmyk.shall.only.be.used.if.defaultcmyk.pdfa.or.outputintent=DeviceCMYK shall only be used if a device independent DefaultCMYK colour space has been set or if a DeviceN-based DefaultCMYK colour space has been set when the DeviceCMYK colour space is used or the file has a PDF/A OutputIntent that contains a CMYK destination profile.
 devicegray.may.be.used.only.if.the.file.has.a.rgb.or.cmyk.pdfa.outputIntent=DeviceGray may be used only if the file has a PDF/A OutputIntent that uses an RGB or CMYK colour space.
@@ -334,6 +334,8 @@ pdf.string.is.too.long=PDF string is too long.
 pdfpcells.can.t.have.a.rowspan.gt.1=PdfPCells can't have a rowspan > 1
 pdfreader.not.opened.with.owner.password=PdfReader not opened with owner password
 pdfx.conformance.can.only.be.set.before.opening.the.document=PDFX conformance can only be set before opening the document.
+pdfx.conformance.cannot.be.set.for.PdfAStamperImp.instance=PDFX conformance cannot be set for PdfAStamperImp instance.
+pdfx.conformance.cannot.be.set.for.PdfAWriter.instance=PDFX conformance cannot be set for PdfAWriter instance.
 planar.images.are.not.supported=Planar images are not supported.
 png.filter.unknown=PNG filter unknown.
 postscript.xobjects.are.not.allowed=PostScript XObjects are not allowed.
