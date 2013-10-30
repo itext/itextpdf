@@ -1,6 +1,5 @@
 package com.itextpdf.text.error_messages;
 
-import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -15,7 +14,7 @@ public class ErrorMessageExistenceTest {
 
     private static String[] LANGUAGES = {"nl", "en"};
     private static String SOURCE_FILES_EXTENSION = ".java";
-    private static String SOURCE_CODE_ROOT_PATH = "../";
+    private static String SOURCE_CODE_ROOT_PATH = "./";
     private List<File> sourceFiles;
     private List<String> nonLozalizedMessageErrors;
     Pattern pattern;
