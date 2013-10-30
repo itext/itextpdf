@@ -4,14 +4,16 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class ErrorMessageExistenceTest {
-
+public class PdfAErrorMessageExistenceTest {
     private static String[] LANGUAGES = {"nl", "en"};
     private static String SOURCE_FILES_EXTENSION = ".java";
     private static String SOURCE_CODE_ROOT_PATH = "./";
@@ -79,4 +81,5 @@ public class ErrorMessageExistenceTest {
             //Assert.assertFalse(assertMessage, MessageLocalization.getMessage(key, false).startsWith("No message found for"));
         }
     }
+
 }
