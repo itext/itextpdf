@@ -1259,11 +1259,32 @@ public class PdfA1CheckerTest {
             Assert.fail("PdfAConformanceException should be thrown");
         }
 
-
     }
 
+    @Test
+    public void fontCheckTest1() throws IOException {
+        boolean exceptionThrown = false;
+        try {
+            Document document = new Document();
+            PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream("./target/pdfa2FontCheckTest1.pdf"), PdfAConformanceLevel.PDF_A_1A);
+            writer.createXmpMetadata();
+            writer.setTagged();
+            document.open();
+            document.addLanguage("en-US");
 
+            Font font = FontFactory.getFont("./src/test/resources/com/itextpdf/text/pdf/FreeMonoBold.ttf", BaseFont.WINANSI, false/*BaseFont.EMBEDDED*/, 12);
+            document.add(new Paragraph("Hello World", font));
+            ICC_Profile icc = ICC_Profile.getInstance(new FileInputStream("./src/test/resources/com/itextpdf/text/pdf/sRGB Color Space Profile.icm"));
+            writer.setOutputIntents("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", icc);
 
+            document.close();
+        } catch (DocumentException docExc) {
+            exceptionThrown = true;
+        } catch (PdfAConformanceException exc) {
+            exceptionThrown = true;
+        }
 
-
+        if (!exceptionThrown)
+            Assert.fail("PdfAConformance exception should be thrown");
+    }
 }

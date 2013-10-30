@@ -188,7 +188,7 @@ public class PdfAWriter extends PdfWriter {
      */
     protected TtfUnicodeWriter getTtfUnicodeWriter() {
         if (ttfUnicodeWriter == null)
-            ttfUnicodeWriter = new PdfATtfUnicodeWriter(this);
+            ttfUnicodeWriter = new PdfATtfUnicodeWriter(this, ((PdfAConformance)pdfIsoConformance).getConformanceLevel());
         return ttfUnicodeWriter;
     }
 

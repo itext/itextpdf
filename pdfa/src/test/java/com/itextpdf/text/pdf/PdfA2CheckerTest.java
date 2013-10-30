@@ -971,7 +971,7 @@ public class PdfA2CheckerTest {
         PdfAnnotation annot = new PdfAnnotation(writer, new Rectangle(100, 100, 200, 200));
         annot.put(PdfName.SUBTYPE, PdfName.TEXT);
         annot.put(PdfName.F, new PdfNumber(PdfAnnotation.FLAGS_PRINT | PdfAnnotation.FLAGS_NOZOOM | PdfAnnotation.FLAGS_NOROTATE));
-        PdfDictionary ap = new PdfDictionary();;
+        PdfDictionary ap = new PdfDictionary();
         PdfStream s = new PdfStream("Hello World".getBytes());
         ap.put(PdfName.N, writer.addToBody(s).getIndirectReference());
         annot.put(PdfName.AP, ap);
@@ -1028,7 +1028,7 @@ public class PdfA2CheckerTest {
         annot.put(PdfName.SUBTYPE, PdfName.STAMP);
         annot.put(PdfName.F, new PdfNumber(PdfAnnotation.FLAGS_PRINT));
         annot.put(PdfName.CONTENTS, new PdfString("Hello World"));
-        PdfDictionary ap = new PdfDictionary();;
+        PdfDictionary ap = new PdfDictionary();
         PdfStream s = new PdfStream("Hello World".getBytes());
         ap.put(PdfName.N, writer.addToBody(s).getIndirectReference());
         annot.put(PdfName.AP, ap);
@@ -1271,6 +1271,33 @@ public class PdfA2CheckerTest {
         writer.setOutputIntents("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", icc);
 
         document.close();
+    }
+
+    @Test
+    public void fontCheckTest1() throws IOException {
+        boolean exceptionThrown = false;
+        try {
+            Document document = new Document();
+            PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream("./target/pdfa2FontCheckTest1.pdf"), PdfAConformanceLevel.PDF_A_2A);
+            writer.createXmpMetadata();
+            writer.setTagged();
+            document.open();
+            document.addLanguage("en-US");
+
+            Font font = FontFactory.getFont("./src/test/resources/com/itextpdf/text/pdf/FreeMonoBold.ttf", BaseFont.WINANSI, false/*BaseFont.EMBEDDED*/, 12);
+            document.add(new Paragraph("Hello World", font));
+            ICC_Profile icc = ICC_Profile.getInstance(new FileInputStream("./src/test/resources/com/itextpdf/text/pdf/sRGB Color Space Profile.icm"));
+            writer.setOutputIntents("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", icc);
+
+            document.close();
+        } catch (DocumentException docExc) {
+            exceptionThrown = true;
+        } catch (PdfAConformanceException exc) {
+            exceptionThrown = true;
+        }
+
+        if (!exceptionThrown)
+            Assert.fail("PdfAConformance exception should be thrown");
     }
 
     /**
