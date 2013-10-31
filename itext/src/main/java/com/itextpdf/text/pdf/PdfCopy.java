@@ -405,7 +405,7 @@ public class PdfCopy extends PdfWriter {
         PdfObject res = copyObject(obj, keepStructure, directRootKids);
         if (disableIndirects.contains(obj))
             iRef.setNotCopied();
-        if ((res != null) && !(res instanceof PdfNull))
+        if (res != null)
         {
             addToBody(res, theRef);
             return theRef;
@@ -475,7 +475,7 @@ public class PdfCopy extends PdfWriter {
                 if (!key.equals(PdfName.B) && !key.equals(PdfName.PARENT)) {
                     parentObjects.put(value, in);
                     PdfObject res = copyObject(value, keepStruct, directRootKids);
-                    if ((res != null) && !(res instanceof PdfNull))
+                    if (res != null)
                         out.put(key, res);
                 }
             }
@@ -486,7 +486,7 @@ public class PdfCopy extends PdfWriter {
                 } else {
                     res = copyObject(value, keepStruct, directRootKids);
                 }
-                if ((res != null) && !(res instanceof PdfNull))
+                if (res != null)
                     out.put(key, res);
             }
         }
@@ -514,7 +514,7 @@ public class PdfCopy extends PdfWriter {
             PdfObject value = in.get(key);
             parentObjects.put(value, in);
             PdfObject res = copyObject(value);
-            if ((res != null) && !(res instanceof PdfNull))
+            if (res != null)
                 out.put(key, res);
         }
 
@@ -532,7 +532,7 @@ public class PdfCopy extends PdfWriter {
             PdfObject value = i.next();
             parentObjects.put(value, in);
             PdfObject res = copyObject(value, keepStruct, directRootKids);
-            if ((res != null) && !(res instanceof PdfNull))
+            if (res != null)
                 out.add(res);
         }
         return out;
