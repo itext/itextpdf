@@ -48,7 +48,9 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 
+import com.itextpdf.text.DocumentException;
 import junit.framework.Assert;
 
 import org.junit.After;
@@ -102,7 +104,35 @@ public class PdfCopyTest {
         	sourceR.close();
         }
     }
-    
+
+    @Test
+    /**
+     * Test to make sure that the following issue is fixed: http://sourceforge.net/mailarchive/message.php?msg_id=30891213
+     */
+    public void testDecodeParmsArrayWithNullItems() throws IOException, DocumentException {
+        Document document = new Document();
+        ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
+        PdfSmartCopy pdfSmartCopy = new PdfSmartCopy(document, byteStream);
+        document.open();
+
+        PdfReader reader = TestResourceUtils.getResourceAsPdfReader(this, "imgWithDecodeParms.pdf");
+        pdfSmartCopy.addPage(pdfSmartCopy.getImportedPage(reader, 1));
+
+        document.close();
+        reader.close();
+
+        reader = new PdfReader(byteStream.toByteArray());
+        PdfDictionary page = reader.getPageN(1);
+        PdfDictionary resources = page.getAsDict(PdfName.RESOURCES);
+        PdfDictionary xObject = resources.getAsDict(PdfName.XOBJECT);
+        PdfStream img = xObject.getAsStream(new PdfName("Im0"));
+        PdfArray decodeParms = img.getAsArray(PdfName.DECODEPARMS);
+        Assert.assertEquals(2, decodeParms.size());
+        Assert.assertTrue(decodeParms.getPdfObject(0) instanceof PdfNull);
+
+        reader.close();
+    }
+
     private static byte[] createImagePdf() throws Exception {
 
         final ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
