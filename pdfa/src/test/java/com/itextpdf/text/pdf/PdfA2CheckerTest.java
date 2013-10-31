@@ -887,7 +887,7 @@ public class PdfA2CheckerTest {
             document.close();
         } catch (PdfAConformanceException e) {
             if (e.getObject() == annot && e.getMessage()
-                    .equals("Appearance dictionary of Widget subtype and Btn filled type shall contain only the n key with dictionary value")) {
+                    .equals("Appearance dictionary of Widget subtype and Btn field type shall contain only the n key with dictionary value")) {
                 exceptionThrown = true;
             }
         }

@@ -727,7 +727,7 @@ public class PdfA2Checker extends PdfAChecker {
                 PdfObject n = getDirectObject(ap.get(PdfName.N));
                 if (PdfName.WIDGET.equals(annot.getAsName(PdfName.SUBTYPE)) && new PdfName("Btn").equals(annot.getAsName(PdfName.FT))) {
                     if (n == null || !n.isDictionary())
-                        throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("appearance.dictionary.of.widget.subtype.and.btn.filled.type.shall.contain.only.the.n.key.with.dictionary.value"));
+                        throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("appearance.dictionary.of.widget.subtype.and.btn.field.type.shall.contain.only.the.n.key.with.dictionary.value"));
                 } else {
                     if (n == null || !n.isStream())
                         throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("appearance.dictionary.shall.contain.only.the.n.key.with.stream.value"));
