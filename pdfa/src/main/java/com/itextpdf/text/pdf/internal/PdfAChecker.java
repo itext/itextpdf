@@ -119,7 +119,7 @@ abstract public class PdfAChecker {
 
     protected PdfDictionary getDirectDictionary(PdfObject obj) {
         obj = getDirectObject(obj);
-        if (obj != null && obj.isDictionary())
+        if (obj != null && obj instanceof PdfDictionary)
             return (PdfDictionary)obj;
         return null;
     }

@@ -76,7 +76,9 @@ public class PdfA2Checker extends PdfAChecker {
 
     static private final HashSet<PdfName> keysForCheck = new HashSet<PdfName>(Arrays.asList(PdfName.AP, PdfName.N,
             PdfName.R, PdfName.D, PdfName.FONTFILE, PdfName.FONTFILE2, PdfName.FONTFILE3, PdfName.NAME, PdfName.XFA,
-            PdfName.ALTERNATEPRESENTATION, PdfName.DOCMDP, PdfName.REFERENCE, new PdfName("DigestLocation"), new PdfName("DigestMethod"), new PdfName("DigestValue"), PdfName.MARKED, PdfName.S));
+            PdfName.ALTERNATEPRESENTATION, PdfName.DOCMDP, PdfName.REFERENCE, new PdfName("DigestLocation"),
+            new PdfName("DigestMethod"), new PdfName("DigestValue"), PdfName.MARKED, PdfName.S, PdfName.SUBTYPE,
+            PdfName.F));
 
     static public final PdfName DIGESTLOCATION = new PdfName("DigestLocation");
     static public final PdfName DIGESTMETHOD = new PdfName("DigestMethod");
@@ -399,10 +401,32 @@ public class PdfA2Checker extends PdfAChecker {
     protected void checkFileSpec(PdfWriter writer, int key, Object obj1) {
         if (obj1 instanceof PdfFileSpecification) {
             PdfDictionary fileSpec = (PdfFileSpecification)obj1;
-            if (fileSpec.contains(PdfName.EF) &&
-                    (!fileSpec.contains(PdfName.UF) || !fileSpec.contains(PdfName.F))) {
+            if (!fileSpec.contains(PdfName.UF) || !fileSpec.contains(PdfName.F) || !fileSpec.contains(PdfName.DESC)) {
                 throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("file.specification.dictionary.shall.contain.f.uf.and.desc.entries"));
             }
+
+            if (fileSpec.contains(PdfName.EF)) {
+                PdfDictionary dict = getDirectDictionary(fileSpec.get(PdfName.EF));
+                if (dict == null || !dict.contains(PdfName.F)) {
+                    throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("ef.key.of.file.specification.dictionary.shall.contain.dictionary.with.valid.f.key"));
+                }
+
+                PdfDictionary embeddedFile = getDirectDictionary(dict.get(PdfName.F));
+                if (embeddedFile == null) {
+                    throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("ef.key.of.file.specification.dictionary.shall.contain.dictionary.with.valid.f.key"));
+                }
+
+                checkEmbeddedFile(embeddedFile);
+            }
+        }
+    }
+
+    private static PdfName MimeTypePdf = new PdfName(PdfAWriter.MimeTypePdf);
+
+    protected void checkEmbeddedFile(PdfDictionary embeddedFile) {
+        PdfName subtype = embeddedFile.getAsName(PdfName.SUBTYPE);
+        if (subtype == null || !MimeTypePdf.equals(subtype)) {
+            throw new PdfAConformanceException(embeddedFile, MessageLocalization.getComposedMessage("embedded.file.shall.contain.pdf.mime.type"));
         }
     }
 
@@ -598,6 +622,8 @@ public class PdfA2Checker extends PdfAChecker {
                         throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("outputintent.shall.have.colourspace.gray.rgb.or.cmyk"));
                     }
                 }
+            } else if (PdfName.EMBEDDEDFILE.equals(type)) {
+                checkEmbeddedFile(dictionary);
             }
             PdfObject obj2 = dictionary.get(PdfName.HALFTONETYPE);
             if (obj2 != null && obj2.isNumber()) {

@@ -43,7 +43,7 @@
  */
 package com.itextpdf.text.pdf.security;
 
-public class SecurityConstants {
+public final class SecurityConstants {
 
     public static final String XMLNS = "xmlns";
     public static final String XMLNS_XADES = "xmlns:xades";
