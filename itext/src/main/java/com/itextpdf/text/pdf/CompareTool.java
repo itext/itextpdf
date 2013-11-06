@@ -124,8 +124,10 @@ public class CompareTool {
         }
 
         if (ignoredAreas != null && !ignoredAreas.isEmpty()) {
-            PdfStamper outStamper = new PdfStamper(new PdfReader(outPdf), new FileOutputStream(outPath + ignoredAreasPrefix + outPdfName));
-            PdfStamper cmpStamper = new PdfStamper(new PdfReader(cmpPdf), new FileOutputStream(outPath + ignoredAreasPrefix + cmpPdfName));
+            PdfReader cmpReader = new PdfReader(cmpPdf);
+            PdfReader outReader = new PdfReader(outPdf);
+            PdfStamper outStamper = new PdfStamper(outReader, new FileOutputStream(outPath + ignoredAreasPrefix + outPdfName));
+            PdfStamper cmpStamper = new PdfStamper(cmpReader, new FileOutputStream(outPath + ignoredAreasPrefix + cmpPdfName));
 
             for (Map.Entry<Integer, List<Rectangle>> entry : ignoredAreas.entrySet()) {
                 int pageNumber = entry.getKey();
@@ -145,6 +147,9 @@ public class CompareTool {
 
             outStamper.close();
             cmpStamper.close();
+
+            outReader.close();
+            cmpReader.close();
 
             init(outPath + ignoredAreasPrefix + outPdfName, outPath + ignoredAreasPrefix + cmpPdfName);
         }
