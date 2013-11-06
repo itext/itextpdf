@@ -16,9 +16,9 @@
 </TH>
 </TR>
 <TR o="/Table">
-<TD headers="[header1]" width="209.2" o="/Table"><Span>row 2, coumn 1</Span>
+<TD headers="[header1]" width="209.2" o="/Table"><Span>row 2, column 1</Span>
 </TD>
-<TD headers="[header2, header2]" width="209.2" o="/Table"><Span>row 2, coumn 2</Span>
+<TD headers="[header2, header2]" width="209.2" o="/Table"><Span>row 2, column 2</Span>
 </TD>
 </TR>
 </TBody>

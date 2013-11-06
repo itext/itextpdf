@@ -103,6 +103,19 @@ public class PdfStructureTreeRoot extends PdfDictionary implements IPdfStructure
         rm.put(used, standard);
     }
 
+    public boolean isRoleMapped(PdfName role) {
+        if (role == null)
+            return false;
+        PdfDictionary roleMap = getAsDict(PdfName.ROLEMAP);
+        if (roleMap == null)
+            return false;
+        PdfName mappedTo = roleMap.getAsName(role);
+        if (writer.getStandardStructElems().contains(mappedTo))
+            return true;
+        else
+            return isRoleMapped(mappedTo);
+    }
+
     public void mapClass(PdfName name, PdfObject object) {
         if (classMap == null) {
             classMap = new PdfDictionary();
