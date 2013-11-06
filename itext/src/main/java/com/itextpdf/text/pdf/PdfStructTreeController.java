@@ -63,11 +63,6 @@ public class PdfStructTreeController {
 
     public static enum returnType {BELOW, FOUND, ABOVE, NOTFOUND};
 
-    public static final PdfName[] standardTypes = {PdfName.P, PdfName.H, PdfName.H1, PdfName.H2, PdfName.H3, PdfName.H4,
-            PdfName.H5, PdfName.H6, PdfName.L, PdfName.LBL, PdfName.LI, PdfName.LBODY, PdfName.TABLE, PdfName.TABLEROW,
-            PdfName.TH, PdfName.TD, PdfName.THEAD, PdfName.TBODY, PdfName.TFOOT, PdfName.SPAN, PdfName.QUOTE, PdfName.NOTE,
-            PdfName.REFERENCE, PdfName.BIBENTRY, PdfName.CODE, PdfName.LINK, PdfName.ANNOT, PdfName.RUBY, PdfName.WARICHU};
-
     protected PdfStructTreeController(PdfReader reader, PdfCopy writer) throws BadPdfFormatException {
         if (!writer.isTagged())
             throw new BadPdfFormatException(MessageLocalization.getComposedMessage("no.structtreeroot.found"));
@@ -407,7 +402,7 @@ public class PdfStructTreeController {
         if (structType == null) {
             return;
         }
-        for (PdfName name : standardTypes) {
+        for (PdfName name : writer.getStandardStructElems()) {
             if (name.equals(structType))
                 return;
         }
