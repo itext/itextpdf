@@ -132,6 +132,11 @@ public class
     public static final PdfName AESV3 = new PdfName("AESV3");
     /**
      * A name
+     * @since 5.4.5
+     */
+    public static final PdfName AFRELATIONSHIP = new PdfName("AFRelationship");
+    /**
+     * A name
      * @since 5.0.3
      */
     public static final PdfName AHX = new PdfName("AHx");
