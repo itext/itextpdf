@@ -794,12 +794,16 @@ public class PdfPTable implements LargeElement, Spaceable, IAccessibleElement {
     }
 
     private PdfPTableBody openTableBlock(PdfPTableBody block, PdfContentByte canvas) {
-        canvas.openMCBlock(block);
-        return block;
+        if (canvas.writer.getStandardStructElems().contains(block.getRole())) {
+            canvas.openMCBlock(block);
+            return block;
+        }
+        return null;
     }
 
     private PdfPTableBody closeTableBlock(PdfPTableBody block, PdfContentByte canvas) {
-        canvas.closeMCBlock(block);
+        if (canvas.writer.getStandardStructElems().contains(block.getRole()))
+            canvas.closeMCBlock(block);
         return null;
     }
 
