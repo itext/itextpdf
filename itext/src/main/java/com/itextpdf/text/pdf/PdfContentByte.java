@@ -3527,7 +3527,7 @@ public class PdfContentByte {
     }
 
     public void openMCBlock(IAccessibleElement element) {
-        if (isTagged() && taggingAllowed(element)) {
+        if (isTagged()) {
             if (pdf.openMCDocument) {
                 pdf.openMCDocument = false;
                 writer.getDirectContentUnder().openMCBlock(pdf);
@@ -3594,7 +3594,7 @@ public class PdfContentByte {
     }
 
     public void closeMCBlock(IAccessibleElement element) {
-        if (isTagged() && element != null && taggingAllowed(element)) {
+        if (isTagged() && element != null/* && element.getRole() != null*/) {
             if (getMcElements().contains(element)) {
                 closeMCBlockInt(element);
                 getMcElements().remove(element);
@@ -3632,18 +3632,6 @@ public class PdfContentByte {
                 openMCBlockInt(this.getMcElements().get(i));
             }
         }
-    }
-
-    /**
-     * Checks whether tagging is allowed for certain element.
-     * @param element
-     * @return
-     */
-    protected boolean taggingAllowed(IAccessibleElement element) {
-        return element != null &&
-                (writer.getStandardStructElems().contains(element.getRole()) ||
-                PdfName.ARTIFACT.equals(element.getRole()) ||
-                writer.getStructureTreeRoot().isRoleMapped(element.getRole()));
     }
 
     protected int getMcDepth() {
