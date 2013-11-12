@@ -47,8 +47,8 @@ import com.itextpdf.text.Font.FontFamily;
 import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.pdf.HyphenationEvent;
 
-import java.util.*;
-import java.util.List;
+import java.util.ArrayList;
+import java.util.Collection;
 
 /**
  * A <CODE>Phrase</CODE> is a series of <CODE>Chunk</CODE>s.
@@ -86,6 +86,9 @@ public class Phrase extends ArrayList<Element> implements TextElementArray {
 	/** This is the leading of this phrase. */
     protected float leading = Float.NaN;
 
+    /** The text leading that is multiplied by the biggest font size in the line. */
+    protected float multipliedLeading = 0;
+
     /** This is the font of this phrase. */
     protected Font font;
 
@@ -116,7 +119,7 @@ public class Phrase extends ArrayList<Element> implements TextElementArray {
     public Phrase(final Phrase phrase) {
         super();
         this.addAll(phrase);
-        leading = phrase.getLeading();
+        setLeading(phrase.getLeading(), phrase.getMultipliedLeading());
         font = phrase.getFont();
         tabSettings = phrase.getTabSettings();
         setHyphenation(phrase.getHyphenation());
@@ -435,13 +438,34 @@ public class Phrase extends ArrayList<Element> implements TextElementArray {
     // other methods that change the member variables
 
     /**
-     * Sets the leading of this phrase.
-     *
-     * @param	leading		the new leading
+     * Sets the leading fixed and variable. The resultant leading will be
+     * fixedLeading+multipliedLeading*maxFontSize where maxFontSize is the
+     * size of the biggest font in the line.
+     * @param fixedLeading the fixed leading
+     * @param multipliedLeading the variable leading
      */
+    public void setLeading(final float fixedLeading, final float multipliedLeading) {
+        this.leading = fixedLeading;
+        this.multipliedLeading = multipliedLeading;
+    }
 
-    public void setLeading(final float leading) {
-        this.leading = leading;
+    /**
+     * @see com.itextpdf.text.Phrase#setLeading(float)
+     */
+    public void setLeading(final float fixedLeading) {
+        this.leading = fixedLeading;
+        this.multipliedLeading = 0;
+    }
+
+    /**
+     * Sets the variable leading. The resultant leading will be
+     * multipliedLeading*maxFontSize where maxFontSize is the
+     * size of the biggest font in the line.
+     * @param multipliedLeading the variable leading
+     */
+    public void setMultipliedLeading(final float multipliedLeading) {
+        this.leading = 0;
+        this.multipliedLeading = multipliedLeading;
     }
 
     /**
@@ -466,8 +490,29 @@ public class Phrase extends ArrayList<Element> implements TextElementArray {
         return leading;
     }
 
+    /**
+     * Gets the variable leading
+     * @return the leading
+     */
+    public float getMultipliedLeading() {
+        return multipliedLeading;
+    }
+
+    /**
+     * Gets the total leading.
+     * This method is based on the assumption that the
+     * font of the Paragraph is the font of all the elements
+     * that make part of the paragraph. This isn't necessarily
+     * true.
+     * @return the total leading (fixed and multiplied)
+     */
     public float getTotalLeading() {
-        return getLeading();
+        float m = font == null ?
+                Font.DEFAULTSIZE * multipliedLeading : font.getCalculatedLeading(multipliedLeading);
+        if (m > 0 && !hasLeading()) {
+            return m;
+        }
+        return getLeading() + m;
     }
 
     /**
