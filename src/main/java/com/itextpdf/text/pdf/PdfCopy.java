@@ -401,7 +401,7 @@ public class PdfCopy extends PdfWriter {
             }
         }
         iRef.setCopied();
-        parentObjects.put(obj, in);
+        if (obj != null) parentObjects.put(obj, in);
         PdfObject res = copyObject(obj, keepStructure, directRootKids);
         if (disableIndirects.contains(obj))
             iRef.setNotCopied();
@@ -674,7 +674,7 @@ public class PdfCopy extends PdfWriter {
         if (indirectMap.containsKey(reader)) {
             throw new IllegalArgumentException(MessageLocalization.getComposedMessage("document.1.has.already.been.added", reader.toString()));
         }
-        reader.selectPages(pagesToKeep);
+        reader.selectPages(pagesToKeep, false);
         addDocument(reader);
     }
 
@@ -722,7 +722,7 @@ public class PdfCopy extends PdfWriter {
             updateReferences(object);
         }
         PdfIndirectObject iobj;
-        if ((tagged || mergeFields) && indirectObjects != null && (object.isArray() || object.isDictionary() || object.isStream())) {
+        if ((tagged || mergeFields) && indirectObjects != null && (object.isArray() || object.isDictionary() || object.isStream() || object.isNull())) {
             RefKey key = new RefKey(ref);
             PdfIndirectObject obj = indirectObjects.get(key);
             if (obj == null) {
