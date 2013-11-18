@@ -103,7 +103,7 @@ public class PngWriter {
             zip.write(0);
             zip.write(data, k, remaining);
         }
-        zip.finish();
+        zip.close();
         writeChunk(IDAT, stream.toByteArray());
     }
 
@@ -120,7 +120,7 @@ public class PngWriter {
         stream.write(0);
         DeflaterOutputStream zip = new DeflaterOutputStream(stream);
         zip.write(data);
-        zip.finish();
+        zip.close();
         writeChunk(iCCP, stream.toByteArray());
     }
 
