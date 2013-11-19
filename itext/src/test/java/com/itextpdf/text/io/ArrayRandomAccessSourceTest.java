@@ -1,15 +1,11 @@
 package com.itextpdf.text.io;
 
-import static org.junit.Assert.*;
-
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.Random;
 
 import junit.framework.Assert;
 import junit.framework.AssertionFailedError;
 
-import org.bouncycastle.util.Arrays;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
