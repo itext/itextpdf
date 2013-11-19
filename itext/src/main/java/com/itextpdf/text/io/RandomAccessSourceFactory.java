@@ -188,14 +188,26 @@ public final class RandomAccessSourceFactory {
         	return new RAFRandomAccessSource(raf);
         }
         
-		try{
-	    	// if this throws, the RAF will be closed by the FileChannelRandomAccessSource or PagedChannelRandomAccessSource
-			return createBestSource(raf.getChannel());
-		} catch (MapFailedException e){
-	    	// if this throws, the RAF will be closed by the RAFRandomAccessSource
-			return new RAFRandomAccessSource(raf);
-		}  catch (IllegalArgumentException iae) {   //pdf files with zero or negative length stay opened without this catch
-            return new RAFRandomAccessSource(raf);
+        try{
+        	if (raf.length() <= 0) // files with zero length can't be mapped and will throw an IllegalArgumentException.  Just open using a simple RAF source.
+        		return new RAFRandomAccessSource(raf); 
+        	
+			try{
+				// ownership of the RAF passes to whatever source is created by createBestSource. 
+				return createBestSource(raf.getChannel());
+			} catch (MapFailedException e){
+				return new RAFRandomAccessSource(raf);
+			}
+        } catch (IOException e){ // If RAFRandomAccessSource constructor or createBestSource throws, then we must close the RAF we created.
+        	try{
+        		raf.close();
+        	} catch (IOException ignore){}
+        	throw e;
+        } catch (RuntimeException e){ // if we get a runtime exception during opening, we must close the RAF we created
+        	try{
+        		raf.close();
+        	} catch (IOException ignore){}
+        	throw e;
         }
 	}
 	
