@@ -105,6 +105,7 @@ class MappedChannelRandomAccessSource implements RandomAccessSource {
 		} catch (IOException e){
 			if (exceptionIsMapFailureException(e))
 				throw new MapFailedException(e);
+			throw e;
 		}
 	}
 	
