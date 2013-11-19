@@ -556,10 +556,15 @@ public class TaggedPdfTest {
         s2.setIndentation(10);
         s2.add(new Paragraph("Some text..."));
         document.add(c);
+        c = new Chapter(4);
+        c.setTriggerNewPage(false);
+        c.setIndentation(40);
+        c.addSection("First section of a fourths chapter, the chapter itself is invisible");
+        document.add(c);
 
         document.close();
 
-        int[] nums = new int[]{114, 60} ;
+        int[] nums = new int[]{114, 63} ;
         compareNums("11", nums);
         compareResults("11");
     }
