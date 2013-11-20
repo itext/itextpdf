@@ -2207,10 +2207,10 @@ public class PdfWriter extends DocWriter implements
      * Use this method to set the document's compression to the
      * PDF 1.5 mode with object streams and xref streams.
      * It can be set at any time but once set it can't be unset.
-     * <p>
-     * If set before opening the document it will also set the pdf version to 1.5.
      */
-    public void setFullCompression() {
+    public void setFullCompression() throws DocumentException {
+    	if (open)
+    		throw new DocumentException(MessageLocalization.getComposedMessage("you.can.t.set.the.full.compression.if.the.document.is.already.open"));
         this.fullCompression = true;
         setAtLeastPdfVersion(VERSION_1_5);
     }
