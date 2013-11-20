@@ -48,7 +48,6 @@ import java.util.ArrayList;
 
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.ExceptionConverter;
-import com.itextpdf.text.Version;
 import com.itextpdf.text.error_messages.MessageLocalization;
 
 /**
