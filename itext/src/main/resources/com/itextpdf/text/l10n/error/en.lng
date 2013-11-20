@@ -527,6 +527,7 @@ you.can.t.add.cells.to.a.table.directly.add.them.to.a.row.first=You can't add ce
 you.can.t.add.listitems.rows.or.cells.to.a.cell=You can't add listitems, rows or cells to a cell.
 you.can.t.add.one.row.to.another.row=You can't add one row to another row.
 you.can.t.have.1.pages.on.one.page.minimum.2.maximum.8=You can't have {1} pages on one page (minimum 2; maximum 8).
+you.can.t.set.the.full.compression.if.the.document.is.already.open=You can't set the full compression if the document is already open.
 you.can.t.set.the.initial.leading.if.the.document.is.already.open=You can't set the initial leading if the document is already open.
 you.can.t.split.this.document.at.page.1.there.is.no.such.page=You can't split this document at page {1}; there is no such page.
 you.can.t.translate.a.negative.number.into.an.alphabetical.value=You can't translate a negative number into an alphabetical value.
