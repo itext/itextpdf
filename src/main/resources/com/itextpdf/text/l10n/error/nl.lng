@@ -527,6 +527,7 @@ you.can.t.add.cells.to.a.table.directly.add.them.to.a.row.first=Je kan geen cell
 you.can.t.add.listitems.rows.or.cells.to.a.cell=Je kan geen lijst items, rijen of cellen toevoegen aan een cell.
 you.can.t.add.one.row.to.another.row=Je kan rijen niet aan rijen toevoegen.
 you.can.t.have.1.pages.on.one.page.minimum.2.maximum.8=Je kan geen {1} pagina's op ��n blad plaatsen (minimum 2; maximum 8).
+you.can.t.set.the.full.compression.if.the.document.is.already.open=Je mag geen full compression invoeren als het document al open is.
 you.can.t.set.the.initial.leading.if.the.document.is.already.open=Je kan geen initial leading bepalen als het document al open is.
 you.can.t.split.this.document.at.page.1.there.is.no.such.page=Je kan dit document niet splitsen op pagina {1}; Die pagina bestaat niet.
 you.can.t.translate.a.negative.number.into.an.alphabetical.value=Je kan een negatieve waarde niet omzetten naar een alfabetische waarde.
