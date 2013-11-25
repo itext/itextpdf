@@ -365,12 +365,6 @@ public class PdfDocument extends Document {
      */
     protected boolean isSectionTitle = false;
 
-    /**
-     * Signals that the current leading has to be subtracted from a YMark object when positive.
-     * @since 2.1.2
-     */
-    protected int leadingCount = 0;
-
     /** The current active <CODE>PdfAction</CODE> when processing an <CODE>Anchor</CODE>. */
     protected PdfAction anchorAction = null;
 
@@ -380,6 +374,29 @@ public class PdfDocument extends Document {
      * @since 5.4.0
      */
     protected TabSettings tabSettings;
+
+    /**
+     * Signals that the current leading has to be subtracted from a YMark object when positive
+     * and save current leading
+     * @since 2.1.2
+     */
+    private Stack<Float> leadingStack = new Stack<Float>();
+
+    /**
+     * Save current @leading
+     */
+    protected void pushLeading() {
+        leadingStack.push(leading);
+    }
+
+    /**
+     * Restore @leading from leadingStack
+     */
+    protected void popLeading() {
+        leading = leadingStack.pop();
+        if (leadingStack.size() > 0)
+            leading = leadingStack.peek();
+    }
 
     /**
      * Getter for the current tab stops.
@@ -474,17 +491,17 @@ public class PdfDocument extends Document {
                     break;
                 }
                 case Element.ANCHOR: {
-                	leadingCount++;
-                    Anchor anchor = (Anchor) element;
+                	Anchor anchor = (Anchor) element;
                     String url = anchor.getReference();
                     leading = anchor.getLeading();
+                    pushLeading();
                     if (url != null) {
                         anchorAction = new PdfAction(url);
                     }
                     // we process the element
                     element.process(this);
                     anchorAction = null;
-                    leadingCount--;
+                    popLeading();
                     break;
                 }
                 case Element.ANNOTATION: {
@@ -501,20 +518,19 @@ public class PdfDocument extends Document {
                     break;
                 }
                 case Element.PHRASE: {
-                	leadingCount++;
                     TabSettings backupTabSettings = tabSettings;
                     if (((Phrase) element).getTabSettings() != null)
                         tabSettings = ((Phrase) element).getTabSettings();
                     // we cast the element to a phrase and set the leading of the document
                     leading = ((Phrase) element).getTotalLeading();
+                    pushLeading();
                     // we process the element
                     element.process(this);
                     tabSettings = backupTabSettings;
-                    leadingCount--;
+                    popLeading();
                     break;
                 }
                 case Element.PARAGRAPH: {
-                    leadingCount++;
                     TabSettings backupTabSettings = tabSettings;
                     if (((Phrase) element).getTabSettings() != null)
                         tabSettings = ((Phrase) element).getTabSettings();
@@ -529,6 +545,7 @@ public class PdfDocument extends Document {
                     // we adjust the parameters of the document
                     alignment = paragraph.getAlignment();
                     leading = paragraph.getTotalLeading();
+                    pushLeading();
                     carriageReturn();
 
                     // we don't want to make orphans/widows
@@ -575,7 +592,7 @@ public class PdfDocument extends Document {
                     indentation.indentRight -= paragraph.getIndentationRight();
                     carriageReturn();
                     tabSettings = backupTabSettings;
-                    leadingCount--;
+                    popLeading();
                     if (isTagged(writer)) {
                         flushLines();
                         text.closeMCBlock(paragraph);
@@ -670,7 +687,6 @@ public class PdfDocument extends Document {
                     break;
                 }
                 case Element.LISTITEM: {
-                    leadingCount++;
                     // we cast the element to a ListItem
                     ListItem listItem = (ListItem) element;
                     if (isTagged(writer)) {
@@ -685,6 +701,7 @@ public class PdfDocument extends Document {
                     indentation.listIndentLeft += listItem.getIndentationLeft();
                     indentation.indentRight += listItem.getIndentationRight();
                     leading = listItem.getTotalLeading();
+                    pushLeading();
                     carriageReturn();
 
                     // we prepare the current line to be able to show us the listsymbol
@@ -701,7 +718,7 @@ public class PdfDocument extends Document {
                     carriageReturn();
                     indentation.listIndentLeft -= listItem.getIndentationLeft();
                     indentation.indentRight -= listItem.getIndentationRight();
-                    leadingCount--;
+                    popLeading();
                     if (isTagged(writer)) {
                         flushLines();
                         text.closeMCBlock(listItem.getListBody());
@@ -748,7 +765,7 @@ public class PdfDocument extends Document {
                 }
                 case Element.YMARK: {
                     DrawInterface zh = (DrawInterface)element;
-                    zh.draw(graphics, indentLeft(), indentBottom(), indentRight(), indentTop(), indentTop() - currentHeight - (leadingCount > 0 ? leading : 0));
+                    zh.draw(graphics, indentLeft(), indentBottom(), indentRight(), indentTop(), indentTop() - currentHeight - (leadingStack.size() > 0 ? leading : 0));
                     pageEmpty = false;
                     break;
                 }
