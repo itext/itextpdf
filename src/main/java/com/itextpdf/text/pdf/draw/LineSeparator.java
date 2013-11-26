@@ -43,10 +43,11 @@
  */
 package com.itextpdf.text.pdf.draw;
 
-import com.itextpdf.text.Element;
-import com.itextpdf.text.pdf.PdfContentByte;
-
 import com.itextpdf.text.BaseColor;
+import com.itextpdf.text.Element;
+import com.itextpdf.text.Font;
+import com.itextpdf.text.pdf.PdfChunk;
+import com.itextpdf.text.pdf.PdfContentByte;
 
 /**
  * Element that draws a solid line from left to right.
@@ -64,7 +65,7 @@ public class LineSeparator extends VerticalPositionMark {
     /** The color of the line. */
     protected BaseColor lineColor;
     /** The alignment of the line. */
-    protected int alignment = Element.ALIGN_CENTER;
+    protected int alignment = Element.ALIGN_BOTTOM;
     
     /**
      * Creates a new instance of the LineSeparator class.
@@ -80,6 +81,17 @@ public class LineSeparator extends VerticalPositionMark {
         this.lineColor = lineColor;
         this.alignment = align;
         this.offset = offset;
+    }
+
+    /**
+     * Creates a new instance of the LineSeparator class.
+     * @param font			the font
+     */
+    public LineSeparator(Font font) {
+        this.lineWidth = PdfChunk.UNDERLINE_THICKNESS * font.getSize();
+        this.offset = PdfChunk.UNDERLINE_OFFSET * font.getSize();
+        this.percentage = 100;
+        this.lineColor = font.getColor();
     }
 
     /**

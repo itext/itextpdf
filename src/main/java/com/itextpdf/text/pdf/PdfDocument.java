@@ -1515,7 +1515,7 @@ public class PdfDocument extends Document {
                             graphics.beginText(true);
                         }
                     }
-                    if (chunk.isAttribute(Chunk.UNDERLINE)) {
+                    if (chunk.isAttribute(Chunk.UNDERLINE) && !chunk.isNewlineSplit()) {
                         boolean inText = graphics.getInText();
                         if (inText && isTagged(writer)) {
                             graphics.endText();
