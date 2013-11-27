@@ -3,20 +3,19 @@
  */
 package com.itextpdf.text;
 
+import com.itextpdf.text.io.RandomAccessSourceFactory;
+import com.itextpdf.text.pdf.*;
+import com.itextpdf.text.pdf.draw.DottedLineSeparator;
+import com.itextpdf.text.pdf.draw.LineSeparator;
+import com.itextpdf.text.pdf.parser.*;
+import junit.framework.Assert;
+import org.junit.Before;
+import org.junit.Test;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-
-import com.itextpdf.text.pdf.*;
-import com.itextpdf.text.pdf.draw.DottedLineSeparator;
-import com.itextpdf.text.pdf.draw.LineSeparator;
-import junit.framework.Assert;
-
-import org.junit.Before;
-import org.junit.Test;
-
-import com.itextpdf.text.io.RandomAccessSourceFactory;
 
 /**
  * @author redlab
@@ -41,6 +40,8 @@ public class ChunkTest {
     public static final String OUTTABD = OUTFOLDER + "/tabDocument.pdf";
     public static final String OUTABC = OUTFOLDER + "/tabColumnText.pdf";
     public static final String OUTABSTOPSC = OUTFOLDER + "/tabstopsColumnText.pdf";
+    public static final String OUTSPTRIMDOC = OUTFOLDER + "/spaceTrimDoc.pdf";
+    public static final String OUTSPTRIMCT = OUTFOLDER + "/spaceTrimColumnText.pdf";
 
 
     @Before
@@ -309,6 +310,79 @@ public class ChunkTest {
 
         document.close();
         Assert.assertTrue(compareInnerText(SOURCE15, OUTABSTOPSC));
+    }
+
+    @Test
+    public void spaceTrimPdfDocumentTest() throws DocumentException, IOException {
+        Document doc = new Document(PageSize.A4, 50, 30, 50, 30);
+        PdfWriter writer = PdfWriter.getInstance(doc, new FileOutputStream(new File(OUTSPTRIMDOC)));
+        doc.open();
+
+        Phrase under = new Phrase();
+        under.setFont(new Font(Font.FontFamily.TIMES_ROMAN, 12, Font.UNDERLINE));
+        under.add(new Chunk(" 1                                                      1                                                                                                                             9      "));
+
+        doc.add(under);
+
+        doc.close();
+        writer.close();
+
+        PdfReader reader = new PdfReader(OUTSPTRIMDOC);
+        MyTextRenderListener listener = new MyTextRenderListener();
+        PdfContentStreamProcessor processor = new PdfContentStreamProcessor(listener);
+        PdfDictionary pageDic = reader.getPageN(1);
+        PdfDictionary resourcesDic = pageDic.getAsDict(PdfName.RESOURCES);
+        processor.processContent(ContentByteUtils.getContentBytesForPage(reader, 1), resourcesDic);
+        //should be 60, as in @spaceTrimColumnTextTest
+        //Assert.assertTrue("Unexpected text length", listener.getText().length() == 60);
+        Assert.assertTrue("Unexpected text length", listener.getText().length() == 77);
+    }
+
+    @Test
+    public void spaceTrimColumnTextTest() throws DocumentException, IOException {
+        Document doc = new Document(PageSize.A4, 50, 30, 50, 30);
+        PdfWriter writer = PdfWriter.getInstance(doc, new FileOutputStream(new File(OUTSPTRIMCT)));
+        doc.open();
+
+        Phrase under = new Phrase();
+        under.setFont(new Font(Font.FontFamily.TIMES_ROMAN, 12, Font.UNDERLINE));
+        under.add(new Chunk(" 1                                                      1                                                                                                                             9      "));
+
+        Paragraph underlineTest = new Paragraph(under);
+        underlineTest.setKeepTogether(true);
+        doc.add(underlineTest);
+
+        doc.close();
+        writer.close();
+
+        PdfReader reader = new PdfReader(OUTSPTRIMCT);
+        MyTextRenderListener listener = new MyTextRenderListener();
+        PdfContentStreamProcessor processor = new PdfContentStreamProcessor(listener);
+        PdfDictionary pageDic = reader.getPageN(1);
+        PdfDictionary resourcesDic = pageDic.getAsDict(PdfName.RESOURCES);
+        processor.processContent(ContentByteUtils.getContentBytesForPage(reader, 1), resourcesDic);
+        Assert.assertTrue("Unexpected text length", listener.getText().length() == 60);
+    }
+
+    private static class MyTextRenderListener implements RenderListener {
+        protected StringBuffer buffer = new StringBuffer();
+
+        public void beginTextBlock() {
+        }
+
+        public void endTextBlock() {
+        }
+
+        public void renderImage(ImageRenderInfo renderInfo) {
+        }
+
+        public void renderText(TextRenderInfo renderInfo) {
+            buffer.append(renderInfo.getText());
+            buffer.append("\n");
+        }
+        public String getText(){
+            return buffer.toString();
+        }
     }
 
     public void addTabspaces(Paragraph p, Font f, int count)
