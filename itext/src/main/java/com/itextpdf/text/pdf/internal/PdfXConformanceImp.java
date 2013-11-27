@@ -189,6 +189,9 @@ public class PdfXConformanceImp implements PdfXConformance {
                 break;
             case PdfIsoKeys.PDFISOKEY_GSTATE:
                 PdfDictionary gs = (PdfDictionary)obj1;
+                // The example PdfXPdfA threw a NullPointerException because gs was null
+                if (gs == null)
+                	break;
                 PdfObject obj = gs.get(PdfName.BM);
                 if (obj != null && !PdfGState.BM_NORMAL.equals(obj) && !PdfGState.BM_COMPATIBLE.equals(obj))
                     throw new PdfXConformanceException(MessageLocalization.getComposedMessage("blend.mode.1.not.allowed", obj.toString()));
