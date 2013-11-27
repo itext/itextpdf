@@ -44,7 +44,6 @@
 package com.itextpdf.text.pdf;
 
 import java.util.HashMap;
-import java.util.UUID;
 
 import com.itextpdf.text.*;
 import com.itextpdf.text.log.Logger;
@@ -84,6 +83,7 @@ public class PdfPRow implements IAccessibleElement {
 	protected float maxHeight = 0;
 	
 	protected boolean calculated = false;
+	protected boolean adjusted = false;
     
     private int[] canvasesPos;
 
@@ -845,7 +845,15 @@ public class PdfPRow implements IAccessibleElement {
 		return false;
 	}
 
-    public PdfObject getAccessibleAttribute(final PdfName key) {
+    public boolean isAdjusted() {
+		return adjusted;
+	}
+
+	public void setAdjusted(boolean adjusted) {
+		this.adjusted = adjusted;
+	}
+
+	public PdfObject getAccessibleAttribute(final PdfName key) {
         if (accessibleAttributes != null)
             return accessibleAttributes.get(key);
         else

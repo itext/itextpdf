@@ -203,7 +203,7 @@ public class PdfCopyForms
      * <p>
      * If set before opening the document it will also set the pdf version to 1.5.
      */
-    public void setFullCompression() {
+    public void setFullCompression() throws DocumentException {
         fc.setFullCompression();
     }
 

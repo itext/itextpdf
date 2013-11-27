@@ -59,11 +59,15 @@ public class TaggedPdfTest {
             "vestibulum pulvinar. Nullam diam quam, lobortis sit amet semper vitae, tempus eget dolor.");
 
     private void initializeDocument(String path) throws DocumentException, FileNotFoundException {
+        initializeDocument(path, PdfWriter.VERSION_1_7);
+    }
+
+    private void initializeDocument(String path, char pdfVersion) throws DocumentException, FileNotFoundException {
         new File("./target/com/itextpdf/test/pdf/TaggedPdfTest/").mkdirs();
         Document.compress = false;
         document = new Document();
         writer = PdfWriter.getInstance(document, new FileOutputStream(path));
-        writer.setPdfVersion('7');
+        writer.setPdfVersion(pdfVersion);
         writer.setTagged();
         document.open();
 
@@ -76,7 +80,6 @@ public class TaggedPdfTest {
         c.setRole(null);
         h1 = new Paragraph(c);
         h1.setRole(PdfName.H1);
-
     }
 
     @Test
@@ -553,10 +556,15 @@ public class TaggedPdfTest {
         s2.setIndentation(10);
         s2.add(new Paragraph("Some text..."));
         document.add(c);
+        c = new Chapter(4);
+        c.setTriggerNewPage(false);
+        c.setIndentation(40);
+        c.addSection("First section of a fourths chapter, the chapter itself is invisible");
+        document.add(c);
 
         document.close();
 
-        int[] nums = new int[]{114, 60} ;
+        int[] nums = new int[]{114, 63} ;
         compareNums("11", nums);
         compareResults("11");
     }
@@ -582,8 +590,8 @@ public class TaggedPdfTest {
         table.setFooterRows(2);
         try {
             for (int i = 1; i <= 50; i++) {
-                table.addCell("row " + i + ", coumn 1");
-                table.addCell("row " + i + ", coumn 2");
+                table.addCell("row " + i + ", column 1");
+                table.addCell("row " + i + ", column 2");
             }
         } catch (Exception e) {
 
@@ -700,35 +708,23 @@ public class TaggedPdfTest {
         table.setFooterRows(2);
 
         try {
-            PdfPHeaderCell headerCell = null, headerCell2 = null;
-            cell = null;
-            for (int i = 1; i <= 2; i++) {
-                if (i == 1){
-                    headerCell = new PdfPHeaderCell();
-                    headerCell.setScope(PdfPHeaderCell.ROW);
-                    headerCell.setPhrase(new Phrase("header1"));
-                    headerCell.setName("header1");
-                    table.addCell(headerCell);
-
-                    headerCell2 = new PdfPHeaderCell();
-                    headerCell2.setScope(PdfPHeaderCell.ROW);
-                    headerCell2.setPhrase(new Phrase("header2"));
-                    headerCell2.setName("header2");
-                    table.addCell(headerCell2);
-                }
-                else
-                {
-                    cell = new PdfPCell(new Phrase("row " + i + ", coumn 1"));
-                    cell.addHeader(headerCell);
-                    table.addCell(cell);
-
-                    cell = new PdfPCell(new Phrase("row " + i + ", coumn 2"));
-                    cell.addHeader(headerCell2);
-                    cell.addHeader(headerCell2);
-
-                    table.addCell(cell);
-                }
-            }
+            PdfPHeaderCell headerCell = new PdfPHeaderCell();
+            headerCell.setScope(PdfPHeaderCell.ROW);
+            headerCell.setPhrase(new Phrase("header1"));
+            headerCell.setName("header1");
+            table.addCell(headerCell);
+            PdfPHeaderCell headerCell2 = new PdfPHeaderCell();
+            headerCell2.setScope(PdfPHeaderCell.ROW);
+            headerCell2.setPhrase(new Phrase("header2"));
+            headerCell2.setName("header2");
+            table.addCell(headerCell2);
+            cell = new PdfPCell(new Phrase("row 2, column 1"));
+            cell.addHeader(headerCell);
+            table.addCell(cell);
+            cell = new PdfPCell(new Phrase("row 2, column 2"));
+            cell.addHeader(headerCell2);
+            cell.addHeader(headerCell2);
+            table.addCell(cell);
         } catch (Exception e) {
             System.out.println(e.getLocalizedMessage());
         }
@@ -881,6 +877,79 @@ public class TaggedPdfTest {
             document.close();
         }
         junit.framework.Assert.fail("Expected error: 'Template with tagged content could not be used more than once.");
+    }
+
+    @Test
+    public void createTaggedPdf22() throws DocumentException, IOException, ParserConfigurationException, SAXException {
+        initializeDocument("./target/com/itextpdf/test/pdf/TaggedPdfTest/out22.pdf", PdfWriter.VERSION_1_4);
+        Paragraph p = new Paragraph();
+        PdfName nParagraph = new PdfName("Paragraph");
+        p.setRole(nParagraph);
+        writer.getStructureTreeRoot().mapRole(nParagraph, PdfName.P);
+
+        try {
+            Chunk c = new Chunk("Quick brown ");
+            PdfName nTextBlock = new PdfName("TextBlock");
+            c.setRole(nTextBlock);
+            writer.getStructureTreeRoot().mapRole(nTextBlock, PdfName.SPAN);
+            p.add(c);
+            Image i = Image.getInstance("./src/test/resources/com/itextpdf/text/pdf/TaggedPdfTest/fox.bmp");
+            c = new Chunk(i, 0, 0);
+            PdfName nImage = new PdfName("Image");
+            c.setRole(nImage);
+            writer.getStructureTreeRoot().mapRole(nImage, PdfName.FIGURE);
+            c.setAccessibleAttribute(PdfName.ALT, new PdfString("Fox image"));
+            p.add(c);
+            p.add(new Chunk(" jumped over a lazy "));
+            i = Image.getInstance("./src/test/resources/com/itextpdf/text/pdf/TaggedPdfTest/dog.bmp");
+            c = new Chunk(i, 0, 0);
+            c.setAccessibleAttribute(PdfName.ALT, new PdfString("Dog image"));
+            p.add(c);
+
+        } catch (Exception e) {
+
+        }
+        document.add(h1);
+        document.add(p);
+        document.close();
+        int[] nums = new int[]{7};
+        compareNums("22", nums);
+        compareResults("22");
+    }
+
+    @Test
+    public void createTaggedPdf23() throws DocumentException, IOException, ParserConfigurationException, SAXException {
+        initializeDocument("./target/com/itextpdf/test/pdf/TaggedPdfTest/out23.pdf", PdfWriter.VERSION_1_4);
+
+        PdfPTable table = new PdfPTable(2);
+        PdfPCell cell = new PdfPCell(new Paragraph("header 1"));
+        cell.setColspan(2);
+        table.addCell(cell);
+        cell = new PdfPCell(new Paragraph("header 2"));
+        cell.setColspan(2);
+        table.addCell(cell);
+        cell = new PdfPCell(new Paragraph("footer 1"));
+        cell.setColspan(2);
+        table.addCell(cell);
+        cell = new PdfPCell(new Paragraph("footer 2"));
+        cell.setColspan(2);
+        table.addCell(cell);
+        table.setHeaderRows(4);
+        table.setFooterRows(2);
+        try {
+            for (int i = 1; i <= 50; i++) {
+                table.addCell("row " + i + ", column 1");
+                table.addCell("row " + i + ", column 2");
+            }
+        } catch (Exception e) {
+
+        }
+        document.add(table);
+        document.close();
+
+        int[] nums = new int[]{234, 44} ;
+        compareNums("23", nums);
+        compareResults("23");
     }
 
     private void compareNums(String name, int[] nums) throws IOException {

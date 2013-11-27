@@ -44,11 +44,6 @@
  package com.itextpdf.text;
 
 import com.itextpdf.text.pdf.PdfName;
-import com.itextpdf.text.pdf.PdfObject;
-import com.itextpdf.text.pdf.interfaces.IAccessibleElement;
-
-import java.util.HashMap;
-import java.util.UUID;
 
 public class ListLabel extends ListBody {
 

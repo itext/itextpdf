@@ -1,13 +1,52 @@
 package com.itextpdf.text.pdf;
 
 import com.itextpdf.text.*;
+import com.itextpdf.text.error_messages.MessageLocalization;
 import junit.framework.Assert;
 import org.junit.Test;
 
-import java.io.*;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
-public class
-        PdfA1CheckerTest {
+public class PdfA1CheckerTest {
+
+    static {
+        try {
+            MessageLocalization.setLanguage("en", "US");
+        } catch (IOException e) {
+        }
+    }
+
+    @Test
+    public void metadaCheckTest() throws IOException, DocumentException {
+
+        FileOutputStream fos = new FileOutputStream("./target/metadaPDFA1CheckTest1.pdf");
+        Document document = new Document();
+        PdfWriter writer = PdfAWriter.getInstance(document, fos, PdfAConformanceLevel.PDF_A_1B);
+        document.open();
+        PdfContentByte canvas = writer.getDirectContent();
+
+        canvas.setColorFill(BaseColor.LIGHT_GRAY);
+        canvas.moveTo(writer.getPageSize().getLeft(), writer.getPageSize().getBottom());
+        canvas.lineTo(writer.getPageSize().getRight(), writer.getPageSize().getBottom());
+        canvas.lineTo(writer.getPageSize().getRight(), writer.getPageSize().getTop());
+        canvas.lineTo(writer.getPageSize().getLeft(), writer.getPageSize().getBottom());
+        canvas.fill();
+
+        ICC_Profile icc = ICC_Profile.getInstance(new FileInputStream("./src/test/resources/com/itextpdf/text/pdf/sRGB Color Space Profile.icm"));
+        writer.setOutputIntents("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", icc);
+
+        boolean exceptionThrown = false;
+        try {
+            document.close();
+        } catch (PdfAConformanceException exc) {
+            exceptionThrown = true;
+        }
+
+        if (!exceptionThrown)
+            Assert.fail("PdfAConformance exception should be thrown on unknown blend mode.");
+    }
 
     @Test
     public void trailerCheckTest() throws DocumentException, IOException {
@@ -273,7 +312,7 @@ public class
     @Test
     public void canvasCheckTest2() throws DocumentException, IOException {
         Document document = new Document();
-        PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream("./target/canvasCheckTestt2.pdf"), PdfAConformanceLevel.PDF_A_1B);
+        PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream("./target/pdfa1CanvasCheckTest2.pdf"), PdfAConformanceLevel.PDF_A_1B);
         writer.createXmpMetadata();
         document.open();
 
@@ -295,7 +334,7 @@ public class
     @Test
     public void colorCheckTest1() throws DocumentException, IOException {
         Document document = new Document();
-        PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream("./target/colorCheckTest1.pdf"), PdfAConformanceLevel.PDF_A_1B);
+        PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream("./target/pdfa1ColorCheckTest1.pdf"), PdfAConformanceLevel.PDF_A_1B);
         writer.createXmpMetadata();
         document.open();
 
@@ -308,23 +347,29 @@ public class
         boolean exceptionThrown = false;
         try {
             canvas.setColorFill(new CMYKColor(0.1f, 0.1f, 0.1f, 0.1f));
+            canvas.moveTo(writer.getPageSize().getLeft(), writer.getPageSize().getBottom());
+            canvas.lineTo(writer.getPageSize().getRight(), writer.getPageSize().getBottom());
+            canvas.lineTo(writer.getPageSize().getRight(), writer.getPageSize().getTop());
+            canvas.fill();
             canvas.setColorFill(BaseColor.RED);
+            canvas.moveTo(writer.getPageSize().getRight(), writer.getPageSize().getTop());
+            canvas.lineTo(writer.getPageSize().getRight(), writer.getPageSize().getBottom());
+            canvas.lineTo(writer.getPageSize().getLeft(), writer.getPageSize().getBottom());
+            canvas.fill();
+            document.close();
         } catch (PdfAConformanceException e) {
-            if (BaseColor.RED == e.getObject()) {
+            if (BaseColor.RED.equals(e.getObject())) {
                 exceptionThrown = true;
             }
         }
         if (!exceptionThrown)
             Assert.fail("PdfAConformanceException should be thrown.");
-
-        document.close();
-
     }
 
     @Test
     public void colorCheckTest2() throws DocumentException, IOException {
         Document document = new Document();
-        PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream("./target/colorCheckTest2.pdf"), PdfAConformanceLevel.PDF_A_1B);
+        PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream("./target/pdfa1ColorCheckTest2.pdf"), PdfAConformanceLevel.PDF_A_1B);
         writer.createXmpMetadata();
         document.open();
 
@@ -336,15 +381,102 @@ public class
         PdfContentByte canvas = writer.getDirectContent();
         boolean exceptionThrown = false;
         canvas.setColorFill(new CMYKColor(0.1f, 0.1f, 0.1f, 0.1f));
+        canvas.moveTo(writer.getPageSize().getLeft(), writer.getPageSize().getBottom());
+        canvas.lineTo(writer.getPageSize().getRight(), writer.getPageSize().getBottom());
+        canvas.lineTo(writer.getPageSize().getRight(), writer.getPageSize().getTop());
+        canvas.fill();
         try {
             document.close();
         } catch (PdfAConformanceException e) {
-            if (BaseColor.RED == e.getObject()) {
+            if (BaseColor.RED.equals(e.getObject())) {
                 exceptionThrown = true;
             }
         }
         if (!exceptionThrown)
             Assert.fail("PdfAConformanceException should be thrown.");
+    }
+
+    @Test
+    public void colorCheckTest3() throws DocumentException, IOException {
+        Document document = new Document();
+        PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream("./target/pdfa1ColorCheckTest3.pdf"), PdfAConformanceLevel.PDF_A_1B);
+        writer.createXmpMetadata();
+        document.open();
+
+        Font font = FontFactory.getFont("./src/test/resources/com/itextpdf/text/pdf/FreeMonoBold.ttf", BaseFont.WINANSI, BaseFont.EMBEDDED, 12);
+        document.add(new Paragraph("Hello World", font));
+
+        PdfContentByte canvas = writer.getDirectContent();
+        canvas.setColorFill(BaseColor.GREEN);
+        canvas.moveTo(writer.getPageSize().getLeft(), writer.getPageSize().getBottom());
+        canvas.lineTo(writer.getPageSize().getRight(), writer.getPageSize().getBottom());
+        canvas.lineTo(writer.getPageSize().getRight(), writer.getPageSize().getTop());
+        canvas.fill();
+
+        boolean exceptionThrown = false;
+        try {
+            document.close();
+        } catch (PdfAConformanceException e) {
+            exceptionThrown = true;
+        }
+        if (!exceptionThrown)
+            Assert.fail("PdfAConformanceException should be thrown.");
+
+        document = new Document();
+        writer = PdfAWriter.getInstance(document, new FileOutputStream("./target/pdfa1ColorCheckTest3.pdf"), PdfAConformanceLevel.PDF_A_1B);
+        writer.createXmpMetadata();
+        document.open();
+
+        font = FontFactory.getFont("./src/test/resources/com/itextpdf/text/pdf/FreeMonoBold.ttf", BaseFont.WINANSI, BaseFont.EMBEDDED, 12);
+        document.add(new Paragraph("Hello World", font));
+        ICC_Profile icc = ICC_Profile.getInstance(new FileInputStream("./src/test/resources/com/itextpdf/text/pdf/sRGB Color Space Profile.icm"));
+        writer.setOutputIntents("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", icc);
+
+        canvas = writer.getDirectContent();
+        canvas.setColorFill(BaseColor.GREEN);
+        canvas.moveTo(writer.getPageSize().getLeft(), writer.getPageSize().getBottom());
+        canvas.lineTo(writer.getPageSize().getRight(), writer.getPageSize().getBottom());
+        canvas.lineTo(writer.getPageSize().getRight(), writer.getPageSize().getTop());
+        canvas.fill();
+
+        document.close();
+    }
+
+    @Test
+    public void colorCheckTest4() throws DocumentException, IOException {
+        Document document = new Document();
+        PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream("./target/pdfa1ColorCheckTest4.pdf"), PdfAConformanceLevel.PDF_A_2B);
+        writer.createXmpMetadata();
+        document.open();
+        ICC_Profile icc = ICC_Profile.getInstance(new FileInputStream("./src/test/resources/com/itextpdf/text/pdf/sRGB Color Space Profile.icm"));
+        writer.setOutputIntents("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", icc);
+
+        Font font = FontFactory.getFont("./src/test/resources/com/itextpdf/text/pdf/FreeMonoBold.ttf", BaseFont.WINANSI, BaseFont.EMBEDDED, 12);
+        document.add(new Paragraph("Hello World", font));
+        document.close();
+
+        PdfReader reader = new PdfReader("./target/pdfa1ColorCheckTest4.pdf");
+        PdfAStamper stamper = new PdfAStamper(reader, new FileOutputStream("./target/pdfa1ColorCheckTest4_updating_failed.pdf"), PdfAConformanceLevel.PDF_A_2B);
+        boolean exceptionThrown = false;
+        try {
+            icc = ICC_Profile.getInstance(new FileInputStream("./src/test/resources/com/itextpdf/text/pdf/sRGB Color Space Profile.icm"));
+            stamper.getWriter().setOutputIntents("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", icc);
+            font = FontFactory.getFont("./src/test/resources/com/itextpdf/text/pdf/FreeMonoBold.ttf", BaseFont.WINANSI, BaseFont.EMBEDDED, 12);
+            font.setColor(BaseColor.RED);
+            PdfContentByte canvas = stamper.getOverContent(1);
+            canvas.setFontAndSize(font.getBaseFont(), 12);
+            canvas.setColorFill(BaseColor.RED);
+            ColumnText.showTextAligned(canvas,
+                    Element.ALIGN_LEFT, new Paragraph("Hello World", font), 36, 775, 760);
+            stamper.close();
+        } catch (PdfAConformanceException e) {
+            exceptionThrown = true;
+        }
+        reader.close();
+
+        if (!exceptionThrown)
+            Assert.fail("PdfAConformance exception should be thrown");
+
     }
 
 
@@ -576,12 +708,13 @@ public class
         try {
             document.close();
         } catch (PdfAConformanceException e) {
-            if (e.getObject() == annot) {
+            if (e.getObject() == annot && e.getMessage()
+                    .equals("Annotation type /Movie not allowed.")) {
                 exceptionThrown = true;
             }
         }
         if (!exceptionThrown)
-            Assert.fail("PdfAConformanceException should be thrown.");
+            Assert.fail("PdfAConformanceException with correct message should be thrown.");
     }
 
     @Test
@@ -597,6 +730,7 @@ public class
         writer.setOutputIntents("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", icc);
 
         PdfAnnotation annot = new PdfAnnotation(writer, new Rectangle(100, 100, 200, 200));
+        annot.put(PdfName.SUBTYPE, PdfName.TEXT);
         annot.put(PdfName.F, new PdfNumber(PdfAnnotation.FLAGS_PRINT));
         annot.put(PdfName.CA, new PdfNumber(0.5));
         PdfContentByte canvas = writer.getDirectContent();
@@ -605,12 +739,13 @@ public class
         try {
             document.close();
         } catch (PdfAConformanceException e) {
-            if (e.getObject() == annot) {
+            if (e.getObject() == annot && e.getMessage()
+                    .equals("An annotation dictionary shall not contain the CA key with a value other than 1.0.")) {
                 exceptionThrown = true;
             }
         }
         if (!exceptionThrown)
-            Assert.fail("PdfAConformanceException should be thrown.");
+            Assert.fail("PdfAConformanceException with correct message should be thrown.");
     }
 
     @Test
@@ -626,6 +761,7 @@ public class
         writer.setOutputIntents("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", icc);
 
         PdfAnnotation annot = new PdfAnnotation(writer, new Rectangle(100, 100, 200, 200));
+        annot.put(PdfName.SUBTYPE, PdfName.TEXT);
         annot.put(PdfName.F, new PdfNumber(0));
         PdfContentByte canvas = writer.getDirectContent();
         canvas.addAnnotation(annot);
@@ -633,12 +769,13 @@ public class
         try {
             document.close();
         } catch (PdfAConformanceException e) {
-            if (e.getObject() == annot) {
+            if (e.getObject() == annot && e.getMessage()
+                    .equals("The F key's Print flag bit shall be set to 1 and its Hidden, Invisible and NoView flag bits shall be set to 0.")) {
                 exceptionThrown = true;
             }
         }
         if (!exceptionThrown)
-            Assert.fail("PdfAConformanceException should be thrown.");
+            Assert.fail("PdfAConformanceException with correct message should be thrown.");
     }
 
     @Test
@@ -654,6 +791,7 @@ public class
         writer.setOutputIntents("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", icc);
 
         PdfAnnotation annot = new PdfAnnotation(writer, new Rectangle(100, 100, 200, 200));
+        annot.put(PdfName.SUBTYPE, PdfName.TEXT);
         annot.put(PdfName.F, new PdfNumber(PdfAnnotation.FLAGS_PRINT & PdfAnnotation.FLAGS_INVISIBLE));
         PdfContentByte canvas = writer.getDirectContent();
         canvas.addAnnotation(annot);
@@ -661,12 +799,13 @@ public class
         try {
             document.close();
         } catch (PdfAConformanceException e) {
-            if (e.getObject() == annot) {
+            if (e.getObject() == annot && e.getMessage()
+                    .equals("The F key's Print flag bit shall be set to 1 and its Hidden, Invisible and NoView flag bits shall be set to 0.")) {
                 exceptionThrown = true;
             }
         }
         if (!exceptionThrown)
-            Assert.fail("PdfAConformanceException should be thrown.");
+            Assert.fail("PdfAConformanceException with correct message should be thrown.");
     }
 
     @Test
@@ -682,6 +821,7 @@ public class
         writer.setOutputIntents("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", icc);
 
         PdfAnnotation annot = new PdfAnnotation(writer, new Rectangle(100, 100, 200, 200));
+        annot.put(PdfName.SUBTYPE, PdfName.WIDGET);
         annot.put(PdfName.F, new PdfNumber(PdfAnnotation.FLAGS_PRINT));
         PdfDictionary ap = new PdfDictionary();
         PdfStream s = new PdfStream("Hello World".getBytes());
@@ -694,12 +834,13 @@ public class
         try {
             document.close();
         } catch (PdfAConformanceException e) {
-            if (e.getObject() == annot) {
+            if (e.getObject() == annot && e.getMessage()
+                    .equals("Appearance dictionary shall contain only the N key with stream value.")) {
                 exceptionThrown = true;
             }
         }
         if (!exceptionThrown)
-            Assert.fail("PdfAConformanceException should be thrown.");
+            Assert.fail("PdfAConformanceException with correct message should be thrown.");
     }
 
     @Test
@@ -715,6 +856,7 @@ public class
         writer.setOutputIntents("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", icc);
 
         PdfAnnotation annot = new PdfAnnotation(writer, new Rectangle(100, 100, 200, 200));
+        annot.put(PdfName.SUBTYPE, PdfName.WIDGET);
         annot.put(PdfName.F, new PdfNumber(PdfAnnotation.FLAGS_PRINT));
         PdfDictionary ap = new PdfDictionary();
         ap.put(PdfName.N, new PdfDictionary());
@@ -725,12 +867,13 @@ public class
         try {
             document.close();
         } catch (PdfAConformanceException e) {
-            if (e.getObject() == annot) {
+            if (e.getObject() == annot && e.getMessage()
+                    .equals("Appearance dictionary shall contain only the N key with stream value.")) {
                 exceptionThrown = true;
             }
         }
         if (!exceptionThrown)
-            Assert.fail("PdfAConformanceException should be thrown.");
+            Assert.fail("PdfAConformanceException with correct message should be thrown.");
     }
 
     @Test
@@ -774,12 +917,13 @@ public class
         try {
             document.close();
         } catch (PdfAConformanceException e) {
-            if (e.getObject() == annot && e.getLocalizedMessage().contains("Contents")) {
+            if (e.getObject() == annot && e.getMessage()
+                    .equals("Annotation of type /Stamp should have Contents key.")) {
                 exceptionThrown = true;
             }
         }
         if (!exceptionThrown)
-            Assert.fail("PdfAConformanceException should be thrown.");
+            Assert.fail("PdfAConformanceException with correct message should be thrown.");
     }
 
     @Test
@@ -1115,11 +1259,32 @@ public class
             Assert.fail("PdfAConformanceException should be thrown");
         }
 
-
     }
 
+    @Test
+    public void fontCheckTest1() throws IOException {
+        boolean exceptionThrown = false;
+        try {
+            Document document = new Document();
+            PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream("./target/pdfa2FontCheckTest1.pdf"), PdfAConformanceLevel.PDF_A_1A);
+            writer.createXmpMetadata();
+            writer.setTagged();
+            document.open();
+            document.addLanguage("en-US");
 
+            Font font = FontFactory.getFont("./src/test/resources/com/itextpdf/text/pdf/FreeMonoBold.ttf", BaseFont.WINANSI, false/*BaseFont.EMBEDDED*/, 12);
+            document.add(new Paragraph("Hello World", font));
+            ICC_Profile icc = ICC_Profile.getInstance(new FileInputStream("./src/test/resources/com/itextpdf/text/pdf/sRGB Color Space Profile.icm"));
+            writer.setOutputIntents("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", icc);
 
+            document.close();
+        } catch (DocumentException docExc) {
+            exceptionThrown = true;
+        } catch (PdfAConformanceException exc) {
+            exceptionThrown = true;
+        }
 
-
+        if (!exceptionThrown)
+            Assert.fail("PdfAConformance exception should be thrown");
+    }
 }

@@ -51,7 +51,6 @@ import com.itextpdf.text.pdf.interfaces.IAccessibleElement;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.UUID;
 
 /**
  * A <CODE>List</CODE> contains several <CODE>ListItem</CODE>s.

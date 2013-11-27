@@ -54,7 +54,6 @@ import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.DocWriter;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.ExceptionConverter;
-import com.itextpdf.text.pdf.interfaces.PdfIsoConformance;
 import com.itextpdf.text.pdf.internal.PdfIsoKeys;
 
 /**

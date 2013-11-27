@@ -176,7 +176,7 @@ public class ChunkCssApplier {
                 } else {
                     if (style == Font.BOLDITALIC) {
                         style = Font.ITALIC;
-                    } else {
+                    } else if (style == Font.BOLD) {
                         style = Font.NORMAL;
                     }
                 }

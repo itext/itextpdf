@@ -782,6 +782,12 @@ public class PdfWriter extends DocWriter implements
     /** body of the PDF document */
     protected PdfBody body;
 
+    protected ICC_Profile colorProfile;
+
+    public ICC_Profile getColorProfile() {
+        return colorProfile;
+    }
+
     /**
      * Adds the local destinations to the body of the document.
      * @param desto the <CODE>HashMap</CODE> containing the destinations
@@ -1197,6 +1203,8 @@ public class PdfWriter extends DocWriter implements
 
     /** A number referring to the previous Cross-Reference Table. */
     protected long prevxref = 0;
+    /** The original file ID (if present). */
+    protected byte[] originalFileID = null;
 
     /**
      * Signals that the <CODE>Document</CODE> has been opened and that
@@ -1300,13 +1308,15 @@ public class PdfWriter extends DocWriter implements
                 PdfIndirectReference encryption = null;
                 PdfObject fileID = null;
                 body.flushObjStm();
+            	boolean isModified = (originalFileID != null);
                 if (crypto != null) {
                     PdfIndirectObject encryptionObject = addToBody(crypto.getEncryptionDictionary(), false);
                     encryption = encryptionObject.getIndirectReference();
-                    fileID = crypto.getFileID();
+                    fileID = crypto.getFileID(isModified);
                 }
-                else
-                    fileID = PdfEncryption.createInfoId(PdfEncryption.createDocumentId());
+                else {
+                    fileID = PdfEncryption.createInfoId(isModified ? originalFileID : PdfEncryption.createDocumentId(), isModified);
+                }
 
                 // write the cross-reference table of the body
                 body.writeCrossReferenceTable(os, indirectCatalog.getIndirectReference(),
@@ -1845,9 +1855,9 @@ public class PdfWriter extends DocWriter implements
     public static final int PDFX32002 = 2;
 
     /** Stores the PDF ISO conformance. */
-	protected PdfIsoConformance pdfIsoConformance = getPdfIsoConformance();
+	protected PdfIsoConformance pdfIsoConformance = initPdfIsoConformance();
 
-    protected PdfIsoConformance getPdfIsoConformance() {
+    protected PdfIsoConformance initPdfIsoConformance() {
         return new PdfXConformanceImp(this);
     }
 
@@ -1904,6 +1914,7 @@ public class PdfWriter extends DocWriter implements
      * @throws IOException on error
      */
     public void setOutputIntents(final String outputConditionIdentifier, final String outputCondition, final String registryName, final String info, final ICC_Profile colorProfile) throws IOException {
+        PdfWriter.checkPdfIsoConformance(this, PdfIsoKeys.PDFISOKEY_OUTPUTINTENT, colorProfile);
         getExtraCatalog();
         PdfDictionary out = new PdfDictionary(PdfName.OUTPUTINTENT);
         if (outputCondition != null)
@@ -1922,6 +1933,7 @@ public class PdfWriter extends DocWriter implements
         out.put(PdfName.S, PdfName.GTS_PDFX);
 
         extraCatalog.put(PdfName.OUTPUTINTENTS, new PdfArray(out));
+        this.colorProfile = colorProfile;
     }
 
    /**
@@ -2195,10 +2207,10 @@ public class PdfWriter extends DocWriter implements
      * Use this method to set the document's compression to the
      * PDF 1.5 mode with object streams and xref streams.
      * It can be set at any time but once set it can't be unset.
-     * <p>
-     * If set before opening the document it will also set the pdf version to 1.5.
      */
-    public void setFullCompression() {
+    public void setFullCompression() throws DocumentException {
+    	if (open)
+    		throw new DocumentException(MessageLocalization.getComposedMessage("you.can.t.set.the.full.compression.if.the.document.is.already.open"));
         this.fullCompression = true;
         setAtLeastPdfVersion(VERSION_1_5);
     }

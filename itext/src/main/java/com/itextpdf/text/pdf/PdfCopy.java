@@ -134,41 +134,6 @@ public class PdfCopy extends PdfWriter {
     private static final PdfName iTextTag = new PdfName("_iTextTag_");
     private static final Integer zero = Integer.valueOf(0);
 
-
-    /**
-     * A key to allow us to hash indirect references
-     */
-    protected static class RefKey {
-        int num;
-        int gen;
-        RefKey(int num, int gen) {
-            this.num = num;
-            this.gen = gen;
-        }
-        RefKey(PdfIndirectReference ref) {
-            num = ref.getNumber();
-            gen = ref.getGeneration();
-        }
-        RefKey(PRIndirectReference ref) {
-            num = ref.getNumber();
-            gen = ref.getGeneration();
-        }
-        @Override
-        public int hashCode() {
-            return (gen<<16)+num;
-        }
-        @Override
-        public boolean equals(Object o) {
-            if (!(o instanceof RefKey)) return false;
-            RefKey other = (RefKey)o;
-            return this.gen == other.gen && this.num == other.num;
-        }
-        @Override
-        public String toString() {
-            return Integer.toString(num) + ' ' + gen;
-        }
-    }
-
     protected static class ImportedPage {
         int pageNumber;
         PdfReader reader;
@@ -436,11 +401,11 @@ public class PdfCopy extends PdfWriter {
             }
         }
         iRef.setCopied();
-        parentObjects.put(obj, in);
+        if (obj != null) parentObjects.put(obj, in);
         PdfObject res = copyObject(obj, keepStructure, directRootKids);
         if (disableIndirects.contains(obj))
             iRef.setNotCopied();
-        if ((res != null) && !(res instanceof PdfNull))
+        if (res != null)
         {
             addToBody(res, theRef);
             return theRef;
@@ -510,7 +475,7 @@ public class PdfCopy extends PdfWriter {
                 if (!key.equals(PdfName.B) && !key.equals(PdfName.PARENT)) {
                     parentObjects.put(value, in);
                     PdfObject res = copyObject(value, keepStruct, directRootKids);
-                    if ((res != null) && !(res instanceof PdfNull))
+                    if (res != null)
                         out.put(key, res);
                 }
             }
@@ -521,7 +486,7 @@ public class PdfCopy extends PdfWriter {
                 } else {
                     res = copyObject(value, keepStruct, directRootKids);
                 }
-                if ((res != null) && !(res instanceof PdfNull))
+                if (res != null)
                     out.put(key, res);
             }
         }
@@ -549,7 +514,7 @@ public class PdfCopy extends PdfWriter {
             PdfObject value = in.get(key);
             parentObjects.put(value, in);
             PdfObject res = copyObject(value);
-            if ((res != null) && !(res instanceof PdfNull))
+            if (res != null)
                 out.put(key, res);
         }
 
@@ -567,7 +532,7 @@ public class PdfCopy extends PdfWriter {
             PdfObject value = i.next();
             parentObjects.put(value, in);
             PdfObject res = copyObject(value, keepStruct, directRootKids);
-            if ((res != null) && !(res instanceof PdfNull))
+            if (res != null)
                 out.add(res);
         }
         return out;
@@ -709,7 +674,7 @@ public class PdfCopy extends PdfWriter {
         if (indirectMap.containsKey(reader)) {
             throw new IllegalArgumentException(MessageLocalization.getComposedMessage("document.1.has.already.been.added", reader.toString()));
         }
-        reader.selectPages(pagesToKeep);
+        reader.selectPages(pagesToKeep, false);
         addDocument(reader);
     }
 
@@ -738,10 +703,10 @@ public class PdfCopy extends PdfWriter {
             fields.add(reader.getAcroFields());
             updateCalculationOrder(reader);
         }
-        boolean tagged = PdfStructTreeController.checkTagged(reader);
+        boolean tagged = this.tagged && PdfStructTreeController.checkTagged(reader);
         mergeFieldsInternalCall = true;
         for (int i = 1; i <= reader.getNumberOfPages(); i++) {
-            addPage(getImportedPage(reader, i, tagged && this.tagged));
+            addPage(getImportedPage(reader, i, tagged));
         }
         mergeFieldsInternalCall = false;
     }
@@ -751,35 +716,36 @@ public class PdfCopy extends PdfWriter {
         return this.addToBody(object, ref, false);
     }
 
+    @Override
     public PdfIndirectObject addToBody(final PdfObject object, final PdfIndirectReference ref, boolean formBranching) throws IOException {
         if (formBranching) {
             updateReferences(object);
         }
-        PdfIndirectObject indObj;
-        if ((tagged || mergeFields) && indirectObjects != null && (object.isArray() || object.isDictionary() || object.isStream())) {
+        PdfIndirectObject iobj;
+        if ((tagged || mergeFields) && indirectObjects != null && (object.isArray() || object.isDictionary() || object.isStream() || object.isNull())) {
             RefKey key = new RefKey(ref);
             PdfIndirectObject obj = indirectObjects.get(key);
             if (obj == null) {
                 obj = new PdfIndirectObject(ref, object, this);
                 indirectObjects.put(key, obj);
             }
-            indObj =  obj;
+            iobj =  obj;
         } else {
-            indObj = super.addToBody(object, ref);
+            iobj = super.addToBody(object, ref);
         }
         if (mergeFields && object.isDictionary()) {
             PdfNumber annotId = ((PdfDictionary)object).getAsNumber(PdfCopy.annotId);
             if (annotId != null) {
                 if (formBranching) {
-                    mergedMap.put(annotId.intValue(), indObj);
-                    mergedSet.add(indObj);
+                    mergedMap.put(annotId.intValue(), iobj);
+                    mergedSet.add(iobj);
                 } else {
-                    unmergedMap.put(annotId.intValue(), indObj);
-                    unmergedSet.add(indObj);
+                    unmergedMap.put(annotId.intValue(), iobj);
+                    unmergedSet.add(iobj);
                 }
             }
         }
-        return indObj;
+        return iobj;
     }
 
     @Override
@@ -821,7 +787,7 @@ public class PdfCopy extends PdfWriter {
 
     protected void fixTaggedStructure() throws IOException {
         HashMap<Integer, PdfIndirectReference> numTree = structureTreeRoot.getNumTree();
-        HashSet<PdfCopy.RefKey> activeKeys = new HashSet<PdfCopy.RefKey>();
+        HashSet<RefKey> activeKeys = new HashSet<RefKey>();
         ArrayList<PdfIndirectReference> actives = new ArrayList<PdfIndirectReference>();
         int pageRefIndex = 0;
 
@@ -837,7 +803,7 @@ public class PdfCopy extends PdfWriter {
         //from end, because some objects can appear on several pages because of MCR (out16.pdf)
         for (int i = numTree.size() - 1; i >= 0; --i) {
             PdfIndirectReference currNum = numTree.get(i);
-            PdfCopy.RefKey numKey = new PdfCopy.RefKey(currNum);
+            RefKey numKey = new RefKey(currNum);
             PdfObject obj = indirectObjects.get(numKey).object;
             if (obj.isDictionary()) {
                 boolean addActiveKeys = false;
@@ -866,7 +832,7 @@ public class PdfCopy extends PdfWriter {
                 for (int j = 0; j < currNums.size(); j++) {
                     PdfIndirectReference currKid = (PdfIndirectReference)currNums.getDirectObject(j);
                     if (currKid.equals(prevKid)) continue;
-                    PdfCopy.RefKey kidKey = new PdfCopy.RefKey(currKid);
+                    RefKey kidKey = new RefKey(currKid);
                     activeKeys.add(kidKey);
                     actives.add(currKid);
 
@@ -915,18 +881,18 @@ public class PdfCopy extends PdfWriter {
         }
     }
 
-    private void removeInactiveReferences(PdfArray array, HashSet<PdfCopy.RefKey> activeKeys) {
+    private void removeInactiveReferences(PdfArray array, HashSet<RefKey> activeKeys) {
         for (int i = 0; i < array.size(); ++i) {
             PdfObject obj = array.getPdfObject(i);
-            if ((obj.type() == 0 && !activeKeys.contains(new PdfCopy.RefKey((PdfIndirectReference)obj))) ||
+            if ((obj.type() == 0 && !activeKeys.contains(new RefKey((PdfIndirectReference)obj))) ||
                     (obj.isDictionary() && containsInactivePg((PdfDictionary)obj, activeKeys)))
                 array.remove(i--);
         }
     }
 
-    private boolean containsInactivePg(PdfDictionary dict, HashSet<PdfCopy.RefKey> activeKeys) {
+    private boolean containsInactivePg(PdfDictionary dict, HashSet<RefKey> activeKeys) {
         PdfObject pg = dict.get(PdfName.PG);
-        if (pg != null && !activeKeys.contains(new PdfCopy.RefKey((PdfIndirectReference)pg)))
+        if (pg != null && !activeKeys.contains(new RefKey((PdfIndirectReference)pg)))
             return true;
         return false;
     }
@@ -934,13 +900,13 @@ public class PdfCopy extends PdfWriter {
     //return new found objects
     private ArrayList<PdfIndirectReference> findActiveParents(HashSet<RefKey> activeKeys){
         ArrayList<PdfIndirectReference> newRefs = new ArrayList<PdfIndirectReference>();
-        ArrayList<PdfCopy.RefKey> tmpActiveKeys = new ArrayList<PdfCopy.RefKey>(activeKeys);
+        ArrayList<RefKey> tmpActiveKeys = new ArrayList<RefKey>(activeKeys);
         for (int i = 0; i < tmpActiveKeys.size(); ++i) {
             PdfIndirectObject iobj = indirectObjects.get(tmpActiveKeys.get(i));
             if (iobj == null || !iobj.object.isDictionary()) continue;
             PdfObject parent = ((PdfDictionary)iobj.object).get(PdfName.P);
             if (parent != null && parent.type() == 0) {
-                PdfCopy.RefKey key = new PdfCopy.RefKey((PdfIndirectReference)parent);
+                RefKey key = new RefKey((PdfIndirectReference)parent);
                 if (!activeKeys.contains(key)) {
                     activeKeys.add(key);
                     tmpActiveKeys.add(key);
@@ -981,7 +947,7 @@ public class PdfCopy extends PdfWriter {
     private void findActives(ArrayList<PdfIndirectReference> actives, HashSet<RefKey> activeKeys, HashSet<PdfName> activeClassMaps){
         //collect all active objects from current active set (include kids, classmap, attributes)
         for (int i = 0; i < actives.size(); ++i) {
-            PdfCopy.RefKey key = new PdfCopy.RefKey(actives.get(i));
+            RefKey key = new RefKey(actives.get(i));
             PdfIndirectObject iobj = indirectObjects.get(key);
             if (iobj == null || iobj.object == null) continue;
             switch (iobj.object.type()){
@@ -999,8 +965,8 @@ public class PdfCopy extends PdfWriter {
         }
     }
 
-    private void findActivesFromReference(PdfIndirectReference iref, ArrayList<PdfIndirectReference> actives, HashSet<PdfCopy.RefKey> activeKeys) {
-        PdfCopy.RefKey key = new PdfCopy.RefKey(iref);
+    private void findActivesFromReference(PdfIndirectReference iref, ArrayList<PdfIndirectReference> actives, HashSet<RefKey> activeKeys) {
+        RefKey key = new RefKey(iref);
         PdfIndirectObject iobj = indirectObjects.get(key);
         if (iobj != null && iobj.object.isDictionary() && containsInactivePg((PdfDictionary) iobj.object, activeKeys)) return;
 
@@ -1010,7 +976,7 @@ public class PdfCopy extends PdfWriter {
         }
     }
 
-    private void findActivesFromArray(PdfArray array, ArrayList<PdfIndirectReference> actives, HashSet<PdfCopy.RefKey> activeKeys, HashSet<PdfName> activeClassMaps) {
+    private void findActivesFromArray(PdfArray array, ArrayList<PdfIndirectReference> actives, HashSet<RefKey> activeKeys, HashSet<PdfName> activeClassMaps) {
         for (PdfObject obj: array) {
             switch (obj.type()) {
                 case 0://PdfIndirectReference
@@ -1027,7 +993,7 @@ public class PdfCopy extends PdfWriter {
         }
     }
 
-    private void findActivesFromDict(PdfDictionary dict, ArrayList<PdfIndirectReference> actives, HashSet<PdfCopy.RefKey> activeKeys,  HashSet<PdfName> activeClassMaps) {
+    private void findActivesFromDict(PdfDictionary dict, ArrayList<PdfIndirectReference> actives, HashSet<RefKey> activeKeys,  HashSet<PdfName> activeClassMaps) {
         if (containsInactivePg(dict, activeKeys)) return;
         for (PdfName key: dict.getKeys()) {
             PdfObject obj = dict.get(key);
@@ -1058,7 +1024,7 @@ public class PdfCopy extends PdfWriter {
 
     protected void flushIndirectObjects() throws IOException {
         for (PdfIndirectObject iobj: savedObjects)
-            indirectObjects.remove(new PdfCopy.RefKey(iobj.number, iobj.generation));
+            indirectObjects.remove(new RefKey(iobj.number, iobj.generation));
         HashSet<RefKey> inactives = new HashSet<RefKey>();
         for(Map.Entry<RefKey, PdfIndirectObject> entry: indirectObjects.entrySet()) {
             if (entry.getValue() != null) writeObjectToBody(entry.getValue());
@@ -1242,7 +1208,6 @@ public class PdfCopy extends PdfWriter {
             Object obj = map.get(s);
             if (tk.hasMoreTokens()) {
                 if (obj == null) {
-                    obj = new HashMap();
                     map.put(s, obj);
                     map = (HashMap<String, Object>)obj;
                     continue;
@@ -1562,7 +1527,6 @@ public class PdfCopy extends PdfWriter {
     @Override
     public void close() {
         if (open) {
-            PdfReaderInstance ri = currentPdfReaderInstance;
             pdf.close();
             super.close();
 // Users are responsible for closing PdfReaderw            
@@ -1585,6 +1549,9 @@ public class PdfCopy extends PdfWriter {
 
     @Override
     public void freeReader(PdfReader reader) throws IOException {
+    	PdfArray array = reader.trailer.getAsArray(PdfName.ID);
+    	if (array != null)
+    		originalFileID = array.getAsString(0).getBytes();
         indirectMap.remove(reader);
 // TODO: Removed - the user should be responsible for closing all PdfReaders.  But, this could cause a lot of memory leaks in code out there that hasn't been properly closing things - maybe add a finalizer to PdfReader that calls PdfReader#close() ??            	
 //        if (currentPdfReaderInstance != null) {

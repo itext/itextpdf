@@ -66,7 +66,6 @@ public class TtfUnicodeWriter {
         PdfIndirectReference ind_font = null;
         PdfObject pobj = null;
         PdfIndirectObject obj = null;
-        PdfIndirectReference cidset = null;
         // sivan: cff
         if (font.cff) {
             byte b[] = font.readCffFont();
@@ -93,7 +92,7 @@ public class TtfUnicodeWriter {
         String subsetPrefix = "";
         if (font.subset)
             subsetPrefix = font.createSubsetPrefix();
-        PdfDictionary dic = font.getFontDescriptor(ind_font, subsetPrefix, cidset);
+        PdfDictionary dic = font.getFontDescriptor(ind_font, subsetPrefix, null);
         obj = writer.addToBody(dic);
         ind_font = obj.getIndirectReference();
 
@@ -112,6 +111,4 @@ public class TtfUnicodeWriter {
         pobj = font.getFontBaseType(ind_font, subsetPrefix, toUnicodeRef);
         writer.addToBody(pobj, ref);
     }
-
-
 }

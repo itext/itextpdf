@@ -51,6 +51,7 @@ import com.itextpdf.text.Image;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.Phrase;
 import com.itextpdf.text.Rectangle;
+import com.itextpdf.text.Version;
 import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.io.RASInputStream;
 import com.itextpdf.text.io.RandomAccessSource;
@@ -88,6 +89,7 @@ public class PdfSignatureAppearance {
         this.writer = writer;
         signDate = new GregorianCalendar();
         fieldName = getNewSigName();
+        signatureCreator = Version.getInstance().getVersion();
     }
 
 	/*
@@ -193,6 +195,25 @@ public class PdfSignatureAppearance {
         this.locationCaption = locationCaption;
     }
 
+    /** Holds value of the application that creates the signature */
+    private String signatureCreator;
+    
+    /**
+     * Gets the signature creator.
+     * @return the signature creator
+     */
+    public String getSignatureCreator(){
+    	return signatureCreator;
+    }
+
+    /**
+     * Sets the name of the application used to create the signature.
+     * @param signatureCreator the name of the signature creating application
+     */
+    public void setSignatureCreator(String signatureCreator){
+    	this.signatureCreator = signatureCreator;
+    }
+    
     /** The contact name of the signer. */
     private String contact;
 

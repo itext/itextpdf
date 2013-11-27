@@ -572,10 +572,11 @@ public class PdfStamper
      * Sets the document's compression to the new 1.5 mode with object streams and xref
      * streams. It can be set at any time but once set it can't be unset.
      */
-    public void setFullCompression() {
+    public void setFullCompression() throws DocumentException {
         if (stamper.isAppend())
             return;
-        stamper.setFullCompression();
+        stamper.fullCompression = true;
+        stamper.setAtLeastPdfVersion(PdfWriter.VERSION_1_5);
     }
 
     /**

@@ -127,9 +127,8 @@ public class TextRenderInfo {
     public boolean hasMcid(int mcid, boolean checkTheTopmostLevelOnly) {
         if (checkTheTopmostLevelOnly) {
             if (markedContentInfos instanceof ArrayList) {
-                ArrayList<MarkedContentInfo> mci = (ArrayList<MarkedContentInfo>)markedContentInfos;
-                MarkedContentInfo info = mci.size() > 0 ? mci.get(mci.size() - 1) : null;
-                return (info != null && info.hasMcid()) ? info.getMcid() == mcid : false;
+                Integer infoMcid = getMcid();
+                return (infoMcid != null) ? infoMcid == mcid : false;
             }
         } else {
             for (MarkedContentInfo info : markedContentInfos) {
@@ -139,6 +138,18 @@ public class TextRenderInfo {
             }
         }
         return false;
+    }
+
+    /**
+     * @return the marked content associated with the TextRenderInfo instance.
+     */
+    public Integer getMcid() {
+        if (markedContentInfos instanceof ArrayList) {
+            ArrayList<MarkedContentInfo> mci = (ArrayList<MarkedContentInfo>)markedContentInfos;
+            MarkedContentInfo info = mci.size() > 0 ? mci.get(mci.size() - 1) : null;
+            return (info != null && info.hasMcid()) ? info.getMcid() : null;
+        }
+        return null;
     }
 
 	/**

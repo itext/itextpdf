@@ -44,6 +44,7 @@
 package com.itextpdf.text.pdf;
 
 import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.ExceptionConverter;
 import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.log.Counter;
 import com.itextpdf.text.log.CounterFactory;
@@ -88,6 +89,31 @@ public class PdfAStamperImp extends PdfStamperImp {
         readPdfAInfo();
     }
 
+    protected void readColorProfile() {
+        PdfObject outputIntents = reader.getCatalog().getAsArray(PdfName.OUTPUTINTENTS);
+        if (outputIntents != null && ((PdfArray) outputIntents).size() > 0) {
+            PdfStream iccProfileStream = null;
+            for (int i = 0; i < ((PdfArray) outputIntents).size(); i++) {
+                PdfDictionary outputIntentDictionary = ((PdfArray) outputIntents).getAsDict(i);
+                if (outputIntentDictionary != null) {
+                    PdfName gts = outputIntentDictionary.getAsName(PdfName.S);
+                    if (iccProfileStream == null || PdfName.GTS_PDFA1.equals(gts)) {
+                        iccProfileStream = outputIntentDictionary.getAsStream(PdfName.DESTOUTPUTPROFILE);
+                        if (iccProfileStream != null && PdfName.GTS_PDFA1.equals(gts))
+                            break;
+                    }
+                }
+            }
+            if (iccProfileStream instanceof PRStream) {
+                try {
+                    colorProfile = ICC_Profile.getInstance(PdfReader.getStreamBytes((PRStream)iccProfileStream));
+                } catch(IOException exc) {
+                    throw new ExceptionConverter(exc);
+                }
+            }
+        }
+    }
+
     /**
      * @see PdfStamperImp#setOutputIntents(String, String, String, String, ICC_Profile)
      */
@@ -123,7 +149,7 @@ public class PdfAStamperImp extends PdfStamperImp {
      */
     protected TtfUnicodeWriter getTtfUnicodeWriter() {
         if (ttfUnicodeWriter == null)
-            ttfUnicodeWriter = new PdfATtfUnicodeWriter(this);
+            ttfUnicodeWriter = new PdfATtfUnicodeWriter(this, ((PdfAConformance) pdfIsoConformance).getConformanceLevel());
         return ttfUnicodeWriter;
     }
 
@@ -139,9 +165,9 @@ public class PdfAStamperImp extends PdfStamperImp {
     }
 
     /**
-     * @see com.itextpdf.text.pdf.PdfStamperImp#getPdfIsoConformance()
+     * @see com.itextpdf.text.pdf.PdfStamperImp#initPdfIsoConformance()
      */
-    protected PdfIsoConformance getPdfIsoConformance() {
+    protected PdfIsoConformance initPdfIsoConformance() {
         return new PdfAConformanceImp(this);
     }
 

@@ -116,7 +116,12 @@ public class CssFilesImpl implements CssFiles {
             if (CSS.Property.BORDER.equalsIgnoreCase(key)) {
                 css.putAll(utils.parseBorder(value));
             } else if (CSS.Property.MARGIN.equalsIgnoreCase(key)) {
-                css.putAll(utils.parseBoxValues(value, "margin-", ""));
+                Map<String, String> margins = utils.parseBoxValues(value, "margin-", "");
+                for (String marginKey : margins.keySet()) {
+                    if (!css.containsKey(marginKey)) {
+                        css.put(marginKey, margins.get(marginKey));
+                    }
+                }
             } else if (CSS.Property.BORDER_WIDTH.equalsIgnoreCase(key)) {
                 css.putAll(utils.parseBoxValues(value, "border-", "-width"));
             } else if (CSS.Property.BORDER_STYLE.equalsIgnoreCase(key)) {

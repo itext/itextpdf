@@ -46,6 +46,8 @@ package com.itextpdf.tool.xml.css.apply;
 import com.itextpdf.text.Image;
 import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.css.CSS;
+import com.itextpdf.tool.xml.css.CssUtils;
+import com.itextpdf.tool.xml.html.HTML;
 
 /**
  * @author redlab_b
@@ -61,6 +63,42 @@ public class ImageCssApplier {
 	 * @return a styled Image
 	 */
 	public Image apply(final Image img, final Tag tag) {
+        String widthValue = tag.getCSS().get(HTML.Attribute.WIDTH);
+        if (widthValue == null) {
+            widthValue = tag.getAttributes().get(HTML.Attribute.WIDTH);
+        }
+
+        String heightValue = tag.getCSS().get(HTML.Attribute.HEIGHT);
+        if (heightValue == null) {
+            heightValue = tag.getAttributes().get(HTML.Attribute.HEIGHT);
+        }
+
+        if (widthValue == null)
+            img.setScaleToFitLineWhenOverflow(true);
+        else
+            img.setScaleToFitLineWhenOverflow(false);
+
+        if (heightValue == null)
+            img.setScaleToFitHeight(true);
+        else
+            img.setScaleToFitHeight(false);
+
+
+        CssUtils utils = CssUtils.getInstance();
+        float widthInPoints = utils.parsePxInCmMmPcToPt(widthValue);
+
+        float heightInPoints = utils.parsePxInCmMmPcToPt(heightValue);
+
+        if (widthInPoints > 0 && heightInPoints > 0) {
+            img.scaleAbsolute(widthInPoints, heightInPoints);
+        } else if (widthInPoints > 0) {
+            heightInPoints = img.getHeight() * widthInPoints / img.getWidth();
+            img.scaleAbsolute(widthInPoints, heightInPoints);
+        } else if (heightInPoints > 0) {
+            widthInPoints = img.getWidth() * heightInPoints / img.getHeight();
+            img.scaleAbsolute(widthInPoints, heightInPoints);
+        }
+
 		 String before = tag.getCSS().get(CSS.Property.BEFORE);
          if (before != null) {
          	img.setSpacingBefore(Float.parseFloat(before));

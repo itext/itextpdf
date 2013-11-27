@@ -43,6 +43,9 @@
  */
 package com.itextpdf.text.pdf;
 
+import com.itextpdf.text.BaseColor;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.xml.xmp.PdfProperties;
 import com.itextpdf.text.xml.xmp.XmpBasicProperties;
 import com.itextpdf.xmp.*;
@@ -55,6 +58,8 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.io.*;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Helper class for tests: uses ghostscript to compare PDFs at a pixel level.
@@ -72,6 +77,8 @@ public class CompareTool {
     static private String differentPages = "File <filename> differs on page <pagenumber>.";
     static private String undefinedGsPath = "Path to GhostScript is not specified. Please use -DgsExec=<path_to_ghostscript> (e.g. -DgsExec=\"C:/Program Files/gs/gs8.64/bin/gswin32c.exe\")";
 
+    static private String ignoredAreasPrefix = "ignored_areas_";
+
     private String cmpPdf;
     private String cmpPdfName;
     private String cmpImage;
@@ -86,7 +93,11 @@ public class CompareTool {
         compareExec = System.getProperty("compareExec");
     }
 
-    public String compare(String outPath, String differenceImage) throws IOException, InterruptedException {
+    public String compare(String outPath, String differenceImagePrefix) throws IOException, InterruptedException, DocumentException {
+        return compare(outPath, differenceImagePrefix, null);
+    }
+
+    public String compare(String outPath, String differenceImagePrefix, Map<Integer, List<Rectangle>> ignoredAreas) throws IOException, InterruptedException, DocumentException {
         if (gsExec == null || !(new File(gsExec).exists())) {
             return undefinedGsPath;
         }
@@ -107,9 +118,40 @@ public class CompareTool {
             }
         }
 
-        File diffFile = new File(differenceImage);
+        File diffFile = new File(outPath + differenceImagePrefix);
         if (diffFile.exists()) {
             diffFile.delete();
+        }
+
+        if (ignoredAreas != null && !ignoredAreas.isEmpty()) {
+            PdfReader cmpReader = new PdfReader(cmpPdf);
+            PdfReader outReader = new PdfReader(outPdf);
+            PdfStamper outStamper = new PdfStamper(outReader, new FileOutputStream(outPath + ignoredAreasPrefix + outPdfName));
+            PdfStamper cmpStamper = new PdfStamper(cmpReader, new FileOutputStream(outPath + ignoredAreasPrefix + cmpPdfName));
+
+            for (Map.Entry<Integer, List<Rectangle>> entry : ignoredAreas.entrySet()) {
+                int pageNumber = entry.getKey();
+                List<Rectangle> rectangles = entry.getValue();
+
+                if (rectangles != null && !rectangles.isEmpty()) {
+                    PdfContentByte outCB = outStamper.getOverContent(pageNumber);
+                    PdfContentByte cmpCB = cmpStamper.getOverContent(pageNumber);
+
+                    for (Rectangle rect : rectangles) {
+                        rect.setBackgroundColor(BaseColor.BLACK);
+                        outCB.rectangle(rect);
+                        cmpCB.rectangle(rect);
+                    }
+                }
+            }
+
+            outStamper.close();
+            cmpStamper.close();
+
+            outReader.close();
+            cmpReader.close();
+
+            init(outPath + ignoredAreasPrefix + outPdfName, outPath + ignoredAreasPrefix + cmpPdfName);
         }
 
         if (targetDir.exists()) {
@@ -164,7 +206,7 @@ public class CompareTool {
                         is2.close();
                         if (!cmpResult) {
                             if (new File(compareExec).exists()) {
-                                String compareParams = this.compareParams.replace("<image1>", imageFiles[i].getAbsolutePath()).replace("<image2>", cmpImageFiles[i].getAbsolutePath()).replace("<difference>", differenceImage + Integer.toString(i + 1) + ".png");
+                                String compareParams = this.compareParams.replace("<image1>", imageFiles[i].getAbsolutePath()).replace("<image2>", cmpImageFiles[i].getAbsolutePath()).replace("<difference>", outPath + differenceImagePrefix + Integer.toString(i + 1) + ".png");
                                 p = Runtime.getRuntime().exec(compareExec + compareParams);
                                 bre = new BufferedReader(new InputStreamReader(p.getErrorStream()));
                                 while ((line = bre.readLine()) != null) {
@@ -175,7 +217,7 @@ public class CompareTool {
                                 if (cmpExitValue == 0) {
                                     if (differentPagesFail == null)  {
                                         differentPagesFail = differentPages.replace("<filename>", outPdf).replace("<pagenumber>", Integer.toString(i + 1));
-                                        differentPagesFail += "\nPlease, examine " + differenceImage + Integer.toString(i + 1) + ".png for more details.";
+                                        differentPagesFail += "\nPlease, examine " + outPath + differenceImagePrefix + Integer.toString(i + 1) + ".png for more details.";
                                     } else {
                                         differentPagesFail =
                                                 "File " + outPdf + " differs.\nPlease, examine difference images for more details.";
@@ -212,9 +254,13 @@ public class CompareTool {
         return null;
     }
 
-    public String compare(String outPdf, String cmpPdf, String outPath, String differenceImage) throws IOException, InterruptedException {
+    public String compare(String outPdf, String cmpPdf, String outPath, String differenceImagePrefix, Map<Integer, List<Rectangle>> ignoredAreas) throws IOException, InterruptedException, DocumentException {
         init(outPdf, cmpPdf);
-        return compare(outPath, differenceImage);
+        return compare(outPath, differenceImagePrefix, ignoredAreas);
+    }
+
+    public String compare(String outPdf, String cmpPdf, String outPath, String differenceImagePrefix) throws IOException, InterruptedException, DocumentException {
+        return compare(outPdf, cmpPdf, outPath, differenceImagePrefix, null);
     }
 
     public String compareXmp(){

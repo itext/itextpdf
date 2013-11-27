@@ -43,17 +43,83 @@
  */
 package com.itextpdf.text.pdf.internal;
 
-import com.itextpdf.text.pdf.PdfAConformanceLevel;
-import com.itextpdf.text.pdf.PdfWriter;
+import com.itextpdf.text.error_messages.MessageLocalization;
+import com.itextpdf.text.pdf.*;
+
+import java.util.Arrays;
+import java.util.HashSet;
 
 public class PdfA3Checker extends PdfA2Checker {
+
+    static private HashSet<PdfName> allowedAFRelationships = new HashSet<PdfName>(Arrays.asList(
+            AFRelationshipValue.Source, AFRelationshipValue.Data, AFRelationshipValue.Alternative,
+            AFRelationshipValue.Supplement, AFRelationshipValue.Unspecified));
+
 
     PdfA3Checker(PdfAConformanceLevel conformanceLevel) {
         super(conformanceLevel);
     }
 
-    protected void checkFileSpec(PdfWriter writer, int key, Object obj1) {
-    	// don't do anything
+    @Override
+    protected HashSet<PdfName> initKeysForCheck() {
+        HashSet<PdfName> keysForCheck = super.initKeysForCheck();
+        keysForCheck.add(PdfName.PARAMS);
+        keysForCheck.add(PdfName.MODDATE);
+        keysForCheck.add(PdfName.F);
+        return keysForCheck;
     }
 
+    @Override
+    protected void checkFileSpec(PdfWriter writer, int key, Object obj1) {
+        if (obj1 instanceof PdfFileSpecification) {
+            PdfDictionary fileSpec = (PdfFileSpecification)obj1;
+            if(!fileSpec.contains(PdfName.UF) || !fileSpec.contains(PdfName.F)
+                    || !fileSpec.contains(PdfName.DESC)) {
+                throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("file.specification.dictionary.shall.contain.f.uf.and.desc.entries"));
+            }
+
+            PdfObject obj = fileSpec.get(PdfName.AFRELATIONSHIP);
+
+            if (obj == null || !obj.isName() || !allowedAFRelationships.contains(obj)) {
+                throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("file.specification.dictionary.shall.contain.correct.afrelationship.key"));
+            }
+
+            if (fileSpec.contains(PdfName.EF)) {
+                PdfDictionary dict = getDirectDictionary(fileSpec.get(PdfName.EF));
+                if (dict == null || !dict.contains(PdfName.F)) {
+                    throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("ef.key.of.file.specification.dictionary.shall.contain.dictionary.with.valid.f.key"));
+                }
+
+                PdfDictionary embeddedFile = getDirectDictionary(dict.get(PdfName.F));
+                if (embeddedFile == null) {
+                    throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("ef.key.of.file.specification.dictionary.shall.contain.dictionary.with.valid.f.key"));
+                }
+
+                checkEmbeddedFile(embeddedFile);
+            }
+        }
+    }
+
+    protected void checkEmbeddedFile(PdfDictionary embeddedFile) {
+        PdfDictionary params = getDirectDictionary(embeddedFile.get(PdfName.PARAMS));
+        if (params == null) {
+            throw new PdfAConformanceException(embeddedFile, MessageLocalization.getComposedMessage("embedded.file.shall.contain.valid.params.key"));
+        }
+        PdfObject modDate = params.get(PdfName.MODDATE);
+        if (modDate == null || !(modDate instanceof PdfDate)) {
+            throw new PdfAConformanceException(embeddedFile, MessageLocalization.getComposedMessage("embedded.file.shall.contain.params.key.with.valid.moddate.key"));
+        }
+    }
+
+    @Override
+    protected void checkPdfObject(PdfWriter writer, int key, Object obj1) {
+        super.checkPdfObject(writer, key, obj1);
+        if (obj1 instanceof PdfDictionary) {
+            PdfDictionary dictionary = (PdfDictionary) obj1;
+            PdfName type = dictionary.getAsName(PdfName.TYPE);
+            if (PdfName.EMBEDDEDFILE.equals(type)) {
+                checkEmbeddedFile(dictionary);
+            }
+        }
+    }
 }

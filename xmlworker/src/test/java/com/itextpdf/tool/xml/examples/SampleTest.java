@@ -34,7 +34,7 @@ public class SampleTest {
     protected String outPdf;
     protected String inputHtml;
     private String cmpPdf;
-    private String differenceImage;
+    private String differenceImagePrefix;
     private CompareTool compareTool;
     protected String testPath;
     protected String testName;
@@ -51,7 +51,7 @@ public class SampleTest {
             }
             outPath = "." + File.separator + "target" + File.separator + testPath + testName + File.separator;
             String inputPath = "." + File.separator + "target" + File.separator + "test-classes" + File.separator + testPath + File.separator + testName + File.separator;
-            differenceImage = outPath + "difference";
+            differenceImagePrefix = "difference";
             outPdf = outPath + testName + ".pdf";
             inputHtml = inputPath + "<testName>.html".replaceAll("<testName>", testName);
             cmpPdf = inputPath + "<testName>.pdf".replaceAll("<testName>", testName);
@@ -70,7 +70,7 @@ public class SampleTest {
         if (!this.getClass().getName().equals(SampleTest.class.getName()) && (testName.length() > 0)) {
             transformHtml2Pdf();
             if (detectCrashesAndHangUpsOnly() == false) {
-                String errorMessage = compareTool.compare(outPath, differenceImage);
+                String errorMessage = compareTool.compare(outPath, differenceImagePrefix);
                 if (errorMessage != null) {
                     Assert.fail(errorMessage);
                 }

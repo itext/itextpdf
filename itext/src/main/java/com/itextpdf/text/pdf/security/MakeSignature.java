@@ -129,6 +129,7 @@ public class MakeSignature {
         PdfSignature dic = new PdfSignature(PdfName.ADOBE_PPKLITE, sigtype == CryptoStandard.CADES ? PdfName.ETSI_CADES_DETACHED : PdfName.ADBE_PKCS7_DETACHED);
         dic.setReason(sap.getReason());
         dic.setLocation(sap.getLocation());
+        dic.setSignatureCreator(sap.getSignatureCreator());
         dic.setContact(sap.getContact());
         dic.setDate(new PdfDate(sap.getSignDate())); // time-stamp will over-rule this
         sap.setCryptoDictionary(dic);
@@ -202,6 +203,7 @@ public class MakeSignature {
         PdfSignature dic = new PdfSignature(null, null);
         dic.setReason(sap.getReason());
         dic.setLocation(sap.getLocation());
+        dic.setSignatureCreator(sap.getSignatureCreator());
         dic.setContact(sap.getContact());
         dic.setDate(new PdfDate(sap.getSignDate())); // time-stamp will over-rule this
         externalSignatureContainer.modifySigningDictionary(dic);

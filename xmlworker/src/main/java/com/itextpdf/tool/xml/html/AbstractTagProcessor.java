@@ -234,7 +234,7 @@ public abstract class AbstractTagProcessor implements TagProcessor, CssAppliersA
 	 * @param ctx the WorkerContext.
 	 * @return a List of paragraphs.
 	 */
-	public final List<Element> currentContentToParagraph(final List<Element> currentContent,
+	public List<Element> currentContentToParagraph(final List<Element> currentContent,
 			final boolean addNewLines, final boolean applyCSS, final Tag tag, final WorkerContext ctx) {
 		try {
 			List<Element> list = new ArrayList<Element>();
