@@ -575,7 +575,8 @@ public class PdfStamper
     public void setFullCompression() throws DocumentException {
         if (stamper.isAppend())
             return;
-        stamper.setFullCompression();
+        stamper.fullCompression = true;
+        stamper.setAtLeastPdfVersion(PdfWriter.VERSION_1_5);
     }
 
     /**
