@@ -59,9 +59,7 @@ import com.itextpdf.tool.xml.pipeline.end.PdfWriterPipeline;
 import com.itextpdf.tool.xml.pipeline.html.HtmlPipeline;
 import com.itextpdf.tool.xml.pipeline.html.HtmlPipelineContext;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.Reader;
+import java.io.*;
 import java.nio.charset.Charset;
 
 /**
@@ -96,29 +94,28 @@ public class XMLWorkerHelper {
 	/**
 	 * @return the default css file.
 	 */
-	public static synchronized CssFile getCSS(InputStream in) {
+    public static synchronized CssFile getCSS(InputStream in) {
         CssFile cssFile = null;
         if (null != in) {
-            final CssFileProcessor cssFileProcessor = new CssFileProcessor();
-            int i = -1;
+            final CssFileProcessor cssFileProcessor = new
+                    CssFileProcessor();
+            BufferedReader br = new BufferedReader(new InputStreamReader(in));
             try {
-                while (-1 != (i = in.read())) {
-                    cssFileProcessor.process((char) i);
+                char[] buffer = new char[8192];
+                int length;
+                while ((length = br.read(buffer)) > 0) {
+                    for(int i = 0 ; i < length; i++) {
+                        cssFileProcessor.process(buffer[i]);
+                    }
                 }
-                cssFile = new CSSFileWrapper(cssFileProcessor.getCss(), true);
-            } catch (final IOException e) {
-                throw new RuntimeWorkerException(e);
-            } finally {
-                try {
-                    in.close();
-                } catch (final IOException e) {
-                    throw new RuntimeWorkerException(e);
-                }
-            }
+                cssFile = new CSSFileWrapper(cssFileProcessor.getCss(),
+                        true);
+            } catch (final IOException e) { throw new RuntimeWorkerException(e); }
+            finally
+            { try { in.close(); } catch (final IOException e) { throw new RuntimeWorkerException(e); } }
         }
-
-		return cssFile;
-	}
+        return cssFile;
+    }
 
     public synchronized CssFile getDefaultCSS() {
         if (null == defaultCssFile) {
