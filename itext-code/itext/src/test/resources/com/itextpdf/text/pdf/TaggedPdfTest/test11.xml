@@ -1,0 +1,281 @@
+<Document>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<H1 color="[0, 0, 1]">
+<Span>1. </Span>
+<Span>First chapter</Span>
+</H1>
+<H2 color="[0, 0, 1]">
+<Span>1.1. </Span>
+<Span>First section of a first chapter</Span>
+</H2>
+<H3 color="[0, 0, 1]">
+<Span>1.1.1. </Span>
+<Span>First subsection of a first section of a first chapter</Span>
+</H3>
+<P><Span>Some text...</Span>
+</P>
+<H3 color="[0, 0, 1]">
+<Span>1.1.2. </Span>
+<Span>Second subsection of a first section of a first chapter</Span>
+</H3>
+<P><Span>Some text...</Span>
+</P>
+<H3 color="[0, 0, 1]">
+<Span>1.1.3. </Span>
+<Span>Third subsection of a first section of a first chapter</Span>
+</H3>
+<P><Span>Some text...</Span>
+</P>
+<H2 color="[0, 0, 1]">
+<Span>1.2. </Span>
+<Span>Second section of a first chapter</Span>
+</H2>
+<H3 color="[0, 0, 1]">
+<Span>1.2.1. </Span>
+<Span>First subsection of a second section of a first chapter</Span>
+</H3>
+<P><Span>Some text...</Span>
+</P>
+<H3 color="[0, 0, 1]">
+<Span>1.2.2. </Span>
+<Span>Second subsection of a second section of a first chapter</Span>
+</H3>
+<P><Span>Some text...</Span>
+</P>
+<H3 color="[0, 0, 1]">
+<Span>1.2.3. </Span>
+<Span>Third subsection of a second section of a first chapter</Span>
+</H3>
+<P><Span>Some text...</Span>
+</P>
+<H2 color="[0, 0, 1]">
+<Span>1.3. </Span>
+<Span>Third section of a first chapter</Span>
+</H2>
+<H3 color="[0, 0, 1]">
+<Span>1.3.1. </Span>
+<Span>First subsection of a third section of a first chapter</Span>
+</H3>
+<P><Span>Some text...</Span>
+</P>
+<H3 color="[0, 0, 1]">
+<Span>1.3.2. </Span>
+<Span>Second subsection of a third section of a first chapter</Span>
+</H3>
+<P><Span>Some text...</Span>
+</P>
+<H3 color="[0, 0, 1]">
+<Span>1.3.3. </Span>
+<Span>Third subsection of a third section of a first chapter</Span>
+</H3>
+<P><Span>Some text...</Span>
+</P>
+<H1 color="[0, 0, 1]">
+<Span>2. </Span>
+<Span>Second chapter</Span>
+</H1>
+<H2 color="[0, 0, 1]">
+<Span>2.1. </Span>
+<Span>First section of a second chapter</Span>
+</H2>
+<H3 color="[0, 0, 1]">
+<Span>2.1.1. </Span>
+<Span>First subsection of a first section of a second chapter</Span>
+</H3>
+<P><Span>Some text...</Span>
+</P>
+<H3 color="[0, 0, 1]">
+<Span>2.1.2. </Span>
+<Span>Second subsection of a first section of a second chapter</Span>
+</H3>
+<P><Span>Some text...</Span>
+</P>
+<H3 color="[0, 0, 1]">
+<Span>2.1.3. </Span>
+<Span>Third subsection of a first section of a second chapter</Span>
+</H3>
+<P><Span>Some text...</Span>
+</P>
+<H2 color="[0, 0, 1]">
+<Span>2.2. </Span>
+<Span>Second section of a second chapter</Span>
+</H2>
+<H3 color="[0, 0, 1]">
+<Span>2.2.1. </Span>
+<Span>First subsection of a second section of a second chapter</Span>
+</H3>
+<P><Span>Some text...</Span>
+</P>
+<H3 color="[0, 0, 1]">
+<Span>2.2.2. </Span>
+<Span>Second subsection of a second section of a second chapter</Span>
+</H3>
+<P><Span>Some text...</Span>
+</P>
+<H3 color="[0, 0, 1]">
+<Span>2.2.3. </Span>
+<Span>Third subsection of a second section of a second chapter</Span>
+</H3>
+<P><Span>Some text...</Span>
+</P>
+<H2 color="[0, 0, 1]">
+<Span>2.3. </Span>
+<Span>Third section of a second chapter</Span>
+</H2>
+<H3 color="[0, 0, 1]">
+<Span>2.3.1. </Span>
+<Span>First subsection of a third section of a second chapter</Span>
+</H3>
+<P><Span>Some text...</Span>
+</P>
+<H3 color="[0, 0, 1]">
+<Span>2.3.2. </Span>
+<Span>Second subsection of a third section of a second chapter</Span>
+</H3>
+<P><Span>Some text...</Span>
+</P>
+<H3 color="[0, 0, 1]">
+<Span>2.3.3. </Span>
+<Span>Third subsection of a third section of a second chapter</Span>
+</H3>
+<P><Span>Some text...</Span>
+</P>
+<H1 color="[0, 0, 1]">
+<Span>3. </Span>
+<Span>Third chapter</Span>
+</H1>
+<H2 color="[0, 0, 1]">
+<Span>3.1. </Span>
+<Span>First section of a third chapter</Span>
+</H2>
+<H3 color="[0, 0, 1]">
+<Span>3.1.1. </Span>
+<Span>First subsection of a first section of a third chapter</Span>
+</H3>
+<P><Span>Some text...</Span>
+</P>
+<H3 color="[0, 0, 1]">
+<Span>3.1.2. </Span>
+<Span>Second subsection of a first section of a third chapter</Span>
+</H3>
+<P><Span>Some text...</Span>
+</P>
+<H3 color="[0, 0, 1]">
+<Span>3.1.3. </Span>
+<Span>Third subsection of a first section of a third chapter</Span>
+</H3>
+<P><Span>Some text...</Span>
+</P>
+<H2 color="[0, 0, 1]">
+<Span>3.2. </Span>
+<Span>Second section of a third chapter</Span>
+</H2>
+<H3 color="[0, 0, 1]">
+<Span>3.2.1. </Span>
+<Span>First subsection of a second section of a third chapter</Span>
+</H3>
+<P><Span>Some text...</Span>
+</P>
+<H3 color="[0, 0, 1]">
+<Span>3.2.2. </Span>
+<Span>Second subsection of a second section of a third chapter</Span>
+</H3>
+<P><Span>Some text...</Span>
+</P>
+<H3 color="[0, 0, 1]">
+<Span>3.2.3. </Span>
+<Span>Third subsection of a second section of a third chapter</Span>
+</H3>
+<P><Span>Some text...</Span>
+</P>
+<H2 color="[0, 0, 1]">
+<Span>3.3. </Span>
+<Span>Third section of a third chapter</Span>
+</H2>
+<H3 color="[0, 0, 1]">
+<Span>3.3.1. </Span>
+<Span>First subsection of a third section of a third chapter</Span>
+</H3>
+<P><Span>Some text...</Span>
+</P>
+<H3 color="[0, 0, 1]">
+<Span>3.3.2. </Span>
+<Span>Second subsection of a third section of a third chapter</Span>
+</H3>
+<P><Span>Some text...</Span>
+</P>
+<H3 color="[0, 0, 1]">
+<Span>3.3.3. </Span>
+<Span>Third subsection of a third section of a third chapter</Span>
+</H3>
+<P><Span>Some text...</Span>
+</P>
+<H2>
+<Span>4.1. </Span>
+<Span>First section of a fourths chapter, the chapter itself is invisible</Span>
+</H2>
+</Document>
