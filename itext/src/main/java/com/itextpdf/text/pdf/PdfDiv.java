@@ -51,7 +51,6 @@ import com.itextpdf.text.pdf.interfaces.IAccessibleElement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.UUID;
 
 /**
  * A special element to put a collection of elements at an absolute position.
@@ -98,6 +97,8 @@ public class PdfDiv implements Element, Spaceable, IAccessibleElement {
     private PositionType position = PositionType.STATIC;
 
     private FloatLayout floatLayout = null;
+
+    private float yLine;
 
     protected PdfName role = PdfName.DIV;
     protected HashMap<PdfName, PdfObject> accessibleAttributes = null;
@@ -149,6 +150,10 @@ public class PdfDiv implements Element, Spaceable, IAccessibleElement {
 
     public void setBackgroundColor(BaseColor backgroundColor) {
         this.backgroundColor = backgroundColor;
+    }
+
+    public float getYLine() {
+        return yLine;
     }
 
     private BaseColor backgroundColor = null;
@@ -273,9 +278,6 @@ public class PdfDiv implements Element, Spaceable, IAccessibleElement {
     }
 
     public void addElement(Element element) {
-        if (element instanceof PdfPTable) {
-            ((PdfPTable)element).setSplitLate(false);
-        }
         content.add(element);
     }
 
@@ -389,7 +391,7 @@ public class PdfDiv implements Element, Spaceable, IAccessibleElement {
         float maxY = Math.max(lly, ury);
         float minY = Math.min(lly, ury);
         float rightX = Math.max(llx, urx);
-        float yLine = maxY;
+        yLine = maxY;
         boolean contentCutByFixedHeight = false;
 
         if (width != null && width > 0) {
@@ -475,23 +477,9 @@ public class PdfDiv implements Element, Spaceable, IAccessibleElement {
         int status = ColumnText.NO_MORE_TEXT;
 
         if (!content.isEmpty()) {
-            FloatLayout  floatLayout = null;
             if (this.floatLayout == null) {
-                ArrayList<Element> floatingElements = new ArrayList<Element>();
-                floatingElements.addAll(content);
-                if (simulate) {
-                    floatLayout = new FloatLayout(floatingElements, useAscender);
-                } else {
-                    floatLayout = this.floatLayout = new FloatLayout(floatingElements, useAscender);
-                }
-            } else {
-                if (simulate) {
-                    ArrayList<Element> floatingElements = new ArrayList<Element>();
-                    floatingElements.addAll(this.floatLayout.content);
-                    floatLayout = new FloatLayout(floatingElements, useAscender);
-                } else {
-                    floatLayout = this.floatLayout;
-                }
+                ArrayList<Element> floatingElements = new ArrayList<Element>(content);
+                floatLayout = new FloatLayout(floatingElements, useAscender);
             }
 
             floatLayout.setSimpleColumn(leftX, minY, rightX, yLine);

@@ -43,15 +43,11 @@
  */
 package com.itextpdf.tool.xml.html;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Element;
-import com.itextpdf.tool.xml.NoCustomContextException;
 import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.WorkerContext;
-import com.itextpdf.tool.xml.exceptions.RuntimeWorkerException;
+
+import java.util.List;
 
 /**
  * @author redlab_b

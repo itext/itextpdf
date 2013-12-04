@@ -150,6 +150,8 @@ public class PdfChunk {
 
     protected IAccessibleElement accessibleElement = null;
 
+    public static final float UNDERLINE_THICKNESS = 1f / 15;
+    public static final float UNDERLINE_OFFSET = -1f / 3;
     // constructors
 
 /**
@@ -234,7 +236,7 @@ public class PdfChunk {
             }
         }
         if (f.isUnderlined()) {
-            Object obj[] = {null, new float[]{0, 1f / 15, 0, -1f / 3, 0}};
+            Object obj[] = {null, new float[]{0, UNDERLINE_THICKNESS, 0, UNDERLINE_OFFSET, 0}};
             Object unders[][] = Utilities.addToArray((Object[][])attributes.get(Chunk.UNDERLINE), obj);
             attributes.put(Chunk.UNDERLINE, unders);
         }

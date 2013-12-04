@@ -43,30 +43,6 @@
  */
 package com.itextpdf.text.pdf;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.DataInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.security.Key;
-import java.security.MessageDigest;
-import java.security.PrivateKey;
-import java.security.cert.Certificate;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.Stack;
-import java.util.zip.InflaterInputStream;
-
-import org.spongycastle.cms.CMSEnvelopedData;
-import org.spongycastle.cms.RecipientInformation;
-
 import com.itextpdf.text.Document;
 import com.itextpdf.text.ExceptionConverter;
 import com.itextpdf.text.PageSize;
@@ -75,15 +51,25 @@ import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.exceptions.BadPasswordException;
 import com.itextpdf.text.exceptions.InvalidPdfException;
 import com.itextpdf.text.exceptions.UnsupportedPdfException;
-import com.itextpdf.text.io.WindowRandomAccessSource;
 import com.itextpdf.text.io.RandomAccessSource;
 import com.itextpdf.text.io.RandomAccessSourceFactory;
-import com.itextpdf.text.log.Counter;
-import com.itextpdf.text.log.CounterFactory;
+import com.itextpdf.text.io.WindowRandomAccessSource;
+import com.itextpdf.text.log.*;
 import com.itextpdf.text.pdf.PRTokeniser.TokenType;
 import com.itextpdf.text.pdf.interfaces.PdfViewerPreferences;
 import com.itextpdf.text.pdf.internal.PdfViewerPreferencesImp;
 import org.spongycastle.cert.X509CertificateHolder;
+import org.spongycastle.cms.CMSEnvelopedData;
+import org.spongycastle.cms.RecipientInformation;
+
+import java.io.*;
+import java.net.URL;
+import java.security.Key;
+import java.security.MessageDigest;
+import java.security.PrivateKey;
+import java.security.cert.Certificate;
+import java.util.*;
+import java.util.zip.InflaterInputStream;
 
 /**
  * Reads a PDF document.
@@ -100,6 +86,7 @@ public class PdfReader implements PdfViewerPreferences {
 	public static boolean unethicalreading = false;
 	
 	public static boolean debugmode = false;
+	private static final Logger LOGGER = LoggerFactory.getLogger(PdfReader.class);
 	
     static final PdfName pageInhCandidates[] = {
         PdfName.MEDIABOX, PdfName.ROTATE, PdfName.RESOURCES, PdfName.CROPBOX
@@ -165,7 +152,7 @@ public class PdfReader implements PdfViewerPreferences {
 	
     /**
      * Constructs a new PdfReader.  This is the master constructor.
-     * @param the source of bytes for the reader
+     * @param byteSource source of bytes for the reader
      * @param partialRead if true, the reader is opened in partial mode (PDF is parsed on demand), if false, the entire PDF is parsed into memory as the reader opens
      * @param ownerPassword the password or null if no password is required
      * @param certificate the certificate or null if no certificate is required
@@ -1204,7 +1191,8 @@ public class PdfReader implements PdfViewerPreferences {
         }
         catch (IOException e) {
         	if (debugmode) {
-        		e.printStackTrace();
+                if (LOGGER.isLogging(Level.ERROR))
+                    LOGGER.error(e.getMessage(), e);
         		obj = null;
         	}
         	else
@@ -1304,7 +1292,8 @@ public class PdfReader implements PdfViewerPreferences {
             }
             catch (IOException e) {
             	if (debugmode) {
-            		e.printStackTrace();
+                    if (LOGGER.isLogging(Level.ERROR))
+                        LOGGER.error(e.getMessage(), e);
             		obj = null;
             	}
             	else
@@ -3415,8 +3404,19 @@ public class PdfReader implements PdfViewerPreferences {
      * @param pagesToKeep the pages to keep in the document
      */
     public void selectPages(final List<Integer> pagesToKeep) {
+        selectPages(pagesToKeep, true);
+    }
+
+    /**
+     * Selects the pages to keep in the document. The pages are described as a
+     * <CODE>List</CODE> of <CODE>Integer</CODE>. The page ordering can be changed but
+     * no page repetitions are allowed. Note that it may be very slow in partial mode.
+     * @param pagesToKeep the pages to keep in the document
+     * @param removeUnused indicate if to remove unsed objects. @see removeUnusedObjects
+     */
+    protected void selectPages(final List<Integer> pagesToKeep, boolean removeUnused) {
         pageRefs.selectPages(pagesToKeep);
-        removeUnusedObjects();
+        if (removeUnused) removeUnusedObjects();
     }
 
     /** Sets the viewer preferences as the sum of several constants.

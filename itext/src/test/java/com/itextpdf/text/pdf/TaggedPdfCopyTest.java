@@ -1,20 +1,28 @@
 package com.itextpdf.text.pdf;
 
-import com.itextpdf.text.*;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.error_messages.MessageLocalization;
+import com.itextpdf.text.pdf.parser.TaggedPdfReaderTool;
 
-import com.itextpdf.text.pdf.parser.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.xml.sax.SAXException;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import java.io.*;
 
 public class TaggedPdfCopyTest {
     Document document;
@@ -45,6 +53,8 @@ public class TaggedPdfCopyTest {
     public static final String SOURCE62 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/6/source62.pdf";
     public static final String SOURCE63 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/6/source63.pdf";
     public static final String SOURCE64 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/6/source64.pdf";
+    public static final String SOURCE72 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/7/source72.pdf";
+    public static final String SOURCE73 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/7/source73.pdf";
 
     public static final String OUT = "./target/com/itextpdf/test/pdf/TaggedPdfCopyTest/out";
 
@@ -665,9 +675,6 @@ public class TaggedPdfCopyTest {
 
         PdfReader reader = new PdfReader(output);
         PdfDictionary catalog = reader.getCatalog();
-        PdfDictionary structTreeRoot = catalog.getAsDict(PdfName.STRUCTTREEROOT);
-        PdfDictionary structParent = structTreeRoot.getAsDict(PdfName.PARENTTREE);
-        PdfArray nums = structParent.getAsArray(PdfName.NUMS);
         PdfDictionary acroForm = catalog.getAsDict(PdfName.ACROFORM);
         PdfDictionary fonts = acroForm.getAsDict(PdfName.DR).getAsDict(PdfName.FONT);
 
@@ -736,6 +743,51 @@ public class TaggedPdfCopyTest {
         PdfDictionary page1 = reader.getPageN(1);
         PdfDictionary t1_0 = page1.getAsDict(PdfName.RESOURCES).getAsDict(PdfName.XOBJECT).getAsStream(new PdfName("Fm0")).getAsDict(PdfName.RESOURCES).getAsDict(PdfName.FONT).getAsDict(new PdfName("T1_0"));
         Assert.assertNotNull(t1_0);
+
+        reader.close();
+    }
+
+    @Test
+    public void copyTaggedPdf20() throws IOException, DocumentException, ParserConfigurationException, SAXException {
+        initializeDocument("20");
+        copy.setMergeFields();
+
+        PdfReader reader2 = new PdfReader(SOURCE72);
+        copy.addDocument(reader2, java.util.Arrays.asList(1,3,5));
+        document.close();
+        reader2.close();
+
+        PdfReader reader = new PdfReader(output);
+        PdfDictionary catalog = reader.getCatalog();
+        PdfDictionary acroForm = catalog.getAsDict(PdfName.ACROFORM);
+        PdfArray acroFields = acroForm.getAsArray(PdfName.FIELDS);
+        junit.framework.Assert.assertTrue(acroFields.size() == 4);
+
+        reader.close();
+
+        compareResults("20");
+    }
+
+    @Test
+    public void copyTaggedPdf21() throws IOException, DocumentException {
+        initializeDocument("21");
+        copy.setMergeFields();
+
+        PdfReader reader1 = new PdfReader(SOURCE73);
+        copy.addDocument(reader1);
+        document.close();
+        reader1.close();
+
+        PdfReader reader = new PdfReader(output);
+        PdfDictionary page = reader.getPageN(1);
+        PdfDictionary resources = page.getAsDict(PdfName.RESOURCES);
+        PdfDictionary xObject = resources.getAsDict(PdfName.XOBJECT);
+        PdfStream img = xObject.getAsStream(new PdfName("Im0"));
+        PdfArray decodeParms = img.getAsArray(PdfName.DECODEPARMS);
+        junit.framework.Assert.assertEquals(2, decodeParms.size());
+        PdfObject iref = decodeParms.getPdfObject(0);
+        junit.framework.Assert.assertTrue(iref instanceof PdfIndirectReference);
+        junit.framework.Assert.assertTrue(reader.getPdfObjectRelease(((PdfIndirectReference)iref).getNumber()) instanceof PdfNull);
 
         reader.close();
     }

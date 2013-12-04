@@ -63,11 +63,6 @@ public class PdfStructTreeController {
 
     public static enum returnType {BELOW, FOUND, ABOVE, NOTFOUND};
 
-    public static final PdfName[] standardTypes = {PdfName.P, PdfName.H, PdfName.H1, PdfName.H2, PdfName.H3, PdfName.H4,
-            PdfName.H5, PdfName.H6, PdfName.L, PdfName.LBL, PdfName.LI, PdfName.LBODY, PdfName.TABLE, PdfName.TABLEROW,
-            PdfName.TH, PdfName.TD, PdfName.THEAD, PdfName.TBODY, PdfName.TFOOT, PdfName.SPAN, PdfName.QUOTE, PdfName.NOTE,
-            PdfName.REFERENCE, PdfName.BIBENTRY, PdfName.CODE, PdfName.LINK, PdfName.ANNOT, PdfName.RUBY, PdfName.WARICHU};
-
     protected PdfStructTreeController(PdfReader reader, PdfCopy writer) throws BadPdfFormatException {
         if (!writer.isTagged())
             throw new BadPdfFormatException(MessageLocalization.getComposedMessage("no.structtreeroot.found"));
@@ -96,11 +91,11 @@ public class PdfStructTreeController {
     static public boolean checkTagged(PdfReader reader) {
         PdfObject obj = reader.getCatalog().get(PdfName.STRUCTTREEROOT);
         obj = getDirectObject(obj);
-        if ((obj == null) || (!obj.isDictionary()))
+        if (obj == null || !obj.isDictionary())
             return false;
         PdfDictionary structTreeRoot = (PdfDictionary) obj;
         obj = PdfStructTreeController.getDirectObject(structTreeRoot.get(PdfName.PARENTTREE));
-        if (!obj.isDictionary())
+        if (obj == null || !obj.isDictionary())
             return false;
         return true;
     }
@@ -255,7 +250,7 @@ public class PdfStructTreeController {
     private void addKid(PdfObject obj) throws IOException, BadPdfFormatException {
         if (!obj.isIndirect()) return;
         PRIndirectReference currRef = (PRIndirectReference)obj;
-        PdfCopy.RefKey key =  new PdfCopy.RefKey(currRef);
+        RefKey key =  new RefKey(currRef);
         if (!writer.indirects.containsKey(key)) {
             writer.copyIndirect(currRef, true, false);
         }
@@ -407,7 +402,7 @@ public class PdfStructTreeController {
         if (structType == null) {
             return;
         }
-        for (PdfName name : standardTypes) {
+        for (PdfName name : writer.getStandardStructElems()) {
             if (name.equals(structType))
                 return;
         }

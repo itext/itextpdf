@@ -9,7 +9,7 @@
   <artifactId>itextg</artifactId>
   <packaging>jar</packaging>
   <name>iText, a Free Java-PDF library</name>
-  <version>5.4.4</version>
+  <version>5.4.5</version>
   <description>iText, a free Java-PDF library</description>
   <url>http://www.itextpdf.com/</url>
   <mailingLists>
@@ -137,6 +137,14 @@
               <Implementation-Build>${buildNumber}</Implementation-Build>
             </manifestEntries>
           </archive>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>2.19.1</version>
+        <configuration>
+          <argLine>-Xms512m -Xmx1024m</argLine>
         </configuration>
       </plugin>
     </plugins>

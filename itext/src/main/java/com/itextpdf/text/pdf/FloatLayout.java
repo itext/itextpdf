@@ -114,7 +114,6 @@ public class FloatLayout {
     public int layout(PdfContentByte canvas, boolean simulate)  throws DocumentException  {
         compositeColumn.setCanvas(canvas);
         int status = ColumnText.NO_MORE_TEXT;
-        filledWidth = 0;
 
         ArrayList<Element> floatingElements = new ArrayList<Element>();
         List<Element> content = simulate ? new ArrayList<Element>(this.content) : this.content;
@@ -143,14 +142,15 @@ public class FloatLayout {
                         canvas.closeMCBlock(floatingElement);
                     }
 
-                    yLine -= floatingElement.getActualHeight();
-
                     if (floatingElement.getActualWidth() > filledWidth) {
                         filledWidth = floatingElement.getActualWidth();
                     }
                     if ((status & ColumnText.NO_MORE_TEXT) == 0) {
                         content.add(0, floatingElement);
+                        yLine = floatingElement.getYLine();
                         break;
+                    } else {
+                        yLine -= floatingElement.getActualHeight();
                     }
                 }
             } else {

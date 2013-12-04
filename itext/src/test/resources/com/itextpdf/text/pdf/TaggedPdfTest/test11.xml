@@ -63,6 +63,7 @@
 
 
 
+
 <H1 color="[0, 0, 1]">
 <Span>1. </Span>
 <Span>First chapter</Span>
@@ -273,4 +274,8 @@
 </H3>
 <P><Span>Some text...</Span>
 </P>
+<H2>
+<Span>4.1. </Span>
+<Span>First section of a fourths chapter, the chapter itself is invisible</Span>
+</H2>
 </Document>

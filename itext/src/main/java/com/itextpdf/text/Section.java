@@ -173,7 +173,8 @@ public class Section extends ArrayList<Element> implements TextElementArray, Lar
     protected Section(final Paragraph title, final int numberDepth) {
         this.numberDepth = numberDepth;
         this.title = title;
-        title.setRole(new PdfName("H" + numberDepth));
+        if (title != null)
+            title.setRole(new PdfName("H" + numberDepth));
     }
 
     // implementation of the Element-methods

@@ -163,6 +163,7 @@ public class Table extends AbstractTagProcessor {
 			table.setHeaderRows(headerRows + footerRows);
 			table.setFooterRows(footerRows);
             table.setHorizontalAlignment(Element.ALIGN_LEFT);
+            table.setSplitLate(false);
 			TableStyleValues styleValues = setStyleValues(tag);
 			table.setTableEvent(new TableBorderEvent(styleValues));
 			setVerticalMargin(table, tag, styleValues, ctx);

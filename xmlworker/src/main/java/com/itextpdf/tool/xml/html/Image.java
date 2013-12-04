@@ -112,23 +112,6 @@ public class Image extends AbstractTagProcessor {
 				throw new RuntimeWorkerException(LocaleMessages.getInstance().getMessage(LocaleMessages.NO_CUSTOM_CONTEXT), e);
 			}
 			if (null != img) {
-				String width = attributes.get(HTML.Attribute.WIDTH);
-				float widthInPoints = utils.parsePxInCmMmPcToPt(width);
-				String height = attributes.get(HTML.Attribute.HEIGHT);
-                if (width == null || height == null)
-                    img.setScaleToFitLineWhenOverflow(true);
-                else
-                    img.setScaleToFitLineWhenOverflow(false);
-				float heightInPoints = utils.parsePxInCmMmPcToPt(height);
-				if (widthInPoints > 0 && heightInPoints > 0) {
-					img.scaleAbsolute(widthInPoints, heightInPoints);
-				} else if (widthInPoints > 0) {
-					heightInPoints = img.getHeight() * widthInPoints / img.getWidth();
-					img.scaleAbsolute(widthInPoints, heightInPoints);
-				} else if (heightInPoints > 0) {
-					widthInPoints = img.getWidth() * heightInPoints / img.getHeight();
-					img.scaleAbsolute(widthInPoints, heightInPoints);
-				}
 				try {
 					HtmlPipelineContext htmlPipelineContext = getHtmlPipelineContext(ctx);
 					l.add(getCssAppliers().apply(new Chunk((com.itextpdf.text.Image) getCssAppliers().apply(img, tag, htmlPipelineContext), 0, 0, true), tag, htmlPipelineContext));

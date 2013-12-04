@@ -359,9 +359,7 @@ public class BidiLine {
             if (ck.isImage() && minY < yLine) {
                 Image img = ck.getImage();
                 if (img.isScaleToFitHeight() && yLine + 2 * descender - img.getScaledHeight() - ck.getImageOffsetY() - img.getSpacingBefore() < minY) {
-                    //float scalePercent = (yLine + 2 * descender - ck.getImageOffsetY() - img.getSpacingBefore() - minY) / img.getHeight() * 100;
-            		//img.scalePercent(scalePercent);
-                    float scalePercent = (yLine + 2 * descender - ck.getImageOffsetY() - img.getSpacingBefore() - minY) / img.getHeight();
+                    float scalePercent = (yLine + 2 * descender - ck.getImageOffsetY() - img.getSpacingBefore() - minY) / img.getScaledHeight();
                 	ck.setImageScalePercentage(scalePercent);
                 }
             }

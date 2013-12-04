@@ -132,6 +132,11 @@ public class
     public static final PdfName AESV3 = new PdfName("AESV3");
     /**
      * A name
+     * @since 5.4.5
+     */
+    public static final PdfName AFRELATIONSHIP = new PdfName("AFRelationship");
+    /**
+     * A name
      * @since 5.0.3
      */
     public static final PdfName AHX = new PdfName("AHx");
@@ -145,6 +150,11 @@ public class
     public static final PdfName ALT = new PdfName("Alt");
     /** A name */
     public static final PdfName ALTERNATE = new PdfName("Alternate");
+    /**
+     * A name
+     * @since 5.4.5
+     */
+    public static final PdfName ALTERNATEPRESENTATION = new PdfName("AlternatePresentations");
     /**
      * A name.
      * @since 5.4.3
@@ -168,6 +178,8 @@ public class
     public static final PdfName ANTIALIAS = new PdfName("AntiAlias");
     /** A name */
     public static final PdfName AP = new PdfName("AP");
+    /** A name */
+    public static final PdfName APP = new PdfName("App");
     /** A name */
     public static final PdfName APPDEFAULT = new PdfName("AppDefault");
     /**
@@ -307,6 +319,11 @@ public class
     public static final PdfName CALRGB = new PdfName("CalRGB");
     /** A name */
     public static final PdfName CAPHEIGHT = new PdfName("CapHeight");
+    /**
+     * A name
+     * @since 5.4.5
+     */
+    public static final PdfName CARET = new PdfName("Caret");
     /**
      * A name
      * @since 2.1.6
@@ -868,6 +885,11 @@ public class
     public static final PdfName GLITTER = new PdfName("Glitter");
     /** A name of an attribute. */
     public static final PdfName GOTO = new PdfName("GoTo");
+    /**
+     * A name
+     * @since 5.4.5
+     */
+    public static final PdfName GOTO3DVIEW= new PdfName("GoTo3DView");
     /** A name of an attribute. */
     public static final PdfName GOTOE = new PdfName("GoToE");
     /** A name of an attribute. */
@@ -917,7 +939,17 @@ public class
      * @since 2.1.6
      */
     public static final PdfName H6 = new PdfName("H6");
-
+    /**
+     * A name
+     * @since 5.4.5
+     */
+    public static final PdfName HALFTONENAME = new PdfName("HalftoneName");
+    /**
+     * A name
+     * @since 5.4.5
+     */
+    public static final PdfName HALFTONETYPE = new PdfName("HalftoneType");
+    /**
     /**
      * A name.
      * @since 2.1.6
@@ -958,14 +990,24 @@ public class
     /** A name */
     public static final PdfName HIGHLIGHT = new PdfName("Highlight");
     /**
-     * A name.
+     * A name
      * @since 2.1.6
      */
     public static final PdfName HOFFSET = new PdfName("HOffset");
+    /**
+     * A name
+     * @since 5.4.5
+     */
+    public static final PdfName HT = new PdfName("HT");
+    /**
+     * A name
+     * @since 5.4.5
+     */
+    public static final PdfName HTP = new PdfName("HTP");
     /** A name */
     public static final PdfName I = new PdfName("I");
     /**
-     * A name.
+     * A name
      * @since 5.4.3
      */
     public static final PdfName IC = new PdfName("IC");
@@ -1251,6 +1293,11 @@ public class
     public static final PdfName NEAR = new PdfName("Near");
     /** A name */
     public static final PdfName NEEDAPPEARANCES = new PdfName("NeedAppearances");
+    /**
+     * A name.
+     * @since 5.4.5
+     */
+    public static final PdfName NEEDRENDERING= new PdfName("NeedsRendering");
     /** A name */
     public static final PdfName NEWWINDOW = new PdfName("NewWindow");
     /** A name */
@@ -1491,6 +1538,11 @@ public class
     public static final PdfName PRESENTATION = new PdfName("Presentation");
     /** A name */
     public static final PdfName PRESERVERB = new PdfName("PreserveRB");
+    /**
+     * A name.
+     * @since 5.4.5
+     */
+    public static final PdfName PRESSTEPS = new PdfName("PresSteps");
     /** A name */
     public static final PdfName PREV = new PdfName("Prev");
     /** A name */
@@ -1531,6 +1583,8 @@ public class
      * @since 5.1.0
      */
     public static final PdfName PROJCS = new PdfName("PROJCS");
+    /** A name */
+    public static final PdfName PROP_BUILD = new PdfName("Prop_Build");
     /** A name */
     public static final PdfName PROPERTIES = new PdfName("Properties");
     /** A name */
@@ -1604,6 +1658,7 @@ public class
     public static final PdfName RESETFORM = new PdfName("ResetForm");
     /** A name */
     public static final PdfName RESOURCES = new PdfName("Resources");
+    public static final PdfName REQUIREMENTS = new PdfName("Requirements");
     /** A name */
     public static final PdfName RI = new PdfName("RI");
     /**
@@ -1774,6 +1829,8 @@ public class
     public static final PdfName SIZE = new PdfName("Size");
     /** A name */
     public static final PdfName SMASK = new PdfName("SMask");
+
+    public static final PdfName SMASKINDATA = new PdfName("SMaskInData");
     /** A name */
     public static final PdfName SORT = new PdfName("Sort");
     /**
@@ -2190,6 +2247,11 @@ public class
      * @since 2.1.6
      */
     public static final PdfName WARICHU = new PdfName("Warichu");
+    /**
+     * A name
+     * @since 5.4.5
+     */
+    public static final PdfName WATERMARK = new PdfName("Watermark");
     /** A name of an attribute. */
     public static final PdfName WC = new PdfName("WC");
     /** A name of an attribute. */

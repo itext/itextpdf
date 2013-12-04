@@ -44,7 +44,6 @@
 package com.itextpdf.text.pdf;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.UUID;
 
 import com.itextpdf.text.AccessibleElementId;
 import com.itextpdf.text.Rectangle;

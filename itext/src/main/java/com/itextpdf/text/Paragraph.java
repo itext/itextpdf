@@ -50,7 +50,6 @@ import com.itextpdf.text.pdf.interfaces.IAccessibleElement;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.UUID;
 
 /**
  * A <CODE>Paragraph</CODE> is a series of <CODE>Chunk</CODE>s and/or <CODE>Phrases</CODE>.
@@ -82,9 +81,6 @@ public class Paragraph extends Phrase implements Indentable, Spaceable, IAccessi
 
 	/** The alignment of the text. */
     protected int alignment = Element.ALIGN_UNDEFINED;
-
-    /** The text leading that is multiplied by the biggest font size in the line. */
-    protected float multipliedLeading = 0;
 
     /** The indentation of this paragraph on the left side. */
     protected float indentationLeft;
@@ -202,7 +198,6 @@ public class Paragraph extends Phrase implements Indentable, Spaceable, IAccessi
         if (phrase instanceof Paragraph) {
         	Paragraph p = (Paragraph)phrase;
         	setAlignment(p.alignment);
-        	setLeading(phrase.getLeading(), p.multipliedLeading);
         	setIndentationLeft(p.getIndentationLeft());
         	setIndentationRight(p.getIndentationRight());
         	setFirstLineIndent(p.getFirstLineIndent());
@@ -237,6 +232,7 @@ public class Paragraph extends Phrase implements Indentable, Spaceable, IAccessi
         if (accessibleAttributes != null)
             copy.accessibleAttributes = new HashMap<PdfName, PdfObject>(accessibleAttributes);
         copy.setTabSettings(getTabSettings());
+        copy.setKeepTogether(getKeepTogether());
     	return copy;
     }
     
@@ -356,38 +352,6 @@ public class Paragraph extends Phrase implements Indentable, Spaceable, IAccessi
         this.alignment = alignment;
     }
 
-    /**
-     * @see com.itextpdf.text.Phrase#setLeading(float)
-     */
-    @Override
-    public void setLeading(float fixedLeading) {
-        this.leading = fixedLeading;
-        this.multipliedLeading = 0;
-    }
-
-    /**
-     * Sets the variable leading. The resultant leading will be
-     * multipliedLeading*maxFontSize where maxFontSize is the
-     * size of the biggest font in the line.
-     * @param multipliedLeading the variable leading
-     */
-    public void setMultipliedLeading(float multipliedLeading) {
-        this.leading = 0;
-        this.multipliedLeading = multipliedLeading;
-    }
-
-    /**
-     * Sets the leading fixed and variable. The resultant leading will be
-     * fixedLeading+multipliedLeading*maxFontSize where maxFontSize is the
-     * size of the biggest font in the line.
-     * @param fixedLeading the fixed leading
-     * @param multipliedLeading the variable leading
-     */
-    public void setLeading(float fixedLeading, float multipliedLeading) {
-        this.leading = fixedLeading;
-        this.multipliedLeading = multipliedLeading;
-    }
-
     /* (non-Javadoc)
 	 * @see com.itextpdf.text.Indentable#setIndentationLeft(float)
 	 */
@@ -451,31 +415,6 @@ public class Paragraph extends Phrase implements Indentable, Spaceable, IAccessi
      */
     public int getAlignment() {
         return alignment;
-    }
-
-    /**
-     * Gets the variable leading
-     * @return the leading
-     */
-    public float getMultipliedLeading() {
-        return multipliedLeading;
-    }
-
-    /**
-     * Gets the total leading.
-     * This method is based on the assumption that the
-     * font of the Paragraph is the font of all the elements
-     * that make part of the paragraph. This isn't necessarily
-     * true.
-     * @return the total leading (fixed and multiplied)
-     */
-    public float getTotalLeading() {
-    	float m = font == null ?
-    			Font.DEFAULTSIZE * multipliedLeading : font.getCalculatedLeading(multipliedLeading);
-    	if (m > 0 && !hasLeading()) {
-    		return m;
-    	}
-    	return getLeading() + m;
     }
 
 	/* (non-Javadoc)

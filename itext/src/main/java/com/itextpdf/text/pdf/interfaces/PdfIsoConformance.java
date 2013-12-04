@@ -43,8 +43,6 @@
  */
 package com.itextpdf.text.pdf.interfaces;
 
-import com.itextpdf.text.pdf.PdfWriter;
-
 public interface PdfIsoConformance {
 
     /**

@@ -85,9 +85,6 @@ public class NoNewLineParagraph extends Phrase {
 	/** The alignment of the text. */
     protected int alignment = Element.ALIGN_UNDEFINED;
 
-    /** The text leading that is multiplied by the biggest font size in the line. */
-    protected float multipliedLeading = 0;
-
     /** The indentation of this paragraph on the left side. */
     protected float indentationLeft;
 
@@ -198,8 +195,6 @@ public class NoNewLineParagraph extends Phrase {
         if (phrase instanceof NoNewLineParagraph) {
         	NoNewLineParagraph p = (NoNewLineParagraph)phrase;
         	alignment = p.getAlignment();
-        	leading = phrase.getLeading();
-        	multipliedLeading = p.getMultipliedLeading();
         	indentationLeft = p.getIndentationLeft();
         	indentationRight = p.getIndentationRight();
         	firstLineIndent = p.getFirstLineIndent();
@@ -210,7 +205,6 @@ public class NoNewLineParagraph extends Phrase {
         if (phrase instanceof Paragraph) {
         	Paragraph p = (Paragraph)phrase;
         	setAlignment(p.getAlignment());
-        	setLeading(phrase.getLeading(), p.getMultipliedLeading());
         	setIndentationLeft(p.getIndentationLeft());
         	setIndentationRight(p.getIndentationRight());
         	setFirstLineIndent(p.getFirstLineIndent());
@@ -247,38 +241,6 @@ public class NoNewLineParagraph extends Phrase {
      */
     public void setAlignment(final int alignment) {
         this.alignment = alignment;
-    }
-
-    /**
-     * @see com.itextpdf.text.Phrase#setLeading(float)
-     */
-    @Override
-    public void setLeading(final float fixedLeading) {
-        this.leading = fixedLeading;
-        this.multipliedLeading = 0;
-    }
-
-    /**
-     * Sets the variable leading. The resultant leading will be
-     * multipliedLeading*maxFontSize where maxFontSize is the
-     * size of the biggest font in the line.
-     * @param multipliedLeading the variable leading
-     */
-    public void setMultipliedLeading(final float multipliedLeading) {
-        this.leading = 0;
-        this.multipliedLeading = multipliedLeading;
-    }
-
-    /**
-     * Sets the leading fixed and variable. The resultant leading will be
-     * fixedLeading+multipliedLeading*maxFontSize where maxFontSize is the
-     * size of the biggest font in the line.
-     * @param fixedLeading the fixed leading
-     * @param multipliedLeading the variable leading
-     */
-    public void setLeading(final float fixedLeading, final float multipliedLeading) {
-        this.leading = fixedLeading;
-        this.multipliedLeading = multipliedLeading;
     }
 
     /**
@@ -352,31 +314,6 @@ public class NoNewLineParagraph extends Phrase {
      */
     public int getAlignment() {
         return alignment;
-    }
-
-    /**
-     * Gets the variable leading.
-     * @return the leading
-     */
-    public float getMultipliedLeading() {
-        return multipliedLeading;
-    }
-
-    /**
-     * Gets the total leading.
-     * This method is based on the assumption that the
-     * font of the Paragraph is the font of all the elements
-     * that make part of the paragraph. This isn't necessarily
-     * true.
-     * @return the total leading (fixed and multiplied)
-     */
-    public float getTotalLeading() {
-    	float m = font == null ?
-    			Font.DEFAULTSIZE * multipliedLeading : font.getCalculatedLeading(multipliedLeading);
-    	if (m > 0 && !hasLeading()) {
-    		return m;
-    	}
-    	return getLeading() + m;
     }
 
 	/**

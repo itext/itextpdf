@@ -48,7 +48,6 @@ import com.itextpdf.text.pdf.PdfName;
 import com.itextpdf.text.pdf.PdfObject;
 
 import java.util.HashMap;
-import java.util.UUID;
 
 /**
  * Describes accessible element.
