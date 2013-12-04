@@ -343,46 +343,5 @@ public class Barcode39 extends Barcode{
         return getBarcodeSize();
     }
 
-    // AWT related methods (remove this if you port to Android / GAE)
-    
-    /** Creates a <CODE>java.awt.Image</CODE>. This image only
-     * contains the bars without any text.
-     * @param foreground the color of the bars
-     * @param background the color of the background
-     * @return the image
-     */    
-    public java.awt.Image createAwtImage(java.awt.Color foreground, java.awt.Color background) {
-        int f = foreground.getRGB();
-        int g = background.getRGB();
-        java.awt.Canvas canvas = new java.awt.Canvas();
 
-        String bCode = code;
-        if (extended)
-            bCode = getCode39Ex(code);
-        if (generateChecksum)
-            bCode += getChecksum(bCode);
-        int len = bCode.length() + 2;
-        int nn = (int)n;
-        int fullWidth = len * (6 + 3 * nn) + (len - 1);
-        byte bars[] = getBarsCode39(bCode);
-        boolean print = true;
-        int ptr = 0;
-        int height = (int)barHeight;
-        int pix[] = new int[fullWidth * height];
-        for (int k = 0; k < bars.length; ++k) {
-            int w = (bars[k] == 0 ? 1 : nn);
-            int c = g;
-            if (print)
-                c = f;
-            print = !print;
-            for (int j = 0; j < w; ++j)
-                pix[ptr++] = c;
-        }
-        for (int k = fullWidth; k < pix.length; k += fullWidth) {
-            System.arraycopy(pix, 0, pix, k, fullWidth); 
-        }
-        java.awt.Image img = canvas.createImage(new java.awt.image.MemoryImageSource(fullWidth, height, pix, 0, fullWidth));
-        
-        return img;
-    }    
 }

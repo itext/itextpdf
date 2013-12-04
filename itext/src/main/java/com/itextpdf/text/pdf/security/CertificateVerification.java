@@ -55,10 +55,10 @@ import java.util.Enumeration;
 import java.util.GregorianCalendar;
 import java.util.List;
 
-import org.bouncycastle.cert.ocsp.BasicOCSPResp;
-import org.bouncycastle.cms.jcajce.JcaSimpleSignerInfoVerifierBuilder;
-import org.bouncycastle.operator.jcajce.JcaContentVerifierProviderBuilder;
-import org.bouncycastle.tsp.TimeStampToken;
+import org.spongycastle.cert.ocsp.BasicOCSPResp;
+import org.spongycastle.cms.jcajce.JcaSimpleSignerInfoVerifierBuilder;
+import org.spongycastle.operator.jcajce.JcaContentVerifierProviderBuilder;
+import org.spongycastle.tsp.TimeStampToken;
 
 /**
  * This class consists of some methods that allow you to verify certificates.

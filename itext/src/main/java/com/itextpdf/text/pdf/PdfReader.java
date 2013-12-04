@@ -58,9 +58,9 @@ import com.itextpdf.text.log.*;
 import com.itextpdf.text.pdf.PRTokeniser.TokenType;
 import com.itextpdf.text.pdf.interfaces.PdfViewerPreferences;
 import com.itextpdf.text.pdf.internal.PdfViewerPreferencesImp;
-import org.bouncycastle.cert.X509CertificateHolder;
-import org.bouncycastle.cms.CMSEnvelopedData;
-import org.bouncycastle.cms.RecipientInformation;
+import org.spongycastle.cert.X509CertificateHolder;
+import org.spongycastle.cms.CMSEnvelopedData;
+import org.spongycastle.cms.RecipientInformation;
 
 import java.io.*;
 import java.net.URL;
