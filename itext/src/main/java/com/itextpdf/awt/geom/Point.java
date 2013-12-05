@@ -101,7 +101,7 @@ public class Point extends Point2D implements Serializable {
     }
 
     public void translate(int dx, int dy) {
-        translate((double)x, (double)y);
+        translate((double)dx, (double)dy);
     }
     public void translate(double dx, double dy) {
         x += dx;
