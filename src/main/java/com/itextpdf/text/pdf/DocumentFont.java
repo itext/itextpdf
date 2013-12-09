@@ -474,7 +474,12 @@ public class DocumentFont extends BaseFont {
     }
 
     private void fillEncoding(PdfName encoding) {
-        if (PdfName.MAC_ROMAN_ENCODING.equals(encoding) || PdfName.WIN_ANSI_ENCODING.equals(encoding)) {
+        if (encoding == null && isSymbolic()) {
+            for (int k = 0; k < 256; ++k) {
+                uni2byte.put(k, k);
+                byte2uni.put(k, k);
+            }
+        } else if (PdfName.MAC_ROMAN_ENCODING.equals(encoding) || PdfName.WIN_ANSI_ENCODING.equals(encoding)) {
             byte b[] = new byte[256];
             for (int k = 0; k < 256; ++k)
                 b[k] = (byte)k;
@@ -848,5 +853,15 @@ public class DocumentFont extends BaseFont {
      */
     IntHashtable getDiffmap() {
         return diffmap;
+    }
+
+    boolean isSymbolic() {
+        PdfDictionary fontDescriptor = font.getAsDict(PdfName.FONTDESCRIPTOR);
+        if (fontDescriptor == null)
+            return false;
+        PdfNumber flags = fontDescriptor.getAsNumber(PdfName.FLAGS);
+        if (flags == null)
+            return false;
+        return (flags.intValue() & 0x04) != 0;
     }
 }
