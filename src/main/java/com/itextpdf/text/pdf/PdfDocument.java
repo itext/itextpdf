@@ -1657,11 +1657,12 @@ public class PdfDocument extends Document {
                         	Float ws = (Float) chunk.getAttribute(Chunk.WORD_SPACING);
         					text.setWordSpacing(ws.floatValue());
         				}
+
+                        if (chunk.isAttribute(Chunk.CHAR_SPACING)) {
+                            Float cs = (Float) chunk.getAttribute(Chunk.CHAR_SPACING);
+                            text.setCharacterSpacing(cs.floatValue());
+                        }
                     }
-                    if (chunk.isAttribute(Chunk.CHAR_SPACING)) {
-                    	Float cs = (Float) chunk.getAttribute(Chunk.CHAR_SPACING);
-						text.setCharacterSpacing(cs.floatValue());
-					}
                     if (chunk.isImage()) {
                         Image image = chunk.getImage();
                         width = chunk.getImageWidth();
@@ -1770,11 +1771,13 @@ public class PdfDocument extends Document {
                 adjustMatrix = true;
                 text.setTextMatrix(xMarker, yMarker);
             }
-            if (chunk.isAttribute(Chunk.CHAR_SPACING)) {
-				text.setCharacterSpacing(baseCharacterSpacing);
-            }
-            if (chunk.isAttribute(Chunk.WORD_SPACING)) {
-				text.setWordSpacing(baseWordSpacing);
+            if (!isJustified) {
+                if (chunk.isAttribute(Chunk.CHAR_SPACING)) {
+                    text.setCharacterSpacing(baseCharacterSpacing);
+                }
+                if (chunk.isAttribute(Chunk.WORD_SPACING)) {
+                    text.setWordSpacing(baseWordSpacing);
+                }
             }
             if (isTagged(writer) && chunk.accessibleElement != null) {
                 text.closeMCBlock(chunk.accessibleElement);
