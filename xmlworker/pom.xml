@@ -113,7 +113,10 @@
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>2.9</version>
 				<configuration>
-					<excludes>
+                    <includes>
+                        <include>**/*.java</include>
+                    </includes>
+                    <excludes>
 						<exclude>examples/*.java</exclude>
                         <exclude>com/itextpdf/tool/xml/examples/*.java</exclude>
 						<exclude>com/itextpdf/tool/xml/examples/css/div/*.java</exclude>
