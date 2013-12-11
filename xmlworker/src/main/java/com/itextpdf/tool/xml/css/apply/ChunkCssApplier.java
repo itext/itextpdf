@@ -100,7 +100,14 @@ public class ChunkCssApplier {
                     c.setSkew(0, 12);
                 }
             } else if (CSS.Property.LETTER_SPACING.equalsIgnoreCase(key)) {
-                c.setCharacterSpacing(utils.parsePxInCmMmPcToPt(value));
+                String letterSpacing = rules.get(CSS.Property.LETTER_SPACING);
+                float letterSpacingValue = 0f;
+                if (utils.isRelativeValue(value)) {
+                    letterSpacingValue = utils.parseRelativeValue(letterSpacing, f.getSize());
+                } else if (utils.isMetricValue(value)){
+                    letterSpacingValue = utils.parsePxInCmMmPcToPt(letterSpacing);
+                }
+                c.setCharacterSpacing(letterSpacingValue);
             } else if (null != rules.get(CSS.Property.XFA_FONT_HORIZONTAL_SCALE)) { // only % allowed; need a catch block NumberFormatExc?
                 c.setHorizontalScaling(Float.parseFloat(rules.get(CSS.Property.XFA_FONT_HORIZONTAL_SCALE).replace("%", "")) / 100);
             }
