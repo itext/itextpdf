@@ -71,8 +71,14 @@ import com.itextpdf.text.pdf.interfaces.PdfXConformance;
 import com.itextpdf.text.pdf.internal.PdfIsoKeys;
 import com.itextpdf.text.pdf.internal.PdfVersionImp;
 import com.itextpdf.text.pdf.internal.PdfXConformanceImp;
+import com.itextpdf.text.xml.xmp.PdfProperties;
 import com.itextpdf.text.xml.xmp.XmpWriter;
+import com.itextpdf.xmp.XMPConst;
 import com.itextpdf.xmp.XMPException;
+import com.itextpdf.xmp.XMPMeta;
+import com.itextpdf.xmp.impl.XMPMetaImpl;
+import com.itextpdf.xmp.impl.XMPNode;
+import com.itextpdf.xmp.options.PropertyOptions;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -1840,6 +1846,13 @@ public class PdfWriter extends DocWriter implements
     public void createXmpMetadata() {
         try {
             xmpWriter = createXmpWriter(null, pdf.getInfo());
+            if (isTagged()) {
+                try {
+                    xmpWriter.getXmpMeta().setPropertyInteger(XMPConst.NS_PDFUA_ID, PdfProperties.PART, 1, new PropertyOptions(PropertyOptions.SEPARATE_NODE));
+                } catch (XMPException e) {
+                    throw new ExceptionConverter(e);
+                }
+            }
             xmpMetadata = null;
         } catch (IOException ioe) {
             ioe.printStackTrace();
