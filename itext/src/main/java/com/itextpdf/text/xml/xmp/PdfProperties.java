@@ -54,6 +54,7 @@ public class PdfProperties {
     public static final String VERSION = "PDFVersion";
     /** The Producer. */
     public static final String PRODUCER = "Producer";
+    public static final String PART = "part";
 
     /**
      * Adds keywords.
