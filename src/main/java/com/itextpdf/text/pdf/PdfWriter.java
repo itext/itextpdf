@@ -75,9 +75,6 @@ import com.itextpdf.text.xml.xmp.PdfProperties;
 import com.itextpdf.text.xml.xmp.XmpWriter;
 import com.itextpdf.xmp.XMPConst;
 import com.itextpdf.xmp.XMPException;
-import com.itextpdf.xmp.XMPMeta;
-import com.itextpdf.xmp.impl.XMPMetaImpl;
-import com.itextpdf.xmp.impl.XMPNode;
 import com.itextpdf.xmp.options.PropertyOptions;
 
 import java.io.ByteArrayOutputStream;
