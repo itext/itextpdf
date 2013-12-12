@@ -111,7 +111,7 @@ public class CssSelectorTest {
 		Assert.assertTrue("Not found root", rootSelectors.contains("root"));
 		Assert.assertTrue("Not found rootId", rootSelectors.contains("#rootId"));
 		Assert.assertTrue("Not found rootClass", rootSelectors.contains(".rootClass"));
-		Assert.assertEquals("Too many entries",3,  rootSelectors.size());
+		Assert.assertEquals("Too many entries",5,  rootSelectors.size());
 	}
 
 	@Test
@@ -119,7 +119,7 @@ public class CssSelectorTest {
 		Tag t = new Tag("dummy");
 		t.getAttributes().put("class", "klass1 klass2 klass3");
 		Set<String> set = css.createClassSelectors(t);
-		Assert.assertEquals("should have found 3 selectors", 3, set.size());
+		Assert.assertEquals("should have found 6 selectors", 6, set.size());
 	}
 
 }

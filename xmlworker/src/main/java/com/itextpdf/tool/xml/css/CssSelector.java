@@ -215,6 +215,9 @@ public class CssSelector {
 				StringBuilder builder = new StringBuilder();
 				builder.append('.').append(klass);
 				set.add(builder.toString());
+				builder = new StringBuilder();
+                builder.append(t.getName()).append('.').append(klass);
+                set.add(builder.toString());
 			}
 		}
 		return set;
@@ -232,6 +235,9 @@ public class CssSelector {
 			StringBuilder builder = new StringBuilder();
 			builder.append('#').append(id);
 			set.add(builder.toString());
+            builder = new StringBuilder();
+            builder.append(t.getName()).append('#').append(id);
+            set.add(builder.toString());
 		}
 		return set;
 	}
