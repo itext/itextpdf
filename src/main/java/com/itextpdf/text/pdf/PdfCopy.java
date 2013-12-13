@@ -841,7 +841,7 @@ public class PdfCopy extends PdfWriter {
                         PdfDictionary dict = (PdfDictionary)iobj.object;
                         PdfIndirectReference pg = (PdfIndirectReference)dict.get(PdfName.PG);
                         //if pg is real page - do nothing, else set correct pg and remove first MCID if exists
-                        if (!pageReferences.contains(pg) && !pg.equals(currPage)){
+                        if (pg != null && !pageReferences.contains(pg) && !pg.equals(currPage)){
                             dict.put(PdfName.PG, currPage);
                             PdfArray kids = dict.getAsArray(PdfName.K);
                             if (kids != null) {
