@@ -118,6 +118,7 @@ public class PdfCopy extends PdfWriter {
     static private int annotIdCnt = 0;
 
     protected boolean mergeFields = false;
+    private boolean needAppearances = false;
     private boolean hasSignature;
     private PdfIndirectReference acroForm;
     private HashMap<PdfArray, ArrayList<Integer>> tabOrder;
@@ -700,6 +701,12 @@ public class PdfCopy extends PdfWriter {
                     }
                 }
             }
+            AcroFields acro = reader.getAcroFields();
+            // when a document with NeedAppearances is encountered, the flag is set
+            // in the resulting document.
+            boolean needapp = !acro.isGenerateAppearances();
+            if (needapp)
+                needAppearances = true;
             fields.add(reader.getAcroFields());
             updateCalculationOrder(reader);
         }
@@ -1313,6 +1320,9 @@ public class PdfCopy extends PdfWriter {
         PdfDictionary form = new PdfDictionary();
         form.put(PdfName.DR, propagate(resources));
 
+        if (needAppearances) {
+            form.put(PdfName.NEEDAPPEARANCES, PdfBoolean.PDFTRUE);
+        }
         form.put(PdfName.DA, new PdfString("/Helv 0 Tf 0 g "));
         tabOrder = new HashMap<PdfArray, ArrayList<Integer>>();
         calculationOrderRefs = new ArrayList<Object>(calculationOrder);
