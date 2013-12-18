@@ -48,17 +48,20 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 
-import com.itextpdf.text.DocumentException;
 import junit.framework.Assert;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.itextpdf.testutils.TestResourceUtils;
 import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.PageSize;
 
 /**
@@ -131,6 +134,33 @@ public class PdfCopyTest {
         Assert.assertTrue(decodeParms.getPdfObject(0) instanceof PdfNull);
 
         reader.close();
+    }
+    
+    @Test
+    @Ignore
+    public void testNeedAppearances() throws DocumentException, IOException, InterruptedException {
+        String f1 = "./src/test/resources/com/itextpdf/text/pdf/PdfCopyTest/appearances1.pdf";
+        String f2 = "./src/test/resources/com/itextpdf/text/pdf/PdfCopyTest/appearances2.pdf";
+        String f3 = "./src/test/resources/com/itextpdf/text/pdf/PdfCopyTest/appearances3.pdf";
+        String f4 = "./src/test/resources/com/itextpdf/text/pdf/PdfCopyTest/appearances4.pdf";
+
+        new File("./target/com/itextpdf/test/pdf/PdfCopyTest/").mkdirs();
+        FileOutputStream outputPdfStream = new FileOutputStream("./target/com/itextpdf/test/pdf/PdfCopyTest/appearances.pdf");
+        Document document = new Document();
+        PdfCopy copy = new PdfCopy(document, outputPdfStream);
+        copy.setMergeFields();
+        document.open();
+        for (String f : new String[] {f1, f2, f3, f4}) {
+            PdfReader r = new PdfReader(f);
+            copy.addDocument(r);
+        }
+        copy.close();
+        //TODO
+        //CompareTool compareTool = new CompareTool("./target/com/itextpdf/test/pdf/PdfCopyTest/appearances.pdf", "./src/test/resources/com/itextpdf/text/pdf/PdfCopyTest/cmp_appearances.pdf");
+        //String errorMessage = compareTool.compare("./target/com/itextpdf/test/pdf/PdfCopyTest/", "diff");
+        //if (errorMessage != null) {
+        //    Assert.fail(errorMessage);
+        //}
     }
 
     private static byte[] createImagePdf() throws Exception {
