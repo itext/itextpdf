@@ -7,13 +7,13 @@
 dog. A very long line appears here
 because we need new line.</Span>
 </TD>
-<TD width="209.2" o="/Table"><Figure bBox="[0, 0, 106, 61]" width="106" height="61"></Figure>
+<TD width="209.2" o="/Table"><Figure bBox="[0, 0, 106, 61]" width="106" o="/Layout" height="61"></Figure>
 </TD>
 </TR>
 <TR o="/Table">
 <TD width="209.2" o="/Table"><Span>jumped over a lazy</Span>
 </TD>
-<TD width="209.2" o="/Table"><Figure bBox="[0, 0, 106, 61]" width="106" height="61"></Figure>
+<TD width="209.2" o="/Table"><Figure bBox="[0, 0, 106, 61]" width="106" o="/Layout" height="61"></Figure>
 </TD>
 </TR>
 <TR o="/Table">
@@ -27,14 +27,14 @@ long line appears
 here because we
 need new line.</Span>
 </TD>
-<TD width="102.6" o="/Table"><Figure bBox="[0, 0, 106, 61]" width="106" height="61"></Figure>
+<TD width="102.6" o="/Table"><Figure bBox="[0, 0, 106, 61]" width="106" o="/Layout" height="61"></Figure>
 </TD>
 </TR>
 <TR o="/Table">
 <TD width="102.6" o="/Table"><Span>jumped over a
 lazy</Span>
 </TD>
-<TD width="102.6" o="/Table"><Figure bBox="[0, 0, 106, 61]" width="106" height="61"></Figure>
+<TD width="102.6" o="/Table"><Figure bBox="[0, 0, 106, 61]" width="106" o="/Layout" height="61"></Figure>
 </TD>
 </TR>
 <TR o="/Table">

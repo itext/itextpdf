@@ -456,7 +456,10 @@ public class PdfDiv implements Element, Spaceable, IAccessibleElement {
                 if (backgroundWidth > 0 && backgroundHeight > 0) {
                     Rectangle background = new Rectangle(leftX, maxY - backgroundHeight, leftX + backgroundWidth, maxY);
                     background.setBackgroundColor(backgroundColor);
+                    PdfArtifact artifact = new PdfArtifact();
+                    canvas.openMCBlock(artifact);
                     canvas.rectangle(background);
+                    canvas.closeMCBlock(artifact);
                 }
             }
         }

@@ -1,6 +1,6 @@
 <Document>
 
-<Div><P><Span textDecorationThickness="1.2" textDecorationType="/Underline" backgroundColor="[1, 0, 1]" color="[1, 0.78431, 0]" textDecorationColor="[1, 0.68627, 0.68627]">Hello tagged world!</Span>
+<Div><P><Span textDecorationThickness="1.2" textDecorationType="/Underline" backgroundColor="[1, 0, 1]" o="/Layout" color="[1, 0.78431, 0]" textDecorationColor="[1, 0.68627, 0.68627]">Hello tagged world!</Span>
 </P>
 </Div>
 <P><Span>This paragraph appears between 2 div blocks</Span>
