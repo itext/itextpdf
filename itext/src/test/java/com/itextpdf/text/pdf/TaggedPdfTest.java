@@ -73,9 +73,9 @@ public class TaggedPdfTest {
 
         //Required for PDF/UA
         writer.setViewerPreferences(PdfWriter.DisplayDocTitle);
-        writer.createXmpMetadata();
         document.addLanguage("en-US");
         document.addTitle("Some title");
+        writer.createXmpMetadata();
         Chunk c = new Chunk("Document Header", new Font(Font.FontFamily.HELVETICA,14,Font.BOLD,BaseColor.BLUE));
         c.setRole(null);
         h1 = new Paragraph(c);

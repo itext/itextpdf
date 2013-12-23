@@ -4,8 +4,8 @@
 
 
 <TextBlock>Quick brown </TextBlock>
-<Image bBox="[0, 0, 106, 61]" width="106" height="61"></Image>
+<Image bBox="[0, 0, 106, 61]" width="106" o="/Layout" height="61"></Image>
 <Span> jumped over a lazy </Span>
-<Figure bBox="[0, 0, 106, 61]" width="106" height="61"></Figure>
+<Figure bBox="[0, 0, 106, 61]" width="106" o="/Layout" height="61"></Figure>
 </Paragraph>
 </Document>

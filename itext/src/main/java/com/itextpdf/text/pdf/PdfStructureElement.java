@@ -253,6 +253,8 @@ public class PdfStructureElement extends PdfDictionary implements IPdfStructureE
             writeAttributes((PdfPTableBody)element);
         } else if (element instanceof PdfDiv) {
             writeAttributes((PdfDiv)element);
+        } else if (element instanceof PdfTemplate) {
+            writeAttributes((PdfTemplate)element);
         } else if (element instanceof Document) {
             writeAttributes((Document)element);
         }
@@ -274,6 +276,7 @@ public class PdfStructureElement extends PdfDictionary implements IPdfStructureE
             } else {
                 HashMap<String, Object> attr = chunk.getAttributes();
                 if (attr != null){
+                    this.setAttribute(PdfName.O, PdfName.LAYOUT);
                     // Setting non-inheritable attributes
                     if (attr.containsKey(Chunk.UNDERLINE)){
                         this.setAttribute(PdfName.TEXTDECORATIONTYPE, PdfName.UNDERLINE);
@@ -334,6 +337,7 @@ public class PdfStructureElement extends PdfDictionary implements IPdfStructureE
 
     private void writeAttributes(final Image image) {
         if (image != null) {
+            this.setAttribute(PdfName.O, PdfName.LAYOUT);
             if (image.getWidth() > 0){
                 this.setAttribute(PdfName.WIDTH, new PdfNumber(image.getWidth()));
             }
@@ -346,6 +350,20 @@ public class PdfStructureElement extends PdfDictionary implements IPdfStructureE
                 BaseColor color = image.getBackgroundColor();
                 this.setAttribute(PdfName.BACKGROUNDCOLOR, new PdfArray(new float[] {color.getRed()/255f, color.getGreen()/255f, color.getBlue()/255f}) );
             }
+        }
+    }
+
+    private void writeAttributes(final PdfTemplate template) {
+        if (template != null) {
+            this.setAttribute(PdfName.O, PdfName.LAYOUT);
+            if (template.getWidth() > 0){
+                this.setAttribute(PdfName.WIDTH, new PdfNumber(template.getWidth()));
+            }
+            if (template.getHeight() > 0){
+                this.setAttribute(PdfName.HEIGHT, new PdfNumber(template.getHeight()));
+            }
+            PdfRectangle rect = new PdfRectangle(template.getBoundingBox());
+            this.setAttribute(PdfName.BBOX, rect);
         }
     }
 

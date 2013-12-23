@@ -1120,6 +1120,11 @@ public class
     public static final PdfName LAUNCH = new PdfName("Launch");
     /**
      * A name
+     * @since 5.4.6
+     */
+    public static final PdfName LAYOUT = new PdfName("Layout");
+    /**
+     * A name
      * @since 2.1.6
      */
     public static final PdfName LBL = new PdfName("Lbl");
