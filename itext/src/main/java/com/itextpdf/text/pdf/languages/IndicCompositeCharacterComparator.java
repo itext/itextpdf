@@ -56,16 +56,16 @@ import java.util.Comparator;
  * of Characters before the one with lower no. This is necessay to properly display the CompositeCharacters
  * when they occur side by side.
  * </p>
- * <p>
- * <h3>Examples of CompositeCharactes from Bangla</h3>
- * <ul>
- * <li><b>à¦?à§?à¦?</b></li>
- * <li><b>à¦?à§?</b></li>
- * <li><b>à¦?à§?à¦·à§?à¦®</b></li>
- * <li><b>à¦?à§?à¦·</b></li>
- * </ul>
- * </p>
- *  
+// * <p>
+// * <h3>Examples of CompositeCharactes from Bangla</h3>
+// * <ul>
+// * <li><b>ï¿½?ï¿½?ï¿½?</b></li>
+// * <li><b>ï¿½?ï¿½?</b></li>
+// * <li><b>ï¿½?ï¿½?à¦·ï¿½?à¦®</b></li>
+// * <li><b>ï¿½?ï¿½?à¦·</b></li>
+// * </ul>
+// * </p>
+ *
  * @author <a href="mailto:paawak@gmail.com">Palash Ray</a>
  */
 public class IndicCompositeCharacterComparator implements Comparator<String> {
