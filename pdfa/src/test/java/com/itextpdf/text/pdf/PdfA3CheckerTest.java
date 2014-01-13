@@ -123,4 +123,27 @@ public class PdfA3CheckerTest {
         if (!exceptionThrown)
             Assert.fail("PdfAConformanceException with correct message should be thrown.");
     }
+
+    @Test
+    public void fileSpecCheckTest6() throws DocumentException, IOException {
+        Document document = new Document();
+        PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream("./target/fileSpecCheckTest2.pdf"), PdfAConformanceLevel.PDF_A_3B);
+        writer.createXmpMetadata();
+        document.open();
+
+        Font font = FontFactory.getFont("./src/test/resources/com/itextpdf/text/pdf/FreeMonoBold.ttf", BaseFont.WINANSI, BaseFont.EMBEDDED, 12);
+        document.add(new Paragraph("Hello World", font));
+        ICC_Profile icc = ICC_Profile.getInstance(new FileInputStream("./src/test/resources/com/itextpdf/text/pdf/sRGB Color Space Profile.icm"));
+        writer.setOutputIntents("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", icc);
+
+        PdfDictionary params = new PdfDictionary();
+        params.put(PdfName.MODDATE, new PdfDate());
+        PdfFileSpecification fileSpec = PdfFileSpecification.fileEmbedded(
+                writer, "./src/test/resources/com/itextpdf/text/pdf/foo.xml", "foo.xml", null, false, "text/xml", params);
+        fileSpec.put(PdfName.AFRELATIONSHIP, AFRelationshipValue.Data);
+
+        writer.addFileAttachment(fileSpec);
+
+        document.close();
+    }
 }

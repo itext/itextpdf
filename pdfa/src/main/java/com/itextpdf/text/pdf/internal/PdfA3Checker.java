@@ -102,13 +102,14 @@ public class PdfA3Checker extends PdfA2Checker {
     }
 
     protected void checkEmbeddedFile(PdfDictionary embeddedFile) {
-        PdfDictionary params = getDirectDictionary(embeddedFile.get(PdfName.PARAMS));
+        PdfObject params = getDirectObject(embeddedFile.get(PdfName.PARAMS));
         if (params == null) {
             throw new PdfAConformanceException(embeddedFile, MessageLocalization.getComposedMessage("embedded.file.shall.contain.valid.params.key"));
-        }
-        PdfObject modDate = params.get(PdfName.MODDATE);
-        if (modDate == null || !(modDate instanceof PdfDate)) {
-            throw new PdfAConformanceException(embeddedFile, MessageLocalization.getComposedMessage("embedded.file.shall.contain.params.key.with.valid.moddate.key"));
+        } else if (params.isDictionary()){
+            PdfObject modDate = ((PdfDictionary)params).get(PdfName.MODDATE);
+            if (modDate == null || !(modDate instanceof PdfDate)) {
+                throw new PdfAConformanceException(embeddedFile, MessageLocalization.getComposedMessage("embedded.file.shall.contain.params.key.with.valid.moddate.key"));
+            }
         }
     }
 
