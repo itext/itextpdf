@@ -1,17 +1,16 @@
 /*
- * $Id$
+ * $Id: CompareTool.java 6062 2013-11-06 14:24:47Z eugenemark $
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2014 iText Group NV
+ * Copyright (c) 1998-2013 1T3XT BVBA
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License version 3
  * as published by the Free Software Foundation with the addition of the
  * following permission added to Section 15 as permitted in Section 7(a):
- * FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY
- * ITEXT GROUP. ITEXT GROUP DISCLAIMS THE WARRANTY OF NON INFRINGEMENT
- * OF THIRD PARTY RIGHTS
+ * FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY 1T3XT,
+ * 1T3XT DISCLAIMS THE WARRANTY OF NON INFRINGEMENT OF THIRD PARTY RIGHTS.
  *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
@@ -42,11 +41,14 @@
  * For more information, please contact iText Software Corp. at this
  * address: sales@itextpdf.com
  */
-package com.itextpdf.text.pdf;
+package com.itextpdf.testutils;
 
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Rectangle;
+import com.itextpdf.text.pdf.PdfContentByte;
+import com.itextpdf.text.pdf.PdfReader;
+import com.itextpdf.text.pdf.PdfStamper;
 import com.itextpdf.text.xml.xmp.PdfProperties;
 import com.itextpdf.text.xml.xmp.XmpBasicProperties;
 import com.itextpdf.xmp.*;
@@ -65,20 +67,21 @@ import java.util.Map;
 /**
  * Helper class for tests: uses ghostscript to compare PDFs at a pixel level.
  */
+@SuppressWarnings("ResultOfMethodCallIgnored")
 public class CompareTool {
 
     private String gsExec;
     private String compareExec;
-    private String gsParams = " -dNOPAUSE -dBATCH -sDEVICE=png16m -r150 -sOutputFile=<outputfile> <inputfile>";
-    private String compareParams = " <image1> <image2> <difference>";
+    private final String gsParams = " -dNOPAUSE -dBATCH -sDEVICE=png16m -r150 -sOutputFile=<outputfile> <inputfile>";
+    private final String compareParams = " <image1> <image2> <difference>";
 
-    static private String cannotOpenTargetDirectory = "Cannot open target directory for <filename>.";
-    static private String gsFailed = "GhostScript failed for <filename>.";
-    static private String unexpectedNumberOfPages = "Unexpected number of pages for <filename>.";
-    static private String differentPages = "File <filename> differs on page <pagenumber>.";
-    static private String undefinedGsPath = "Path to GhostScript is not specified. Please use -DgsExec=<path_to_ghostscript> (e.g. -DgsExec=\"C:/Program Files/gs/gs8.64/bin/gswin32c.exe\")";
+    static private final String cannotOpenTargetDirectory = "Cannot open target directory for <filename>.";
+    static private final String gsFailed = "GhostScript failed for <filename>.";
+    static private final String unexpectedNumberOfPages = "Unexpected number of pages for <filename>.";
+    static private final String differentPages = "File <filename> differs on page <pagenumber>.";
+    static private final String undefinedGsPath = "Path to GhostScript is not specified. Please use -DgsExec=<path_to_ghostscript> (e.g. -DgsExec=\"C:/Program Files/gs/gs8.64/bin/gswin32c.exe\")";
 
-    static private String ignoredAreasPrefix = "ignored_areas_";
+    static private final String ignoredAreasPrefix = "ignored_areas_";
 
     private String cmpPdf;
     private String cmpPdfName;
@@ -240,7 +243,7 @@ public class CompareTool {
                         return differentPagesFail;
                     } else {
                         if (bUnexpectedNumberOfPages)
-                            return unexpectedNumberOfPages.replace("<filename>", outPdf) + "\n" + differentPagesFail;
+                            return unexpectedNumberOfPages.replace("<filename>", outPdf);
                     }
                 } else {
                     return gsFailed.replace("<filename>", outPdf);
@@ -338,14 +341,15 @@ public class CompareTool {
         outPdfName =  new File(outPdf).getName();
         cmpPdfName = new File(cmpPdf).getName();
         outImage = outPdfName + "-%03d.png";
-        cmpImage = "cmp_" + cmpPdfName + "-%03d.png";
+        if (cmpPdfName.startsWith("cmp_")) cmpImage = cmpPdfName + "-%03d.png";
+        else cmpImage = "cmp_" + cmpPdfName + "-%03d.png";
     }
 
     private boolean compareStreams(InputStream is1, InputStream is2) throws IOException {
         byte[] buffer1 = new byte[64 * 1024];
         byte[] buffer2 = new byte[64 * 1024];
-        int len1 = 0;
-        int len2 = 0;
+        int len1;
+        int len2;
         for (; ;) {
             len1 = is1.read(buffer1);
             len2 = is2.read(buffer2);
@@ -353,7 +357,7 @@ public class CompareTool {
                 return false;
             if (!Arrays.equals(buffer1, buffer2))
                 return false;
-            if (len1 == -1 || len2 == -1)
+            if (len1 == -1)
                 break;
         }
         return true;
