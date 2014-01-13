@@ -74,7 +74,7 @@ import com.itextpdf.tool.xml.pipeline.html.HtmlPipelineContext;
  *
  */
 public class HTMLWorkerFactoryTest {
-    public static final String RESOURCE_TEST_PATH = "./target/test-classes/";
+    public static final String RESOURCE_TEST_PATH = "./src/test/resources/";
 //	public static final String SNIPPETS = "/snippets/";
 	public static final String SNIPPETS = "/bugs/";
 
@@ -128,15 +128,14 @@ public class HTMLWorkerFactoryTest {
 
 	@Test
 	public void parseXfaOnlyXML() throws IOException {
-		BufferedInputStream bis = new BufferedInputStream(HTMLWorkerFactoryTest.class.getResourceAsStream(SNIPPETS+TEST+"snippet.html"));
+		BufferedInputStream bis = new BufferedInputStream(HTMLWorkerFactoryTest.class.getResourceAsStream(String.format("%s%ssnippet.html", SNIPPETS, TEST)));
 		final Document doc = new Document(PageSize.A4);
 		float margin = utils.parseRelativeValue("10%", PageSize.A4.getWidth());
 		doc.setMargins(margin, margin, margin, margin);
 		PdfWriter writer = null;
 		try {
             writer = PdfWriter.getInstance(doc, new FileOutputStream(
-                    RESOURCE_TEST_PATH
-                            +TEST+"Test.pdf"));
+                    String.format("%s%sTest.pdf", RESOURCE_TEST_PATH, TEST)));
 		} catch (DocumentException e) {
 			e.printStackTrace();
 		}

@@ -21,7 +21,6 @@ import org.junit.Ignore;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.nio.charset.Charset;
 
 @Ignore
@@ -30,7 +29,8 @@ public class ComplexDiv01Test extends SampleTest {
         return "complexDiv01";
     }
 
-    protected void transformHtml2Pdf() throws IOException, DocumentException, InterruptedException {
+    @Override
+    protected void makePdf(String outPdf) throws Exception {
         Document doc = new Document(PageSize.A3.rotate());
 
         PdfWriter pdfWriter = PdfWriter.getInstance(doc, new FileOutputStream(outPdf));
@@ -41,8 +41,8 @@ public class ComplexDiv01Test extends SampleTest {
 
 
         CssFilesImpl cssFiles = new CssFilesImpl();
-        cssFiles.add(XMLWorkerHelper.getCSS(new FileInputStream("." + File.separator + "target" + File.separator + "test-classes" + File.separator + testPath + testName + File.separator + "complexDiv_files" + File.separator + "main.css")));
-        cssFiles.add(XMLWorkerHelper.getCSS(new FileInputStream("." + File.separator + "target" + File.separator + "test-classes" + File.separator + testPath + testName + File.separator + "complexDiv_files" + File.separator + "widget082.css")));
+        cssFiles.add(XMLWorkerHelper.getCSS(new FileInputStream(String.format("./src/test/resources/%s%s/complexDiv_files/main.css", testPath, getTestName()))));
+        cssFiles.add(XMLWorkerHelper.getCSS(new FileInputStream(String.format("./src/test/resources/%s%s/complexDiv_files/widget082.css", testPath, getTestName()))));
         StyleAttrCSSResolver cssResolver = new StyleAttrCSSResolver(cssFiles);
         HtmlPipelineContext hpc = new HtmlPipelineContext(new CssAppliersImpl(new XMLWorkerFontProvider(SampleTest.class.getResource("fonts").getPath())));
         hpc.setAcceptUnknown(true).autoBookmark(true).setTagFactory(Tags.getHtmlTagProcessorFactory());

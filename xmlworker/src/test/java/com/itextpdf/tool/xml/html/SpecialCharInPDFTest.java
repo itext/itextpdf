@@ -75,7 +75,7 @@ import com.itextpdf.tool.xml.pipeline.html.HtmlPipelineContext;
  *
  */
 public class SpecialCharInPDFTest {
-    public static final String RESOURCE_TEST_PATH = "./target/test-classes/";
+    public static final String RESOURCE_TEST_PATH = "./src/test/resources/";
 	public static final String SNIPPETS = "/snippets/";
 
 	  private static final String TEST = "index_";
@@ -89,15 +89,14 @@ public class SpecialCharInPDFTest {
 
 	@Test
 	public void parseXfaOnlyXML() throws IOException {
-		BufferedInputStream bis = new BufferedInputStream(SpecialCharInPDFTest.class.getResourceAsStream(SNIPPETS+TEST+"snippet.html"));
+		BufferedInputStream bis = new BufferedInputStream(SpecialCharInPDFTest.class.getResourceAsStream(String.format("%s%ssnippet.html", SNIPPETS, TEST)));
 		final Document doc = new Document(PageSize.A4);
 		float margin = utils.parseRelativeValue("10%", PageSize.A4.getWidth());
 		doc.setMargins(margin, margin, margin, margin);
 		PdfWriter writer = null;
 		try {
             writer = PdfWriter.getInstance(doc, new FileOutputStream(
-                    RESOURCE_TEST_PATH
-                            +TEST+"_charset.pdf"));
+                    String.format("%s%s_charset.pdf", RESOURCE_TEST_PATH, TEST)));
 		} catch (DocumentException e) {
 			e.printStackTrace();
 		}

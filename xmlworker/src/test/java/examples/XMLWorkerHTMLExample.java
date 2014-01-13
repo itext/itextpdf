@@ -84,7 +84,7 @@ public class XMLWorkerHTMLExample extends Setup {
 	public void setupDefaultProcessingYourself() throws IOException, DocumentException {
 		Document doc = new Document(PageSize.A4);
 		PdfWriter writer = PdfWriter.getInstance(doc, new FileOutputStream(new File(
-				"./target/test-classes/examples/columbus2.pdf")));
+				"./src/test/resources/examples/columbus2.pdf")));
 		doc.open();
 		HtmlPipelineContext htmlContext = new HtmlPipelineContext(null);
 		htmlContext.setTagFactory(Tags.getHtmlTagProcessorFactory());
@@ -108,7 +108,7 @@ public class XMLWorkerHTMLExample extends Setup {
 	public void addingAnImageRoot() throws IOException, DocumentException {
 		Document doc = new Document(PageSize.A4);
 		PdfWriter writer = PdfWriter.getInstance(doc, new FileOutputStream(new File(
-				"./target/test-classes/examples/columbus3.pdf")));
+				"./src/test/resources/examples/columbus3.pdf")));
 		doc.open();
 		HtmlPipelineContext htmlContext = new HtmlPipelineContext(null);
 		htmlContext.setImageProvider(new AbstractImageProvider() {
@@ -137,7 +137,7 @@ public class XMLWorkerHTMLExample extends Setup {
 	public void addingALinkProvider() throws IOException, DocumentException {
 		Document doc = new Document(PageSize.A4);
 		PdfWriter writer = PdfWriter.getInstance(doc, new FileOutputStream(new File(
-				"./target/test-classes/examples/columbus3.pdf")));
+				"./src/test/resources/examples/columbus3.pdf")));
 		doc.open();
 		HtmlPipelineContext htmlContext = new HtmlPipelineContext(null);
 		htmlContext.setLinkProvider(new LinkProvider() {

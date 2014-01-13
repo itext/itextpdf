@@ -83,7 +83,7 @@ public class ImageTest {
 	@Before
 	public void init() {
 		i.setCssAppliers(new CssAppliersImpl());
-		I.getAttributes().put(HTML.Attribute.SRC, "target/test-classes/images.jpg");
+		I.getAttributes().put(HTML.Attribute.SRC, "src/test/resources/images.jpg");
 		workerContextImpl = new WorkerContextImpl();
 		workerContextImpl.put(HtmlPipeline.class.getName(), new HtmlPipelineContext(null));
 	}

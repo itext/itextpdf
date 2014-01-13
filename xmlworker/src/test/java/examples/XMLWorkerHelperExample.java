@@ -84,7 +84,7 @@ public class XMLWorkerHelperExample extends Setup {
 	public void defaultSetup() throws DocumentException, IOException {
 		Document doc = new Document(PageSize.A4);
 		PdfWriter instance = PdfWriter.getInstance(doc, new FileOutputStream(new File(
-				"./target/test-classes/examples/columbus.pdf")));
+				"./src/test/resources/examples/columbus.pdf")));
 		doc.open();
 		XMLWorkerHelper.getInstance().parseXHtml(instance, doc,
 				XMLWorkerHelperExample.class.getResourceAsStream("columbus.html"), Charset.defaultCharset());

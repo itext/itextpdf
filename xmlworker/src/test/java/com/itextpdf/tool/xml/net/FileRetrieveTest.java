@@ -78,8 +78,8 @@ public class FileRetrieveTest {
     @Before
     public void setup() {
         retriever = new FileRetrieveImpl();
-        actual = new File("./target/test-classes/css/actual.css");
-        expected = new File("./target/test-classes/css/test.css");
+        actual = new File("./src/test/resources/css/actual.css");
+        expected = new File("./src/test/resources/css/test.css");
     }
 
     @After
@@ -138,7 +138,7 @@ public class FileRetrieveTest {
     @Test
     public void retrieveFile() throws MalformedURLException, IOException {
     	final FileOutputStream out = new FileOutputStream(actual);
-    	retriever.addRootDir(new File("./target/test-classes"));
+    	retriever.addRootDir(new File("./src/test/resources"));
     	retriever.processFromHref("/css/test.css",
     			new ReadingProcessor() {
 

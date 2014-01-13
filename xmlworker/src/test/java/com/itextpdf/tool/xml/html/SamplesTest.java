@@ -67,7 +67,7 @@ import com.itextpdf.tool.xml.XMLWorkerHelper;
  * Added to visually check all snippets. (see target/text-classes/*.pdf )
  */
 public class SamplesTest {
-	public static final String RESOURCE_TEST_PATH = "./target/test-classes";
+	public static final String RESOURCE_TEST_PATH = "./src/test/resources";
 	private final List<String> list = new ArrayList<String>();
 
 	static {
@@ -115,13 +115,12 @@ public class SamplesTest {
 			final Document doc = new Document();
 			PdfWriter writer = null;
 			try {
-				writer = PdfWriter.getInstance(doc, new FileOutputStream(RESOURCE_TEST_PATH + "/" + str + "Test.pdf"));
+				writer = PdfWriter.getInstance(doc, new FileOutputStream(String.format("%s/%sTest.pdf", RESOURCE_TEST_PATH, str)));
 			} catch (DocumentException e) {
 				e.printStackTrace();
 			}
 			doc.open();
-			BufferedInputStream bis = new BufferedInputStream(SamplesTest.class.getResourceAsStream("/snippets/" + str
-					+ "snippet.html"));
+			BufferedInputStream bis = new BufferedInputStream(SamplesTest.class.getResourceAsStream(String.format("/snippets/%ssnippet.html", str)));
 			XMLWorkerHelper helper = XMLWorkerHelper.getInstance();
 			helper.parseXHtml(writer, doc, new InputStreamReader(bis));
 			doc.close();
