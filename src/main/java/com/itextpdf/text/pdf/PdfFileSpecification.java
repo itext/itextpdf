@@ -203,12 +203,13 @@ public class PdfFileSpecification extends PdfDictionary {
             if (!param.contains(PdfName.MODDATE)) {
                 param.put(PdfName.MODDATE, new PdfDate());
             }
-            if (fileStore != null) {
+            if (fileStore == null) {
+                stream.put(PdfName.PARAMS, refFileLength);
+            }
+            else {
                 param.put(PdfName.SIZE, new PdfNumber(stream.getRawLength()));
                 stream.put(PdfName.PARAMS, param);
             }
-            else
-                stream.put(PdfName.PARAMS, refFileLength);
 
             if (mimeType != null)
                 stream.put(PdfName.SUBTYPE, new PdfName(mimeType));
