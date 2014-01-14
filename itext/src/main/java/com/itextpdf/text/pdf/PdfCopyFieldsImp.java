@@ -46,12 +46,7 @@ package com.itextpdf.text.pdf;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.StringTokenizer;
+import java.util.*;
 
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
@@ -89,6 +84,9 @@ class PdfCopyFieldsImp extends PdfWriter {
     private ArrayList<Object> calculationOrderRefs;
     private boolean hasSignature;
     private boolean needAppearances = false;
+    private HashSet<Object> mergedRadioButtons = new HashSet<Object>();
+
+
 
     protected Counter COUNTER = CounterFactory.getCounter(PdfCopyFields.class);
     protected Counter getCounter() {
@@ -313,6 +311,8 @@ class PdfCopyFieldsImp extends PdfWriter {
                     adjustTabOrder(annots, ind, nn);
                 }
                 else {
+                    PdfDictionary field = (PdfDictionary)list.get(0);
+                    PdfName v = field.getAsName(PdfName.V);
                     PdfArray kids = new PdfArray();
                     for (int k = 1; k < list.size(); k += 2) {
                         int page = ((Integer)list.get(k)).intValue();
@@ -327,6 +327,21 @@ class PdfCopyFieldsImp extends PdfWriter {
                         widget.put(PdfName.PARENT, ind);
                         PdfNumber nn = (PdfNumber)widget.get(iTextTag);
                         widget.remove(iTextTag);
+                        if (PdfCopy.isCheckButton(field)) {
+                            PdfName as = widget.getAsName(PdfName.AS);
+                            if (v != null && as != null)
+                                widget.put(PdfName.AS, v);
+                        } else if (PdfCopy.isRadioButton(field)) {
+                            PdfName as = widget.getAsName(PdfName.AS);
+                            if (v != null && as != null && !as.equals(getOffStateName(widget))) {
+                                if (!mergedRadioButtons.contains(list)) {
+                                    mergedRadioButtons.add(list);
+                                    widget.put(PdfName.AS, v);
+                                } else {
+                                    widget.put(PdfName.AS, getOffStateName(widget));
+                                }
+                            }
+                        }
                         PdfIndirectReference wref = addToBody(widget).getIndirectReference();
                         adjustTabOrder(annots, wref, nn);
                         kids.add(wref);
@@ -340,6 +355,10 @@ class PdfCopyFieldsImp extends PdfWriter {
             }
         }
         return arr;
+    }
+
+    protected PdfName getOffStateName(PdfDictionary widget) {
+        return PdfName.Off;
     }
 
     protected void createAcroForms() throws IOException {

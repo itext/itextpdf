@@ -135,6 +135,9 @@ public class PdfCopy extends PdfWriter {
     private boolean mergeFieldsInternalCall = false;
     private static final PdfName iTextTag = new PdfName("_iTextTag_");
     private static final Integer zero = Integer.valueOf(0);
+    private HashSet<Object> mergedRadioButtons = new HashSet<Object>();
+    private HashMap<Object, PdfObject> mergedTextFields = new HashMap<Object, PdfObject>();
+
 
     protected static class ImportedPage {
         int pageNumber;
@@ -1376,7 +1379,7 @@ public class PdfCopy extends PdfWriter {
     }
 
     @SuppressWarnings("unchecked")
-    private PdfArray branchForm(HashMap<String, Object> level, PdfIndirectReference parent, String fname) throws IOException {
+    private PdfArray branchForm(HashMap<String, Object> level, PdfIndirectReference parent, String fname) throws IOException, BadPdfFormatException {
         PdfArray arr = new PdfArray();
         for (Map.Entry<String, Object> entry: level.entrySet()) {
             String name = entry.getKey();
@@ -1408,6 +1411,7 @@ public class PdfCopy extends PdfWriter {
                     adjustTabOrder(annots, ind, nn);
                 }
                 else {
+                    PdfDictionary field = (PdfDictionary)list.get(0);
                     PdfArray kids = new PdfArray();
                     for (int k = 1; k < list.size(); k += 2) {
                         int page = ((Integer)list.get(k)).intValue();
@@ -1417,6 +1421,34 @@ public class PdfCopy extends PdfWriter {
                         widget.put(PdfName.PARENT, ind);
                         PdfNumber nn = (PdfNumber)widget.get(iTextTag);
                         widget.remove(iTextTag);
+                        if (PdfCopy.isTextField(field)) {
+                            PdfString v = field.getAsString(PdfName.V);
+                            PdfObject ap = widget.get(PdfName.AP);
+                            if (v != null && ap != null) {
+                                if (!mergedTextFields.containsKey(list)) {
+                                    mergedTextFields.put(list, ap);
+                                } else {
+                                    PdfObject ap1 = mergedTextFields.get(list);
+                                    widget.put(PdfName.AP, copyObject(ap1));
+                                }
+                            }
+                        } else if (PdfCopy.isCheckButton(field)) {
+                            PdfName v = field.getAsName(PdfName.V);
+                            PdfName as = widget.getAsName(PdfName.AS);
+                            if (v != null && as != null)
+                                widget.put(PdfName.AS, v);
+                        } else if (PdfCopy.isRadioButton(field)) {
+                            PdfName v = field.getAsName(PdfName.V);
+                            PdfName as = widget.getAsName(PdfName.AS);
+                            if (v != null && as != null && !as.equals(getOffStateName(widget))) {
+                                if (!mergedRadioButtons.contains(list)) {
+                                    mergedRadioButtons.add(list);
+                                    widget.put(PdfName.AS, v);
+                                } else {
+                                    widget.put(PdfName.AS, getOffStateName(widget));
+                                }
+                            }
+                        }
                         widget.put(PdfName.TYPE, PdfName.ANNOT);
                         PdfIndirectReference wref = addToBody(widget, getPdfIndirectReference(), true).getIndirectReference();
                         adjustTabOrder(annots, wref, nn);
@@ -1580,6 +1612,10 @@ public class PdfCopy extends PdfWriter {
         super.freeReader(reader);
     }
 
+    protected PdfName getOffStateName(PdfDictionary widget) {
+        return PdfName.Off;
+    }
+
     protected static final HashSet<PdfName> widgetKeys = new HashSet<PdfName>();
     protected static final HashSet<PdfName> fieldKeys = new HashSet<PdfName>();
     static {
@@ -1619,6 +1655,31 @@ public class PdfCopy extends PdfWriter {
         fieldKeys.add(PdfName.I);
         fieldKeys.add(PdfName.LOCK);
         fieldKeys.add(PdfName.SV);
+    }
+
+    static Integer getFlags(PdfDictionary field) {
+        PdfName type = field.getAsName(PdfName.FT);
+        if (!PdfName.BTN.equals(type))
+            return null;
+        PdfNumber flags = field.getAsNumber(PdfName.FF);
+        if (flags == null)
+            return null;
+        return flags.intValue();
+    }
+
+    static boolean isCheckButton(PdfDictionary field) {
+        Integer flags = getFlags(field);
+        return flags == null || ((flags.intValue() & PdfFormField.FF_PUSHBUTTON) == 0 && (flags.intValue() & PdfFormField.FF_RADIO) == 0);
+    }
+
+    static boolean isRadioButton(PdfDictionary field) {
+        Integer flags = getFlags(field);
+        return flags != null && (flags.intValue() & PdfFormField.FF_PUSHBUTTON) == 0 && (flags.intValue() & PdfFormField.FF_RADIO) != 0;
+    }
+
+    static boolean isTextField(PdfDictionary field) {
+        PdfName type = field.getAsName(PdfName.FT);
+        return PdfName.TX.equals(type);
     }
 
     /**
