@@ -49,7 +49,6 @@ import java.io.OutputStream;
 import java.util.Map;
 
 import com.itextpdf.text.Version;
-import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.pdf.PdfDate;
 import com.itextpdf.text.pdf.PdfDictionary;
 import com.itextpdf.text.pdf.PdfName;
@@ -317,9 +316,9 @@ public class XmpWriter {
         } else if (PdfName.AUTHOR.equals(key)) {
             xmpMeta.appendArrayItem(XMPConst.NS_DC, DublinCoreProperties.CREATOR, new PropertyOptions(PropertyOptions.ARRAY_ORDERED), value, null);
         } else if (PdfName.SUBJECT.equals(key)) {
-            xmpMeta.appendArrayItem(XMPConst.NS_DC, DublinCoreProperties.SUBJECT, new PropertyOptions(PropertyOptions.ARRAY), value, null);
             xmpMeta.setLocalizedText(XMPConst.NS_DC, DublinCoreProperties.DESCRIPTION, XMPConst.X_DEFAULT, XMPConst.X_DEFAULT, value);
         } else if (PdfName.KEYWORDS.equals(key)) {
+            xmpMeta.appendArrayItem(XMPConst.NS_DC, DublinCoreProperties.SUBJECT, new PropertyOptions(PropertyOptions.ARRAY), value, null);
             xmpMeta.setProperty(XMPConst.NS_PDF, PdfProperties.KEYWORDS, value);
         } else if (PdfName.PRODUCER.equals(key)) {
             xmpMeta.setProperty(XMPConst.NS_PDF, PdfProperties.PRODUCER, value);
