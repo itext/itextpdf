@@ -257,7 +257,7 @@ public class CMapAwareDocumentFont extends DocumentFont {
     @Override
     public int getWidth(int char1) {
         if (char1 == ' ')
-            return spaceWidth;
+            return spaceWidth != 0 ? spaceWidth : defaultWidth;
         return super.getWidth(char1);
     }
     
