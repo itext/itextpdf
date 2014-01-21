@@ -48,12 +48,10 @@ package com.itextpdf.text.pdf;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 
 import com.itextpdf.testutils.CompareTool;
+import com.itextpdf.text.Paragraph;
 import junit.framework.Assert;
 
 import org.junit.After;
@@ -236,6 +234,56 @@ public class PdfCopyTest {
         if (errorMessage != null) {
             Assert.fail(errorMessage);
         }
+    }
+
+    @Test
+    public void testFullCompression1() throws DocumentException, IOException {
+        String outfile = "./target/com/itextpdf/test/pdf/PdfCopyTest/out-noforms.pdf";
+        String first = "./src/test/resources/com/itextpdf/text/pdf/PdfCopyTest/hello.pdf";
+        String second = "./src/test/resources/com/itextpdf/text/pdf/PdfCopyTest/hello_memory.pdf";
+        OutputStream out = new FileOutputStream(outfile);
+        PdfReader reader = new PdfReader(first);
+        PdfReader reader2 = new PdfReader(second);
+        Document pdfDocument = new Document();
+        PdfCopy pdfCopy = new PdfCopy(pdfDocument, out);
+        pdfCopy.setMergeFields();
+        pdfCopy.setFullCompression();
+        pdfCopy.setCompressionLevel(PdfStream.BEST_COMPRESSION);
+        pdfDocument.open();
+        pdfCopy.addDocument(reader);
+        pdfCopy.addDocument(reader2);
+        pdfCopy.close();
+        reader.close();
+        reader2.close();
+
+        reader = new PdfReader("./target/com/itextpdf/test/pdf/PdfCopyTest/out-noforms.pdf");
+        Assert.assertNotNull(reader.getPageN(1));
+        reader.close();
+    }
+
+    @Test
+    public void testFullCompression2() throws DocumentException, IOException {
+        String outfile = "./target/com/itextpdf/test/pdf/PdfCopyTest/out-forms.pdf";
+        String first = "./src/test/resources/com/itextpdf/text/pdf/PdfCopyTest/subscribe.pdf";
+        String second = "./src/test/resources/com/itextpdf/text/pdf/PdfCopyTest/filled_form_1.pdf";
+        OutputStream out = new FileOutputStream(outfile);
+        PdfReader reader = new PdfReader(first);
+        PdfReader reader2 = new PdfReader(second);
+        Document pdfDocument = new Document();
+        PdfCopy pdfCopy = new PdfCopy(pdfDocument, out);
+        pdfCopy.setMergeFields();
+        pdfCopy.setFullCompression();
+        pdfCopy.setCompressionLevel(PdfStream.BEST_COMPRESSION);
+        pdfDocument.open();
+        pdfCopy.addDocument(reader);
+        pdfCopy.addDocument(reader2);
+        pdfCopy.close();
+        reader.close();
+        reader2.close();
+
+        reader = new PdfReader("./target/com/itextpdf/test/pdf/PdfCopyTest/out-forms.pdf");
+        Assert.assertNotNull(reader.getPageN(1));
+        reader.close();
     }
 
     private static byte[] createImagePdf() throws Exception {

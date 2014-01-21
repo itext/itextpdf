@@ -1083,7 +1083,7 @@ public class PdfCopy extends PdfWriter {
                 if (annotId != null)
                     dictionary.remove(PdfCopy.annotId);
             }
-            body.write(object, object.number, object.generation);
+            body.add(object.object, object.number, object.generation, true);
             if (annotId != null) {
                 dictionary.put(PdfCopy.annotId, annotId);
             }
@@ -1219,6 +1219,7 @@ public class PdfCopy extends PdfWriter {
             Object obj = map.get(s);
             if (tk.hasMoreTokens()) {
                 if (obj == null) {
+                    obj = new HashMap<String, Object>();
                     map.put(s, obj);
                     map = (HashMap<String, Object>)obj;
                     continue;
