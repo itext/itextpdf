@@ -48,6 +48,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 
 import com.itextpdf.awt.geom.AffineTransform;
 import com.itextpdf.text.BaseColor;
@@ -950,8 +951,27 @@ public class PdfAnnotation extends PdfDictionary {
     		buf.append(destination);
     		buf.append(" parameters ");
     		buf.append(parameters);
+            if (parameters != null) {
+                appendDictionary(buf, parameters);
+            }
+
     		return buf.toString();
     	}
+
+        private void appendDictionary(StringBuffer buf, HashMap<PdfName, PdfObject> dict) {
+            buf.append(" <<");
+            for(Map.Entry<PdfName, PdfObject> entry : dict.entrySet()) {
+                buf.append(entry.getKey());
+                buf.append(":");
+                if (entry.getValue() instanceof PdfDictionary)
+                    appendDictionary(buf, ((PdfDictionary)entry.getValue()).hashMap);
+                else
+                    buf.append(entry.getValue());
+                buf.append(" ");
+            }
+
+            buf.append(">> ");
+        }
 
     }
 

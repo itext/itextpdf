@@ -1,19 +1,24 @@
 package com.itextpdf.testutils;
 
+import com.itextpdf.text.log.Logger;
+import com.itextpdf.text.log.LoggerFactory;
+
 import javax.management.OperationsException;
 import java.io.File;
 
 public abstract class ITextTest {
 
+    private final static Logger LOGGER = LoggerFactory.getLogger(ITextTest.class.getName());
+
     public void runTest() throws Exception {
-        System.out.println("Starting test.");
+        LOGGER.info("Starting test.");
         String outPdf = getOutPdf();
         if (outPdf == null || outPdf.length() == 0)
             throw new OperationsException("outPdf cannot be empty!");
         makePdf(outPdf);
         assertPdf(outPdf);
         comparePdf(outPdf, getCmpPdf());
-        System.out.println("Test complete.");
+        LOGGER.info("Test complete.");
     }
 
     protected abstract void makePdf(String outPdf) throws Exception;
