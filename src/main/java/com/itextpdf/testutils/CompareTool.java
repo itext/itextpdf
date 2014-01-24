@@ -101,8 +101,10 @@ public class CompareTool {
     }
 
     public String compare(String outPath, String differenceImagePrefix, Map<Integer, List<Rectangle>> ignoredAreas) throws IOException, InterruptedException, DocumentException {
-        if (gsExec == null || !(new File(gsExec).exists())) {
-            return undefinedGsPath;
+        if (gsExec == null)
+        	return undefinedGsPath;
+        if (!(new File(gsExec).exists())) {
+            return new File(gsExec).getAbsolutePath() + " does not exist";
         }
         if (!outPath.endsWith("/"))
             outPath = outPath + "/";
