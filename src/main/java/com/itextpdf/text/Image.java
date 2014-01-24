@@ -413,7 +413,7 @@ public abstract class Image extends Rectangle implements Indentable, Spaceable, 
 				RandomAccessFileOrArray ra = null;
 				try {
 					ra = new RandomAccessFileOrArray(imgb);
-					Image img = TiffImage.getTiffImage(ra, 1, handleIncorrectImage);
+					Image img = TiffImage.getTiffImage(ra, handleIncorrectImage, 1);
                     if (img.getOriginalData() == null)
                         img.setOriginalData(imgb);
 					return img;
