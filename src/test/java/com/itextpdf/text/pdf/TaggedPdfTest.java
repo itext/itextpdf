@@ -587,7 +587,7 @@ public class TaggedPdfTest {
         cell.setColspan(2);
         table.addCell(cell);
         table.setHeaderRows(4);
-        table.setFooterRows(4);
+        table.setFooterRows(2);
         try {
             for (int i = 1; i <= 50; i++) {
                 table.addCell("row " + i + ", column 1");
@@ -599,7 +599,7 @@ public class TaggedPdfTest {
         document.add(table);
         document.close();
 
-        int[] nums = new int[]{236, 46} ;
+        int[] nums = new int[]{237, 47} ;
         compareNums("12", nums);
         compareResults("12");
     }
@@ -705,7 +705,7 @@ public class TaggedPdfTest {
         cell.setColspan(2);
         table.addCell(cell);
         table.setHeaderRows(4);
-        table.setFooterRows(4);
+        table.setFooterRows(2);
 
         try {
             PdfPHeaderCell headerCell = new PdfPHeaderCell();
@@ -730,7 +730,7 @@ public class TaggedPdfTest {
         }
         document.add(table);
         document.close();
-        int[] nums = new int[]{26} ;
+        int[] nums = new int[]{27} ;
         compareNums("17", nums);
         compareResults("17");
     }
@@ -967,10 +967,8 @@ public class TaggedPdfTest {
 
     private PdfArray verifyArraySize(PdfObject obj, int size, String message) {
         if (obj == null || !obj.isArray()) Assert.fail(message + " is not array");
-
         if (((PdfArray)obj).size() != size)
-            Assert.fail(message + " has wrong size"
-                    + String.format("(Expected:%s, real:%s)",size, ((PdfArray)obj).size()));
+            Assert.fail(message + " has wrong size");
         return (PdfArray)obj;
     }
 
