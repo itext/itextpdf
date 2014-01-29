@@ -71,6 +71,11 @@ public interface PdfPageEvent {
  * Note that if even if a page is not written this method is still
  * called. It is preferable to use <CODE>onEndPage</CODE> to avoid
  * infinite loops.
+ * </P>
+ * <P>
+ * Note that this method isn't called for the first page. You should apply modifications for the first
+ * page either before opening the document or by using the onOpenDocument() method.
+ * </P>
  *
  * @param writer the <CODE>PdfWriter</CODE> for this document
  * @param document the document

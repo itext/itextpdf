@@ -44,17 +44,11 @@
  */
 package com.itextpdf.text;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.lang.reflect.Constructor;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.HashMap;
-
 import com.itextpdf.awt.PdfGraphics2D;
 import com.itextpdf.text.api.Indentable;
 import com.itextpdf.text.api.Spaceable;
 import com.itextpdf.text.error_messages.MessageLocalization;
+import com.itextpdf.text.io.RandomAccessSourceFactory;
 import com.itextpdf.text.pdf.ICC_Profile;
 import com.itextpdf.text.pdf.PRIndirectReference;
 import com.itextpdf.text.pdf.PdfArray;
@@ -79,6 +73,13 @@ import com.itextpdf.text.pdf.codec.PngImage;
 import com.itextpdf.text.pdf.codec.TiffImage;
 import com.itextpdf.text.pdf.interfaces.IAccessibleElement;
 import com.itextpdf.text.pdf.interfaces.IAlternateDescription;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.lang.reflect.Constructor;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.HashMap;
 
 /**
  * An <CODE>Image</CODE> is the representation of a graphic element (JPEG, PNG
@@ -251,9 +252,11 @@ public abstract class Image extends Rectangle implements Indentable, Spaceable, 
 	 * @throws MalformedURLException
 	 * @throws IOException
 	 */
-	public static Image getInstance(final URL url, boolean handleIncorrectImage) throws BadElementException,
+	public static Image getInstance(final URL url, boolean recoverFromImageError) throws BadElementException,
 			MalformedURLException, IOException {
 		InputStream is = null;
+        RandomAccessSourceFactory randomAccessSourceFactory = new RandomAccessSourceFactory();
+
 		try {
 			is = url.openStream();
 			int c1 = is.read();
@@ -299,13 +302,22 @@ public abstract class Image extends Rectangle implements Indentable, Spaceable, 
 					if (url.getProtocol().equals("file")) {
 						String file = url.getFile();
                         file = Utilities.unEscapeURL(file);
-						ra = new RandomAccessFileOrArray(file);
+						ra = new RandomAccessFileOrArray(randomAccessSourceFactory.createBestSource(file));
 					} else
-						ra = new RandomAccessFileOrArray(url);
-					Image img = TiffImage.getTiffImage(ra, handleIncorrectImage, 1);
+						ra = new RandomAccessFileOrArray(randomAccessSourceFactory.createSource(url));
+					Image img = TiffImage.getTiffImage(ra, 1);
 					img.url = url;
 					return img;
-				} finally {
+				} catch (RuntimeException e ) {
+                    if ( recoverFromImageError ) {
+                        // reruns the getTiffImage() with several error recovering workarounds in place
+                        // not guaranteed to work with every TIFF
+                        Image img = TiffImage.getTiffImage(ra, recoverFromImageError, 1);
+                        img.url = url;
+                        return img;
+                    }
+                    throw e;
+                } finally {
 					if (ra != null)
 						ra.close();
 				}
@@ -318,9 +330,9 @@ public abstract class Image extends Rectangle implements Indentable, Spaceable, 
 					if (url.getProtocol().equals("file")) {
 						String file = url.getFile();
 						file = Utilities.unEscapeURL(file);
-			            ra = new RandomAccessFileOrArray(file);
+			            ra = new RandomAccessFileOrArray(randomAccessSourceFactory.createBestSource(file));
 					} else
-						ra = new RandomAccessFileOrArray(url);
+						ra = new RandomAccessFileOrArray(randomAccessSourceFactory.createSource(url));
 					Image img = JBIG2Image.getJbig2Image(ra, 1);
 					img.url = url;
 					return img;
@@ -353,8 +365,8 @@ public abstract class Image extends Rectangle implements Indentable, Spaceable, 
 		return getInstance(Utilities.toURL(filename));
 	}
     
-    public static Image getInstance(final String filename, boolean handleIncorrectImage) throws IOException, BadElementException {
-        return getInstance(Utilities.toURL(filename), handleIncorrectImage);
+    public static Image getInstance(final String filename, boolean recoverFromImageError) throws IOException, BadElementException {
+        return getInstance(Utilities.toURL(filename), recoverFromImageError);
     }
 
 
@@ -373,9 +385,10 @@ public abstract class Image extends Rectangle implements Indentable, Spaceable, 
 	 * @throws MalformedURLException
 	 * @throws IOException
 	 */
-	public static Image getInstance(final byte imgb[], boolean handleIncorrectImage) throws BadElementException,
+	public static Image getInstance(final byte imgb[], boolean recoverFromImageError) throws BadElementException,
 			MalformedURLException, IOException {
 		InputStream is = null;
+        RandomAccessSourceFactory randomAccessSourceFactory = new RandomAccessSourceFactory();
 		try {
 			is = new java.io.ByteArrayInputStream(imgb);
 			int c1 = is.read();
@@ -412,12 +425,22 @@ public abstract class Image extends Rectangle implements Indentable, Spaceable, 
 					|| c1 == 'I' && c2 == 'I' && c3 == 42 && c4 == 0) {
 				RandomAccessFileOrArray ra = null;
 				try {
-					ra = new RandomAccessFileOrArray(imgb);
-					Image img = TiffImage.getTiffImage(ra, handleIncorrectImage, 1);
+					ra = new RandomAccessFileOrArray(randomAccessSourceFactory.createSource(imgb));
+					Image img = TiffImage.getTiffImage(ra, 1);
                     if (img.getOriginalData() == null)
                         img.setOriginalData(imgb);
 					return img;
-				} finally {
+				} catch ( RuntimeException e ) {
+                    if ( recoverFromImageError ) {
+                        // reruns the getTiffImage() with several error recovering workarounds in place
+                        // not guaranteed to work with every TIFF
+                        Image img = TiffImage.getTiffImage(ra, recoverFromImageError, 1);
+                        if (img.getOriginalData() == null)
+                            img.setOriginalData(imgb);
+                        return img;
+                    }
+                    throw e;
+                } finally {
 					if (ra != null)
 						ra.close();
 				}
@@ -430,20 +453,14 @@ public abstract class Image extends Rectangle implements Indentable, Spaceable, 
 				int c6 = is.read();
 				int c7 = is.read();
 				int c8 = is.read();
+                is.close();
 				if ( c5 == '\r' && c6 == '\n' && c7 == 0x1a && c8 == '\n' ) {
-					int file_header_flags = is.read();
-					// TODO number of pages never read, can be removed?
-					int number_of_pages = -1;
-					if ( (file_header_flags & 0x2) == 0x2 ) {
-						number_of_pages = is.read() << 24 | is.read() << 16 | is.read() << 8 | is.read();
-					}
-					is.close();
 					// a jbig2 file with a file header.  the header is the only way we know here.
 					// embedded jbig2s don't have a header, have to create them by explicit use of Jbig2Image?
 					// nkerr, 2008-12-05  see also the getInstance(URL)
 					RandomAccessFileOrArray ra = null;
 					try {
-						ra = new RandomAccessFileOrArray(imgb);
+						ra = new RandomAccessFileOrArray(randomAccessSourceFactory.createSource(imgb));
 						Image img = JBIG2Image.getJbig2Image(ra, 1);
 						if (img.getOriginalData() == null)
 							img.setOriginalData(imgb);
@@ -494,8 +511,7 @@ public abstract class Image extends Rectangle implements Indentable, Spaceable, 
 	 * @since	2.1.5
 	 */
 	public static Image getInstance(final int width, final int height, final byte[] data, final byte[] globals) {
-		Image img = new ImgJBIG2(width, height, data, globals);
-		return img;
+		return new ImgJBIG2(width, height, data, globals);
 	}
 
 	/**
