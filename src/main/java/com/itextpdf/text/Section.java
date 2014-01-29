@@ -799,4 +799,7 @@ public class Section extends ArrayList<Element> implements TextElementArray, Lar
         title.setId(id);
     }
 
+    public boolean isInline() {
+        return false;
+    }
 }

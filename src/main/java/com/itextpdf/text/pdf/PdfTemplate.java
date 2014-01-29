@@ -386,4 +386,8 @@ public class PdfTemplate extends PdfContentByte implements IAccessibleElement {
     public void setId(final AccessibleElementId id) {
         this.id = id;
     }
+
+    public boolean isInline() {
+        return false;
+    }
 }

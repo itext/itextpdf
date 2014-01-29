@@ -87,6 +87,10 @@ public class PdfArtifact implements IAccessibleElement {
         this.id = id;
     }
 
+    public boolean isInline() {
+        return true;
+    }
+
     public PdfString getType() {
         return accessibleAttributes == null ? null : (PdfString) accessibleAttributes.get(PdfName.TYPE);
     }

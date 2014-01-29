@@ -3560,8 +3560,7 @@ public class PdfContentByte {
             IAccessibleElement parent = null;
             if (getMcElements().size() > 0)
                 parent = getMcElements().get(getMcElements().size() - 1);
-            if (parent != null && (parent.getRole() == null || PdfName.ARTIFACT.equals(parent.getRole())))
-                element.setRole(null);
+            writer.checkElementRole(element, parent);
             if (element.getRole() != null) {
                 if (!PdfName.ARTIFACT.equals(element.getRole())) {
                     structureElement = pdf.structElements.get(element.getId());
@@ -3570,9 +3569,6 @@ public class PdfContentByte {
                         structureElement.writeAttributes(element);
                     }
                 }
-                boolean inTextLocal = inText;
-                if (inText)
-                    endText();
                 if (PdfName.ARTIFACT.equals(element.getRole())) {
                     HashMap<PdfName, PdfObject> properties = element.getAccessibleAttributes();
                     PdfDictionary propertiesDict = null;
@@ -3583,12 +3579,22 @@ public class PdfContentByte {
                             propertiesDict.put(entry.getKey(), entry.getValue());
                         }
                     }
+                    boolean inTextLocal = inText;
+                    if (inText)
+                        endText();
                     beginMarkedContentSequence(element.getRole(), propertiesDict, true);
+                    if (inTextLocal)
+                        beginText(true);
                 } else {
-                    beginMarkedContentSequence(structureElement);
+                    if (writer.needToBeMarkedInContent(element)) {
+                        boolean inTextLocal = inText;
+                        if (inText)
+                            endText();
+                        beginMarkedContentSequence(structureElement);
+                        if (inTextLocal)
+                            beginText(true);
+                    }
                 }
-                if (inTextLocal)
-                    beginText(true);
             }
         }
         return structureElement;
@@ -3604,7 +3610,7 @@ public class PdfContentByte {
     }
 
     private void closeMCBlockInt(IAccessibleElement element) {
-        if (isTagged() && element.getRole() != null) {
+        if (isTagged() && element.getRole() != null && writer.needToBeMarkedInContent(element)) {
             boolean inTextLocal = inText;
             if (inText)
                 endText();

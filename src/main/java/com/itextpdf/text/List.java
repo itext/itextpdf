@@ -657,4 +657,7 @@ public class List implements TextElementArray, Indentable, IAccessibleElement {
         this.id = id;
     }
 
+    public boolean isInline() {
+        return false;
+    }
 }

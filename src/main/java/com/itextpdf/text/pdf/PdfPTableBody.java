@@ -94,4 +94,7 @@ public class PdfPTableBody implements IAccessibleElement {
         this.id = id;
     }
 
+    public boolean isInline() {
+        return false;
+    }
 }

@@ -1946,6 +1946,10 @@ public abstract class Image extends Rectangle implements Indentable, Spaceable, 
         this.id = id;
     }
 
+    public boolean isInline() {
+        return true;
+    }
+
     // AWT related methods (remove this if you port to Android / GAE)
 
 	/**

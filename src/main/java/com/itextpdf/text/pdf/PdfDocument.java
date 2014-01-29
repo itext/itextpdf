@@ -1328,8 +1328,7 @@ public class PdfDocument extends Document {
                     lbl = l.listItem().getListLabel();
                     graphics.openMCBlock(lbl);
                     symbol = new Chunk(symbol);
-                    if (!lbl.getTagLabelContent())
-                        symbol.setRole(null);
+                    symbol.setRole(null);
                 }
                 ColumnText.showTextAligned(graphics, Element.ALIGN_LEFT, new Phrase(symbol), text.getXTLM() - l.listIndent(), text.getYTLM(), 0);
                 if (lbl != null) {

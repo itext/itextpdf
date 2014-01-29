@@ -12,10 +12,7 @@ import org.xml.sax.SAXException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 
 public class TaggedPdfTest {
     private Document document;
@@ -237,13 +234,11 @@ public class TaggedPdfTest {
             listItem = new ListItem(c);
             list.add(listItem);
             listItem = new ListItem(new Chunk("jumped over a lazy"));
-            listItem.getListLabel().setTagLabelContent(false);
             list.add(listItem);
             i = Image.getInstance("./src/test/resources/com/itextpdf/text/pdf/TaggedPdfTest/dog.bmp");
             c = new Chunk(i, 0, 0);
             c.setAccessibleAttribute(PdfName.ALT, new PdfString("Dog image"));
             listItem = new ListItem(c);
-            listItem.getListLabel().setTagLabelContent(false);
             list.add(listItem);
         } catch (Exception e) {
 
@@ -252,7 +247,7 @@ public class TaggedPdfTest {
         document.add(list);
         document.close();
 
-        int[] nums = new int[]{22};
+        int[] nums = new int[]{20};
         compareNums("5", nums);
         compareResults("5");
     }
@@ -288,7 +283,7 @@ public class TaggedPdfTest {
         columnText.addElement(list);
         columnText.go();
         document.close();
-        int[] nums = new int[]{24};
+        int[] nums = new int[]{20};
         compareNums("6", nums);
         compareResults("6");
     }
@@ -322,7 +317,7 @@ public class TaggedPdfTest {
         document.add(list);
         document.close();
 
-        int[] nums = new int[]{63, 14} ;
+        int[] nums = new int[]{58, 14} ;
         compareNums("7", nums);
         compareResults("7");
     }
@@ -364,7 +359,7 @@ public class TaggedPdfTest {
         columnText.go();
         document.close();
 
-        int[] nums = new int[]{64, 35} ;
+        int[] nums = new int[]{59, 35} ;
         compareNums("8", nums);
         compareResults("8");
     }
@@ -950,6 +945,58 @@ public class TaggedPdfTest {
         int[] nums = new int[]{234, 44} ;
         compareNums("23", nums);
         compareResults("23");
+    }
+
+    @Test
+    public void createTaggedPdf24() throws DocumentException, IOException, ParserConfigurationException, SAXException {
+        Document document = new Document(PageSize.LETTER);
+
+
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+        PdfWriter writer = PdfWriter.getInstance(document, baos);
+
+        writer.setViewerPreferences(PdfWriter.DisplayDocTitle);
+
+//set more document properties
+
+        writer.setPdfVersion(PdfWriter.VERSION_1_7);
+        writer.setTagged(PdfWriter.markInlineElementsOnly);
+        PdfDictionary info = writer.getInfo();
+        info.put(PdfName.TITLE, new PdfString("Testing"));
+
+        writer.createXmpMetadata();
+
+
+// step 3
+
+        document.open();
+        document.addLanguage("en_US");
+        document.setAccessibleAttribute(PdfName.LANG, new PdfString("en_US"));
+
+// step 4
+
+        Chunk ck = new Chunk("Testing testing", FontFactory.getFont("./src/test/resources/com/itextpdf/text/pdf/FreeMonoBold.ttf", BaseFont.WINANSI, BaseFont.EMBEDDED, 12));
+        ck.setRole(null);
+        Paragraph p = new Paragraph("Testing testing");
+        p.setAccessibleAttribute(PdfName.ACTUALTEXT, new PdfString("ALT Text"));
+        p.setAccessibleAttribute(PdfName.ALT, new PdfString("ALT Text"));
+
+
+        document.add(p);
+
+// step 5
+        document.close();
+
+        FileOutputStream fos = new FileOutputStream(new File("./target/com/itextpdf/test/pdf/TaggedPdfTest/out24.pdf"));
+
+        fos.write(baos.toByteArray());
+
+        fos.flush();
+
+        fos.close();
+        compareResults("24");
     }
 
     private void compareNums(String name, int[] nums) throws IOException {
