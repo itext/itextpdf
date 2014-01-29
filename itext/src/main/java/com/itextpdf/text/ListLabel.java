@@ -50,7 +50,6 @@ public class ListLabel extends ListBody {
 
     protected PdfName role = PdfName.LBL;
     protected float indentation = 0;
-    protected boolean tagLabelContent = true;
 
     protected ListLabel(final ListItem parentItem) {
         super(parentItem);
@@ -90,12 +89,16 @@ public class ListLabel extends ListBody {
      * &lt;/LI&gt;
      * @return
      */
+    @Deprecated
     public boolean getTagLabelContent() {
-        return tagLabelContent;
+        return false;
     }
 
-    public void setTagLabelContent(boolean tagLabelContent) {
-        this.tagLabelContent = tagLabelContent;
-    }
+    @Deprecated
+    public void setTagLabelContent(boolean tagLabelContent) {}
 
+    @Override
+    public boolean isInline() {
+        return true;    //To change body of overridden methods use File | Settings | File Templates.
+    }
 }

@@ -850,4 +850,7 @@ public class Document implements DocListener, IAccessibleElement {
         this.id = id;
     }
 
+    public boolean isInline() {
+        return false;
+    }
 }

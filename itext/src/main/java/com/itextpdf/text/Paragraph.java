@@ -531,4 +531,7 @@ public class Paragraph extends Phrase implements Indentable, Spaceable, IAccessi
         this.id = id;
     }
 
+    public boolean isInline() {
+        return false;
+    }
 }

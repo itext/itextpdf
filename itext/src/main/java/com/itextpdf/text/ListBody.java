@@ -96,4 +96,7 @@ public class ListBody implements IAccessibleElement {
         this.id = id;
     }
 
+    public boolean isInline() {
+        return false;
+    }
 }

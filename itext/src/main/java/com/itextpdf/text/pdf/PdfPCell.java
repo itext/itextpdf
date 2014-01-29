@@ -1038,6 +1038,10 @@ public class PdfPCell extends Rectangle implements IAccessibleElement {
         this.id = id;
     }
 
+    public boolean isInline() {
+        return false;
+    }
+
     public void addHeader(PdfPHeaderCell header){
         if (headers == null)
             headers = new ArrayList<PdfPHeaderCell>();

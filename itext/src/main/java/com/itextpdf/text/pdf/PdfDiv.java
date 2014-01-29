@@ -544,4 +544,7 @@ public class PdfDiv implements Element, Spaceable, IAccessibleElement {
         this.id = id;
     }
 
+    public boolean isInline() {
+        return false;
+    }
 }

@@ -93,4 +93,5 @@ public interface IAccessibleElement {
 
     void setId(final AccessibleElementId id);
 
+    boolean isInline();
 }

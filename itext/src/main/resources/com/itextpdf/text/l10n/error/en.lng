@@ -218,6 +218,7 @@ inconsistent.mapping=Inconsistent mapping.
 inconsistent.writers.are.you.mixing.two.documents=Inconsistent writers. Are you mixing two documents?
 incorrect.segment.type.in.1=Incorrect segment type in {1}
 infinite.table.loop=Infinite table loop; row content is larger than the page (for instance because you didn't scale an image).
+inline.elements.with.role.null.are.not.allowed=The tagging mode markInlineElementsOnl is used. Inline elements with role 'null' are not allowed.
 insertion.of.illegal.element.1=Insertion of illegal Element: {1}
 inserttable.point.has.null.value=insertTable - point has null-value
 inserttable.table.has.null.value=insertTable - table has null-value

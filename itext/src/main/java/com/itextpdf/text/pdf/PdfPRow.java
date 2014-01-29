@@ -891,4 +891,7 @@ public class PdfPRow implements IAccessibleElement {
         return canvas != null && canvas.writer != null && canvas.writer.isTagged();
     }
 
+    public boolean isInline() {
+        return false;
+    }
 }

@@ -60,15 +60,7 @@ import com.itextpdf.text.log.Counter;
 import com.itextpdf.text.log.CounterFactory;
 import com.itextpdf.text.pdf.collection.PdfCollection;
 import com.itextpdf.text.pdf.events.PdfPageEventForwarder;
-import com.itextpdf.text.pdf.interfaces.PdfAnnotations;
-import com.itextpdf.text.pdf.interfaces.PdfDocumentActions;
-import com.itextpdf.text.pdf.interfaces.PdfEncryptionSettings;
-import com.itextpdf.text.pdf.interfaces.PdfIsoConformance;
-import com.itextpdf.text.pdf.interfaces.PdfPageActions;
-import com.itextpdf.text.pdf.interfaces.PdfRunDirection;
-import com.itextpdf.text.pdf.interfaces.PdfVersion;
-import com.itextpdf.text.pdf.interfaces.PdfViewerPreferences;
-import com.itextpdf.text.pdf.interfaces.PdfXConformance;
+import com.itextpdf.text.pdf.interfaces.*;
 import com.itextpdf.text.pdf.internal.PdfIsoKeys;
 import com.itextpdf.text.pdf.internal.PdfVersionImp;
 import com.itextpdf.text.pdf.internal.PdfXConformanceImp;
@@ -2546,6 +2538,8 @@ public class PdfWriter extends DocWriter implements
 //  [F12] tagged PDF
 
     protected boolean tagged = false;
+    protected int taggingCompatibilityMode = 0x00;
+    static public final int markInlineElementsOnly = 0x001;
     protected PdfStructureTreeRoot structureTreeRoot;
 
     /**
@@ -2555,6 +2549,32 @@ public class PdfWriter extends DocWriter implements
         if (open)
             throw new IllegalArgumentException(MessageLocalization.getComposedMessage("tagging.must.be.set.before.opening.the.document"));
         tagged = true;
+    }
+
+    public void setTagged(int compatibilityMode) {
+        if (open)
+            throw new IllegalArgumentException(MessageLocalization.getComposedMessage("tagging.must.be.set.before.opening.the.document"));
+        tagged = true;
+        this.taggingCompatibilityMode = compatibilityMode;
+    }
+
+    public boolean needToBeMarkedInContent(IAccessibleElement element) {
+        if ((taggingCompatibilityMode & markInlineElementsOnly) != 0) {
+            if (element.isInline() || PdfName.ARTIFACT.equals(element.getRole())) {
+                return true;
+            }
+            return false;
+        }
+        return true;
+    }
+
+    public void checkElementRole(IAccessibleElement element, IAccessibleElement parent) {
+        if (parent != null && (parent.getRole() == null || PdfName.ARTIFACT.equals(parent.getRole())))
+            element.setRole(null);
+        else if ((taggingCompatibilityMode & markInlineElementsOnly) != 0) {
+            if (element.isInline() && element.getRole() == null && (parent == null || !parent.isInline()))
+                throw new IllegalArgumentException(MessageLocalization.getComposedMessage("inline.elements.with.role.null.are.not.allowed"));
+        }
     }
 
     /**

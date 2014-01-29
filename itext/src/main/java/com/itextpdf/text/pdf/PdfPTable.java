@@ -1856,6 +1856,10 @@ public class PdfPTable implements LargeElement, Spaceable, IAccessibleElement {
         this.id = id;
     }
 
+    public boolean isInline() {
+        return false;
+    }
+
     public PdfPTableHeader getHeader() {
         if (header == null)
             header = new PdfPTableHeader();
