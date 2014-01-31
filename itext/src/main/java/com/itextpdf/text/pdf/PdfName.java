@@ -1507,6 +1507,11 @@ public class
     /** A name */
     public static final PdfName PICKTRAYBYPDFSIZE = new PdfName("PickTrayByPDFSize");
     /**
+     * A name
+     * @since 5.4.6
+     */
+    public static final PdfName PIECEINFO = new PdfName("PieceInfo");
+    /**
      * A name.
      * @since 2.1.6
      */

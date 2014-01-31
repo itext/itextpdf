@@ -44,12 +44,6 @@
  */
 package com.itextpdf.text.pdf.ocg;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import com.itextpdf.text.pdf.PRStream;
 import com.itextpdf.text.pdf.PdfArray;
 import com.itextpdf.text.pdf.PdfDictionary;
@@ -57,6 +51,12 @@ import com.itextpdf.text.pdf.PdfName;
 import com.itextpdf.text.pdf.PdfObject;
 import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.PdfString;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Class that knows how to remove OCG layers.
@@ -82,7 +82,7 @@ public class OCGRemover {
 		for (int i = 1; i <= n; i++) {
 			page = reader.getPageN(i);
 			parse(parser, page);
-			page.remove(new PdfName("PieceInfo"));
+			page.remove(PdfName.PIECEINFO);
 			removeAnnots(page, ocgs);
 			removeProperties(page, ocgs);
 		}
