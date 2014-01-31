@@ -977,13 +977,16 @@ public class TaggedPdfTest {
 
 // step 4
 
-        Chunk ck = new Chunk("Testing testing", FontFactory.getFont("./src/test/resources/com/itextpdf/text/pdf/FreeMonoBold.ttf", BaseFont.WINANSI, BaseFont.EMBEDDED, 12));
-        ck.setRole(null);
-        Paragraph p = new Paragraph("Testing testing");
-        p.setAccessibleAttribute(PdfName.ACTUALTEXT, new PdfString("ALT Text"));
-        p.setAccessibleAttribute(PdfName.ALT, new PdfString("ALT Text"));
+        Paragraph p = new Paragraph("Paragraph testing testing");
+        p.setAccessibleAttribute(PdfName.ACTUALTEXT, new PdfString("Paragraph ALT Text"));
+        p.setAccessibleAttribute(PdfName.ALT, new PdfString("Paragraph ALT Text"));
+        document.add(p);
 
 
+        Chunk ck = new Chunk("Span testing testing", FontFactory.getFont("./src/test/resources/com/itextpdf/text/pdf/FreeMonoBold.ttf", BaseFont.WINANSI, BaseFont.EMBEDDED, 12));
+        ck.setAccessibleAttribute(PdfName.ACTUALTEXT, new PdfString("Span ALT Text"));
+        ck.setAccessibleAttribute(PdfName.ALT, new PdfString("Span ALT Text"));
+        p = new Paragraph(ck);
         document.add(p);
 
 // step 5
