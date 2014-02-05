@@ -1,5 +1,5 @@
 /*
- * $Id: CompareTool.java 6062 2013-11-06 14:24:47Z eugenemark $
+ * $Id$
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2014 iText Group NV
