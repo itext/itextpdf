@@ -684,6 +684,9 @@ public class PdfCopy extends PdfWriter {
     }
 
     public void addDocument(PdfReader reader) throws DocumentException, IOException {
+        if ( ! document.isOpen() ) {
+            throw new DocumentException(MessageLocalization.getComposedMessage("the.document.is.not.open.yet.you.can.only.add.meta.information"));
+        }
         if (indirectMap.containsKey(reader)) {
             throw new IllegalArgumentException(MessageLocalization.getComposedMessage("document.1.has.already.been.added", reader.toString()));
         }
