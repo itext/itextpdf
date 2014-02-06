@@ -47,6 +47,7 @@ import com.itextpdf.awt.FontMapper;
 import com.itextpdf.awt.PdfGraphics2D;
 import com.itextpdf.awt.PdfPrinterGraphics2D;
 import com.itextpdf.awt.geom.AffineTransform;
+import com.itextpdf.awt.geom.Point2D;
 import com.itextpdf.text.*;
 import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.exceptions.IllegalPdfSyntaxException;
@@ -1354,8 +1355,28 @@ public class PdfContentByte {
         try {
             if (image.getLayer() != null)
                 beginLayer(image.getLayer());
-            if (inText && isTagged()) {
-                endText();
+            if (isTagged()) {
+                if (inText)
+                    endText();
+                AffineTransform transform = new AffineTransform(a, b, c, d, e, f);
+                Point2D[] src = new Point2D.Float[] {new Point2D.Float(0, 0), new Point2D.Float(1, 0), new Point2D.Float(1, 1), new Point2D.Float(0, 1)};
+                Point2D[] dst = new Point2D.Float[4];
+                transform.transform(src, 0, dst, 0, 4);
+                float left = Float.MAX_VALUE;
+                float right = -Float.MAX_VALUE;
+                float bottom = Float.MAX_VALUE;
+                float top = -Float.MAX_VALUE;
+                for (int i = 0; i < 4; i++) {
+                    if (dst[i].getX() < left)
+                        left = (float)dst[i].getX();
+                    if (dst[i].getX() > right)
+                        right = (float)dst[i].getX();
+                    if (dst[i].getY() < bottom)
+                        bottom = (float)dst[i].getY();
+                    if (dst[i].getY() > top)
+                        top = (float)dst[i].getY();
+                }
+                image.setAccessibleAttribute(PdfName.BBOX, new PdfArray(new float[] {left, bottom, right, top}));
             }
             if (writer != null && image.isImgTemplate()) {
                 writer.addDirectImageSimple(image);
@@ -3566,7 +3587,6 @@ public class PdfContentByte {
                     structureElement = pdf.structElements.get(element.getId());
                     if (structureElement == null) {
                         structureElement = new PdfStructureElement(getParentStructureElement(), element.getRole());
-                        structureElement.writeAttributes(element);
                     }
                 }
                 if (PdfName.ARTIFACT.equals(element.getRole())) {
@@ -3611,6 +3631,9 @@ public class PdfContentByte {
 
     private void closeMCBlockInt(IAccessibleElement element) {
         if (isTagged() && element.getRole() != null && writer.needToBeMarkedInContent(element)) {
+            PdfStructureElement structureElement = pdf.structElements.get(element.getId());
+            if (structureElement != null)
+                structureElement.writeAttributes(element);
             boolean inTextLocal = inText;
             if (inText)
                 endText();
