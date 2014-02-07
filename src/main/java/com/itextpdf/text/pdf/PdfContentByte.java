@@ -54,7 +54,6 @@ import com.itextpdf.text.exceptions.IllegalPdfSyntaxException;
 import com.itextpdf.text.pdf.interfaces.IAccessibleElement;
 import com.itextpdf.text.pdf.internal.PdfAnnotationsImp;
 import com.itextpdf.text.pdf.internal.PdfIsoKeys;
-import com.itextpdf.text.pdf.parser.Matrix;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -1364,9 +1363,9 @@ public class PdfContentByte {
                 Point2D[] dst = new Point2D.Float[4];
                 transform.transform(src, 0, dst, 0, 4);
                 float left = Float.MAX_VALUE;
-                float right = Float.MIN_VALUE;
+                float right = -Float.MAX_VALUE;
                 float bottom = Float.MAX_VALUE;
-                float top = Float.MIN_VALUE;
+                float top = -Float.MAX_VALUE;
                 for (int i = 0; i < 4; i++) {
                     if (dst[i].getX() < left)
                         left = (float)dst[i].getX();
