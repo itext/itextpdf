@@ -255,6 +255,7 @@ public class PdfCopyTest {
         pdfCopy.close();
         reader.close();
         reader2.close();
+        out.close();
 
         reader = new PdfReader("./target/com/itextpdf/test/pdf/PdfCopyTest/out-noforms.pdf");
         Assert.assertNotNull(reader.getPageN(1));
@@ -280,6 +281,7 @@ public class PdfCopyTest {
         pdfCopy.close();
         reader.close();
         reader2.close();
+        out.close();
 
         reader = new PdfReader("./target/com/itextpdf/test/pdf/PdfCopyTest/out-forms.pdf");
         Assert.assertNotNull(reader.getPageN(1));
