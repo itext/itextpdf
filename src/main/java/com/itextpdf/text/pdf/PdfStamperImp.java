@@ -261,10 +261,16 @@ class PdfStamperImp extends PdfWriter {
             producer = oldInfo.getAsString(PdfName.PRODUCER).toUnicodeString();
         }
         Version version = Version.getInstance();
-        if (producer == null) {
+        if (producer == null || version.getVersion().indexOf(version.getProduct()) == -1) {
         	producer = version.getVersion();
-        } else if (producer.indexOf(version.getProduct()) == -1) {
-        	StringBuffer buf = new StringBuffer(producer);
+        }
+        else {
+            int idx = producer.indexOf("; modified using");
+            StringBuffer buf;
+            if (idx == -1)
+                buf = new StringBuffer(producer);
+            else
+                buf = new StringBuffer(producer.substring(0, idx));
         	buf.append("; modified using ");
         	buf.append(version.getVersion());
         	producer = buf.toString();
