@@ -388,6 +388,6 @@ public class PdfTemplate extends PdfContentByte implements IAccessibleElement {
     }
 
     public boolean isInline() {
-        return false;
+        return true;
     }
 }

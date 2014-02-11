@@ -1,29 +1,22 @@
-<Document><Table width="418.4" height="96">
-
-<THead o="/Table">
-<TR o="/Table"><TD colspan="2" width="418.4" o="/Table"><Span>h1</Span>
+<Document><Table width="418.4" height="96"><THead o="/Table"><TR o="/Table"><TD colspan="2" width="418.4" o="/Table"><Span>h1</Span>
 </TD>
 </TR>
 <TR o="/Table"><TD colspan="2" width="418.4" o="/Table"><Span>h2</Span>
 </TD>
 </TR>
 </THead>
-<TBody>
-<TR o="/Table">
-<TH name="/header1" width="209.2" o="/Table" scope="/Row"><Span>header1</Span>
+<TBody><TR o="/Table"><TH name="/header1" width="209.2" o="/Table" scope="/Row"><Span>header1</Span>
 </TH>
 <TH name="/header2" width="209.2" o="/Table" scope="/Row"><Span>header2</Span>
 </TH>
 </TR>
-<TR o="/Table">
-<TD headers="[header1]" width="209.2" o="/Table"><Span>row 2, column 1</Span>
+<TR o="/Table"><TD headers="[header1]" width="209.2" o="/Table"><Span>row 2, column 1</Span>
 </TD>
 <TD headers="[header2, header2]" width="209.2" o="/Table"><Span>row 2, column 2</Span>
 </TD>
 </TR>
 </TBody>
-<TFoot>
-<TR o="/Table"><TD colspan="2" width="418.4" o="/Table"><Span>footer 1</Span>
+<TFoot><TR o="/Table"><TD colspan="2" width="418.4" o="/Table"><Span>footer 1</Span>
 </TD>
 </TR>
 <TR o="/Table"><TD colspan="2" width="418.4" o="/Table"><Span>footer 2</Span>

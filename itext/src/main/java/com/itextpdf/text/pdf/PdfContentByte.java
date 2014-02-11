@@ -3630,16 +3630,19 @@ public class PdfContentByte {
     }
 
     private void closeMCBlockInt(IAccessibleElement element) {
-        if (isTagged() && element.getRole() != null && writer.needToBeMarkedInContent(element)) {
+        if (isTagged() && element.getRole() != null) {
             PdfStructureElement structureElement = pdf.structElements.get(element.getId());
-            if (structureElement != null)
+            if (structureElement != null) {
                 structureElement.writeAttributes(element);
-            boolean inTextLocal = inText;
-            if (inText)
-                endText();
-            endMarkedContentSequence();
-            if (inTextLocal)
-                beginText(true);
+            }
+            if (writer.needToBeMarkedInContent(element)) {
+                boolean inTextLocal = inText;
+                if (inText)
+                    endText();
+                endMarkedContentSequence();
+                if (inTextLocal)
+                    beginText(true);
+            }
         }
     }
 
