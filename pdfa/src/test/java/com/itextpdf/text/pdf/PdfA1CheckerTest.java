@@ -1148,7 +1148,6 @@ public class PdfA1CheckerTest {
 
         Font font = FontFactory.getFont("./src/test/resources/com/itextpdf/text/pdf/FreeMonoBold.ttf", BaseFont.WINANSI, BaseFont.EMBEDDED, 72);
         Chunk c = new Chunk("Document Header", font);
-        c.setRole(null);
         Paragraph h1 = new Paragraph(c);
         h1.setRole(PdfName.H1);
         document.add(h1);
