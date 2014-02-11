@@ -51,6 +51,7 @@ import com.itextpdf.text.log.Counter;
 import com.itextpdf.text.log.CounterFactory;
 import com.itextpdf.text.pdf.interfaces.PdfAConformance;
 import com.itextpdf.text.pdf.interfaces.PdfIsoConformance;
+import com.itextpdf.text.pdf.internal.PdfAChecker;
 import com.itextpdf.text.pdf.internal.PdfAConformanceImp;
 import com.itextpdf.text.xml.xmp.PdfAXmpWriter;
 import com.itextpdf.text.xml.xmp.XmpWriter;
@@ -216,4 +217,52 @@ public class PdfAStamperImp extends PdfStamperImp {
         }
 
     }
+
+    @Override
+    public PdfIndirectObject addToBody(PdfObject object) throws IOException {
+        PdfIndirectObject iobj = super.addToBody(object);
+        getPdfAChecker().cacheObject(iobj.getIndirectReference(), iobj.object);
+        return iobj;
+    }
+
+    @Override
+    public PdfIndirectObject addToBody(PdfObject object, boolean inObjStm) throws IOException {
+        PdfIndirectObject iobj =  super.addToBody(object, inObjStm);
+        getPdfAChecker().cacheObject(iobj.getIndirectReference(), iobj.object);
+        return iobj;
+    }
+
+    @Override
+    public PdfIndirectObject addToBody(PdfObject object, PdfIndirectReference ref, boolean inObjStm)
+            throws IOException {
+        PdfIndirectObject iobj = super.addToBody(object, ref, inObjStm);
+        getPdfAChecker().cacheObject(iobj.getIndirectReference(), iobj.object);
+        return iobj;
+    }
+
+    @Override
+    public PdfIndirectObject addToBody(PdfObject object, PdfIndirectReference ref) throws IOException {
+        PdfIndirectObject iobj = super.addToBody(object, ref);
+        getPdfAChecker().cacheObject(iobj.getIndirectReference(), iobj.object);
+        return iobj;
+    }
+
+    @Override
+    public PdfIndirectObject addToBody(PdfObject object, int refNumber) throws IOException {
+        PdfIndirectObject iobj = super.addToBody(object, refNumber);
+        getPdfAChecker().cacheObject(iobj.getIndirectReference(), iobj.object);
+        return iobj;
+    }
+
+    @Override
+    public PdfIndirectObject addToBody(PdfObject object, int refNumber, boolean inObjStm) throws IOException {
+        PdfIndirectObject iobj = super.addToBody(object, refNumber, inObjStm);
+        getPdfAChecker().cacheObject(iobj.getIndirectReference(), iobj.object);
+        return iobj;
+    }
+
+    private PdfAChecker getPdfAChecker() {
+        return ((PdfAConformanceImp)pdfIsoConformance).getPdfAChecker();
+    }
+
 }

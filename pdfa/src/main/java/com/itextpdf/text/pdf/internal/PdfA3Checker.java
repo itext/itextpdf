@@ -107,7 +107,7 @@ public class PdfA3Checker extends PdfA2Checker {
             throw new PdfAConformanceException(embeddedFile, MessageLocalization.getComposedMessage("embedded.file.shall.contain.valid.params.key"));
         } else if (params.isDictionary()){
             PdfObject modDate = ((PdfDictionary)params).get(PdfName.MODDATE);
-            if (modDate == null || !(modDate instanceof PdfDate)) {
+            if (modDate == null || !(modDate instanceof PdfString)) {
                 throw new PdfAConformanceException(embeddedFile, MessageLocalization.getComposedMessage("embedded.file.shall.contain.params.key.with.valid.moddate.key"));
             }
         }

@@ -5,13 +5,17 @@ import com.itextpdf.text.error_messages.MessageLocalization;
 import junit.framework.Assert;
 import org.junit.Test;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
 public class PdfA1CheckerTest {
 
+    private static final String outputDir = "./target/test/PdfA1/";
+
     static {
+        new File(outputDir).mkdirs();
         try {
             MessageLocalization.setLanguage("en", "US");
         } catch (IOException e) {
@@ -21,7 +25,7 @@ public class PdfA1CheckerTest {
     @Test
     public void metadaCheckTest() throws IOException, DocumentException {
 
-        FileOutputStream fos = new FileOutputStream("./target/metadaPDFA1CheckTest1.pdf");
+        FileOutputStream fos = new FileOutputStream(outputDir + "metadaPDFA1CheckTest1.pdf");
         Document document = new Document();
         PdfWriter writer = PdfAWriter.getInstance(document, fos, PdfAConformanceLevel.PDF_A_1B);
         document.open();
@@ -51,7 +55,7 @@ public class PdfA1CheckerTest {
     @Test
     public void trailerCheckTest() throws DocumentException, IOException {
         Document document = new Document();
-        PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream("./target/trailerCheckTest.pdf"), PdfAConformanceLevel.PDF_A_1B);
+        PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream(outputDir + "trailerCheckTest.pdf"), PdfAConformanceLevel.PDF_A_1B);
         writer.createXmpMetadata();
         writer.setEncryption(null, null, 1, PdfWriter.STANDARD_ENCRYPTION_40);
         document.open();
@@ -74,7 +78,7 @@ public class PdfA1CheckerTest {
     @Test
     public void fileSpecCheckTest() throws DocumentException, IOException {
         Document document = new Document();
-        PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream("./target/fileSpecCheckTest.pdf"), PdfAConformanceLevel.PDF_A_1B);
+        PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream(outputDir + "fileSpecCheckTest.pdf"), PdfAConformanceLevel.PDF_A_1B);
         writer.createXmpMetadata();
         document.open();
         Font font = FontFactory.getFont("./src/test/resources/com/itextpdf/text/pdf/FreeMonoBold.ttf", BaseFont.WINANSI, BaseFont.EMBEDDED, 12);
@@ -98,7 +102,7 @@ public class PdfA1CheckerTest {
     @Test
     public void pdfObjectCheckTest1() throws DocumentException, IOException {
         Document document = new Document();
-        PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream("./target/pdfObjectCheckTest1.pdf"), PdfAConformanceLevel.PDF_A_1B);
+        PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream(outputDir + "pdfObjectCheckTest1.pdf"), PdfAConformanceLevel.PDF_A_1B);
         writer.createXmpMetadata();
         document.open();
 
@@ -126,7 +130,7 @@ public class PdfA1CheckerTest {
     @Test
     public void pdfObjectCheckTest2() throws DocumentException, IOException {
         Document document = new Document();
-        PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream("./target/pdfObjectCheckTest2.pdf"), PdfAConformanceLevel.PDF_A_1B);
+        PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream(outputDir + "pdfObjectCheckTest2.pdf"), PdfAConformanceLevel.PDF_A_1B);
         writer.createXmpMetadata();
         document.open();
 
@@ -157,7 +161,7 @@ public class PdfA1CheckerTest {
     @Test
     public void pdfObjectCheckTest3() throws DocumentException, IOException {
         Document document = new Document();
-        PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream("./target/pdfObjectCheckTest3.pdf"), PdfAConformanceLevel.PDF_A_1B);
+        PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream(outputDir + "pdfObjectCheckTest3.pdf"), PdfAConformanceLevel.PDF_A_1B);
         writer.createXmpMetadata();
         document.open();
 
@@ -178,7 +182,7 @@ public class PdfA1CheckerTest {
     @Test
     public void pdfObjectCheckTest4() throws DocumentException, IOException {
         Document document = new Document();
-        PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream("./target/pdfObjectCheckTest4.pdf"), PdfAConformanceLevel.PDF_A_1B);
+        PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream(outputDir + "pdfObjectCheckTest4.pdf"), PdfAConformanceLevel.PDF_A_1B);
         writer.createXmpMetadata();
         document.open();
 
@@ -208,7 +212,7 @@ public class PdfA1CheckerTest {
     @Test
     public void pdfObjectCheckTest5() throws DocumentException, IOException {
         Document document = new Document();
-        PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream("./target/pdfObjectCheckTest5.pdf"), PdfAConformanceLevel.PDF_A_1B);
+        PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream(outputDir + "pdfObjectCheckTest5.pdf"), PdfAConformanceLevel.PDF_A_1B);
         writer.createXmpMetadata();
         document.open();
 
@@ -228,7 +232,7 @@ public class PdfA1CheckerTest {
     @Test
     public void pdfObjectCheckTest6() throws DocumentException, IOException {
         Document document = new Document();
-        PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream("./target/pdfObjectCheckTest6.pdf"), PdfAConformanceLevel.PDF_A_1B);
+        PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream(outputDir + "pdfObjectCheckTest6.pdf"), PdfAConformanceLevel.PDF_A_1B);
         writer.createXmpMetadata();
         document.open();
 
@@ -258,7 +262,7 @@ public class PdfA1CheckerTest {
     @Test
     public void pdfObjectCheckTest7() throws DocumentException, IOException {
         Document document = new Document();
-        PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream("./target/pdfObjectCheckTest7.pdf"), PdfAConformanceLevel.PDF_A_1B);
+        PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream(outputDir + "pdfObjectCheckTest7.pdf"), PdfAConformanceLevel.PDF_A_1B);
         writer.createXmpMetadata();
         document.open();
 
@@ -279,7 +283,7 @@ public class PdfA1CheckerTest {
     @Test
     public void canvasCheckTest1() throws DocumentException, IOException {
         Document document = new Document();
-        PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream("./target/canvasCheckTest1.pdf"), PdfAConformanceLevel.PDF_A_1B);
+        PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream(outputDir + "canvasCheckTest1.pdf"), PdfAConformanceLevel.PDF_A_1B);
         writer.createXmpMetadata();
         document.open();
 
@@ -312,7 +316,7 @@ public class PdfA1CheckerTest {
     @Test
     public void canvasCheckTest2() throws DocumentException, IOException {
         Document document = new Document();
-        PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream("./target/pdfa1CanvasCheckTest2.pdf"), PdfAConformanceLevel.PDF_A_1B);
+        PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream(outputDir + "pdfa1CanvasCheckTest2.pdf"), PdfAConformanceLevel.PDF_A_1B);
         writer.createXmpMetadata();
         document.open();
 
@@ -334,7 +338,7 @@ public class PdfA1CheckerTest {
     @Test
     public void colorCheckTest1() throws DocumentException, IOException {
         Document document = new Document();
-        PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream("./target/pdfa1ColorCheckTest1.pdf"), PdfAConformanceLevel.PDF_A_1B);
+        PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream(outputDir + "pdfa1ColorCheckTest1.pdf"), PdfAConformanceLevel.PDF_A_1B);
         writer.createXmpMetadata();
         document.open();
 
@@ -369,7 +373,7 @@ public class PdfA1CheckerTest {
     @Test
     public void colorCheckTest2() throws DocumentException, IOException {
         Document document = new Document();
-        PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream("./target/pdfa1ColorCheckTest2.pdf"), PdfAConformanceLevel.PDF_A_1B);
+        PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream(outputDir + "pdfa1ColorCheckTest2.pdf"), PdfAConformanceLevel.PDF_A_1B);
         writer.createXmpMetadata();
         document.open();
 
@@ -399,7 +403,7 @@ public class PdfA1CheckerTest {
     @Test
     public void colorCheckTest3() throws DocumentException, IOException {
         Document document = new Document();
-        PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream("./target/pdfa1ColorCheckTest3.pdf"), PdfAConformanceLevel.PDF_A_1B);
+        PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream(outputDir + "pdfa1ColorCheckTest3.pdf"), PdfAConformanceLevel.PDF_A_1B);
         writer.createXmpMetadata();
         document.open();
 
@@ -423,7 +427,7 @@ public class PdfA1CheckerTest {
             Assert.fail("PdfAConformanceException should be thrown.");
 
         document = new Document();
-        writer = PdfAWriter.getInstance(document, new FileOutputStream("./target/pdfa1ColorCheckTest3.pdf"), PdfAConformanceLevel.PDF_A_1B);
+        writer = PdfAWriter.getInstance(document, new FileOutputStream(outputDir + "pdfa1ColorCheckTest3.pdf"), PdfAConformanceLevel.PDF_A_1B);
         writer.createXmpMetadata();
         document.open();
 
@@ -445,7 +449,7 @@ public class PdfA1CheckerTest {
     @Test
     public void colorCheckTest4() throws DocumentException, IOException {
         Document document = new Document();
-        PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream("./target/pdfa1ColorCheckTest4.pdf"), PdfAConformanceLevel.PDF_A_2B);
+        PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream(outputDir + "pdfa1ColorCheckTest4.pdf"), PdfAConformanceLevel.PDF_A_2B);
         writer.createXmpMetadata();
         document.open();
         ICC_Profile icc = ICC_Profile.getInstance(new FileInputStream("./src/test/resources/com/itextpdf/text/pdf/sRGB Color Space Profile.icm"));
@@ -455,8 +459,8 @@ public class PdfA1CheckerTest {
         document.add(new Paragraph("Hello World", font));
         document.close();
 
-        PdfReader reader = new PdfReader("./target/pdfa1ColorCheckTest4.pdf");
-        PdfAStamper stamper = new PdfAStamper(reader, new FileOutputStream("./target/pdfa1ColorCheckTest4_updating_failed.pdf"), PdfAConformanceLevel.PDF_A_2B);
+        PdfReader reader = new PdfReader(outputDir + "pdfa1ColorCheckTest4.pdf");
+        PdfAStamper stamper = new PdfAStamper(reader, new FileOutputStream(outputDir + "pdfa1ColorCheckTest4_updating_failed.pdf"), PdfAConformanceLevel.PDF_A_2B);
         boolean exceptionThrown = false;
         try {
             icc = ICC_Profile.getInstance(new FileInputStream("./src/test/resources/com/itextpdf/text/pdf/sRGB Color Space Profile.icm"));
@@ -483,7 +487,7 @@ public class PdfA1CheckerTest {
     @Test
     public void egsCheckTest1() throws DocumentException, IOException {
         Document document = new Document();
-        PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream("./target/egsCheckTest1.pdf"), PdfAConformanceLevel.PDF_A_1B);
+        PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream(outputDir + "egsCheckTest1.pdf"), PdfAConformanceLevel.PDF_A_1B);
         writer.createXmpMetadata();
         document.open();
 
@@ -514,7 +518,7 @@ public class PdfA1CheckerTest {
     @Test
     public void egsCheckTest2() throws DocumentException, IOException {
         Document document = new Document();
-        PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream("./target/egsCheckTest2.pdf"), PdfAConformanceLevel.PDF_A_1B);
+        PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream(outputDir + "egsCheckTest2.pdf"), PdfAConformanceLevel.PDF_A_1B);
         writer.createXmpMetadata();
         document.open();
 
@@ -534,7 +538,7 @@ public class PdfA1CheckerTest {
     @Test
     public void egsCheckTest3() throws DocumentException, IOException {
         Document document = new Document();
-        PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream("./target/egsCheckTest3.pdf"), PdfAConformanceLevel.PDF_A_1B);
+        PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream(outputDir + "egsCheckTest3.pdf"), PdfAConformanceLevel.PDF_A_1B);
         writer.createXmpMetadata();
         document.open();
 
@@ -564,7 +568,7 @@ public class PdfA1CheckerTest {
     @Test
     public void egsCheckTest4() throws DocumentException, IOException {
         Document document = new Document();
-        PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream("./target/egsCheckTest4.pdf"), PdfAConformanceLevel.PDF_A_1B);
+        PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream(outputDir + "egsCheckTest4.pdf"), PdfAConformanceLevel.PDF_A_1B);
         writer.createXmpMetadata();
         document.open();
 
@@ -593,7 +597,7 @@ public class PdfA1CheckerTest {
     @Test
     public void transparencyCheckTest1() throws DocumentException, IOException {
         Document document = new Document();
-        PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream("./target/transparencyCheckTest1.pdf"), PdfAConformanceLevel.PDF_A_1B);
+        PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream(outputDir + "transparencyCheckTest1.pdf"), PdfAConformanceLevel.PDF_A_1B);
         writer.createXmpMetadata();
         document.open();
 
@@ -623,7 +627,7 @@ public class PdfA1CheckerTest {
     @Test
     public void transparencyCheckTest2() throws DocumentException, IOException {
         Document document = new Document();
-        PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream("./target/transparencyCheckTest2.pdf"), PdfAConformanceLevel.PDF_A_1B);
+        PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream(outputDir + "transparencyCheckTest2.pdf"), PdfAConformanceLevel.PDF_A_1B);
         writer.createXmpMetadata();
         document.open();
 
@@ -652,7 +656,7 @@ public class PdfA1CheckerTest {
     @Test
     public void transparencyCheckTest3() throws DocumentException, IOException {
         Document document = new Document();
-        PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream("./target/transparencyCheckTest3.pdf"), PdfAConformanceLevel.PDF_A_1B);
+        PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream(outputDir + "transparencyCheckTest3.pdf"), PdfAConformanceLevel.PDF_A_1B);
         writer.createXmpMetadata();
         document.open();
 
@@ -672,7 +676,7 @@ public class PdfA1CheckerTest {
     @Test
     public void transparencyCheckTest4() throws DocumentException, IOException {
         Document document = new Document();
-        PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream("./target/transparencyCheckTest4.pdf"), PdfAConformanceLevel.PDF_A_1B);
+        PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream(outputDir + "transparencyCheckTest4.pdf"), PdfAConformanceLevel.PDF_A_1B);
         writer.createXmpMetadata();
         document.open();
 
@@ -691,7 +695,7 @@ public class PdfA1CheckerTest {
     @Test
     public void annotationCheckTest1() throws DocumentException, IOException {
         Document document = new Document();
-        PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream("./target/annotationCheckTest1.pdf"), PdfAConformanceLevel.PDF_A_1B);
+        PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream(outputDir + "annotationCheckTest1.pdf"), PdfAConformanceLevel.PDF_A_1B);
         writer.createXmpMetadata();
         document.open();
 
@@ -720,7 +724,7 @@ public class PdfA1CheckerTest {
     @Test
     public void annotationCheckTest2() throws DocumentException, IOException {
         Document document = new Document();
-        PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream("./target/annotationCheckTest2.pdf"), PdfAConformanceLevel.PDF_A_1B);
+        PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream(outputDir + "annotationCheckTest2.pdf"), PdfAConformanceLevel.PDF_A_1B);
         writer.createXmpMetadata();
         document.open();
 
@@ -751,7 +755,7 @@ public class PdfA1CheckerTest {
     @Test
     public void annotationCheckTest3() throws DocumentException, IOException {
         Document document = new Document();
-        PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream("./target/annotationCheckTest3.pdf"), PdfAConformanceLevel.PDF_A_1B);
+        PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream(outputDir + "annotationCheckTest3.pdf"), PdfAConformanceLevel.PDF_A_1B);
         writer.createXmpMetadata();
         document.open();
 
@@ -781,7 +785,7 @@ public class PdfA1CheckerTest {
     @Test
     public void annotationCheckTest4() throws DocumentException, IOException {
         Document document = new Document();
-        PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream("./target/annotationCheckTest4.pdf"), PdfAConformanceLevel.PDF_A_1B);
+        PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream(outputDir + "annotationCheckTest4.pdf"), PdfAConformanceLevel.PDF_A_1B);
         writer.createXmpMetadata();
         document.open();
 
@@ -811,7 +815,7 @@ public class PdfA1CheckerTest {
     @Test
     public void annotationCheckTest5() throws DocumentException, IOException {
         Document document = new Document();
-        PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream("./target/annotationCheckTest5.pdf"), PdfAConformanceLevel.PDF_A_1B);
+        PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream(outputDir + "annotationCheckTest5.pdf"), PdfAConformanceLevel.PDF_A_1B);
         writer.createXmpMetadata();
         document.open();
 
@@ -846,7 +850,7 @@ public class PdfA1CheckerTest {
     @Test
     public void annotationCheckTest6() throws DocumentException, IOException {
         Document document = new Document();
-        PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream("./target/annotationCheckTest6.pdf"), PdfAConformanceLevel.PDF_A_1B);
+        PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream(outputDir + "annotationCheckTest6.pdf"), PdfAConformanceLevel.PDF_A_1B);
         writer.createXmpMetadata();
         document.open();
 
@@ -879,7 +883,7 @@ public class PdfA1CheckerTest {
     @Test
     public void annotationCheckTest7() throws DocumentException, IOException {
         Document document = new Document();
-        PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream("./target/annotationCheckTest7.pdf"), PdfAConformanceLevel.PDF_A_1B);
+        PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream(outputDir + "annotationCheckTest7.pdf"), PdfAConformanceLevel.PDF_A_1B);
         writer.createXmpMetadata();
         document.open();
 
@@ -899,7 +903,7 @@ public class PdfA1CheckerTest {
     @Test
     public void annotationCheckTest8() throws DocumentException, IOException {
         Document document = new Document();
-        PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream("./target/annotationCheckTest8.pdf"), PdfAConformanceLevel.PDF_A_1A);
+        PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream(outputDir + "annotationCheckTest8.pdf"), PdfAConformanceLevel.PDF_A_1A);
         writer.createXmpMetadata();
         document.open();
 
@@ -929,7 +933,7 @@ public class PdfA1CheckerTest {
     @Test
     public void annotationCheckTest9() throws DocumentException, IOException {
         Document document = new Document();
-        PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream("./target/annotationCheckTest9.pdf"), PdfAConformanceLevel.PDF_A_1A);
+        PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream(outputDir + "annotationCheckTest9.pdf"), PdfAConformanceLevel.PDF_A_1A);
         writer.createXmpMetadata();
         writer.setTagged();
         document.open();
@@ -953,7 +957,7 @@ public class PdfA1CheckerTest {
     public void fieldCheckTest1() throws DocumentException, IOException {
         String LANGUAGES[] = new String[] {"Russian", "English", "Dutch", "French", "Spanish", "German"};
         Document document = new Document();
-        PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream("./target/fieldCheckTest1.pdf"), PdfAConformanceLevel.PDF_A_1B);
+        PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream(outputDir + "fieldCheckTest1.pdf"), PdfAConformanceLevel.PDF_A_1B);
         document.open();
         writer.createXmpMetadata();
 
@@ -993,7 +997,7 @@ public class PdfA1CheckerTest {
     public void fieldCheckTest2() throws DocumentException, IOException {
         String LANGUAGES[] = new String[] {"Russian", "English", "Dutch", "French"};
         Document document = new Document();
-        PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream("./target/fieldCheckTest2.pdf"), PdfAConformanceLevel.PDF_A_1B);
+        PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream(outputDir + "fieldCheckTest2.pdf"), PdfAConformanceLevel.PDF_A_1B);
         document.open();
         writer.createXmpMetadata();
 
@@ -1030,7 +1034,7 @@ public class PdfA1CheckerTest {
     @Test
     public void fieldCheckTest3() throws DocumentException, IOException {
         Document document = new Document();
-        PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream("./target/fieldCheckTest3.pdf"), PdfAConformanceLevel.PDF_A_1B);
+        PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream(outputDir + "fieldCheckTest3.pdf"), PdfAConformanceLevel.PDF_A_1B);
         document.open();
         writer.createXmpMetadata();
 
@@ -1065,7 +1069,7 @@ public class PdfA1CheckerTest {
     @Test
     public void fieldCheckTest4() throws DocumentException, IOException {
         Document document = new Document();
-        PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream("./target/fieldCheckTest4.pdf"), PdfAConformanceLevel.PDF_A_1B);
+        PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream(outputDir + "fieldCheckTest4.pdf"), PdfAConformanceLevel.PDF_A_1B);
         document.open();
         writer.createXmpMetadata();
 
@@ -1094,7 +1098,7 @@ public class PdfA1CheckerTest {
     public void fieldCheckTest5() throws DocumentException, IOException {
         String LANGUAGES[] = new String[] {"Russian", "English", "Dutch", "French"};
         Document document = new Document();
-        PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream("./target/fieldCheckTest5.pdf"), PdfAConformanceLevel.PDF_A_1B);
+        PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream(outputDir + "fieldCheckTest5.pdf"), PdfAConformanceLevel.PDF_A_1B);
         document.open();
         writer.createXmpMetadata();
 
@@ -1139,7 +1143,7 @@ public class PdfA1CheckerTest {
     @Test
     public void markInfoCheckTest1() throws DocumentException, IOException {
         Document document = new Document();
-        PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream("./target/markInfoCheckTest1.pdf"), PdfAConformanceLevel.PDF_A_1A);
+        PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream(outputDir + "markInfoCheckTest1.pdf"), PdfAConformanceLevel.PDF_A_1A);
         writer.setTagged();
         writer.createXmpMetadata();
         document.open();
@@ -1162,7 +1166,7 @@ public class PdfA1CheckerTest {
     @Test
     public void markInfoCheckTest2() throws DocumentException, IOException {
         Document document = new Document();
-        PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream("./target/markInfoCheckTest2.pdf"), PdfAConformanceLevel.PDF_A_1A);
+        PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream(outputDir + "markInfoCheckTest2.pdf"), PdfAConformanceLevel.PDF_A_1A);
         writer.createXmpMetadata();
         document.open();
 
@@ -1185,7 +1189,7 @@ public class PdfA1CheckerTest {
     @Test
     public void roleMapCheckTest1() throws DocumentException, IOException {
         Document document = new Document();
-        PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream("./target/roleMapCheckTest1.pdf"), PdfAConformanceLevel.PDF_A_1A);
+        PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream(outputDir + "roleMapCheckTest1.pdf"), PdfAConformanceLevel.PDF_A_1A);
         writer.setTagged();
         writer.createXmpMetadata();
         document.open();
@@ -1212,7 +1216,7 @@ public class PdfA1CheckerTest {
     @Test
     public void roleMapCheckTest2() throws DocumentException, IOException {
         Document document = new Document();
-        PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream("./target/roleMapCheckTest2.pdf"), PdfAConformanceLevel.PDF_A_1A);
+        PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream(outputDir + "roleMapCheckTest2.pdf"), PdfAConformanceLevel.PDF_A_1A);
         writer.setTagged();
         writer.createXmpMetadata();
         document.open();
@@ -1232,7 +1236,7 @@ public class PdfA1CheckerTest {
     @Test
     public void roleMapCheckTest3() throws DocumentException, IOException {
         Document document = new Document();
-        PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream("./target/roleMapCheckTest3.pdf"), PdfAConformanceLevel.PDF_A_1A);
+        PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream(outputDir + "roleMapCheckTest3.pdf"), PdfAConformanceLevel.PDF_A_1A);
         writer.setTagged();
         writer.createXmpMetadata();
         document.open();
@@ -1265,7 +1269,7 @@ public class PdfA1CheckerTest {
         boolean exceptionThrown = false;
         try {
             Document document = new Document();
-            PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream("./target/pdfa2FontCheckTest1.pdf"), PdfAConformanceLevel.PDF_A_1A);
+            PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream(outputDir + "pdfa2FontCheckTest1.pdf"), PdfAConformanceLevel.PDF_A_1A);
             writer.createXmpMetadata();
             writer.setTagged();
             document.open();

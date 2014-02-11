@@ -8,10 +8,16 @@ import java.io.*;
 
 public class PdfA3CheckerTest {
 
+    private static final String outputDir = "./target/test/PdfA3/";
+
+    static {
+        new File(outputDir).mkdirs();
+    }
+
     @Test
     public void fileSpecCheckTest1() throws DocumentException, IOException {
         Document document = new Document();
-        PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream("./target/fileSpecCheckTest1.pdf"), PdfAConformanceLevel.PDF_A_3B);
+        PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream(outputDir + "fileSpecCheckTest1.pdf"), PdfAConformanceLevel.PDF_A_3B);
         writer.createXmpMetadata();
         document.open();
 
@@ -33,7 +39,7 @@ public class PdfA3CheckerTest {
     @Test
     public void fileSpecCheckTest2() throws DocumentException, IOException {
         Document document = new Document();
-        PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream("./target/fileSpecCheckTest2.pdf"), PdfAConformanceLevel.PDF_A_3B);
+        PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream(outputDir + "fileSpecCheckTest2.pdf"), PdfAConformanceLevel.PDF_A_3B);
         writer.createXmpMetadata();
         document.open();
 
@@ -58,7 +64,7 @@ public class PdfA3CheckerTest {
     @Test
     public void fileSpecCheckTest3() throws DocumentException, IOException {
         Document document = new Document();
-        PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream("./target/fileSpecCheckTest3.pdf"), PdfAConformanceLevel.PDF_A_3B);
+        PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream(outputDir + "fileSpecCheckTest3.pdf"), PdfAConformanceLevel.PDF_A_3B);
         writer.createXmpMetadata();
         document.open();
 
@@ -77,7 +83,7 @@ public class PdfA3CheckerTest {
     @Test
     public void fileSpecCheckTest4() throws DocumentException, IOException {
         Document document = new Document();
-        PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream("./target/fileSpecCheckTest4.pdf"), PdfAConformanceLevel.PDF_A_3B);
+        PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream(outputDir + "fileSpecCheckTest4.pdf"), PdfAConformanceLevel.PDF_A_3B);
         writer.createXmpMetadata();
         document.open();
 
@@ -95,7 +101,7 @@ public class PdfA3CheckerTest {
     @Test
     public void fileSpecCheckTest5() throws DocumentException, IOException {
         Document document = new Document();
-        PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream("./target/fileSpecCheckTest5.pdf"), PdfAConformanceLevel.PDF_A_3B);
+        PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream(outputDir + "fileSpecCheckTest5.pdf"), PdfAConformanceLevel.PDF_A_3B);
         writer.createXmpMetadata();
         document.open();
 
@@ -127,7 +133,7 @@ public class PdfA3CheckerTest {
     @Test
     public void fileSpecCheckTest6() throws DocumentException, IOException {
         Document document = new Document();
-        PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream("./target/fileSpecCheckTest2.pdf"), PdfAConformanceLevel.PDF_A_3B);
+        PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream(outputDir + "fileSpecCheckTest2.pdf"), PdfAConformanceLevel.PDF_A_3B);
         writer.createXmpMetadata();
         document.open();
 
@@ -145,5 +151,30 @@ public class PdfA3CheckerTest {
         writer.addFileAttachment(fileSpec);
 
         document.close();
+    }
+
+    @Test
+    public void fileSpecCheckTest7() throws DocumentException, IOException {
+        FileInputStream inPdf = new FileInputStream("./src/test/resources/com/itextpdf/text/pdf/fileSpec.pdf");
+        ByteArrayOutputStream xml = new ByteArrayOutputStream();
+        PrintStream out = new PrintStream(xml);
+        out.print("<foo><foo2>Hello world</foo2></foo>");
+        out.close();
+
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        PdfReader reader = new PdfReader(inPdf);
+        PdfAStamper stamper = new PdfAStamper(reader, output, PdfAConformanceLevel.PDF_A_3B);
+
+        stamper.createXmpMetadata();
+
+        PdfDictionary embeddedFileParams = new PdfDictionary();
+        embeddedFileParams.put(PdfName.MODDATE, new PdfDate());
+        PdfFileSpecification fs = PdfFileSpecification.fileEmbedded(stamper.getWriter(), "foo", "foo",
+                xml.toByteArray() , "text/xml", embeddedFileParams, 0);
+        fs.put(PdfName.AFRELATIONSHIP, AFRelationshipValue.Source);
+        stamper.addFileAttachment("description", fs);
+
+        stamper.close();
+        reader.close();
     }
 }
