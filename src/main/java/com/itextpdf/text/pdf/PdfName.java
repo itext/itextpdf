@@ -1121,7 +1121,7 @@ public class
     public static final PdfName LAUNCH = new PdfName("Launch");
     /**
      * A name
-     * @since 5.4.6
+     * @since 5.5.0
      */
     public static final PdfName LAYOUT = new PdfName("Layout");
     /**
@@ -1508,7 +1508,7 @@ public class
     public static final PdfName PICKTRAYBYPDFSIZE = new PdfName("PickTrayByPDFSize");
     /**
      * A name
-     * @since 5.4.6
+     * @since 5.5.0
      */
     public static final PdfName PIECEINFO = new PdfName("PieceInfo");
     /**
