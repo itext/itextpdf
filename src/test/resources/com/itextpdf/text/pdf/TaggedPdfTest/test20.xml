@@ -1,10 +1,4 @@
-<Document>
-
-
-
-
-
-<P o="/Layout" color="[1, 0, 0]"><Span>Hello   world
+<Document><P o="/Layout" color="[1, 0, 0]"><Span>Hello   world
 </Span>
 </P>
 <Span>Hello word</Span>

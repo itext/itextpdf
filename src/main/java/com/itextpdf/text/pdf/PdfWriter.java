@@ -2537,29 +2537,29 @@ public class PdfWriter extends DocWriter implements
 
 //  [F12] tagged PDF
 
+    static public final int markAll = 0x00;
+    static public final int markInlineElementsOnly = 0x01;
+
     protected boolean tagged = false;
-    protected int taggingCompatibilityMode = 0x00;
-    static public final int markInlineElementsOnly = 0x001;
+    protected int taggingMode = markInlineElementsOnly;
     protected PdfStructureTreeRoot structureTreeRoot;
 
     /**
      * Mark this document for tagging. It must be called before open.
      */
     public void setTagged() {
-        if (open)
-            throw new IllegalArgumentException(MessageLocalization.getComposedMessage("tagging.must.be.set.before.opening.the.document"));
-        tagged = true;
+        setTagged(markInlineElementsOnly);
     }
 
-    public void setTagged(int compatibilityMode) {
+    public void setTagged(int taggingMode) {
         if (open)
             throw new IllegalArgumentException(MessageLocalization.getComposedMessage("tagging.must.be.set.before.opening.the.document"));
         tagged = true;
-        this.taggingCompatibilityMode = compatibilityMode;
+        this.taggingMode = taggingMode;
     }
 
     public boolean needToBeMarkedInContent(IAccessibleElement element) {
-        if ((taggingCompatibilityMode & markInlineElementsOnly) != 0) {
+        if ((taggingMode & markInlineElementsOnly) != 0) {
             if (element.isInline() || PdfName.ARTIFACT.equals(element.getRole())) {
                 return true;
             }
@@ -2571,7 +2571,7 @@ public class PdfWriter extends DocWriter implements
     public void checkElementRole(IAccessibleElement element, IAccessibleElement parent) {
         if (parent != null && (parent.getRole() == null || PdfName.ARTIFACT.equals(parent.getRole())))
             element.setRole(null);
-        else if ((taggingCompatibilityMode & markInlineElementsOnly) != 0) {
+        else if ((taggingMode & markInlineElementsOnly) != 0) {
             if (element.isInline() && element.getRole() == null && (parent == null || !parent.isInline()))
                 throw new IllegalArgumentException(MessageLocalization.getComposedMessage("inline.elements.with.role.null.are.not.allowed"));
         }

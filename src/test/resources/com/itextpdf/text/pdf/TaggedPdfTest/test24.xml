@@ -1,5 +1,5 @@
-<Document><P><Span>Paragraph testing testing</Span>
+<Document><P o="/Layout"><Span>Paragraph testing testing</Span>
 </P>
-<P><Span>Span testing testing</Span>
+<P o="/Layout"><Span>Span testing testing</Span>
 </P>
 </Document>
