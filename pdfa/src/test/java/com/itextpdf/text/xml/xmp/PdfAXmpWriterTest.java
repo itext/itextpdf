@@ -30,11 +30,11 @@ public class PdfAXmpWriterTest {
         writer.createXmpMetadata();
         XmpWriter xmp = writer.getXmpWriter();
 
-        DublinCoreProperties.addSubject(xmp.getXmpMeta(), "Subject1");
-        DublinCoreProperties.addSubject(xmp.getXmpMeta(), "Subject2");
-        DublinCoreProperties.addSubject(xmp.getXmpMeta(), "Subject3");
+        DublinCoreProperties.addSubject(xmp.getXmpMeta(), "Hello World");
+        DublinCoreProperties.addSubject(xmp.getXmpMeta(), "XMP & Metadata");
+        DublinCoreProperties.addSubject(xmp.getXmpMeta(), "Metadata");
 
-        PdfProperties.setKeywords(xmp.getXmpMeta(), "Keywords");
+        PdfProperties.setKeywords(xmp.getXmpMeta(), "Hello World, XMP & Metadata, Metadata");
         PdfProperties.setVersion(xmp.getXmpMeta(), "1.4");
 
         // step 3
@@ -142,13 +142,13 @@ public class PdfAXmpWriterTest {
         XmpWriter xmp = new PdfAXmpWriter(os, PdfAConformanceLevel.PDF_A_2B);
         XmpSchema dc = new com.itextpdf.text.xml.xmp.DublinCoreSchema();
         XmpArray subject = new XmpArray(XmpArray.UNORDERED);
-        subject.add("Subject1");
-        subject.add("Subject2");
-        subject.add("Subject3");
+        subject.add("Hello World");
+        subject.add("XMP & Metadata");
+        subject.add("Metadata");
         dc.setProperty(DublinCoreSchema.SUBJECT, subject);
         xmp.addRdfDescription(dc.getXmlns(), dc.toString());
         PdfSchema pdf = new PdfSchema();
-        pdf.setProperty(PdfSchema.KEYWORDS, "Keywords");
+        pdf.setProperty(PdfSchema.KEYWORDS, "Hello World, XMP & Metadata, Metadata");
         pdf.setProperty(PdfSchema.VERSION, "1.4");
         xmp.addRdfDescription(pdf);
         xmp.close();
