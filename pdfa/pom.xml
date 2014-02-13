@@ -7,7 +7,7 @@
 		<version>1.0.0</version>
 	</parent>
 	<artifactId>itext-pdfa</artifactId>
-	<version>5.4.6-SNAPSHOT</version>
+	<version>5.5.1-SNAPSHOT</version>
 	<name>iText ISO-19005 Module</name>
 	<description>iText ISO-19005 Module</description>
 	<build>
@@ -73,7 +73,7 @@ var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga
 		<dependency>
 			<groupId>com.itextpdf</groupId>
 			<artifactId>itextpdf</artifactId>
-			<version>5.4.6-SNAPSHOT</version>
+			<version>5.5.1-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 	<properties>
