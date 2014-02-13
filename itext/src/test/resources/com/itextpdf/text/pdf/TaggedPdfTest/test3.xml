@@ -1,6 +1,6 @@
-<Document>
-<H1 color="[0, 0, 1]">Document Header</H1>
-<P><Span>Lorem ipsum dolor sit amet,consectetur adipiscing elit.Pellentesque a lectus sit amet lectus
+<Document><H1 o="/Layout" color="[0, 0, 1]"><Span>Document Header</Span>
+</H1>
+<P o="/Layout"><Span>Lorem ipsum dolor sit amet,consectetur adipiscing elit.Pellentesque a lectus sit amet lectus
 accumsan aliquam.Quisque facilisis ullamcorper dolor, quis gravida leo faucibus in. Donec a dolor
 ligula, quis placerat nunc. Etiam enim velit, egestas in lacinia at, ultricies eu massa.Cras ornare
 felis id quam vehicula lobortis. Ut semper malesuada nulla, in vulputate dui eleifend at. Phasellus

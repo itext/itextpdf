@@ -1,5 +1,6 @@
 package com.itextpdf.text.pdf.mc;
 
+import com.itextpdf.testutils.CompareTool;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.log.LoggerFactory;
 import com.itextpdf.text.log.SysoLogger;

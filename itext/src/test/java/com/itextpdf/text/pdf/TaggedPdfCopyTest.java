@@ -23,26 +23,27 @@ public class TaggedPdfCopyTest {
     public static final String NO_ROLE_MAP = "The document does not contain RoleMap";
     public static final String NO_STRUCT_TREE_ROOT = "No StructTreeRoot found";
 
-    public static final String SOURCE4 =  "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/1/source4.pdf";
-    public static final String SOURCE10 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/1/source10.pdf";
-    public static final String SOURCE11 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/1/source11.pdf";
-    public static final String SOURCE12 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/1/source12.pdf";
-    public static final String SOURCE16 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/1/source16.pdf";
-    public static final String SOURCE17 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/1/source17.pdf";
-    public static final String SOURCE18 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/1/source18.pdf";
-    public static final String SOURCE19 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/1/source19.pdf";
-    public static final String SOURCE22 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/2/source22.pdf";
-    public static final String SOURCE32 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/3/source32.pdf";
-    public static final String SOURCE42 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/4/source42.pdf";
-    public static final String SOURCE51 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/5/source51.pdf";
-    public static final String SOURCE52 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/5/source52.pdf";
-    public static final String SOURCE53 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/5/source53.pdf";
-    public static final String SOURCE61 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/6/source61.pdf";
-    public static final String SOURCE62 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/6/source62.pdf";
-    public static final String SOURCE63 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/6/source63.pdf";
-    public static final String SOURCE64 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/6/source64.pdf";
-    public static final String SOURCE72 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/7/source72.pdf";
-    public static final String SOURCE73 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/7/source73.pdf";
+    public static final String SOURCE4 =  "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/pdf/source4.pdf";
+    public static final String SOURCE10 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/pdf/source10.pdf";
+    public static final String SOURCE11 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/pdf/source11.pdf";
+    public static final String SOURCE12 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/pdf/source12.pdf";
+    public static final String SOURCE16 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/pdf/source16.pdf";
+    public static final String SOURCE17 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/pdf/source17.pdf";
+    public static final String SOURCE18 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/pdf/source18.pdf";
+    public static final String SOURCE19 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/pdf/source19.pdf";
+    public static final String SOURCE22 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/pdf/source22.pdf";
+    public static final String SOURCE32 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/pdf/source32.pdf";
+    public static final String SOURCE42 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/pdf/source42.pdf";
+    public static final String SOURCE51 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/pdf/source51.pdf";
+    public static final String SOURCE52 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/pdf/source52.pdf";
+    public static final String SOURCE53 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/pdf/source53.pdf";
+    public static final String SOURCE61 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/pdf/source61.pdf";
+    public static final String SOURCE62 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/pdf/source62.pdf";
+    public static final String SOURCE63 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/pdf/source63.pdf";
+    public static final String SOURCE64 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/pdf/source64.pdf";
+    public static final String SOURCE72 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/pdf/source72.pdf";
+    public static final String SOURCE73 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/pdf/source73.pdf";
+    public static final String DEV_805 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/pdf/dev-805.pdf";
 
     public static final String OUT = "./target/com/itextpdf/test/pdf/TaggedPdfCopyTest/out";
 
@@ -776,6 +777,23 @@ public class TaggedPdfCopyTest {
         junit.framework.Assert.assertTrue(iref instanceof PdfIndirectReference);
         junit.framework.Assert.assertTrue(reader.getPdfObjectRelease(((PdfIndirectReference)iref).getNumber()) instanceof PdfNull);
 
+        reader.close();
+    }
+
+    //Check for crash in case of structure element contains no "Pg" keys.
+    @Test
+    public void copyTaggedPdf22() throws IOException, DocumentException {
+        initializeDocument("22");
+
+        PdfReader reader = new PdfReader(DEV_805);
+
+        int n = reader.getNumberOfPages();
+        for (int page = 0; page < n; ) {
+            copy.addPage(copy.getImportedPage(reader, ++page,true));
+        }
+
+        copy.freeReader(reader);
+        document.close();
         reader.close();
     }
 

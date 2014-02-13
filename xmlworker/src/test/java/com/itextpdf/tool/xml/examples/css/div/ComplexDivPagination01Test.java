@@ -1,7 +1,6 @@
 package com.itextpdf.tool.xml.examples.css.div;
 
 import com.itextpdf.text.Document;
-import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.PageSize;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.tool.xml.Pipeline;
@@ -23,7 +22,6 @@ import org.junit.Ignore;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.nio.charset.Charset;
 
 @Ignore
@@ -32,7 +30,8 @@ public class ComplexDivPagination01Test extends SampleTest {
         return "complexDivPagination01";
     }
 
-    protected void transformHtml2Pdf() throws IOException, DocumentException, InterruptedException {
+    @Override
+    protected void makePdf(String outPdf) throws Exception {
         Document doc = new Document(PageSize.A4.rotate());
         PdfWriter pdfWriter = PdfWriter.getInstance(doc, new FileOutputStream(outPdf));
         doc.setMargins(45, 45, 0, 100);
@@ -40,8 +39,8 @@ public class ComplexDivPagination01Test extends SampleTest {
 
 
         CssFilesImpl cssFiles = new CssFilesImpl();
-        cssFiles.add(XMLWorkerHelper.getCSS(new FileInputStream("." + File.separator + "target" + File.separator + "test-classes" + File.separator + testPath + testName + File.separator + "complexDiv_files" + File.separator + "main.css")));
-        cssFiles.add(XMLWorkerHelper.getCSS(new FileInputStream("." + File.separator + "target" + File.separator + "test-classes" + File.separator + testPath + testName + File.separator + "complexDiv_files" + File.separator + "widget082.css")));
+        cssFiles.add(XMLWorkerHelper.getCSS(new FileInputStream(String.format("./src/test/resources/%s%s/complexDiv_files/main.css", testPath, getTestName()))));
+        cssFiles.add(XMLWorkerHelper.getCSS(new FileInputStream(String.format("./src/test/resources/%s%s/complexDiv_files/widget082.css", testPath, getTestName()))));
         StyleAttrCSSResolver cssResolver = new StyleAttrCSSResolver(cssFiles);
         HtmlPipelineContext hpc = new HtmlPipelineContext(new CssAppliersImpl(new XMLWorkerFontProvider(SampleTest.class.getResource("fonts").getPath())));
         hpc.setAcceptUnknown(true).autoBookmark(true).setTagFactory(Tags.getHtmlTagProcessorFactory());

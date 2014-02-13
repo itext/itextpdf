@@ -2,15 +2,16 @@
  * $Id:  $
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2011 1T3XT BVBA
+ * Copyright (c) 1998-2014 iText Group NV
  * Authors: Bruno Lowagie, Paulo Soares, Kevin Day, et al.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License version 3
  * as published by the Free Software Foundation with the addition of the
  * following permission added to Section 15 as permitted in Section 7(a):
- * FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY 1T3XT,
- * 1T3XT DISCLAIMS THE WARRANTY OF NON INFRINGEMENT OF THIRD PARTY RIGHTS.
+ * FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY
+ * ITEXT GROUP. ITEXT GROUP DISCLAIMS THE WARRANTY OF NON INFRINGEMENT
+ * OF THIRD PARTY RIGHTS
  *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
@@ -47,18 +48,20 @@ package com.itextpdf.text.pdf;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
+import java.io.*;
 
-import com.itextpdf.text.DocumentException;
+import com.itextpdf.testutils.CompareTool;
+import com.itextpdf.text.Paragraph;
 import junit.framework.Assert;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.itextpdf.testutils.TestResourceUtils;
 import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.PageSize;
 
 /**
@@ -130,6 +133,158 @@ public class PdfCopyTest {
         Assert.assertEquals(2, decodeParms.size());
         Assert.assertTrue(decodeParms.getPdfObject(0) instanceof PdfNull);
 
+        reader.close();
+    }
+    
+    @Test
+    public void testNeedAppearances() throws DocumentException, IOException, InterruptedException {
+        String f1 = "./src/test/resources/com/itextpdf/text/pdf/PdfCopyTest/appearances1.pdf";
+        String f2 = "./src/test/resources/com/itextpdf/text/pdf/PdfCopyTest/appearances2.pdf";
+        String f3 = "./src/test/resources/com/itextpdf/text/pdf/PdfCopyTest/appearances3.pdf";
+        String f4 = "./src/test/resources/com/itextpdf/text/pdf/PdfCopyTest/appearances4.pdf";
+
+        new File("./target/com/itextpdf/test/pdf/PdfCopyTest/").mkdirs();
+        FileOutputStream outputPdfStream = new FileOutputStream("./target/com/itextpdf/test/pdf/PdfCopyTest/appearances.pdf");
+        Document document = new Document();
+        PdfCopy copy = new PdfCopy(document, outputPdfStream);
+        copy.setMergeFields();
+        document.open();
+        for (String f : new String[] {f1, f2, f3, f4}) {
+            PdfReader r = new PdfReader(f);
+            copy.addDocument(r);
+        }
+        copy.close();
+        CompareTool compareTool = new CompareTool("./target/com/itextpdf/test/pdf/PdfCopyTest/appearances.pdf", "./src/test/resources/com/itextpdf/text/pdf/PdfCopyTest/cmp_appearances.pdf");
+        String errorMessage = compareTool.compare("./target/com/itextpdf/test/pdf/PdfCopyTest/", "diff");
+        if (errorMessage != null) {
+            Assert.fail(errorMessage);
+        }
+    }
+
+    @Test
+    public void testNeedAppearancesFalse() throws DocumentException, IOException, InterruptedException {
+        String f1 = "./src/test/resources/com/itextpdf/text/pdf/PdfCopyTest/appearances1(needAppearancesFalse).pdf";
+        String f2 = "./src/test/resources/com/itextpdf/text/pdf/PdfCopyTest/appearances2(needAppearancesFalse).pdf";
+        String f3 = "./src/test/resources/com/itextpdf/text/pdf/PdfCopyTest/appearances3(needAppearancesFalse).pdf";
+        String f4 = "./src/test/resources/com/itextpdf/text/pdf/PdfCopyTest/appearances4(needAppearancesFalse).pdf";
+
+        new File("./target/com/itextpdf/test/pdf/PdfCopyTest/").mkdirs();
+        FileOutputStream outputPdfStream = new FileOutputStream("./target/com/itextpdf/test/pdf/PdfCopyTest/appearances(needAppearancesFalse).pdf");
+        Document document = new Document();
+        PdfCopy copy = new PdfCopy(document, outputPdfStream);
+        copy.setMergeFields();
+        document.open();
+        for (String f : new String[] {f1, f2, f3, f4}) {
+            PdfReader r = new PdfReader(f);
+            copy.addDocument(r);
+        }
+        copy.close();
+        CompareTool compareTool = new CompareTool("./target/com/itextpdf/test/pdf/PdfCopyTest/appearances(needAppearancesFalse).pdf", "./src/test/resources/com/itextpdf/text/pdf/PdfCopyTest/cmp_appearances(needAppearancesFalse).pdf");
+        String errorMessage = compareTool.compare("./target/com/itextpdf/test/pdf/PdfCopyTest/", "diff");
+        if (errorMessage != null) {
+            Assert.fail(errorMessage);
+        }
+    }
+
+    @Test
+    public void testNeedAppearancesFalseWithStreams() throws DocumentException, IOException, InterruptedException {
+        String f1 = "./src/test/resources/com/itextpdf/text/pdf/PdfCopyTest/appearances1(needAppearancesFalseWithStreams).pdf";
+        String f2 = "./src/test/resources/com/itextpdf/text/pdf/PdfCopyTest/appearances2(needAppearancesFalseWithStreams).pdf";
+        String f3 = "./src/test/resources/com/itextpdf/text/pdf/PdfCopyTest/appearances3(needAppearancesFalseWithStreams).pdf";
+        String f4 = "./src/test/resources/com/itextpdf/text/pdf/PdfCopyTest/appearances4(needAppearancesFalseWithStreams).pdf";
+
+        new File("./target/com/itextpdf/test/pdf/PdfCopyTest/").mkdirs();
+        FileOutputStream outputPdfStream = new FileOutputStream("./target/com/itextpdf/test/pdf/PdfCopyTest/appearances(needAppearancesFalseWithStreams).pdf");
+        Document document = new Document();
+        PdfCopy copy = new PdfCopy(document, outputPdfStream);
+        copy.setMergeFields();
+        document.open();
+        for (String f : new String[] {f1, f2, f3, f4}) {
+            PdfReader r = new PdfReader(f);
+            copy.addDocument(r);
+        }
+        copy.close();
+        CompareTool compareTool = new CompareTool("./target/com/itextpdf/test/pdf/PdfCopyTest/appearances(needAppearancesFalseWithStreams).pdf", "./src/test/resources/com/itextpdf/text/pdf/PdfCopyTest/cmp_appearances(needAppearancesFalseWithStreams).pdf");
+        String errorMessage = compareTool.compare("./target/com/itextpdf/test/pdf/PdfCopyTest/", "diff");
+        if (errorMessage != null) {
+            Assert.fail(errorMessage);
+        }
+    }
+
+    @Test
+    public void testNeedAppearancesMixed() throws DocumentException, IOException, InterruptedException {
+        String f1 = "./src/test/resources/com/itextpdf/text/pdf/PdfCopyTest/appearances1.pdf";
+        String f2 = "./src/test/resources/com/itextpdf/text/pdf/PdfCopyTest/appearances2(needAppearancesFalse).pdf";
+        String f3 = "./src/test/resources/com/itextpdf/text/pdf/PdfCopyTest/appearances3(needAppearancesFalseWithStreams).pdf";
+        String f4 = "./src/test/resources/com/itextpdf/text/pdf/PdfCopyTest/appearances4.pdf";
+
+        new File("./target/com/itextpdf/test/pdf/PdfCopyTest/").mkdirs();
+        FileOutputStream outputPdfStream = new FileOutputStream("./target/com/itextpdf/test/pdf/PdfCopyTest/appearances(mixed).pdf");
+        Document document = new Document();
+        PdfCopy copy = new PdfCopy(document, outputPdfStream);
+        copy.setMergeFields();
+        document.open();
+        for (String f : new String[] {f1, f2, f3, f4}) {
+            PdfReader r = new PdfReader(f);
+            copy.addDocument(r);
+        }
+        copy.close();
+        CompareTool compareTool = new CompareTool("./target/com/itextpdf/test/pdf/PdfCopyTest/appearances(mixed).pdf", "./src/test/resources/com/itextpdf/text/pdf/PdfCopyTest/cmp_appearances(mixed).pdf");
+        String errorMessage = compareTool.compare("./target/com/itextpdf/test/pdf/PdfCopyTest/", "diff");
+        if (errorMessage != null) {
+            Assert.fail(errorMessage);
+        }
+    }
+
+    @Test
+    public void testFullCompression1() throws DocumentException, IOException {
+        String outfile = "./target/com/itextpdf/test/pdf/PdfCopyTest/out-noforms.pdf";
+        String first = "./src/test/resources/com/itextpdf/text/pdf/PdfCopyTest/hello.pdf";
+        String second = "./src/test/resources/com/itextpdf/text/pdf/PdfCopyTest/hello_memory.pdf";
+        OutputStream out = new FileOutputStream(outfile);
+        PdfReader reader = new PdfReader(first);
+        PdfReader reader2 = new PdfReader(second);
+        Document pdfDocument = new Document();
+        PdfCopy pdfCopy = new PdfCopy(pdfDocument, out);
+        pdfCopy.setMergeFields();
+        pdfCopy.setFullCompression();
+        pdfCopy.setCompressionLevel(PdfStream.BEST_COMPRESSION);
+        pdfDocument.open();
+        pdfCopy.addDocument(reader);
+        pdfCopy.addDocument(reader2);
+        pdfCopy.close();
+        reader.close();
+        reader2.close();
+        out.close();
+
+        reader = new PdfReader("./target/com/itextpdf/test/pdf/PdfCopyTest/out-noforms.pdf");
+        Assert.assertNotNull(reader.getPageN(1));
+        reader.close();
+    }
+
+    @Test
+    public void testFullCompression2() throws DocumentException, IOException {
+        String outfile = "./target/com/itextpdf/test/pdf/PdfCopyTest/out-forms.pdf";
+        String first = "./src/test/resources/com/itextpdf/text/pdf/PdfCopyTest/subscribe.pdf";
+        String second = "./src/test/resources/com/itextpdf/text/pdf/PdfCopyTest/filled_form_1.pdf";
+        OutputStream out = new FileOutputStream(outfile);
+        PdfReader reader = new PdfReader(first);
+        PdfReader reader2 = new PdfReader(second);
+        Document pdfDocument = new Document();
+        PdfCopy pdfCopy = new PdfCopy(pdfDocument, out);
+        pdfCopy.setMergeFields();
+        pdfCopy.setFullCompression();
+        pdfCopy.setCompressionLevel(PdfStream.BEST_COMPRESSION);
+        pdfDocument.open();
+        pdfCopy.addDocument(reader);
+        pdfCopy.addDocument(reader2);
+        pdfCopy.close();
+        reader.close();
+        reader2.close();
+        out.close();
+
+        reader = new PdfReader("./target/com/itextpdf/test/pdf/PdfCopyTest/out-forms.pdf");
+        Assert.assertNotNull(reader.getPageN(1));
         reader.close();
     }
 

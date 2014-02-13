@@ -1,7 +1,6 @@
 package com.itextpdf.tool.xml.examples.html;
 
 import com.itextpdf.text.Document;
-import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.PageSize;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.tool.xml.Pipeline;
@@ -21,7 +20,6 @@ import com.itextpdf.tool.xml.pipeline.html.HtmlPipelineContext;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.nio.charset.Charset;
 
 public class DivPagination02Test extends SampleTest {
@@ -29,7 +27,7 @@ public class DivPagination02Test extends SampleTest {
         return "divPagination02";
     }
 
-    protected void transformHtml2Pdf() throws IOException, DocumentException, InterruptedException {
+    protected void makePdf(String outPdf) throws Exception {
         Document doc = new Document(PageSize.A4.rotate());
         PdfWriter pdfWriter = PdfWriter.getInstance(doc, new FileOutputStream(outPdf));
         doc.setMargins(doc.leftMargin() - 10, doc.rightMargin() - 10, doc.topMargin(), doc.bottomMargin());

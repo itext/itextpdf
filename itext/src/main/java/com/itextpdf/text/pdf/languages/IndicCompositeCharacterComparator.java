@@ -2,15 +2,16 @@
  * $Id: $
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2013 1T3XT BVBA
+ * Copyright (c) 1998-2014 iText Group NV
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License version 3
  * as published by the Free Software Foundation with the addition of the
  * following permission added to Section 15 as permitted in Section 7(a):
- * FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY 1T3XT,
- * 1T3XT DISCLAIMS THE WARRANTY OF NON INFRINGEMENT OF THIRD PARTY RIGHTS.
+ * FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY
+ * ITEXT GROUP. ITEXT GROUP DISCLAIMS THE WARRANTY OF NON INFRINGEMENT
+ * OF THIRD PARTY RIGHTS
  *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
@@ -55,16 +56,16 @@ import java.util.Comparator;
  * of Characters before the one with lower no. This is necessay to properly display the CompositeCharacters
  * when they occur side by side.
  * </p>
- * <p>
- * <h3>Examples of CompositeCharactes from Bangla</h3>
- * <ul>
- * <li><b>à¦?à§?à¦?</b></li>
- * <li><b>à¦?à§?</b></li>
- * <li><b>à¦?à§?à¦·à§?à¦®</b></li>
- * <li><b>à¦?à§?à¦·</b></li>
- * </ul>
- * </p>
- *  
+// * <p>
+// * <h3>Examples of CompositeCharactes from Bangla</h3>
+// * <ul>
+// * <li><b>ï¿½?ï¿½?ï¿½?</b></li>
+// * <li><b>ï¿½?ï¿½?</b></li>
+// * <li><b>ï¿½?ï¿½?à¦·ï¿½?à¦®</b></li>
+// * <li><b>ï¿½?ï¿½?à¦·</b></li>
+// * </ul>
+// * </p>
+ *
  * @author <a href="mailto:paawak@gmail.com">Palash Ray</a>
  */
 public class IndicCompositeCharacterComparator implements Comparator<String> {

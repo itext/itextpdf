@@ -1,11 +1,9 @@
-<Document>
-
-<Div><P><Span textDecorationThickness="1.2" textDecorationType="/Underline" backgroundColor="[1, 0, 1]" color="[1, 0.78431, 0]" textDecorationColor="[1, 0.68627, 0.68627]">Hello tagged world!</Span>
+<Document><Div><P o="/Layout"><Span textDecorationThickness="1.2" textDecorationType="/Underline" backgroundColor="[1, 0, 1]" o="/Layout" color="[1, 0.78431, 0]" textDecorationColor="[1, 0.68627, 0.68627]">Hello tagged world!</Span>
 </P>
 </Div>
-<P><Span>This paragraph appears between 2 div blocks</Span>
+<P o="/Layout"><Span>This paragraph appears between 2 div blocks</Span>
 </P>
-<Div><P><Span>Lorem ipsum dolor sit amet,consectetur adipiscing elit.Pellentesque a lectus sit amet lectus
+<Div><P o="/Layout"><Span>Lorem ipsum dolor sit amet,consectetur adipiscing elit.Pellentesque a lectus sit amet lectus
 accumsan aliquam.Quisque facilisis ullamcorper dolor, quis gravida leo faucibus in. Donec a dolor
 ligula, quis placerat nunc. Etiam enim velit, egestas in lacinia at, ultricies eu massa.Cras ornare
 felis id quam vehicula lobortis. Ut semper malesuada nulla, in vulputate dui eleifend at. Phasellus

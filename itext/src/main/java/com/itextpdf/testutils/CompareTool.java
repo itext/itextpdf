@@ -2,15 +2,16 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2013 1T3XT BVBA
+ * Copyright (c) 1998-2014 iText Group NV
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License version 3
  * as published by the Free Software Foundation with the addition of the
  * following permission added to Section 15 as permitted in Section 7(a):
- * FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY 1T3XT,
- * 1T3XT DISCLAIMS THE WARRANTY OF NON INFRINGEMENT OF THIRD PARTY RIGHTS.
+ * FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY
+ * ITEXT GROUP. ITEXT GROUP DISCLAIMS THE WARRANTY OF NON INFRINGEMENT
+ * OF THIRD PARTY RIGHTS
  *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
@@ -41,11 +42,15 @@
  * For more information, please contact iText Software Corp. at this
  * address: sales@itextpdf.com
  */
-package com.itextpdf.text.pdf;
+package com.itextpdf.testutils;
 
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Meta;
 import com.itextpdf.text.Rectangle;
+import com.itextpdf.text.pdf.*;
+import com.itextpdf.text.pdf.parser.*;
+import com.itextpdf.text.xml.XMLUtil;
 import com.itextpdf.text.xml.xmp.PdfProperties;
 import com.itextpdf.text.xml.xmp.XmpBasicProperties;
 import com.itextpdf.xmp.*;
@@ -56,28 +61,26 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.*;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Helper class for tests: uses ghostscript to compare PDFs at a pixel level.
  */
+@SuppressWarnings("ResultOfMethodCallIgnored")
 public class CompareTool {
 
     private String gsExec;
     private String compareExec;
-    private String gsParams = " -dNOPAUSE -dBATCH -sDEVICE=png16m -r150 -sOutputFile=<outputfile> <inputfile>";
-    private String compareParams = " <image1> <image2> <difference>";
+    private final String gsParams = " -dNOPAUSE -dBATCH -sDEVICE=png16m -r150 -sOutputFile=<outputfile> <inputfile>";
+    private final String compareParams = " <image1> <image2> <difference>";
 
-    static private String cannotOpenTargetDirectory = "Cannot open target directory for <filename>.";
-    static private String gsFailed = "GhostScript failed for <filename>.";
-    static private String unexpectedNumberOfPages = "Unexpected number of pages for <filename>.";
-    static private String differentPages = "File <filename> differs on page <pagenumber>.";
-    static private String undefinedGsPath = "Path to GhostScript is not specified. Please use -DgsExec=<path_to_ghostscript> (e.g. -DgsExec=\"C:/Program Files/gs/gs8.64/bin/gswin32c.exe\")";
+    static private final String cannotOpenTargetDirectory = "Cannot open target directory for <filename>.";
+    static private final String gsFailed = "GhostScript failed for <filename>.";
+    static private final String unexpectedNumberOfPages = "Unexpected number of pages for <filename>.";
+    static private final String differentPages = "File <filename> differs on page <pagenumber>.";
+    static private final String undefinedGsPath = "Path to GhostScript is not specified. Please use -DgsExec=<path_to_ghostscript> (e.g. -DgsExec=\"C:/Program Files/gs/gs8.64/bin/gswin32c.exe\")";
 
-    static private String ignoredAreasPrefix = "ignored_areas_";
+    static private final String ignoredAreasPrefix = "ignored_areas_";
 
     private String cmpPdf;
     private String cmpPdfName;
@@ -98,9 +101,13 @@ public class CompareTool {
     }
 
     public String compare(String outPath, String differenceImagePrefix, Map<Integer, List<Rectangle>> ignoredAreas) throws IOException, InterruptedException, DocumentException {
-        if (gsExec == null || !(new File(gsExec).exists())) {
-            return undefinedGsPath;
+        if (gsExec == null)
+        	return undefinedGsPath;
+        if (!(new File(gsExec).exists())) {
+            return new File(gsExec).getAbsolutePath() + " does not exist";
         }
+        if (!outPath.endsWith("/"))
+            outPath = outPath + "/";
         File targetDir = new File(outPath);
         File[] imageFiles;
         File[] cmpImageFiles;
@@ -239,7 +246,7 @@ public class CompareTool {
                         return differentPagesFail;
                     } else {
                         if (bUnexpectedNumberOfPages)
-                            return unexpectedNumberOfPages.replace("<filename>", outPdf) + "\n" + differentPagesFail;
+                            return unexpectedNumberOfPages.replace("<filename>", outPdf);
                     }
                 } else {
                     return gsFailed.replace("<filename>", outPdf);
@@ -331,20 +338,119 @@ public class CompareTool {
         return doc2.isEqualNode(doc1);
     }
 
+    public String compareDocumentInfo(String outPdf, String cmpPdf) throws IOException {
+        System.out.println("Comparing document info...");
+        String message = null;
+        PdfReader outReader = new PdfReader(outPdf);
+        PdfReader cmpReader = new PdfReader(cmpPdf);
+        String[] cmpInfo = convertInfo(cmpReader.getInfo());
+        String[] outInfo = convertInfo(outReader.getInfo());
+        for (int i = 0; i < cmpInfo.length; ++i) {
+            if (!cmpInfo[i].equals(outInfo[i])){
+                message = "Document info fail";
+                break;
+            }
+        }
+        outReader.close();
+        cmpReader.close();
+        return message;
+    }
+
+    public String compareLinks(String outPdf, String cmpPdf) throws IOException {
+        System.out.println("Comparing link annotations...");
+        String message = null;
+        PdfReader outReader = new PdfReader(outPdf);
+        PdfReader cmpReader = new PdfReader(cmpPdf);
+        for (int i = 0; i < outReader.getNumberOfPages() && i < cmpReader.getNumberOfPages(); i++) {
+            List<PdfAnnotation.PdfImportedLink> outLinks = outReader.getLinks(i + 1);
+            List<PdfAnnotation.PdfImportedLink> cmpLinks = cmpReader.getLinks(i + 1);
+            if (cmpLinks.size() != outLinks.size()) {
+                message =  String.format("Different number of links on page %d.", i + 1);
+                break;
+            }
+            for (int j = 0; j < cmpLinks.size(); j++) {
+                if (!cmpLinks.get(j).toString().equals(outLinks.get(j).toString())) {
+                    message = String.format("Different links on page %d.\n%s\n%s", i + 1, cmpLinks.get(j).toString(), outLinks.get(j).toString());
+                    break;
+                }
+            }
+        }
+        outReader.close();
+        cmpReader.close();
+        return message;
+    }
+
+    public String compareTagStructures(String outPdf, String cmpPdf) throws IOException, ParserConfigurationException, SAXException {
+        System.out.println("Comparing tag structures...");
+
+        String outXml = outPdf.replace(".pdf", ".xml");
+        String cmpXml = cmpPdf.replace(".pdf", ".xml");
+
+        String error = null;
+        PdfReader reader = new PdfReader(outPdf);
+        FileOutputStream xmlOut1 = new FileOutputStream(outXml);
+        new CmpTaggedPdfReaderTool().convertToXml(reader, xmlOut1);
+        reader.close();
+        reader = new PdfReader(cmpPdf);
+        FileOutputStream xmlOut2 = new FileOutputStream(cmpXml);
+        new CmpTaggedPdfReaderTool().convertToXml(reader, xmlOut2);
+        reader.close();
+        if (!compareXmls(outXml, cmpXml)) {
+            error = "The tag structures are different.";
+        }
+        xmlOut1.close();
+        xmlOut2.close();
+        return error;
+    }
+
+    private String[] convertInfo(HashMap<String, String> info){
+        String[] convertedInfo = new String[]{"","","",""} ;
+        for(Map.Entry<String,String> entry : info.entrySet()){
+            if (Meta.TITLE.equalsIgnoreCase(entry.getKey())){
+                convertedInfo[0] = entry.getValue();
+            } else if (Meta.AUTHOR.equalsIgnoreCase(entry.getKey())){
+                convertedInfo[1] = entry.getValue();
+            } else if (Meta.SUBJECT.equalsIgnoreCase(entry.getKey())){
+                convertedInfo[2] = entry.getValue();
+            } else if (Meta.KEYWORDS.equalsIgnoreCase(entry.getKey())){
+                convertedInfo[3] = entry.getValue();
+            }
+        }
+        return convertedInfo;
+    }
+
+    public boolean compareXmls(String xml1, String xml2) throws ParserConfigurationException, SAXException, IOException {
+        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+        dbf.setNamespaceAware(true);
+        dbf.setCoalescing(true);
+        dbf.setIgnoringElementContentWhitespace(true);
+        dbf.setIgnoringComments(true);
+        DocumentBuilder db = dbf.newDocumentBuilder();
+
+        org.w3c.dom.Document doc1 = db.parse(new File(xml1));
+        doc1.normalizeDocument();
+
+        org.w3c.dom.Document doc2 = db.parse(new File(xml2));
+        doc2.normalizeDocument();
+
+        return doc2.isEqualNode(doc1);
+    }
+
     private void init(String outPdf, String cmpPdf) {
         this.outPdf = outPdf;
         this.cmpPdf = cmpPdf;
         outPdfName =  new File(outPdf).getName();
         cmpPdfName = new File(cmpPdf).getName();
         outImage = outPdfName + "-%03d.png";
-        cmpImage = "cmp_" + cmpPdfName + "-%03d.png";
+        if (cmpPdfName.startsWith("cmp_")) cmpImage = cmpPdfName + "-%03d.png";
+        else cmpImage = "cmp_" + cmpPdfName + "-%03d.png";
     }
 
     private boolean compareStreams(InputStream is1, InputStream is2) throws IOException {
         byte[] buffer1 = new byte[64 * 1024];
         byte[] buffer2 = new byte[64 * 1024];
-        int len1 = 0;
-        int len2 = 0;
+        int len1;
+        int len2;
         for (; ;) {
             len1 = is1.read(buffer1);
             len2 = is2.read(buffer2);
@@ -352,7 +458,7 @@ public class CompareTool {
                 return false;
             if (!Arrays.equals(buffer1, buffer2))
                 return false;
-            if (len1 == -1 || len2 == -1)
+            if (len1 == -1)
                 break;
         }
         return true;
@@ -382,6 +488,82 @@ public class CompareTool {
             String f1Name = f1.getAbsolutePath();
             String f2Name = f2.getAbsolutePath();
             return f1Name.compareTo(f2Name);
+        }
+    }
+
+    class CmpTaggedPdfReaderTool extends TaggedPdfReaderTool {
+
+        Map<PdfDictionary, Map<Integer, String> > parsedTags = new HashMap<PdfDictionary, Map<Integer, String>>();
+
+        @Override
+        public void parseTag(String tag, PdfObject object, PdfDictionary page)
+                throws IOException {
+            if (object instanceof PdfNumber) {
+
+                if (!parsedTags.containsKey(page)) {
+                    CmpMarkedContentRenderFilter listener = new CmpMarkedContentRenderFilter();
+
+                    PdfContentStreamProcessor processor = new PdfContentStreamProcessor(
+                            listener);
+                    processor.processContent(PdfReader.getPageContent(page), page
+                            .getAsDict(PdfName.RESOURCES));
+
+                    parsedTags.put(page, listener.getParsedTagContent());
+                }
+
+                String tagContent = "";
+                if (parsedTags.get(page).containsKey(((PdfNumber) object).intValue()))
+                    tagContent = parsedTags.get(page).get(((PdfNumber) object).intValue());
+
+                out.print(XMLUtil.escapeXML(tagContent, true));
+
+            } else {
+                super.parseTag(tag, object, page);
+            }
+        }
+
+        @Override
+        public void inspectChildDictionary(PdfDictionary k) throws IOException {
+            inspectChildDictionary(k, true);
+        }
+    }
+
+    class CmpMarkedContentRenderFilter implements RenderListener {
+
+        Map<Integer, TextExtractionStrategy> tagsByMcid = new HashMap<Integer, TextExtractionStrategy>();
+
+        public Map<Integer, String> getParsedTagContent() {
+            Map<Integer, String> content = new HashMap<Integer, String>();
+            for (int id : tagsByMcid.keySet()) {
+                content.put(id, tagsByMcid.get(id).getResultantText());
+            }
+            return content;
+        }
+
+        public void beginTextBlock() {
+            for (int id : tagsByMcid.keySet()) {
+                tagsByMcid.get(id).beginTextBlock();
+            }
+        }
+
+        public void renderText(TextRenderInfo renderInfo) {
+            Integer mcid = renderInfo.getMcid();
+            if (mcid != null && tagsByMcid.containsKey(mcid)) {
+                tagsByMcid.get(mcid).renderText(renderInfo);
+            }
+            else if (mcid != null) {
+                tagsByMcid.put(mcid, new SimpleTextExtractionStrategy());
+                tagsByMcid.get(mcid).renderText(renderInfo);
+            }
+        }
+
+        public void endTextBlock() {
+            for (int id : tagsByMcid.keySet()) {
+                tagsByMcid.get(id).endTextBlock();
+            }
+        }
+
+        public void renderImage(ImageRenderInfo renderInfo) {
         }
     }
 }

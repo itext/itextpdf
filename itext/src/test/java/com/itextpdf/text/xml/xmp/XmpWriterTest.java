@@ -1,5 +1,6 @@
 package com.itextpdf.text.xml.xmp;
 
+import com.itextpdf.testutils.CompareTool;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Paragraph;
@@ -38,7 +39,7 @@ public class XmpWriterTest {
         DublinCoreProperties.addSubject(xmp.getXmpMeta(), "XMP & Metadata");
         DublinCoreProperties.addSubject(xmp.getXmpMeta(), "Metadata");
 
-        PdfProperties.setKeywords(xmp.getXmpMeta(), "Hello World, XMP, Metadata");
+        PdfProperties.setKeywords(xmp.getXmpMeta(), "Hello World, XMP & Metadata, Metadata");
         PdfProperties.setVersion(xmp.getXmpMeta(), "1.4");
 
         xmp.close();
@@ -131,7 +132,7 @@ public class XmpWriterTest {
         dc.setProperty(DublinCoreSchema.SUBJECT, subject);
         xmp.addRdfDescription(dc.getXmlns(), dc.toString());
         PdfSchema pdf = new PdfSchema();
-        pdf.setProperty(PdfSchema.KEYWORDS, "Hello World, XMP, Metadata");
+        pdf.setProperty(PdfSchema.KEYWORDS, "Hello World, XMP & Metadata, Metadata");
         pdf.setProperty(PdfSchema.VERSION, "1.4");
         xmp.addRdfDescription(pdf);
         xmp.close();

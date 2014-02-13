@@ -2,15 +2,16 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2011 1T3XT BVBA
+ * Copyright (c) 1998-2014 iText Group NV
  * Authors: Balder Van Camp, Emiel Ackermann, et al.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License version 3
  * as published by the Free Software Foundation with the addition of the
  * following permission added to Section 15 as permitted in Section 7(a):
- * FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY 1T3XT,
- * 1T3XT DISCLAIMS THE WARRANTY OF NON INFRINGEMENT OF THIRD PARTY RIGHTS.
+ * FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY
+ * ITEXT GROUP. ITEXT GROUP DISCLAIMS THE WARRANTY OF NON INFRINGEMENT
+ * OF THIRD PARTY RIGHTS
  *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
@@ -77,8 +78,8 @@ public class FileRetrieveTest {
     @Before
     public void setup() {
         retriever = new FileRetrieveImpl();
-        actual = new File("./target/test-classes/css/actual.css");
-        expected = new File("./target/test-classes/css/test.css");
+        actual = new File("./src/test/resources/css/actual.css");
+        expected = new File("./src/test/resources/css/test.css");
     }
 
     @After
@@ -137,7 +138,7 @@ public class FileRetrieveTest {
     @Test
     public void retrieveFile() throws MalformedURLException, IOException {
     	final FileOutputStream out = new FileOutputStream(actual);
-    	retriever.addRootDir(new File("./target/test-classes"));
+    	retriever.addRootDir(new File("./src/test/resources"));
     	retriever.processFromHref("/css/test.css",
     			new ReadingProcessor() {
 

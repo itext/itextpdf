@@ -1,7 +1,6 @@
 package com.itextpdf.tool.xml.examples.css.div;
 
 import com.itextpdf.text.Document;
-import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.PageSize;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.tool.xml.Pipeline;
@@ -23,7 +22,6 @@ import org.junit.Ignore;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.nio.charset.Charset;
 
 @Ignore
@@ -32,7 +30,8 @@ public class ComplexDiv02Test extends SampleTest{
         return "complexDiv02";
     }
 
-    protected void transformHtml2Pdf() throws IOException, DocumentException, InterruptedException {
+    @Override
+    protected void makePdf(String outPdf) throws Exception {
         Document doc = new Document(PageSize.A1.rotate());
         PdfWriter pdfWriter = PdfWriter.getInstance(doc, new FileOutputStream(outPdf));
         doc.setMargins(doc.leftMargin() - 10, doc.rightMargin() - 10, doc.topMargin(), doc.bottomMargin());
@@ -40,8 +39,8 @@ public class ComplexDiv02Test extends SampleTest{
 
 
         CssFilesImpl cssFiles = new CssFilesImpl();
-        cssFiles.add(XMLWorkerHelper.getCSS(new FileInputStream("." + File.separator + "target" + File.separator + "test-classes" + File.separator + testPath + testName + File.separator + "complexDiv02_files" + File.separator + "minimum0.css")));
-        cssFiles.add(XMLWorkerHelper.getCSS(new FileInputStream("." + File.separator + "target" + File.separator + "test-classes" + File.separator + testPath + testName + File.separator + "complexDiv02_files" + File.separator + "print000.css")));
+        cssFiles.add(XMLWorkerHelper.getCSS(new FileInputStream(String.format("./src/test/resources/%s%s/complexDiv02_files/minimum0.css", testPath, getTestName()))));
+        cssFiles.add(XMLWorkerHelper.getCSS(new FileInputStream(String.format("./src/test/resources/%s%s/complexDiv02_files/print000.css", testPath, getTestName()))));
         cssFiles.add(XMLWorkerHelper.getCSS(SampleTest.class.getResourceAsStream("sampleTest.css")));
         StyleAttrCSSResolver cssResolver = new StyleAttrCSSResolver(cssFiles);
         HtmlPipelineContext hpc = new HtmlPipelineContext(new CssAppliersImpl(new XMLWorkerFontProvider(SampleTest.class.getResource("fonts").getPath())));

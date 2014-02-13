@@ -68,6 +68,9 @@ public final class PropertyOptions extends Options
 	public static final int SCHEMA_NODE = 0x80000000;
 	/** may be used in the future */
 	public static final int DELETE_EXISTING = 0x20000000;
+    /** Updated by iText. Indicates if the property should be writted as a separate node */
+    public static final int SEPARATE_NODE = 0x40000000;
+
 	
 	
 	/**
@@ -400,7 +403,8 @@ public final class PropertyOptions extends Options
 			ARRAY_ORDERED |
 			ARRAY_ALTERNATE |
 			ARRAY_ALT_TEXT |
-			SCHEMA_NODE;			
+			SCHEMA_NODE |
+            SEPARATE_NODE;
 	}
 
 	

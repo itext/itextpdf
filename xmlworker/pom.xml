@@ -9,7 +9,7 @@
 	<groupId>com.itextpdf.tool</groupId>
 	<artifactId>xmlworker</artifactId>
 	<name>iText XML Worker</name>
-	<version>5.4.5</version>
+	<version>5.5.0</version>
 	<description>Parses XML to PDF, with CSS support, using iText</description>
 	<licenses>
 		<license>
@@ -113,14 +113,15 @@
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>2.9</version>
 				<configuration>
-					<excludes>
+                    <includes>
+                        <include>**/*.java</include>
+                    </includes>
+                    <excludes>
 						<exclude>examples/*.java</exclude>
                         <exclude>com/itextpdf/tool/xml/examples/*.java</exclude>
 						<exclude>com/itextpdf/tool/xml/examples/css/div/*.java</exclude>
 						<exclude>com/itextpdf/tool/xml/BugRunnerTest.java</exclude>
 					</excludes>
-					<parallel>classes</parallel>
-					<threadCount>2</threadCount>
 				</configuration>
 			</plugin>
 		</plugins>
@@ -147,6 +148,19 @@
 								<link>http://api.itextpdf.com/itext/</link>
 								<link>http://api.itextpdf.com/xtra/</link>
 							</links>
+				    		<footer><![CDATA[
+<script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-11854164-1']);
+_gaq.push(['_setDomainName', 'itextpdf.com']);
+_gaq.push(['_trackPageview']);
+(function() {
+var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+ga.src = ('https:' == document.location.protocol ? 'https://' : 'http://') + 'stats.g.doubleclick.net/dc.js';
+var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script>
+    ]]></footer>
 						</configuration>
 					</plugin>
 					<!--<plugin>
@@ -182,7 +196,7 @@
 		<dependency>
 			<groupId>com.itextpdf</groupId>
 			<artifactId>itextpdf</artifactId>
-			<version>5.4.5</version>
+			<version>5.5.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>

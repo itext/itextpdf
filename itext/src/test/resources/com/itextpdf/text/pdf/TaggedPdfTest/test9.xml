@@ -1,24 +1,18 @@
-<Document>
-
-<H1 color="[0, 0, 1]">Document Header</H1>
-<Table width="418.4" height="1640.17"><TBody>
-
-<TR o="/Table">
-<TD width="209.2" o="/Table"><Span>Quick brown fox jumped over a lazy
+<Document><H1 o="/Layout" color="[0, 0, 1]"><Span>Document Header</Span>
+</H1>
+<Table width="418.4" height="1640.17"><TBody><TR o="/Table"><TD width="209.2" o="/Table"><Span>Quick brown fox jumped over a lazy
 dog. A very long line appears here
 because we need new line.</Span>
 </TD>
-<TD width="209.2" o="/Table"><Figure bBox="[0, 0, 106, 61]" width="106" height="61"></Figure>
+<TD width="209.2" o="/Table"><Figure bBox="[299.5, 664.91, 504.7, 783]" width="106" o="/Layout" height="61"></Figure>
 </TD>
 </TR>
-<TR o="/Table">
-<TD width="209.2" o="/Table"><Span>jumped over a lazy</Span>
+<TR o="/Table"><TD width="209.2" o="/Table"><Span>jumped over a lazy</Span>
 </TD>
-<TD width="209.2" o="/Table"><Figure bBox="[0, 0, 106, 61]" width="106" height="61"></Figure>
+<TD width="209.2" o="/Table"><Figure bBox="[299.5, 542.83, 504.7, 660.91]" width="106" o="/Layout" height="61"></Figure>
 </TD>
 </TR>
-<TR o="/Table">
-<TD width="209.2" o="/Table" height="770"><Span>Hello World</Span>
+<TR o="/Table"><TD width="209.2" o="/Table" height="770"><Span>Hello World</Span>
 </TD>
 <TD width="209.2" o="/Table" height="770"><Span>Lorem ipsum dolor sit
 amet,consectetur adipiscing
@@ -140,7 +134,7 @@ tempus eget dolor.</Span>
 </TR>
 </TBody>
 </Table>
-<P><Span>Extra paragraph at the end of the document. Please make sure that this is really last portion of
+<P o="/Layout"><Span>Extra paragraph at the end of the document. Please make sure that this is really last portion of
 page content.</Span>
 </P>
 </Document>
