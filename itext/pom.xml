@@ -163,8 +163,7 @@ var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga
                     <unpackBundle>true</unpackBundle>
                     <!-- All com.itextpdf.text.* package are 'public' -->
                     <instructions>
-                        <Export-Package>com.itextpdf.text.*</Export-Package>
-                        <Import-Package>org.bouncycastle.*;resolution:=optional</Import-Package>
+                        <Export-Package>com.itextpdf.text.*, com.itextpdf.awt.*, com.itextpdf.xmp.*</Export-Package>
                     </instructions>
                 </configuration>
             </plugin>
