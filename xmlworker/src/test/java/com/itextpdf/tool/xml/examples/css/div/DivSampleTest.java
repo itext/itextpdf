@@ -2,11 +2,9 @@ package com.itextpdf.tool.xml.examples.css.div;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.nio.charset.Charset;
 
 import com.itextpdf.text.Document;
-import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.PageSize;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.tool.xml.Pipeline;
@@ -25,7 +23,8 @@ import com.itextpdf.tool.xml.pipeline.html.HtmlPipeline;
 import com.itextpdf.tool.xml.pipeline.html.HtmlPipelineContext;
 
 public class DivSampleTest extends SampleTest {
-    protected void transformHtml2Pdf() throws IOException, DocumentException, InterruptedException {
+    @Override
+    protected void makePdf(String outPdf) throws Exception {
         Document doc = new Document(PageSize.A4_LANDSCAPE);
         PdfWriter pdfWriter = PdfWriter.getInstance(doc, new FileOutputStream(outPath + outPdf));
         doc.setMargins(0, 0, 0, 0);

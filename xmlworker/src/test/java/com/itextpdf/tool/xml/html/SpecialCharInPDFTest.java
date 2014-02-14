@@ -2,15 +2,16 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2011 1T3XT BVBA
+ * Copyright (c) 1998-2014 iText Group NV
  * Authors: Balder Van Camp, Emiel Ackermann, et al.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License version 3
  * as published by the Free Software Foundation with the addition of the
  * following permission added to Section 15 as permitted in Section 7(a):
- * FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY 1T3XT,
- * 1T3XT DISCLAIMS THE WARRANTY OF NON INFRINGEMENT OF THIRD PARTY RIGHTS.
+ * FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY
+ * ITEXT GROUP. ITEXT GROUP DISCLAIMS THE WARRANTY OF NON INFRINGEMENT
+ * OF THIRD PARTY RIGHTS
  *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
@@ -74,7 +75,7 @@ import com.itextpdf.tool.xml.pipeline.html.HtmlPipelineContext;
  *
  */
 public class SpecialCharInPDFTest {
-    public static final String RESOURCE_TEST_PATH = "./target/test-classes/";
+    public static final String RESOURCE_TEST_PATH = "./src/test/resources/";
 	public static final String SNIPPETS = "/snippets/";
 
 	  private static final String TEST = "index_";
@@ -88,15 +89,14 @@ public class SpecialCharInPDFTest {
 
 	@Test
 	public void parseXfaOnlyXML() throws IOException {
-		BufferedInputStream bis = new BufferedInputStream(SpecialCharInPDFTest.class.getResourceAsStream(SNIPPETS+TEST+"snippet.html"));
+		BufferedInputStream bis = new BufferedInputStream(SpecialCharInPDFTest.class.getResourceAsStream(String.format("%s%ssnippet.html", SNIPPETS, TEST)));
 		final Document doc = new Document(PageSize.A4);
 		float margin = utils.parseRelativeValue("10%", PageSize.A4.getWidth());
 		doc.setMargins(margin, margin, margin, margin);
 		PdfWriter writer = null;
 		try {
             writer = PdfWriter.getInstance(doc, new FileOutputStream(
-                    RESOURCE_TEST_PATH
-                            +TEST+"_charset.pdf"));
+                    String.format("%s%s_charset.pdf", RESOURCE_TEST_PATH, TEST)));
 		} catch (DocumentException e) {
 			e.printStackTrace();
 		}

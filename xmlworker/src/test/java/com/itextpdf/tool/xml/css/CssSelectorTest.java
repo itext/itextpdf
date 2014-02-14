@@ -2,15 +2,16 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2011 1T3XT BVBA
+ * Copyright (c) 1998-2014 iText Group NV
  * Authors: Balder Van Camp, Emiel Ackermann, et al.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License version 3
  * as published by the Free Software Foundation with the addition of the
  * following permission added to Section 15 as permitted in Section 7(a):
- * FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY 1T3XT,
- * 1T3XT DISCLAIMS THE WARRANTY OF NON INFRINGEMENT OF THIRD PARTY RIGHTS.
+ * FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY
+ * ITEXT GROUP. ITEXT GROUP DISCLAIMS THE WARRANTY OF NON INFRINGEMENT
+ * OF THIRD PARTY RIGHTS
  *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
@@ -111,7 +112,7 @@ public class CssSelectorTest {
 		Assert.assertTrue("Not found root", rootSelectors.contains("root"));
 		Assert.assertTrue("Not found rootId", rootSelectors.contains("#rootId"));
 		Assert.assertTrue("Not found rootClass", rootSelectors.contains(".rootClass"));
-		Assert.assertEquals("Too many entries",3,  rootSelectors.size());
+		Assert.assertEquals("Too many entries",5,  rootSelectors.size());
 	}
 
 	@Test
@@ -119,7 +120,7 @@ public class CssSelectorTest {
 		Tag t = new Tag("dummy");
 		t.getAttributes().put("class", "klass1 klass2 klass3");
 		Set<String> set = css.createClassSelectors(t);
-		Assert.assertEquals("should have found 3 selectors", 3, set.size());
+		Assert.assertEquals("should have found 6 selectors", 6, set.size());
 	}
 
 }

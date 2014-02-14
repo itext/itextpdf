@@ -2,15 +2,16 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2013 1T3XT BVBA
+ * Copyright (c) 1998-2014 iText Group NV
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License version 3
  * as published by the Free Software Foundation with the addition of the
  * following permission added to Section 15 as permitted in Section 7(a):
- * FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY 1T3XT,
- * 1T3XT DISCLAIMS THE WARRANTY OF NON INFRINGEMENT OF THIRD PARTY RIGHTS.
+ * FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY
+ * ITEXT GROUP. ITEXT GROUP DISCLAIMS THE WARRANTY OF NON INFRINGEMENT
+ * OF THIRD PARTY RIGHTS
  *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
@@ -54,21 +55,35 @@ import com.itextpdf.text.exceptions.UnsupportedPdfException;
 import com.itextpdf.text.io.RandomAccessSource;
 import com.itextpdf.text.io.RandomAccessSourceFactory;
 import com.itextpdf.text.io.WindowRandomAccessSource;
-import com.itextpdf.text.log.*;
+import com.itextpdf.text.log.Counter;
+import com.itextpdf.text.log.CounterFactory;
+import com.itextpdf.text.log.Level;
+import com.itextpdf.text.log.Logger;
+import com.itextpdf.text.log.LoggerFactory;
 import com.itextpdf.text.pdf.PRTokeniser.TokenType;
 import com.itextpdf.text.pdf.interfaces.PdfViewerPreferences;
 import com.itextpdf.text.pdf.internal.PdfViewerPreferencesImp;
-import org.spongycastle.cert.X509CertificateHolder;
-import org.spongycastle.cms.CMSEnvelopedData;
-import org.spongycastle.cms.RecipientInformation;
+import com.itextpdf.text.pdf.security.ExternalDecryptionProcess;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.security.Key;
 import java.security.MessageDigest;
 import java.security.PrivateKey;
 import java.security.cert.Certificate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.Stack;
 import java.util.zip.InflaterInputStream;
 
 /**
@@ -122,6 +137,7 @@ public class PdfReader implements PdfViewerPreferences {
     protected Key certificateKey = null; //added by Aiken Sam for certificate decryption
     protected Certificate certificate = null; //added by Aiken Sam for certificate decryption
     protected String certificateKeyProvider = null; //added by Aiken Sam for certificate decryption
+    protected ExternalDecryptionProcess externalDecryptionProcess = null;
     private boolean ownerPasswordUsed;
     protected ArrayList<PdfString> strings = new ArrayList<PdfString>();
     protected boolean sharedStreams = true;
@@ -158,12 +174,14 @@ public class PdfReader implements PdfViewerPreferences {
      * @param certificate the certificate or null if no certificate is required
      * @param certificateKey the key or null if no certificate key is required
      * @param certificateKeyProvider the name of the key provider, or null if no key is required
+     * @param externalDecryptionProcess
      * @param closeSourceOnConstructorError if true, the byteSource will be closed if there is an error during construction of this reader
      */
-    private PdfReader(RandomAccessSource byteSource, boolean partialRead, byte ownerPassword[], Certificate certificate, Key certificateKey, String certificateKeyProvider, boolean closeSourceOnConstructorError) throws IOException {
+    private PdfReader(RandomAccessSource byteSource, boolean partialRead, byte ownerPassword[], Certificate certificate, Key certificateKey, String certificateKeyProvider, ExternalDecryptionProcess externalDecryptionProcess, boolean closeSourceOnConstructorError) throws IOException {
         this.certificate = certificate;
         this.certificateKey = certificateKey;
         this.certificateKeyProvider = certificateKeyProvider;
+        this.externalDecryptionProcess = externalDecryptionProcess;
         this.password = ownerPassword;
         this.partial = partialRead;
         try{
@@ -189,7 +207,7 @@ public class PdfReader implements PdfViewerPreferences {
      * @throws IOException on error
      */
     public PdfReader(final String filename) throws IOException {
-        this(filename, null);
+        this(filename, (byte[]) null);
     }
 
     /**
@@ -221,6 +239,7 @@ public class PdfReader implements PdfViewerPreferences {
     			null,
     			null,
     			null,
+                null,
     			true	
         );
     }
@@ -248,6 +267,7 @@ public class PdfReader implements PdfViewerPreferences {
     			null,
     			null,
     			null,
+                null,
     			true
         );
 
@@ -272,6 +292,7 @@ public class PdfReader implements PdfViewerPreferences {
     			certificate,
     			certificateKey,
     			certificateKeyProvider,
+                null,
     			true
         		
         );
@@ -279,9 +300,29 @@ public class PdfReader implements PdfViewerPreferences {
     }
 
 
-    
+    /**
+     * Reads and parses a PDF document.
+     * @param filename the file name of the document
+     * @param externalDecryptionProcess
+     * @throws IOException on error
+     */
+    public PdfReader(final String filename, final ExternalDecryptionProcess externalDecryptionProcess) throws IOException {
+        this(
+                new RandomAccessSourceFactory()
+                        .setForceRead(false)
+                        .setUsePlainRandomAccess(Document.plainRandomAccess)
+                        .createBestSource(filename),
+                false,
+                null,
+                null,
+                null,
+                null,
+                externalDecryptionProcess,
+                true
+        );
 
-    
+    }
+
     /**
      * Reads and parses a PDF document.
      * @param url the URL of the document
@@ -305,6 +346,7 @@ public class PdfReader implements PdfViewerPreferences {
     			null,
     			null,
     			null,
+                null,
     			true
         );
 
@@ -325,6 +367,7 @@ public class PdfReader implements PdfViewerPreferences {
     			null,
     			null,
     			null,
+                null,
     			false
         );
     	
@@ -356,6 +399,7 @@ public class PdfReader implements PdfViewerPreferences {
     			null,
     			null,
     			null,
+                null,
     			false
         );
     }
@@ -857,28 +901,50 @@ public class PdfReader implements PdfViewerPreferences {
             catch (Exception f) {
                 throw new ExceptionConverter(f);
             }
-            for (int i = 0; i<recipients.size(); i++) {
-                PdfObject recipient = recipients.getPdfObject(i);
-                strings.remove(recipient);
+            if (externalDecryptionProcess == null) {
+                for (int i = 0; i < recipients.size(); i++) {
+                    PdfObject recipient = recipients.getPdfObject(i);
+                    strings.remove(recipient);
 
-                CMSEnvelopedData data = null;
-                try {
-                    data = new CMSEnvelopedData(recipient.getBytes());
+                    CMSEnvelopedData data = null;
+                    try {
+                        data = new CMSEnvelopedData(recipient.getBytes());
 
-                    Iterator<RecipientInformation> recipientCertificatesIt = data.getRecipientInfos().getRecipients().iterator();
+                        Iterator<RecipientInformation> recipientCertificatesIt = data.getRecipientInfos().getRecipients().iterator();
 
-                    while (recipientCertificatesIt.hasNext()) {
-                        RecipientInformation recipientInfo = recipientCertificatesIt.next();
-                        
-                        if (recipientInfo.getRID().match(certHolder) && !foundRecipient) {
-                        	envelopedData = PdfEncryptor.getContent(recipientInfo, (PrivateKey)certificateKey, certificateKeyProvider);
-                        	foundRecipient = true;
-                        } 
+                        while (recipientCertificatesIt.hasNext()) {
+                            RecipientInformation recipientInfo = recipientCertificatesIt.next();
+
+                            if (recipientInfo.getRID().match(certHolder) && !foundRecipient) {
+                                envelopedData = PdfEncryptor.getContent(recipientInfo, (PrivateKey) certificateKey, certificateKeyProvider);
+                                foundRecipient = true;
+                            }
+                        }
+
+                    } catch (Exception f) {
+                        throw new ExceptionConverter(f);
                     }
-
                 }
-                catch (Exception f) {
-                    throw new ExceptionConverter(f);
+            } else {
+                for (int i = 0; i < recipients.size(); i++) {
+                    PdfObject recipient = recipients.getPdfObject(i);
+                    strings.remove(recipient);
+
+                    CMSEnvelopedData data = null;
+                    try {
+                        data = new CMSEnvelopedData(recipient.getBytes());
+
+                        RecipientInformation recipientInfo =
+                                data.getRecipientInfos().get(externalDecryptionProcess.getCmsRecipientId());
+
+                        if (recipientInfo != null) {
+                            envelopedData =
+                                    recipientInfo.getContent(externalDecryptionProcess.getCmsRecipient());
+                            foundRecipient = true;
+                        }
+                    } catch (Exception f) {
+                        throw new ExceptionConverter(f);
+                    }
                 }
             }
 

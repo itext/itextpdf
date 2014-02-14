@@ -43,6 +43,7 @@ import com.itextpdf.xmp.XMPError;
 import com.itextpdf.xmp.XMPException;
 import com.itextpdf.xmp.XMPMeta;
 import com.itextpdf.xmp.XMPMetaFactory;
+import com.itextpdf.xmp.options.PropertyOptions;
 import com.itextpdf.xmp.options.SerializeOptions;
 
 
@@ -1333,6 +1334,7 @@ public class XMPSerializerRDF
 			!node.hasQualifier()  &&
 			!node.getOptions().isURI()  &&
 			!node.getOptions().isCompositeProperty()  &&
+            !node.getOptions().containsOneOf(PropertyOptions.SEPARATE_NODE) &&
 			!XMPConst.ARRAY_ITEM_NAME.equals(node.getName());
 	}
 

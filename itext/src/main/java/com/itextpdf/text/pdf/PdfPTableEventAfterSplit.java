@@ -2,15 +2,16 @@
  * $Id: Type1Font.java 5756 2013-04-12 12:39:00Z michaeldemey $
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2013 1T3XT BVBA
+ * Copyright (c) 1998-2014 iText Group NV
  * Authors: Bruno Lowagie, DB Systel, et al.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License version 3
  * as published by the Free Software Foundation with the addition of the
  * following permission added to Section 15 as permitted in Section 7(a):
- * FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY 1T3XT,
- * 1T3XT DISCLAIMS THE WARRANTY OF NON INFRINGEMENT OF THIRD PARTY RIGHTS.
+ * FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY
+ * ITEXT GROUP. ITEXT GROUP DISCLAIMS THE WARRANTY OF NON INFRINGEMENT
+ * OF THIRD PARTY RIGHTS
  *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
@@ -46,7 +47,7 @@
  * Copyright 2013, DB Systel GmbH
  *
  * Contributed by Deutsche Bahn Systel GmbH (Thorsten Seitz)
- * Deutsche Bahn signed an MIT-style agreement with 1T3XT BVBA
+ * Deutsche Bahn signed an MIT-style agreement with iText Group NV
  * regarding the use of this class.
  */
 package com.itextpdf.text.pdf;

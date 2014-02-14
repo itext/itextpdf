@@ -2,15 +2,16 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2013 1T3XT BVBA
- * BVBA Authors: Balder Van Camp, Emiel Ackermann, et al.
+ * Copyright (c) 1998-2014 iText Group NV
+ * Authors: Balder Van Camp, Emiel Ackermann, et al.
  *
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU Affero General Public License version 3 as published by
- * the Free Software Foundation with the addition of the following permission
- * added to Section 15 as permitted in Section 7(a): FOR ANY PART OF THE COVERED
- * WORK IN WHICH THE COPYRIGHT IS OWNED BY 1T3XT, 1T3XT DISCLAIMS THE WARRANTY
- * OF NON INFRINGEMENT OF THIRD PARTY RIGHTS.
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License version 3
+ * as published by the Free Software Foundation with the addition of the
+ * following permission added to Section 15 as permitted in Section 7(a):
+ * FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY
+ * ITEXT GROUP. ITEXT GROUP DISCLAIMS THE WARRANTY OF NON INFRINGEMENT
+ * OF THIRD PARTY RIGHTS.
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
@@ -59,9 +60,7 @@ import com.itextpdf.tool.xml.pipeline.end.PdfWriterPipeline;
 import com.itextpdf.tool.xml.pipeline.html.HtmlPipeline;
 import com.itextpdf.tool.xml.pipeline.html.HtmlPipelineContext;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.Reader;
+import java.io.*;
 import java.nio.charset.Charset;
 
 /**
@@ -96,29 +95,28 @@ public class XMLWorkerHelper {
 	/**
 	 * @return the default css file.
 	 */
-	public static synchronized CssFile getCSS(InputStream in) {
+    public static synchronized CssFile getCSS(InputStream in) {
         CssFile cssFile = null;
         if (null != in) {
-            final CssFileProcessor cssFileProcessor = new CssFileProcessor();
-            int i = -1;
+            final CssFileProcessor cssFileProcessor = new
+                    CssFileProcessor();
+            BufferedReader br = new BufferedReader(new InputStreamReader(in));
             try {
-                while (-1 != (i = in.read())) {
-                    cssFileProcessor.process((char) i);
+                char[] buffer = new char[8192];
+                int length;
+                while ((length = br.read(buffer)) > 0) {
+                    for(int i = 0 ; i < length; i++) {
+                        cssFileProcessor.process(buffer[i]);
+                    }
                 }
-                cssFile = new CSSFileWrapper(cssFileProcessor.getCss(), true);
-            } catch (final IOException e) {
-                throw new RuntimeWorkerException(e);
-            } finally {
-                try {
-                    in.close();
-                } catch (final IOException e) {
-                    throw new RuntimeWorkerException(e);
-                }
-            }
+                cssFile = new CSSFileWrapper(cssFileProcessor.getCss(),
+                        true);
+            } catch (final IOException e) { throw new RuntimeWorkerException(e); }
+            finally
+            { try { in.close(); } catch (final IOException e) { throw new RuntimeWorkerException(e); } }
         }
-
-		return cssFile;
-	}
+        return cssFile;
+    }
 
     public synchronized CssFile getDefaultCSS() {
         if (null == defaultCssFile) {

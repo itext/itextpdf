@@ -74,8 +74,8 @@ public class TIFFFaxDecoder {
     private int fillBits = 0;
     private int oneD;
 
-    //
-    private boolean handleIncorrectImage;
+    // should iText try to recover from images it can't read?
+    private boolean recoverFromImageError;
     
     static int table1[] = {
         0x00, // 0 bits are left in first byte - SHOULD NOT HAPPEN
@@ -612,8 +612,7 @@ public class TIFFFaxDecoder {
 
     // One-dimensional decoding methods
     
-    public void decode1D(byte[] buffer, byte[] compData,
-    int startX, int height) {
+    public void decode1D(byte[] buffer, byte[] compData, int startX, int height) {
         this.data = compData;
         
         int lineOffset = 0;
@@ -628,8 +627,7 @@ public class TIFFFaxDecoder {
         }
     }
     
-    public void decodeNextScanline(byte[] buffer,
-    int lineOffset, int bitOffset) {
+    public void decodeNextScanline(byte[] buffer, int lineOffset, int bitOffset) {
         int bits = 0, code = 0, isT = 0;
         int current, entry, twoBits;
         boolean isWhite = true;
@@ -767,11 +765,7 @@ public class TIFFFaxDecoder {
     
     // Two-dimensional decoding methods
     
-    public void decode2D(byte[] buffer,
-    byte compData[],
-    int startX,
-    int height,
-    long tiffT4Options) {
+    public void decode2D(byte[] buffer, byte compData[], int startX, int height, long tiffT4Options) {
         this.data = compData;
         compression = 3;
         
@@ -1168,7 +1162,7 @@ public class TIFFFaxDecoder {
         // Fill in remaining bits
         while (bitNum < lastBit) {
             byteNum = bitNum >> 3;
-            if ( handleIncorrectImage && !(byteNum < buffer.length) ) {
+            if ( recoverFromImageError && !(byteNum < buffer.length) ) {
                 // do nothing
             } else {
                 buffer[byteNum] |= 1 << (7 - (bitNum & 0x7));
@@ -1331,7 +1325,6 @@ public class TIFFFaxDecoder {
             // the bytes preceding it are 0's.
             int n;
             while ((n = nextNBits(8)) != 1) {
-                
                 // If not all zeros
                 if (n != 0) {
                     throw new RuntimeException(MessageLocalization.getComposedMessage("all.fill.bits.preceding.eol.code.must.be.0"));
@@ -1423,7 +1416,7 @@ public class TIFFFaxDecoder {
         }
         
         bytePointer++;
-        
+
         int i1 = (b & table1[bitsLeft]) << (bitsToGet - bitsLeft);
         int i2 = (next & table2[bitsFromNextByte]) >>> (8 - bitsFromNextByte);
         
@@ -1461,7 +1454,7 @@ public class TIFFFaxDecoder {
                 next = data[bp + 1];
             }
         } else if (fillOrder == 2) {
-            if ( handleIncorrectImage && !(bp < data.length)  ) {
+            if ( recoverFromImageError && !(bp < data.length)  ) {
                 // do nothing
             } else {
                 b = flipTable[data[bp] & 0xff];
@@ -1521,7 +1514,7 @@ public class TIFFFaxDecoder {
         return true;
     }
 
-    public void setHandleIncorrectImage(boolean handleIncorrectImage) {
-        this.handleIncorrectImage = handleIncorrectImage;
+    public void setRecoverFromImageError(boolean recoverFromImageError) {
+        this.recoverFromImageError = recoverFromImageError;
     }
 }

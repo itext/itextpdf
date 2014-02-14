@@ -11,7 +11,7 @@
 	<artifactId>itext-xtra</artifactId>
 	<packaging>jar</packaging>
 	<name>iText Xtra</name>
-	<version>5.4.5</version>
+	<version>5.5.0</version>
 	<description>iText Xtra, part of iText a Free Java-PDF library</description>
 	<!-- General Info -->
 	<url>http://www.itextpdf.com/</url>
@@ -45,6 +45,39 @@
 	</scm>
 	<!-- Build -->
 	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>2.8</version>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+                    <links>
+						<link>http://api.itextpdf.com/itext/</link>
+					</links>
+				    <footer><![CDATA[
+<script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-11854164-1']);
+_gaq.push(['_setDomainName', 'itextpdf.com']);
+_gaq.push(['_trackPageview']);
+(function() {
+var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+ga.src = ('https:' == document.location.protocol ? 'https://' : 'http://') + 'stats.g.doubleclick.net/dc.js';
+var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script>
+    ]]></footer>
+				</configuration>
+			</plugin>
+		</plugins>
 		<resources>
 			<resource>
 				<directory>src/main/resources</directory>
@@ -60,7 +93,7 @@
 		<dependency>
 			<groupId>com.itextpdf</groupId>
 			<artifactId>itextpdf</artifactId>
-			<version>5.4.5</version>
+			<version>5.5.0</version>
 			<type>jar</type>
 			<scope>compile</scope>
 		</dependency>

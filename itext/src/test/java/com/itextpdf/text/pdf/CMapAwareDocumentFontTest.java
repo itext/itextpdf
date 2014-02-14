@@ -46,7 +46,6 @@ public class CMapAwareDocumentFontTest {
         }
     }
 
-    @Ignore
     @Test
     public void weirdHyphensTest() throws IOException {
         PdfReader reader = TestResourceUtils.getResourceAsPdfReader(this, "WeirdHyphens.pdf");

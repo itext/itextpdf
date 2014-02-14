@@ -2,15 +2,16 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2013 1T3XT BVBA
+ * Copyright (c) 1998-2014 iText Group NV
  * Authors: Balder Van Camp, Emiel Ackermann, et al.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License version 3
  * as published by the Free Software Foundation with the addition of the
  * following permission added to Section 15 as permitted in Section 7(a):
- * FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY 1T3XT,
- * 1T3XT DISCLAIMS THE WARRANTY OF NON INFRINGEMENT OF THIRD PARTY RIGHTS.
+ * FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY
+ * ITEXT GROUP. ITEXT GROUP DISCLAIMS THE WARRANTY OF NON INFRINGEMENT
+ * OF THIRD PARTY RIGHTS
  *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
@@ -100,7 +101,14 @@ public class ChunkCssApplier {
                     c.setSkew(0, 12);
                 }
             } else if (CSS.Property.LETTER_SPACING.equalsIgnoreCase(key)) {
-                c.setCharacterSpacing(utils.parsePxInCmMmPcToPt(value));
+                String letterSpacing = rules.get(CSS.Property.LETTER_SPACING);
+                float letterSpacingValue = 0f;
+                if (utils.isRelativeValue(value)) {
+                    letterSpacingValue = utils.parseRelativeValue(letterSpacing, f.getSize());
+                } else if (utils.isMetricValue(value)){
+                    letterSpacingValue = utils.parsePxInCmMmPcToPt(letterSpacing);
+                }
+                c.setCharacterSpacing(letterSpacingValue);
             } else if (null != rules.get(CSS.Property.XFA_FONT_HORIZONTAL_SCALE)) { // only % allowed; need a catch block NumberFormatExc?
                 c.setHorizontalScaling(Float.parseFloat(rules.get(CSS.Property.XFA_FONT_HORIZONTAL_SCALE).replace("%", "")) / 100);
             }

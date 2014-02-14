@@ -218,6 +218,7 @@ inconsistent.mapping=Inconsistente mapping.
 inconsistent.writers.are.you.mixing.two.documents=Inconsistente writers. Ben je twee documenten aan het verhaspelen?
 incorrect.segment.type.in.1=Foutief segment type in {1}
 infinite.table.loop=Oneindige tabel lus; rij inhoud is groter dan de pagina (bijvoorbeeld omdat een foto niet geschaald is.).
+inline.elements.with.role.null.are.not.allowed=The tagging mode markInlineElementsOnl is used. Inline elements with role 'null' are not allowed.
 insertion.of.illegal.element.1=Invoeging van een ongeldig Element: {1}
 inserttable.point.has.null.value=insertTable - punt bevat een null-waarde
 inserttable.table.has.null.value=insertTable - tabel bevat een null-waarde

@@ -2,15 +2,16 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2013 1T3XT BVBA
+ * Copyright (c) 1998-2014 iText Group NV
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License version 3
  * as published by the Free Software Foundation with the addition of the
  * following permission added to Section 15 as permitted in Section 7(a):
- * FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY 1T3XT,
- * 1T3XT DISCLAIMS THE WARRANTY OF NON INFRINGEMENT OF THIRD PARTY RIGHTS.
+ * FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY
+ * ITEXT GROUP. ITEXT GROUP DISCLAIMS THE WARRANTY OF NON INFRINGEMENT
+ * OF THIRD PARTY RIGHTS.
  *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
@@ -57,7 +58,7 @@ public final class Version {
 	
 	/**
 	 * This String contains the name of the product.
-	 * iText is a registered trademark by 1T3XT.
+	 * iText is a registered trademark by iText Group NV.
 	 * Please don't change this constant.
 	 */
 	private String iText = "iText\u00ae";
@@ -66,7 +67,7 @@ public final class Version {
 	 * This String contains the version number of this iText release.
 	 * For debugging purposes, we request you NOT to change this constant.
 	 */
-	private String release = "5.4.5";
+	private String release = "5.5.0";
 	
 	/**
 	 * The license key.
@@ -75,18 +76,18 @@ public final class Version {
 	
 	/**
 	 * This String contains the iText version as shown in the producer line.
-	 * iText is a product developed by 1T3XT BVBA.
-	 * 1T3XT requests that you retain the iText producer line
+	 * iText is a product developed by iText Group NV.
+	 * iText Group requests that you retain the iText producer line
 	 * in every PDF that is created or manipulated using iText.
 	 */
-	private String iTextVersion = iText + " " + release + " \u00a92000-2013 1T3XT BVBA";
+	private String iTextVersion = iText + " " + release + " \u00a92000-2013 iText Group NV";
 
 	/** The iText version instance. */
 	private static Version version = null;
 	
 	/**
 	 * Gets an instance of the iText version that is currently used.
-	 * Note that 1T3XT requests that you retain the iText producer line
+	 * Note that iText Group requests that you retain the iText producer line
 	 * in every PDF that is created or manipulated using iText.
 	 */
 	public static Version getInstance() {
@@ -144,7 +145,7 @@ public final class Version {
 	
 	/**
 	 * Gets the product name.
-	 * 1T3XT requests that you retain the iText producer line
+	 * iText Group NV requests that you retain the iText producer line
 	 * in every PDF that is created or manipulated using iText.
      * @return the product name
      */
@@ -154,7 +155,7 @@ public final class Version {
     
 	/**
 	 * Gets the release number.
-	 * 1T3XT requests that you retain the iText producer line
+	 * iText Group NV requests that you retain the iText producer line
 	 * in every PDF that is created or manipulated using iText.
      * @return the release number
      */
@@ -164,8 +165,8 @@ public final class Version {
 
 	/**
 	 * Returns the iText version as shown in the producer line.
-	 * iText is a product developed by 1T3XT BVBA.
-	 * 1T3XT requests that you retain the iText producer line
+	 * iText is a product developed by iText Group NV.
+	 * iText Group requests that you retain the iText producer line
 	 * in every PDF that is created or manipulated using iText.
      * @return iText version
      */
