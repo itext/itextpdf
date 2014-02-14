@@ -212,7 +212,7 @@ public class CompareTool {
                         is1.close();
                         is2.close();
                         if (!cmpResult) {
-                            if (new File(compareExec).exists()) {
+                            if (compareExec != null && new File(compareExec).exists()) {
                                 String compareParams = this.compareParams.replace("<image1>", imageFiles[i].getAbsolutePath()).replace("<image2>", cmpImageFiles[i].getAbsolutePath()).replace("<difference>", outPath + differenceImagePrefix + Integer.toString(i + 1) + ".png");
                                 p = Runtime.getRuntime().exec(compareExec + compareParams);
                                 bre = new BufferedReader(new InputStreamReader(p.getErrorStream()));
