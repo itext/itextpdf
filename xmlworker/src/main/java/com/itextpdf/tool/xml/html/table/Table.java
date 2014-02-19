@@ -182,13 +182,13 @@ public class Table extends AbstractTagProcessor {
 			for (TableRowElement row : tableRows) {
 				int column = 0;
 				for (HtmlCell cell : row.getContent()) {
-					// check whether the current column should be skipped due to
-					// a
+					// check whether the current column should be skipped due to a
 					// rowspan value of higher cell in this column.
-					while (rowspanValue[column] > 1) {
-						rowspanValue[column] = rowspanValue[column] - 1;
-						++column;
-					}
+                    // Contribution made by Arnost Havelka (Asseco): added while condition
+                    while ((column < numberOfColumns) && (rowspanValue[column] > 1)) {
+                        rowspanValue[column] = rowspanValue[column] - 1;
+                        ++column;
+                    }
 					// sets a rowspan counter for current column (counter not
 					// needed for last column).
 					if (cell.getRowspan() > 1 && column != numberOfColumns - 1) {
@@ -200,6 +200,10 @@ public class Table extends AbstractTagProcessor {
 						fixedWidth /= colspan;
 						for (int i = 0; i < colspan; i++) {
 							int c = column + i;
+                            // Contribution made by Arnost Havelka (Asseco)
+                            if (c > numberOfColumns - 1) {
+                                break;
+                            }
 							if (fixedWidth > fixedWidths[c]) {
 								fixedWidths[c] = fixedWidth;
 								columnWidths[c] = fixedWidth;
@@ -212,6 +216,10 @@ public class Table extends AbstractTagProcessor {
 						float widestWordOfCell = widthValues[1] / colspan;
 						for (int i = 0; i < colspan; i++) {
 							int c = column + i;
+                            // Contribution made by Arnost Havelka (Asseco)
+                            if (c >= numberOfColumns) {
+                                continue;
+                            }
 							if (fixedWidths[c] == 0 && cellWidth > columnWidths[c]) {
 								columnWidths[c] = cellWidth;
                                 if (colspan == 1) {
