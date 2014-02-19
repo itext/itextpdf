@@ -76,7 +76,16 @@ public class TagEncounteredState implements State {
 					this.parser.flush();
 					this.parser.memory().comment().setLength(0);
 					parser.selectState().comment();
-					this.parser.append(character);
+                    // if else structure added to check for the presence of an empty comment without a space <!---->
+                    // if this check isn't included it would add the third dash to the stringbuilder of XmlParser and
+                    // not to memory().comment() which caused CloseCommentState to keep adding the rest of the document
+                    // as a comment because it checked the closing tag on the length, which would be 1 in this case
+                    // (the fourth dash)
+                    if ( character != '-' ) {
+                        this.parser.append(character);
+                    } else {
+                        this.parser.memory().comment().append(character);
+                    }
 				} else if (tag.equals("![CDATA[")) {
 					this.parser.flush();
 					parser.selectState().cdata();
