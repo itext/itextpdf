@@ -177,4 +177,49 @@ public class PdfA3CheckerTest {
         stamper.close();
         reader.close();
     }
+
+    @Test
+    public void barcodesTest1() throws DocumentException, IOException {
+        Document document = new Document();
+        PdfAWriter writer = PdfAWriter.getInstance(document,new
+                FileOutputStream(outputDir + "barcodesTest1.pdf"), PdfAConformanceLevel.PDF_A_3A);
+
+        writer.setTagged();
+        document.open();
+        writer.setViewerPreferences(PdfWriter.DisplayDocTitle);
+        document.addTitle("Some title");
+        document.addLanguage("en-us");
+        writer.createXmpMetadata();
+
+        document.newPage();
+
+        // Set output intent. PDF/A requirement.
+        ICC_Profile icc = ICC_Profile.getInstance(new FileInputStream("./src/test/resources/com/itextpdf/text/pdf/sRGB Color Space Profile.icm"));
+        writer.setOutputIntents("Custom", "", "http://www.color.org",
+                "sRGB IEC61966-2.1", icc);
+
+        // All fonts shall be embedded. PDF/A requirement.
+        Font normal9 = FontFactory.getFont("./src/test/resources/com/itextpdf/text/pdf/FreeMonoBold.ttf", BaseFont.WINANSI, BaseFont.EMBEDDED, 9);
+        Font normal8 = FontFactory.getFont("./src/test/resources/com/itextpdf/text/pdf/FreeMonoBold.ttf", BaseFont.WINANSI, BaseFont.EMBEDDED, 8);
+
+        BaseColor color = new BaseColor(111,211,11);
+        normal8.setColor(color);
+
+        PdfContentByte cb = writer.getDirectContent();
+
+        String code = "119716-500023718";
+        Barcode barcode = new Barcode39();
+        barcode.setCode(code);
+        barcode.setStartStopText(false);
+        barcode.setFont(normal9.getBaseFont());
+        barcode.setExtended(true);
+
+        Image image = barcode.createImageWithBarcode(cb, color, color);
+        image.setAlt("Bla Bla");
+        document.add(image);
+
+        document.close();
+    }
+
+
 }

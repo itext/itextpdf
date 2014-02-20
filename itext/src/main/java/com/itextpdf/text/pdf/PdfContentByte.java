@@ -1381,6 +1381,11 @@ public class PdfContentByte {
             if (writer != null && image.isImgTemplate()) {
                 writer.addDirectImageSimple(image);
                 PdfTemplate template = image.getTemplateData();
+                if (image.getAccessibleAttributes() != null) {
+                    for (PdfName key : image.getAccessibleAttributes().keySet()) {
+                        template.setAccessibleAttribute(key, image.getAccessibleAttribute(key));
+                    }
+                }
                 float w = template.getWidth();
                 float h = template.getHeight();
                 addTemplate(template, a / w, b / w, c / h, d / h, e, f);
