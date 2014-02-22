@@ -1425,6 +1425,7 @@ public class PdfReader implements PdfViewerPreferences {
     }
 
     protected void readObjStm(final PRStream stream, final IntHashtable map) throws IOException {
+        if (stream == null) return;
         int first = stream.getAsNumber(PdfName.FIRST).intValue();
         int n = stream.getAsNumber(PdfName.N).intValue();
         byte b[] = getStreamBytes(stream, tokens.getFile());
