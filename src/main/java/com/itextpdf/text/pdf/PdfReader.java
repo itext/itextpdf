@@ -1398,7 +1398,7 @@ public class PdfReader implements PdfViewerPreferences {
             long pos;
             while (true) {
                 pos = tokens.getFilePointer();
-                if (!tokens.readLineSegment(tline))
+                if (!tokens.readLineSegment(tline, false)) // added boolean because of mailing list issue (17 Feb. 2014)
                     break;
                 if (equalsn(tline, endstream)) {
                     streamLength = pos - start;
@@ -1739,7 +1739,7 @@ public class PdfReader implements PdfViewerPreferences {
         byte line[] = new byte[64];
         for (;;) {
             long pos = tokens.getFilePointer();
-            if (!tokens.readLineSegment(line))
+            if (!tokens.readLineSegment(line, true)) // added boolean because of mailing list issue (17 Feb. 2014)
                 break;
             if (line[0] == 't') {
                 if (!PdfEncodings.convertToString(line, null).startsWith("trailer"))
