@@ -1508,7 +1508,11 @@ public class AcroFields {
                 valDict.put(PdfName.V, vt);
                 merged.put(PdfName.V, vt);
                 markUsed(widget);
-                if (isInAP(widget,  vt)) {
+                PdfDictionary appDic = widget.getAsDict(PdfName.AP);
+                if (appDic == null)
+                	return false;
+                PdfDictionary normal = appDic.getAsDict(PdfName.N);
+                if (isInAP(normal,  vt) || normal == null) {
                     merged.put(PdfName.AS, vt);
                     widget.put(PdfName.AS, vt);
                 }
@@ -1570,12 +1574,8 @@ public class AcroFields {
         return true;
 	}
 
-    boolean isInAP(PdfDictionary dic, PdfName check) {
-        PdfDictionary appDic = dic.getAsDict(PdfName.AP);
-        if (appDic == null)
-            return false;
-        PdfDictionary NDic = appDic.getAsDict(PdfName.N);
-        return NDic != null && NDic.get(check) != null;
+    boolean isInAP(PdfDictionary nDic, PdfName check) {
+        return nDic != null && nDic.get(check) != null;
     }
 
     /**
