@@ -255,7 +255,7 @@ public class PdfStream extends PdfDictionary {
             }
             else {
                 PdfArray filters = new PdfArray(filter);
-                filters.add(PdfName.FLATEDECODE);
+                filters.add(0, PdfName.FLATEDECODE);
                 put(PdfName.FILTER, filters);
             }
             compressed = true;
