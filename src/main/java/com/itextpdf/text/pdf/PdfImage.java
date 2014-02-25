@@ -250,6 +250,8 @@ public class PdfImage extends PdfStream {
                 default:
                     throw new BadPdfFormatException(MessageLocalization.getComposedMessage("1.is.an.unknown.image.format", errorID));
             }
+            if (image.getCompressionLevel() > NO_COMPRESSION)
+            	flateCompress(image.getCompressionLevel());
             put(PdfName.LENGTH, new PdfNumber(streamBytes.size()));
         }
         catch(IOException ioe) {
