@@ -48,15 +48,14 @@ package com.itextpdf.text.pdf;
 import com.itextpdf.testutils.TestResourceUtils;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.PageSize;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.*;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class PdfReaderTest {
@@ -114,4 +113,18 @@ public class PdfReaderTest {
         
         rdr.close();
     }
+
+    //Check for crash
+    @Test
+    public void readCompressedPdfTest1() throws IOException {
+        File testFile = TestResourceUtils.getResourceAsTempFile(this, "readCompressedPdfTest1.pdf");
+        String filename = testFile.getAbsolutePath();
+        PdfReader rdr = new PdfReader(filename);
+        for (int i = 1; i <= rdr.getNumberOfPages(); i++) {
+            PdfDictionary p = rdr.getPageNRelease(i);
+            assertEquals(PdfName.PAGE.toString(), p.getAsName(PdfName.TYPE).toString());
+        }
+        rdr.close();
+    }
+
 }
