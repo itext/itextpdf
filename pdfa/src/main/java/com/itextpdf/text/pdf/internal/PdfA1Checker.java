@@ -302,17 +302,17 @@ public class PdfA1Checker extends PdfAChecker {
                 if (outputIntents != null && outputIntents.size() > 0) {
                     for (int i = 0; i < outputIntents.size(); i++) {
                         PdfDictionary outputIntentDictionary = getDirectDictionary(outputIntents.getPdfObject(i));
+                        if (outputIntentDictionary == null)
+                            continue;
                         PdfName gts = outputIntentDictionary.getAsName(PdfName.S);
                         if (PdfName.GTS_PDFA1.equals(gts)) {
                             if (pdfa1OutputIntentFound)
                                 throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("a.pdfa.file.may.have.only.one.pdfa.outputintent"));
                             pdfa1OutputIntentFound = true;
                         }
-                        if (outputIntentDictionary != null) {
-                            PdfObject destOutputIntent = outputIntentDictionary.get(PdfName.DESTOUTPUTPROFILE);
-                            if (destOutputIntent == null && PdfName.GTS_PDFA1.equals(gts))
-                                throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("outputintent.shall.have.gtspdfa1.and.destoutputintent"));
-                        }
+                        PdfObject destOutputIntent = outputIntentDictionary.get(PdfName.DESTOUTPUTPROFILE);
+                        if (destOutputIntent == null && PdfName.GTS_PDFA1.equals(gts))
+                            throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("outputintent.shall.have.gtspdfa1.and.destoutputintent"));
                     }
                 }
 
