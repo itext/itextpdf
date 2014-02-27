@@ -5,10 +5,7 @@ import com.itextpdf.text.error_messages.MessageLocalization;
 import junit.framework.Assert;
 import org.junit.Test;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 
 public class PdfA1CheckerTest {
 
@@ -1289,5 +1286,48 @@ public class PdfA1CheckerTest {
 
         if (!exceptionThrown)
             Assert.fail("PdfAConformance exception should be thrown");
+    }
+
+    @Test
+    public void stamperColorCheckTest() throws IOException, DocumentException {
+        boolean exceptionThrown = false;
+        try {
+            PdfReader reader = new PdfReader("./src/test/resources/com/itextpdf/text/pdf/pdfa1.pdf");
+            PdfAStamper stamper = new PdfAStamper(reader, new ByteArrayOutputStream(), PdfAConformanceLevel.PDF_A_1A);
+            PdfContentByte canvas = stamper.getOverContent(1);
+            Rectangle rect = stamper.getWriter().getPageSize();
+            canvas.setColorFill(new CMYKColor(0.1f, 0.1f, 0.1f, 0.1f));
+            canvas.moveTo(rect.getLeft(), rect.getBottom());
+            canvas.lineTo(rect.getRight(), rect.getBottom());
+            canvas.lineTo(rect.getRight(), rect.getTop());
+            canvas.fill();
+            stamper.close();
+            reader.close();
+        } catch (PdfAConformanceException exc) {
+            exceptionThrown = true;
+        }
+
+        if (!exceptionThrown)
+            Assert.fail("PdfAConformance exception should be thrown");
+    }
+
+    @Test
+    public void stamperTextTest() throws IOException, DocumentException {
+        PdfReader reader = new PdfReader("./src/test/resources/com/itextpdf/text/pdf/pdfa1.pdf");
+        PdfAStamper stamper = new PdfAStamper(reader, new FileOutputStream(outputDir + "stamperTextTest.pdf"), PdfAConformanceLevel.PDF_A_1A);
+        PdfArtifact artifact = new PdfArtifact();
+        BaseFont bf = BaseFont.createFont("./src/test/resources/com/itextpdf/text/pdf/FreeMonoBold.ttf",
+                BaseFont.WINANSI, BaseFont.EMBEDDED);
+        artifact.setType(new PdfString("Layout"));
+        PdfContentByte canvas = stamper.getOverContent(1);
+        canvas.openMCBlock(artifact);
+        canvas.beginText();
+        canvas.setFontAndSize(bf, 120);
+        canvas.showTextAligned(Element.ALIGN_CENTER, "TEST", 200, 400, 45);
+        canvas.endText();
+        canvas.closeMCBlock(artifact);
+
+        stamper.close();
+        reader.close();
     }
 }
