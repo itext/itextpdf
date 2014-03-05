@@ -73,6 +73,8 @@ abstract public class PdfAChecker {
         }
     }
 
+    abstract public void close(PdfWriter writer);
+
     private PdfObject cleverPdfArrayClone(PdfArray array) {
         PdfArray newArray = new PdfArray();
         for (int i = 0; i < array.size(); i++) {

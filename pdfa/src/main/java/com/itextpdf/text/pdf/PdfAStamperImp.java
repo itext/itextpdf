@@ -64,6 +64,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Extension to PdfStamperImp that will attempt to keep a file
@@ -265,4 +266,9 @@ public class PdfAStamperImp extends PdfStamperImp {
         return ((PdfAConformanceImp)pdfIsoConformance).getPdfAChecker();
     }
 
+    @Override
+    protected void close(Map<String, String> moreInfo) throws IOException {
+        super.close(moreInfo);
+        getPdfAChecker().close(this);
+    }
 }

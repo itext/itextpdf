@@ -354,4 +354,10 @@ public class PdfAWriter extends PdfWriter {
     public void addPdfAttachment(String description, byte[] fileStore, String file, String fileDisplay, PdfName afRelationshipValue) throws IOException {
         addFileAttachment(description, fileStore, file, fileDisplay, MimeTypePdf, afRelationshipValue);
     }
+
+    @Override
+    public void close() {
+        super.close();
+        getPdfAChecker().close(this);
+    }
 }
