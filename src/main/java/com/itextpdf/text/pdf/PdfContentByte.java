@@ -397,6 +397,16 @@ public class PdfContentByte {
     }
 
     /**
+     * Set the rendering intent, possible values are: PdfName.ABSOLUTECOLORIMETRIC,
+     * PdfName.RELATIVECOLORIMETRIC, PdfName.SATURATION, PdfName.PERCEPTUAL.
+     * @param ri
+     * @since 5.0.2
+     */
+    public void setRenderingIntent(PdfName ri) {
+    	content.append(ri.getBytes()).append(" ri").append_i(separator);
+    }
+    
+    /**
      * Changes the value of the <VAR>line dash pattern</VAR>.
      * <P>
      * The line dash pattern controls the pattern of dashes and gaps used to stroke paths.
