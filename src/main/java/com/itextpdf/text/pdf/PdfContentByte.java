@@ -400,7 +400,6 @@ public class PdfContentByte {
      * Set the rendering intent, possible values are: PdfName.ABSOLUTECOLORIMETRIC,
      * PdfName.RELATIVECOLORIMETRIC, PdfName.SATURATION, PdfName.PERCEPTUAL.
      * @param ri
-     * @since 5.0.2
      */
     public void setRenderingIntent(PdfName ri) {
     	content.append(ri.getBytes()).append(" ri").append_i(separator);
