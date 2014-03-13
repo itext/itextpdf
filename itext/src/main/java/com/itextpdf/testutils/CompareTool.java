@@ -356,6 +356,42 @@ public class CompareTool {
         return message;
     }
 
+    private boolean linksAreSame(PdfAnnotation.PdfImportedLink cmpLink, PdfAnnotation.PdfImportedLink outLink) {
+        // Compare link boxes, page numbers the links refer to, and simple parameters (non-indirect, non-arrays, non-dictionaries)
+
+        if (cmpLink.getDestinationPage() != outLink.getDestinationPage())
+            return false;
+        if (!cmpLink.getRect().toString().equals(outLink.getRect().toString()))
+            return false;
+
+        Map<PdfName, PdfObject> cmpParams = cmpLink.getParameters();
+        Map<PdfName, PdfObject> outParams = outLink.getParameters();
+        if (cmpParams.size() != outParams.size())
+            return false;
+
+        for (Map.Entry<PdfName, PdfObject> cmpEntry : cmpParams.entrySet()) {
+            PdfObject cmpObj = cmpEntry.getValue();
+            if (!outParams.containsKey(cmpEntry.getKey()))
+                return false;
+            PdfObject outObj = outParams.get(cmpEntry.getKey());
+            if (cmpObj.type() != outObj.type())
+                return false;
+
+            switch (cmpObj.type()) {
+                case PdfObject.NULL:
+                case PdfObject.BOOLEAN:
+                case PdfObject.NUMBER:
+                case PdfObject.STRING:
+                case PdfObject.NAME:
+                    if (!cmpObj.toString().equals(outObj.toString()))
+                        return false;
+                    break;
+            }
+        }
+
+        return true;
+    }
+
     public String compareLinks(String outPdf, String cmpPdf) throws IOException {
         System.out.println("Comparing link annotations...");
         String message = null;
@@ -369,7 +405,7 @@ public class CompareTool {
                 break;
             }
             for (int j = 0; j < cmpLinks.size(); j++) {
-                if (!cmpLinks.get(j).toString().equals(outLinks.get(j).toString())) {
+                if (!linksAreSame(cmpLinks.get(j), outLinks.get(j))) {
                     message = String.format("Different links on page %d.\n%s\n%s", i + 1, cmpLinks.get(j).toString(), outLinks.get(j).toString());
                     break;
                 }
