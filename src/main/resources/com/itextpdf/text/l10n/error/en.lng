@@ -383,6 +383,7 @@ template.with.tagged.could.not.be.used.more.than.once=Template with tagged conte
 text.annotations.should.set.the.nozoom.and.norotate.flag.bits.of.the.f.key.to.1=Text annotations should set the NoZoom and NoRotate flag bits of the F key to 1.
 text.cannot.be.null=Text cannot be null.
 the.array.must.contain.string.or.pdfannotation=The array must contain String or PdfAnnotation.
+the.artifact.type.1.is.invalid=The artifact type '{1}' is invalid.
 the.as.key.shall.not.appear.in.any.optional.content.configuration.dictionary=The AS key shall not appear in any optional content configuration dictionary.
 the.bit-depth.of.the.jpeg2000.data.shall.have.a.value.in.the.range.1to38=The bit-depth of the JPEG2000 data shall have a value in the range 1 to 38.
 the.byte.array.is.not.a.recognized.imageformat=The byte array is not a recognized imageformat.
