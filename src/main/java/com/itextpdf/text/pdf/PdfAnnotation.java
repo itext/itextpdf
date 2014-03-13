@@ -44,17 +44,17 @@
  */
 package com.itextpdf.text.pdf;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-
 import com.itextpdf.awt.geom.AffineTransform;
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.pdf.internal.PdfIsoKeys;
+
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
 
 /**
  * A <CODE>PdfAnnotation</CODE> is a note that is associated with a page.
@@ -855,6 +855,7 @@ public class PdfAnnotation extends PdfDictionary {
     	HashMap<PdfName, PdfObject> parameters = new HashMap<PdfName, PdfObject>();
     	PdfArray destination = null;
     	int newPage=0;
+        PdfArray rect;
 
     	PdfImportedLink(PdfDictionary annotation) {
     		parameters.putAll(annotation.hashMap);
@@ -871,7 +872,17 @@ public class PdfAnnotation extends PdfDictionary {
     		lly = rc.getAsNumber(1).floatValue();
         	urx = rc.getAsNumber(2).floatValue();
     		ury = rc.getAsNumber(3).floatValue();
+
+            rect = new PdfArray(rc);
     	}
+
+        public Map<PdfName, PdfObject> getParameters() {
+            return new HashMap<PdfName, PdfObject>(parameters);
+        }
+
+        public PdfArray getRect() {
+            return new PdfArray(rect);
+        }
 
     	public boolean isInternal() {
     		return destination != null;
