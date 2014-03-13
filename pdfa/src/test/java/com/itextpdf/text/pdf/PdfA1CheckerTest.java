@@ -1318,7 +1318,7 @@ public class PdfA1CheckerTest {
         PdfArtifact artifact = new PdfArtifact();
         BaseFont bf = BaseFont.createFont("./src/test/resources/com/itextpdf/text/pdf/FreeMonoBold.ttf",
                 BaseFont.WINANSI, BaseFont.EMBEDDED);
-        artifact.setType(new PdfString("Layout"));
+        artifact.setType(PdfArtifact.ArtifactType.LAYOUT);
         PdfContentByte canvas = stamper.getOverContent(1);
         canvas.openMCBlock(artifact);
         canvas.beginText();

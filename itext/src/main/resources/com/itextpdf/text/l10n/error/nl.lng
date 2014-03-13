@@ -383,6 +383,7 @@ template.with.tagged.could.not.be.used.more.than.once=Template met tagged conten
 text.annotations.should.set.the.nozoom.and.norotate.flag.bits.of.the.f.key.to.1=Text annotations moeten de NoZoom en NoRotate vlaggen van de F sleutel op 1 zetten.
 text.cannot.be.null=Text mag niet null zijn.
 the.array.must.contain.string.or.pdfannotation=De array moet een String of een PdfAnnotation bevatten.
+the.artifact.type.1.is.invalid=The artifact type '{1}' is invalid.
 the.as.key.shall.not.appear.in.any.optional.content.configuration.dictionary=De AS sleutel mag niet voorkomen in een optional content configuratie dictionary.
 the.bit-depth.of.the.jpeg2000.data.shall.have.a.value.in.the.range.1to38=De bit-depth van de JPEG2000 data moet een waarde tussen 1 en 38 hebben.
 the.byte.array.is.not.a.recognized.imageformat=De byte array bevat geen gekend afbeeldingsformaat.
