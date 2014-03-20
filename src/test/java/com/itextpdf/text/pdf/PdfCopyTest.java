@@ -45,24 +45,19 @@
 package com.itextpdf.text.pdf;
 
 
-import java.awt.Color;
-import java.awt.Graphics2D;
-import java.awt.image.BufferedImage;
-import java.io.*;
-
 import com.itextpdf.testutils.CompareTool;
-import com.itextpdf.text.Paragraph;
-import junit.framework.Assert;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
-
 import com.itextpdf.testutils.TestResourceUtils;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.PageSize;
+import junit.framework.Assert;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.*;
 
 /**
  * @author kevin
@@ -241,6 +236,8 @@ public class PdfCopyTest {
         String outfile = "./target/com/itextpdf/test/pdf/PdfCopyTest/out-noforms.pdf";
         String first = "./src/test/resources/com/itextpdf/text/pdf/PdfCopyTest/hello.pdf";
         String second = "./src/test/resources/com/itextpdf/text/pdf/PdfCopyTest/hello_memory.pdf";
+        new File("./target/com/itextpdf/test/pdf/PdfCopyTest/").mkdirs();
+
         OutputStream out = new FileOutputStream(outfile);
         PdfReader reader = new PdfReader(first);
         PdfReader reader2 = new PdfReader(second);
@@ -267,6 +264,8 @@ public class PdfCopyTest {
         String outfile = "./target/com/itextpdf/test/pdf/PdfCopyTest/out-forms.pdf";
         String first = "./src/test/resources/com/itextpdf/text/pdf/PdfCopyTest/subscribe.pdf";
         String second = "./src/test/resources/com/itextpdf/text/pdf/PdfCopyTest/filled_form_1.pdf";
+        new File("./target/com/itextpdf/test/pdf/PdfCopyTest/").mkdirs();
+
         OutputStream out = new FileOutputStream(outfile);
         PdfReader reader = new PdfReader(first);
         PdfReader reader2 = new PdfReader(second);
