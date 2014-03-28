@@ -291,6 +291,7 @@ public class PdfPTable implements LargeElement, Spaceable, IAccessibleElement {
      * @since 2.1.6 private is now protected
      */
     protected void copyFormat(final PdfPTable sourceTable) {
+        rowsNotChecked = sourceTable.rowsNotChecked;
         relativeWidths = new float[sourceTable.getNumberOfColumns()];
         absoluteWidths = new float[sourceTable.getNumberOfColumns()];
         System.arraycopy(sourceTable.relativeWidths, 0, relativeWidths, 0, getNumberOfColumns());
