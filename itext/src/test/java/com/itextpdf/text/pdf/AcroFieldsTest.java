@@ -45,6 +45,9 @@
 package com.itextpdf.text.pdf;
 
 import com.itextpdf.testutils.TestResourceUtils;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.Image;
+import com.itextpdf.text.Rectangle;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -52,12 +55,17 @@ import org.junit.Test;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.HashMap;
 
 public class AcroFieldsTest {
-    
+
+    private String outFolder = "./target/com/itextpdf/test/pdf/AcroFieldsTest/";
+
     @Before
     public void setUp() throws Exception {
+        new File(outFolder).mkdirs();
         TestResourceUtils.purgeTempFiles();
     }
 
@@ -158,4 +166,48 @@ public class AcroFieldsTest {
             Assert.assertEquals(expected[i], actual[i]);
         }
     }
+
+    @Test
+    public void fdfTest() throws Exception {
+
+        String acroform_pdf = "./src/test/resources/com/itextpdf/text/pdf/AcroFieldsTest/acroform.pdf";
+        String barcode_jpg = "./src/test/resources/com/itextpdf/text/pdf/AcroFieldsTest/barcode.jpg";
+        String signature_pdf = "./src/test/resources/com/itextpdf/text/pdf/AcroFieldsTest/signature.pdf";
+        String outFdf = outFolder + "acroform_fields.fdf";
+
+        FileOutputStream fos = new FileOutputStream(outFdf);
+        FdfWriter fdfWriter = new FdfWriter(fos);
+        fdfWriter.setFile(new File(acroform_pdf).getAbsolutePath());
+
+        fdfWriter.setFieldAsString("FirstName", "Alexander");
+        fdfWriter.setFieldAsString("LastName", "Chingarev");
+
+        //Add signature from external PDF.
+        PdfReader signatureReader = new PdfReader(signature_pdf);
+        fdfWriter.setFieldAsTemplate("Signature", fdfWriter.getImportedPage(signatureReader, 1));
+
+        //Add barcode image
+        Image img = Image.getInstance(barcode_jpg);
+        fdfWriter.setFieldAsImage("Barcode", img);
+
+        fdfWriter.write();
+
+        //Close signature PDF reader.
+        signatureReader.close();
+
+
+        FdfReader fdfReader = new FdfReader(outFdf);
+        HashMap<String, PdfDictionary> fields = fdfReader.getFields();
+        PdfDictionary barcode = fields.get("Barcode");
+        PdfStream n = barcode.getAsDict(PdfName.AP).getAsStream(PdfName.N);
+        Assert.assertNotNull(n);
+        PdfStream img0 = n.getAsDict(PdfName.RESOURCES).getAsDict(PdfName.XOBJECT).getAsStream(new PdfName("img0"));
+        Assert.assertNotNull(img0);
+        PdfDictionary signature = fields.get("Signature");
+        n = barcode.getAsDict(PdfName.AP).getAsStream(PdfName.N);
+        Assert.assertNotNull(n);
+        fdfReader.close();
+    }
+
+
 }

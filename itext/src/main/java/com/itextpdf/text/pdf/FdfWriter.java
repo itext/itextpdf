@@ -46,12 +46,11 @@ package com.itextpdf.text.pdf;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.StringTokenizer;
+import java.util.*;
 
 import com.itextpdf.text.DocWriter;
+import com.itextpdf.text.ExceptionConverter;
+import com.itextpdf.text.Image;
 import com.itextpdf.text.log.Counter;
 import com.itextpdf.text.log.CounterFactory;
 import com.itextpdf.text.pdf.AcroFields.Item;
@@ -62,6 +61,7 @@ import com.itextpdf.text.pdf.AcroFields.Item;
 public class FdfWriter {
     private static final byte[] HEADER_FDF = DocWriter.getISOBytes("%FDF-1.4\n%\u00e2\u00e3\u00cf\u00d3\n");
     HashMap<String, Object> fields = new HashMap<String, Object>();
+    Wrt wrt = null;
 
     /** The PDF file associated with the FDF. */
     private String file;
@@ -70,13 +70,22 @@ public class FdfWriter {
     public FdfWriter() {
     }
 
+    public FdfWriter(OutputStream os) throws IOException {
+        wrt = new Wrt(os, this);
+    }
+
     /** Writes the content to a stream.
      * @param os the stream
      * @throws IOException on error
      */
     public void writeTo(OutputStream os) throws IOException {
-        Wrt wrt = new Wrt(os, this);
-        wrt.writeTo();
+        if (wrt == null)
+            wrt = new Wrt(os, this);
+        wrt.write();
+    }
+
+    public void write() throws IOException {
+        wrt.write();
     }
 
     @SuppressWarnings("unchecked")
@@ -247,6 +256,48 @@ public class FdfWriter {
     	return setField(field, action);
     }
 
+    public boolean setFieldAsTemplate(String field, PdfTemplate template) {
+        try {
+            PdfDictionary d = new PdfDictionary();
+            if (template instanceof PdfImportedPage)
+                d.put(PdfName.N, template.getIndirectReference());
+            else {
+                PdfStream str = template.getFormXObject(PdfStream.NO_COMPRESSION);
+                PdfIndirectReference ref = wrt.addToBody(str).getIndirectReference();
+                d.put(PdfName.N, ref);
+            }
+            return setField(field, d);
+        } catch (Exception e) {
+            throw new ExceptionConverter(e);
+        }
+    }
+
+    public boolean setFieldAsImage(String field, Image image) {
+        try {
+            if (Float.isNaN(image.getAbsoluteX()))
+                image.setAbsolutePosition(0, image.getAbsoluteY());
+            if (Float.isNaN(image.getAbsoluteY()))
+                image.setAbsolutePosition(image.getAbsoluteY(), 0);
+            PdfTemplate tmpl = PdfTemplate.createTemplate(wrt, image.getWidth(), image.getHeight());
+            tmpl.addImage(image);
+            PdfStream str = tmpl.getFormXObject(PdfStream.NO_COMPRESSION);
+            PdfIndirectReference ref = wrt.addToBody(str).getIndirectReference();
+            PdfDictionary d = new PdfDictionary();
+            d.put(PdfName.N, ref);
+            return setField(field, d);
+        } catch (Exception de) {
+            throw new ExceptionConverter(de);
+        }
+    }
+
+    public PdfImportedPage getImportedPage(PdfReader reader, int pageNumber) {
+        return wrt.getImportedPage(reader, pageNumber);
+    }
+
+    public PdfTemplate createTemplate(float width, float height) {
+        return PdfTemplate.createTemplate(wrt, width, height);
+    }
+
     /** Sets all the fields from this <CODE>FdfReader</CODE>
      * @param fdf the <CODE>FdfReader</CODE>
      */
@@ -316,7 +367,12 @@ public class FdfWriter {
             body = new PdfBody(this);
         }
 
-        void writeTo() throws IOException {
+        void write() throws IOException {
+            for (PdfReaderInstance element : readerInstances.values()) {
+                currentPdfReaderInstance= element;
+                currentPdfReaderInstance.writeAllPages();
+            }
+
             PdfDictionary dic = new PdfDictionary();
             dic.put(PdfName.FIELDS, calculate(fdf.fields));
             if (fdf.file != null)
@@ -343,11 +399,11 @@ public class FdfWriter {
                 dic.put(PdfName.T, new PdfString(key, PdfObject.TEXT_UNICODE));
                 if (v instanceof HashMap) {
                     dic.put(PdfName.KIDS, calculate((HashMap<String, Object>)v));
-                }
-                else if(v instanceof PdfAction) {	// (plaflamme)
+                } else if(v instanceof PdfAction) {	// (plaflamme)
                    	dic.put(PdfName.A, (PdfAction)v);
-                }
-                else {
+                } else if (v instanceof PdfDictionary && ((PdfDictionary)v).size() == 1 && ((PdfDictionary)v).contains(PdfName.N)) {
+                    dic.put(PdfName.AP, (PdfDictionary)v);
+                } else {
                     dic.put(PdfName.V, (PdfObject)v);
                 }
                 ar.add(dic);
