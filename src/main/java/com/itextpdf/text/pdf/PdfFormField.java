@@ -117,6 +117,7 @@ public class PdfFormField extends PdfAnnotation {
         super(writer, null);
         form = true;
         annotation = false;
+        role = PdfName.FORM;
     }
 
     public void setWidget(Rectangle rect, PdfName highlight) {

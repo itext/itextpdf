@@ -45,9 +45,11 @@
 package com.itextpdf.text.pdf;
 
 import com.itextpdf.awt.geom.AffineTransform;
+import com.itextpdf.text.AccessibleElementId;
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.error_messages.MessageLocalization;
+import com.itextpdf.text.pdf.interfaces.IAccessibleElement;
 import com.itextpdf.text.pdf.internal.PdfIsoKeys;
 
 import java.io.IOException;
@@ -62,7 +64,7 @@ import java.util.Map;
  * @see		PdfDictionary
  */
 
-public class PdfAnnotation extends PdfDictionary {
+public class PdfAnnotation extends PdfDictionary implements IAccessibleElement {
     /** highlight attributename */
     public static final PdfName HIGHLIGHT_NONE = PdfName.N;
     /** highlight attributename */
@@ -91,6 +93,8 @@ public class PdfAnnotation extends PdfDictionary {
     public static final int FLAGS_LOCKED = 128;
     /** flagvalue */
     public static final int FLAGS_TOGGLENOVIEW = 256;
+    /** flagvalue PDF 1.7*/
+    public static final int FLAGS_LOCKEDCONTENTS = 512;
     /** appearance attributename */
     public static final PdfName APPEARANCE_NORMAL = PdfName.N;
     /** appearance attributename */
@@ -144,6 +148,10 @@ public class PdfAnnotation extends PdfDictionary {
 
     /** Holds value of property placeInPage. */
     private int placeInPage = -1;
+
+    protected PdfName role = null;
+    protected HashMap<PdfName, PdfObject> accessibleAttributes = null;
+    private AccessibleElementId id = null;
 
     // constructors
     public PdfAnnotation(PdfWriter writer, Rectangle rect) {
@@ -992,4 +1000,42 @@ public class PdfAnnotation extends PdfDictionary {
         super.toPdf(writer, os);
     }
 
+    public PdfObject getAccessibleAttribute(final PdfName key) {
+        if (accessibleAttributes != null)
+            return accessibleAttributes.get(key);
+        else
+            return null;
+    }
+
+    public void setAccessibleAttribute(final PdfName key, final PdfObject value) {
+        if (accessibleAttributes == null)
+            accessibleAttributes = new HashMap<PdfName, PdfObject>();
+        accessibleAttributes.put(key, value);
+    }
+
+    public HashMap<PdfName, PdfObject> getAccessibleAttributes() {
+        return accessibleAttributes;
+    }
+
+    public PdfName getRole() {
+        return role;
+    }
+
+    public void setRole(final PdfName role) {
+        this.role = role;
+    }
+
+    public AccessibleElementId getId() {
+        if (id == null)
+            id = new AccessibleElementId();
+        return id;
+    }
+
+    public void setId(final AccessibleElementId id) {
+        this.id = id;
+    }
+
+    public boolean isInline() {
+        return false;
+    }
 }
