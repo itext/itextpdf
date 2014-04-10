@@ -3084,6 +3084,11 @@ public class PdfContentByte {
         return cb;
     }
 
+    public void inheritGraphicState(PdfContentByte parentCanvas) {
+        this.state = parentCanvas.state;
+        this.stateList = parentCanvas.stateList;
+    }
+
     /**
      * Implements a link to another document.
      * @param filename the filename for the remote document
@@ -3406,10 +3411,24 @@ public class PdfContentByte {
     }
 
     void addAnnotation(final PdfAnnotation annot) {
+        boolean needToTag = isTagged() && annot.getRole() != null && (!(annot instanceof PdfFormField) || ((PdfFormField)annot).getKids() == null);
+        if (needToTag) {
+            openMCBlock(annot);
+        }
         writer.addAnnotation(annot);
+        if (needToTag) {
+            PdfStructureElement strucElem = pdf.structElements.get(annot.getId());
+            if (strucElem != null) {
+                int structParent = pdf.getStructParentIndex(annot);
+                annot.put(PdfName.STRUCTPARENT, new PdfNumber(structParent));
+                strucElem.setAnnotation(annot, getCurrentPage());
+                writer.getStructureTreeRoot().setAnnotationMark(structParent, strucElem.getReference());
+            }
+            closeMCBlock(annot);
+        }
     }
 
-    void addAnnotation(final PdfAnnotation annot, boolean applyCTM) {
+    public void addAnnotation(final PdfAnnotation annot, boolean applyCTM) {
         if (applyCTM && state.CTM.getType() != AffineTransform.TYPE_IDENTITY) {
             annot.applyCTM(state.CTM);
         }

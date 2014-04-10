@@ -179,6 +179,24 @@ public class PdfStructureElement extends PdfDictionary implements IPdfStructureE
         top.setPageMark(page, reference);
     }
 
+    void setAnnotation(PdfAnnotation annot, PdfIndirectReference currentPage) {
+        PdfArray kArray = getAsArray(PdfName.K);
+        if (kArray == null) {
+            kArray = new PdfArray();
+            PdfObject k = get(PdfName.K);
+            if (k != null) {
+                kArray.add(k);
+            }
+            put(PdfName.K, kArray);
+        }
+        PdfDictionary dict = new PdfDictionary();
+        dict.put(PdfName.TYPE, PdfName.OBJR);
+        dict.put(PdfName.OBJ, annot.getIndirectReference());
+        if (annot.getRole() == PdfName.FORM)
+            dict.put(PdfName.PG, currentPage);
+        kArray.add(dict);
+    }
+
     /**
      * Gets the reference this object will be written to.
      * @return the reference this object will be written to

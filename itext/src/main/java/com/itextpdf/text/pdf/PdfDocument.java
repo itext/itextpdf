@@ -1568,26 +1568,13 @@ public class PdfDocument extends Document {
                         }
                         text.addAnnotation(annot, true);
                         if (isTagged(writer) && chunk.accessibleElement != null) {
-                            int structParent = getStructParentIndex(annot);
-                            annot.put(PdfName.STRUCTPARENT, new PdfNumber(structParent));
                             PdfStructureElement strucElem = structElements.get(chunk.accessibleElement.getId());
                             if (strucElem != null) {
-                                PdfArray kArray = strucElem.getAsArray(PdfName.K);
-                                if (kArray == null) {
-                                    kArray = new PdfArray();
-                                    PdfObject k = strucElem.get(PdfName.K);
-                                    if (k != null) {
-                                        kArray.add(k);
-                                    }
-                                    strucElem.put(PdfName.K, kArray);
-                                }
-                                PdfDictionary dict = new PdfDictionary();
-                                dict.put(PdfName.TYPE, PdfName.OBJR);
-                                dict.put(PdfName.OBJ, annot.getIndirectReference());
-                                kArray.add(dict);
+                                int structParent = getStructParentIndex(annot);
+                                annot.put(PdfName.STRUCTPARENT, new PdfNumber(structParent));
+                                strucElem.setAnnotation(annot, writer.getCurrentPage());
                                 writer.getStructureTreeRoot().setAnnotationMark(structParent, strucElem.getReference());
                             }
-
                         }
                     }
                     if (chunk.isAttribute(Chunk.REMOTEGOTO)) {
