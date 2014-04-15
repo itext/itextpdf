@@ -44,16 +44,19 @@
  */
 package com.itextpdf.text.pdf;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.*;
-
 import com.itextpdf.text.DocWriter;
 import com.itextpdf.text.ExceptionConverter;
 import com.itextpdf.text.Image;
 import com.itextpdf.text.log.Counter;
 import com.itextpdf.text.log.CounterFactory;
 import com.itextpdf.text.pdf.AcroFields.Item;
+
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.StringTokenizer;
 
 /** Writes an FDF form.
  * @author Paulo Soares
@@ -65,6 +68,7 @@ public class FdfWriter {
 
     /** The PDF file associated with the FDF. */
     private String file;
+    private String statusMessage;
 
     /** Creates a new FdfWriter. */
     public FdfWriter() {
@@ -86,6 +90,14 @@ public class FdfWriter {
 
     public void write() throws IOException {
         wrt.write();
+    }
+
+    public String getStatusMessage() {
+        return statusMessage;
+    }
+
+    public void setStatusMessage(String statusMessage) {
+        this.statusMessage = statusMessage;
     }
 
     @SuppressWarnings("unchecked")
@@ -377,6 +389,8 @@ public class FdfWriter {
             dic.put(PdfName.FIELDS, calculate(fdf.fields));
             if (fdf.file != null)
                 dic.put(PdfName.F, new PdfString(fdf.file, PdfObject.TEXT_UNICODE));
+            if (fdf.statusMessage != null && !fdf.statusMessage.isEmpty())
+                dic.put(PdfName.STATUS, new PdfString(fdf.statusMessage));
             PdfDictionary fd = new PdfDictionary();
             fd.put(PdfName.FDF, dic);
             PdfIndirectReference ref = addToBody(fd).getIndirectReference();
