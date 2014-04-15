@@ -1885,6 +1885,8 @@ public class
     /** A name */
     public static final PdfName STAMP = new PdfName("Stamp");
     /** A name */
+    public static final PdfName STATUS = new PdfName("Status");
+    /** A name */
     public static final PdfName STANDARD = new PdfName("Standard");
     /**
      * A name
