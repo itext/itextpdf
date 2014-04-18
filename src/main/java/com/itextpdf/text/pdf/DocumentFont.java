@@ -732,6 +732,10 @@ public class DocumentFont extends BaseFont {
                     b[bptr++] = (byte)(g / 256);
                     b[bptr++] = (byte)g;
                 }
+                else {
+                    b[bptr++] = 0;
+                    b[bptr++] = (byte)chars[k];
+                }
             }
             if (bptr == b.length)
                 return b;
