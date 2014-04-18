@@ -389,7 +389,7 @@ public class FdfWriter {
             dic.put(PdfName.FIELDS, calculate(fdf.fields));
             if (fdf.file != null)
                 dic.put(PdfName.F, new PdfString(fdf.file, PdfObject.TEXT_UNICODE));
-            if (fdf.statusMessage != null && !fdf.statusMessage.isEmpty())
+            if (fdf.statusMessage != null && fdf.statusMessage.trim().length() != 0)
                 dic.put(PdfName.STATUS, new PdfString(fdf.statusMessage));
             PdfDictionary fd = new PdfDictionary();
             fd.put(PdfName.FDF, dic);
