@@ -55,6 +55,7 @@ import com.itextpdf.text.pdf.interfaces.IAccessibleElement;
 import com.itextpdf.text.pdf.internal.PdfAnnotationsImp;
 import com.itextpdf.text.pdf.internal.PdfIsoKeys;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -1448,8 +1449,17 @@ public class PdfContentByte {
                         value.toPdf(null, content);
                         content.append('\n');
                     }
+                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                    pimage.writeContent(baos);
+                    byte[] imageBytes = baos.toByteArray();
+                    content.append(String.format("/L %s\n", imageBytes.length));
+                    /*
+                    // The following restriction will be normative in PDF 2.0
+                    if (imageBytes.length > 4096)
+                    	throw new DocumentException("Inline images must be 4 KB or less");
+                    */
                     content.append("ID\n");
-                    pimage.writeContent(content);
+                    content.append(imageBytes);
                     content.append("\nEI\nQ").append_i(separator);
                 }
                 else {
