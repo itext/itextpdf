@@ -204,7 +204,7 @@ public class AcroFieldsTest {
         PdfStream img0 = n.getAsDict(PdfName.RESOURCES).getAsDict(PdfName.XOBJECT).getAsStream(new PdfName("img0"));
         Assert.assertNotNull(img0);
         PdfDictionary signature = fields.get("Signature");
-        n = barcode.getAsDict(PdfName.AP).getAsStream(PdfName.N);
+        n = signature.getAsDict(PdfName.AP).getAsStream(PdfName.N);
         Assert.assertNotNull(n);
         fdfReader.close();
     }
