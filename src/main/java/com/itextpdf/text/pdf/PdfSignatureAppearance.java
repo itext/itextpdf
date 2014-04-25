@@ -1260,7 +1260,7 @@ public class PdfSignatureAppearance {
         preClosed = true;
         AcroFields af = writer.getAcroFields();
         String name = getFieldName();
-        boolean fieldExists = !(isInvisible() || isNewField());
+        boolean fieldExists = !isNewField();
         PdfIndirectReference refSig = writer.getPdfIndirectReference();
         writer.setSigFlags(3);
         PdfDictionary fieldLock = null;
