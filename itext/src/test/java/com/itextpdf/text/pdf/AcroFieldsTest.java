@@ -45,13 +45,12 @@
 package com.itextpdf.text.pdf;
 
 import com.itextpdf.testutils.TestResourceUtils;
-import com.itextpdf.text.Document;
-import com.itextpdf.text.Image;
-import com.itextpdf.text.Rectangle;
+import com.itextpdf.text.*;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.w3c.dom.css.RGBColor;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -185,7 +184,6 @@ public class AcroFieldsTest {
         //Add signature from external PDF.
         PdfReader signatureReader = new PdfReader(signature_pdf);
         fdfWriter.setFieldAsTemplate("Signature", fdfWriter.getImportedPage(signatureReader, 1));
-
         //Add barcode image
         Image img = Image.getInstance(barcode_jpg);
         fdfWriter.setFieldAsImage("Barcode", img);
@@ -201,13 +199,16 @@ public class AcroFieldsTest {
         PdfDictionary barcode = fields.get("Barcode");
         PdfStream n = barcode.getAsDict(PdfName.AP).getAsStream(PdfName.N);
         Assert.assertNotNull(n);
+        byte[] b = FdfReader.getStreamBytes((PRStream) n);
+        Assert.assertEquals(32, b.length);
         PdfStream img0 = n.getAsDict(PdfName.RESOURCES).getAsDict(PdfName.XOBJECT).getAsStream(new PdfName("img0"));
         Assert.assertNotNull(img0);
         PdfDictionary signature = fields.get("Signature");
         n = signature.getAsDict(PdfName.AP).getAsStream(PdfName.N);
         Assert.assertNotNull(n);
+        b = FdfReader.getStreamBytes((PRStream) n);
+        Assert.assertEquals(24410, b.length);
         fdfReader.close();
     }
-
 
 }
