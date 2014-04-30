@@ -550,9 +550,10 @@ public class PdfDocument extends Document {
                     carriageReturn();
 
                     // we don't want to make orphans/widows
-                    if (currentHeight + line.height() + leading > indentTop() - indentBottom()) {
+                    if (currentHeight + calculateLineHeight() > indentTop() - indentBottom()) {
                         newPage();
                     }
+
                     indentation.indentLeft += paragraph.getIndentationLeft();
                     indentation.indentRight += paragraph.getIndentationRight();
                     carriageReturn();
@@ -1218,6 +1219,23 @@ public class PdfDocument extends Document {
     }
 
     /**
+     * line.height() is usually the same as the leading
+     * We should take leading into account if it is not the same as the line.height
+     *
+     * @return float combined height of the line
+     * @since 5.1.1
+     */
+    protected float calculateLineHeight() {
+        float tempHeight = line.height();
+
+        if ( tempHeight != leading) {
+            tempHeight += leading;
+        }
+
+        return tempHeight;
+    }
+
+    /**
      * If the current line is not empty or null, it is added to the arraylist
      * of lines and a new empty line is added.
      */
@@ -1229,7 +1247,7 @@ public class PdfDocument extends Document {
         // If the current line is not null or empty
         if (line != null && line.size() > 0) {
             // we check if the end of the page is reached (bugfix by Francois Gravel)
-            if (currentHeight + line.height() + leading > indentTop() - indentBottom()) {
+            if (currentHeight + calculateLineHeight() > indentTop() - indentBottom()) {
             	// if the end of the line is reached, we start a newPage which will flush existing lines
             	// then move to next page but before then we need to exclude the current one that does not fit
             	// After the new page we add the current line back in
@@ -1866,7 +1884,12 @@ public class PdfDocument extends Document {
     protected void addSpacing(final float extraspace, final float oldleading, Font f) {
     	if (extraspace == 0) return;
     	if (pageEmpty) return;
-    	if (currentHeight + line.height() + leading > indentTop() - indentBottom()) return;
+
+    	if (currentHeight + calculateLineHeight() > indentTop() - indentBottom()) {
+            newPage();
+            return;
+        }
+
         leading = extraspace;
         carriageReturn();
         if (f.isUnderlined() || f.isStrikethru()) {
