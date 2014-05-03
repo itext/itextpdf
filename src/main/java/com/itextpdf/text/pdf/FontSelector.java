@@ -117,7 +117,7 @@ public class FontSelector {
                 int u = Utilities.convertToUtf32(cc, k);
                 for (int f = 0; f < fonts.size(); ++f) {
                     font = fonts.get(f);
-                    if (font.getBaseFont().charExists(u)) {
+                    if (font.getBaseFont().charExists(u) || Character.getType(u) == Character.FORMAT) {
                         if (currentFont != font) {
                             if (sb.length() > 0 && currentFont != null) {
                                 newChunk = new Chunk(sb.toString(), currentFont);
