@@ -1,5 +1,5 @@
 /*
- * $Id$
+ * $Id: PdfA3Checker.java 6231 2014-02-11 12:21:02Z pavel-alay $
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2014 iText Group NV
@@ -44,77 +44,59 @@
  */
 package com.itextpdf.text.pdf.internal;
 
-import com.itextpdf.text.pdf.PdfAConformanceLevel;
-import com.itextpdf.text.pdf.PdfWriter;
-import com.itextpdf.text.pdf.interfaces.PdfAConformance;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.ExceptionConverter;
+import com.itextpdf.text.error_messages.MessageLocalization;
+import com.itextpdf.text.pdf.*;
+import com.itextpdf.text.xml.xmp.PdfAXmpWriter;
+import com.itextpdf.xmp.XMPException;
+import com.itextpdf.xmp.XMPMeta;
 
-/**
- * Implementation of the PdfAConformance interface,
- * including the level of conformance.
- *
- * @see PdfAConformance
- */
-public class PdfAConformanceImp implements PdfAConformance {
+import java.util.ArrayList;
+import java.util.List;
 
-    /**
-     * The PDF conformance level, e.g. PDF/A1 Level A, PDF/A3 Level U,...
-     */
-    protected PdfAConformanceLevel conformanceLevel;
-    protected PdfAChecker pdfAChecker;
-    protected PdfWriter writer;
+public class ZugferdChecker extends PdfA3Checker {
 
-    public PdfAConformanceImp(PdfWriter writer) {
-        this.writer = writer;
+    private List<PdfFileSpecification> attachments = new ArrayList<PdfFileSpecification>();
+
+    ZugferdChecker(PdfAConformanceLevel conformanceLevel) {
+        super(conformanceLevel);
     }
 
-    public void checkPdfIsoConformance(int key, Object obj1) {
-        pdfAChecker.checkPdfAConformance(writer, key, obj1);
+    @Override
+    protected void checkFileSpec(PdfWriter writer, int key, Object obj1) {
+        super.checkFileSpec(writer, key, obj1);
+        attachments.add((PdfFileSpecification)obj1);
     }
 
-    /**
-     * @see com.itextpdf.text.pdf.interfaces.PdfAConformance#getConformanceLevel()
-     */
-    public PdfAConformanceLevel getConformanceLevel() {
-        return conformanceLevel;
-    }
-
-    /**
-     * @see PdfAConformance#setConformanceLevel(com.itextpdf.text.pdf.PdfAConformanceLevel)
-     */
-    public void setConformanceLevel(PdfAConformanceLevel conformanceLevel) {
-        this.conformanceLevel = conformanceLevel;
-        switch (this.conformanceLevel) {
-            case PDF_A_1A:
-            case PDF_A_1B:
-                pdfAChecker = new PdfA1Checker(conformanceLevel);
-                break;
-            case PDF_A_2A:
-            case PDF_A_2B:
-            case PDF_A_2U:
-                pdfAChecker = new PdfA2Checker(conformanceLevel);
-                break;
-            case PDF_A_3A:
-            case PDF_A_3B:
-            case PDF_A_3U:
-                pdfAChecker = new PdfA3Checker(conformanceLevel);
-                break;
-            case ZUGFeRD:
-                pdfAChecker = new ZugferdChecker(conformanceLevel);
-                break;
-            default:
-                pdfAChecker = new PdfA1Checker(conformanceLevel);
-                break;
+    @Override
+    public void close(PdfWriter writer) {
+        super.close(writer);
+        boolean ok = false;
+        XMPMeta xmpMeta = writer.getXmpWriter().getXmpMeta();
+        try {
+            String docFileName = xmpMeta.getPropertyString(PdfAXmpWriter.zugferdSchemaNS, PdfAXmpWriter.zugferdDocumentFileName);
+            for (PdfFileSpecification attachment : attachments) {
+                if (docFileName.equals(attachment.getAsString(PdfName.UF).toString())) {
+                    PdfName relationship = attachment.getAsName(PdfName.AFRELATIONSHIP);
+                    if (!AFRelationshipValue.Alternative.equals(relationship)) {
+                        attachments.clear();
+                        throw new PdfAConformanceException(attachment, MessageLocalization.getComposedMessage("afrelationship.value.shall.be.alternative"));
+                    }
+                    ok = true;
+                    break;
+                }
+            }
+        } catch (XMPException e) {
+            attachments.clear();
+            throw new ExceptionConverter(e);
+        }
+        attachments.clear();
+        if (!ok) {
+            throw new PdfAConformanceException(xmpMeta, MessageLocalization.getComposedMessage("zugferd.xmp.schema.shall.contain.attachment.name"));
         }
     }
 
-    /**
-     * @see com.itextpdf.text.pdf.interfaces.PdfAConformance#isPdfIso()
-     */
-    public boolean isPdfIso() {
-        return true;
-    }
 
-    public PdfAChecker getPdfAChecker() {
-        return pdfAChecker;
-    }
+
 }

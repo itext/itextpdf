@@ -1,6 +1,8 @@
 package com.itextpdf.text.pdf;
 
 import com.itextpdf.text.*;
+import com.itextpdf.text.xml.xmp.PdfAXmpWriter;
+import com.itextpdf.xmp.XMPException;
 import junit.framework.Assert;
 import org.junit.Test;
 
@@ -220,6 +222,34 @@ public class PdfA3CheckerTest {
 
         document.close();
     }
+
+    @Test
+    public void zugferdInvoiceTest() throws DocumentException, IOException, XMPException {
+        Document document = new Document();
+        PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream(outputDir + "zugferdInvoiceTest.pdf"), PdfAConformanceLevel.ZUGFeRD);
+        writer.createXmpMetadata();
+        writer.getXmpWriter().setProperty(PdfAXmpWriter.zugferdSchemaNS, PdfAXmpWriter.zugferdDocumentFileName, "invoice.xml");
+        document.open();
+
+        Font font = FontFactory.getFont("./src/test/resources/com/itextpdf/text/pdf/FreeMonoBold.ttf", BaseFont.WINANSI, BaseFont.EMBEDDED, 12);
+        document.add(new Paragraph("Hello World", font));
+        ICC_Profile icc = ICC_Profile.getInstance(new FileInputStream("./src/test/resources/com/itextpdf/text/pdf/sRGB Color Space Profile.icm"));
+        writer.setOutputIntents("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", icc);
+
+        PdfDictionary parameters = new PdfDictionary();
+        parameters.put(PdfName.MODDATE, new PdfDate());
+        PdfFileSpecification fileSpec = PdfFileSpecification.fileEmbedded(
+                writer, "./src/test/resources/com/itextpdf/text/pdf/invoice.xml",
+                "invoice.xml", null, "application/xml", parameters, 0);
+        fileSpec.put(PdfName.AFRELATIONSHIP, AFRelationshipValue.Alternative);
+        writer.addFileAttachment("invoice.xml", fileSpec);
+        PdfArray array = new PdfArray();
+        array.add(fileSpec.getReference());
+        writer.getExtraCatalog().put(new PdfName("AF"), array);
+
+        document.close();
+    }
+
 
 
 }
