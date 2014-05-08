@@ -1530,7 +1530,7 @@ public class
      * A name.
      * @since 5.0.2
      */
-    public static final PdfName POLYLINE = new PdfName("Polyline");
+    public static final PdfName POLYLINE = new PdfName("PolyLine");
     /** A name */
     public static final PdfName POPUP = new PdfName("Popup");
     /**
