@@ -257,6 +257,7 @@ public class PdfAXmpWriter extends XmpWriter {
                 xmpMeta.setProperty(XMPConst.NS_PDFA_ID, PdfAProperties.CONFORMANCE, "B");
                 XMPMeta taggedExtensionMeta = XMPMetaFactory.parseFromString(zugferdExtension);
                 XMPUtils.appendProperties(taggedExtensionMeta, xmpMeta, true, false);
+                break;
             default:
                 break;
         }
