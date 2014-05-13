@@ -133,6 +133,7 @@ devicegray.shall.only.be.used.if.defaultgray.pdfa.or.outputintent=DeviceGray sha
 devicergb.and.devicecmyk.colorspaces.cannot.be.used.both.in.one.file=DeviceRGB and DeviceCMYK colorspaces cannot be used both in one file.
 devicergb.may.be.used.only.if.the.file.has.a.rgb.pdfa.outputIntent=DeviceRGB may be used only if the file has a PDF/A OutputIntent that uses an RGB colour space.
 devicergb.shall.only.be.used.if.defaultrgb.pdfa.or.outputintent=DeviceRGB shall only be used if a device independent DefaultRGB colour space has been set when the DeviceRGB colour space is used, or if the file has a PDF/A OutputIntent that contains an RGB destination profile.
+devicen.color.shall.have.the.same.number.of.colorants.as.the.destination.DeviceN.color.space=DeviceN color shall have the same number of colorants as the destination color space
 dictionary.key.1.is.not.a.name=Dictionary key {1} is not a name.
 dictionary.key.is.not.a.name=Dictionary key is not a name.
 dimensions.of.a.cell.are.attributed.automagically.see.the.faq=Dimensions of a Cell are attributed automagically. See the FAQ.

@@ -44,7 +44,7 @@
  */
 package com.itextpdf.text.pdf;
 
-/** Each spotcolor in the document will have an instance of this class
+/** Each colorSpace in the document will have an instance of this class
  *
  * @author Phillip Pan (phillip@formstar.com)
  */
@@ -55,20 +55,20 @@ class ColorDetails {
     PdfIndirectReference indirectReference;
     /** The color name that appears in the document body stream
      */
-    PdfName colorName;
+    PdfName colorSpaceName;
     /** The color
      */
-    PdfSpotColor spotcolor;
+    IPdfSpecialColorSpace colorSpace;
 
     /** Each spot color used in a document has an instance of this class.
      * @param colorName the color name
      * @param indirectReference the indirect reference to the font
      * @param scolor the <CODE>PDfSpotColor</CODE>
      */
-    ColorDetails(PdfName colorName, PdfIndirectReference indirectReference, PdfSpotColor scolor) {
-        this.colorName = colorName;
+    ColorDetails(PdfName colorName, PdfIndirectReference indirectReference, IPdfSpecialColorSpace scolor) {
+        this.colorSpaceName = colorName;
         this.indirectReference = indirectReference;
-        this.spotcolor = scolor;
+        this.colorSpace = scolor;
     }
 
     /** Gets the indirect reference to this color.
@@ -81,14 +81,14 @@ class ColorDetails {
     /** Gets the color name as it appears in the document body.
      * @return the color name
      */
-    PdfName getColorName() {
-        return colorName;
+    PdfName getColorSpaceName() {
+        return colorSpaceName;
     }
 
     /** Gets the <CODE>SpotColor</CODE> object.
      * @return the <CODE>PdfSpotColor</CODE>
      */
-    public PdfObject getSpotColor(PdfWriter writer) {
-        return spotcolor.getSpotObject(writer);
+    public PdfObject getPdfObject(PdfWriter writer) {
+        return colorSpace.getPdfObject(writer);
     }
 }

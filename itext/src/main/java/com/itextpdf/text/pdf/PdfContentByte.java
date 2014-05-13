@@ -2740,6 +2740,11 @@ public class PdfContentByte {
                 setShadingStroke(shading.getPdfShadingPattern());
                 break;
             }
+            case ExtendedColor.TYPE_DEVICEN: {
+                DeviceNColor devicen = (DeviceNColor)color;
+                setColorStroke(devicen.getPdfDeviceNColor(), devicen.getTints());
+                break;
+            }
             default:
                 setRGBColorStroke(color.getRed(), color.getGreen(), color.getBlue());
         }
@@ -2776,6 +2781,11 @@ public class PdfContentByte {
                 setShadingFill(shading.getPdfShadingPattern());
                 break;
             }
+            case ExtendedColor.TYPE_DEVICEN: {
+                DeviceNColor devicen = (DeviceNColor)color;
+                setColorFill(devicen.getPdfDeviceNColor(), devicen.getTints());
+                break;
+            }
             default:
                 setRGBColorFill(color.getRed(), color.getGreen(), color.getBlue());
         }
@@ -2790,10 +2800,23 @@ public class PdfContentByte {
         checkWriter();
         state.colorDetails = writer.addSimple(sp);
         PageResources prs = getPageResources();
-        PdfName name = state.colorDetails.getColorName();
+        PdfName name = state.colorDetails.getColorSpaceName();
         name = prs.addColor(name, state.colorDetails.getIndirectReference());
         saveColor(new SpotColor(sp, tint), true);
         content.append(name.getBytes()).append(" cs ").append(tint).append(" scn").append_i(separator);
+    }
+
+    public void setColorFill(final PdfDeviceNColor sp, final float[] tints) {
+        checkWriter();
+        state.colorDetails = writer.addSimple(sp);
+        PageResources prs = getPageResources();
+        PdfName name = state.colorDetails.getColorSpaceName();
+        name = prs.addColor(name, state.colorDetails.getIndirectReference());
+        saveColor(new DeviceNColor(sp, tints), true);
+        content.append(name.getBytes()).append(" cs ");
+        for (float tint : tints)
+            content.append(tint + " ");
+        content.append("scn").append_i(separator);
     }
 
     /** Sets the stroke color to a spot color.
@@ -2805,10 +2828,23 @@ public class PdfContentByte {
         checkWriter();
         state.colorDetails = writer.addSimple(sp);
         PageResources prs = getPageResources();
-        PdfName name = state.colorDetails.getColorName();
+        PdfName name = state.colorDetails.getColorSpaceName();
         name = prs.addColor(name, state.colorDetails.getIndirectReference());
         saveColor(new SpotColor(sp, tint), false);
         content.append(name.getBytes()).append(" CS ").append(tint).append(" SCN").append_i(separator);
+    }
+
+    public void setColorStroke(final PdfDeviceNColor sp, final float[] tints) {
+        checkWriter();
+        state.colorDetails = writer.addSimple(sp);
+        PageResources prs = getPageResources();
+        PdfName name = state.colorDetails.getColorSpaceName();
+        name = prs.addColor(name, state.colorDetails.getIndirectReference());
+        saveColor(new DeviceNColor(sp, tints), true);
+        content.append(name.getBytes()).append(" CS ");
+        for (float tint : tints)
+            content.append(tint + " ");
+        content.append("scn").append_i(separator);
     }
 
     /** Sets the fill color to a pattern. The pattern can be
@@ -2884,7 +2920,7 @@ public class PdfContentByte {
         PdfName name = writer.addSimplePattern(p);
         name = prs.addPattern(name, p.getIndirectReference());
         ColorDetails csDetail = writer.addSimplePatternColorspace(color);
-        PdfName cName = prs.addColor(csDetail.getColorName(), csDetail.getIndirectReference());
+        PdfName cName = prs.addColor(csDetail.getColorSpaceName(), csDetail.getIndirectReference());
         saveColor(new UncoloredPattern(p, color, tint), true);
         content.append(cName.getBytes()).append(" cs").append_i(separator);
         outputColorNumbers(color, tint);
@@ -2915,7 +2951,7 @@ public class PdfContentByte {
         PdfName name = writer.addSimplePattern(p);
         name = prs.addPattern(name, p.getIndirectReference());
         ColorDetails csDetail = writer.addSimplePatternColorspace(color);
-        PdfName cName = prs.addColor(csDetail.getColorName(), csDetail.getIndirectReference());
+        PdfName cName = prs.addColor(csDetail.getColorSpaceName(), csDetail.getIndirectReference());
         saveColor(new UncoloredPattern(p, color, tint), false);
         content.append(cName.getBytes()).append(" CS").append_i(separator);
         outputColorNumbers(color, tint);
@@ -2950,7 +2986,7 @@ public class PdfContentByte {
         content.append(name.getBytes()).append(" sh").append_i(separator);
         ColorDetails details = shading.getColorDetails();
         if (details != null)
-            prs.addColor(details.getColorName(), details.getIndirectReference());
+            prs.addColor(details.getColorSpaceName(), details.getIndirectReference());
     }
 
     /**
@@ -2973,7 +3009,7 @@ public class PdfContentByte {
         content.append(PdfName.PATTERN.getBytes()).append(" cs ").append(name.getBytes()).append(" scn").append_i(separator);
         ColorDetails details = shading.getColorDetails();
         if (details != null)
-            prs.addColor(details.getColorName(), details.getIndirectReference());
+            prs.addColor(details.getColorSpaceName(), details.getIndirectReference());
     }
 
     /**
@@ -2988,7 +3024,7 @@ public class PdfContentByte {
         content.append(PdfName.PATTERN.getBytes()).append(" CS ").append(name.getBytes()).append(" SCN").append_i(separator);
         ColorDetails details = shading.getColorDetails();
         if (details != null)
-            prs.addColor(details.getColorName(), details.getIndirectReference());
+            prs.addColor(details.getColorSpaceName(), details.getIndirectReference());
     }
 
     /** Check if we have a valid PdfWriter.
