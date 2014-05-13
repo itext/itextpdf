@@ -405,6 +405,9 @@ public class CompareTool {
         } else if (cmpDirectObj.isString()) {
             if (!objectsIsEquals((PdfString)outDirectObj, (PdfString)cmpDirectObj))
                 return false;
+        } else if (cmpDirectObj.isBoolean()) {
+            if (!objectsIsEquals((PdfBoolean)outDirectObj, (PdfBoolean)cmpDirectObj))
+                return false;
         } else {
             throw new UnsupportedOperationException();
         }
@@ -419,7 +422,7 @@ public class CompareTool {
         if (outArray == null || outArray.size() != cmpArray.size())
             return false;
         for (int i = 0; i < cmpArray.size(); i++) {
-            if (!objectsIsEquals(outArray.getDirectObject(i), cmpArray.getDirectObject(i)))
+            if (!objectsIsEquals(outArray.getPdfObject(i), cmpArray.getPdfObject(i)))
                 return false;
         }
 
@@ -436,6 +439,10 @@ public class CompareTool {
 
     private boolean objectsIsEquals(PdfString outString, PdfString cmpString) {
         return Arrays.equals(cmpString.getBytes(), outString.getBytes());
+    }
+
+    private boolean objectsIsEquals(PdfBoolean outBoolean, PdfBoolean cmpBoolean) {
+        return Arrays.equals(cmpBoolean.getBytes(), outBoolean.getBytes());
     }
 
     public String compareXmp(){
