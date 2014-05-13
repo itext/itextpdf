@@ -311,7 +311,7 @@ public class CompareTool {
         } else {
             String message = compare(outPath, differenceImagePrefix, ignoredAreas, equalPages);
             if (message == null || message.length() == 0)
-                return "Compare by content fails.\nNo visual differences";
+                return "Compare by content fails. No visual differences";
             return message;
         }
     }
@@ -476,16 +476,16 @@ public class CompareTool {
             }
 
             if (!compareXmls(cmpBytes, outBytes)) {
-                return "The XMP packages different!!!";
+                return "The XMP packages different!";
             }
         } catch (XMPException xmpExc) {
-            return "XMP parsing failure!!!";
+            return "XMP parsing failure!";
         } catch (IOException ioExc) {
-            return "XMP parsing failure!!!";
+            return "XMP parsing failure!";
         } catch (ParserConfigurationException parseExc)  {
-            return "XMP parsing failure!!!";
+            return "XMP parsing failure!";
         } catch (SAXException parseExc)  {
-            return "XMP parsing failure!!!";
+            return "XMP parsing failure!";
         }
         finally {
             if (cmpReader != null)
@@ -595,7 +595,7 @@ public class CompareTool {
         System.out.println("Comparing tag structures...");
 
         String outXml = outPdf.replace(".pdf", ".xml");
-        String cmpXml = cmpPdf.replace(".pdf", ".xml");
+        String cmpXml = outPdf.replace(".pdf", ".cmp.xml");
 
         String error = null;
         PdfReader reader = new PdfReader(outPdf);
