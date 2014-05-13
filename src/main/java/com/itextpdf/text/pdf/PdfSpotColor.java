@@ -53,7 +53,7 @@ import com.itextpdf.text.error_messages.MessageLocalization;
  * @see		PdfDictionary
  */
 
-public class PdfSpotColor{
+public class PdfSpotColor implements IPdfSpecialColorSpace {
     
 /**	The color name */
     public PdfName name;
@@ -81,8 +81,18 @@ public class PdfSpotColor{
     public BaseColor getAlternativeCS() {
         return altcs;
     }
-    
+
+    public PdfName getName() {
+        return name;
+    }
+
+
+    @Deprecated
     protected PdfObject getSpotObject(PdfWriter writer) {
+        return getPdfObject(writer);
+    }
+
+    public PdfObject getPdfObject(PdfWriter writer) {
         PdfArray array = new PdfArray(PdfName.SEPARATION);
         array.add(name);
         PdfFunction func = null;
@@ -91,7 +101,7 @@ public class PdfSpotColor{
             switch (type) {
                 case ExtendedColor.TYPE_GRAY:
                     array.add(PdfName.DEVICEGRAY);
-                    func = PdfFunction.type2(writer, new float[]{0, 1}, null, new float[]{0}, new float[]{((GrayColor)altcs).getGray()}, 1);
+                    func = PdfFunction.type2(writer, new float[]{0, 1}, null, new float[]{1}, new float[]{((GrayColor)altcs).getGray()}, 1);
                     break;
                 case ExtendedColor.TYPE_CMYK:
                     array.add(PdfName.DEVICECMYK);
@@ -112,8 +122,13 @@ public class PdfSpotColor{
         return array;
     }
 
+    @Override
     public boolean equals(Object obj) {
-        return obj instanceof PdfSpotColor && ((PdfSpotColor)obj).name == this.name && ((PdfSpotColor)obj).altcs == this.altcs;
+        return obj instanceof PdfSpotColor && ((PdfSpotColor)obj).name.equals(this.name) && ((PdfSpotColor)obj).altcs.equals(this.altcs);
     }
 
+    @Override
+    public int hashCode() {
+        return name.hashCode() ^ altcs.hashCode();    //To change body of overridden methods use File | Settings | File Templates.
+    }
 }

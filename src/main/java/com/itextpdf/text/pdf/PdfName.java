@@ -408,6 +408,7 @@ public class
      * @since 5.3.4
      */
     public static final PdfName COLOR = new PdfName("Color");
+    public static final PdfName COLORANTS = new PdfName("Colorants");
     /** A name */
     public static final PdfName COLORS = new PdfName("Colors");
     /** A name */
@@ -1292,6 +1293,7 @@ public class
      * @since 2.1.6
      */
     public static final PdfName NAVIGATIONPANE = new PdfName("NavigationPane");
+    public static final PdfName NCHANNEL = new PdfName("NChannel");
     /**
      * A name.
      * @since 2.1.6
@@ -1379,7 +1381,7 @@ public class
     /** A name */
     public static final PdfName OFF = new PdfName("OFF");
     /** A name */
-    public static final PdfName ON = new PdfName("ON");
+    public static final PdfName ON = new PdfName("on");
     /** A name */
     public static final PdfName ONECOLUMN = new PdfName("OneColumn");
     /** A name */

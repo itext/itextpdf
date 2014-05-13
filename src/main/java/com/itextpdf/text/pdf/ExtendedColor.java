@@ -65,6 +65,8 @@ public abstract class ExtendedColor extends BaseColor{
     public static final int TYPE_PATTERN = 4;
     /** a type of extended color. */
     public static final int TYPE_SHADING = 5;
+    /** a type of extended color. */
+    public static final int TYPE_DEVICEN = 6;
     
     protected int type;
 
