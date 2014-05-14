@@ -52,7 +52,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
-import java.nio.charset.Charset;
 import java.util.Set;
 
 /**
@@ -105,7 +104,7 @@ public class TaggedPdfReaderTool {
 	 */
 	public void convertToXml(PdfReader reader, OutputStream os)
 			throws IOException {
-        convertToXml(reader, os, Charset.defaultCharset().name());
+        convertToXml(reader, os, "UTF-8");
     }
 
     /**
