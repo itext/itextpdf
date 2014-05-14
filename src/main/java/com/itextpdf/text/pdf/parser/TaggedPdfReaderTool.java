@@ -44,19 +44,14 @@
  */
 package com.itextpdf.text.pdf.parser;
 
+import com.itextpdf.text.error_messages.MessageLocalization;
+import com.itextpdf.text.pdf.*;
+import com.itextpdf.text.xml.XMLUtil;
+
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.PrintWriter;
-
-import com.itextpdf.text.error_messages.MessageLocalization;
-import com.itextpdf.text.pdf.PdfArray;
-import com.itextpdf.text.pdf.PdfDictionary;
-import com.itextpdf.text.pdf.PdfName;
-import com.itextpdf.text.pdf.PdfNumber;
-import com.itextpdf.text.pdf.PdfObject;
-import com.itextpdf.text.pdf.PdfReader;
-import com.itextpdf.text.xml.XMLUtil;
 import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.nio.charset.Charset;
 import java.util.Set;
 
@@ -189,6 +184,12 @@ public class TaggedPdfReaderTool {
                 }
             }
             out.print(">");
+            PdfObject alt = k.get(PdfName.ALT);
+            if (alt != null) {
+                out.print("<alt>");
+                out.print(alt.toString());
+                out.print("</alt>");
+            }
             PdfDictionary dict = k.getAsDict(PdfName.PG);
             if (dict != null)
                 parseTag(tagN, k.getDirectObject(PdfName.K), dict);
