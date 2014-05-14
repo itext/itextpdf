@@ -44,20 +44,14 @@
  */
 package com.itextpdf.text.pdf.parser;
 
+import com.itextpdf.text.error_messages.MessageLocalization;
+import com.itextpdf.text.pdf.*;
+import com.itextpdf.text.xml.XMLUtil;
+
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.PrintWriter;
-
-import com.itextpdf.text.error_messages.MessageLocalization;
-import com.itextpdf.text.pdf.PdfArray;
-import com.itextpdf.text.pdf.PdfDictionary;
-import com.itextpdf.text.pdf.PdfName;
-import com.itextpdf.text.pdf.PdfNumber;
-import com.itextpdf.text.pdf.PdfObject;
-import com.itextpdf.text.pdf.PdfReader;
-import com.itextpdf.text.xml.XMLUtil;
 import java.io.OutputStreamWriter;
-import java.nio.charset.Charset;
+import java.io.PrintWriter;
 import java.util.Set;
 
 /**
@@ -110,7 +104,7 @@ public class TaggedPdfReaderTool {
 	 */
 	public void convertToXml(PdfReader reader, OutputStream os)
 			throws IOException {
-        convertToXml(reader, os, Charset.defaultCharset().name());
+        convertToXml(reader, os, "UTF-8");
     }
 
     /**
@@ -189,6 +183,12 @@ public class TaggedPdfReaderTool {
                 }
             }
             out.print(">");
+            PdfObject alt = k.get(PdfName.ALT);
+            if (alt != null && alt.toString() != null) {
+                out.print("<alt><![CDATA[");
+                out.print(alt.toString().replaceAll("[\\000]*", ""));
+                out.print("]]></alt>");
+            }
             PdfDictionary dict = k.getAsDict(PdfName.PG);
             if (dict != null)
                 parseTag(tagN, k.getDirectObject(PdfName.K), dict);
