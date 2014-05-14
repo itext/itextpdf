@@ -185,10 +185,10 @@ public class TaggedPdfReaderTool {
             }
             out.print(">");
             PdfObject alt = k.get(PdfName.ALT);
-            if (alt != null) {
-                out.print("<alt>");
-                out.print(alt.toString());
-                out.print("</alt>");
+            if (alt != null && alt.toString() != null) {
+                out.print("<alt><![CDATA[");
+                out.print(alt.toString().replaceAll("[\\000]*", ""));
+                out.print("]]></alt>");
             }
             PdfDictionary dict = k.getAsDict(PdfName.PG);
             if (dict != null)
