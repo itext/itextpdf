@@ -1223,7 +1223,7 @@ public class PdfDocument extends Document {
      * We should take leading into account if it is not the same as the line.height
      *
      * @return float combined height of the line
-     * @since 5.1.1
+     * @since 5.5.1
      */
     protected float calculateLineHeight() {
         float tempHeight = line.height();
