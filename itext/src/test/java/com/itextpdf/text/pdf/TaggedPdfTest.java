@@ -1,7 +1,6 @@
 package com.itextpdf.text.pdf;
 
 import com.itextpdf.text.*;
-import com.itextpdf.text.pdf.internal.PdfVersionImp;
 import com.itextpdf.text.pdf.parser.*;
 import com.itextpdf.text.xml.XMLUtil;
 import org.junit.After;
@@ -715,7 +714,7 @@ public class TaggedPdfTest {
         writer.getDirectContent().openMCBlock(div);
 
         PdfArtifact artifact = new PdfArtifact();
-        artifact.setType(new PdfString("Rectangle"));
+        artifact.setType(new PdfString("Background"));
         writer.getDirectContent().openMCBlock(artifact);
         writer.getDirectContent().setColorFill(BaseColor.RED);
         writer.getDirectContent().rectangle(100, 100, 400, 400);

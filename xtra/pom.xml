@@ -1,102 +1,106 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<parent>
-		<artifactId>itext-parent</artifactId>
-		<groupId>com.itextpdf</groupId>
-		<version>1.0.0</version>
-	</parent>
-	<modelVersion>4.0.0</modelVersion>
-	<groupId>com.itextpdf</groupId>
-	<artifactId>itext-xtra</artifactId>
-	<packaging>jar</packaging>
-	<name>iText Xtra</name>
-	<version>5.5.0</version>
-	<description>iText Xtra, part of iText a Free Java-PDF library</description>
-	<!-- General Info -->
-	<url>http://www.itextpdf.com/</url>
-	<mailingLists>
-		<mailingList>
-			<name>iText Questions</name>
-			<subscribe>
-				http://lists.sourceforge.net/lists/listinfo/itext-questions
-			</subscribe>
-			<post>itext-questions@lists.sourceforge.net</post>
-			<archive>
-				http://news.gmane.org/gmane.comp.java.lib.itext.general
-			</archive>
-			<otherArchives>
-				<otherArchive>http://itext-general.2136553.n4.nabble.com/</otherArchive>
-				<otherArchive>http://www.junlu.com/2.html</otherArchive>
-				<otherArchive>http://sourceforge.net/mailarchive/forum.php?forum_id=3273</otherArchive>
-				<otherArchive>http://www.mail-archive.com/itext-questions%40lists.sourceforge.net/</otherArchive>
-			</otherArchives>
-		</mailingList>
-	</mailingLists>
-	<licenses>
-		<license>
-			<name>GNU Affero General Public License v3</name>
-			<url>http://www.fsf.org/licensing/licenses/agpl-3.0.html</url>
-		</license>
-	</licenses>
-	<scm>
-		<connection>scm:svn:http://itext.svn.sourceforge.net/svnroot/itext/trunk/xtra</connection>
-		<url>http://itext.svn.sourceforge.net/viewvc/itext</url>
-	</scm>
-	<!-- Build -->
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>2.8</version>
-				<executions>
-					<execution>
-						<id>attach-sources</id>
-						<goals>
-							<goal>jar</goal>
-						</goals>
-					</execution>
-				</executions>
-				<configuration>
-                    <links>
-						<link>http://api.itextpdf.com/itext/</link>
-					</links>
-				    <footer><![CDATA[
-<script type="text/javascript">
-var _gaq = _gaq || [];
-_gaq.push(['_setAccount', 'UA-11854164-1']);
-_gaq.push(['_setDomainName', 'itextpdf.com']);
-_gaq.push(['_trackPageview']);
-(function() {
-var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-ga.src = ('https:' == document.location.protocol ? 'https://' : 'http://') + 'stats.g.doubleclick.net/dc.js';
-var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-})();
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>itext-parent</artifactId>
+        <groupId>com.itextpdf</groupId>
+        <version>1.0.0</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>com.itextpdf</groupId>
+    <artifactId>itext-xtra</artifactId>
+    <packaging>jar</packaging>
+    <name>iText Xtra</name>
+    <version>5.5.1</version>
+    <description>iText Xtra, part of iText a Free Java-PDF library</description>
+    <!-- General Info -->
+    <url>http://www.itextpdf.com/</url>
+    <mailingLists>
+        <mailingList>
+            <name>iText Questions</name>
+            <subscribe>
+                http://lists.sourceforge.net/lists/listinfo/itext-questions
+            </subscribe>
+            <post>itext-questions@lists.sourceforge.net</post>
+            <archive>
+                http://news.gmane.org/gmane.comp.java.lib.itext.general
+            </archive>
+            <otherArchives>
+                <otherArchive>http://itext-general.2136553.n4.nabble.com/</otherArchive>
+                <otherArchive>http://www.junlu.com/2.html</otherArchive>
+                <otherArchive>http://sourceforge.net/mailarchive/forum.php?forum_id=3273</otherArchive>
+                <otherArchive>http://www.mail-archive.com/itext-questions%40lists.sourceforge.net/</otherArchive>
+            </otherArchives>
+        </mailingList>
+    </mailingLists>
+    <licenses>
+        <license>
+            <name>GNU Affero General Public License v3</name>
+            <url>http://www.fsf.org/licensing/licenses/agpl-3.0.html</url>
+        </license>
+    </licenses>
+    <scm>
+        <connection>scm:svn:http://itext.svn.sourceforge.net/svnroot/itext/trunk/xtra</connection>
+        <url>http://itext.svn.sourceforge.net/viewvc/itext</url>
+    </scm>
+    <!-- Build -->
+    <!-- Profiles - default, release -->
+    <profiles>
+        <profile>
+            <id>all</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <version>2.8</version>
+                        <executions>
+                            <execution>
+                                <id>attach-sources</id>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <links>
+                                <link>http://api.itextpdf.com/itext/</link>
+                            </links>
+                            <footer><![CDATA[
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-11854164-1', 'itextpdf.com');
+  ga('send', 'pageview');
+
 </script>
     ]]></footer>
-				</configuration>
-			</plugin>
-		</plugins>
-		<resources>
-			<resource>
-				<directory>src/main/resources</directory>
-				<includes>
-					<include>**/*.txt</include>
-				</includes>
-			</resource>
-		</resources>
-	</build>
-	<!-- Profiles - default, release -->
-	<!-- Dependencies -->
-	<dependencies>
-		<dependency>
-			<groupId>com.itextpdf</groupId>
-			<artifactId>itextpdf</artifactId>
-			<version>5.5.0</version>
-			<type>jar</type>
-			<scope>compile</scope>
-		</dependency>
+                        </configuration>
+                    </plugin>
+                </plugins>
+                <resources>
+                    <resource>
+                        <directory>src/main/resources</directory>
+                        <includes>
+                            <include>**/*.txt</include>
+                        </includes>
+                    </resource>
+                </resources>
+            </build>
+        </profile>
+    </profiles>
+    <!-- Dependencies -->
+    <dependencies>
+        <dependency>
+            <groupId>com.itextpdf</groupId>
+            <artifactId>itextpdf</artifactId>
+            <version>5.5.1</version>
+            <type>jar</type>
+            <scope>compile</scope>
+        </dependency>
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
@@ -104,5 +108,5 @@ var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga
             <type>jar</type>
             <scope>test</scope>
         </dependency>
-	</dependencies>
+    </dependencies>
 </project>

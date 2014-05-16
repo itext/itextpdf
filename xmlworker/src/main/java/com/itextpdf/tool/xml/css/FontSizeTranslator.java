@@ -110,7 +110,9 @@ public class FontSizeTranslator {
                 if (tag.getParent() != null) {
                     float parentSize =
                         getFontSize(tag.getParent()); // if the font-size of the parent can be set in some memory the translation part is not needed anymore.
-                    if (parentSize <= 6.75f) {
+                    if (parentSize == Font.UNDEFINED) {
+                        size = 9.75f;
+                    } else if (parentSize <= 6.75f) {
                         size = parentSize - 1;
                     } else if (parentSize == 7.5f) {
                         size = 6.75f;
@@ -135,7 +137,9 @@ public class FontSizeTranslator {
             } else if (value.equalsIgnoreCase(CSS.Value.LARGER)) {
                 if (tag.getParent() != null) {
                     float parentSize = getFontSize(tag.getParent()); // if the font-size of the parent can be set in some memory the translation part is not needed anymore.
-                    if (parentSize == 6.75f) {
+                    if (parentSize == Font.UNDEFINED) {
+                        size = 13.5f;
+                    } else if (parentSize == 6.75f) {
                         size = 7.5f;
                     } else if (parentSize == 7.5f) {
                         size = 9.75f;

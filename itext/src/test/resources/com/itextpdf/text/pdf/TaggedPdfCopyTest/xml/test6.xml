@@ -1,4 +1,5 @@
-<root><P></P>
+<root><P><alt>Apple, Inc. logo.
+</alt></P>
 <P>iPhone </P>
 <Part><H1>User&#8217;s Guide
 </H1>
@@ -54,7 +55,9 @@ directly to voicemail. </P>
 <P>When you connect iPhone to your computer, iTunes syncs iPhone with the information 
 and media on your computer, according to how you&#8217;ve configured the iPhone sync 
 settings in iTunes. </P>
-<P></P>
+<P><alt>begin artwork description: An iPhone and a Mac computer with an arrow between the two showing that you can sync information between your iPhone and your computer.
+:end description.
+</alt></P>
 <P>You can set iTunes to sync any or all of the following: 
 &#194; Contacts&#8212;names, phone numbers, addresses, email addresses, and so on 
 &#194; Calendars&#8212;appointments and events 
@@ -136,7 +139,9 @@ original message.
 <P>Delete a message </P>
 <P>You can also delete a message directly from the mailbox message list by swiping left or 
 right over the message title and then tapping Delete. </P>
-<P></P>
+<P><alt>begin screenshot description:  A portion of the Inbox screen listing messages, with a red Delete button to the right of a message.
+:end description.
+</alt></P>
 <P>Or you can tap Edit and tap  next to a message. </P>
 <P>Check for new messages </P>
 <P>Choose a mailbox, or tap  at any time. </P>
@@ -145,7 +150,8 @@ right over the message title and then tapping Delete. </P>
 For example, if someone sends you a PDF, Microsoft Word, or Microsoft Excel 
 document, you can read it on iPhone. </P>
 <P> Tap the attachment. It downloads to iPhone and then opens. </P>
-<P></P>
+<P><alt>begin screenshot description:  The top portion of the message screen showing a message that contains an attachment. To the right is another screenshot of the same message now showing the downloaded image.
+:end description.</alt></P>
 <P>You can view attachments in both portrait and landscape orientation. If the format of 
 an attached file isn&#8217;t supported by iPhone, you can see the name of the file but you 
 can&#8217;t open it. iPhone supports the following email attachment file formats: </P>
@@ -319,7 +325,8 @@ same user account, use the same sync settings for each. </P>
 <Sect><H4>Setting Up Syncing </H4>
 <P>You use the iPhone settings panes in iTunes to specify the iTunes content and other 
 information you want to sync to iPhone. </P>
-<P></P>
+<P><alt>begin screenshot description: The iTunes application icon
+:end description.</alt></P>
 <P>Set up syncing </P>
 <P>1	 Connect iPhone to your computer, and open iTunes (if it doesn&#8217;t open automatically). 
 Unless your keyboard has a high-powered USB 2.0 port, you must connect iPhone to a 
@@ -329,7 +336,11 @@ USB 2.0 port on your computer. </P>
 <P>4	 Click Apply in the lower-right corner of the screen. 
 The following sections provide an overview of each of the iPhone settings panes. 
 For more information, open iTunes and choose Help &gt; iTunes Help. </P>
-<P></P>
+<P><alt>begin screenshot description: 
+The iPhone settings panes in iTunes. A series of tabs runs across
+the top of the pane. The tabs from left to right are: Summary (selected), Info, Ringtones, Music, Photos, Podcasts, Video. The Summary tab shows three sections from top to bottom: iPhone which shows general information about your iPhone, such as the software version or serial number; Version which contains a Check for Update button and a Restore button; and Options which
+contains three sync option checkboxes.
+:end description.</alt></P>
 </Sect>
 </Sect>
 </Sect>
@@ -338,7 +349,8 @@ For more information, open iTunes and choose Help &gt; iTunes Help. </P>
 <P>90 </P>
 <H2>Notes
 </H2>
-<P></P>
+<P><alt>begin screenshot description: The Notes application icon
+:end description.</alt></P>
 <H3>Writing, Reading, and Emailing Notes </H3>
 <Sect><P>Notes are listed by date added, with the most recent note at the top. You can see the 
 first few words of each note in the list. </P>

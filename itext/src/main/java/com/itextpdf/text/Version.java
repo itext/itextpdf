@@ -67,7 +67,7 @@ public final class Version {
 	 * This String contains the version number of this iText release.
 	 * For debugging purposes, we request you NOT to change this constant.
 	 */
-	private String release = "5.5.0";
+	private String release = "5.5.1";
 	
 	/**
 	 * The license key.
@@ -80,7 +80,7 @@ public final class Version {
 	 * iText Group requests that you retain the iText producer line
 	 * in every PDF that is created or manipulated using iText.
 	 */
-	private String iTextVersion = iText + " " + release + " \u00a92000-2013 iText Group NV";
+	private String iTextVersion = iText + " " + release + " \u00a92000-2014 iText Group NV";
 
 	/** The iText version instance. */
 	private static Version version = null;

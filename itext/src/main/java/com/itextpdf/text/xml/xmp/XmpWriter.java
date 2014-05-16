@@ -319,7 +319,8 @@ public class XmpWriter {
             xmpMeta.setLocalizedText(XMPConst.NS_DC, DublinCoreProperties.DESCRIPTION, XMPConst.X_DEFAULT, XMPConst.X_DEFAULT, value);
         } else if (PdfName.KEYWORDS.equals(key)) {
             for (String v : value.split(",|;"))
-                xmpMeta.appendArrayItem(XMPConst.NS_DC, DublinCoreProperties.SUBJECT, new PropertyOptions(PropertyOptions.ARRAY), v.trim(), null);
+                if (v.trim().length() > 0)
+                    xmpMeta.appendArrayItem(XMPConst.NS_DC, DublinCoreProperties.SUBJECT, new PropertyOptions(PropertyOptions.ARRAY), v.trim(), null);
             xmpMeta.setProperty(XMPConst.NS_PDF, PdfProperties.KEYWORDS, value);
         } else if (PdfName.PRODUCER.equals(key)) {
             xmpMeta.setProperty(XMPConst.NS_PDF, PdfProperties.PRODUCER, value);

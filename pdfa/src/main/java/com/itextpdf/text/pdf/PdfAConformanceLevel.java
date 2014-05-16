@@ -86,5 +86,10 @@ public enum PdfAConformanceLevel {
     /**
      * PDF/A-3u
      */
-    PDF_A_3U
+    PDF_A_3U,
+
+    /**
+     * ZUGFeRD
+     */
+    ZUGFeRD
 }

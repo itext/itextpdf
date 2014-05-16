@@ -73,6 +73,8 @@ abstract public class PdfAChecker {
         }
     }
 
+    abstract public void close(PdfWriter writer);
+
     private PdfObject cleverPdfArrayClone(PdfArray array) {
         PdfArray newArray = new PdfArray();
         for (int i = 0; i < array.size(); i++) {
@@ -104,13 +106,17 @@ abstract public class PdfAChecker {
     protected PdfObject getDirectObject(PdfObject obj) {
         if (obj == null)
             return null;
-        //use counter to prevent indirect reference cycling
+        // use counter to prevent indirect reference cycling
         int count = 0;
-        while (obj.type() == 0) {
-            PdfObject tmp = cachedObjects.get(new RefKey((PdfIndirectReference)obj));
-            if (tmp == null)
-                break;
-            obj = tmp;
+        // resolve references
+        while (obj instanceof PdfIndirectReference) {
+            PdfObject curr;
+            if (obj.isIndirect())
+                curr = PdfReader.getPdfObject(obj);
+            else
+                curr = cachedObjects.get(new RefKey((PdfIndirectReference)obj));
+            if (curr == null) break;
+            obj = curr;
             //10 - is max allowed reference chain
             if (count++ > 10)
                 break;

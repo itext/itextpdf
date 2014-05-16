@@ -64,6 +64,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Extension to PdfStamperImp that will attempt to keep a file
@@ -159,11 +160,11 @@ public class PdfAStamperImp extends PdfStamperImp {
      * @see PdfStamperImp#createXmpWriter(java.io.ByteArrayOutputStream, com.itextpdf.text.pdf.PdfDictionary)
      */
     protected XmpWriter createXmpWriter(ByteArrayOutputStream baos, PdfDictionary info) throws IOException {
-        return new PdfAXmpWriter(baos, info, ((PdfAConformance) pdfIsoConformance).getConformanceLevel());
+        return new PdfAXmpWriter(baos, info, ((PdfAConformance) pdfIsoConformance).getConformanceLevel(), this);
     }
 
     protected XmpWriter createXmpWriter(ByteArrayOutputStream baos, HashMap<String, String> info) throws IOException {
-        return new PdfAXmpWriter(baos, info, ((PdfAConformance) pdfIsoConformance).getConformanceLevel());
+        return new PdfAXmpWriter(baos, info, ((PdfAConformance) pdfIsoConformance).getConformanceLevel(), this);
     }
 
     /**
@@ -265,4 +266,9 @@ public class PdfAStamperImp extends PdfStamperImp {
         return ((PdfAConformanceImp)pdfIsoConformance).getPdfAChecker();
     }
 
+    @Override
+    protected void close(Map<String, String> moreInfo) throws IOException {
+        super.close(moreInfo);
+        getPdfAChecker().close(this);
+    }
 }

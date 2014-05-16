@@ -199,11 +199,11 @@ public class PdfAWriter extends PdfWriter {
      * @see PdfWriter#createXmpWriter(java.io.ByteArrayOutputStream, com.itextpdf.text.pdf.PdfDictionary)
      */
     protected XmpWriter createXmpWriter(ByteArrayOutputStream baos, PdfDictionary info) throws IOException {
-        return xmpWriter = new PdfAXmpWriter(baos, info, ((PdfAConformance)pdfIsoConformance).getConformanceLevel());
+        return xmpWriter = new PdfAXmpWriter(baos, info, ((PdfAConformance)pdfIsoConformance).getConformanceLevel(), this);
     }
 
     protected XmpWriter createXmpWriter(ByteArrayOutputStream baos, HashMap<String, String> info) throws IOException {
-        return xmpWriter = new PdfAXmpWriter(baos, info, ((PdfAConformance)pdfIsoConformance).getConformanceLevel());
+        return xmpWriter = new PdfAXmpWriter(baos, info, ((PdfAConformance)pdfIsoConformance).getConformanceLevel(), this);
     }
 
     /**
@@ -353,5 +353,11 @@ public class PdfAWriter extends PdfWriter {
      */
     public void addPdfAttachment(String description, byte[] fileStore, String file, String fileDisplay, PdfName afRelationshipValue) throws IOException {
         addFileAttachment(description, fileStore, file, fileDisplay, MimeTypePdf, afRelationshipValue);
+    }
+
+    @Override
+    public void close() {
+        super.close();
+        getPdfAChecker().close(this);
     }
 }
