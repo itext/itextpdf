@@ -67,7 +67,7 @@ public final class Version {
 	 * This String contains the version number of this iText release.
 	 * For debugging purposes, we request you NOT to change this constant.
 	 */
-	private String release = "5.5.1-SNAPSHOT";
+	private String release = "5.5.1";
 	
 	/**
 	 * The license key.
