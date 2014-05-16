@@ -86,9 +86,6 @@ class PdfCopyFormsImp extends PdfCopyFieldsImp {
         }
         reader.shuffleSubsetNames();
         readers2intrefs.put(reader, new IntHashtable());
-
-        visited.put(reader, new IntHashtable());
-
         fields.add(reader.getAcroFields());
         updateCalculationOrder(reader);
     }
