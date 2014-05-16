@@ -2745,6 +2745,11 @@ public class PdfContentByte {
                 setColorStroke(devicen.getPdfDeviceNColor(), devicen.getTints());
                 break;
             }
+            case ExtendedColor.TYPE_LAB: {
+                LabColor lab = (LabColor)color;
+                setColorStroke(lab.getLabColorSpace(), lab.getL(), lab.getA(), lab.getB());
+                break;
+            }
             default:
                 setRGBColorStroke(color.getRed(), color.getGreen(), color.getBlue());
         }
@@ -2786,6 +2791,11 @@ public class PdfContentByte {
                 setColorFill(devicen.getPdfDeviceNColor(), devicen.getTints());
                 break;
             }
+            case ExtendedColor.TYPE_LAB: {
+                LabColor lab = (LabColor)color;
+                setColorFill(lab.getLabColorSpace(), lab.getL(), lab.getA(), lab.getB());
+                break;
+            }
             default:
                 setRGBColorFill(color.getRed(), color.getGreen(), color.getBlue());
         }
@@ -2806,16 +2816,28 @@ public class PdfContentByte {
         content.append(name.getBytes()).append(" cs ").append(tint).append(" scn").append_i(separator);
     }
 
-    public void setColorFill(final PdfDeviceNColor sp, final float[] tints) {
+    public void setColorFill(final PdfDeviceNColor dn, final float[] tints) {
         checkWriter();
-        state.colorDetails = writer.addSimple(sp);
+        state.colorDetails = writer.addSimple(dn);
         PageResources prs = getPageResources();
         PdfName name = state.colorDetails.getColorSpaceName();
         name = prs.addColor(name, state.colorDetails.getIndirectReference());
-        saveColor(new DeviceNColor(sp, tints), true);
+        saveColor(new DeviceNColor(dn, tints), true);
         content.append(name.getBytes()).append(" cs ");
         for (float tint : tints)
             content.append(tint + " ");
+        content.append("scn").append_i(separator);
+    }
+
+    public void setColorFill(final PdfLabColor lab, float l, float a, float b) {
+        checkWriter();
+        state.colorDetails = writer.addSimple(lab);
+        PageResources prs = getPageResources();
+        PdfName name = state.colorDetails.getColorSpaceName();
+        name = prs.addColor(name, state.colorDetails.getIndirectReference());
+        saveColor(new LabColor(lab, l, a, b), true);
+        content.append(name.getBytes()).append(" cs ");
+        content.append(l + " " + a + " " + b + " ");
         content.append("scn").append_i(separator);
     }
 
@@ -2844,7 +2866,19 @@ public class PdfContentByte {
         content.append(name.getBytes()).append(" CS ");
         for (float tint : tints)
             content.append(tint + " ");
-        content.append("scn").append_i(separator);
+        content.append("SCN").append_i(separator);
+    }
+
+    public void setColorStroke(final PdfLabColor lab, float l, float a, float b) {
+        checkWriter();
+        state.colorDetails = writer.addSimple(lab);
+        PageResources prs = getPageResources();
+        PdfName name = state.colorDetails.getColorSpaceName();
+        name = prs.addColor(name, state.colorDetails.getIndirectReference());
+        saveColor(new LabColor(lab, l, a, b), true);
+        content.append(name.getBytes()).append(" CS ");
+        content.append(l + " " + a + " " + b + " ");
+        content.append("SCN").append_i(separator);
     }
 
     /** Sets the fill color to a pattern. The pattern can be

@@ -2438,7 +2438,7 @@ public class PdfWriter extends DocWriter implements
 //  [F6] spot colors
 
     /** The colors of this document */
-    protected HashMap<IPdfSpecialColorSpace, ColorDetails> documentColors = new HashMap<IPdfSpecialColorSpace, ColorDetails>();
+    protected HashMap<ICachedColorSpace, ColorDetails> documentColors = new HashMap<ICachedColorSpace, ColorDetails>();
 
     /** The color number counter for the colors in the document. */
     protected int colorNumber = 1;
@@ -2453,12 +2453,12 @@ public class PdfWriter extends DocWriter implements
      * @return an <CODE>Object[]</CODE> where position 0 is a <CODE>PdfName</CODE>
      * and position 1 is an <CODE>PdfIndirectReference</CODE>
      */
-    ColorDetails addSimple(final IPdfSpecialColorSpace spc) {
+    ColorDetails addSimple(final ICachedColorSpace spc) {
         ColorDetails ret = documentColors.get(spc);
         if (ret == null) {
             ret = new ColorDetails(getColorspaceName(), body.getPdfIndirectReference(), spc);
-            if (spc instanceof PdfDeviceNColor) {
-                ((PdfDeviceNColor) spc).getColorantsDetails(this);
+            if (spc instanceof IPdfSpecialColorSpace) {
+                ((IPdfSpecialColorSpace) spc).getColorantDetails(this);
             }
             documentColors.put(spc, ret);
         }

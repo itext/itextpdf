@@ -3,9 +3,10 @@ package com.itextpdf.text.pdf;
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.error_messages.MessageLocalization;
 
+import java.util.Arrays;
 import java.util.Locale;
 
-public class PdfDeviceNColor implements IPdfSpecialColorSpace {
+public class PdfDeviceNColor implements ICachedColorSpace, IPdfSpecialColorSpace {
     PdfSpotColor[] spotColors;
     ColorDetails[] colorantsDetails;
 
@@ -21,7 +22,7 @@ public class PdfDeviceNColor implements IPdfSpecialColorSpace {
         return spotColors;
     }
 
-    public ColorDetails[] getColorantsDetails(PdfWriter writer) {
+    public ColorDetails[] getColorantDetails(PdfWriter writer) {
         if (colorantsDetails == null) {
             colorantsDetails = new ColorDetails[spotColors.length];
             int i = 0;
@@ -49,7 +50,12 @@ public class PdfDeviceNColor implements IPdfSpecialColorSpace {
             colorantsRanges[2 * i] = 0;
             colorantsRanges[2 * i + 1] = 1;
             colorants.add(spotColorant.getName());
-            colorantsDict.put(spotColorant.getName(), colorantsDetails[i].getIndirectReference());
+            if (colorantsDict.get(spotColorant.getName()) != null)
+                throw new RuntimeException(MessageLocalization.getComposedMessage("devicen.component.names.shall.be.different"));
+            if (colorantsDetails != null)
+                colorantsDict.put(spotColorant.getName(), colorantsDetails[i].getIndirectReference());
+            else
+                colorantsDict.put(spotColorant.getName(), spotColorant.getPdfObject(writer));
             BaseColor color = spotColorant.getAlternativeCS();
             if (color instanceof ExtendedColor) {
                 int type = ((ExtendedColor)color).type;
@@ -65,6 +71,13 @@ public class PdfDeviceNColor implements IPdfSpecialColorSpace {
                         CMYK[1][i] = ((CMYKColor)color).getMagenta();
                         CMYK[2][i] = ((CMYKColor)color).getYellow();
                         CMYK[3][i] = ((CMYKColor)color).getBlack();
+                        break;
+                    case ExtendedColor.TYPE_LAB:
+                        CMYKColor cmyk = ((LabColor)color).toCmyk();
+                        CMYK[0][i] = cmyk.getCyan();
+                        CMYK[1][i] = cmyk.getMagenta();
+                        CMYK[2][i] = cmyk.getYellow();
+                        CMYK[3][i] = cmyk.getBlack();
                         break;
                     default:
                         throw new RuntimeException(MessageLocalization.getComposedMessage("only.rgb.gray.and.cmyk.are.supported.as.alternative.color.spaces"));
@@ -124,24 +137,19 @@ public class PdfDeviceNColor implements IPdfSpecialColorSpace {
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (obj instanceof PdfDeviceNColor && ((PdfDeviceNColor)obj).spotColors.length == this.spotColors.length) {
-            int i = 0;
-            for (PdfSpotColor spotColor : this.spotColors) {
-                if (!spotColor.equals(((PdfDeviceNColor)obj).spotColors[i]))
-                    return false;
-                i++;
-            }
-            return true;
-        }
-        return false;
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof PdfDeviceNColor)) return false;
+
+        PdfDeviceNColor that = (PdfDeviceNColor) o;
+
+        if (!Arrays.equals(spotColors, that.spotColors)) return false;
+
+        return true;
     }
 
     @Override
     public int hashCode() {
-        int hashCode = 0xFFFF;
-        for (PdfSpotColor spotColor : spotColors)
-            hashCode ^= spotColor.hashCode();
-        return hashCode;
+        return Arrays.hashCode(spotColors);
     }
 }

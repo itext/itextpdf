@@ -53,7 +53,7 @@ import com.itextpdf.text.error_messages.MessageLocalization;
  * @see		PdfDictionary
  */
 
-public class PdfSpotColor implements IPdfSpecialColorSpace {
+public class PdfSpotColor implements ICachedColorSpace, IPdfSpecialColorSpace {
     
 /**	The color name */
     public PdfName name;
@@ -61,6 +61,8 @@ public class PdfSpotColor implements IPdfSpecialColorSpace {
 /** The alternative color space */
     public BaseColor altcs;
     // constructors
+
+    public ColorDetails altColorDetails;
     
     /**
      * Constructs a new <CODE>PdfSpotColor</CODE>.
@@ -72,6 +74,13 @@ public class PdfSpotColor implements IPdfSpecialColorSpace {
     public PdfSpotColor(String name, BaseColor altcs) {
         this.name = new PdfName(name);
         this.altcs = altcs;
+    }
+
+    public ColorDetails[] getColorantDetails(PdfWriter writer) {
+        if (altColorDetails == null && this.altcs instanceof ExtendedColor && ((ExtendedColor) this.altcs).getType() == ExtendedColor.TYPE_LAB) {
+            altColorDetails = writer.addSimple(((LabColor)altcs).getLabColorSpace());
+        }
+        return new ColorDetails[] {altColorDetails};
     }
     
     /**
@@ -109,6 +118,15 @@ public class PdfSpotColor implements IPdfSpecialColorSpace {
                     func = PdfFunction.type2(writer, new float[]{0, 1}, null, new float[]{0, 0, 0, 0},
                         new float[]{cmyk.getCyan(), cmyk.getMagenta(), cmyk.getYellow(), cmyk.getBlack()}, 1);
                     break;
+                case ExtendedColor.TYPE_LAB:
+                    LabColor lab = (LabColor)altcs;
+                    if (altColorDetails != null)
+                        array.add(altColorDetails.getIndirectReference());
+                    else
+                        array.add(lab.getLabColorSpace().getPdfObject(writer));
+                    func = PdfFunction.type2(writer, new float[]{0, 1}, null, new float[]{100f, 0f, 0f},
+                            new float[]{lab.getL(), lab.getA(), lab.getB()}, 1);
+                    break;
                 default:
                     throw new RuntimeException(MessageLocalization.getComposedMessage("only.rgb.gray.and.cmyk.are.supported.as.alternative.color.spaces"));
             }
@@ -123,12 +141,22 @@ public class PdfSpotColor implements IPdfSpecialColorSpace {
     }
 
     @Override
-    public boolean equals(Object obj) {
-        return obj instanceof PdfSpotColor && ((PdfSpotColor)obj).name.equals(this.name) && ((PdfSpotColor)obj).altcs.equals(this.altcs);
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof PdfSpotColor)) return false;
+
+        PdfSpotColor spotColor = (PdfSpotColor) o;
+
+        if (!altcs.equals(spotColor.altcs)) return false;
+        if (!name.equals(spotColor.name)) return false;
+
+        return true;
     }
 
     @Override
     public int hashCode() {
-        return name.hashCode() ^ altcs.hashCode();    //To change body of overridden methods use File | Settings | File Templates.
+        int result = name.hashCode();
+        result = 31 * result + altcs.hashCode();
+        return result;
     }
 }
