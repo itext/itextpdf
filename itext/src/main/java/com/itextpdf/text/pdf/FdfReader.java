@@ -100,19 +100,9 @@ public class FdfReader extends PdfReader {
     @Override
     protected void readPdf() throws IOException {
         fields = new HashMap<String, PdfDictionary>();
-        try {
-            tokens.checkFdfHeader();
-            rebuildXref();
-            readDocObj();
-        }
-        finally {
-            try {
-                tokens.close();
-            }
-            catch (Exception e) {
-                // empty on purpose
-            }
-        }
+        tokens.checkFdfHeader();
+        rebuildXref();
+        readDocObj();
         readFields();
     }
 

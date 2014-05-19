@@ -973,7 +973,7 @@ public class TIFFFaxDecoder {
             
             // Till one whole scanline is decoded
             escape:
-            while (bitOffset < w) {
+            while (bitOffset < w && bytePointer < data.length) {
                 // Get the next changing element
                 getNextChangingElement(a0, isWhite, b);
                 b1 = b[0];
@@ -1198,7 +1198,11 @@ public class TIFFFaxDecoder {
             } else if (bits == 0) {     // ERROR
                 throw new InvalidImageException(MessageLocalization.getComposedMessage("invalid.code.encountered"));
             } else if (bits == 15) {    // EOL
-                throw new RuntimeException(MessageLocalization.getComposedMessage("eol.code.word.encountered.in.white.run"));
+                if ( runLength == 0 ) {
+                    isWhite = false;
+                } else {
+                    throw new RuntimeException(MessageLocalization.getComposedMessage("eol.code.word.encountered.in.white.run"));
+                }
             } else {
                 // 11 bits - 0000 0111 1111 1111 = 0x07ff
                 code = (entry >>> 5) & 0x07ff;

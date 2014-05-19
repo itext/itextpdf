@@ -97,6 +97,12 @@ public class PdfShading {
                 colorSpace = colorDetails.getIndirectReference();
                 break;
             }
+            case ExtendedColor.TYPE_DEVICEN: {
+                DeviceNColor deviceNColor = (DeviceNColor)color;
+                colorDetails = writer.addSimple(deviceNColor.getPdfDeviceNColor());
+                colorSpace = colorDetails.getIndirectReference();
+                break;
+            }
             case ExtendedColor.TYPE_PATTERN:
             case ExtendedColor.TYPE_SHADING: {
                 throwColorSpaceError();
@@ -139,6 +145,9 @@ public class PdfShading {
             }
             case ExtendedColor.TYPE_SEPARATION: {
                 return new float[]{((SpotColor)color).getTint()};
+            }
+            case ExtendedColor.TYPE_DEVICEN: {
+                return ((DeviceNColor)color).getTints();
             }
             case ExtendedColor.TYPE_RGB: {
                 return new float[]{color.getRed() / 255f, color.getGreen() / 255f, color.getBlue() / 255f};

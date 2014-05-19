@@ -1,8 +1,8 @@
 <Document><H1 o="/Layout" color="[0, 0, 1]"><Span>Document Header</Span>
 </H1>
 <Paragraph o="/Layout"><TextBlock>Quick brown </TextBlock>
-<Image bBox="[106.02, 769, 212.02, 830]" width="106" o="/Layout" height="61"></Image>
+<Image bBox="[106.02, 769, 212.02, 830]" width="106" o="/Layout" height="61"><alt>Fox image</alt></Image>
 <Span> jumped over a lazy </Span>
-<Figure bBox="[319.4, 769, 425.4, 830]" width="106" o="/Layout" height="61"></Figure>
+<Figure bBox="[319.4, 769, 425.4, 830]" width="106" o="/Layout" height="61"><alt>Dog image</alt></Figure>
 </Paragraph>
 </Document>

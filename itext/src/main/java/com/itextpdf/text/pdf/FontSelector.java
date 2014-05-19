@@ -44,13 +44,13 @@
  */
 package com.itextpdf.text.pdf;
 
-import java.util.ArrayList;
-
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Font;
 import com.itextpdf.text.Phrase;
 import com.itextpdf.text.Utilities;
 import com.itextpdf.text.error_messages.MessageLocalization;
+
+import java.util.ArrayList;
 
 /** Selects the appropriate fonts that contain the glyphs needed to
  * render text correctly. The fonts are checked in order until the
@@ -117,7 +117,7 @@ public class FontSelector {
                 int u = Utilities.convertToUtf32(cc, k);
                 for (int f = 0; f < fonts.size(); ++f) {
                     font = fonts.get(f);
-                    if (font.getBaseFont().charExists(u)) {
+                    if (font.getBaseFont().charExists(u) || Character.getType(u) == Character.FORMAT) {
                         if (currentFont != font) {
                             if (sb.length() > 0 && currentFont != null) {
                                 newChunk = new Chunk(sb.toString(), currentFont);
@@ -133,7 +133,7 @@ public class FontSelector {
             } else {
                 for (int f = 0; f < fonts.size(); ++f) {
                     font = fonts.get(f);
-                    if (font.getBaseFont().charExists(c)) {
+                    if (font.getBaseFont().charExists(c) || Character.getType(c) == Character.FORMAT) {
                         if (currentFont != font) {
                             if (sb.length() > 0 && currentFont != null) {
                                 newChunk = new Chunk(sb.toString(), currentFont);

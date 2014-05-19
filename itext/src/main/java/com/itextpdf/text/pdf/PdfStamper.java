@@ -476,6 +476,15 @@ public class PdfStamper
         stamper.addJavaScript(js, !PdfEncodings.isPdfDocEncoding(js));
     }
 
+    /** Adds a JavaScript action at the document level. When the document
+     * opens all this JavaScript runs. The existing JavaScript will be replaced.
+     * @param name the name for the JavaScript snippet in the name tree
+     * @param js the JavaScript code
+     */
+    public void addJavaScript(final String name, final String js) {
+        stamper.addJavaScript(name, PdfAction.javaScript(js, stamper, !PdfEncodings.isPdfDocEncoding(js)));
+    }
+
     /** Adds a file attachment at the document level. Existing attachments will be kept.
      * @param description the file description
      * @param fileStore an array with the file. If it's <CODE>null</CODE>

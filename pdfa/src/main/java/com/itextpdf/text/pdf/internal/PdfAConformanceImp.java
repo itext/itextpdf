@@ -98,6 +98,9 @@ public class PdfAConformanceImp implements PdfAConformance {
             case PDF_A_3U:
                 pdfAChecker = new PdfA3Checker(conformanceLevel);
                 break;
+            case ZUGFeRD:
+                pdfAChecker = new ZugferdChecker(conformanceLevel);
+                break;
             default:
                 pdfAChecker = new PdfA1Checker(conformanceLevel);
                 break;

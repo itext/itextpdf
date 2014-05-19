@@ -73,7 +73,7 @@ public final class HTML {
 
 		public static final String XML = "xml";
 		public static final String THEAD = "thead";
-		public static final String TBODY = "thead";
+		public static final String TBODY = "tbody";
 		public static final String TFOOT = "tfoot";
 		public static final String OL = "ol";
 		public static final String UL = "ul";
