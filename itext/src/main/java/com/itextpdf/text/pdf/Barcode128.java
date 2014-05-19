@@ -772,51 +772,5 @@ public class Barcode128 extends Barcode{
             ais.put(k, -1);
     }
 
-    // AWT related methods (remove this if you port to Android / GAE)
-    
-    /** Creates a <CODE>java.awt.Image</CODE>. This image only
-     * contains the bars without any text.
-     * @param foreground the color of the bars
-     * @param background the color of the background
-     * @return the image
-     */    
-    public java.awt.Image createAwtImage(java.awt.Color foreground, java.awt.Color background) {
-        int f = foreground.getRGB();
-        int g = background.getRGB();
-        java.awt.Canvas canvas = new java.awt.Canvas();
-        String bCode;
-        if (codeType == CODE128_RAW) {
-            int idx = code.indexOf('\uffff');
-            if (idx >= 0)
-                bCode = code.substring(0, idx);
-            else
-                bCode = code;
-        }
-        else {
-            bCode = getRawText(code, codeType == CODE128_UCC);
-        }
-        int len = bCode.length();
-        int fullWidth = (len + 2) * 11 + 2;
-        byte bars[] = getBarsCode128Raw(bCode);
-        
-        boolean print = true;
-        int ptr = 0;
-        int height = (int)barHeight;
-        int pix[] = new int[fullWidth * height];
-        for (int k = 0; k < bars.length; ++k) {
-            int w = bars[k];
-            int c = g;
-            if (print)
-                c = f;
-            print = !print;
-            for (int j = 0; j < w; ++j)
-                pix[ptr++] = c;
-        }
-        for (int k = fullWidth; k < pix.length; k += fullWidth) {
-            System.arraycopy(pix, 0, pix, k, fullWidth); 
-        }
-        java.awt.Image img = canvas.createImage(new java.awt.image.MemoryImageSource(fullWidth, height, pix, 0, fullWidth));
-        
-        return img;
-    }
+
 }
