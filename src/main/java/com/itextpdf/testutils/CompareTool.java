@@ -312,12 +312,11 @@ public class CompareTool {
             System.out.flush();
             return null;
         } else {
+            System.out.println("Fail");
+            System.out.flush();
             String message = compare(outPath, differenceImagePrefix, ignoredAreas, equalPages);
-            if (message == null || message.length() == 0) {
-                System.out.println("Fail");
-                System.out.flush();
+            if (message == null || message.length() == 0)
                 return "Compare by content fails. No visual differences";
-            }
             return message;
         }
     }
