@@ -1,9 +1,9 @@
 /*
- * $Id$
+ * $Id: PdfACopy.java 6134 2013-12-23 13:15:14Z pavel-alay $
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2014 iText Group NV
- * Authors: Alexander Chingarev, Bruno Lowagie, et al.
+ * Authors: Bruno Lowagie, Pavel Alay, et al.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License version 3
@@ -44,8 +44,8 @@
  */
 package com.itextpdf.text.pdf;
 
+import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.ExceptionConverter;
 import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.log.Counter;
 import com.itextpdf.text.log.CounterFactory;
@@ -64,62 +64,64 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.HashMap;
-import java.util.Map;
 
 /**
- * Extension to PdfStamperImp that will attempt to keep a file
+ * Extension of PdfCopy that will attempt to keep a file
  * in conformance with the PDF/A standard.
+ * @see PdfCopy
  */
-public class PdfAStamperImp extends PdfStamperImp {
-
-    protected Counter COUNTER = CounterFactory.getCounter(PdfAStamper.class);
-
+public class PdfACopy extends PdfCopy {
     /**
-     * Creates new PdfStamperImp.
+     * Constructor
      *
-     * @param reader           reads the PDF
-     * @param os               the output destination
-     * @param pdfVersion       the new pdf version or '\0' to keep the same version as the original document
-     * @param append
-     * @param conformanceLevel PDF/A conformance level of a new PDF document
-     * @throws DocumentException on error
-     * @throws IOException
+     * @param document document
+     * @param os       outputstream
      */
-    PdfAStamperImp(PdfReader reader, OutputStream os, char pdfVersion, boolean append, PdfAConformanceLevel conformanceLevel) throws DocumentException, IOException {
-        super(reader, os, pdfVersion, append);
-        ((PdfAConformance) pdfIsoConformance).setConformanceLevel(conformanceLevel);
+    public PdfACopy(Document document, OutputStream os, PdfAConformanceLevel conformanceLevel) throws DocumentException {
+        super(document, os);
+        ((PdfAConformance)pdfIsoConformance).setConformanceLevel(conformanceLevel);
         PdfAWriter.setPdfVersion(this, conformanceLevel);
-        readPdfAInfo();
     }
 
-    protected void readColorProfile() {
-        PdfObject outputIntents = reader.getCatalog().getAsArray(PdfName.OUTPUTINTENTS);
-        if (outputIntents != null && ((PdfArray) outputIntents).size() > 0) {
-            PdfStream iccProfileStream = null;
-            for (int i = 0; i < ((PdfArray) outputIntents).size(); i++) {
-                PdfDictionary outputIntentDictionary = ((PdfArray) outputIntents).getAsDict(i);
-                if (outputIntentDictionary != null) {
-                    PdfName gts = outputIntentDictionary.getAsName(PdfName.S);
-                    if (iccProfileStream == null || PdfName.GTS_PDFA1.equals(gts)) {
-                        iccProfileStream = outputIntentDictionary.getAsStream(PdfName.DESTOUTPUTPROFILE);
-                        if (iccProfileStream != null && PdfName.GTS_PDFA1.equals(gts))
-                            break;
-                    }
-                }
-            }
-            if (iccProfileStream instanceof PRStream) {
-                try {
-                    colorProfile = ICC_Profile.getInstance(PdfReader.getStreamBytes((PRStream)iccProfileStream));
-                } catch(IOException exc) {
-                    throw new ExceptionConverter(exc);
-                }
-            }
-        }
+    protected Counter COUNTER = CounterFactory.getCounter(PdfACopy.class);
+    protected Counter getCounter() {
+        return COUNTER;
     }
 
-    /**
-     * @see PdfStamperImp#setOutputIntents(String, String, String, String, ICC_Profile)
-     */
+    @Override
+    protected PdfIsoConformance initPdfIsoConformance() {
+        return new PdfAConformanceImp(this);
+    }
+
+    @Override
+    protected void cacheObject(PdfIndirectObject iobj) {
+        super.cacheObject(iobj);
+        getPdfAChecker().cacheObject(iobj.getIndirectReference(), iobj.object);
+    }
+
+    private PdfAChecker getPdfAChecker() {
+        return ((PdfAConformanceImp)pdfIsoConformance).getPdfAChecker();
+    }
+
+    @Override
+    public void addDocument(PdfReader reader) throws DocumentException, IOException {
+        checkPdfAInfo(reader);
+        super.addDocument(reader);
+    }
+
+    @Override
+    public void addPage(PdfImportedPage iPage) throws IOException, BadPdfFormatException {
+        checkPdfAInfo(iPage.readerInstance.getReader());
+        super.addPage(iPage);
+    }
+
+    @Override
+    public PageStamp createPageStamp(PdfImportedPage iPage) {
+        checkPdfAInfo(iPage.readerInstance.getReader());
+        return super.createPageStamp(iPage);
+    }
+
+    @Override
     public void setOutputIntents(final String outputConditionIdentifier, final String outputCondition, final String registryName, final String info, final ICC_Profile colorProfile) throws IOException {
         super.setOutputIntents(outputConditionIdentifier, outputCondition, registryName, info, colorProfile);
         PdfArray a = extraCatalog.getAsArray(PdfName.OUTPUTINTENTS);
@@ -131,99 +133,88 @@ public class PdfAStamperImp extends PdfStamperImp {
         }
     }
 
-    /**
-     * Always throws an exception since PDF/X conformance level cannot be set for PDF/A conformant documents.
-     *
-     * @param pdfx
-     */
-    public void setPDFXConformance(final int pdfx) {
-        throw new PdfAConformanceException(MessageLocalization.getComposedMessage("pdfx.conformance.cannot.be.set.for.PdfAStamperImp.instance"));
-    }
-
-    /**
-     * @see com.itextpdf.text.pdf.PdfStamperImp#getTtfUnicodeWriter()
-     */
     @Override
-    protected TtfUnicodeWriter getTtfUnicodeWriter() {
-        if (ttfUnicodeWriter == null)
-            ttfUnicodeWriter = new PdfATtfUnicodeWriter(this, ((PdfAConformance) pdfIsoConformance).getConformanceLevel());
-        return ttfUnicodeWriter;
-    }
-
-    /**
-     * @see PdfStamperImp#createXmpWriter(java.io.ByteArrayOutputStream, com.itextpdf.text.pdf.PdfDictionary)
-     */
     protected XmpWriter createXmpWriter(ByteArrayOutputStream baos, PdfDictionary info) throws IOException {
         return new PdfAXmpWriter(baos, info, ((PdfAConformance) pdfIsoConformance).getConformanceLevel(), this);
     }
 
+    @Override
     protected XmpWriter createXmpWriter(ByteArrayOutputStream baos, HashMap<String, String> info) throws IOException {
         return new PdfAXmpWriter(baos, info, ((PdfAConformance) pdfIsoConformance).getConformanceLevel(), this);
     }
 
     /**
-     * @see com.itextpdf.text.pdf.PdfStamperImp#initPdfIsoConformance()
+     * @see com.itextpdf.text.pdf.PdfWriter#getTtfUnicodeWriter()
      */
-    protected PdfIsoConformance initPdfIsoConformance() {
-        return new PdfAConformanceImp(this);
+    @Override
+    protected TtfUnicodeWriter getTtfUnicodeWriter() {
+        if (ttfUnicodeWriter == null)
+            ttfUnicodeWriter = new PdfATtfUnicodeWriter(this, ((PdfAConformance)pdfIsoConformance).getConformanceLevel());
+        return ttfUnicodeWriter;
     }
 
-    protected Counter getCounter() {
-        return COUNTER;
+    @Override
+    public void close() {
+        super.close();
+        getPdfAChecker().close(this);
     }
 
-    private void readPdfAInfo() {
-        byte[] metadata = null;
-        XMPMeta xmpMeta = null;
-        XMPProperty pdfaidConformance = null;
-        XMPProperty pdfaidPart = null;
+    private void checkPdfAInfo(PdfReader reader) {
+        byte[] metadata;
+        XMPMeta xmpMeta;
+        XMPProperty pdfaidConformance;
+        XMPProperty pdfaidPart;
         try {
             metadata = reader.getMetadata();
             xmpMeta = XMPMetaParser.parse(metadata, null);
             pdfaidConformance = xmpMeta.getProperty(XMPConst.NS_PDFA_ID, "pdfaid:conformance");
             pdfaidPart = xmpMeta.getProperty(XMPConst.NS_PDFA_ID, "pdfaid:part");
         } catch (Throwable e) {
-            throw new PdfAConformanceException(MessageLocalization.getComposedMessage("only.pdfa.documents.can.be.opened.in.PdfAStamper"));
+            throw new PdfAConformanceException(MessageLocalization.getComposedMessage("only.pdfa.documents.can.be.added.in.PdfACopy"));
         }
         if (pdfaidConformance == null || pdfaidPart == null) {
-            throw new PdfAConformanceException(MessageLocalization.getComposedMessage("only.pdfa.documents.can.be.opened.in.PdfAStamper"));
+            throw new PdfAConformanceException(MessageLocalization.getComposedMessage("only.pdfa.documents.can.be.added.in.PdfACopy"));
         }
+
         switch (((PdfAConformance) pdfIsoConformance).getConformanceLevel()) {
             case PDF_A_1A:
             case PDF_A_1B:
                 if (!"1".equals(pdfaidPart.getValue())) {
-                    throw new PdfAConformanceException(MessageLocalization.getComposedMessage("only.pdfa.1.documents.can.be.opened.in.PdfAStamper", "1"));
+                    throw new PdfAConformanceException(MessageLocalization.getComposedMessage("different.pdf.a.version", "1"));
                 }
                 break;
             case PDF_A_2A:
             case PDF_A_2B:
             case PDF_A_2U:
                 if (!"2".equals(pdfaidPart.getValue())) {
-                    throw new PdfAConformanceException(MessageLocalization.getComposedMessage("only.pdfa.1.documents.can.be.opened.in.PdfAStamper", "2"));
+                    throw new PdfAConformanceException(MessageLocalization.getComposedMessage("different.pdf.a.version", "2"));
                 }
                 break;
             case PDF_A_3A:
             case PDF_A_3B:
             case PDF_A_3U:
+            case ZUGFeRD:
                 if (!"3".equals(pdfaidPart.getValue())) {
-                    throw new PdfAConformanceException(MessageLocalization.getComposedMessage("only.pdfa.1.documents.can.be.opened.in.PdfAStamper", "3"));
+                    throw new PdfAConformanceException(MessageLocalization.getComposedMessage("different.pdf.a.version", "3"));
                 }
                 break;
         }
-    }
 
-    @Override
-    protected void cacheObject(PdfIndirectObject iobj) {
-        getPdfAChecker().cacheObject(iobj.getIndirectReference(), iobj.object);
-    }
+        switch (((PdfAConformance) pdfIsoConformance).getConformanceLevel()) {
+            case PDF_A_1A:
+            case PDF_A_2A:
+            case PDF_A_3A:
+                if (!"A".equals(pdfaidConformance.getValue())) {
+                    throw new PdfAConformanceException(MessageLocalization.getComposedMessage("incompatible.pdf.a.conformance.level", "a"));
+                }
+                break;
+            case PDF_A_2U:
+            case PDF_A_3U:
+                if ("B".equals(pdfaidConformance.getValue())) {
+                    throw new PdfAConformanceException(MessageLocalization.getComposedMessage("incompatible.pdf.a.conformance.level", "u"));
+                }
+                break;
 
-    private PdfAChecker getPdfAChecker() {
-        return ((PdfAConformanceImp)pdfIsoConformance).getPdfAChecker();
-    }
-
-    @Override
-    protected void close(Map<String, String> moreInfo) throws IOException {
-        super.close(moreInfo);
-        getPdfAChecker().close(this);
+        }
     }
 }

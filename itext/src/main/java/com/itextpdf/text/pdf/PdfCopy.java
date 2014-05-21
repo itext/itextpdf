@@ -763,14 +763,12 @@ public class PdfCopy extends PdfWriter {
     }
 
     @Override
-    public PdfIndirectObject addToBody(final PdfObject object) throws IOException {
-        PdfIndirectObject iobj = super.addToBody(object);
+    protected void cacheObject(PdfIndirectObject iobj) {
         if ((tagged || mergeFields) && indirectObjects != null) {
             savedObjects.add(iobj);
             RefKey key = new RefKey(iobj.number, iobj.generation);
             if (!indirectObjects.containsKey(key)) indirectObjects.put(key, iobj);
         }
-        return iobj;
     }
 
     @Override
@@ -1576,7 +1574,7 @@ public class PdfCopy extends PdfWriter {
         if (open) {
             pdf.close();
             super.close();
-// Users are responsible for closing PdfReaderw            
+// Users are responsible for closing PdfReader
 //            if (ri != null) {
 //                try {
 //                    ri.getReader().close();
@@ -1588,9 +1586,12 @@ public class PdfCopy extends PdfWriter {
 //            }
         }
     }
+
     public PdfIndirectReference add(PdfOutline outline) { return null; }
+
     @Override
     public void addAnnotation(PdfAnnotation annot) {  }
+
     @Override
     PdfIndirectReference add(PdfPage page, PdfContents contents) throws PdfException { return null; }
 
