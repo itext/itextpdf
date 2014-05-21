@@ -150,7 +150,7 @@ public class PdfCopyTest {
         }
         copy.close();
         CompareTool compareTool = new CompareTool("./target/com/itextpdf/test/pdf/PdfCopyTest/appearances.pdf", "./src/test/resources/com/itextpdf/text/pdf/PdfCopyTest/cmp_appearances.pdf");
-        String errorMessage = compareTool.compare("./target/com/itextpdf/test/pdf/PdfCopyTest/", "diff");
+        String errorMessage = compareTool.compareByContent("./target/com/itextpdf/test/pdf/PdfCopyTest/", "diff");
         if (errorMessage != null) {
             Assert.fail(errorMessage);
         }
@@ -175,7 +175,7 @@ public class PdfCopyTest {
         }
         copy.close();
         CompareTool compareTool = new CompareTool("./target/com/itextpdf/test/pdf/PdfCopyTest/appearances(needAppearancesFalse).pdf", "./src/test/resources/com/itextpdf/text/pdf/PdfCopyTest/cmp_appearances(needAppearancesFalse).pdf");
-        String errorMessage = compareTool.compare("./target/com/itextpdf/test/pdf/PdfCopyTest/", "diff");
+        String errorMessage = compareTool.compareByContent("./target/com/itextpdf/test/pdf/PdfCopyTest/", "diff");
         if (errorMessage != null) {
             Assert.fail(errorMessage);
         }
@@ -200,7 +200,7 @@ public class PdfCopyTest {
         }
         copy.close();
         CompareTool compareTool = new CompareTool("./target/com/itextpdf/test/pdf/PdfCopyTest/appearances(needAppearancesFalseWithStreams).pdf", "./src/test/resources/com/itextpdf/text/pdf/PdfCopyTest/cmp_appearances(needAppearancesFalseWithStreams).pdf");
-        String errorMessage = compareTool.compare("./target/com/itextpdf/test/pdf/PdfCopyTest/", "diff");
+        String errorMessage = compareTool.compareByContent("./target/com/itextpdf/test/pdf/PdfCopyTest/", "diff");
         if (errorMessage != null) {
             Assert.fail(errorMessage);
         }
@@ -225,7 +225,7 @@ public class PdfCopyTest {
         }
         copy.close();
         CompareTool compareTool = new CompareTool("./target/com/itextpdf/test/pdf/PdfCopyTest/appearances(mixed).pdf", "./src/test/resources/com/itextpdf/text/pdf/PdfCopyTest/cmp_appearances(mixed).pdf");
-        String errorMessage = compareTool.compare("./target/com/itextpdf/test/pdf/PdfCopyTest/", "diff");
+        String errorMessage = compareTool.compareByContent("./target/com/itextpdf/test/pdf/PdfCopyTest/", "diff");
         if (errorMessage != null) {
             Assert.fail(errorMessage);
         }
