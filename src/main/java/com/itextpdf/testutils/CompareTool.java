@@ -284,6 +284,7 @@ public class CompareTool {
 
 
     public String compareByContent(String outPath, String differenceImagePrefix, Map<Integer, List<Rectangle>> ignoredAreas) throws DocumentException, InterruptedException, IOException {
+        System.out.print("[itext] INFO  Comparing by content..........");
         PdfReader outReader = new PdfReader(outPdf);
         outPages = new ArrayList<PdfDictionary>();
         outPagesRef = new ArrayList<RefKey>();
@@ -307,11 +308,16 @@ public class CompareTool {
 
 
         if (equalPages.size() == cmpPages.size()) {
+            System.out.println("OK");
+            System.out.flush();
             return null;
         } else {
             String message = compare(outPath, differenceImagePrefix, ignoredAreas, equalPages);
-            if (message == null || message.length() == 0)
+            if (message == null || message.length() == 0) {
+                System.out.println("Fail");
+                System.out.flush();
                 return "Compare by content fails. No visual differences";
+            }
             return message;
         }
     }
@@ -514,7 +520,7 @@ public class CompareTool {
     }
 
     public String compareDocumentInfo(String outPdf, String cmpPdf) throws IOException {
-        System.out.println("Comparing document info...");
+        System.out.print("[itext] INFO  Comparing document info.......");
         String message = null;
         PdfReader outReader = new PdfReader(outPdf);
         PdfReader cmpReader = new PdfReader(cmpPdf);
@@ -528,6 +534,12 @@ public class CompareTool {
         }
         outReader.close();
         cmpReader.close();
+
+        if (message == null)
+            System.out.println("OK");
+        else
+            System.out.println("Fail");
+        System.out.flush();
         return message;
     }
 
@@ -568,7 +580,7 @@ public class CompareTool {
     }
 
     public String compareLinks(String outPdf, String cmpPdf) throws IOException {
-        System.out.println("Comparing link annotations...");
+        System.out.print("[itext] INFO  Comparing link annotations....");
         String message = null;
         PdfReader outReader = new PdfReader(outPdf);
         PdfReader cmpReader = new PdfReader(cmpPdf);
@@ -588,16 +600,21 @@ public class CompareTool {
         }
         outReader.close();
         cmpReader.close();
+        if (message == null)
+            System.out.println("OK");
+        else
+            System.out.println("Fail");
+        System.out.flush();
         return message;
     }
 
     public String compareTagStructures(String outPdf, String cmpPdf) throws IOException, ParserConfigurationException, SAXException {
-        System.out.println("Comparing tag structures...");
+        System.out.print("[itext] INFO  Comparing tag structures......");
 
         String outXml = outPdf.replace(".pdf", ".xml");
         String cmpXml = outPdf.replace(".pdf", ".cmp.xml");
 
-        String error = null;
+        String message = null;
         PdfReader reader = new PdfReader(outPdf);
         FileOutputStream xmlOut1 = new FileOutputStream(outXml);
         new CmpTaggedPdfReaderTool().convertToXml(reader, xmlOut1);
@@ -607,11 +624,16 @@ public class CompareTool {
         new CmpTaggedPdfReaderTool().convertToXml(reader, xmlOut2);
         reader.close();
         if (!compareXmls(outXml, cmpXml)) {
-            error = "The tag structures are different.";
+            message = "The tag structures are different.";
         }
         xmlOut1.close();
         xmlOut2.close();
-        return error;
+        if (message == null)
+            System.out.println("OK");
+        else
+            System.out.println("Fail");
+        System.out.flush();
+        return message;
     }
 
     private String[] convertInfo(HashMap<String, String> info){
