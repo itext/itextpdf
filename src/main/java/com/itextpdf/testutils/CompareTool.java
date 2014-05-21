@@ -361,7 +361,7 @@ public class CompareTool {
                 PdfObject cmpObj = cmpDict.getDirectObject(key);
                 if (cmpObj.isName() && cmpObj.toString().indexOf('+') > 0) {
                     PdfObject outObj = outDict.getDirectObject(key);
-                    if (!outObj.isName())
+                    if (!outObj.isName() || outObj.toString().indexOf('+') == -1)
                         return false;
                     String cmpName = cmpObj.toString().substring(cmpObj.toString().indexOf('+'));
                     String outName = outObj.toString().substring(outObj.toString().indexOf('+'));
