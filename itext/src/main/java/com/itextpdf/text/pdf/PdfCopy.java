@@ -1713,6 +1713,8 @@ public class PdfCopy extends PdfWriter {
     public PageStamp createPageStamp(PdfImportedPage iPage) {
         int pageNum = iPage.getPageNumber();
         PdfReader reader = iPage.getPdfReaderInstance().getReader();
+        if (isTagged())
+            throw new RuntimeException(MessageLocalization.getComposedMessage("creating.page.stamp.not.allowed.for.tagged.reader"));
         PdfDictionary pageN = reader.getPageN(pageNum);
         return new PageStamp(reader, pageN, this);
     }
