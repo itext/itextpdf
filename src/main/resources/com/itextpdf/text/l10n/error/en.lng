@@ -121,6 +121,7 @@ corrupted.png.file=Corrupted PNG file.
 could.not.find.web.browser=Could not find web browser.
 could.not.flatten.file.untagged.annotations.found=Could not flatten file: untagged annotations found!
 count.of.referred.to.segments.had.bad.value.in.header.for.segment.1.starting.at.2=count of referred-to segments had bad value in header for segment {1} starting at {2}
+creating.page.stamp.not.allowed.for.tagged.reader=Creating PageStamp not allowed for tagged reader.
 crypt.filter.is.not.permitted.inline.image=Crypt filter is not permitted for inline images.
 defaultcryptfilter.not.found.encryption=/DefaultCryptFilter not found (encryption)
 deprecated.setstate.and.noop.actions.are.not.allowed=Deprecated set-state and no-op actions are not allowed.

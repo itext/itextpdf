@@ -121,6 +121,7 @@ corrupted.png.file=Corrupt PNG bestand.
 could.not.find.web.browser=Kon geen webbrowser vinden.
 could.not.flatten.file.untagged.annotations.found=Kan het document niet flattenen: ongetagde annotations gevonden!
 count.of.referred.to.segments.had.bad.value.in.header.for.segment.1.starting.at.2=Een aantal referred-to segmenten heeft een ongeldige waarde in de header voor segment {1} beginnend bij {2}
+creating.page.stamp.not.allowed.for.tagged.reader=Creating PageStamp not allowed for tagged reader.
 crypt.filter.is.not.permitted.inline.image=Crypt filter is niet toegelaten voor inline images.
 defaultcryptfilter.not.found.encryption=/DefaultCryptFilter niet gevonden (encryption)
 deprecated.setstate.and.noop.actions.are.not.allowed=Deprecated set-state en no-op actions zijn niet toegelaten.
