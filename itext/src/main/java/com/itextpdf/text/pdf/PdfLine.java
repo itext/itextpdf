@@ -164,20 +164,25 @@ public class PdfLine {
                     tabStopAnchorPosition = Float.NaN;
                     tabStop = PdfChunk.getTabStop(chunk, originalWidth - width);
                     if (tabStop.getPosition() > originalWidth) {
-                        width = 0;
                         if (isWhiteSpace)
-                            return null;
-                        else
-                            return chunk;
+                            overflow = null;
+                        else if (Math.abs(originalWidth - width) < 0.001) {
+                            addToLine(chunk);
+                            overflow = null;
+                        } else {
+                            overflow = chunk;
+                        }
+                        width = 0;
+                    } else {
+                        chunk.setTabStop(tabStop);
+                        if (tabStop.getAlignment() == TabStop.Alignment.LEFT) {
+                            width = originalWidth - tabStop.getPosition();
+                            tabStop = null;
+                            tabPosition = Float.NaN;
+                        } else
+                            tabPosition = originalWidth - width;
+                        addToLine(chunk);
                     }
-                    tabStop.setPosition(tabStop.getPosition());
-                    chunk.setTabStop(tabStop);
-                    if (tabStop.getAlignment() == TabStop.Alignment.LEFT) {
-                        width = originalWidth - tabStop.getPosition();
-                        tabStop = null;
-                        tabPosition = Float.NaN;
-                    } else
-                        tabPosition = originalWidth - width;
                 } else
                     return null;
             } else {
@@ -189,8 +194,8 @@ public class PdfLine {
                 }
                 chunk.adjustLeft(left);
                 width = originalWidth - tabStopPosition;
+                addToLine(chunk);
             }
-            addToLine(chunk);
         }
         // if the length of the chunk > 0 we add it to the line
         else if (chunk.length() > 0 || chunk.isImage()) {
