@@ -239,7 +239,7 @@ public class PdfDocument extends Document {
                         if (dest.destination == null) //no destination
                             continue;
                         PdfIndirectReference ref = dest.reference;
-                        ar.add(new PdfString(name, null));
+                        ar.add(new PdfString(name, PdfObject.TEXT_UNICODE));
                         ar.add(ref);
                     }
                     if (ar.size() > 0) {

@@ -471,7 +471,7 @@ public class PdfAction extends PdfDictionary {
         if (isName)
             action.put(PdfName.D, new PdfName(dest));
         else
-            action.put(PdfName.D, new PdfString(dest, null));
+            action.put(PdfName.D, new PdfString(dest, PdfObject.TEXT_UNICODE));
         return action;
     }
 
@@ -490,7 +490,7 @@ public class PdfAction extends PdfDictionary {
         if (isName)
             action.put(PdfName.D, new PdfName(dest));
         else
-            action.put(PdfName.D, new PdfString(dest, null));
+            action.put(PdfName.D, new PdfString(dest, PdfObject.TEXT_UNICODE));
         if (newWindow)
             action.put(PdfName.NEWWINDOW, PdfBoolean.PDFTRUE);
         return action;
@@ -507,7 +507,7 @@ public class PdfAction extends PdfDictionary {
         if (isName)
             return gotoEmbedded(filename, target, new PdfName(dest), newWindow);
         else
-            return gotoEmbedded(filename, target, new PdfString(dest, null), newWindow);
+            return gotoEmbedded(filename, target, new PdfString(dest, PdfObject.TEXT_UNICODE), newWindow);
     }
 
     /**
