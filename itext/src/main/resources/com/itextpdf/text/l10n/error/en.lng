@@ -20,6 +20,7 @@
 1.is.not.a.valid.ttf.or.otf.file={1} is not a valid TTF or OTF file.
 1.is.not.an.acceptable.value.for.the.field.2={1} is not an acceptable value for the field {2}
 1.is.not.an.afm.or.pfm.font.file={1} is not an AFM or PFM font file.
+1.method.can.be.only.used.in.mergeFields.mode.please.use.addDocument={1} method can be only used in mergeFields mode, please use addDocument.
 1.method.cannot.be.used.in.mergeFields.mode.please.use.addDocument={1} method cannot be used in mergeFields mode, please use addDocument.
 1.must.have.8.bits.per.component={1} must have 8 bits per component.
 1.near.line.2.column.3={1} near line {2}, column {3}
@@ -472,6 +473,7 @@ the.widths.array.in.pdfptable.constructor.can.not.be.null=The widths array in Pd
 the.widths.array.in.pdfptable.constructor.can.not.have.zero.length=The widths array in PdfPTable constructor can not have zero length.
 the.writer.in.pdfcontentbyte.is.null=The writer in PdfContentByte is null.
 there.are.illegal.characters.for.barcode.128.in.1=There are illegal characters for barcode 128 in '{1}'.
+there.are.no.enough.imported.pages.for.copied.fields=There are no enough imported pages for copied fields. Please use addDocument or copy enough pages before.
 this.acrofields.instance.is.read.only=This AcroFields instance is read-only.
 this.image.can.not.be.an.image.mask=This image can not be an image mask.
 this.largeelement.has.already.been.added.to.the.document=This LargeElement has already been added to the Document.
