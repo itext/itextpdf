@@ -44,18 +44,18 @@
  */
 package com.itextpdf.tool.xml.css;
 
-import java.io.IOException;
-import java.util.Map;
-
+import com.itextpdf.text.log.LoggerFactory;
+import com.itextpdf.text.log.SysoLogger;
+import com.itextpdf.tool.xml.Tag;
+import com.itextpdf.tool.xml.net.FileRetrieve;
+import com.itextpdf.tool.xml.net.FileRetrieveImpl;
 import junit.framework.Assert;
-
 import org.junit.Before;
 import org.junit.Test;
 
-import com.itextpdf.text.log.LoggerFactory;
-import com.itextpdf.text.log.SysoLogger;
-import com.itextpdf.tool.xml.net.FileRetrieve;
-import com.itextpdf.tool.xml.net.FileRetrieveImpl;
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author redlab_b
@@ -77,8 +77,9 @@ public class CSSFileProcessorTest {
     public void parseCSS() throws IOException {
         retriever.processFromStream(CSSFileProcessorTest.class.getResourceAsStream("/css/test.css"), proc);
         CssFile file = proc.getCss();
-        Map<String, String> map = file.get("body");
-        Assert.assertTrue("margin not found.", map.containsKey("margin"));
-        Assert.assertEquals("Value for margin not correct.", "20px", map.get("margin"));
+        List<Map<String, String>> rules = file.get(new Tag("body"));
+        Assert.assertTrue(rules.size() == 1);
+        Assert.assertTrue("margin not found.", rules.get(0).containsKey("margin"));
+        Assert.assertEquals("Value for margin not correct.", "20px", rules.get(0).get("margin"));
     }
 }

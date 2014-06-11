@@ -42,9 +42,6 @@
  */
 package com.itextpdf.tool.xml.css.parser;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import com.itextpdf.tool.xml.css.CssFile;
 import com.itextpdf.tool.xml.css.CssUtils;
 import com.itextpdf.tool.xml.css.parser.state.CommentEnd;
@@ -53,6 +50,9 @@ import com.itextpdf.tool.xml.css.parser.state.CommentStart;
 import com.itextpdf.tool.xml.css.parser.state.Properties;
 import com.itextpdf.tool.xml.css.parser.state.Rule;
 import com.itextpdf.tool.xml.css.parser.state.Unknown;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * State controller for CSS Processing
@@ -127,8 +127,14 @@ public class CssStateController {
 		}
 		if (currentSelector.contains(",")) {
 			String[] selectors = currentSelector.split(",");
-			for (String selector : selectors) {
-				css.add(utils.stripDoubleSpacesAndTrim(selector), new HashMap<String, String>(map));
+            //check for rules like p, {…}
+			for (int i = 0; i < selectors.length; i++) {
+                selectors[i] = utils.stripDoubleSpacesAndTrim(selectors[i]);
+                if (selectors[i].length() == 0)
+                    return;
+            }
+            for (String selector : selectors) {
+				css.add(selector, map);
 			}
 		} else {
 			css.add(utils.stripDoubleSpacesAndTrim(currentSelector), map);

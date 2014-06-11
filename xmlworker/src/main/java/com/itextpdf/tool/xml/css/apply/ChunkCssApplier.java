@@ -52,7 +52,6 @@ import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.css.CSS;
 import com.itextpdf.tool.xml.css.CssUtils;
 import com.itextpdf.tool.xml.css.FontSizeTranslator;
-import com.itextpdf.tool.xml.html.HTML;
 
 import java.util.Arrays;
 import java.util.List;
