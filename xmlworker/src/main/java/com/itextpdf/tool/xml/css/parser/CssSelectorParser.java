@@ -52,23 +52,31 @@ import java.util.regex.Pattern;
 
 public class CssSelectorParser {
 
-    private static final String selectorPattern = "(\\*)|([_a-z][_a-z0-9-]*)|(\\.[_a-zA-Z][_a-zA-Z0-9-]*)|(#[_a-z][_a-zA-Z0-9-]*)|( )|(\\+)|(>)|(~)";
-    private static final String selectorMatcher = "((\\*)|([_a-z][_a-z0-9-]*)|(\\.[_a-zA-Z][_a-zA-Z0-9-]*)|(#[_a-z][_a-zA-Z0-9-]*)|( )|(\\+)|(>)|(~))*";
+    private static final String selectorPatternString =
+            "(\\*)|([_a-zA-Z][\\w-]*)|(\\.[_a-zA-Z][\\w-]*)|(#[_a-z][\\w-]*)|(\\[[_a-zA-Z][\\w-]*(([~^$*|])?=((\"[\\w-]+\")|([\\w-]+)))?\\])|( )|(\\+)|(>)|(~)";
+
+    private static final String selectorMatcherString = "(" + selectorPatternString + ")*";
+    private static final Pattern selectorPattern = Pattern.compile(selectorPatternString);
+    private static final Pattern selectorMatcher = Pattern.compile(selectorMatcherString);
+
 
     public static List<CssSelectorItem> createCssSelector(String selector) {
-        if (!selector.matches(selectorMatcher))
+        if (!selectorMatcher.matcher(selector).matches())
             return null;
         List<CssSelectorItem> cssSelectorItems = new ArrayList<CssSelectorItem>();
-        Matcher matcher = Pattern.compile(selectorPattern).matcher(selector);
+        Matcher itemMatcher = selectorPattern.matcher(selector);
         boolean isTagSelector = false;
-        while(matcher.find()) {
-            String selectorItem = matcher.group(0);
+        while(itemMatcher.find()) {
+            String selectorItem = itemMatcher.group(0);
             switch (selectorItem.charAt(0)) {
                 case '#':
                     cssSelectorItems.add(new CssIdSelector(selectorItem.substring(1)));
                     break;
                 case '.':
                     cssSelectorItems.add(new CssClassSelector(selectorItem.substring(1)));
+                    break;
+                case '[':
+                    cssSelectorItems.add(new CssAttributeSelector(selectorItem));
                     break;
                 case ' ':
                 case '+':
@@ -168,6 +176,85 @@ public class CssSelectorParser {
         @Override
         public String toString() {
             return "#" + id;
+        }
+    }
+
+    static class CssAttributeSelector implements CssSelectorItem {
+        private String property;
+        private char matchSymbol = 0;
+        private String value = null;
+
+        CssAttributeSelector(String attrSelector) {
+            int indexOfEqual = attrSelector.indexOf('=');
+            if (indexOfEqual == -1) {
+                property = attrSelector.substring(1, attrSelector.length() - 1);
+            } else {
+                if (attrSelector.charAt(indexOfEqual + 1) == '"')
+                    value = attrSelector.substring(indexOfEqual + 2, attrSelector.length() - 2);
+                else
+                    value = attrSelector.substring(indexOfEqual + 1, attrSelector.length() - 1);
+                matchSymbol = attrSelector.charAt(indexOfEqual - 1);
+                if ("~^$*|".indexOf(matchSymbol) == -1) {
+                    matchSymbol = 0;
+                    property = attrSelector.substring(1, indexOfEqual);
+                } else {
+                    property = attrSelector.substring(1, indexOfEqual - 1);
+                }
+            }
+        }
+
+        public char getSeparator() {
+            return 0;
+        }
+
+        public boolean matches(Tag t) {
+            if (t == null)
+                return false;
+            String attrValue = t.getAttributes().get(property);
+            if (attrValue == null) return false;
+            if (value == null) return true;
+
+            switch (matchSymbol) {
+                case '|':
+                    String pattern = String.format("^%s-?", value);
+                    if (Pattern.compile(pattern).matcher(attrValue).find())
+                        return true;
+                    break;
+                case '^':
+                    if (attrValue.startsWith(value))
+                        return true;
+                    break;
+                case '$':
+                    if (attrValue.endsWith(value))
+                        return true;
+                    break;
+                case '~':
+                    pattern = String.format("(^%s\\s+)|(\\s+%s\\s+)|(\\s+%s$)", value, value, value);
+                    if (Pattern.compile(pattern).matcher(attrValue).find())
+                        return true;
+                    break;
+                case 0:
+                    if (attrValue.equals(value))
+                        return true;
+                    break;
+                case '*':
+                    if (attrValue.contains(value))
+                        return true;
+                    break;
+            }
+            return false;
+        }
+
+        @Override
+        public String toString() {
+            StringBuilder buf = new StringBuilder();
+            buf.append('[').append(property);
+            if (matchSymbol != 0)
+                buf.append(matchSymbol);
+            if (value != null)
+                buf.append('=').append('"').append(value).append('"');
+            buf.append(']');
+            return buf.toString();
         }
     }
 
