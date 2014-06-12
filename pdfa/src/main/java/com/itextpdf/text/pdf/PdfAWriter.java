@@ -231,13 +231,14 @@ public class PdfAWriter extends PdfWriter {
      * @param fileDisplay the actual file name stored in the pdf
      * @param mimeType mime type of the file
      * @param afRelationshipValue AFRelationship key value, @see AFRelationshipValue. If <CODE>null</CODE>, @see AFRelationshipValue.Unspecified will be added.
-     *
+     * @param fileParameter the optional extra file parameters such as the creation or modification date 
+     * @return the file specification
      * @throws IOException on error
      */
-    public void addFileAttachment(String description, byte[] fileStore, String file, String fileDisplay,
-                                  String mimeType, PdfName afRelationshipValue) throws IOException {
+    public PdfFileSpecification addFileAttachment(String description, byte[] fileStore, String file, String fileDisplay,
+                                  String mimeType, PdfName afRelationshipValue, PdfDictionary fileParameter) throws IOException {
         PdfFileSpecification pdfFileSpecification = PdfFileSpecification.fileEmbedded(this, file, fileDisplay,
-                fileStore, mimeType, null, PdfStream.BEST_COMPRESSION);
+                fileStore, mimeType, fileParameter, PdfStream.BEST_COMPRESSION);
 
         if (afRelationshipValue != null)
             pdfFileSpecification.put(PdfName.AFRELATIONSHIP, afRelationshipValue);
@@ -245,6 +246,25 @@ public class PdfAWriter extends PdfWriter {
             pdfFileSpecification.put(PdfName.AFRELATIONSHIP, AFRelationshipValue.Unspecified);
 
         addFileAttachment(description, pdfFileSpecification);
+        return pdfFileSpecification;
+    }
+
+    /**
+     * Use this method to add a file attachment at the document level.
+     * @param description the file description
+     * @param fileStore an array with the file. If it's <CODE>null</CODE>
+     * the file will be read from the disk
+     * @param file the path to the file. It will only be used if
+     * <CODE>fileStore</CODE> is not <CODE>null</CODE>
+     * @param fileDisplay the actual file name stored in the pdf
+     * @param mimeType mime type of the file
+     * @param afRelationshipValue AFRelationship key value, @see AFRelationshipValue. If <CODE>null</CODE>, @see AFRelationshipValue.Unspecified will be added.
+     * @return the file specification
+     * @throws IOException on error
+     */
+    public PdfFileSpecification addFileAttachment(String description, byte[] fileStore, String file, String fileDisplay,
+                                  String mimeType, PdfName afRelationshipValue) throws IOException {
+        return addFileAttachment(description, fileStore, file, fileDisplay, mimeType, afRelationshipValue, null);
     }
 
     /**
