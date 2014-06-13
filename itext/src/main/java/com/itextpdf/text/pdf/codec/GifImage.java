@@ -123,6 +123,7 @@ public class GifImage {
             while ((read = is.read(bytes)) != -1) {
                 baos.write(bytes, 0, read);
             }
+            is.close();
 
             is = new ByteArrayInputStream(baos.toByteArray());
             baos.flush();
