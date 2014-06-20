@@ -689,7 +689,17 @@ public class PdfCopy extends PdfWriter {
         addDocument(reader);
     }
 
+    /**
+     * Copy document fields to a destination document.
+     * @param reader a document where fields are copied from.
+     * @throws DocumentException
+     * @throws IOException
+     */
     public void copyDocumentFields(PdfReader reader) throws DocumentException, IOException {
+        if (isTagged()) {
+            throw new UnsupportedOperationException(MessageLocalization.getComposedMessage("document.fields.cannot.be.copied.in.tagged.mode"));
+        }
+
         if (!document.isOpen()) {
             throw new DocumentException(MessageLocalization.getComposedMessage("the.document.is.not.open.yet.you.can.only.add.meta.information"));
         }

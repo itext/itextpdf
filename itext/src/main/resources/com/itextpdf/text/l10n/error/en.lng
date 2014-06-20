@@ -148,6 +148,7 @@ document.1.has.already.been.added=Document {1} has already been added.
 document.already.pre.closed=Document already pre closed.
 document.catalog.dictionary.shall.include.a.markinfo.dictionary.whose.entry.marked.shall.have.a.value.of.true=Document catalog dictionary shall include a MarkInfo dictionary whose entry Marked shall have a value of true.
 document.catalog.dictionary.should.contain.lang.entry=Document catalog dictionary should contain Lang entry.
+document.fields.cannot.be.copied.in.tagged.mode=Document fields cannot be copied in tagged mode.
 ef.key.of.file.specification.dictionary.shall.contain.dictionary.with.valid.f.key=EF key of the file specification dictionary for an embedded file shall contain dictionary with valid F key.
 element.not.allowed=Element not allowed.
 embedded.file.shall.contain.valid.params.key=Embedded file shall contain valid Params key.
