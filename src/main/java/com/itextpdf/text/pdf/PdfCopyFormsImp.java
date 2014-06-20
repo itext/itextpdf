@@ -55,6 +55,7 @@ import com.itextpdf.text.pdf.AcroFields.Item;
  * Allows you to add one (or more) existing PDF document(s)
  * and add the form(s) of (an)other PDF document(s).
  * @since 2.1.5
+ * @deprecated since 5.5.2
  */
 class PdfCopyFormsImp extends PdfCopyFieldsImp {
 

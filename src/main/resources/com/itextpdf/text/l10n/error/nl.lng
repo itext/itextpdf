@@ -148,6 +148,7 @@ document.1.has.already.been.added=Het Document {1} is als gesloten (preclosed).
 document.already.pre.closed=Het Document is als gesloten (preclosed).
 document.catalog.dictionary.shall.include.a.markinfo.dictionary.whose.entry.marked.shall.have.a.value.of.true=Document catalog dictionary moet een MarkInfo dictionary bevatten waarvan het Marked veld de waarde true moet hebben.
 document.catalog.dictionary.should.contain.lang.entry=Document catalog dictionary mag geen Lang veld bevatten.
+document.fields.cannot.be.copied.in.tagged.mode=Document fields cannot be copied in tagged mode.
 ef.key.of.file.specification.dictionary.shall.contain.dictionary.with.valid.f.key=De EF sleutel van de file specification dictionary voor een embedded file moet een dictionary bevatten met een geldige F sleutel.
 element.not.allowed=Element niet toegelaten.
 embedded.file.shall.contain.valid.params.key=Een embedded file moet een geldige Params sleutel hebben.
