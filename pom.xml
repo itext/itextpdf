@@ -14,7 +14,7 @@
     <version>5.5.2-SNAPSHOT</version>
     <description>iText, a free Java-PDF library</description>
     <!-- General Info -->
-    <url>http://www.itextpdf.com/</url>
+    <url>http://itextpdf.com</url>
     <mailingLists>
         <mailingList>
             <name>iText Questions</name>
@@ -75,8 +75,8 @@
         </license>
     </licenses>
     <scm>
-        <connection>scm:svn:http://itext.svn.sourceforge.net/svnroot/itext/trunk/itext</connection>
-        <url>http://itext.svn.sourceforge.net/viewvc/itext</url>
+        <connection>scm:svn:http://svn.code.sf.net/p/itext/code/trunk/itext</connection>
+        <url>http://sourceforge.net/p/itext/code</url>
     </scm>
 
     <!-- Build -->
@@ -255,6 +255,7 @@
     </reporting>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <sonar.language>java</sonar.language>
         <checkstyle.header.file>license.txt</checkstyle.header.file>
     </properties>
 </project>
