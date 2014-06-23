@@ -8,8 +8,13 @@
     </parent>
     <artifactId>itext-pdfa</artifactId>
     <version>5.5.2-SNAPSHOT</version>
-    <name>iText ISO-19005 Module</name>
+    <name>iText PDF/A</name>
     <description>iText ISO-19005 Module</description>
+    <url>http://itextpdf.com</url>
+    <scm>
+        <connection>scm:svn:http://svn.code.sf.net/p/itext/code/trunk/pdfa</connection>
+        <url>http://sourceforge.net/p/itext/code</url>
+    </scm>
     <profiles>
         <profile>
             <id>all</id>
@@ -82,5 +87,6 @@
     </dependencies>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <sonar.language>java</sonar.language>
     </properties>
 </project>
