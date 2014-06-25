@@ -1347,10 +1347,10 @@ public class PdfWriter extends DocWriter implements
                     fileID, prevxref);
                     trailer.toPdf(this, os);
                 }
-                super.close();
-            }
-            catch(IOException ioe) {
+            } catch(IOException ioe) {
                 throw new ExceptionConverter(ioe);
+            } finally {
+                super.close();
             }
         }
         getCounter().written(os.getCounter());
