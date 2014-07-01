@@ -307,7 +307,12 @@ public class DocumentFont extends BaseFont {
         CMapToUnicode toUnicode = null;
         PdfObject enc = PdfReader.getPdfObject(font.get(PdfName.ENCODING));
         if (enc == null) {
-            fillEncoding(null);
+            PdfName baseFont = font.getAsName(PdfName.BASEFONT);
+            if (BuiltinFonts14.containsKey(fontName)
+                    && (PdfName.SYMBOL.equals(baseFont) || PdfName.ZAPFDINGBATS.equals(baseFont))) {
+                fillEncoding(baseFont);
+            } else
+                fillEncoding(null);
             try {
                 toUnicode = processToUnicode();
                 if (toUnicode != null) {
@@ -480,19 +485,25 @@ public class DocumentFont extends BaseFont {
                 uni2byte.put(k, k);
                 byte2uni.put(k, k);
             }
-        } else if (PdfName.MAC_ROMAN_ENCODING.equals(encoding) || PdfName.WIN_ANSI_ENCODING.equals(encoding)) {
+        } else if (PdfName.MAC_ROMAN_ENCODING.equals(encoding) || PdfName.WIN_ANSI_ENCODING.equals(encoding)
+                    || PdfName.SYMBOL.equals(encoding) || PdfName.ZAPFDINGBATS.equals(encoding)) {
             byte b[] = new byte[256];
             for (int k = 0; k < 256; ++k)
                 b[k] = (byte)k;
             String enc = WINANSI;
             if (PdfName.MAC_ROMAN_ENCODING.equals(encoding))
                 enc = MACROMAN;
+            else if (PdfName.SYMBOL.equals(encoding))
+                enc = SYMBOL;
+            else if (PdfName.ZAPFDINGBATS.equals(encoding))
+                enc = ZAPFDINGBATS;
             String cv = PdfEncodings.convertToString(b, enc);
             char arr[] = cv.toCharArray();
             for (int k = 0; k < 256; ++k) {
                 uni2byte.put(arr[k], k);
                 byte2uni.put(k, arr[k]);
             }
+            this.encoding = enc;
         }
         else {
             for (int k = 0; k < 256; ++k) {
