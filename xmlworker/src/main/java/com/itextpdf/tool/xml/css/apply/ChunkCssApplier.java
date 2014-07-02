@@ -130,13 +130,15 @@ public class ChunkCssApplier {
                 c.setHorizontalScaling(100 / Float.parseFloat(xfaVertScale.replace("%", "")));
             }
         }
-        if (null != rules.get(CSS.Property.TEXT_DECORATION)) { // Restriction? In html a underline and a line-through is possible on one piece of text. A Chunk can set an underline only once.
-            String value = rules.get(CSS.Property.TEXT_DECORATION);
-            if (CSS.Value.UNDERLINE.equalsIgnoreCase(value)) {
-                c.setUnderline(0.75f, -size / 8f);
-            }
-            if (CSS.Value.LINE_THROUGH.equalsIgnoreCase(value)) {
-                c.setUnderline(0.75f, size / 4f);
+        if (null != rules.get(CSS.Property.TEXT_DECORATION)) {
+            String[] splitValues = rules.get(CSS.Property.TEXT_DECORATION).split("\\s+");
+            for (String value : splitValues) {
+                if (CSS.Value.UNDERLINE.equalsIgnoreCase(value)) {
+                    c.setUnderline(0.75f, -size / 8f);
+                }
+                if (CSS.Value.LINE_THROUGH.equalsIgnoreCase(value)) {
+                    c.setUnderline(0.75f, size / 4f);
+                }
             }
         }
         if (null != rules.get(CSS.Property.BACKGROUND_COLOR)) {
