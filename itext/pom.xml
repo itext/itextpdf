@@ -7,7 +7,6 @@
         <version>1.0.0</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.itextpdf</groupId>
     <artifactId>itextpdf</artifactId>
     <packaging>jar</packaging>
     <name>iText, a Free Java-PDF library</name>
@@ -158,7 +157,7 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>2.9</version>
                 <configuration>
-                    <argLine>-Xms512m -Xmx1024m</argLine>
+                    <runOrder>random</runOrder>
                 </configuration>
             </plugin>
         </plugins>
@@ -167,7 +166,7 @@
         <profile>
             <id>snapshot</id>
             <build>
-                <finalName>${artifactId}-${version}-rev${buildNumber}</finalName>
+                <finalName>${project.artifactId}-${project.version}-rev${buildNumber}</finalName>
             </build>
         </profile>
         <profile>
@@ -207,6 +206,38 @@
                 </plugins>
             </build>
         </profile>
+        <!-- BEGIN: Specific to mapping unit tests and covered code -->
+        <profile>
+            <id>coverage-per-test</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <!-- Minimal supported version is 2.4 -->
+                        <version>2.17</version>
+                        <configuration>
+                            <properties>
+                                <property>
+                                    <name>listener</name>
+                                    <value>org.sonar.java.jacoco.JUnitListener</value>
+                                </property>
+                            </properties>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+
+            <dependencies>
+                <dependency>
+                    <groupId>org.codehaus.sonar-plugins.java</groupId>
+                    <artifactId>sonar-jacoco-listeners</artifactId>
+                    <version>1.2</version>
+                    <scope>test</scope>
+                </dependency>
+            </dependencies>
+        </profile>
+        <!-- END: Specific to mapping unit tests and covered code -->
     </profiles>
     <!-- Dependencies -->
     <dependencies>
@@ -255,7 +286,10 @@
     </reporting>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <sonar.language>java</sonar.language>
+        <argLine>-Xms512m -Xmx1024m</argLine>
         <checkstyle.header.file>license.txt</checkstyle.header.file>
+        <sonar.language>java</sonar.language>
+        <sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
+        <sonar.jacoco.reportPath>${project.basedir}/target/jacoco.exec</sonar.jacoco.reportPath>
     </properties>
 </project>
