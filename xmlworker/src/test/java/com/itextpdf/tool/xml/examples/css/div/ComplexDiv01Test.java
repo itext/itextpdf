@@ -44,6 +44,7 @@ public class ComplexDiv01Test extends SampleTest {
         HtmlPipelineContext hpc = new HtmlPipelineContext(new CssAppliersImpl(new XMLWorkerFontProvider(SampleTest.class.getResource("fonts").getPath())));
         hpc.setAcceptUnknown(true).autoBookmark(true).setTagFactory(Tags.getHtmlTagProcessorFactory());
         hpc.setImageProvider(new SampleTestImageProvider());
+        hpc.setPageSize(doc.getPageSize());
         HtmlPipeline htmlPipeline = new HtmlPipeline(hpc, new PdfWriterPipeline(doc, pdfWriter));
         Pipeline<?> pipeline = new CssResolverPipeline(cssResolver, htmlPipeline);
         XMLWorker worker = new XMLWorker(pipeline, true);
