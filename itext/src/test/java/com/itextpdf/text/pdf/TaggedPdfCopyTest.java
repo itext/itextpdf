@@ -5,6 +5,8 @@ import com.itextpdf.text.error_messages.MessageLocalization;
 
 import com.itextpdf.text.pdf.parser.*;
 import org.junit.*;
+import org.junit.Assert;
+import org.junit.Test;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -44,6 +46,11 @@ public class TaggedPdfCopyTest {
     public static final String SOURCE72 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/pdf/source72.pdf";
     public static final String SOURCE73 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/pdf/source73.pdf";
     public static final String DEV_805 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/pdf/dev-805.pdf";
+    public static final String SOURCE_CF_11 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/pdf/sourceCf11.pdf";
+    public static final String SOURCE_CF_12 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/pdf/sourceCf12.pdf";
+    public static final String SOURCE_CF_13 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/pdf/sourceCf13.pdf";
+    public static final String SOURCE_CF_14 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/pdf/sourceCf14.pdf";
+    public static final String SOURCE_CF_15 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/pdf/sourceCf15.pdf";
 
     public static final String OUT = "./target/com/itextpdf/test/pdf/TaggedPdfCopyTest/out";
 
@@ -788,6 +795,48 @@ public class TaggedPdfCopyTest {
         copy.freeReader(reader);
         document.close();
         reader.close();
+    }
+
+    @Test
+    @Ignore
+    public void copyFields1Test() throws DocumentException, IOException, InterruptedException {
+        initializeDocument("copyFields1");
+        copy.setMergeFields();
+
+        PdfReader readerMain = new PdfReader(SOURCE_CF_14);
+        PdfReader secondSourceReader = new PdfReader(SOURCE_CF_15);
+        //PdfReader thirdReader = new PdfReader("./src/test/resources/com/itextpdf/text/pdf/PdfCopyTest/appearances1.pdf");
+
+        copy.addDocument(readerMain);
+        copy.copyDocumentFields(secondSourceReader);
+        //copy.addDocument(thirdReader);
+
+        copy.close();
+        readerMain.close();
+        secondSourceReader.close();
+        //thirdReader.close();
+        /*CompareTool compareTool = new CompareTool("./target/com/itextpdf/test/pdf/PdfCopyTest/copyFields.pdf", "./src/test/resources/com/itextpdf/text/pdf/PdfCopyTest/cmp_copyFields.pdf");
+        String errorMessage = compareTool.compareByContent("./target/com/itextpdf/test/pdf/PdfCopyTest/", "diff");
+        if (errorMessage != null) {
+            junit.framework.Assert.fail(errorMessage);
+        }*/
+    }
+
+    @Test
+    @Ignore
+    public void copyFields2Test() throws DocumentException, IOException, InterruptedException {
+        initializeDocument("copyFields2");
+        copy.setMergeFields();
+
+        PdfReader readerMain = new PdfReader(SOURCE_CF_11);
+        PdfReader secondSourceReader = new PdfReader(SOURCE_CF_14);
+
+        copy.addDocument(readerMain);
+        copy.copyDocumentFields(secondSourceReader);
+
+        copy.close();
+        readerMain.close();
+        secondSourceReader.close();
     }
 
     @After
