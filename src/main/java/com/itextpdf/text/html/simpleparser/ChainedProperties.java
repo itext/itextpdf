@@ -54,7 +54,9 @@ import com.itextpdf.text.html.HtmlUtilities;
 /**
  * Stores the hierarchy of tags along with the attributes of each tag.
  * @since 5.0.6 renamed from ChainedProperties
+ * @deprecated since 5.5.2
  */
+@Deprecated
 public class ChainedProperties {
 
 	/**

@@ -47,7 +47,9 @@ package com.itextpdf.text.html;
 /**
  * Static final values of supported HTML tags and attributes.
  * @since 5.0.6
+ * @deprecated since 5.5.2
  */
+@Deprecated
 public class HtmlTags {
 
 	// tag names

@@ -78,9 +78,9 @@ import com.itextpdf.text.xml.simpleparser.SimpleXMLParser;
 /**
  * Old iText class that allows you to convert HTML to PDF.
  * We've completely rewritten HTML to PDF conversion and we made it a separate project named XML Worker.
- * @deprecated please switch to XML Worker instead (this is a separate project)
+ * @deprecated since 5.5.2; please switch to XML Worker instead (this is a separate project)
  */
-
+@Deprecated
 public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 
 	private static Logger LOGGER = LoggerFactory.getLogger(HTMLWorker.class);

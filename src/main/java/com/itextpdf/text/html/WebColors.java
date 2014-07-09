@@ -56,7 +56,9 @@ import java.util.StringTokenizer;
  * http://en.wikipedia.org/wiki/Web_colors )
  *
  * @author blowagie
+ * @deprecated since 5.5.2
  */
+@Deprecated
 public class WebColors extends HashMap<String, int[]> {
 
 	private static final long serialVersionUID = 3542523100813372896L;

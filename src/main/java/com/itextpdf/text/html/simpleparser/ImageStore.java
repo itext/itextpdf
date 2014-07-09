@@ -50,7 +50,9 @@ import com.itextpdf.text.Image;
 
 /**
  * @since 5.0.6
+ * @deprecated since 5.5.2
  */
+@Deprecated
 public class ImageStore extends HashMap<String, Image> {
 
 	/** Serial version UID. */

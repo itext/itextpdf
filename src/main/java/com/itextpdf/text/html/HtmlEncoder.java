@@ -74,8 +74,10 @@ import com.itextpdf.text.BaseColor;
  *    String htmlPresentation = HtmlEncoder.encode("Marie-Th&#233;r&#232;se S&#248;rensen");
  * </PRE></BLOCKQUOTE><P>
  * for more info: see O'Reilly; "HTML: The Definitive Guide" (page 164)
+ *
+ * @deprecated since 5.5.2
  */
-
+@Deprecated
 public final class HtmlEncoder {
     
 	/**
