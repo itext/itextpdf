@@ -46,9 +46,9 @@ public class TaggedPdfCopyTest {
     public static final String SOURCE72 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/pdf/source72.pdf";
     public static final String SOURCE73 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/pdf/source73.pdf";
     public static final String DEV_805 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/pdf/dev-805.pdf";
-    //public static final String SOURCE_CF_11 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/pdf/sourceCf11.pdf";
-    //public static final String SOURCE_CF_12 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/pdf/sourceCf12.pdf";
-    //public static final String SOURCE_CF_13 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/pdf/sourceCf13.pdf";
+    public static final String SOURCE_CF_11 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/pdf/sourceCf11.pdf";
+    public static final String SOURCE_CF_12 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/pdf/sourceCf12.pdf";
+    public static final String SOURCE_CF_13 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/pdf/sourceCf13.pdf";
     public static final String SOURCE_CF_14 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/pdf/sourceCf14.pdf";
     public static final String SOURCE_CF_15 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/pdf/sourceCf15.pdf";
 
@@ -820,6 +820,23 @@ public class TaggedPdfCopyTest {
         if (errorMessage != null) {
             junit.framework.Assert.fail(errorMessage);
         }*/
+    }
+
+    @Test
+    @Ignore
+    public void copyFields2Test() throws DocumentException, IOException, InterruptedException {
+        initializeDocument("copyFields2");
+        copy.setMergeFields();
+
+        PdfReader readerMain = new PdfReader(SOURCE_CF_11);
+        PdfReader secondSourceReader = new PdfReader(SOURCE_CF_14);
+
+        copy.addDocument(readerMain);
+        copy.copyDocumentFields(secondSourceReader);
+
+        copy.close();
+        readerMain.close();
+        secondSourceReader.close();
     }
 
     @After
