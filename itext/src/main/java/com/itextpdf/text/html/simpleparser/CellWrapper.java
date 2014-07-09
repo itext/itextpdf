@@ -60,7 +60,9 @@ import com.itextpdf.text.pdf.PdfPCell;
  * that isn't available in PdfPCell.
  * @author  psoares
  * @since 5.0.6 (renamed)
+ * @deprecated since 5.5.2
  */
+@Deprecated
 public class CellWrapper implements TextElementArray {
 
 	/** The cell that is wrapped in this stub. */

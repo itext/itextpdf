@@ -49,6 +49,10 @@ import java.util.Map;
 import com.itextpdf.text.DocListener;
 import com.itextpdf.text.Image;
 
+/**
+ * @deprecated since 5.5.2
+ */
+@Deprecated
 public interface ImageProvider {
     Image getImage(String src, Map<String, String> attrs, ChainedProperties chain, DocListener doc);
 }

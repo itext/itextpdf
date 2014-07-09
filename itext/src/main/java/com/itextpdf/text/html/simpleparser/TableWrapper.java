@@ -63,7 +63,10 @@ import com.itextpdf.text.pdf.PdfPTable;
  * to put on the HTMLWorker stack.
  * @author  psoares
  * @since 5.0.6 (renamed)
+ * @deprecated since 5.5.2
  */
+@Deprecated
+
 public class TableWrapper implements Element {
 	/**
 	 * The styles that need to be applied to the table
