@@ -189,7 +189,7 @@ public class PdfLine {
                 //Keep deprecated tab logic for backward compatibility...
                 Float tabStopPosition = ((Float)tab[1]).floatValue();
                 boolean newline = ((Boolean)tab[2]).booleanValue();
-                if (newline && tabPosition < originalWidth - width) {
+                if (newline && tabStopPosition < originalWidth - width) {
                     return chunk;
                 }
                 chunk.adjustLeft(left);
