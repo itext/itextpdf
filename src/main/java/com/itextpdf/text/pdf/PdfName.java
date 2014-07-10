@@ -1386,7 +1386,7 @@ public class
     /** A name */
     public static final PdfName OFF = new PdfName("OFF");
     /** A name */
-    public static final PdfName ON = new PdfName("on");
+    public static final PdfName ON = new PdfName("ON");
     /** A name */
     public static final PdfName ONECOLUMN = new PdfName("OneColumn");
     /** A name */
