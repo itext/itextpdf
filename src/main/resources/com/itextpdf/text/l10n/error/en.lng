@@ -264,6 +264,7 @@ invalid.tsa.1.response.code.2=Invalid TSA '{1}' response, code {2}
 invalid.type.was.passed.in.state.1=Invalid type was passed in state: {1}
 invalid.use.of.a.pattern.a.template.was.expected=Invalid use of a pattern. A template was expected.
 irregular.columns.are.not.supported.in.composite.mode=Irregular columns are not supported in composite mode.
+it.is.not.possible.to.free.reader.in.merge.fields.mode=It is not possible to free reader in mergeFields mode.
 java.awt.image.fetch.aborted.or.errored=java.awt.Image fetch aborted or errored
 java.awt.image.interrupted.waiting.for.pixels=java.awt.Image Interrupted waiting for pixels!
 jpeg2000.enumerated.colour.space.19.(CIEJab).shall.not.be.used=JPEG2000 enumerated colour space 19 (CIEJab) shall not be used.

@@ -138,7 +138,6 @@ public class PdfCopy extends PdfWriter {
     private HashSet<Object> mergedRadioButtons = new HashSet<Object>();
     private HashMap<Object, PdfObject> mergedTextFields = new HashMap<Object, PdfObject>();
 
-
     protected static class ImportedPage {
         int pageNumber;
         PdfReader reader;
@@ -696,10 +695,6 @@ public class PdfCopy extends PdfWriter {
      * @throws IOException
      */
     public void copyDocumentFields(PdfReader reader) throws DocumentException, IOException {
-        if (isTagged()) {
-            throw new UnsupportedOperationException(MessageLocalization.getComposedMessage("document.fields.cannot.be.copied.in.tagged.mode"));
-        }
-
         if (!document.isOpen()) {
             throw new DocumentException(MessageLocalization.getComposedMessage("the.document.is.not.open.yet.you.can.only.add.meta.information"));
         }
@@ -714,12 +709,23 @@ public class PdfCopy extends PdfWriter {
         if (!mergeFields)
             throw new IllegalArgumentException(MessageLocalization.getComposedMessage("1.method.can.be.only.used.in.mergeFields.mode.please.use.addDocument", "copyDocumentFields"));
 
-
         indirects = new HashMap<RefKey, IndirectReferences>();
         indirectMap.put(reader, indirects);
 
         reader.consolidateNamedDestinations();
         reader.shuffleSubsetNames();
+        if (tagged && PdfStructTreeController.checkTagged(reader)) {
+            structTreeRootReference = (PRIndirectReference)reader.getCatalog().get(PdfName.STRUCTTREEROOT);
+            if (structTreeController != null) {
+                if (reader != structTreeController.reader)
+                    structTreeController.setReader(reader);
+            } else {
+                structTreeController = new PdfStructTreeController(reader, this);
+            }
+        }
+
+        List<PdfObject> annotationsToBeCopied = new ArrayList<PdfObject>();
+
         for (int i = 1; i <= reader.getNumberOfPages(); i++) {
             PdfDictionary page = reader.getPageNRelease(i);
             if (page != null && page.contains(PdfName.ANNOTS)) {
@@ -727,22 +733,32 @@ public class PdfCopy extends PdfWriter {
                 if (annots != null && annots.size() > 0) {
                     if (importedPages.size() < i)
                         throw new DocumentException(MessageLocalization.getComposedMessage("there.are.no.enough.imported.pages.for.copied.fields"));
+                    indirectMap.get(reader).put(new RefKey(reader.pageRefs.getPageOrigRef(i)), new IndirectReferences(pageReferences.get(i - 1)));
                     for (int j = 0; j < annots.size(); j++) {
                         PdfDictionary annot = annots.getAsDict(j);
                         if (annot != null) {
-                            copyDictionary(annot);
                             annot.put(annotId, new PdfNumber(++annotIdCnt));
+                            annotationsToBeCopied.add(annots.getPdfObject(j));
                         }
                     }
                 }
             }
         }
+
+        for (PdfObject annot : annotationsToBeCopied) {
+            copyObject(annot);
+        }
+
+        if (tagged && structTreeController != null)
+            structTreeController.attachStructTreeRootKids(null);
+
         AcroFields acro = reader.getAcroFields();
         boolean needapp = !acro.isGenerateAppearances();
         if (needapp)
             needAppearances = true;
         fields.add(acro);
         updateCalculationOrder(reader);
+        structTreeRootReference = null;
     }
 
     public void addDocument(PdfReader reader) throws DocumentException, IOException {
@@ -1664,6 +1680,8 @@ public class PdfCopy extends PdfWriter {
 
     @Override
     public void freeReader(PdfReader reader) throws IOException {
+        if (mergeFields)
+            throw new UnsupportedOperationException(MessageLocalization.getComposedMessage("it.is.not.possible.to.free.reader.in.merge.fields.mode"));
     	PdfArray array = reader.trailer.getAsArray(PdfName.ID);
     	if (array != null)
     		originalFileID = array.getAsString(0).getBytes();

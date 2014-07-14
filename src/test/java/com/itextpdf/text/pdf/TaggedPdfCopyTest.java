@@ -51,6 +51,7 @@ public class TaggedPdfCopyTest {
     public static final String SOURCE_CF_13 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/pdf/sourceCf13.pdf";
     public static final String SOURCE_CF_14 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/pdf/sourceCf14.pdf";
     public static final String SOURCE_CF_15 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/pdf/sourceCf15.pdf";
+    public static final String SOURCE_CF_16 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/pdf/sourceCf16.pdf";
 
     public static final String OUT = "./target/com/itextpdf/test/pdf/TaggedPdfCopyTest/out";
 
@@ -798,9 +799,8 @@ public class TaggedPdfCopyTest {
     }
 
     @Test
-    @Ignore
-    public void copyFields1Test() throws DocumentException, IOException, InterruptedException {
-        initializeDocument("copyFields1");
+    public void copyFields1Test() throws DocumentException, IOException, InterruptedException, ParserConfigurationException, SAXException {
+        initializeDocument("CopyFields1");
         copy.setMergeFields();
 
         PdfReader readerMain = new PdfReader(SOURCE_CF_14);
@@ -820,6 +820,8 @@ public class TaggedPdfCopyTest {
         if (errorMessage != null) {
             junit.framework.Assert.fail(errorMessage);
         }*/
+
+        compareResults("CopyFields1");
     }
 
     @Test
@@ -837,6 +839,43 @@ public class TaggedPdfCopyTest {
         copy.close();
         readerMain.close();
         secondSourceReader.close();
+    }
+
+    @Test
+    @Ignore
+    public void copyFields3Test() throws DocumentException, IOException, InterruptedException, ParserConfigurationException, SAXException {
+        initializeDocument("CopyFields3");
+        copy.setMergeFields();
+
+        PdfReader readerMain = new PdfReader(SOURCE_CF_12);
+        PdfReader secondSourceReader = new PdfReader(SOURCE_CF_11);
+
+        copy.addDocument(readerMain);
+        copy.copyDocumentFields(secondSourceReader);
+
+        copy.close();
+        readerMain.close();
+        secondSourceReader.close();
+
+        compareResults("CopyFields3");
+    }
+
+    @Test
+    public void copyFields4Test() throws Exception {
+        initializeDocument("CopyFields4");
+        copy.setMergeFields();
+
+        PdfReader readerMain = new PdfReader(SOURCE_CF_13);
+        PdfReader secondSourceReader = new PdfReader(SOURCE_CF_16);
+
+        copy.addDocument(readerMain);
+        copy.copyDocumentFields(secondSourceReader);
+
+        copy.close();
+        readerMain.close();
+        secondSourceReader.close();
+
+        compareResults("CopyFields4");
     }
 
     @After
