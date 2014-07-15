@@ -77,9 +77,9 @@ public class CSSFileProcessorTest {
     public void parseCSS() throws IOException {
         retriever.processFromStream(CSSFileProcessorTest.class.getResourceAsStream("/css/test.css"), proc);
         CssFile file = proc.getCss();
-        List<Map<String, String>> rules = file.get(new Tag("body"));
+        List<CssRule> rules = file.get(new Tag("body"));
         Assert.assertTrue(rules.size() == 1);
-        Assert.assertTrue("margin not found.", rules.get(0).containsKey("margin"));
-        Assert.assertEquals("Value for margin not correct.", "20px", rules.get(0).get("margin"));
+        Assert.assertTrue("margin not found.", rules.get(0).getNormalDeclarations().containsKey("margin"));
+        Assert.assertEquals("Value for margin not correct.", "20px", rules.get(0).getNormalDeclarations().get("margin"));
     }
 }

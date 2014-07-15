@@ -80,7 +80,7 @@ public class CSSFileWrapper implements CssFile {
 		throw new UnsupportedOperationException();
 	}
 
-    public List<Map<String, String>> get(Tag t) {
+    public List<CssRule> get(Tag t) {
         return css.get(t);
     }
 

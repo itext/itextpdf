@@ -69,7 +69,7 @@ public interface CssFile {
 	 * @return a list of maps with all CSS properties for this tag or an empty list
 	 *         if none found.
 	 */
-	List<Map<String, String>> get(Tag t);
+	List<CssRule> get(Tag t);
 
 	/**
 	 * @return if this CSS file should never be thrown away. Used in CSSFilesImpl#clear

@@ -37,6 +37,7 @@ package com.itextpdf.tool.xml.css;
 import com.itextpdf.tool.xml.Tag;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -95,10 +96,15 @@ public class CssFilesImpl implements CssFiles {
 	}
 
     public void populateCss(final Tag t, final Map<String, String> aggregatedProps) {
+        List<CssRule> rules = new ArrayList<CssRule>();
         for (CssFile cssFile: this.files) {
-            for (Map<String, String> declaration: cssFile.get(t))
-                populateOneCss(aggregatedProps, declaration);
+            rules.addAll(cssFile.get(t));
         }
+        Collections.sort(rules);
+        for (CssRule rule: rules)
+            populateOneCss(aggregatedProps, rule.getImportantDeclarations());
+        for (CssRule rule: rules)
+            populateOneCss(aggregatedProps, rule.getNormalDeclarations());
     }
 
     public void populateOneCss(final Map<String, String> aggregatedProps, final Map<String, String> cssDeclaration) {

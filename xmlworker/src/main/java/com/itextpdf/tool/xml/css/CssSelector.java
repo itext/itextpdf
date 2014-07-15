@@ -91,7 +91,7 @@ public class CssSelector {
                         t = t.getParent();
                     }
                     return false;
-                case '+':
+                case '~':
                     if (!t.hasParent())
                         return false;
                     precededIndex = t.getParent().getChildren().indexOf (t) - 1;
@@ -101,7 +101,7 @@ public class CssSelector {
                         precededIndex--;
                     }
                     return false;
-                case '~':
+                case '+':
                     if (!t.hasParent())
                         return false;
                     precededIndex = t.getParent().getChildren().indexOf (t) - 1;
@@ -112,11 +112,18 @@ public class CssSelector {
         }
     }
 
+    public int calculateSpecifity() {
+        int specifity = 0;
+        for (CssSelectorItem item : this.selectorItems)
+            specifity += item.getSpecificity();
+        return specifity;
+    }
+
     @Override
     public String toString() {
         StringBuffer buf = new StringBuffer();
         for (CssSelectorItem item: selectorItems)
-                buf.append(item.toString());
+            buf.append(item.toString());
         return buf.toString();
     }
 }

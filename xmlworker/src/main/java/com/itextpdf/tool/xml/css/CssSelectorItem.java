@@ -49,4 +49,6 @@ public interface CssSelectorItem {
     boolean matches(Tag t);
     
     char getSeparator();
+
+    int getSpecificity();
 }

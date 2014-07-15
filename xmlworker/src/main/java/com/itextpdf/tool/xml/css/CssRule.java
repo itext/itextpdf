@@ -45,26 +45,37 @@ package com.itextpdf.tool.xml.css;
 import java.util.List;
 import java.util.Map;
 
-public class CssRule {
+public class CssRule implements Comparable<CssRule> {
 
     private CssSelector selector;
-    private Map<String, String> declarations;
+    private Map<String, String> normalDeclarations;
+    private Map<String, String> importantDeclarations;
 
-    public CssRule(List<CssSelectorItem> selector, Map<String, String> declarations) {
+    public CssRule(List<CssSelectorItem> selector, Map<String, String> normalDeclarations, Map<String, String> importantDeclarations) {
         this.selector = new CssSelector(selector);
-        this.declarations = declarations;
+        this.normalDeclarations = normalDeclarations;
+        this.importantDeclarations = importantDeclarations;
     }
 
     public CssSelector getSelector() {
         return selector;
     }
 
-    public Map<String, String> getDeclarations() {
-        return declarations;
+    public Map<String, String> getNormalDeclarations() {
+        return normalDeclarations;
+    }
+
+    public Map<String, String> getImportantDeclarations() {
+        return importantDeclarations;
     }
 
     @Override
     public String toString() {
-        return String.format("%s { count: %d }", selector.toString(), declarations.size());
+        return String.format("%s { count: %d } #spec:%d",
+                selector.toString(), normalDeclarations.size() + importantDeclarations.size(), selector.calculateSpecifity());
+    }
+
+    public int compareTo(CssRule o) {
+        return this.selector.calculateSpecifity() - o.selector.calculateSpecifity();
     }
 }

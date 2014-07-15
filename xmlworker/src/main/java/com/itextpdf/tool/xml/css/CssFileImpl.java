@@ -48,6 +48,7 @@ import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.css.parser.CssSelectorParser;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -78,14 +79,14 @@ public class CssFileImpl implements CssFile {
     public void add(final String selector, final Map<String, String> props) {
         List<CssSelectorItem> selectorItems = CssSelectorParser.createCssSelector(selector);
         if (selectorItems != null)
-            rules.add(new CssRule(selectorItems, props));
+            rules.add(new CssRule(selectorItems, props, new HashMap<String, String>()));
     }
 
-    public List<Map<String, String>> get(Tag t) {
-        List<Map<String, String>> result = new ArrayList<Map<String, String>>();
+    public List<CssRule> get(Tag t) {
+        List<CssRule> result = new ArrayList<CssRule>();
         for (CssRule rule : rules) {
             if (rule.getSelector().matches(t))
-                result.add(rule.getDeclarations());
+                result.add(rule);
         }
         return result;
     }

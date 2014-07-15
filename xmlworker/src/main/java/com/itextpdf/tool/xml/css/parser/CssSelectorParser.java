@@ -52,6 +52,10 @@ import java.util.regex.Pattern;
 
 public class CssSelectorParser {
 
+    private static final int a = 1 << 16;
+    private static final int b = 1 << 8;
+    private static final int c = 1;
+
     private static final String selectorPatternString =
             "(\\*)|([_a-zA-Z][\\w-]*)|(\\.[_a-zA-Z][\\w-]*)|(#[_a-z][\\w-]*)|(\\[[_a-zA-Z][\\w-]*(([~^$*|])?=((\"[\\w-]+\")|([\\w-]+)))?\\])|( )|(\\+)|(>)|(~)";
 
@@ -110,17 +114,24 @@ public class CssSelectorParser {
 
     static class CssTagSelector implements CssSelectorItem {
         private String t;
+        private boolean isUniversal;
 
         CssTagSelector(String t) {
             this.t = t;
+            isUniversal = this.t.equals("*") ? true : false;
         }
 
         public boolean matches(Tag t){
-            return this.t.equals("*") || this.t.equals(t.getName());
+            return isUniversal || this.t.equals(t.getName());
         }
 
         public char getSeparator() {
             return 0;
+        }
+
+        public int getSpecificity() {
+            if (isUniversal) return 0;
+            return CssSelectorParser.c;
         }
 
         @Override
@@ -151,6 +162,10 @@ public class CssSelectorParser {
             return 0;
         }
 
+        public int getSpecificity() {
+            return CssSelectorParser.b;
+        }
+
         @Override
         public String toString() {
             return "." + className;
@@ -171,6 +186,10 @@ public class CssSelectorParser {
 
         public char getSeparator() {
             return 0;
+        }
+
+        public int getSpecificity() {
+            return CssSelectorParser.a;
         }
 
         @Override
@@ -245,6 +264,10 @@ public class CssSelectorParser {
             return false;
         }
 
+        public int getSpecificity() {
+            return CssSelectorParser.b;
+        }
+
         @Override
         public String toString() {
             StringBuilder buf = new StringBuilder();
@@ -271,6 +294,10 @@ public class CssSelectorParser {
 
         public boolean matches(Tag t){
             return false;
+        }
+
+        public int getSpecificity() {
+            return 0;
         }
 
         @Override
