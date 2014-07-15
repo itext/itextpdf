@@ -102,9 +102,10 @@ public class CssFilesImpl implements CssFiles {
         }
         Collections.sort(rules);
         for (CssRule rule: rules)
-            populateOneCss(aggregatedProps, rule.getImportantDeclarations());
-        for (CssRule rule: rules)
             populateOneCss(aggregatedProps, rule.getNormalDeclarations());
+        for (CssRule rule: rules)
+            populateOneCss(aggregatedProps, rule.getImportantDeclarations());
+
     }
 
     public void populateOneCss(final Map<String, String> aggregatedProps, final Map<String, String> cssDeclaration) {

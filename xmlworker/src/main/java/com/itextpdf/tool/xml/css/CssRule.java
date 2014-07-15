@@ -42,19 +42,34 @@
  */
 package com.itextpdf.tool.xml.css;
 
+import com.itextpdf.text.pdf.events.IndexEvents;
+
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 public class CssRule implements Comparable<CssRule> {
 
     private CssSelector selector;
     private Map<String, String> normalDeclarations;
     private Map<String, String> importantDeclarations;
+    private static final Pattern importantMatcher = Pattern.compile(".*!\\s*important$");
 
-    public CssRule(List<CssSelectorItem> selector, Map<String, String> normalDeclarations, Map<String, String> importantDeclarations) {
+    public CssRule(List<CssSelectorItem> selector, Map<String, String> declarations) {
         this.selector = new CssSelector(selector);
-        this.normalDeclarations = normalDeclarations;
-        this.importantDeclarations = importantDeclarations;
+        this.normalDeclarations = declarations;
+        this.importantDeclarations = new HashMap<String, String>();
+
+        for(Map.Entry<String,String> declaration: normalDeclarations.entrySet()) {
+            int exclIndex = declaration.getValue().indexOf('!');
+            if (exclIndex > 0 && importantMatcher.matcher(declaration.getValue()).matches()) {
+                importantDeclarations.put(declaration.getKey(), declaration.getValue().substring(0, exclIndex).trim());
+            }
+        }
+        //remove important declarations from normal declarations
+        for (String key: importantDeclarations.keySet())
+            normalDeclarations.remove(key);
     }
 
     public CssSelector getSelector() {

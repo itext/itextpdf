@@ -76,7 +76,7 @@ public class CSSFileWrapper implements CssFile {
 	 * @see com.itextpdf.tool.xml.css.CssFile#add(java.lang.String,
 	 * java.util.Map)
 	 */
-	public void add(final String selector, final Map<String, String> props) {
+	public boolean add(final String selector, final Map<String, String> props) {
 		throw new UnsupportedOperationException();
 	}
 

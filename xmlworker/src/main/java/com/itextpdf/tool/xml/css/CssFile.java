@@ -61,7 +61,7 @@ public interface CssFile {
 	 * @param selector the CSS selector
 	 * @param props the properties for the given selector
 	 */
-	void add(String selector, Map<String, String> props);
+	boolean add(String selector, Map<String, String> props);
 
 	/**
 	 * Return CSS declarations for the given tag.

@@ -134,7 +134,10 @@ public class CssStateController {
                     return;
             }
             for (String selector : selectors) {
-				css.add(selector, map);
+                //if any separated selector has errors, all others become invalid.
+                //in this case we just clear map, it is the easies way to support this.
+				if (!css.add(selector, map))
+                    map.clear();
 			}
 		} else {
 			css.add(utils.stripDoubleSpacesAndTrim(currentSelector), map);
