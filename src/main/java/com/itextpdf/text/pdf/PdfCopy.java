@@ -138,6 +138,8 @@ public class PdfCopy extends PdfWriter {
     private HashSet<Object> mergedRadioButtons = new HashSet<Object>();
     private HashMap<Object, PdfObject> mergedTextFields = new HashMap<Object, PdfObject>();
 
+    private HashSet<PdfReader> readersWithImportedStructureTreeRootKids = new HashSet<PdfReader>();
+
     protected static class ImportedPage {
         int pageNumber;
         PdfReader reader;
@@ -319,9 +321,18 @@ public class PdfCopy extends PdfWriter {
         ImportedPage lastPage = importedPages.get(importedPages.size() - 1);
         boolean equalReader = lastPage.reader.equals(newPage.reader);
         //reader exist, correct order;
-        if (equalReader && newPage.pageNumber > lastPage.pageNumber) return 0;
+        if (equalReader && newPage.pageNumber > lastPage.pageNumber) {
+            if (readersWithImportedStructureTreeRootKids.contains(newPage.reader))
+                return 0;
+            else
+                return 1;
+        }
         //reader exist, incorrect order;
         return -1;
+    }
+
+    protected void structureTreeRootKidsForReaderImported(PdfReader reader) {
+        readersWithImportedStructureTreeRootKids.add(reader);
     }
 
     protected void fixStructureTreeRoot(HashSet<RefKey> activeKeys, HashSet<PdfName> activeClassMaps) {

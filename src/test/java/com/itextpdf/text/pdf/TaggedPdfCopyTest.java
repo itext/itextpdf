@@ -825,9 +825,8 @@ public class TaggedPdfCopyTest {
     }
 
     @Test
-    @Ignore
-    public void copyFields2Test() throws DocumentException, IOException, InterruptedException {
-        initializeDocument("copyFields2");
+    public void copyFields2Test() throws DocumentException, IOException, InterruptedException, ParserConfigurationException, SAXException {
+        initializeDocument("CopyFields2");
         copy.setMergeFields();
 
         PdfReader readerMain = new PdfReader(SOURCE_CF_11);
@@ -839,10 +838,11 @@ public class TaggedPdfCopyTest {
         copy.close();
         readerMain.close();
         secondSourceReader.close();
+
+        compareResults("CopyFields2");
     }
 
     @Test
-    @Ignore
     public void copyFields3Test() throws DocumentException, IOException, InterruptedException, ParserConfigurationException, SAXException {
         initializeDocument("CopyFields3");
         copy.setMergeFields();

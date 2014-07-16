@@ -265,6 +265,7 @@ public class PdfStructTreeController {
 
         if (writer.updateRootKids) {
             addKid(structureTreeRoot, newKid);
+            writer.structureTreeRootKidsForReaderImported(reader);
         }
     }
 
