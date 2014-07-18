@@ -128,6 +128,14 @@ public class DocumentFont extends BaseFont {
         PdfName subType = font.getAsName(PdfName.SUBTYPE);
         if (PdfName.TYPE1.equals(subType) || PdfName.TRUETYPE.equals(subType))
             doType1TT();
+        else if (PdfName.TYPE3.equals(subType)) {
+            // In case of a Type3 font, we just show the characters as is.
+            // Note that this doesn't always make sense:
+            // Type 3 fonts are user defined fonts where arbitrary characters are mapped to custom glyphs
+            // For instance: the character a could be mapped to an image of a dog, the character b to an image of a cat
+            // When parsing a document that shows a cat and a dog, you shouldn't expect seeing a cat and a dog. Instead you'll get b and a.
+            fillEncoding(null);
+        }
         else {
             PdfName encodingName = font.getAsName(PdfName.ENCODING);
             if (encodingName != null){
