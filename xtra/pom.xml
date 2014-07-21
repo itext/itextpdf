@@ -10,7 +10,7 @@
     <artifactId>itext-xtra</artifactId>
     <packaging>jar</packaging>
     <name>iText Xtra</name>
-    <version>5.5.2-SNAPSHOT</version>
+    <version>5.5.3-SNAPSHOT</version>
     <description>iText Xtra, part of iText a Free Java-PDF library</description>
     <!-- General Info -->
     <url>http://itextpdf.com</url>
@@ -149,7 +149,7 @@
         <dependency>
             <groupId>com.itextpdf</groupId>
             <artifactId>itextpdf</artifactId>
-            <version>5.5.2-SNAPSHOT</version>
+            <version>5.5.3-SNAPSHOT</version>
             <type>jar</type>
             <scope>compile</scope>
         </dependency>
