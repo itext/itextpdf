@@ -87,6 +87,7 @@ public class Tags {
 		factory.addProcessor(Tag.P, paragraph);
 		factory.addProcessor(Tag.DT, paragraph);
 		factory.addProcessor(Tag.DD, paragraph);
+        factory.addProcessor(Tag.BLOCKQUOTE, paragraph);
 		factory.addProcessor(Tag.BR, defaultpackage + "Break");
 		factory.addProcessor(Tag.SPAN, span);
 		factory.addProcessor(Tag.SMALL, span);

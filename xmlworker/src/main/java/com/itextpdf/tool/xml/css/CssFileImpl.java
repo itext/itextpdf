@@ -44,8 +44,12 @@
  */
 package com.itextpdf.tool.xml.css;
 
+import com.itextpdf.tool.xml.Tag;
+import com.itextpdf.tool.xml.css.parser.CssSelectorParser;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Implementation of CssFile, the CSS is stored in a map.
@@ -54,7 +58,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class CssFileImpl implements CssFile {
 
-    private final Map<String, Map<String, String>> map;
+    private final List<CssRule> rules;
 	private boolean persistent;
 
     /**
@@ -62,7 +66,7 @@ public class CssFileImpl implements CssFile {
      */
     public CssFileImpl() {
     	persistent = false;
-        map = new ConcurrentHashMap<String, Map<String, String>>();
+        rules = new ArrayList<CssRule>();
     }
 
     /*
@@ -71,23 +75,22 @@ public class CssFileImpl implements CssFile {
      * @see com.itextpdf.tool.xml.css.CssFile#add(java.lang.String,
      * java.util.Map)
      */
-    public void add(final String selector, final Map<String, String> props) {
-        Map<String, String> currVal = map.get(selector);
-        if (currVal != null) {
-            currVal.putAll(props);
-        } else {
-            map.put(selector, props);
+    public boolean add(final String selector, final Map<String, String> props) {
+        List<CssSelectorItem> selectorItems = CssSelectorParser.createCssSelector(selector);
+        if (selectorItems != null) {
+            rules.add(new CssRule(selectorItems, props));
+            return true;
         }
+        return false;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.itextpdf.tool.xml.css.CssFile#get(java.lang.String)
-     */
-    public Map<String, String> get(final String selector) {
-        Map<String, String> map = this.map.get(selector);
-		return null == map?new ConcurrentHashMap<String, String>(0):map;
+    public List<CssRule> get(Tag t) {
+        List<CssRule> result = new ArrayList<CssRule>();
+        for (CssRule rule : rules) {
+            if (rule.getSelector().matches(t))
+                result.add(rule);
+        }
+        return result;
     }
 
 	/* (non-Javadoc)

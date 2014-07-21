@@ -54,7 +54,9 @@ import com.itextpdf.tool.xml.pipeline.css.CSSResolver;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -262,11 +264,36 @@ public class StyleAttrCSSResolver implements CSSResolver {
 		// overwrite properties (if value != inherit)
 		for (Entry<String, String> e : tagCss.entrySet()) {
 			if (!CSS.Value.INHERIT.equalsIgnoreCase(e.getValue())) {
-				css.put(e.getKey(), e.getValue());
+                if (e.getKey().equals(CSS.Property.TEXT_DECORATION)) {
+                    String oldValue = css.get(e.getKey());
+                    css.put(e.getKey(), mergeTextDecorationRules(oldValue, e.getValue()));
+                } else {
+                    css.put(e.getKey(), e.getValue());
+                }
 			}
 		}
 
 	}
+
+    private String mergeTextDecorationRules(String oldRule, String newRule) {
+        if (CSS.Value.NONE.equals(newRule))
+            return newRule;
+
+        HashSet<String> attrSet = new HashSet<String>();
+        if (oldRule != null)
+            Collections.addAll(attrSet, oldRule.split("\\s+"));
+        if (newRule != null)
+            Collections.addAll(attrSet, newRule.split("\\s+"));
+        StringBuilder resultantStr = new StringBuilder();
+        for (String attr : attrSet) {
+            if (attr.equals(CSS.Value.NONE) || attr.equals(CSS.Value.INHERIT))
+                continue;
+            if (resultantStr.length() > 0)
+                resultantStr.append(' ');
+            resultantStr.append(attr);
+        }
+        return resultantStr.length() == 0 ? null : resultantStr.toString();
+    }
 
 	/**
 	 * @param css the css map to populate

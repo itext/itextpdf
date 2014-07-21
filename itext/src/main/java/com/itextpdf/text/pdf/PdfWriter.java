@@ -813,6 +813,7 @@ public class PdfWriter extends DocWriter implements
      */
     public PdfIndirectObject addToBody(final PdfObject object) throws IOException {
         PdfIndirectObject iobj = body.add(object);
+        cacheObject(iobj);
         return iobj;
     }
 
@@ -826,6 +827,7 @@ public class PdfWriter extends DocWriter implements
      */
     public PdfIndirectObject addToBody(final PdfObject object, final boolean inObjStm) throws IOException {
         PdfIndirectObject iobj = body.add(object, inObjStm);
+        cacheObject(iobj);
         return iobj;
     }
 
@@ -839,6 +841,7 @@ public class PdfWriter extends DocWriter implements
      */
     public PdfIndirectObject addToBody(final PdfObject object, final PdfIndirectReference ref) throws IOException {
         PdfIndirectObject iobj = body.add(object, ref);
+        cacheObject(iobj);
         return iobj;
     }
 
@@ -853,6 +856,7 @@ public class PdfWriter extends DocWriter implements
      */
     public PdfIndirectObject addToBody(final PdfObject object, final PdfIndirectReference ref, final boolean inObjStm) throws IOException {
         PdfIndirectObject iobj = body.add(object, ref, inObjStm);
+        cacheObject(iobj);
         return iobj;
     }
 
@@ -866,6 +870,7 @@ public class PdfWriter extends DocWriter implements
      */
     public PdfIndirectObject addToBody(final PdfObject object, final int refNumber) throws IOException {
         PdfIndirectObject iobj = body.add(object, refNumber);
+        cacheObject(iobj);
         return iobj;
     }
 
@@ -880,8 +885,15 @@ public class PdfWriter extends DocWriter implements
      */
     public PdfIndirectObject addToBody(final PdfObject object, final int refNumber, final boolean inObjStm) throws IOException {
         PdfIndirectObject iobj = body.add(object, refNumber, 0, inObjStm);
+        cacheObject(iobj);
         return iobj;
     }
+
+    /**
+     * Use this method for caching objects.
+     * @param iobj @see PdfIndirectObject
+     */
+    protected void cacheObject(PdfIndirectObject iobj) { }
 
     /**
      * Use this to get an <CODE>PdfIndirectReference</CODE> for an object that
@@ -1335,10 +1347,10 @@ public class PdfWriter extends DocWriter implements
                     fileID, prevxref);
                     trailer.toPdf(this, os);
                 }
-                super.close();
-            }
-            catch(IOException ioe) {
+            } catch(IOException ioe) {
                 throw new ExceptionConverter(ioe);
+            } finally {
+                super.close();
             }
         }
         getCounter().written(os.getCounter());
@@ -2425,10 +2437,10 @@ public class PdfWriter extends DocWriter implements
     protected PdfReaderInstance currentPdfReaderInstance;
 
     protected int getNewObjectNumber(final PdfReader reader, final int number, final int generation) {
-        if (currentPdfReaderInstance == null) {
-        	currentPdfReaderInstance = getPdfReaderInstance(reader);
+        if (currentPdfReaderInstance == null || currentPdfReaderInstance.getReader() != reader) {
+            currentPdfReaderInstance = getPdfReaderInstance(reader);
         }
-    	return currentPdfReaderInstance.getNewObjectNumber(number, generation);
+        return currentPdfReaderInstance.getNewObjectNumber(number, generation);
     }
 
     RandomAccessFileOrArray getReaderFile(final PdfReader reader) {

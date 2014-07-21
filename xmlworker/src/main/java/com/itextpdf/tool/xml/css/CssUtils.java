@@ -44,14 +44,18 @@
  */
 package com.itextpdf.tool.xml.css;
 
-import java.text.MessageFormat;
-import java.util.*;
-
 import com.itextpdf.text.html.HtmlTags;
 import com.itextpdf.text.html.WebColors;
 import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.css.apply.MarginMemory;
 import com.itextpdf.tool.xml.exceptions.NoDataException;
+
+import java.text.MessageFormat;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @author redlab_b

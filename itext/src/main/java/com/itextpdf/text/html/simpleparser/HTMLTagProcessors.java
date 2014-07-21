@@ -54,8 +54,9 @@ import com.itextpdf.text.html.HtmlTags;
 /**
  * This class maps tags such as div and span to their corresponding
  * TagProcessor classes.
- * @deprecated
+ * @deprecated since 5.5.2
  */
+@Deprecated
 public class HTMLTagProcessors extends HashMap<String, HTMLTagProcessor> {
 
 	/**

@@ -7,14 +7,16 @@
         <version>1.0.0</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.itextpdf</groupId>
     <artifactId>itext-xtra</artifactId>
     <packaging>jar</packaging>
     <name>iText Xtra</name>
-    <version>5.5.1</version>
+    <version>5.5.2</version>
     <description>iText Xtra, part of iText a Free Java-PDF library</description>
     <!-- General Info -->
-    <url>http://www.itextpdf.com/</url>
+    <url>http://itextpdf.com</url>
+    <organization>
+        <url>http://itextpdf.com</url>
+    </organization>
     <mailingLists>
         <mailingList>
             <name>iText Questions</name>
@@ -40,8 +42,8 @@
         </license>
     </licenses>
     <scm>
-        <connection>scm:svn:http://itext.svn.sourceforge.net/svnroot/itext/trunk/xtra</connection>
-        <url>http://itext.svn.sourceforge.net/viewvc/itext</url>
+        <connection>scm:svn:http://svn.code.sf.net/p/itext/code/trunk/xtra</connection>
+        <url>http://sourceforge.net/p/itext/code</url>
     </scm>
     <!-- Build -->
     <!-- Profiles - default, release -->
@@ -80,6 +82,22 @@
     ]]></footer>
                         </configuration>
                     </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-compiler-plugin</artifactId>
+                        <configuration>
+                            <source>1.5</source>
+                            <target>1.5</target>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <version>2.17</version>
+                        <configuration>
+                            <runOrder>random</runOrder>
+                        </configuration>
+                    </plugin>
                 </plugins>
                 <resources>
                     <resource>
@@ -91,13 +109,47 @@
                 </resources>
             </build>
         </profile>
+
+        <!-- BEGIN: Specific to mapping unit tests and covered code -->
+        <profile>
+            <id>coverage-per-test</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <!-- Minimal supported version is 2.4 -->
+                        <version>2.17</version>
+                        <configuration>
+                            <properties>
+                                <property>
+                                    <name>listener</name>
+                                    <value>org.sonar.java.jacoco.JUnitListener</value>
+                                </property>
+                            </properties>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+
+            <dependencies>
+                <dependency>
+                    <groupId>org.codehaus.sonar-plugins.java</groupId>
+                    <artifactId>sonar-jacoco-listeners</artifactId>
+                    <version>1.2</version>
+                    <scope>test</scope>
+                </dependency>
+            </dependencies>
+        </profile>
+        <!-- END: Specific to mapping unit tests and covered code -->
+
     </profiles>
     <!-- Dependencies -->
     <dependencies>
         <dependency>
             <groupId>com.itextpdf</groupId>
             <artifactId>itextpdf</artifactId>
-            <version>5.5.1</version>
+            <version>5.5.2</version>
             <type>jar</type>
             <scope>compile</scope>
         </dependency>
@@ -109,4 +161,11 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <argLine>-Xmx128m</argLine>
+        <sonar.language>java</sonar.language>
+        <sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
+        <sonar.jacoco.reportPath>${project.basedir}/target/jacoco.exec</sonar.jacoco.reportPath>
+    </properties>
 </project>

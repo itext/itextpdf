@@ -44,6 +44,9 @@
  */
 package com.itextpdf.tool.xml.css;
 
+import com.itextpdf.tool.xml.Tag;
+
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -58,15 +61,15 @@ public interface CssFile {
 	 * @param selector the CSS selector
 	 * @param props the properties for the given selector
 	 */
-	void add(String selector, Map<String, String> props);
+	boolean add(String selector, Map<String, String> props);
 
 	/**
-	 * Return CSS for the given selector.
-	 * @param selector the selector to look for
-	 * @return a map with all CSS properties for this selector or an empty map
+	 * Return CSS declarations for the given tag.
+	 * @param t the tag for searching rules
+	 * @return a list of maps with all CSS properties for this tag or an empty list
 	 *         if none found.
 	 */
-	Map<String, String> get(String selector);
+	List<CssRule> get(Tag t);
 
 	/**
 	 * @return if this CSS file should never be thrown away. Used in CSSFilesImpl#clear

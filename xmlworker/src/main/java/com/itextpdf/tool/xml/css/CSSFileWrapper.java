@@ -42,6 +42,9 @@
  */
 package com.itextpdf.tool.xml.css;
 
+import com.itextpdf.tool.xml.Tag;
+
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -73,18 +76,13 @@ public class CSSFileWrapper implements CssFile {
 	 * @see com.itextpdf.tool.xml.css.CssFile#add(java.lang.String,
 	 * java.util.Map)
 	 */
-	public void add(final String selector, final Map<String, String> props) {
+	public boolean add(final String selector, final Map<String, String> props) {
 		throw new UnsupportedOperationException();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see com.itextpdf.tool.xml.css.CssFile#get(java.lang.String)
-	 */
-	public Map<String, String> get(final String selector) {
-		return css.get(selector);
-	}
+    public List<CssRule> get(Tag t) {
+        return css.get(t);
+    }
 
 	/*
 	 * (non-Javadoc)

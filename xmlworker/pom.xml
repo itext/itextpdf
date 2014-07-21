@@ -9,7 +9,7 @@
 	<groupId>com.itextpdf.tool</groupId>
 	<artifactId>xmlworker</artifactId>
 	<name>iText XML Worker</name>
-	<version>5.5.1</version>
+	<version>5.5.2</version>
 	<description>Parses XML to PDF, with CSS support, using iText</description>
 	<licenses>
 		<license>
@@ -119,7 +119,6 @@
                     <excludes>
 						<exclude>examples/*.java</exclude>
                         <exclude>com/itextpdf/tool/xml/examples/*.java</exclude>
-						<exclude>com/itextpdf/tool/xml/examples/css/div/*.java</exclude>
 						<exclude>com/itextpdf/tool/xml/BugRunnerTest.java</exclude>
 					</excludes>
 				</configuration>
@@ -195,7 +194,7 @@
 		<dependency>
 			<groupId>com.itextpdf</groupId>
 			<artifactId>itextpdf</artifactId>
-			<version>5.5.1</version>
+			<version>5.5.2</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>

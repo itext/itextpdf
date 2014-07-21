@@ -9,7 +9,7 @@ I$•y‡–≤Ì@=è’@ö«aÎl4fÀKP‰`úﬁØõ
 endstream
 endobj
 1 0 obj
-<</Parent 5 0 R/Contents 4 0 R/Type/Page/Resources<</ProcSet [/PDF /Text /ImageB /ImageC /ImageI]/Font<</F1 2 0 R/F2 3 0 R>>>>/MediaBox[0 0 595 842]>>
+<</Parent 5 0 R/Contents 4 0 R/Type/Page/Resources<</Font<</F1 2 0 R/F2 3 0 R>>>>/MediaBox[0 0 595 842]>>
 endobj
 7 0 obj
 <</Next 8 0 R/Parent 6 0 R/Dest[1 0 R/XYZ 20 779.6 0]/Title(Lorem ipsum dolor sit amet)>>
@@ -33,31 +33,32 @@ endobj
 <</BaseFont/Helvetica-Bold/Type/Font/Encoding/WinAnsiEncoding/Subtype/Type1>>
 endobj
 5 0 obj
-<</ITXT(5.2.2-SNAPSHOT)/Type/Pages/Count 1/Kids[1 0 R]>>
+<</Type/Pages/Count 1/Kids[1 0 R]>>
 endobj
 11 0 obj
 <</Type/Catalog/Outlines 6 0 R/Pages 5 0 R>>
 endobj
 12 0 obj
-<</Producer(iTextÆ 5.2.2-SNAPSHOT ©2000-2012 1T3XT BVBA)/Title(Tag H2)/ModDate(D:20120425160551+03'00')/CreationDate(D:20120425160551+03'00')>>
+<</Producer(iTextÆ 5.5.2-SNAPSHOT ©2000-2014 iText Group NV \(AGPL-version\))/Title(Tag H2)/ModDate(D:20140521171340+03'00')/CreationDate(D:20140521171340+03'00')>>
 endobj
 xref
 0 13
 0000000000 65535 f 
 0000000349 00000 n 
-0000001168 00000 n 
-0000001256 00000 n 
+0000001123 00000 n 
+0000001211 00000 n 
 0000000015 00000 n 
-0000001349 00000 n 
-0000001102 00000 n 
-0000000515 00000 n 
-0000000620 00000 n 
-0000000737 00000 n 
-0000000855 00000 n 
-0000001421 00000 n 
-0000001482 00000 n 
+0000001304 00000 n 
+0000001057 00000 n 
+0000000470 00000 n 
+0000000575 00000 n 
+0000000692 00000 n 
+0000000810 00000 n 
+0000001355 00000 n 
+0000001416 00000 n 
 trailer
-<</Root 11 0 R/ID [<8765bf08378494a9bddbedd455367491><61574d59537d116cf6f03d7cc2fdadfb>]/Info 12 0 R/Size 13>>
+<</Root 11 0 R/ID [<e79be44d07482136df3939d7ec0784c2><e79be44d07482136df3939d7ec0784c2>]/Info 12 0 R/Size 13>>
+%iText-5.5.2-SNAPSHOT
 startxref
-1642
+1597
 %%EOF

@@ -44,39 +44,54 @@
  */
 package com.itextpdf.text.html;
 
-import org.junit.Test;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import com.itextpdf.text.BaseColor;
 
+import org.junit.Test;
+
+import com.itextpdf.text.BaseColor;
 
 public class WebColorTest {
 
+	// Mix of different separator chars
+	private static final String RGB_PERCENT = "rgb(100%, 33%	50%,20%)";
+	private static final String RGB_OUT_OF_RANGE = "RGB(-100, 10%, 500)";
+	private static final String RGB_MISSING_COLOR_VALUES = "rgb(,,127,63)";
+
 	/**
-	 * Throw a bunch of equivalent colors at WebColors and ensure
-	 * that the return values really are equivalent.
+	 * Test method for
+	 * {@link com.itextpdf.text.html.WebColors#getRGBColor(java.lang.String)}.
+	 * Throw a bunch of equivalent colors at WebColors and ensure that the
+	 * return values really are equivalent.
+	 * 
 	 * @throws Exception
 	 */
 	@Test
 	public void goodColorTests() throws Exception {
-		String colors[] = {
-				"#00FF00", "00FF00", "#0F0", "0F0", "lime", "rgb(0,255,0 )"
-		};
-		// TODO webColor creates colors with a zero alpha channel (save "transparent"), BaseColor's
-		// 3-param constructor creates them with a 0xFF alpha channel.  Which is right?!
+		String colors[] = { "#00FF00", "00FF00", "#0F0", "0F0", "LIme",
+				"rgb(0,255,0 )" };
+		// TODO webColor creates colors with a zero alpha channel (save
+		// "transparent"), BaseColor's 3-param constructor creates them with a
+		// 0xFF alpha channel. Which is right?!
 		BaseColor testCol = new BaseColor(0, 255, 0);
 		for (String colStr : colors) {
 			BaseColor curCol = WebColors.getRGBColor(colStr);
-			assertTrue(dumpColor(testCol) + "!=" + dumpColor(curCol), testCol.equals(curCol));
+			assertTrue(dumpColor(testCol) + "!=" + dumpColor(curCol),
+					testCol.equals(curCol));
 		}
 	}
 
+	/**
+	 * Test method for
+	 * {@link com.itextpdf.text.html.WebColors#getRGBColor(java.lang.String)}.
+	 */
 	@Test
 	public void moreColorTest() {
-	    String colorStr = "#888";
-	    String colorStrLong = "#888888";
-	    assertEquals("Oh Nooo colors are different", WebColors.getRGBColor(colorStr), WebColors.getRGBColor(colorStrLong));
+		String colorStr = "#888";
+		String colorStrLong = "#888888";
+		assertEquals("Oh Nooo colors are different",
+				WebColors.getRGBColor(colorStr),
+				WebColors.getRGBColor(colorStrLong));
 	}
 
 	private String dumpColor(BaseColor col) {
@@ -93,28 +108,113 @@ public class WebColorTest {
 		return colBuf.toString();
 	}
 
+	/**
+	 * Test method for
+	 * {@link com.itextpdf.text.html.WebColors#getRGBColor(java.lang.String)}.
+	 * 
+	 * @throws Exception
+	 */
 	@Test
 	public void badColorTests() throws Exception {
-		String badColors[] = {
-				"", null, "#xyz", "#12345", "notAColor"
-		};
+		String badColors[] = { "", null, "#xyz", "#12345", "notAColor" };
 
 		for (String curStr : badColors) {
 			try {
 				// we can ignore the return value that'll never happen here
 				WebColors.getRGBColor(curStr);
 
-				assertTrue("getRGBColor should have thrown for: " + curStr, false);
+				assertTrue("getRGBColor should have thrown for: " + curStr,
+						false);
 			} catch (IllegalArgumentException e) {
 				// Non-null bad colors will throw an illArgEx
-				assertTrue( curStr != null );
+				assertTrue(curStr != null);
 				// good, it was supposed to throw
 			} catch (NullPointerException e) {
 				// the null color will NPE
-				assertTrue( curStr == null);
+				assertTrue(curStr == null);
 			}
 		}
 	}
 
+	/**
+	 * Test method for
+	 * {@link com.itextpdf.text.html.WebColors#getRGBColor(java.lang.String)}.
+	 */
+	@Test
+	public void testGetRGBColorInPercentRed() {
+		assertEquals(255, WebColors.getRGBColor(RGB_PERCENT).getRed());
+	}
+
+	/**
+	 * Test method for
+	 * {@link com.itextpdf.text.html.WebColors#getRGBColor(java.lang.String)}.
+	 */
+	@Test
+	public void testGetRGBColorInPercentGreen() {
+		assertEquals(84, WebColors.getRGBColor(RGB_PERCENT).getGreen());
+	}
+
+	/**
+	 * Test method for
+	 * {@link com.itextpdf.text.html.WebColors#getRGBColor(java.lang.String)}.
+	 */
+	@Test
+	public void testGetRGBColorInPercentBlue() {
+		assertEquals(127, WebColors.getRGBColor(RGB_PERCENT).getBlue());
+	}
+
+	/**
+	 * Test method for
+	 * {@link com.itextpdf.text.html.WebColors#getRGBColor(java.lang.String)}.
+	 */
+	@Test
+	public void testGetRGBColorInPercentAlpha() {
+		assertEquals(255, WebColors.getRGBColor(RGB_PERCENT).getAlpha());
+	}
+
+	/**
+	 * Test method for
+	 * {@link com.itextpdf.text.html.WebColors#getRGBColor(java.lang.String)}.
+	 */
+	@Test
+	public void testGetRGBColorNegativeValue() {
+		assertEquals(0, WebColors.getRGBColor(RGB_OUT_OF_RANGE).getRed());
+	}
+
+	/**
+	 * Test method for
+	 * {@link com.itextpdf.text.html.WebColors#getRGBColor(java.lang.String)}.
+	 */
+	@Test
+	public void testGetRGBColorValueOutOfRange() {
+		assertEquals(255, WebColors.getRGBColor(RGB_OUT_OF_RANGE).getBlue());
+	}
+
+	/**
+	 * Test method for
+	 * {@link com.itextpdf.text.html.WebColors#getRGBColor(java.lang.String)}.
+	 */
+	@Test
+	public void testGetRGBColorChannelsMissingRed() {
+		assertEquals(127, WebColors.getRGBColor(RGB_MISSING_COLOR_VALUES).getRed());
+	}
+
+	/**
+	 * Test method for
+	 * {@link com.itextpdf.text.html.WebColors#getRGBColor(java.lang.String)}.
+	 */
+	@Test
+	public void testGetRGBColorChannelsMissingGreen() {
+		assertEquals(63, WebColors.getRGBColor(RGB_MISSING_COLOR_VALUES).getGreen());
+	}
+
+	/**
+	 * Test method for
+	 * {@link com.itextpdf.text.html.WebColors#getRGBColor(java.lang.String)}.
+	 */
+	@Test
+	public void testGetRGBColorChannelsMissingBlue() {
+		assertEquals(0, WebColors.getRGBColor(RGB_MISSING_COLOR_VALUES).getBlue());
+	}
 
 }
