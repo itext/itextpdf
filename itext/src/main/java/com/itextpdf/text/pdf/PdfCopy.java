@@ -743,7 +743,7 @@ public class PdfCopy extends PdfWriter {
                 PdfArray annots = page.getAsArray(PdfName.ANNOTS);
                 if (annots != null && annots.size() > 0) {
                     if (importedPages.size() < i)
-                        throw new DocumentException(MessageLocalization.getComposedMessage("there.are.no.enough.imported.pages.for.copied.fields"));
+                        throw new DocumentException(MessageLocalization.getComposedMessage("there.are.not.enough.imported.pages.for.copied.fields"));
                     indirectMap.get(reader).put(new RefKey(reader.pageRefs.getPageOrigRef(i)), new IndirectReferences(pageReferences.get(i - 1)));
                     for (int j = 0; j < annots.size(); j++) {
                         PdfDictionary annot = annots.getAsDict(j);
