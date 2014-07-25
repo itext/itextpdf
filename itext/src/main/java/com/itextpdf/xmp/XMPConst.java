@@ -92,6 +92,8 @@ public interface XMPConst
 	String NS_PDFA_FIELD = "http://www.aiim.org/pdfa/ns/field#";
 	/** */
 	String NS_PDFA_ID = "http://www.aiim.org/pdfa/ns/id/";
+    /** */
+    String NS_PDFUA_ID = "http://www.aiim.org/pdfua/ns/id/";
 	/** */
 	String NS_PDFA_EXTENSION = "http://www.aiim.org/pdfa/ns/extension/";
 	/** The XML namespace for the Photoshop custom schema. */

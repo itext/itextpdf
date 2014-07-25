@@ -1,16 +1,17 @@
 /*
- * $Id: PdfCopy.java 6067 2013-11-14 13:34:40Z pavel-alay $
+ * $Id: PdfCopy.java 6212 2014-02-06 09:08:20Z michaeldemey $
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2013 1T3XT BVBA
+ * Copyright (c) 1998-2014 iText Group NV
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License version 3
  * as published by the Free Software Foundation with the addition of the
  * following permission added to Section 15 as permitted in Section 7(a):
- * FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY 1T3XT,
- * 1T3XT DISCLAIMS THE WARRANTY OF NON INFRINGEMENT OF THIRD PARTY RIGHTS.
+ * FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY
+ * ITEXT GROUP. ITEXT GROUP DISCLAIMS THE WARRANTY OF NON INFRINGEMENT
+ * OF THIRD PARTY RIGHTS
  *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
@@ -118,6 +119,7 @@ public class PdfCopy extends PdfWriter {
     static private int annotIdCnt = 0;
 
     protected boolean mergeFields = false;
+    private boolean needAppearances = false;
     private boolean hasSignature;
     private PdfIndirectReference acroForm;
     private HashMap<PdfArray, ArrayList<Integer>> tabOrder;
@@ -133,6 +135,9 @@ public class PdfCopy extends PdfWriter {
     private boolean mergeFieldsInternalCall = false;
     private static final PdfName iTextTag = new PdfName("_iTextTag_");
     private static final Integer zero = Integer.valueOf(0);
+    private HashSet<Object> mergedRadioButtons = new HashSet<Object>();
+    private HashMap<Object, PdfObject> mergedTextFields = new HashMap<Object, PdfObject>();
+
 
     protected static class ImportedPage {
         int pageNumber;
@@ -679,6 +684,9 @@ public class PdfCopy extends PdfWriter {
     }
 
     public void addDocument(PdfReader reader) throws DocumentException, IOException {
+        if ( ! document.isOpen() ) {
+            throw new DocumentException(MessageLocalization.getComposedMessage("the.document.is.not.open.yet.you.can.only.add.meta.information"));
+        }
         if (indirectMap.containsKey(reader)) {
             throw new IllegalArgumentException(MessageLocalization.getComposedMessage("document.1.has.already.been.added", reader.toString()));
         }
@@ -700,6 +708,12 @@ public class PdfCopy extends PdfWriter {
                     }
                 }
             }
+            AcroFields acro = reader.getAcroFields();
+            // when a document with NeedAppearances is encountered, the flag is set
+            // in the resulting document.
+            boolean needapp = !acro.isGenerateAppearances();
+            if (needapp)
+                needAppearances = true;
             fields.add(reader.getAcroFields());
             updateCalculationOrder(reader);
         }
@@ -841,7 +855,7 @@ public class PdfCopy extends PdfWriter {
                         PdfDictionary dict = (PdfDictionary)iobj.object;
                         PdfIndirectReference pg = (PdfIndirectReference)dict.get(PdfName.PG);
                         //if pg is real page - do nothing, else set correct pg and remove first MCID if exists
-                        if (!pageReferences.contains(pg) && !pg.equals(currPage)){
+                        if (pg != null && !pageReferences.contains(pg) && !pg.equals(currPage)){
                             dict.put(PdfName.PG, currPage);
                             PdfArray kids = dict.getAsArray(PdfName.K);
                             if (kids != null) {
@@ -1072,7 +1086,7 @@ public class PdfCopy extends PdfWriter {
                 if (annotId != null)
                     dictionary.remove(PdfCopy.annotId);
             }
-            body.write(object, object.number, object.generation);
+            body.add(object.object, object.number, object.generation, true);
             if (annotId != null) {
                 dictionary.put(PdfCopy.annotId, annotId);
             }
@@ -1208,6 +1222,7 @@ public class PdfCopy extends PdfWriter {
             Object obj = map.get(s);
             if (tk.hasMoreTokens()) {
                 if (obj == null) {
+                    obj = new HashMap<String, Object>();
                     map.put(s, obj);
                     map = (HashMap<String, Object>)obj;
                     continue;
@@ -1313,6 +1328,9 @@ public class PdfCopy extends PdfWriter {
         PdfDictionary form = new PdfDictionary();
         form.put(PdfName.DR, propagate(resources));
 
+        if (needAppearances) {
+            form.put(PdfName.NEEDAPPEARANCES, PdfBoolean.PDFTRUE);
+        }
         form.put(PdfName.DA, new PdfString("/Helv 0 Tf 0 g "));
         tabOrder = new HashMap<PdfArray, ArrayList<Integer>>();
         calculationOrderRefs = new ArrayList<Object>(calculationOrder);
@@ -1365,7 +1383,7 @@ public class PdfCopy extends PdfWriter {
     }
 
     @SuppressWarnings("unchecked")
-    private PdfArray branchForm(HashMap<String, Object> level, PdfIndirectReference parent, String fname) throws IOException {
+    private PdfArray branchForm(HashMap<String, Object> level, PdfIndirectReference parent, String fname) throws IOException, BadPdfFormatException {
         PdfArray arr = new PdfArray();
         for (Map.Entry<String, Object> entry: level.entrySet()) {
             String name = entry.getKey();
@@ -1397,6 +1415,7 @@ public class PdfCopy extends PdfWriter {
                     adjustTabOrder(annots, ind, nn);
                 }
                 else {
+                    PdfDictionary field = (PdfDictionary)list.get(0);
                     PdfArray kids = new PdfArray();
                     for (int k = 1; k < list.size(); k += 2) {
                         int page = ((Integer)list.get(k)).intValue();
@@ -1406,6 +1425,34 @@ public class PdfCopy extends PdfWriter {
                         widget.put(PdfName.PARENT, ind);
                         PdfNumber nn = (PdfNumber)widget.get(iTextTag);
                         widget.remove(iTextTag);
+                        if (PdfCopy.isTextField(field)) {
+                            PdfString v = field.getAsString(PdfName.V);
+                            PdfObject ap = widget.get(PdfName.AP);
+                            if (v != null && ap != null) {
+                                if (!mergedTextFields.containsKey(list)) {
+                                    mergedTextFields.put(list, ap);
+                                } else {
+                                    PdfObject ap1 = mergedTextFields.get(list);
+                                    widget.put(PdfName.AP, copyObject(ap1));
+                                }
+                            }
+                        } else if (PdfCopy.isCheckButton(field)) {
+                            PdfName v = field.getAsName(PdfName.V);
+                            PdfName as = widget.getAsName(PdfName.AS);
+                            if (v != null && as != null)
+                                widget.put(PdfName.AS, v);
+                        } else if (PdfCopy.isRadioButton(field)) {
+                            PdfName v = field.getAsName(PdfName.V);
+                            PdfName as = widget.getAsName(PdfName.AS);
+                            if (v != null && as != null && !as.equals(getOffStateName(widget))) {
+                                if (!mergedRadioButtons.contains(list)) {
+                                    mergedRadioButtons.add(list);
+                                    widget.put(PdfName.AS, v);
+                                } else {
+                                    widget.put(PdfName.AS, getOffStateName(widget));
+                                }
+                            }
+                        }
                         widget.put(PdfName.TYPE, PdfName.ANNOT);
                         PdfIndirectReference wref = addToBody(widget, getPdfIndirectReference(), true).getIndirectReference();
                         adjustTabOrder(annots, wref, nn);
@@ -1569,6 +1616,10 @@ public class PdfCopy extends PdfWriter {
         super.freeReader(reader);
     }
 
+    protected PdfName getOffStateName(PdfDictionary widget) {
+        return PdfName.Off;
+    }
+
     protected static final HashSet<PdfName> widgetKeys = new HashSet<PdfName>();
     protected static final HashSet<PdfName> fieldKeys = new HashSet<PdfName>();
     static {
@@ -1608,6 +1659,31 @@ public class PdfCopy extends PdfWriter {
         fieldKeys.add(PdfName.I);
         fieldKeys.add(PdfName.LOCK);
         fieldKeys.add(PdfName.SV);
+    }
+
+    static Integer getFlags(PdfDictionary field) {
+        PdfName type = field.getAsName(PdfName.FT);
+        if (!PdfName.BTN.equals(type))
+            return null;
+        PdfNumber flags = field.getAsNumber(PdfName.FF);
+        if (flags == null)
+            return null;
+        return flags.intValue();
+    }
+
+    static boolean isCheckButton(PdfDictionary field) {
+        Integer flags = getFlags(field);
+        return flags == null || ((flags.intValue() & PdfFormField.FF_PUSHBUTTON) == 0 && (flags.intValue() & PdfFormField.FF_RADIO) == 0);
+    }
+
+    static boolean isRadioButton(PdfDictionary field) {
+        Integer flags = getFlags(field);
+        return flags != null && (flags.intValue() & PdfFormField.FF_PUSHBUTTON) == 0 && (flags.intValue() & PdfFormField.FF_RADIO) != 0;
+    }
+
+    static boolean isTextField(PdfDictionary field) {
+        PdfName type = field.getAsName(PdfName.FT);
+        return PdfName.TX.equals(type);
     }
 
     /**

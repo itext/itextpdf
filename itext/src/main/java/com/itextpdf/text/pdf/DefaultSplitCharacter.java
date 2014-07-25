@@ -1,16 +1,17 @@
 /*
- * $Id: DefaultSplitCharacter.java 5914 2013-07-28 14:18:11Z blowagie $
+ * $Id: DefaultSplitCharacter.java 6141 2014-01-10 10:57:59Z michaeldemey $
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2013 1T3XT BVBA
+ * Copyright (c) 1998-2014 iText Group NV
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License version 3
  * as published by the Free Software Foundation with the addition of the
  * following permission added to Section 15 as permitted in Section 7(a):
- * FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY 1T3XT,
- * 1T3XT DISCLAIMS THE WARRANTY OF NON INFRINGEMENT OF THIRD PARTY RIGHTS.
+ * FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY
+ * ITEXT GROUP. ITEXT GROUP DISCLAIMS THE WARRANTY OF NON INFRINGEMENT
+ * OF THIRD PARTY RIGHTS
  *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
@@ -46,56 +47,107 @@ package com.itextpdf.text.pdf;
 import com.itextpdf.text.SplitCharacter;
 
 /**
+ * <p>
  * The default class that is used to determine whether or not a character
- * is a split character. You can subclass this class to define your own
- * split characters.
- * @since	2.1.2
+ * is a split character.
+ * <p/>
+ * You can add an array of characters or a single character on which iText
+ * should split the chunk. If custom characters have been set, iText will ignore
+ * the default characters this class uses to split chunks.
+ *
+ * @since 2.1.2
  */
 public class DefaultSplitCharacter implements SplitCharacter {
-	
-	/**
-	 * An instance of the default SplitCharacter.
-	 */
-	public static final SplitCharacter DEFAULT = new DefaultSplitCharacter();
-	
-	/**
-	 * Checks if a character can be used to split a <CODE>PdfString</CODE>.
-	 * <P>
-	 * for the moment every character less than or equal to SPACE, the character '-'
-	 * and some specific unicode ranges are 'splitCharacters'.
-	 * 
-	 * @param start start position in the array
-	 * @param current current position in the array
-	 * @param end end position in the array
-	 * @param	cc		the character array that has to be checked
-	 * @param ck chunk array
-	 * @return	<CODE>true</CODE> if the character can be used to split a string, <CODE>false</CODE> otherwise
-	 */
+
+    /**
+     * An instance of the default SplitCharacter.
+     */
+    public static final SplitCharacter DEFAULT = new DefaultSplitCharacter();
+
+    protected char[] characters;
+
+    /**
+     * Default constructor, has no custom characters to check.
+     */
+    public DefaultSplitCharacter() {
+        // empty body
+    }
+
+    /**
+     * Constructor with one splittable character.
+     *
+     * @param character char
+     */
+    public DefaultSplitCharacter(char character) {
+        this(new char[]{character});
+    }
+
+    /**
+     * Constructor with an array of splittable characters
+     *
+     * @param characters char[]
+     */
+    public DefaultSplitCharacter(char[] characters) {
+        this.characters = characters;
+    }
+
+    /**
+     * <p>
+     * Checks if a character can be used to split a <CODE>PdfString</CODE>.
+     * <p/>
+     * <p>
+     * The default behavior is that every character less than or equal to SPACE, the character '-'
+     * and some specific unicode ranges are 'splitCharacters'.
+     * </P>
+     * <p/>
+     * If custom splittable characters are set using the specified constructors,
+     * then this class will ignore the default characters described in the
+     * previous paragraph.
+     * </P>
+     *
+     * @param start   start position in the array
+     * @param current current position in the array
+     * @param end     end position in the array
+     * @param ck      chunk array
+     * @param cc      the character array that has to be checked
+     * @return <CODE>true</CODE> if the character can be used to split a string, <CODE>false</CODE> otherwise
+     */
     public boolean isSplitCharacter(int start, int current, int end, char[] cc, PdfChunk[] ck) {
         char c = getCurrentCharacter(current, cc, ck);
+
+        if (characters != null) {
+            for (int i = 0; i < characters.length; i++) {
+                if (c == characters[i]) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
         if (c <= ' ' || c == '-' || c == '\u2010') {
             return true;
         }
         if (c < 0x2002)
             return false;
         return ((c >= 0x2002 && c <= 0x200b)
-        || (c >= 0x2e80 && c < 0xd7a0)
-        || (c >= 0xf900 && c < 0xfb00)
-        || (c >= 0xfe30 && c < 0xfe50)
-        || (c >= 0xff61 && c < 0xffa0));
+                || (c >= 0x2e80 && c < 0xd7a0)
+                || (c >= 0xf900 && c < 0xfb00)
+                || (c >= 0xfe30 && c < 0xfe50)
+                || (c >= 0xff61 && c < 0xffa0));
     }
 
     /**
      * Returns the current character
-	 * @param current current position in the array
-	 * @param	cc		the character array that has to be checked
-	 * @param ck chunk array
-     * @return	the current character
+     *
+     * @param current current position in the array
+     * @param ck      chunk array
+     * @param cc      the character array that has to be checked
+     * @return the current character
      */
     protected char getCurrentCharacter(int current, char[] cc, PdfChunk[] ck) {
-    	if (ck == null) {
-    		return cc[current];
-    	}
-    	return (char)ck[Math.min(current, ck.length - 1)].getUnicodeEquivalent(cc[current]);
+        if (ck == null) {
+            return cc[current];
+        }
+        return (char) ck[Math.min(current, ck.length - 1)].getUnicodeEquivalent(cc[current]);
     }
 }

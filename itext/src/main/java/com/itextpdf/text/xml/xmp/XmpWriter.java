@@ -1,16 +1,17 @@
 /*
- * $Id: XmpWriter.java 5946 2013-08-08 12:06:13Z eugenemark $
+ * $Id: XmpWriter.java 6225 2014-02-10 22:47:30Z rafhens $
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2013 1T3XT BVBA
+ * Copyright (c) 1998-2014 iText Group NV
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License version 3
  * as published by the Free Software Foundation with the addition of the
  * following permission added to Section 15 as permitted in Section 7(a):
- * FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY 1T3XT,
- * 1T3XT DISCLAIMS THE WARRANTY OF NON INFRINGEMENT OF THIRD PARTY RIGHTS.
+ * FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY
+ * ITEXT GROUP. ITEXT GROUP DISCLAIMS THE WARRANTY OF NON INFRINGEMENT
+ * OF THIRD PARTY RIGHTS
  *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
@@ -48,7 +49,6 @@ import java.io.OutputStream;
 import java.util.Map;
 
 import com.itextpdf.text.Version;
-import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.pdf.PdfDate;
 import com.itextpdf.text.pdf.PdfDictionary;
 import com.itextpdf.text.pdf.PdfName;
@@ -316,9 +316,10 @@ public class XmpWriter {
         } else if (PdfName.AUTHOR.equals(key)) {
             xmpMeta.appendArrayItem(XMPConst.NS_DC, DublinCoreProperties.CREATOR, new PropertyOptions(PropertyOptions.ARRAY_ORDERED), value, null);
         } else if (PdfName.SUBJECT.equals(key)) {
-            xmpMeta.appendArrayItem(XMPConst.NS_DC, DublinCoreProperties.SUBJECT, new PropertyOptions(PropertyOptions.ARRAY), value, null);
             xmpMeta.setLocalizedText(XMPConst.NS_DC, DublinCoreProperties.DESCRIPTION, XMPConst.X_DEFAULT, XMPConst.X_DEFAULT, value);
         } else if (PdfName.KEYWORDS.equals(key)) {
+            for (String v : value.split(",|;"))
+                xmpMeta.appendArrayItem(XMPConst.NS_DC, DublinCoreProperties.SUBJECT, new PropertyOptions(PropertyOptions.ARRAY), v.trim(), null);
             xmpMeta.setProperty(XMPConst.NS_PDF, PdfProperties.KEYWORDS, value);
         } else if (PdfName.PRODUCER.equals(key)) {
             xmpMeta.setProperty(XMPConst.NS_PDF, PdfProperties.PRODUCER, value);

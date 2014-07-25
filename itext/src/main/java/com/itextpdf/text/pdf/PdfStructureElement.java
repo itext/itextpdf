@@ -1,16 +1,17 @@
 /*
- * $Id: PdfStructureElement.java 6000 2013-09-09 12:14:24Z pavel-alay $
+ * $Id: PdfStructureElement.java 6213 2014-02-06 09:08:25Z achingarev $
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2013 1T3XT BVBA
+ * Copyright (c) 1998-2014 iText Group NV
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License version 3
  * as published by the Free Software Foundation with the addition of the
  * following permission added to Section 15 as permitted in Section 7(a):
- * FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY 1T3XT,
- * 1T3XT DISCLAIMS THE WARRANTY OF NON INFRINGEMENT OF THIRD PARTY RIGHTS.
+ * FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY
+ * ITEXT GROUP. ITEXT GROUP DISCLAIMS THE WARRANTY OF NON INFRINGEMENT
+ * OF THIRD PARTY RIGHTS
  *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
@@ -253,6 +254,8 @@ public class PdfStructureElement extends PdfDictionary implements IPdfStructureE
             writeAttributes((PdfPTableBody)element);
         } else if (element instanceof PdfDiv) {
             writeAttributes((PdfDiv)element);
+        } else if (element instanceof PdfTemplate) {
+            writeAttributes((PdfTemplate)element);
         } else if (element instanceof Document) {
             writeAttributes((Document)element);
         }
@@ -274,6 +277,7 @@ public class PdfStructureElement extends PdfDictionary implements IPdfStructureE
             } else {
                 HashMap<String, Object> attr = chunk.getAttributes();
                 if (attr != null){
+                    this.setAttribute(PdfName.O, PdfName.LAYOUT);
                     // Setting non-inheritable attributes
                     if (attr.containsKey(Chunk.UNDERLINE)){
                         this.setAttribute(PdfName.TEXTDECORATIONTYPE, PdfName.UNDERLINE);
@@ -334,6 +338,7 @@ public class PdfStructureElement extends PdfDictionary implements IPdfStructureE
 
     private void writeAttributes(final Image image) {
         if (image != null) {
+            this.setAttribute(PdfName.O, PdfName.LAYOUT);
             if (image.getWidth() > 0){
                 this.setAttribute(PdfName.WIDTH, new PdfNumber(image.getWidth()));
             }
@@ -349,8 +354,23 @@ public class PdfStructureElement extends PdfDictionary implements IPdfStructureE
         }
     }
 
+    private void writeAttributes(final PdfTemplate template) {
+        if (template != null) {
+            this.setAttribute(PdfName.O, PdfName.LAYOUT);
+            if (template.getWidth() > 0){
+                this.setAttribute(PdfName.WIDTH, new PdfNumber(template.getWidth()));
+            }
+            if (template.getHeight() > 0){
+                this.setAttribute(PdfName.HEIGHT, new PdfNumber(template.getHeight()));
+            }
+            PdfRectangle rect = new PdfRectangle(template.getBoundingBox());
+            this.setAttribute(PdfName.BBOX, rect);
+        }
+    }
+
     private void writeAttributes(final Paragraph paragraph) {
         if (paragraph != null) {
+            this.setAttribute(PdfName.O, PdfName.LAYOUT);
             // Setting non-inheritable attributes
             if (Float.compare(paragraph.getSpacingBefore(), 0f) != 0)
                 this.setAttribute(PdfName.SPACEBEFORE, new PdfNumber(paragraph.getSpacingBefore()));

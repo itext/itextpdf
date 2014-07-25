@@ -1,16 +1,17 @@
 /*
- * $Id: TiffImage.java 5993 2013-09-06 21:13:00Z rafhens $
+ * $Id: TiffImage.java 6193 2014-01-29 15:01:04Z michaeldemey $
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2013 1T3XT BVBA
+ * Copyright (c) 1998-2014 iText Group NV
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License version 3
  * as published by the Free Software Foundation with the addition of the
  * following permission added to Section 15 as permitted in Section 7(a):
- * FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY 1T3XT,
- * 1T3XT DISCLAIMS THE WARRANTY OF NON INFRINGEMENT OF THIRD PARTY RIGHTS.
+ * FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY
+ * ITEXT GROUP. ITEXT GROUP DISCLAIMS THE WARRANTY OF NON INFRINGEMENT
+ * OF THIRD PARTY RIGHTS
  *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
@@ -98,7 +99,7 @@ public class TiffImage {
         return dpi;
     }
 
-    public static Image getTiffImage(RandomAccessFileOrArray s, boolean handleIncorrectImage, int page, boolean direct) {
+    public static Image getTiffImage(RandomAccessFileOrArray s, boolean recoverFromImageError, int page, boolean direct) {
         if (page < 1)
             throw new IllegalArgumentException(MessageLocalization.getComposedMessage("the.page.number.must.be.gt.eq.1"));
         try {
@@ -209,7 +210,7 @@ public class TiffImage {
                     s.readFully(im);
                     int height = Math.min(rowsStrip, rowsLeft);
                     TIFFFaxDecoder decoder = new TIFFFaxDecoder(fillOrder, w, height);
-                    decoder.setHandleIncorrectImage(handleIncorrectImage);
+                    decoder.setRecoverFromImageError(recoverFromImageError);
                     byte outBuf[] = new byte[(w + 7) / 8 * height];
                     switch (compression) {
                         case TIFFConstants.COMPRESSION_CCITTRLEW:
@@ -228,7 +229,23 @@ public class TiffImage {
                                     decoder.decode2D(outBuf, im, 0, height, tiffT4Options);
                                 }
                                 catch (RuntimeException e2) {
-                                    throw e;
+                                    if ( !recoverFromImageError )
+                                        throw e;
+                                    if ( rowsStrip == 1 )
+                                        throw e;
+                                    // repeat of reading the tiff directly (the if section of this if else structure)
+                                    // copy pasted to avoid making a method with 10 parameters
+                                    im = new byte[(int)size[0]];
+                                    s.seek(offset[0]);
+                                    s.readFully(im);
+                                    img = Image.getInstance(w, h, false, imagecomp, params, im);
+                                    img.setInverted(true);
+                                    img.setDpi(dpiX, dpiY);
+                                    img.setXYRatio(XYRatio);
+                                    img.setOriginalType(Image.ORIGINAL_TIFF);
+                                    if (rotation != 0)
+                                        img.setInitialRotation(rotation);
+                                    return img;
                                 }
                             }
                             g4.fax4Encode(outBuf, height);
@@ -237,7 +254,7 @@ public class TiffImage {
                             try {
                                 decoder.decodeT6(outBuf, im, 0, height, tiffT6Options);
                             } catch (InvalidImageException e) {
-                                if ( !handleIncorrectImage ) {
+                                if ( !recoverFromImageError ) {
                                     throw e;
                                 }
                             }
@@ -273,8 +290,8 @@ public class TiffImage {
         }
     }
 
-    public static Image getTiffImage(RandomAccessFileOrArray s, boolean handleIncorrectImage, int page) {
-        return getTiffImage(s, handleIncorrectImage, page, false);
+    public static Image getTiffImage(RandomAccessFileOrArray s, boolean recoverFromImageError, int page) {
+        return getTiffImage(s, recoverFromImageError, page, false);
     }
     
     /** Reads a page from a TIFF image. Direct mode is not used.

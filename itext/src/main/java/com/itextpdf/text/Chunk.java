@@ -1,16 +1,17 @@
 /*
- * $Id: Chunk.java 6019 2013-09-25 10:44:24Z blowagie $
+ * $Id: Chunk.java 6192 2014-01-29 14:37:53Z eugenemark $
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2013 1T3XT BVBA
+ * Copyright (c) 1998-2014 iText Group NV
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License version 3
  * as published by the Free Software Foundation with the addition of the
  * following permission added to Section 15 as permitted in Section 7(a):
- * FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY 1T3XT,
- * 1T3XT DISCLAIMS THE WARRANTY OF NON INFRINGEMENT OF THIRD PARTY RIGHTS.
+ * FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY
+ * ITEXT GROUP. ITEXT GROUP DISCLAIMS THE WARRANTY OF NON INFRINGEMENT
+ * OF THIRD PARTY RIGHTS
  *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
@@ -284,7 +285,7 @@ public class Chunk implements Element, IAccessibleElement {
 			throw new IllegalArgumentException(MessageLocalization.getComposedMessage("a.tab.position.may.not.be.lower.than.0.yours.is.1", String.valueOf(tabPosition)));
 		}
 		setAttribute(TAB, new Object[] {separator, new Float(tabPosition), Boolean.valueOf(newline), new Float(0)});
-        this.role = null;
+        this.role = PdfName.ARTIFACT;
 	}
 
     /**
@@ -303,7 +304,7 @@ public class Chunk implements Element, IAccessibleElement {
         setAttribute(SPLITCHARACTER, TabSplitCharacter.TAB);
 
         setAttribute(TABSETTINGS, null);
-        this.role = null;
+        this.role = PdfName.ARTIFACT;
     }
 
     /**
@@ -323,7 +324,7 @@ public class Chunk implements Element, IAccessibleElement {
 		this(OBJECT_REPLACEMENT_CHARACTER, new Font());
 		setAttribute(IMAGE, new Object[] { image, new Float(offsetX),
 				new Float(offsetY), Boolean.valueOf(changeLeading) });
-        this.role = null;
+        this.role = PdfName.ARTIFACT;
 	}
 
 	// implementation of the Element-methods
@@ -1082,6 +1083,10 @@ public class Chunk implements Element, IAccessibleElement {
 
     public void setId(final AccessibleElementId id) {
         this.id = id;
+    }
+
+    public boolean isInline() {
+        return true;
     }
 
     public String getTextExpansion() {

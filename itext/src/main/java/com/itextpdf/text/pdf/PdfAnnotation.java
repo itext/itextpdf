@@ -1,16 +1,17 @@
 /*
- * $Id: PdfAnnotation.java 5914 2013-07-28 14:18:11Z blowagie $
+ * $Id: PdfAnnotation.java 6154 2014-01-23 10:47:13Z pavel-alay $
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2013 1T3XT BVBA
+ * Copyright (c) 1998-2014 iText Group NV
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License version 3
  * as published by the Free Software Foundation with the addition of the
  * following permission added to Section 15 as permitted in Section 7(a):
- * FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY 1T3XT,
- * 1T3XT DISCLAIMS THE WARRANTY OF NON INFRINGEMENT OF THIRD PARTY RIGHTS.
+ * FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY
+ * ITEXT GROUP. ITEXT GROUP DISCLAIMS THE WARRANTY OF NON INFRINGEMENT
+ * OF THIRD PARTY RIGHTS
  *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
@@ -47,6 +48,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 
 import com.itextpdf.awt.geom.AffineTransform;
 import com.itextpdf.text.BaseColor;
@@ -949,8 +951,27 @@ public class PdfAnnotation extends PdfDictionary {
     		buf.append(destination);
     		buf.append(" parameters ");
     		buf.append(parameters);
+            if (parameters != null) {
+                appendDictionary(buf, parameters);
+            }
+
     		return buf.toString();
     	}
+
+        private void appendDictionary(StringBuffer buf, HashMap<PdfName, PdfObject> dict) {
+            buf.append(" <<");
+            for(Map.Entry<PdfName, PdfObject> entry : dict.entrySet()) {
+                buf.append(entry.getKey());
+                buf.append(":");
+                if (entry.getValue() instanceof PdfDictionary)
+                    appendDictionary(buf, ((PdfDictionary)entry.getValue()).hashMap);
+                else
+                    buf.append(entry.getValue());
+                buf.append(" ");
+            }
+
+            buf.append(">> ");
+        }
 
     }
 

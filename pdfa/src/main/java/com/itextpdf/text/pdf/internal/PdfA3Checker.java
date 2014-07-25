@@ -1,16 +1,17 @@
 /*
- * $Id: PdfA3Checker.java 6060 2013-11-06 14:07:28Z pavel-alay $
+ * $Id: PdfA3Checker.java 6231 2014-02-11 12:21:02Z pavel-alay $
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2013 1T3XT BVBA
+ * Copyright (c) 1998-2014 iText Group NV
  * Authors: Alexander Chingarev, Bruno Lowagie, et al.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License version 3
  * as published by the Free Software Foundation with the addition of the
  * following permission added to Section 15 as permitted in Section 7(a):
- * FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY 1T3XT,
- * 1T3XT DISCLAIMS THE WARRANTY OF NON INFRINGEMENT OF THIRD PARTY RIGHTS.
+ * FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY
+ * ITEXT GROUP. ITEXT GROUP DISCLAIMS THE WARRANTY OF NON INFRINGEMENT
+ * OF THIRD PARTY RIGHTS
  *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
@@ -101,13 +102,14 @@ public class PdfA3Checker extends PdfA2Checker {
     }
 
     protected void checkEmbeddedFile(PdfDictionary embeddedFile) {
-        PdfDictionary params = getDirectDictionary(embeddedFile.get(PdfName.PARAMS));
+        PdfObject params = getDirectObject(embeddedFile.get(PdfName.PARAMS));
         if (params == null) {
             throw new PdfAConformanceException(embeddedFile, MessageLocalization.getComposedMessage("embedded.file.shall.contain.valid.params.key"));
-        }
-        PdfObject modDate = params.get(PdfName.MODDATE);
-        if (modDate == null || !(modDate instanceof PdfDate)) {
-            throw new PdfAConformanceException(embeddedFile, MessageLocalization.getComposedMessage("embedded.file.shall.contain.params.key.with.valid.moddate.key"));
+        } else if (params.isDictionary()){
+            PdfObject modDate = ((PdfDictionary)params).get(PdfName.MODDATE);
+            if (modDate == null || !(modDate instanceof PdfString)) {
+                throw new PdfAConformanceException(embeddedFile, MessageLocalization.getComposedMessage("embedded.file.shall.contain.params.key.with.valid.moddate.key"));
+            }
         }
     }
 

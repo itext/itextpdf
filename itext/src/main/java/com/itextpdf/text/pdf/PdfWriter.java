@@ -1,16 +1,17 @@
 /*
- * $Id: PdfWriter.java 6076 2013-11-20 13:54:29Z blowagie $
+ * $Id: PdfWriter.java 6228 2014-02-11 11:13:47Z achingarev $
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2013 1T3XT BVBA
+ * Copyright (c) 1998-2014 iText Group NV
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License version 3
  * as published by the Free Software Foundation with the addition of the
  * following permission added to Section 15 as permitted in Section 7(a):
- * FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY 1T3XT,
- * 1T3XT DISCLAIMS THE WARRANTY OF NON INFRINGEMENT OF THIRD PARTY RIGHTS.
+ * FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY
+ * ITEXT GROUP. ITEXT GROUP DISCLAIMS THE WARRANTY OF NON INFRINGEMENT
+ * OF THIRD PARTY RIGHTS
  *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
@@ -59,20 +60,15 @@ import com.itextpdf.text.log.Counter;
 import com.itextpdf.text.log.CounterFactory;
 import com.itextpdf.text.pdf.collection.PdfCollection;
 import com.itextpdf.text.pdf.events.PdfPageEventForwarder;
-import com.itextpdf.text.pdf.interfaces.PdfAnnotations;
-import com.itextpdf.text.pdf.interfaces.PdfDocumentActions;
-import com.itextpdf.text.pdf.interfaces.PdfEncryptionSettings;
-import com.itextpdf.text.pdf.interfaces.PdfIsoConformance;
-import com.itextpdf.text.pdf.interfaces.PdfPageActions;
-import com.itextpdf.text.pdf.interfaces.PdfRunDirection;
-import com.itextpdf.text.pdf.interfaces.PdfVersion;
-import com.itextpdf.text.pdf.interfaces.PdfViewerPreferences;
-import com.itextpdf.text.pdf.interfaces.PdfXConformance;
+import com.itextpdf.text.pdf.interfaces.*;
 import com.itextpdf.text.pdf.internal.PdfIsoKeys;
 import com.itextpdf.text.pdf.internal.PdfVersionImp;
 import com.itextpdf.text.pdf.internal.PdfXConformanceImp;
+import com.itextpdf.text.xml.xmp.PdfProperties;
 import com.itextpdf.text.xml.xmp.XmpWriter;
+import com.itextpdf.xmp.XMPConst;
 import com.itextpdf.xmp.XMPException;
+import com.itextpdf.xmp.options.PropertyOptions;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -1840,6 +1836,13 @@ public class PdfWriter extends DocWriter implements
     public void createXmpMetadata() {
         try {
             xmpWriter = createXmpWriter(null, pdf.getInfo());
+            if (isTagged()) {
+                try {
+                    xmpWriter.getXmpMeta().setPropertyInteger(XMPConst.NS_PDFUA_ID, PdfProperties.PART, 1, new PropertyOptions(PropertyOptions.SEPARATE_NODE));
+                } catch (XMPException e) {
+                    throw new ExceptionConverter(e);
+                }
+            }
             xmpMetadata = null;
         } catch (IOException ioe) {
             ioe.printStackTrace();
@@ -2534,16 +2537,44 @@ public class PdfWriter extends DocWriter implements
 
 //  [F12] tagged PDF
 
+    static public final int markAll = 0x00;
+    static public final int markInlineElementsOnly = 0x01;
+
     protected boolean tagged = false;
+    protected int taggingMode = markInlineElementsOnly;
     protected PdfStructureTreeRoot structureTreeRoot;
 
     /**
      * Mark this document for tagging. It must be called before open.
      */
     public void setTagged() {
+        setTagged(markInlineElementsOnly);
+    }
+
+    public void setTagged(int taggingMode) {
         if (open)
             throw new IllegalArgumentException(MessageLocalization.getComposedMessage("tagging.must.be.set.before.opening.the.document"));
         tagged = true;
+        this.taggingMode = taggingMode;
+    }
+
+    public boolean needToBeMarkedInContent(IAccessibleElement element) {
+        if ((taggingMode & markInlineElementsOnly) != 0) {
+            if (element.isInline() || PdfName.ARTIFACT.equals(element.getRole())) {
+                return true;
+            }
+            return false;
+        }
+        return true;
+    }
+
+    public void checkElementRole(IAccessibleElement element, IAccessibleElement parent) {
+        if (parent != null && (parent.getRole() == null || PdfName.ARTIFACT.equals(parent.getRole())))
+            element.setRole(null);
+        else if ((taggingMode & markInlineElementsOnly) != 0) {
+            if (element.isInline() && element.getRole() == null && (parent == null || !parent.isInline()))
+                throw new IllegalArgumentException(MessageLocalization.getComposedMessage("inline.elements.with.role.null.are.not.allowed"));
+        }
     }
 
     /**

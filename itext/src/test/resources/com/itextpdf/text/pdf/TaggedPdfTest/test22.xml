@@ -1,9 +1,6 @@
-<Document>
-<H1>Document Header</H1>
-<Paragraph>
-
-
-<TextBlock>Quick brown </TextBlock>
+<Document><H1><Span>Document Header</Span>
+</H1>
+<Paragraph><TextBlock>Quick brown </TextBlock>
 <Image></Image>
 <Span> jumped over a lazy </Span>
 <Figure></Figure>

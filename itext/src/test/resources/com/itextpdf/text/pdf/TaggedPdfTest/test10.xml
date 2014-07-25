@@ -1,44 +1,34 @@
-<Document>
-<H1 color="[0, 0, 1]">Document Header</H1>
-<Table width="418.4" height="3592.92"><TBody>
-
-<TR o="/Table">
-<TD width="209.2" o="/Table"><Span>Quick brown fox jumped over a lazy
+<Document><H1 o="/Layout" color="[0, 0, 1]"><Span>Document Header</Span>
+</H1>
+<Table width="418.4" height="3592.92"><TBody><TR o="/Table"><TD width="209.2" o="/Table"><Span>Quick brown fox jumped over a lazy
 dog. A very long line appears here
 because we need new line.</Span>
 </TD>
-<TD width="209.2" o="/Table"><Figure bBox="[0, 0, 106, 61]" width="106" height="61"></Figure>
+<TD width="209.2" o="/Table"><Figure bBox="[299.5, 664.91, 504.7, 783]" width="106" o="/Layout" height="61"></Figure>
 </TD>
 </TR>
-<TR o="/Table">
-<TD width="209.2" o="/Table"><Span>jumped over a lazy</Span>
+<TR o="/Table"><TD width="209.2" o="/Table"><Span>jumped over a lazy</Span>
 </TD>
-<TD width="209.2" o="/Table"><Figure bBox="[0, 0, 106, 61]" width="106" height="61"></Figure>
+<TD width="209.2" o="/Table"><Figure bBox="[299.5, 542.83, 504.7, 660.91]" width="106" o="/Layout" height="61"></Figure>
 </TD>
 </TR>
-<TR o="/Table">
-<TD width="209.2" o="/Table" height="770"><Table width="205.2" height="3344.74"><TBody>
-
-<TR o="/Table">
-<TD width="102.6" o="/Table"><Span>Quick brown fox
+<TR o="/Table"><TD width="209.2" o="/Table" height="770"><Table width="205.2" height="3344.74"><TBody><TR o="/Table"><TD width="102.6" o="/Table"><Span>Quick brown fox
 jumped over a
 lazy dog. A very
 long line appears
 here because we
 need new line.</Span>
 </TD>
-<TD width="102.6" o="/Table"><Figure bBox="[0, 0, 106, 61]" width="106" height="61"></Figure>
+<TD width="102.6" o="/Table"><Figure bBox="[194.9, 745.26, 293.5, 802]" width="106" o="/Layout" height="61"></Figure>
 </TD>
 </TR>
-<TR o="/Table">
-<TD width="102.6" o="/Table"><Span>jumped over a
+<TR o="/Table"><TD width="102.6" o="/Table"><Span>jumped over a
 lazy</Span>
 </TD>
-<TD width="102.6" o="/Table"><Figure bBox="[0, 0, 106, 61]" width="106" height="61"></Figure>
+<TD width="102.6" o="/Table"><Figure bBox="[194.9, 669.26, 293.5, 726]" width="106" o="/Layout" height="61"></Figure>
 </TD>
 </TR>
-<TR o="/Table">
-<TD width="102.6" o="/Table" height="766"><Span>Lorem ipsum
+<TR o="/Table"><TD width="102.6" o="/Table" height="766"><Span>Lorem ipsum
 dolor sit
 amet,consectetur
 adipiscing

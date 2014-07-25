@@ -1,16 +1,17 @@
 /*
- * $Id: PdfAStamperImp.java 6049 2013-10-30 13:18:48Z eugenemark $
+ * $Id: PdfAStamperImp.java 6231 2014-02-11 12:21:02Z pavel-alay $
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2013 1T3XT BVBA
+ * Copyright (c) 1998-2014 iText Group NV
  * Authors: Alexander Chingarev, Bruno Lowagie, et al.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License version 3
  * as published by the Free Software Foundation with the addition of the
  * following permission added to Section 15 as permitted in Section 7(a):
- * FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY 1T3XT,
- * 1T3XT DISCLAIMS THE WARRANTY OF NON INFRINGEMENT OF THIRD PARTY RIGHTS.
+ * FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY
+ * ITEXT GROUP. ITEXT GROUP DISCLAIMS THE WARRANTY OF NON INFRINGEMENT
+ * OF THIRD PARTY RIGHTS
  *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
@@ -50,6 +51,7 @@ import com.itextpdf.text.log.Counter;
 import com.itextpdf.text.log.CounterFactory;
 import com.itextpdf.text.pdf.interfaces.PdfAConformance;
 import com.itextpdf.text.pdf.interfaces.PdfIsoConformance;
+import com.itextpdf.text.pdf.internal.PdfAChecker;
 import com.itextpdf.text.pdf.internal.PdfAConformanceImp;
 import com.itextpdf.text.xml.xmp.PdfAXmpWriter;
 import com.itextpdf.text.xml.xmp.XmpWriter;
@@ -215,4 +217,52 @@ public class PdfAStamperImp extends PdfStamperImp {
         }
 
     }
+
+    @Override
+    public PdfIndirectObject addToBody(PdfObject object) throws IOException {
+        PdfIndirectObject iobj = super.addToBody(object);
+        getPdfAChecker().cacheObject(iobj.getIndirectReference(), iobj.object);
+        return iobj;
+    }
+
+    @Override
+    public PdfIndirectObject addToBody(PdfObject object, boolean inObjStm) throws IOException {
+        PdfIndirectObject iobj =  super.addToBody(object, inObjStm);
+        getPdfAChecker().cacheObject(iobj.getIndirectReference(), iobj.object);
+        return iobj;
+    }
+
+    @Override
+    public PdfIndirectObject addToBody(PdfObject object, PdfIndirectReference ref, boolean inObjStm)
+            throws IOException {
+        PdfIndirectObject iobj = super.addToBody(object, ref, inObjStm);
+        getPdfAChecker().cacheObject(iobj.getIndirectReference(), iobj.object);
+        return iobj;
+    }
+
+    @Override
+    public PdfIndirectObject addToBody(PdfObject object, PdfIndirectReference ref) throws IOException {
+        PdfIndirectObject iobj = super.addToBody(object, ref);
+        getPdfAChecker().cacheObject(iobj.getIndirectReference(), iobj.object);
+        return iobj;
+    }
+
+    @Override
+    public PdfIndirectObject addToBody(PdfObject object, int refNumber) throws IOException {
+        PdfIndirectObject iobj = super.addToBody(object, refNumber);
+        getPdfAChecker().cacheObject(iobj.getIndirectReference(), iobj.object);
+        return iobj;
+    }
+
+    @Override
+    public PdfIndirectObject addToBody(PdfObject object, int refNumber, boolean inObjStm) throws IOException {
+        PdfIndirectObject iobj = super.addToBody(object, refNumber, inObjStm);
+        getPdfAChecker().cacheObject(iobj.getIndirectReference(), iobj.object);
+        return iobj;
+    }
+
+    private PdfAChecker getPdfAChecker() {
+        return ((PdfAConformanceImp)pdfIsoConformance).getPdfAChecker();
+    }
+
 }

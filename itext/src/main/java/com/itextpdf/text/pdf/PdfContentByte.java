@@ -1,16 +1,17 @@
 /*
- * $Id: PdfContentByte.java 6061 2013-11-06 14:21:28Z achingarev $
+ * $Id: PdfContentByte.java 6228 2014-02-11 11:13:47Z achingarev $
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2013 1T3XT BVBA
+ * Copyright (c) 1998-2014 iText Group NV
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License version 3
  * as published by the Free Software Foundation with the addition of the
  * following permission added to Section 15 as permitted in Section 7(a):
- * FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY 1T3XT,
- * 1T3XT DISCLAIMS THE WARRANTY OF NON INFRINGEMENT OF THIRD PARTY RIGHTS.
+ * FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY
+ * ITEXT GROUP. ITEXT GROUP DISCLAIMS THE WARRANTY OF NON INFRINGEMENT
+ * OF THIRD PARTY RIGHTS
  *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
@@ -46,6 +47,7 @@ import com.itextpdf.awt.FontMapper;
 import com.itextpdf.awt.PdfGraphics2D;
 import com.itextpdf.awt.PdfPrinterGraphics2D;
 import com.itextpdf.awt.geom.AffineTransform;
+import com.itextpdf.awt.geom.Point2D;
 import com.itextpdf.text.*;
 import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.exceptions.IllegalPdfSyntaxException;
@@ -1353,8 +1355,28 @@ public class PdfContentByte {
         try {
             if (image.getLayer() != null)
                 beginLayer(image.getLayer());
-            if (inText && isTagged()) {
-                endText();
+            if (isTagged()) {
+                if (inText)
+                    endText();
+                AffineTransform transform = new AffineTransform(a, b, c, d, e, f);
+                Point2D[] src = new Point2D.Float[] {new Point2D.Float(0, 0), new Point2D.Float(1, 0), new Point2D.Float(1, 1), new Point2D.Float(0, 1)};
+                Point2D[] dst = new Point2D.Float[4];
+                transform.transform(src, 0, dst, 0, 4);
+                float left = Float.MAX_VALUE;
+                float right = -Float.MAX_VALUE;
+                float bottom = Float.MAX_VALUE;
+                float top = -Float.MAX_VALUE;
+                for (int i = 0; i < 4; i++) {
+                    if (dst[i].getX() < left)
+                        left = (float)dst[i].getX();
+                    if (dst[i].getX() > right)
+                        right = (float)dst[i].getX();
+                    if (dst[i].getY() < bottom)
+                        bottom = (float)dst[i].getY();
+                    if (dst[i].getY() > top)
+                        top = (float)dst[i].getY();
+                }
+                image.setAccessibleAttribute(PdfName.BBOX, new PdfArray(new float[] {left, bottom, right, top}));
             }
             if (writer != null && image.isImgTemplate()) {
                 writer.addDirectImageSimple(image);
@@ -3559,19 +3581,14 @@ public class PdfContentByte {
             IAccessibleElement parent = null;
             if (getMcElements().size() > 0)
                 parent = getMcElements().get(getMcElements().size() - 1);
-            if (parent != null && (parent.getRole() == null || PdfName.ARTIFACT.equals(parent.getRole())))
-                element.setRole(null);
+            writer.checkElementRole(element, parent);
             if (element.getRole() != null) {
                 if (!PdfName.ARTIFACT.equals(element.getRole())) {
                     structureElement = pdf.structElements.get(element.getId());
                     if (structureElement == null) {
                         structureElement = new PdfStructureElement(getParentStructureElement(), element.getRole());
-                        structureElement.writeAttributes(element);
                     }
                 }
-                boolean inTextLocal = inText;
-                if (inText)
-                    endText();
                 if (PdfName.ARTIFACT.equals(element.getRole())) {
                     HashMap<PdfName, PdfObject> properties = element.getAccessibleAttributes();
                     PdfDictionary propertiesDict = null;
@@ -3582,12 +3599,22 @@ public class PdfContentByte {
                             propertiesDict.put(entry.getKey(), entry.getValue());
                         }
                     }
+                    boolean inTextLocal = inText;
+                    if (inText)
+                        endText();
                     beginMarkedContentSequence(element.getRole(), propertiesDict, true);
+                    if (inTextLocal)
+                        beginText(true);
                 } else {
-                    beginMarkedContentSequence(structureElement);
+                    if (writer.needToBeMarkedInContent(element)) {
+                        boolean inTextLocal = inText;
+                        if (inText)
+                            endText();
+                        beginMarkedContentSequence(structureElement);
+                        if (inTextLocal)
+                            beginText(true);
+                    }
                 }
-                if (inTextLocal)
-                    beginText(true);
             }
         }
         return structureElement;
@@ -3604,12 +3631,18 @@ public class PdfContentByte {
 
     private void closeMCBlockInt(IAccessibleElement element) {
         if (isTagged() && element.getRole() != null) {
-            boolean inTextLocal = inText;
-            if (inText)
-                endText();
-            endMarkedContentSequence();
-            if (inTextLocal)
-                beginText(true);
+            PdfStructureElement structureElement = pdf.structElements.get(element.getId());
+            if (structureElement != null) {
+                structureElement.writeAttributes(element);
+            }
+            if (writer.needToBeMarkedInContent(element)) {
+                boolean inTextLocal = inText;
+                if (inText)
+                    endText();
+                endMarkedContentSequence();
+                if (inTextLocal)
+                    beginText(true);
+            }
         }
     }
 

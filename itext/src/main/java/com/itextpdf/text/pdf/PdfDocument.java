@@ -1,16 +1,17 @@
 /*
- * $Id: PdfDocument.java 6086 2013-11-26 11:19:45Z pavel-alay $
+ * $Id: PdfDocument.java 6192 2014-01-29 14:37:53Z eugenemark $
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2013 1T3XT BVBA
+ * Copyright (c) 1998-2014 iText Group NV
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License version 3
  * as published by the Free Software Foundation with the addition of the
  * following permission added to Section 15 as permitted in Section 7(a):
- * FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY 1T3XT,
- * 1T3XT DISCLAIMS THE WARRANTY OF NON INFRINGEMENT OF THIRD PARTY RIGHTS.
+ * FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY
+ * ITEXT GROUP. ITEXT GROUP DISCLAIMS THE WARRANTY OF NON INFRINGEMENT
+ * OF THIRD PARTY RIGHTS
  *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
@@ -1327,8 +1328,7 @@ public class PdfDocument extends Document {
                     lbl = l.listItem().getListLabel();
                     graphics.openMCBlock(lbl);
                     symbol = new Chunk(symbol);
-                    if (!lbl.getTagLabelContent())
-                        symbol.setRole(null);
+                    symbol.setRole(null);
                 }
                 ColumnText.showTextAligned(graphics, Element.ALIGN_LEFT, new Phrase(symbol), text.getXTLM() - l.listIndent(), text.getYTLM(), 0);
                 if (lbl != null) {
@@ -1657,11 +1657,12 @@ public class PdfDocument extends Document {
                         	Float ws = (Float) chunk.getAttribute(Chunk.WORD_SPACING);
         					text.setWordSpacing(ws.floatValue());
         				}
+
+                        if (chunk.isAttribute(Chunk.CHAR_SPACING)) {
+                            Float cs = (Float) chunk.getAttribute(Chunk.CHAR_SPACING);
+                            text.setCharacterSpacing(cs.floatValue());
+                        }
                     }
-                    if (chunk.isAttribute(Chunk.CHAR_SPACING)) {
-                    	Float cs = (Float) chunk.getAttribute(Chunk.CHAR_SPACING);
-						text.setCharacterSpacing(cs.floatValue());
-					}
                     if (chunk.isImage()) {
                         Image image = chunk.getImage();
                         width = chunk.getImageWidth();
@@ -1770,11 +1771,13 @@ public class PdfDocument extends Document {
                 adjustMatrix = true;
                 text.setTextMatrix(xMarker, yMarker);
             }
-            if (chunk.isAttribute(Chunk.CHAR_SPACING)) {
-				text.setCharacterSpacing(baseCharacterSpacing);
-            }
-            if (chunk.isAttribute(Chunk.WORD_SPACING)) {
-				text.setWordSpacing(baseWordSpacing);
+            if (!isJustified) {
+                if (chunk.isAttribute(Chunk.CHAR_SPACING)) {
+                    text.setCharacterSpacing(baseCharacterSpacing);
+                }
+                if (chunk.isAttribute(Chunk.WORD_SPACING)) {
+                    text.setWordSpacing(baseWordSpacing);
+                }
             }
             if (isTagged(writer) && chunk.accessibleElement != null) {
                 text.closeMCBlock(chunk.accessibleElement);

@@ -1,16 +1,17 @@
 /*
- * $Id: DocumentFont.java 5992 2013-09-06 14:42:08Z eugenemark $
+ * $Id: DocumentFont.java 6134 2013-12-23 13:15:14Z blowagie $
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2013 1T3XT BVBA
+ * Copyright (c) 1998-2014 iText Group NV
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License version 3
  * as published by the Free Software Foundation with the addition of the
  * following permission added to Section 15 as permitted in Section 7(a):
- * FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY 1T3XT,
- * 1T3XT DISCLAIMS THE WARRANTY OF NON INFRINGEMENT OF THIRD PARTY RIGHTS.
+ * FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY
+ * ITEXT GROUP. ITEXT GROUP DISCLAIMS THE WARRANTY OF NON INFRINGEMENT
+ * OF THIRD PARTY RIGHTS
  *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
@@ -474,7 +475,12 @@ public class DocumentFont extends BaseFont {
     }
 
     private void fillEncoding(PdfName encoding) {
-        if (PdfName.MAC_ROMAN_ENCODING.equals(encoding) || PdfName.WIN_ANSI_ENCODING.equals(encoding)) {
+        if (encoding == null && isSymbolic()) {
+            for (int k = 0; k < 256; ++k) {
+                uni2byte.put(k, k);
+                byte2uni.put(k, k);
+            }
+        } else if (PdfName.MAC_ROMAN_ENCODING.equals(encoding) || PdfName.WIN_ANSI_ENCODING.equals(encoding)) {
             byte b[] = new byte[256];
             for (int k = 0; k < 256; ++k)
                 b[k] = (byte)k;
@@ -848,5 +854,15 @@ public class DocumentFont extends BaseFont {
      */
     IntHashtable getDiffmap() {
         return diffmap;
+    }
+
+    boolean isSymbolic() {
+        PdfDictionary fontDescriptor = font.getAsDict(PdfName.FONTDESCRIPTOR);
+        if (fontDescriptor == null)
+            return false;
+        PdfNumber flags = fontDescriptor.getAsNumber(PdfName.FLAGS);
+        if (flags == null)
+            return false;
+        return (flags.intValue() & 0x04) != 0;
     }
 }

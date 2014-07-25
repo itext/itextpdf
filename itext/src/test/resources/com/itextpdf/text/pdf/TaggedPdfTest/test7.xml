@@ -1,37 +1,23 @@
-<Document>
-<H1 color="[0, 0, 1]">Document Header</H1>
-<L listNumbering="/Decimal" o="/List">
-
-
-
-<LI startIndent="13.34">
-<Lbl startIndent="0"><Span>1.</Span>
-</Lbl>
+<Document><H1 o="/Layout" color="[0, 0, 1]"><Span>Document Header</Span>
+</H1>
+<L listNumbering="/Decimal" o="/List"><LI startIndent="13.34"><Lbl>1.</Lbl>
 <LBody><Span>Quick brown fox jumped over a lazy dog. A very long line appears here because we need new
 line.</Span>
 </LBody>
 </LI>
-<LI startIndent="13.34">
-<Lbl startIndent="0"><Span>2.</Span>
-</Lbl>
-<LBody><Figure bBox="[0, 0, 106, 61]" width="106" height="61"></Figure>
+<LI startIndent="13.34"><Lbl>2.</Lbl>
+<LBody><Figure bBox="[49.34, 731, 155.34, 792]" width="106" o="/Layout" height="61"></Figure>
 </LBody>
 </LI>
-<LI startIndent="13.34">
-<Lbl startIndent="0"><Span>3.</Span>
-</Lbl>
+<LI startIndent="13.34"><Lbl>3.</Lbl>
 <LBody><Span>jumped over a lazy</Span>
 </LBody>
 </LI>
-<LI startIndent="13.34">
-<Lbl startIndent="0"><Span>4.</Span>
-</Lbl>
-<LBody><Figure bBox="[0, 0, 106, 61]" width="106" height="61"></Figure>
+<LI startIndent="13.34"><Lbl>4.</Lbl>
+<LBody><Figure bBox="[49.34, 695, 155.34, 756]" width="106" o="/Layout" height="61"></Figure>
 </LBody>
 </LI>
-<LI startIndent="13.34">
-<Lbl startIndent="0"><Span>5.</Span>
-</Lbl>
+<LI startIndent="13.34"><Lbl>5.</Lbl>
 <LBody><Span>Lorem ipsum dolor sit amet,consectetur adipiscing elit.Pellentesque a lectus sit amet lectus
 accumsan aliquam.Quisque facilisis ullamcorper dolor, quis gravida leo faucibus in. Donec a
 dolor ligula, quis placerat nunc. Etiam enim velit, egestas in lacinia at, ultricies eu massa.Cras

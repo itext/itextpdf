@@ -1,16 +1,17 @@
 /*
- * $Id: PdfStamperImp.java 6045 2013-10-29 11:39:04Z blowagie $
+ * $Id: PdfStamperImp.java 6224 2014-02-09 22:35:42Z rafhens $
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2013 1T3XT BVBA
+ * Copyright (c) 1998-2014 iText Group NV
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License version 3
  * as published by the Free Software Foundation with the addition of the
  * following permission added to Section 15 as permitted in Section 7(a):
- * FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY 1T3XT,
- * 1T3XT DISCLAIMS THE WARRANTY OF NON INFRINGEMENT OF THIRD PARTY RIGHTS.
+ * FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY
+ * ITEXT GROUP. ITEXT GROUP DISCLAIMS THE WARRANTY OF NON INFRINGEMENT
+ * OF THIRD PARTY RIGHTS
  *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
@@ -43,6 +44,28 @@
  */
 package com.itextpdf.text.pdf;
 
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.ExceptionConverter;
+import com.itextpdf.text.Image;
+import com.itextpdf.text.Rectangle;
+import com.itextpdf.text.Version;
+import com.itextpdf.text.error_messages.MessageLocalization;
+import com.itextpdf.text.exceptions.BadPasswordException;
+import com.itextpdf.text.log.Counter;
+import com.itextpdf.text.log.CounterFactory;
+import com.itextpdf.text.pdf.AcroFields.Item;
+import com.itextpdf.text.pdf.collection.PdfCollection;
+import com.itextpdf.text.pdf.interfaces.PdfViewerPreferences;
+import com.itextpdf.text.pdf.internal.PdfIsoKeys;
+import com.itextpdf.text.pdf.internal.PdfViewerPreferencesImp;
+import com.itextpdf.text.xml.xmp.PdfProperties;
+import com.itextpdf.text.xml.xmp.XmpBasicProperties;
+import com.itextpdf.text.xml.xmp.XmpWriter;
+import com.itextpdf.xmp.XMPException;
+import com.itextpdf.xmp.XMPMeta;
+import com.itextpdf.xmp.XMPMetaFactory;
+import com.itextpdf.xmp.options.SerializeOptions;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -51,29 +74,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
-
-import com.itextpdf.text.log.Counter;
-import com.itextpdf.text.log.CounterFactory;
-import com.itextpdf.text.pdf.internal.PdfIsoKeys;
-import com.itextpdf.text.xml.xmp.PdfProperties;
-import com.itextpdf.text.xml.xmp.XmpBasicProperties;
-import com.itextpdf.xmp.XMPException;
-
-import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.ExceptionConverter;
-import com.itextpdf.text.Image;
-import com.itextpdf.text.Rectangle;
-import com.itextpdf.text.Version;
-import com.itextpdf.text.error_messages.MessageLocalization;
-import com.itextpdf.text.exceptions.BadPasswordException;
-import com.itextpdf.text.pdf.AcroFields.Item;
-import com.itextpdf.text.pdf.collection.PdfCollection;
-import com.itextpdf.text.pdf.interfaces.PdfViewerPreferences;
-import com.itextpdf.text.pdf.internal.PdfViewerPreferencesImp;
-import com.itextpdf.text.xml.xmp.XmpWriter;
-import com.itextpdf.xmp.XMPMeta;
-import com.itextpdf.xmp.XMPMetaFactory;
-import com.itextpdf.xmp.options.SerializeOptions;
 
 class PdfStamperImp extends PdfWriter {
     HashMap<PdfReader, IntHashtable> readers2intrefs = new HashMap<PdfReader, IntHashtable>();
@@ -225,8 +225,9 @@ class PdfStamperImp extends PdfWriter {
         if (openAction != null) {
             catalog.put(PdfName.OPENACTION, openAction);
         }
-        if (pdf.pageLabels != null)
+        if (pdf.pageLabels != null) {
             catalog.put(PdfName.PAGELABELS, pdf.pageLabels.getDictionary(this));
+        }
         // OCG
         if (!documentOCG.isEmpty()) {
         	fillOCProperties(false);
@@ -250,26 +251,26 @@ class PdfStamperImp extends PdfWriter {
         }
         // metadata
         int skipInfo = -1;
-        PdfObject oInfo = reader.getTrailer().get(PdfName.INFO);
-        PRIndirectReference iInfo = null;
-        PdfDictionary oldInfo = null;
-        if (oInfo instanceof PRIndirectReference)
-            iInfo = (PRIndirectReference)oInfo;
-        if (iInfo != null)
-            oldInfo = (PdfDictionary)PdfReader.getPdfObject(iInfo);
-        else if (oInfo instanceof PdfDictionary)
-            oldInfo = (PdfDictionary)oInfo;
-        String producer = null;
-        if (iInfo != null)
+        PdfIndirectReference iInfo = reader.getTrailer().getAsIndirectObject(PdfName.INFO);
+        if (iInfo != null) {
             skipInfo = iInfo.getNumber();
-        if (oldInfo != null && oldInfo.get(PdfName.PRODUCER) != null)
-        	producer = oldInfo.getAsString(PdfName.PRODUCER).toUnicodeString();
+        }
+        PdfDictionary oldInfo = reader.getTrailer().getAsDict(PdfName.INFO);
+        String producer = null;
+        if (oldInfo != null && oldInfo.get(PdfName.PRODUCER) != null) {
+            producer = oldInfo.getAsString(PdfName.PRODUCER).toUnicodeString();
+        }
         Version version = Version.getInstance();
-        if (producer == null) {
+        if (producer == null || version.getVersion().indexOf(version.getProduct()) == -1) {
         	producer = version.getVersion();
         }
-        else if (producer.indexOf(version.getProduct()) == -1) {
-        	StringBuffer buf = new StringBuffer(producer);
+        else {
+            int idx = producer.indexOf("; modified using");
+            StringBuffer buf;
+            if (idx == -1)
+                buf = new StringBuffer(producer);
+            else
+                buf = new StringBuffer(producer.substring(0, idx));
         	buf.append("; modified using ");
         	buf.append(version.getVersion());
         	producer = buf.toString();
@@ -298,12 +299,12 @@ class PdfStamperImp extends PdfWriter {
         newInfo.put(PdfName.MODDATE, date);
         newInfo.put(PdfName.PRODUCER, new PdfString(producer, PdfObject.TEXT_UNICODE));
         if (append) {
-            if (iInfo == null)
+            if (iInfo == null) {
                 info = addToBody(newInfo, false).getIndirectReference();
-            else
+            } else {
                 info = addToBody(newInfo, iInfo.getNumber(), false).getIndirectReference();
-        }
-        else {
+            }
+        } else {
             info = addToBody(newInfo, false).getIndirectReference();
         }
         // XMP

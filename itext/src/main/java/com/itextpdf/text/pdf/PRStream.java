@@ -1,16 +1,17 @@
 /*
- * $Id: PRStream.java 5914 2013-07-28 14:18:11Z blowagie $
+ * $Id: PRStream.java 6227 2014-02-11 01:14:12Z rafhens $
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2013 1T3XT BVBA
+ * Copyright (c) 1998-2014 iText Group NV
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License version 3
  * as published by the Free Software Foundation with the addition of the
  * following permission added to Section 15 as permitted in Section 7(a):
- * FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY 1T3XT,
- * 1T3XT DISCLAIMS THE WARRANTY OF NON INFRINGEMENT OF THIRD PARTY RIGHTS.
+ * FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY
+ * ITEXT GROUP. ITEXT GROUP DISCLAIMS THE WARRANTY OF NON INFRINGEMENT
+ * OF THIRD PARTY RIGHTS
  *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
@@ -167,6 +168,20 @@ public class PRStream extends PdfStream {
         }
         else
             bytes = data;
+        setLength(bytes.length);
+    }
+    
+    /**
+     * Sets the data associated with the stream, as-is.  This method will not
+     * remove or change any existing filter: the data has to match an existing
+     * filter or an appropriate filter has to be set.
+     * 
+     * @param data data, possibly encrypted and/or compressed
+     * @since 5.5.0
+     */
+    public void setDataRaw(byte[] data) {
+        this.offset = -1;
+        bytes = data;
         setLength(bytes.length);
     }
     

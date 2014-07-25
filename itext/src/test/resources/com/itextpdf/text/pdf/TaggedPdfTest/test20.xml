@@ -1,18 +1,12 @@
-<Document>
-
-
-
-
-
-<P color="[1, 0, 0]"><Span>Hello   world
+<Document><P o="/Layout" color="[1, 0, 0]"><Span>Hello   world
 </Span>
 </P>
 <Span>Hello word</Span>
-<P color="[1, 0, 0]"><Span>Hello   world</Span>
+<P o="/Layout" color="[1, 0, 0]"><Span>Hello   world</Span>
 </P>
-<P color="[0, 1, 0]"><Span>Hello   world</Span>
+<P o="/Layout" color="[0, 1, 0]"><Span>Hello   world</Span>
 </P>
-<Figure>Hello   world</Figure>
-<Figure>Hello   world</Figure>
-<Figure>Hello   world</Figure>
+<Figure bBox="[0, 0, 595, 842]" width="595" o="/Layout" height="842">Hello   world</Figure>
+<Figure bBox="[0, 0, 595, 842]" width="595" o="/Layout" height="842">Hello   world</Figure>
+<Figure bBox="[0, 0, 595, 842]" width="595" o="/Layout" height="842">Hello   world</Figure>
 </Document>
