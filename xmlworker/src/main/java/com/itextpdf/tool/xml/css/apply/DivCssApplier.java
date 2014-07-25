@@ -86,13 +86,14 @@ public class DivCssApplier {
             widthValue = t.getAttributes().get(HTML.Attribute.WIDTH);
         }
         if (widthValue != null) {
+            float pageWidth = psc.getPageSize().getWidth();
             if (utils.isNumericValue(widthValue) || utils.isMetricValue(widthValue)) {
-				div.setWidth(utils.parsePxInCmMmPcToPt(widthValue));
+				div.setWidth(Math.min(pageWidth, utils.parsePxInCmMmPcToPt(widthValue)));
             } else if (utils.isRelativeValue(widthValue)) {
                 if (widthValue.contains(CSS.Value.PERCENTAGE)) {
                     div.setPercentageWidth(utils.parseRelativeValue(widthValue, 1f));
                 } else {
-                    div.setWidth(utils.parseRelativeValue(widthValue, fontSize));
+                    div.setWidth(Math.min(pageWidth, utils.parseRelativeValue(widthValue, fontSize)));
                 }
             }
         }

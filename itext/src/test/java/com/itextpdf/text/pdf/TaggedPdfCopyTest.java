@@ -56,6 +56,12 @@ public class TaggedPdfCopyTest {
     public static final String SOURCE72 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/pdf/source72.pdf";
     public static final String SOURCE73 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/pdf/source73.pdf";
     public static final String DEV_805 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/pdf/dev-805.pdf";
+    public static final String SOURCE_CF_11 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/pdf/sourceCf11.pdf";
+    public static final String SOURCE_CF_12 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/pdf/sourceCf12.pdf";
+    public static final String SOURCE_CF_13 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/pdf/sourceCf13.pdf";
+    public static final String SOURCE_CF_14 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/pdf/sourceCf14.pdf";
+    public static final String SOURCE_CF_15 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/pdf/sourceCf15.pdf";
+    public static final String SOURCE_CF_16 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/pdf/sourceCf16.pdf";
 
     public static final String OUT = "./target/com/itextpdf/test/pdf/TaggedPdfCopyTest/out";
 
@@ -647,15 +653,8 @@ public class TaggedPdfCopyTest {
         Assert.assertEquals(1, nums.getAsNumber(2).intValue());
         Assert.assertEquals(4, nums.getAsNumber(8).intValue());
 
-        Assert.assertEquals(acroForm.getAsArray(PdfName.FIELDS).getAsIndirectObject(0).getNumber(), nums.getAsDict(3).getAsDict(PdfName.K).getAsIndirectObject(PdfName.OBJ).getNumber());
-        Assert.assertEquals(acroForm.getAsArray(PdfName.FIELDS).getAsIndirectObject(2).getNumber(), nums.getAsDict(9).getAsDict(PdfName.K).getAsIndirectObject(PdfName.OBJ).getNumber());
-        Assert.assertEquals(acroForm.getAsArray(PdfName.FIELDS).getAsDict(1).getAsArray(PdfName.KIDS).getAsIndirectObject(0).getNumber(), nums.getAsDict(5).getAsDict(PdfName.K).getAsIndirectObject(PdfName.OBJ).getNumber());
-        Assert.assertEquals(acroForm.getAsArray(PdfName.FIELDS).getAsDict(1).getAsArray(PdfName.KIDS).getAsIndirectObject(1).getNumber(), nums.getAsDict(11).getAsDict(PdfName.K).getAsIndirectObject(PdfName.OBJ).getNumber());
-
-        Assert.assertEquals(1, acroForm.getAsArray(PdfName.FIELDS).getAsDict(0).getAsNumber(PdfName.STRUCTPARENT).intValue());
-        Assert.assertEquals(2, acroForm.getAsArray(PdfName.FIELDS).getAsDict(1).getAsArray(PdfName.KIDS).getAsDict(0).getAsNumber(PdfName.STRUCTPARENT).intValue());
-        Assert.assertEquals(4, acroForm.getAsArray(PdfName.FIELDS).getAsDict(2).getAsNumber(PdfName.STRUCTPARENT).intValue());
-        Assert.assertEquals(5, acroForm.getAsArray(PdfName.FIELDS).getAsDict(1).getAsArray(PdfName.KIDS).getAsDict(1).getAsNumber(PdfName.STRUCTPARENT).intValue());
+        Assert.assertEquals(nums.size(), 12);
+        Assert.assertEquals(acroForm.getAsArray(PdfName.FIELDS).size(), 3);
 
         reader.close();
     }
@@ -808,6 +807,86 @@ public class TaggedPdfCopyTest {
         copy.freeReader(reader);
         document.close();
         reader.close();
+    }
+
+    @Test
+    public void copyFields1Test() throws DocumentException, IOException, InterruptedException, ParserConfigurationException, SAXException {
+        initializeDocument("CopyFields1");
+        copy.setMergeFields();
+
+        PdfReader readerMain = new PdfReader(SOURCE_CF_14);
+        PdfReader secondSourceReader = new PdfReader(SOURCE_CF_15);
+        //PdfReader thirdReader = new PdfReader("./src/test/resources/com/itextpdf/text/pdf/PdfCopyTest/appearances1.pdf");
+
+        copy.addDocument(readerMain);
+        copy.copyDocumentFields(secondSourceReader);
+        //copy.addDocument(thirdReader);
+
+        copy.close();
+        readerMain.close();
+        secondSourceReader.close();
+        //thirdReader.close();
+        /*CompareTool compareTool = new CompareTool("./target/com/itextpdf/test/pdf/PdfCopyTest/copyFields.pdf", "./src/test/resources/com/itextpdf/text/pdf/PdfCopyTest/cmp_copyFields.pdf");
+        String errorMessage = compareTool.compareByContent("./target/com/itextpdf/test/pdf/PdfCopyTest/", "diff");
+        if (errorMessage != null) {
+            junit.framework.Assert.fail(errorMessage);
+        }*/
+
+        compareResults("CopyFields1");
+    }
+
+    @Test
+    public void copyFields2Test() throws DocumentException, IOException, InterruptedException, ParserConfigurationException, SAXException {
+        initializeDocument("CopyFields2");
+        copy.setMergeFields();
+
+        PdfReader readerMain = new PdfReader(SOURCE_CF_11);
+        PdfReader secondSourceReader = new PdfReader(SOURCE_CF_14);
+
+        copy.addDocument(readerMain);
+        copy.copyDocumentFields(secondSourceReader);
+
+        copy.close();
+        readerMain.close();
+        secondSourceReader.close();
+
+        compareResults("CopyFields2");
+    }
+
+    @Test
+    public void copyFields3Test() throws DocumentException, IOException, InterruptedException, ParserConfigurationException, SAXException {
+        initializeDocument("CopyFields3");
+        copy.setMergeFields();
+
+        PdfReader readerMain = new PdfReader(SOURCE_CF_12);
+        PdfReader secondSourceReader = new PdfReader(SOURCE_CF_11);
+
+        copy.addDocument(readerMain);
+        copy.copyDocumentFields(secondSourceReader);
+
+        copy.close();
+        readerMain.close();
+        secondSourceReader.close();
+
+        compareResults("CopyFields3");
+    }
+
+    @Test
+    public void copyFields4Test() throws Exception {
+        initializeDocument("CopyFields4");
+        copy.setMergeFields();
+
+        PdfReader readerMain = new PdfReader(SOURCE_CF_13);
+        PdfReader secondSourceReader = new PdfReader(SOURCE_CF_16);
+
+        copy.addDocument(readerMain);
+        copy.copyDocumentFields(secondSourceReader);
+
+        copy.close();
+        readerMain.close();
+        secondSourceReader.close();
+
+        compareResults("CopyFields4");
     }
 
     @After

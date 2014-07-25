@@ -17,14 +17,11 @@ import com.itextpdf.tool.xml.pipeline.css.CssResolverPipeline;
 import com.itextpdf.tool.xml.pipeline.end.PdfWriterPipeline;
 import com.itextpdf.tool.xml.pipeline.html.HtmlPipeline;
 import com.itextpdf.tool.xml.pipeline.html.HtmlPipelineContext;
-import org.junit.Ignore;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.nio.charset.Charset;
 
-@Ignore
 public class ComplexDiv02Test extends SampleTest{
     protected String getTestName() {
         return "complexDiv02";
@@ -39,8 +36,8 @@ public class ComplexDiv02Test extends SampleTest{
 
 
         CssFilesImpl cssFiles = new CssFilesImpl();
-        cssFiles.add(XMLWorkerHelper.getCSS(new FileInputStream(String.format("./src/test/resources/%s%s/complexDiv02_files/minimum0.css", testPath, getTestName()))));
-        cssFiles.add(XMLWorkerHelper.getCSS(new FileInputStream(String.format("./src/test/resources/%s%s/complexDiv02_files/print000.css", testPath, getTestName()))));
+        cssFiles.add(XMLWorkerHelper.getCSS(new FileInputStream(String.format("./src/test/resources/%s/%s/complexDiv02_files/minimum0.css", testPath, getTestName()))));
+        cssFiles.add(XMLWorkerHelper.getCSS(new FileInputStream(String.format("./src/test/resources/%s/%s/complexDiv02_files/print000.css", testPath, getTestName()))));
         cssFiles.add(XMLWorkerHelper.getCSS(SampleTest.class.getResourceAsStream("sampleTest.css")));
         StyleAttrCSSResolver cssResolver = new StyleAttrCSSResolver(cssFiles);
         HtmlPipelineContext hpc = new HtmlPipelineContext(new CssAppliersImpl(new XMLWorkerFontProvider(SampleTest.class.getResource("fonts").getPath())));

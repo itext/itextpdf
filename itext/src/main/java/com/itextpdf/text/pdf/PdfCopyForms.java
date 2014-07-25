@@ -60,6 +60,7 @@ import com.itextpdf.text.pdf.interfaces.PdfViewerPreferences;
  * create a new PDF and add the form of another PDF document to
  * this new PDF.
  * @since 2.1.5
+ * @deprecated since 5.5.2
  */
 public class PdfCopyForms
 	implements PdfViewerPreferences, PdfEncryptionSettings {

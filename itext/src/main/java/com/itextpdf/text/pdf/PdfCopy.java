@@ -115,7 +115,7 @@ public class PdfCopy extends PdfWriter {
     //for correct update of kids in StructTreeRootController
     protected boolean updateRootKids = false;
 
-    static private PdfName annotId = new PdfName("iTextAnnotId");
+    static private final PdfName annotId = new PdfName("iTextAnnotId");
     static private int annotIdCnt = 0;
 
     protected boolean mergeFields = false;
@@ -138,11 +138,13 @@ public class PdfCopy extends PdfWriter {
     private HashSet<Object> mergedRadioButtons = new HashSet<Object>();
     private HashMap<Object, PdfObject> mergedTextFields = new HashMap<Object, PdfObject>();
 
+    private HashSet<PdfReader> readersWithImportedStructureTreeRootKids = new HashSet<PdfReader>();
 
     protected static class ImportedPage {
         int pageNumber;
         PdfReader reader;
         PdfArray mergedFields;
+        PdfIndirectReference annotsIndirectReference;
 
         ImportedPage(PdfReader reader, int pageNumber, boolean keepFields) {
             this.pageNumber = pageNumber;
@@ -319,9 +321,18 @@ public class PdfCopy extends PdfWriter {
         ImportedPage lastPage = importedPages.get(importedPages.size() - 1);
         boolean equalReader = lastPage.reader.equals(newPage.reader);
         //reader exist, correct order;
-        if (equalReader && newPage.pageNumber > lastPage.pageNumber) return 0;
+        if (equalReader && newPage.pageNumber > lastPage.pageNumber) {
+            if (readersWithImportedStructureTreeRootKids.contains(newPage.reader))
+                return 0;
+            else
+                return 1;
+        }
         //reader exist, incorrect order;
         return -1;
+    }
+
+    protected void structureTreeRootKidsForReaderImported(PdfReader reader) {
+        readersWithImportedStructureTreeRootKids.add(reader);
     }
 
     protected void fixStructureTreeRoot(HashSet<RefKey> activeKeys, HashSet<PdfName> activeClassMaps) {
@@ -650,6 +661,11 @@ public class PdfCopy extends PdfWriter {
         if (tagged)
             structTreeRootReference = (PRIndirectReference)reader.getCatalog().get(PdfName.STRUCTTREEROOT);
         PdfDictionary newPage = copyDictionary(thePage);
+        if (mergeFields) {
+            ImportedPage importedPage = importedPages.get(importedPages.size() - 1);
+            importedPage.annotsIndirectReference = body.getPdfIndirectReference();
+            newPage.put(PdfName.ANNOTS, importedPage.annotsIndirectReference);
+        }
         root.addPage(newPage);
         iPage.setCopied();
         ++currentPageNumber;
@@ -681,6 +697,79 @@ public class PdfCopy extends PdfWriter {
         }
         reader.selectPages(pagesToKeep, false);
         addDocument(reader);
+    }
+
+    /**
+     * Copy document fields to a destination document.
+     * @param reader a document where fields are copied from.
+     * @throws DocumentException
+     * @throws IOException
+     */
+    public void copyDocumentFields(PdfReader reader) throws DocumentException, IOException {
+        if (!document.isOpen()) {
+            throw new DocumentException(MessageLocalization.getComposedMessage("the.document.is.not.open.yet.you.can.only.add.meta.information"));
+        }
+
+        if (indirectMap.containsKey(reader)) {
+            throw new IllegalArgumentException(MessageLocalization.getComposedMessage("document.1.has.already.been.added", reader.toString()));
+        }
+
+        if (!reader.isOpenedWithFullPermissions())
+            throw new BadPasswordException(MessageLocalization.getComposedMessage("pdfreader.not.opened.with.owner.password"));
+
+        if (!mergeFields)
+            throw new IllegalArgumentException(MessageLocalization.getComposedMessage("1.method.can.be.only.used.in.mergeFields.mode.please.use.addDocument", "copyDocumentFields"));
+
+        indirects = new HashMap<RefKey, IndirectReferences>();
+        indirectMap.put(reader, indirects);
+
+        reader.consolidateNamedDestinations();
+        reader.shuffleSubsetNames();
+        if (tagged && PdfStructTreeController.checkTagged(reader)) {
+            structTreeRootReference = (PRIndirectReference)reader.getCatalog().get(PdfName.STRUCTTREEROOT);
+            if (structTreeController != null) {
+                if (reader != structTreeController.reader)
+                    structTreeController.setReader(reader);
+            } else {
+                structTreeController = new PdfStructTreeController(reader, this);
+            }
+        }
+
+        List<PdfObject> annotationsToBeCopied = new ArrayList<PdfObject>();
+
+        for (int i = 1; i <= reader.getNumberOfPages(); i++) {
+            PdfDictionary page = reader.getPageNRelease(i);
+            if (page != null && page.contains(PdfName.ANNOTS)) {
+                PdfArray annots = page.getAsArray(PdfName.ANNOTS);
+                if (annots != null && annots.size() > 0) {
+                    if (importedPages.size() < i)
+                        throw new DocumentException(MessageLocalization.getComposedMessage("there.are.not.enough.imported.pages.for.copied.fields"));
+                    indirectMap.get(reader).put(new RefKey(reader.pageRefs.getPageOrigRef(i)), new IndirectReferences(pageReferences.get(i - 1)));
+                    for (int j = 0; j < annots.size(); j++) {
+                        PdfDictionary annot = annots.getAsDict(j);
+                        if (annot != null) {
+                            annot.put(annotId, new PdfNumber(++annotIdCnt));
+                            annotationsToBeCopied.add(annots.getPdfObject(j));
+                        }
+                    }
+                }
+            }
+        }
+
+        for (PdfObject annot : annotationsToBeCopied) {
+            copyObject(annot);
+        }
+
+        if (tagged && structTreeController != null)
+            structTreeController.attachStructTreeRootKids(null);
+
+        AcroFields acro = reader.getAcroFields();
+        boolean needapp = !acro.isGenerateAppearances();
+        if (needapp)
+            needAppearances = true;
+        fields.add(acro);
+        updateCalculationOrder(reader);
+        structTreeRootReference = null;
     }
 
     public void addDocument(PdfReader reader) throws DocumentException, IOException {
@@ -763,14 +852,12 @@ public class PdfCopy extends PdfWriter {
     }
 
     @Override
-    public PdfIndirectObject addToBody(final PdfObject object) throws IOException {
-        PdfIndirectObject iobj = super.addToBody(object);
+    protected void cacheObject(PdfIndirectObject iobj) {
         if ((tagged || mergeFields) && indirectObjects != null) {
             savedObjects.add(iobj);
             RefKey key = new RefKey(iobj.number, iobj.generation);
             if (!indirectObjects.containsKey(key)) indirectObjects.put(key, iobj);
         }
-        return iobj;
     }
 
     @Override
@@ -1187,9 +1274,11 @@ public class PdfCopy extends PdfWriter {
         for (int k = 0; k < fields.size(); ++k) {
             AcroFields af = fields.get(k);
             Map<String, AcroFields.Item> fd = af.getFields();
-            addPageOffsetToField(fd, pageOffset);
+            if (pageOffset < importedPages.size() && importedPages.get(pageOffset).reader == af.reader) {
+                addPageOffsetToField(fd, pageOffset);
+                pageOffset += af.reader.getNumberOfPages();
+            }
             mergeWithMaster(fd);
-            pageOffset += af.reader.getNumberOfPages();
         }
     }
 
@@ -1346,6 +1435,9 @@ public class PdfCopy extends PdfWriter {
         if (co.size() > 0)
             form.put(PdfName.CO, co);
         this.acroForm = addToBody(form).getIndirectReference();
+        for (ImportedPage importedPage : importedPages) {
+            addToBody(importedPage.mergedFields, importedPage.annotsIndirectReference);
+        }
     }
 
     private void updateReferences(PdfObject obj) {
@@ -1576,7 +1668,7 @@ public class PdfCopy extends PdfWriter {
         if (open) {
             pdf.close();
             super.close();
-// Users are responsible for closing PdfReaderw            
+// Users are responsible for closing PdfReader
 //            if (ri != null) {
 //                try {
 //                    ri.getReader().close();
@@ -1588,14 +1680,19 @@ public class PdfCopy extends PdfWriter {
 //            }
         }
     }
+
     public PdfIndirectReference add(PdfOutline outline) { return null; }
+
     @Override
     public void addAnnotation(PdfAnnotation annot) {  }
+
     @Override
     PdfIndirectReference add(PdfPage page, PdfContents contents) throws PdfException { return null; }
 
     @Override
     public void freeReader(PdfReader reader) throws IOException {
+        if (mergeFields)
+            throw new UnsupportedOperationException(MessageLocalization.getComposedMessage("it.is.not.possible.to.free.reader.in.merge.fields.mode"));
     	PdfArray array = reader.trailer.getAsArray(PdfName.ID);
     	if (array != null)
     		originalFileID = array.getAsString(0).getBytes();
@@ -1712,6 +1809,8 @@ public class PdfCopy extends PdfWriter {
     public PageStamp createPageStamp(PdfImportedPage iPage) {
         int pageNum = iPage.getPageNumber();
         PdfReader reader = iPage.getPdfReaderInstance().getReader();
+        if (isTagged())
+            throw new RuntimeException(MessageLocalization.getComposedMessage("creating.page.stamp.not.allowed.for.tagged.reader"));
         PdfDictionary pageN = reader.getPageN(pageNum);
         return new PageStamp(reader, pageN, this);
     }

@@ -83,7 +83,7 @@ public class SampleTest extends ITextTest {
     protected void comparePdf(String outPdf, String cmpPdf) throws Exception {
         if (!detectCrashesAndHangUpsOnly()) {
             CompareTool compareTool = new CompareTool(outPdf, cmpPdf);
-            String errorMessage = compareTool.compare(outPath, differenceImagePrefix);
+            String errorMessage = compareTool.compareByContent(outPath, differenceImagePrefix);
             if (errorMessage != null) {
                 Assert.fail(errorMessage);
             }

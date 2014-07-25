@@ -133,6 +133,11 @@ public class
     public static final PdfName AESV3 = new PdfName("AESV3");
     /**
      * A name
+     * @since 5.5.2
+     */
+    public static final PdfName AF = new PdfName("AF");
+    /**
+     * A name
      * @since 5.4.5
      */
     public static final PdfName AFRELATIONSHIP = new PdfName("AFRelationship");
@@ -1381,7 +1386,7 @@ public class
     /** A name */
     public static final PdfName OFF = new PdfName("OFF");
     /** A name */
-    public static final PdfName ON = new PdfName("on");
+    public static final PdfName ON = new PdfName("ON");
     /** A name */
     public static final PdfName ONECOLUMN = new PdfName("OneColumn");
     /** A name */

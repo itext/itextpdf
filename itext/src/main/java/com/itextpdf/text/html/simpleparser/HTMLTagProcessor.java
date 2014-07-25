@@ -51,8 +51,9 @@ import com.itextpdf.text.DocumentException;
 
 /**
  * Interface that needs to be implemented by every tag that is supported by HTMLWorker.
- * @deprecated
+ * @deprecated since 5.5.2
  */
+@Deprecated
 public interface HTMLTagProcessor {
 	
 	/**

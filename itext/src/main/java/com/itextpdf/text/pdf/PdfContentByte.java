@@ -2549,6 +2549,45 @@ public class PdfContentByte {
     }
 
     /**
+     * Adds a form XObject to this content.
+     *
+     * @param formXObj the form XObject
+     * @param name the name of form XObject in content stream
+     * @param a an element of the transformation matrix
+     * @param b an element of the transformation matrix
+     * @param c an element of the transformation matrix
+     * @param d an element of the transformation matrix
+     * @param e an element of the transformation matrix
+     * @param f an element of the transformation matrix
+     */
+    public void addFormXObj(final PdfStream formXObj, final PdfName name, final float a, final float b, final float c, final float d, final float e, final float f) throws IOException {
+        checkWriter();
+        PdfWriter.checkPdfIsoConformance(writer, PdfIsoKeys.PDFISOKEY_STREAM, formXObj);
+        PageResources prs = getPageResources();
+        prs.addXObject(name, writer.addToBody(formXObj).getIndirectReference());
+        PdfArtifact artifact = null;
+        if (isTagged()) {
+            if (inText)
+                endText();
+            artifact = new PdfArtifact();
+            openMCBlock(artifact);
+        }
+
+        content.append("q ");
+        content.append(a).append(' ');
+        content.append(b).append(' ');
+        content.append(c).append(' ');
+        content.append(d).append(' ');
+        content.append(e).append(' ');
+        content.append(f).append(" cm ");
+        content.append(name.getBytes()).append(" Do Q").append_i(separator);
+
+        if (isTagged()) {
+            closeMCBlock(artifact);
+        }
+    }
+
+    /**
      * adds a template with the given matrix.
      * @param template template to add
      * @param transform transform to apply to the template prior to adding it.

@@ -109,8 +109,7 @@ public class XMLWorkerHelper {
                         cssFileProcessor.process(buffer[i]);
                     }
                 }
-                cssFile = new CSSFileWrapper(cssFileProcessor.getCss(),
-                        true);
+                cssFile = new CSSFileWrapper(cssFileProcessor.getCss(), true);
             } catch (final IOException e) { throw new RuntimeWorkerException(e); }
             finally
             { try { in.close(); } catch (final IOException e) { throw new RuntimeWorkerException(e); } }

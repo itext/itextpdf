@@ -54,7 +54,9 @@ import com.itextpdf.text.Image;
  * to indicate if the image needs to be added or
  * skipped.
  * @since 5.0.6 (renamed)
+ * @deprecated since 5.5.2
  */
+@Deprecated
 public interface ImageProcessor {
     /**
      * Allows you to (pre)process the image before (or instead of)

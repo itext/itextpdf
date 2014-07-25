@@ -73,7 +73,9 @@ import com.itextpdf.text.pdf.draw.LineSeparator;
  * @author blowagie
  * @author psoares
  * @since 5.0.6 (renamed)
+ * @deprecated since 5.5.2
  */
+@Deprecated
 public class ElementFactory {
 
 

@@ -186,19 +186,7 @@ public class PdfStructTreeController {
                             structureTreeRoot.setPageMark(newArrayNumber, (PdfIndirectReference) res);
                         }
                     }
-                    //Add kid to structureTreeRoot from structTreeRoot
-                    PdfObject structKids = structTreeRoot.get(PdfName.K);
-                    if (structKids == null || (!structKids.isArray() && !structKids.isIndirect())) {
-                        // incorrect syntax of tags
-                        addKid(structureTreeRoot, firstNotNullKid);
-                    } else {
-                        if (structKids.isIndirect()) {
-                            addKid(structKids);
-                        } else { //structKids.isArray()
-                            for (PdfObject kid: (PdfArray)structKids)
-                                addKid(kid);
-                        }
-                    }
+                    attachStructTreeRootKids(firstNotNullKid);
                 } else if (obj.isDictionary()) {
                     PdfDictionary k = getKDict((PdfDictionary)obj);
                     if (k == null)
@@ -223,6 +211,24 @@ public class PdfStructTreeController {
             if (cur == 0)
                 return returnType.NOTFOUND;
             cur /= 2;
+        }
+    }
+
+    /**
+     * Add kid to structureTreeRoot from structTreeRoot
+     */
+    protected void attachStructTreeRootKids(PdfObject firstNotNullKid) throws IOException, BadPdfFormatException {
+        PdfObject structKids = structTreeRoot.get(PdfName.K);
+        if (structKids == null || (!structKids.isArray() && !structKids.isIndirect())) {
+            // incorrect syntax of tags
+            addKid(structureTreeRoot, firstNotNullKid);
+        } else {
+            if (structKids.isIndirect()) {
+                addKid(structKids);
+            } else { //structKids.isArray()
+                for (PdfObject kid: (PdfArray)structKids)
+                    addKid(kid);
+            }
         }
     }
 
@@ -259,6 +265,7 @@ public class PdfStructTreeController {
 
         if (writer.updateRootKids) {
             addKid(structureTreeRoot, newKid);
+            writer.structureTreeRootKidsForReaderImported(reader);
         }
     }
 

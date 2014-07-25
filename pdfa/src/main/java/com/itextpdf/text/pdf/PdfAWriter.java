@@ -157,13 +157,6 @@ public class PdfAWriter extends PdfWriter {
     }
 
     /**
-     * @see com.itextpdf.text.pdf.PdfWriter#isPdfIso()
-     */
-    public boolean isPdfIso() {
-        return pdfIsoConformance.isPdfIso();
-    }
-
-    /**
      * @param conformanceLevel PDF/A conformance level of a new PDF document
      */
     protected PdfAWriter(PdfAConformanceLevel conformanceLevel) {
@@ -189,6 +182,7 @@ public class PdfAWriter extends PdfWriter {
     /**
      * @see com.itextpdf.text.pdf.PdfWriter#getTtfUnicodeWriter()
      */
+    @Override
     protected TtfUnicodeWriter getTtfUnicodeWriter() {
         if (ttfUnicodeWriter == null)
             ttfUnicodeWriter = new PdfATtfUnicodeWriter(this, ((PdfAConformance)pdfIsoConformance).getConformanceLevel());
@@ -219,46 +213,8 @@ public class PdfAWriter extends PdfWriter {
 	}
 
     @Override
-    public PdfIndirectObject addToBody(PdfObject object) throws IOException {
-        PdfIndirectObject iobj = super.addToBody(object);
+    protected void cacheObject(PdfIndirectObject iobj) {
         getPdfAChecker().cacheObject(iobj.getIndirectReference(), iobj.object);
-        return iobj;
-    }
-
-    @Override
-    public PdfIndirectObject addToBody(PdfObject object, boolean inObjStm) throws IOException {
-        PdfIndirectObject iobj =  super.addToBody(object, inObjStm);
-        getPdfAChecker().cacheObject(iobj.getIndirectReference(), iobj.object);
-        return iobj;
-    }
-
-    @Override
-    public PdfIndirectObject addToBody(PdfObject object, PdfIndirectReference ref, boolean inObjStm)
-            throws IOException {
-        PdfIndirectObject iobj = super.addToBody(object, ref, inObjStm);
-        getPdfAChecker().cacheObject(iobj.getIndirectReference(), iobj.object);
-        return iobj;
-    }
-
-    @Override
-    public PdfIndirectObject addToBody(PdfObject object, PdfIndirectReference ref) throws IOException {
-        PdfIndirectObject iobj = super.addToBody(object, ref);
-        getPdfAChecker().cacheObject(iobj.getIndirectReference(), iobj.object);
-        return iobj;
-    }
-
-    @Override
-    public PdfIndirectObject addToBody(PdfObject object, int refNumber) throws IOException {
-        PdfIndirectObject iobj = super.addToBody(object, refNumber);
-        getPdfAChecker().cacheObject(iobj.getIndirectReference(), iobj.object);
-        return iobj;
-    }
-
-    @Override
-    public PdfIndirectObject addToBody(PdfObject object, int refNumber, boolean inObjStm) throws IOException {
-        PdfIndirectObject iobj = super.addToBody(object, refNumber, inObjStm);
-        getPdfAChecker().cacheObject(iobj.getIndirectReference(), iobj.object);
-        return iobj;
     }
 
     private PdfAChecker getPdfAChecker() {
@@ -275,13 +231,14 @@ public class PdfAWriter extends PdfWriter {
      * @param fileDisplay the actual file name stored in the pdf
      * @param mimeType mime type of the file
      * @param afRelationshipValue AFRelationship key value, @see AFRelationshipValue. If <CODE>null</CODE>, @see AFRelationshipValue.Unspecified will be added.
-     *
+     * @param fileParameter the optional extra file parameters such as the creation or modification date 
+     * @return the file specification
      * @throws IOException on error
      */
-    public void addFileAttachment(String description, byte[] fileStore, String file, String fileDisplay,
-                                  String mimeType, PdfName afRelationshipValue) throws IOException {
+    public PdfFileSpecification addFileAttachment(String description, byte[] fileStore, String file, String fileDisplay,
+                                  String mimeType, PdfName afRelationshipValue, PdfDictionary fileParameter) throws IOException {
         PdfFileSpecification pdfFileSpecification = PdfFileSpecification.fileEmbedded(this, file, fileDisplay,
-                fileStore, mimeType, null, PdfStream.BEST_COMPRESSION);
+                fileStore, mimeType, fileParameter, PdfStream.BEST_COMPRESSION);
 
         if (afRelationshipValue != null)
             pdfFileSpecification.put(PdfName.AFRELATIONSHIP, afRelationshipValue);
@@ -289,6 +246,25 @@ public class PdfAWriter extends PdfWriter {
             pdfFileSpecification.put(PdfName.AFRELATIONSHIP, AFRelationshipValue.Unspecified);
 
         addFileAttachment(description, pdfFileSpecification);
+        return pdfFileSpecification;
+    }
+
+    /**
+     * Use this method to add a file attachment at the document level.
+     * @param description the file description
+     * @param fileStore an array with the file. If it's <CODE>null</CODE>
+     * the file will be read from the disk
+     * @param file the path to the file. It will only be used if
+     * <CODE>fileStore</CODE> is not <CODE>null</CODE>
+     * @param fileDisplay the actual file name stored in the pdf
+     * @param mimeType mime type of the file
+     * @param afRelationshipValue AFRelationship key value, @see AFRelationshipValue. If <CODE>null</CODE>, @see AFRelationshipValue.Unspecified will be added.
+     * @return the file specification
+     * @throws IOException on error
+     */
+    public PdfFileSpecification addFileAttachment(String description, byte[] fileStore, String file, String fileDisplay,
+                                  String mimeType, PdfName afRelationshipValue) throws IOException {
+        return addFileAttachment(description, fileStore, file, fileDisplay, mimeType, afRelationshipValue, null);
     }
 
     /**

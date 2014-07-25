@@ -115,7 +115,7 @@ public class DeviceNColorSpaceTest {
         document.close();
 
         CompareTool compareTool = new CompareTool(dest_file, "./src/test/resources/com/itextpdf/text/pdf/cs/DeviceNColorSpaceTest/cmp_device_n_gradient_base.pdf");
-        String error = compareTool.compare(DEST_FOLDER, "diff_");
+        String error = compareTool.compareByContent(DEST_FOLDER, "diff_");
         if (error != null) {
             Assert.fail(error);
         }
@@ -150,7 +150,7 @@ public class DeviceNColorSpaceTest {
         document.close();
 
         CompareTool compareTool = new CompareTool(dest_file, "./src/test/resources/com/itextpdf/text/pdf/cs/DeviceNColorSpaceTest/cmp_device_n_gradient_CmykRedRgbBlue.pdf");
-        String error = compareTool.compare(DEST_FOLDER, "diff_");
+        String error = compareTool.compareByContent(DEST_FOLDER, "diff_");
         if (error != null) {
             Assert.fail(error);
         }
