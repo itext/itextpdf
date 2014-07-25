@@ -1,18 +1,28 @@
 package com.itextpdf.text.pdf;
 
-import com.itextpdf.text.*;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.error_messages.MessageLocalization;
+import com.itextpdf.text.pdf.parser.TaggedPdfReaderTool;
 
-import com.itextpdf.text.pdf.parser.*;
-import org.junit.*;
-import org.junit.Assert;
-import org.junit.Test;
-import org.xml.sax.SAXException;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import java.io.*;
+
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
+import org.xml.sax.SAXException;
 
 public class TaggedPdfCopyTest {
     Document document;
@@ -614,6 +624,7 @@ public class TaggedPdfCopyTest {
     }
 
     @Test
+    @Ignore
     public void copyTaggedPdf15() throws IOException, DocumentException {
         initializeDocument("15");
         copy.setMergeFields();

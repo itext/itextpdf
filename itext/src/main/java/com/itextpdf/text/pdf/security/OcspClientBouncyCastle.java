@@ -57,21 +57,21 @@ import java.security.Security;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
 
-import org.bouncycastle.asn1.DEROctetString;
-import org.bouncycastle.asn1.ocsp.OCSPObjectIdentifiers;
-import org.bouncycastle.asn1.x509.Extension;
-import org.bouncycastle.asn1.x509.Extensions;
-import org.bouncycastle.cert.jcajce.JcaX509CertificateHolder;
-import org.bouncycastle.cert.ocsp.BasicOCSPResp;
-import org.bouncycastle.cert.ocsp.CertificateID;
-import org.bouncycastle.cert.ocsp.CertificateStatus;
-import org.bouncycastle.cert.ocsp.OCSPException;
-import org.bouncycastle.cert.ocsp.OCSPReq;
-import org.bouncycastle.cert.ocsp.OCSPReqBuilder;
-import org.bouncycastle.cert.ocsp.OCSPResp;
-import org.bouncycastle.cert.ocsp.SingleResp;
-import org.bouncycastle.operator.OperatorException;
-import org.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder;
+import org.spongycastle.asn1.DEROctetString;
+import org.spongycastle.asn1.ocsp.OCSPObjectIdentifiers;
+import org.spongycastle.asn1.x509.Extension;
+import org.spongycastle.asn1.x509.Extensions;
+import org.spongycastle.cert.jcajce.JcaX509CertificateHolder;
+import org.spongycastle.cert.ocsp.BasicOCSPResp;
+import org.spongycastle.cert.ocsp.CertificateID;
+import org.spongycastle.cert.ocsp.CertificateStatus;
+import org.spongycastle.cert.ocsp.OCSPException;
+import org.spongycastle.cert.ocsp.OCSPReq;
+import org.spongycastle.cert.ocsp.OCSPReqBuilder;
+import org.spongycastle.cert.ocsp.OCSPResp;
+import org.spongycastle.cert.ocsp.SingleResp;
+import org.spongycastle.operator.OperatorException;
+import org.spongycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder;
 
 import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.io.StreamUtil;
@@ -101,7 +101,7 @@ public class OcspClientBouncyCastle implements OcspClient {
     private static OCSPReq generateOCSPRequest(X509Certificate issuerCert, BigInteger serialNumber) throws OCSPException, IOException, 
             OperatorException, CertificateEncodingException {
         //Add provider BC
-        Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
+        Security.addProvider(new org.spongycastle.jce.provider.BouncyCastleProvider());
 
         // Generate the id for the certificate we are looking for
         CertificateID id = new CertificateID(
@@ -183,7 +183,7 @@ public class OcspClientBouncyCastle implements OcspClient {
                     if (status == CertificateStatus.GOOD) {
                         return basicResponse.getEncoded();
                     }
-                    else if (status instanceof org.bouncycastle.ocsp.RevokedStatus) {
+                    else if (status instanceof org.spongycastle.ocsp.RevokedStatus) {
                         throw new IOException(MessageLocalization.getComposedMessage("ocsp.status.is.revoked"));
                     }
                     else {
