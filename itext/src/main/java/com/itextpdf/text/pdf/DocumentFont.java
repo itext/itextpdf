@@ -1,5 +1,5 @@
 /*
- * $Id: DocumentFont.java 6337 2014-04-23 09:45:44Z eugenemark $
+ * $Id: DocumentFont.java 6478 2014-07-18 11:54:42Z blowagie $
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2014 iText Group NV
@@ -128,6 +128,14 @@ public class DocumentFont extends BaseFont {
         PdfName subType = font.getAsName(PdfName.SUBTYPE);
         if (PdfName.TYPE1.equals(subType) || PdfName.TRUETYPE.equals(subType))
             doType1TT();
+        else if (PdfName.TYPE3.equals(subType)) {
+            // In case of a Type3 font, we just show the characters as is.
+            // Note that this doesn't always make sense:
+            // Type 3 fonts are user defined fonts where arbitrary characters are mapped to custom glyphs
+            // For instance: the character a could be mapped to an image of a dog, the character b to an image of a cat
+            // When parsing a document that shows a cat and a dog, you shouldn't expect seeing a cat and a dog. Instead you'll get b and a.
+            fillEncoding(null);
+        }
         else {
             PdfName encodingName = font.getAsName(PdfName.ENCODING);
             if (encodingName != null){
@@ -307,7 +315,12 @@ public class DocumentFont extends BaseFont {
         CMapToUnicode toUnicode = null;
         PdfObject enc = PdfReader.getPdfObject(font.get(PdfName.ENCODING));
         if (enc == null) {
-            fillEncoding(null);
+            PdfName baseFont = font.getAsName(PdfName.BASEFONT);
+            if (BuiltinFonts14.containsKey(fontName)
+                    && (PdfName.SYMBOL.equals(baseFont) || PdfName.ZAPFDINGBATS.equals(baseFont))) {
+                fillEncoding(baseFont);
+            } else
+                fillEncoding(null);
             try {
                 toUnicode = processToUnicode();
                 if (toUnicode != null) {
@@ -480,19 +493,25 @@ public class DocumentFont extends BaseFont {
                 uni2byte.put(k, k);
                 byte2uni.put(k, k);
             }
-        } else if (PdfName.MAC_ROMAN_ENCODING.equals(encoding) || PdfName.WIN_ANSI_ENCODING.equals(encoding)) {
+        } else if (PdfName.MAC_ROMAN_ENCODING.equals(encoding) || PdfName.WIN_ANSI_ENCODING.equals(encoding)
+                    || PdfName.SYMBOL.equals(encoding) || PdfName.ZAPFDINGBATS.equals(encoding)) {
             byte b[] = new byte[256];
             for (int k = 0; k < 256; ++k)
                 b[k] = (byte)k;
             String enc = WINANSI;
             if (PdfName.MAC_ROMAN_ENCODING.equals(encoding))
                 enc = MACROMAN;
+            else if (PdfName.SYMBOL.equals(encoding))
+                enc = SYMBOL;
+            else if (PdfName.ZAPFDINGBATS.equals(encoding))
+                enc = ZAPFDINGBATS;
             String cv = PdfEncodings.convertToString(b, enc);
             char arr[] = cv.toCharArray();
             for (int k = 0; k < 256; ++k) {
                 uni2byte.put(arr[k], k);
                 byte2uni.put(k, arr[k]);
             }
+            this.encoding = enc;
         }
         else {
             for (int k = 0; k < 256; ++k) {

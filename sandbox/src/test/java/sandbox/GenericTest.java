@@ -44,19 +44,17 @@
  */
 package sandbox;
 
-import java.io.File;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-
-import javax.management.OperationsException;
-
+import com.itextpdf.testutils.CompareTool;
+import com.itextpdf.text.log.Logger;
+import com.itextpdf.text.log.LoggerFactory;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.itextpdf.testutils.CompareTool;
-import com.itextpdf.text.log.Logger;
-import com.itextpdf.text.log.LoggerFactory;
+import javax.management.OperationsException;
+import java.io.File;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 
 public /*abstract*/ class GenericTest {
 	
@@ -66,6 +64,7 @@ public /*abstract*/ class GenericTest {
     /** The class file for the example we're going to test. */
 	protected Class<?> klass;
     protected String className;
+    protected boolean compareRenders = false;
 	/** An error message */
     private String errorMessage;
     /** A prefix that is part of the error message. */
@@ -93,6 +92,10 @@ public /*abstract*/ class GenericTest {
 			throw new RuntimeException(className + " not found");
 		}
 	}
+
+    protected void setCompareRenders(boolean compareRenders) {
+        this.compareRenders = compareRenders;
+    }
 
     /**
          * Tests the example.
@@ -202,9 +205,14 @@ public /*abstract*/ class GenericTest {
         CompareTool compareTool = new CompareTool(dest, cmp);
         String outPath = "./target/" + new File(dest).getParent();
         new File(outPath).mkdirs();
-        addError(compareTool.compare(dest, cmp, outPath, differenceImagePrefix));
+        if (compareRenders) {
+            addError(compareTool.compare(dest, cmp, outPath, differenceImagePrefix));
+            addError(compareTool.compareLinks(dest, cmp));
+        } else {
+            addError(compareTool.compareByContent(dest, cmp, outPath, differenceImagePrefix));
+        }
         addError(compareTool.compareDocumentInfo(dest, cmp));
-        addError(compareTool.compareLinks(dest, cmp));
+
 
         if (errorMessage != null) Assert.fail(errorMessage);
     }

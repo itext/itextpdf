@@ -14,7 +14,9 @@ import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.pdf.AcroFields;
 import com.itextpdf.text.pdf.PdfCopy;
 import com.itextpdf.text.pdf.PdfReader;
+import com.itextpdf.text.pdf.PdfSmartCopy;
 import com.itextpdf.text.pdf.PdfStamper;
+
 import sandbox.WrapToTest;
 
 @WrapToTest
@@ -31,7 +33,7 @@ public class MergeForms2 {
     
     public void manipulatePdf(String src, String dest) throws IOException, DocumentException {
         Document document = new Document();
-        PdfCopy copy = new PdfCopy(document, new FileOutputStream(dest));
+        PdfCopy copy = new PdfSmartCopy(document, new FileOutputStream(dest));
         copy.setMergeFields();
         document.open();
         List<PdfReader> readers = new ArrayList<PdfReader>();

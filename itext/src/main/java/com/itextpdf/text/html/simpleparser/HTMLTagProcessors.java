@@ -1,5 +1,5 @@
 /*
- * $Id: HTMLTagProcessors.java 6134 2013-12-23 13:15:14Z blowagie $
+ * $Id: HTMLTagProcessors.java 6457 2014-07-09 14:04:16Z achingarev $
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2014 iText Group NV
@@ -54,8 +54,9 @@ import com.itextpdf.text.html.HtmlTags;
 /**
  * This class maps tags such as div and span to their corresponding
  * TagProcessor classes.
- * @deprecated
+ * @deprecated since 5.5.2
  */
+@Deprecated
 public class HTMLTagProcessors extends HashMap<String, HTMLTagProcessor> {
 
 	/**

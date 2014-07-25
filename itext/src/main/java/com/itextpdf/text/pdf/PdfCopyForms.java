@@ -1,5 +1,5 @@
 /*
- * $Id: PdfCopyForms.java 6134 2013-12-23 13:15:14Z blowagie $
+ * $Id: PdfCopyForms.java 6425 2014-06-20 10:26:09Z achingarev $
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2014 iText Group NV
@@ -60,6 +60,7 @@ import com.itextpdf.text.pdf.interfaces.PdfViewerPreferences;
  * create a new PDF and add the form of another PDF document to
  * this new PDF.
  * @since 2.1.5
+ * @deprecated since 5.5.2
  */
 public class PdfCopyForms
 	implements PdfViewerPreferences, PdfEncryptionSettings {

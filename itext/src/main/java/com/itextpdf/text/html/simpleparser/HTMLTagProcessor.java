@@ -1,5 +1,5 @@
 /*
- * $Id: HTMLTagProcessor.java 6134 2013-12-23 13:15:14Z blowagie $
+ * $Id: HTMLTagProcessor.java 6457 2014-07-09 14:04:16Z achingarev $
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2014 iText Group NV
@@ -51,8 +51,9 @@ import com.itextpdf.text.DocumentException;
 
 /**
  * Interface that needs to be implemented by every tag that is supported by HTMLWorker.
- * @deprecated
+ * @deprecated since 5.5.2
  */
+@Deprecated
 public interface HTMLTagProcessor {
 	
 	/**

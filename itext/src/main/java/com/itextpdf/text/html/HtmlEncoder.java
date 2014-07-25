@@ -1,5 +1,5 @@
 /*
- * $Id: HtmlEncoder.java 6134 2013-12-23 13:15:14Z blowagie $
+ * $Id: HtmlEncoder.java 6457 2014-07-09 14:04:16Z achingarev $
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2014 iText Group NV
@@ -74,8 +74,10 @@ import com.itextpdf.text.BaseColor;
  *    String htmlPresentation = HtmlEncoder.encode("Marie-Th&#233;r&#232;se S&#248;rensen");
  * </PRE></BLOCKQUOTE><P>
  * for more info: see O'Reilly; "HTML: The Definitive Guide" (page 164)
+ *
+ * @deprecated since 5.5.2
  */
-
+@Deprecated
 public final class HtmlEncoder {
     
 	/**

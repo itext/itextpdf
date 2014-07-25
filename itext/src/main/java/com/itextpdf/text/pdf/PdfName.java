@@ -1,5 +1,5 @@
 /*
- * $Id: PdfName.java 6365 2014-05-13 09:04:57Z eugenemark $
+ * $Id: PdfName.java 6460 2014-07-10 09:11:08Z achingarev $
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2014 iText Group NV
@@ -131,6 +131,11 @@ public class
     public static final PdfName AESV2 = new PdfName("AESV2");
     /** A name */
     public static final PdfName AESV3 = new PdfName("AESV3");
+    /**
+     * A name
+     * @since 5.5.2
+     */
+    public static final PdfName AF = new PdfName("AF");
     /**
      * A name
      * @since 5.4.5
@@ -1381,7 +1386,7 @@ public class
     /** A name */
     public static final PdfName OFF = new PdfName("OFF");
     /** A name */
-    public static final PdfName ON = new PdfName("on");
+    public static final PdfName ON = new PdfName("ON");
     /** A name */
     public static final PdfName ONECOLUMN = new PdfName("OneColumn");
     /** A name */

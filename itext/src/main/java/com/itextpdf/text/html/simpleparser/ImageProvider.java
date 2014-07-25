@@ -1,5 +1,5 @@
 /*
- * $Id: ImageProvider.java 6134 2013-12-23 13:15:14Z blowagie $
+ * $Id: ImageProvider.java 6457 2014-07-09 14:04:16Z achingarev $
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2014 iText Group NV
@@ -49,6 +49,10 @@ import java.util.Map;
 import com.itextpdf.text.DocListener;
 import com.itextpdf.text.Image;
 
+/**
+ * @deprecated since 5.5.2
+ */
+@Deprecated
 public interface ImageProvider {
     Image getImage(String src, Map<String, String> attrs, ChainedProperties chain, DocListener doc);
 }

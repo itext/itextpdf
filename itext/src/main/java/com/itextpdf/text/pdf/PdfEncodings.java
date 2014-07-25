@@ -1,5 +1,5 @@
 /*
- * $Id: PdfEncodings.java 6134 2013-12-23 13:15:14Z blowagie $
+ * $Id: PdfEncodings.java 6446 2014-07-01 10:13:37Z eugenemark $
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2014 iText Group NV
@@ -470,12 +470,16 @@ public class PdfEncodings {
         private static final IntHashtable t1 = new IntHashtable();
         private static final IntHashtable t2 = new IntHashtable();
         private IntHashtable translation;
+        private final char[] byteToChar;
 
         SymbolConversion(boolean symbol) {
-            if (symbol)
+            if (symbol) {
                 translation = t1;
-            else
+                byteToChar = table1;
+            } else {
                 translation = t2;
+                byteToChar = table2;
+            }
         }
 
         public byte[] charToByte(String text, String encoding) {
@@ -505,10 +509,20 @@ public class PdfEncodings {
         }
 
         public String byteToChar(byte[] b, String encoding) {
-            return null;
+            int len = b.length;
+            char cc[] = new char[len];
+            int ptr = 0;
+            for (int k = 0; k < len; ++k) {
+                int c = b[k] & 0xff;
+                char v = byteToChar[c];
+                cc[ptr++] = v;
+            }
+            return new String(cc, 0, ptr);
         }
 
         private final static char table1[] = {
+            '\0','\0','\0','\0','\0','\0','\0','\0','\0','\0','\0','\0','\0','\0','\0','\0',
+            '\0','\0','\0','\0','\0','\0','\0','\0','\0','\0','\0','\0','\0','\0','\0','\0',
             ' ','!','\u2200','#','\u2203','%','&','\u220b','(',')','*','+',',','-','.','/',
             '0','1','2','3','4','5','6','7','8','9',':',';','<','=','>','?',
             '\u2245','\u0391','\u0392','\u03a7','\u0394','\u0395','\u03a6','\u0393','\u0397','\u0399','\u03d1','\u039a','\u039b','\u039c','\u039d','\u039f',
@@ -520,12 +534,14 @@ public class PdfEncodings {
             '\u20ac','\u03d2','\u2032','\u2264','\u2044','\u221e','\u0192','\u2663','\u2666','\u2665','\u2660','\u2194','\u2190','\u2191','\u2192','\u2193',
             '\u00b0','\u00b1','\u2033','\u2265','\u00d7','\u221d','\u2202','\u2022','\u00f7','\u2260','\u2261','\u2248','\u2026','\u2502','\u2500','\u21b5',
             '\u2135','\u2111','\u211c','\u2118','\u2297','\u2295','\u2205','\u2229','\u222a','\u2283','\u2287','\u2284','\u2282','\u2286','\u2208','\u2209',
-            '\u2220','\u2207','\u00ae','\u00a9','\u2122','\u220f','\u221a','\u2022','\u00ac','\u2227','\u2228','\u21d4','\u21d0','\u21d1','\u21d2','\u21d3',
+            '\u2220','\u2207','\u00ae','\u00a9','\u2122','\u220f','\u221a','\u22c5','\u00ac','\u2227','\u2228','\u21d4','\u21d0','\u21d1','\u21d2','\u21d3',
             '\u25ca','\u2329','\0','\0','\0','\u2211','\u239b','\u239c','\u239d','\u23a1','\u23a2','\u23a3','\u23a7','\u23a8','\u23a9','\u23aa',
             '\0','\u232a','\u222b','\u2320','\u23ae','\u2321','\u239e','\u239f','\u23a0','\u23a4','\u23a5','\u23a6','\u23ab','\u23ac','\u23ad','\0'
         };
 
         private final static char table2[] = {
+            '\0','\0','\0','\0','\0','\0','\0','\0','\0','\0','\0','\0','\0','\0','\0','\0',
+            '\0','\0','\0','\0','\0','\0','\0','\0','\0','\0','\0','\0','\0','\0','\0','\0',
             '\u0020','\u2701','\u2702','\u2703','\u2704','\u260e','\u2706','\u2707','\u2708','\u2709','\u261b','\u261e','\u270C','\u270D','\u270E','\u270F',
             '\u2710','\u2711','\u2712','\u2713','\u2714','\u2715','\u2716','\u2717','\u2718','\u2719','\u271A','\u271B','\u271C','\u271D','\u271E','\u271F',
             '\u2720','\u2721','\u2722','\u2723','\u2724','\u2725','\u2726','\u2727','\u2605','\u2729','\u272A','\u272B','\u272C','\u272D','\u272E','\u272F',
@@ -543,15 +559,15 @@ public class PdfEncodings {
         };
 
         static {
-            for (int k = 0; k < table1.length; ++k) {
+            for (int k = 0; k < 256; ++k) {
                 int v = table1[k];
                 if (v != 0)
-                    t1.put(v, k + 32);
+                    t1.put(v, k);
             }
-            for (int k = 0; k < table2.length; ++k) {
+            for (int k = 0; k < 256; ++k) {
                 int v = table2[k];
                 if (v != 0)
-                    t2.put(v, k + 32);
+                    t2.put(v, k);
             }
         }
     }

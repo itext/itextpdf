@@ -1,5 +1,5 @@
 /*
- * $Id: StyleSheet.java 6134 2013-12-23 13:15:14Z blowagie $
+ * $Id: StyleSheet.java 6457 2014-07-09 14:04:16Z achingarev $
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2014 iText Group NV
@@ -56,7 +56,9 @@ import com.itextpdf.text.html.HtmlUtilities;
  * Old class to define styles for HTMLWorker.
  * We've completely rewritten HTML to PDF functionality; see project XML Worker.
  * XML Worker is able to parse CSS files and "style" attribute values.
+ * @deprecated since 5.5.2
  */
+@Deprecated
 public class StyleSheet {
 
 	/**

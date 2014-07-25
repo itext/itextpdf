@@ -1,5 +1,5 @@
 /*
- * $Id: CellWrapper.java 6134 2013-12-23 13:15:14Z blowagie $
+ * $Id: CellWrapper.java 6457 2014-07-09 14:04:16Z achingarev $
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2014 iText Group NV
@@ -60,7 +60,9 @@ import com.itextpdf.text.pdf.PdfPCell;
  * that isn't available in PdfPCell.
  * @author  psoares
  * @since 5.0.6 (renamed)
+ * @deprecated since 5.5.2
  */
+@Deprecated
 public class CellWrapper implements TextElementArray {
 
 	/** The cell that is wrapped in this stub. */

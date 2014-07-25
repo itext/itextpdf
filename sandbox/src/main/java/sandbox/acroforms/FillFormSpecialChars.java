@@ -35,7 +35,11 @@ public class FillFormSpecialChars {
                 new FileOutputStream(dest));
         AcroFields fields = stamper.getAcroFields();
         fields.setGenerateAppearances(true);
-        BaseFont bf = BaseFont.createFont(FONT, BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
+        /**This method is used instead 'BaseFont createFont(String name, String encoding, boolean embedded)'
+           in order to avoid the font cashing. The cashed font could be mistakenly used in another tests.
+           This could cause a test failure on some platforms.
+        **/
+        BaseFont bf = BaseFont.createFont(FONT, BaseFont.IDENTITY_H, BaseFont.EMBEDDED, false, null, null, false);
         fields.setFieldProperty("test", "textfont", bf, null);
         fields.setField("test", VALUE);
         fields.setFieldProperty("test2", "textfont", bf, null);

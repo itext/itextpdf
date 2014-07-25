@@ -1,5 +1,5 @@
 /*
- * $Id: PdfAnnotation.java 6330 2014-04-10 13:03:21Z eugenemark $
+ * $Id: PdfAnnotation.java 6410 2014-05-29 13:05:23Z rafhens $
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2014 iText Group NV
@@ -304,7 +304,7 @@ public class PdfAnnotation extends PdfDictionary implements IAccessibleElement {
      */
     public static PdfAnnotation createLink(PdfWriter writer, Rectangle rect, PdfName highlight, String namedDestination) {
         PdfAnnotation annot = createLink(writer, rect, highlight);
-        annot.put(PdfName.DEST, new PdfString(namedDestination));
+        annot.put(PdfName.DEST, new PdfString(namedDestination, PdfObject.TEXT_UNICODE));
         return annot;
     }
 

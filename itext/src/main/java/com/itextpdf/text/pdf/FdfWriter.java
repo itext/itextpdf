@@ -1,5 +1,5 @@
 /*
- * $Id: FdfWriter.java 6334 2014-04-18 14:20:49Z blowagie $
+ * $Id: FdfWriter.java 6404 2014-05-26 15:43:23Z pavel-alay $
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2014 iText Group NV
@@ -302,6 +302,13 @@ public class FdfWriter {
         }
     }
 
+    public boolean setFieldAsJavascript(String field, PdfName jsTrigName, String js) {
+        PdfAnnotation dict = new PdfAnnotation(wrt, null);
+        PdfAction javascript = PdfAction.javaScript(js, wrt);
+        dict.put(jsTrigName, javascript);
+        return setField(field, dict);
+    }
+
     public PdfImportedPage getImportedPage(PdfReader reader, int pageNumber) {
         return wrt.getImportedPage(reader, pageNumber);
     }
@@ -415,6 +422,8 @@ public class FdfWriter {
                     dic.put(PdfName.KIDS, calculate((HashMap<String, Object>)v));
                 } else if(v instanceof PdfAction) {	// (plaflamme)
                    	dic.put(PdfName.A, (PdfAction)v);
+                } else if (v instanceof PdfAnnotation) {
+                    dic.put(PdfName.AA, (PdfAnnotation)v);
                 } else if (v instanceof PdfDictionary && ((PdfDictionary)v).size() == 1 && ((PdfDictionary)v).contains(PdfName.N)) {
                     dic.put(PdfName.AP, (PdfDictionary)v);
                 } else {

@@ -82,7 +82,7 @@ public class RowspanTest {
 
         // compare
         CompareTool compareTool = new CompareTool(OUTPUT_FOLDER + file, CMP_FOLDER + file);
-        String errorMessage = compareTool.compare(OUTPUT_FOLDER, "diff");
+        String errorMessage = compareTool.compareByContent(OUTPUT_FOLDER, "diff");
         if (errorMessage != null) {
             Assert.fail(errorMessage);
         }
@@ -125,7 +125,7 @@ public class RowspanTest {
 
         // compare
         CompareTool compareTool = new CompareTool(OUTPUT_FOLDER + file, CMP_FOLDER + file);
-        String errorMessage = compareTool.compare(OUTPUT_FOLDER, "diff");
+        String errorMessage = compareTool.compareByContent(OUTPUT_FOLDER, "diff");
         if (errorMessage != null) {
             Assert.fail(errorMessage);
         }

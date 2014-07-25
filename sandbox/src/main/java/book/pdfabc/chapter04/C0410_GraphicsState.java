@@ -1,3 +1,8 @@
+/**
+ * This is an example was written by Bruno Lowagie.
+ * It is used in the book "The ABC of PDF".
+ * This book can be downloaded here: https://leanpub.com/itext_pdfabc/
+ */
 package book.pdfabc.chapter04;
 
 import java.io.File;

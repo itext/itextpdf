@@ -1,5 +1,5 @@
 /*
- * $Id: GifImage.java 6134 2013-12-23 13:15:14Z blowagie $
+ * $Id: GifImage.java 6423 2014-06-13 08:42:48Z blowagie $
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2014 iText Group NV
@@ -123,6 +123,7 @@ public class GifImage {
             while ((read = is.read(bytes)) != -1) {
                 baos.write(bytes, 0, read);
             }
+            is.close();
 
             is = new ByteArrayInputStream(baos.toByteArray());
             baos.flush();

@@ -1,5 +1,5 @@
 /*
- * $Id: PdfDocument.java 6374 2014-05-15 17:48:54Z rafhens $
+ * $Id: PdfDocument.java 6410 2014-05-29 13:05:23Z rafhens $
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2014 iText Group NV
@@ -239,7 +239,7 @@ public class PdfDocument extends Document {
                         if (dest.destination == null) //no destination
                             continue;
                         PdfIndirectReference ref = dest.reference;
-                        ar.add(new PdfString(name, null));
+                        ar.add(new PdfString(name, PdfObject.TEXT_UNICODE));
                         ar.add(ref);
                     }
                     if (ar.size() > 0) {

@@ -31,7 +31,7 @@ public class Tabs {
     public void createPdf(String dest) throws FileNotFoundException, DocumentException {
         Document document = new Document();
 
-        PdfWriter pdfWriter = PdfWriter.getInstance(document, new FileOutputStream(dest));
+        PdfWriter.getInstance(document, new FileOutputStream(dest));
 
         document.open();
 

@@ -1,5 +1,5 @@
 /*
- * $Id: ChainedProperties.java 6134 2013-12-23 13:15:14Z blowagie $
+ * $Id: ChainedProperties.java 6457 2014-07-09 14:04:16Z achingarev $
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2014 iText Group NV
@@ -54,7 +54,9 @@ import com.itextpdf.text.html.HtmlUtilities;
 /**
  * Stores the hierarchy of tags along with the attributes of each tag.
  * @since 5.0.6 renamed from ChainedProperties
+ * @deprecated since 5.5.2
  */
+@Deprecated
 public class ChainedProperties {
 
 	/**

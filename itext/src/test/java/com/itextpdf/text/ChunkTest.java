@@ -34,6 +34,8 @@ public class ChunkTest {
     public static final String SOURCE13 = "./src/test/resources/com/itextpdf/text/Chunk/source13.pdf";
     public static final String SOURCE14 = "./src/test/resources/com/itextpdf/text/Chunk/source14.pdf";
     public static final String SOURCE15 = "./src/test/resources/com/itextpdf/text/Chunk/source15.pdf";
+    public static final String SOURCE16 = "./src/test/resources/com/itextpdf/text/Chunk/source16.pdf";
+    public static final String SOURCE17 = "./src/test/resources/com/itextpdf/text/Chunk/source17.pdf";
     public static final String OUTFOLDER = "./target/com/itextpdf/test/Chunk";
     public static final String OUTTABSPACED = OUTFOLDER + "/tabspaceDocument.pdf";
     public static final String OUTABSPACEC = OUTFOLDER + "/tabspaceColumnText.pdf";
@@ -362,6 +364,61 @@ public class ChunkTest {
         PdfDictionary resourcesDic = pageDic.getAsDict(PdfName.RESOURCES);
         processor.processContent(ContentByteUtils.getContentBytesForPage(reader, 1), resourcesDic);
         Assert.assertTrue("Unexpected text length", listener.getText().length() == 60);
+    }
+
+    @Test
+    public void TabStopOutOfPageBoundDocumentTest() throws DocumentException, IOException {
+        Document doc = new Document(PageSize.A4, 36, 36, 0, 30);
+        PdfWriter writer = PdfWriter.getInstance(doc, new FileOutputStream(OUTFOLDER + "/tabStopOutDocument.pdf"));
+        doc.open();
+        Font f = FontFactory.getFont(FontFactory.COURIER, 11);
+        f.setSize(16);
+        Paragraph p = new Paragraph(Chunk.TABBING);
+        p.add(new Chunk("Hello world", f));
+        ArrayList<TabStop> tabStopsList = new ArrayList<TabStop>();
+        tabStopsList.add(new TabStop(1000, new DottedLineSeparator()));
+        tabStopsList.add(new TabStop(1050, new LineSeparator(), TabStop.Alignment.ANCHOR, ','));
+        tabStopsList.add(new TabStop(1100, new DottedLineSeparator(), TabStop.Alignment.ANCHOR));
+        p.setTabSettings(new TabSettings(tabStopsList, 50));
+        addTabs(p, f, 15, "l.aal");
+        addTabs(p, f, 13, "laa,l");
+        addTabs(p, f, 13, "laa.l");
+        addTabs(p, f, 13, "l,aal");
+
+        doc.add(p);
+        doc.close();
+        writer.close();
+        Assert.assertTrue(compareInnerText(SOURCE16, OUTFOLDER + "/tabStopOutDocument.pdf"));
+    }
+
+    @Test
+    public void TabStopOutOfPageBoundColumnTextTest() throws DocumentException, IOException {
+        Font f = FontFactory.getFont(FontFactory.COURIER, 11);
+        Document doc = new Document();
+        Paragraph p;
+        FileOutputStream fs = new FileOutputStream(OUTFOLDER + "/tabStopOutColumnText.pdf");
+        PdfWriter writer = PdfWriter.getInstance(doc, fs);
+        writer.setCompressionLevel(0);
+        doc.open();
+        ColumnText ct = new ColumnText(writer.getDirectContent());
+        ct.setSimpleColumn(36, 0, 436, 836);
+        f.setSize(16);
+        p = new Paragraph(Chunk.TABBING);
+        p.add(new Chunk("Hello world", f));
+        ArrayList<TabStop> tabStopsList = new ArrayList<TabStop>();
+        tabStopsList.add(new TabStop(1000, new DottedLineSeparator()));
+        tabStopsList.add(new TabStop(1050, new LineSeparator(), TabStop.Alignment.ANCHOR, ','));
+        tabStopsList.add(new TabStop(1100, new DottedLineSeparator(), TabStop.Alignment.ANCHOR));
+        p.setTabSettings(new TabSettings(tabStopsList, 50));
+        addTabs(p, f, 15, "l.aal");
+        addTabs(p, f, 13, "laa,l");
+        addTabs(p, f, 13, "laa.l");
+        addTabs(p, f, 13, "l,aal");
+        ct.addElement(p);
+        ct.go();
+        doc.close();
+        writer.close();
+        Assert.assertTrue(compareInnerText(SOURCE17, OUTFOLDER + "/tabStopOutColumnText.pdf"));
     }
 
     private static class MyTextRenderListener implements RenderListener {
