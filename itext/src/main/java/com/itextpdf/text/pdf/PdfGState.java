@@ -1,5 +1,5 @@
 /*
- * $Id: PdfGState.java 6134 2013-12-23 13:15:14Z blowagie $
+ * $Id: PdfGState.java 6320 2014-03-12 16:40:18Z blowagie $
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2014 iText Group NV
@@ -83,65 +83,65 @@ public class PdfGState extends PdfDictionary {
     
     /**
      * Sets the flag whether to apply overprint for stroking.
-     * @param ov
+     * @param op
      */
-    public void setOverPrintStroking(boolean ov) {
-        put(PdfName.OP, ov ? PdfBoolean.PDFTRUE : PdfBoolean.PDFFALSE);
+    public void setOverPrintStroking(boolean op) {
+        put(PdfName.OP, op ? PdfBoolean.PDFTRUE : PdfBoolean.PDFFALSE);
     }
 
     /**
      * Sets the flag whether to apply overprint for non stroking painting operations.
-     * @param ov
+     * @param op
      */
-    public void setOverPrintNonStroking(boolean ov) {
-        put(PdfName.op, ov ? PdfBoolean.PDFTRUE : PdfBoolean.PDFFALSE);
+    public void setOverPrintNonStroking(boolean op) {
+        put(PdfName.op, op ? PdfBoolean.PDFTRUE : PdfBoolean.PDFFALSE);
     }
 
     /**
      * Sets the flag whether to toggle knockout behavior for overprinted objects.
-     * @param ov - accepts 0 or 1
+     * @param opm - accepts 0 or 1
      */
-    public void setOverPrintMode(int ov) {
-        put(PdfName.OPM, new PdfNumber(ov==0 ? 0 : 1));
+    public void setOverPrintMode(int opm) {
+        put(PdfName.OPM, new PdfNumber(opm==0 ? 0 : 1));
     }
     
     /**
      * Sets the current stroking alpha constant, specifying the constant shape or
      * constant opacity value to be used for stroking operations in the transparent
      * imaging model.
-     * @param n
+     * @param ca
      */
-    public void setStrokeOpacity(float n) {
-        put(PdfName.CA, new PdfNumber(n));
+    public void setStrokeOpacity(float ca) {
+        put(PdfName.CA, new PdfNumber(ca));
     }
     
     /**
      * Sets the current stroking alpha constant, specifying the constant shape or
      * constant opacity value to be used for nonstroking operations in the transparent
      * imaging model.
-     * @param n
+     * @param ca
      */
-    public void setFillOpacity(float n) {
-        put(PdfName.ca, new PdfNumber(n));
+    public void setFillOpacity(float ca) {
+        put(PdfName.ca, new PdfNumber(ca));
     }
     
     /**
      * The alpha source flag specifying whether the current soft mask
      * and alpha constant are to be interpreted as shape values (true)
      * or opacity values (false). 
-     * @param v
+     * @param ais
      */
-    public void setAlphaIsShape(boolean v) {
-        put(PdfName.AIS, v ? PdfBoolean.PDFTRUE : PdfBoolean.PDFFALSE);
+    public void setAlphaIsShape(boolean ais) {
+        put(PdfName.AIS, ais ? PdfBoolean.PDFTRUE : PdfBoolean.PDFFALSE);
     }
     
     /**
      * Determines the behavior of overlapping glyphs within a text object
      * in the transparent imaging model.
-     * @param v
+     * @param tk
      */
-    public void setTextKnockout(boolean v) {
-        put(PdfName.TK, v ? PdfBoolean.PDFTRUE : PdfBoolean.PDFFALSE);
+    public void setTextKnockout(boolean tk) {
+        put(PdfName.TK, tk ? PdfBoolean.PDFTRUE : PdfBoolean.PDFFALSE);
     }
     
     /**

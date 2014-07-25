@@ -14,6 +14,8 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.TreeMap;
 
+import sandbox.WrapToTest;
+
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
@@ -29,6 +31,7 @@ import com.itextpdf.text.pdf.PdfImportedPage;
 import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.draw.DottedLineSeparator;
 
+@WrapToTest
 public class MergeWithToc {
 
     public static final String SRC1 = "resources/pdfs/united_states.pdf";

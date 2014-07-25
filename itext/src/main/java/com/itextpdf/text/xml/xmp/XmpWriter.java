@@ -1,5 +1,5 @@
 /*
- * $Id: XmpWriter.java 6225 2014-02-10 22:47:30Z rafhens $
+ * $Id: XmpWriter.java 6286 2014-02-21 16:46:34Z rafhens $
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2014 iText Group NV
@@ -319,7 +319,8 @@ public class XmpWriter {
             xmpMeta.setLocalizedText(XMPConst.NS_DC, DublinCoreProperties.DESCRIPTION, XMPConst.X_DEFAULT, XMPConst.X_DEFAULT, value);
         } else if (PdfName.KEYWORDS.equals(key)) {
             for (String v : value.split(",|;"))
-                xmpMeta.appendArrayItem(XMPConst.NS_DC, DublinCoreProperties.SUBJECT, new PropertyOptions(PropertyOptions.ARRAY), v.trim(), null);
+                if (v.trim().length() > 0)
+                    xmpMeta.appendArrayItem(XMPConst.NS_DC, DublinCoreProperties.SUBJECT, new PropertyOptions(PropertyOptions.ARRAY), v.trim(), null);
             xmpMeta.setProperty(XMPConst.NS_PDF, PdfProperties.KEYWORDS, value);
         } else if (PdfName.PRODUCER.equals(key)) {
             xmpMeta.setProperty(XMPConst.NS_PDF, PdfProperties.PRODUCER, value);

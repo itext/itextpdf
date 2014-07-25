@@ -103,7 +103,7 @@ public class PdfAXmpWriterTest {
         PdfReader reader = new PdfReader(CMP_FOLDER + "pdf_metadata.pdf");
         PdfStamper stamper = new PdfAStamper(reader, new FileOutputStream(OUT_FOLDER + fileName), PdfAConformanceLevel.PDF_A_1A);
         ByteArrayOutputStream os = new ByteArrayOutputStream();
-        XmpWriter xmp = new PdfAXmpWriter(os, reader.getInfo(), PdfAConformanceLevel.PDF_A_1A);
+        XmpWriter xmp = new PdfAXmpWriter(os, reader.getInfo(), PdfAConformanceLevel.PDF_A_1A, stamper.getWriter());
         DublinCoreProperties.addSubject(xmp.getXmpMeta(), "Hello World");
         DublinCoreProperties.addSubject(xmp.getXmpMeta(), "XMP & Metadata");
         DublinCoreProperties.addSubject(xmp.getXmpMeta(), "Metadata");
@@ -139,7 +139,7 @@ public class PdfAXmpWriterTest {
         // step 2
         PdfWriter writer = PdfAWriter.getInstance(document, new FileOutputStream(OUT_FOLDER + fileName), PdfAConformanceLevel.PDF_A_2B);
         ByteArrayOutputStream os = new ByteArrayOutputStream();
-        XmpWriter xmp = new PdfAXmpWriter(os, PdfAConformanceLevel.PDF_A_2B);
+        XmpWriter xmp = new PdfAXmpWriter(os, PdfAConformanceLevel.PDF_A_2B, writer);
         XmpSchema dc = new com.itextpdf.text.xml.xmp.DublinCoreSchema();
         XmpArray subject = new XmpArray(XmpArray.UNORDERED);
         subject.add("Hello World");

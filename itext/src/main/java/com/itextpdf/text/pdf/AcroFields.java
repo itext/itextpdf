@@ -1,5 +1,5 @@
 /*
- * $Id: AcroFields.java 6134 2013-12-23 13:15:14Z blowagie $
+ * $Id: AcroFields.java 6344 2014-04-29 13:06:21Z michaeldemey $
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2014 iText Group NV
@@ -1508,7 +1508,11 @@ public class AcroFields {
                 valDict.put(PdfName.V, vt);
                 merged.put(PdfName.V, vt);
                 markUsed(widget);
-                if (isInAP(widget,  vt)) {
+                PdfDictionary appDic = widget.getAsDict(PdfName.AP);
+                if (appDic == null)
+                	return false;
+                PdfDictionary normal = appDic.getAsDict(PdfName.N);
+                if (isInAP(normal,  vt) || normal == null) {
                     merged.put(PdfName.AS, vt);
                     widget.put(PdfName.AS, vt);
                 }
@@ -1570,12 +1574,8 @@ public class AcroFields {
         return true;
 	}
 
-    boolean isInAP(PdfDictionary dic, PdfName check) {
-        PdfDictionary appDic = dic.getAsDict(PdfName.AP);
-        if (appDic == null)
-            return false;
-        PdfDictionary NDic = appDic.getAsDict(PdfName.N);
-        return NDic != null && NDic.get(check) != null;
+    boolean isInAP(PdfDictionary nDic, PdfName check) {
+        return nDic != null && nDic.get(check) != null;
     }
 
     /**
@@ -2736,6 +2736,16 @@ public class AcroFields {
             markUsed(widgets);
         }
         return true;
+    }
+
+    /**
+     * Checks whether a name exists as a signature field or not. It checks both signed fields and blank signatures.
+     * @param name String
+     * @return boolean does the signature field exist
+     * @since 5.5.1
+     */
+    public boolean doesSignatureFieldExist(String name) {
+        return getBlankSignatureNames().contains(name) || getSignatureNames().contains(name);
     }
 
     /**

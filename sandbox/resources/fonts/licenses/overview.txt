@@ -89,3 +89,6 @@ Vollkorn-Italic.ttf
 Vollkorn-Bold.ttf
 Vollkorn-BoldItalic.ttf
 
+Fonts downloaded from http://cooltext.com/
+
+cfmingeb.ttf http://cooltext.com/Download-Font-%E6%98%8E%E9%AB%94+TSC+FMing

@@ -1,5 +1,5 @@
 /*
- * $Id: PdfContentByte.java 6228 2014-02-11 11:13:47Z achingarev $
+ * $Id: PdfContentByte.java 6379 2014-05-16 10:12:59Z eugenemark $
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2014 iText Group NV
@@ -55,6 +55,7 @@ import com.itextpdf.text.pdf.interfaces.IAccessibleElement;
 import com.itextpdf.text.pdf.internal.PdfAnnotationsImp;
 import com.itextpdf.text.pdf.internal.PdfIsoKeys;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -396,6 +397,15 @@ public class PdfContentByte {
         }
     }
 
+    /**
+     * Set the rendering intent, possible values are: PdfName.ABSOLUTECOLORIMETRIC,
+     * PdfName.RELATIVECOLORIMETRIC, PdfName.SATURATION, PdfName.PERCEPTUAL.
+     * @param ri
+     */
+    public void setRenderingIntent(PdfName ri) {
+    	content.append(ri.getBytes()).append(" ri").append_i(separator);
+    }
+    
     /**
      * Changes the value of the <VAR>line dash pattern</VAR>.
      * <P>
@@ -1381,6 +1391,11 @@ public class PdfContentByte {
             if (writer != null && image.isImgTemplate()) {
                 writer.addDirectImageSimple(image);
                 PdfTemplate template = image.getTemplateData();
+                if (image.getAccessibleAttributes() != null) {
+                    for (PdfName key : image.getAccessibleAttributes().keySet()) {
+                        template.setAccessibleAttribute(key, image.getAccessibleAttribute(key));
+                    }
+                }
                 float w = template.getWidth();
                 float h = template.getHeight();
                 addTemplate(template, a / w, b / w, c / h, d / h, e, f);
@@ -1434,8 +1449,17 @@ public class PdfContentByte {
                         value.toPdf(null, content);
                         content.append('\n');
                     }
+                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                    pimage.writeContent(baos);
+                    byte[] imageBytes = baos.toByteArray();
+                    content.append(String.format("/L %s\n", imageBytes.length));
+                    /*
+                    // The following restriction will be normative in PDF 2.0
+                    if (imageBytes.length > 4096)
+                    	throw new DocumentException("Inline images must be 4 KB or less");
+                    */
                     content.append("ID\n");
-                    pimage.writeContent(content);
+                    content.append(imageBytes);
                     content.append("\nEI\nQ").append_i(separator);
                 }
                 else {
@@ -2716,6 +2740,16 @@ public class PdfContentByte {
                 setShadingStroke(shading.getPdfShadingPattern());
                 break;
             }
+            case ExtendedColor.TYPE_DEVICEN: {
+                DeviceNColor devicen = (DeviceNColor)color;
+                setColorStroke(devicen.getPdfDeviceNColor(), devicen.getTints());
+                break;
+            }
+            case ExtendedColor.TYPE_LAB: {
+                LabColor lab = (LabColor)color;
+                setColorStroke(lab.getLabColorSpace(), lab.getL(), lab.getA(), lab.getB());
+                break;
+            }
             default:
                 setRGBColorStroke(color.getRed(), color.getGreen(), color.getBlue());
         }
@@ -2752,6 +2786,16 @@ public class PdfContentByte {
                 setShadingFill(shading.getPdfShadingPattern());
                 break;
             }
+            case ExtendedColor.TYPE_DEVICEN: {
+                DeviceNColor devicen = (DeviceNColor)color;
+                setColorFill(devicen.getPdfDeviceNColor(), devicen.getTints());
+                break;
+            }
+            case ExtendedColor.TYPE_LAB: {
+                LabColor lab = (LabColor)color;
+                setColorFill(lab.getLabColorSpace(), lab.getL(), lab.getA(), lab.getB());
+                break;
+            }
             default:
                 setRGBColorFill(color.getRed(), color.getGreen(), color.getBlue());
         }
@@ -2766,10 +2810,35 @@ public class PdfContentByte {
         checkWriter();
         state.colorDetails = writer.addSimple(sp);
         PageResources prs = getPageResources();
-        PdfName name = state.colorDetails.getColorName();
+        PdfName name = state.colorDetails.getColorSpaceName();
         name = prs.addColor(name, state.colorDetails.getIndirectReference());
         saveColor(new SpotColor(sp, tint), true);
         content.append(name.getBytes()).append(" cs ").append(tint).append(" scn").append_i(separator);
+    }
+
+    public void setColorFill(final PdfDeviceNColor dn, final float[] tints) {
+        checkWriter();
+        state.colorDetails = writer.addSimple(dn);
+        PageResources prs = getPageResources();
+        PdfName name = state.colorDetails.getColorSpaceName();
+        name = prs.addColor(name, state.colorDetails.getIndirectReference());
+        saveColor(new DeviceNColor(dn, tints), true);
+        content.append(name.getBytes()).append(" cs ");
+        for (float tint : tints)
+            content.append(tint + " ");
+        content.append("scn").append_i(separator);
+    }
+
+    public void setColorFill(final PdfLabColor lab, float l, float a, float b) {
+        checkWriter();
+        state.colorDetails = writer.addSimple(lab);
+        PageResources prs = getPageResources();
+        PdfName name = state.colorDetails.getColorSpaceName();
+        name = prs.addColor(name, state.colorDetails.getIndirectReference());
+        saveColor(new LabColor(lab, l, a, b), true);
+        content.append(name.getBytes()).append(" cs ");
+        content.append(l + " " + a + " " + b + " ");
+        content.append("scn").append_i(separator);
     }
 
     /** Sets the stroke color to a spot color.
@@ -2781,10 +2850,35 @@ public class PdfContentByte {
         checkWriter();
         state.colorDetails = writer.addSimple(sp);
         PageResources prs = getPageResources();
-        PdfName name = state.colorDetails.getColorName();
+        PdfName name = state.colorDetails.getColorSpaceName();
         name = prs.addColor(name, state.colorDetails.getIndirectReference());
         saveColor(new SpotColor(sp, tint), false);
         content.append(name.getBytes()).append(" CS ").append(tint).append(" SCN").append_i(separator);
+    }
+
+    public void setColorStroke(final PdfDeviceNColor sp, final float[] tints) {
+        checkWriter();
+        state.colorDetails = writer.addSimple(sp);
+        PageResources prs = getPageResources();
+        PdfName name = state.colorDetails.getColorSpaceName();
+        name = prs.addColor(name, state.colorDetails.getIndirectReference());
+        saveColor(new DeviceNColor(sp, tints), true);
+        content.append(name.getBytes()).append(" CS ");
+        for (float tint : tints)
+            content.append(tint + " ");
+        content.append("SCN").append_i(separator);
+    }
+
+    public void setColorStroke(final PdfLabColor lab, float l, float a, float b) {
+        checkWriter();
+        state.colorDetails = writer.addSimple(lab);
+        PageResources prs = getPageResources();
+        PdfName name = state.colorDetails.getColorSpaceName();
+        name = prs.addColor(name, state.colorDetails.getIndirectReference());
+        saveColor(new LabColor(lab, l, a, b), true);
+        content.append(name.getBytes()).append(" CS ");
+        content.append(l + " " + a + " " + b + " ");
+        content.append("SCN").append_i(separator);
     }
 
     /** Sets the fill color to a pattern. The pattern can be
@@ -2860,7 +2954,7 @@ public class PdfContentByte {
         PdfName name = writer.addSimplePattern(p);
         name = prs.addPattern(name, p.getIndirectReference());
         ColorDetails csDetail = writer.addSimplePatternColorspace(color);
-        PdfName cName = prs.addColor(csDetail.getColorName(), csDetail.getIndirectReference());
+        PdfName cName = prs.addColor(csDetail.getColorSpaceName(), csDetail.getIndirectReference());
         saveColor(new UncoloredPattern(p, color, tint), true);
         content.append(cName.getBytes()).append(" cs").append_i(separator);
         outputColorNumbers(color, tint);
@@ -2891,7 +2985,7 @@ public class PdfContentByte {
         PdfName name = writer.addSimplePattern(p);
         name = prs.addPattern(name, p.getIndirectReference());
         ColorDetails csDetail = writer.addSimplePatternColorspace(color);
-        PdfName cName = prs.addColor(csDetail.getColorName(), csDetail.getIndirectReference());
+        PdfName cName = prs.addColor(csDetail.getColorSpaceName(), csDetail.getIndirectReference());
         saveColor(new UncoloredPattern(p, color, tint), false);
         content.append(cName.getBytes()).append(" CS").append_i(separator);
         outputColorNumbers(color, tint);
@@ -2926,7 +3020,7 @@ public class PdfContentByte {
         content.append(name.getBytes()).append(" sh").append_i(separator);
         ColorDetails details = shading.getColorDetails();
         if (details != null)
-            prs.addColor(details.getColorName(), details.getIndirectReference());
+            prs.addColor(details.getColorSpaceName(), details.getIndirectReference());
     }
 
     /**
@@ -2949,7 +3043,7 @@ public class PdfContentByte {
         content.append(PdfName.PATTERN.getBytes()).append(" cs ").append(name.getBytes()).append(" scn").append_i(separator);
         ColorDetails details = shading.getColorDetails();
         if (details != null)
-            prs.addColor(details.getColorName(), details.getIndirectReference());
+            prs.addColor(details.getColorSpaceName(), details.getIndirectReference());
     }
 
     /**
@@ -2964,7 +3058,7 @@ public class PdfContentByte {
         content.append(PdfName.PATTERN.getBytes()).append(" CS ").append(name.getBytes()).append(" SCN").append_i(separator);
         ColorDetails details = shading.getColorDetails();
         if (details != null)
-            prs.addColor(details.getColorName(), details.getIndirectReference());
+            prs.addColor(details.getColorSpaceName(), details.getIndirectReference());
     }
 
     /** Check if we have a valid PdfWriter.
@@ -3068,6 +3162,11 @@ public class PdfContentByte {
             cb.stateList = stateList;
         }
         return cb;
+    }
+
+    public void inheritGraphicState(PdfContentByte parentCanvas) {
+        this.state = parentCanvas.state;
+        this.stateList = parentCanvas.stateList;
     }
 
     /**
@@ -3392,10 +3491,24 @@ public class PdfContentByte {
     }
 
     void addAnnotation(final PdfAnnotation annot) {
+        boolean needToTag = isTagged() && annot.getRole() != null && (!(annot instanceof PdfFormField) || ((PdfFormField)annot).getKids() == null);
+        if (needToTag) {
+            openMCBlock(annot);
+        }
         writer.addAnnotation(annot);
+        if (needToTag) {
+            PdfStructureElement strucElem = pdf.structElements.get(annot.getId());
+            if (strucElem != null) {
+                int structParent = pdf.getStructParentIndex(annot);
+                annot.put(PdfName.STRUCTPARENT, new PdfNumber(structParent));
+                strucElem.setAnnotation(annot, getCurrentPage());
+                writer.getStructureTreeRoot().setAnnotationMark(structParent, strucElem.getReference());
+            }
+            closeMCBlock(annot);
+        }
     }
 
-    void addAnnotation(final PdfAnnotation annot, boolean applyCTM) {
+    public void addAnnotation(final PdfAnnotation annot, boolean applyCTM) {
         if (applyCTM && state.CTM.getType() != AffineTransform.TYPE_IDENTITY) {
             annot.applyCTM(state.CTM);
         }

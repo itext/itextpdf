@@ -12,8 +12,8 @@ import java.util.List;
 
 public class D01_CustomElementHandler {
 
-	public static final String SRC = "resources/xml/walden.html";
-	
+    public static final String SRC = "resources/xml/walden.html";
+    
     public static void main(String[] args) throws IOException {
         XMLWorkerHelper.getInstance().parseXHtml(new ElementHandler() {
             public void add(final Writable w) {

@@ -1,5 +1,5 @@
 /*
- * $Id: FdfReader.java 6134 2013-12-23 13:15:14Z blowagie $
+ * $Id: FdfReader.java 6341 2014-04-25 10:14:14Z achingarev $
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2014 iText Group NV
@@ -100,19 +100,9 @@ public class FdfReader extends PdfReader {
     @Override
     protected void readPdf() throws IOException {
         fields = new HashMap<String, PdfDictionary>();
-        try {
-            tokens.checkFdfHeader();
-            rebuildXref();
-            readDocObj();
-        }
-        finally {
-            try {
-                tokens.close();
-            }
-            catch (Exception e) {
-                // empty on purpose
-            }
-        }
+        tokens.checkFdfHeader();
+        rebuildXref();
+        readDocObj();
         readFields();
     }
 

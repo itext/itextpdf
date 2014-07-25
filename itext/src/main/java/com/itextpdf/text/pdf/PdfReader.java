@@ -1,5 +1,5 @@
 /*
- * $Id: PdfReader.java 6153 2014-01-23 10:19:09Z asubach $
+ * $Id: PdfReader.java 6289 2014-02-24 10:00:44Z michaeldemey $
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2014 iText Group NV
@@ -1398,7 +1398,7 @@ public class PdfReader implements PdfViewerPreferences {
             long pos;
             while (true) {
                 pos = tokens.getFilePointer();
-                if (!tokens.readLineSegment(tline))
+                if (!tokens.readLineSegment(tline, false)) // added boolean because of mailing list issue (17 Feb. 2014)
                     break;
                 if (equalsn(tline, endstream)) {
                     streamLength = pos - start;
@@ -1425,6 +1425,7 @@ public class PdfReader implements PdfViewerPreferences {
     }
 
     protected void readObjStm(final PRStream stream, final IntHashtable map) throws IOException {
+        if (stream == null) return;
         int first = stream.getAsNumber(PdfName.FIRST).intValue();
         int n = stream.getAsNumber(PdfName.N).intValue();
         byte b[] = getStreamBytes(stream, tokens.getFile());
@@ -1738,7 +1739,7 @@ public class PdfReader implements PdfViewerPreferences {
         byte line[] = new byte[64];
         for (;;) {
             long pos = tokens.getFilePointer();
-            if (!tokens.readLineSegment(line))
+            if (!tokens.readLineSegment(line, true)) // added boolean because of mailing list issue (17 Feb. 2014)
                 break;
             if (line[0] == 't') {
                 if (!PdfEncodings.convertToString(line, null).startsWith("trailer"))

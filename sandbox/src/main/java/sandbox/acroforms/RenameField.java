@@ -15,9 +15,7 @@ import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.pdf.AcroFields;
 import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.PdfStamper;
-import sandbox.WrapToTest;
 
-@WrapToTest
 public class RenameField {
 
     public static final String SRC = "resources/pdfs/subscribe.pdf";

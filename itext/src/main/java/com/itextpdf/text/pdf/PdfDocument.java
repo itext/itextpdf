@@ -1,5 +1,5 @@
 /*
- * $Id: PdfDocument.java 6192 2014-01-29 14:37:53Z eugenemark $
+ * $Id: PdfDocument.java 6374 2014-05-15 17:48:54Z rafhens $
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2014 iText Group NV
@@ -550,9 +550,10 @@ public class PdfDocument extends Document {
                     carriageReturn();
 
                     // we don't want to make orphans/widows
-                    if (currentHeight + line.height() + leading > indentTop() - indentBottom()) {
+                    if (currentHeight + calculateLineHeight() > indentTop() - indentBottom()) {
                         newPage();
                     }
+
                     indentation.indentLeft += paragraph.getIndentationLeft();
                     indentation.indentRight += paragraph.getIndentationRight();
                     carriageReturn();
@@ -753,12 +754,12 @@ public class PdfDocument extends Document {
                 case Element.IMGRAW:
                 case Element.IMGTEMPLATE: {
                     //carriageReturn(); suggestion by Marc Campforts
-                    if (isTagged(writer)) {
+                    if (isTagged(writer) && !((Image)element).isImgTemplate()) {
                         flushLines();
                         text.openMCBlock((Image)element);
                     }
                     add((Image) element);
-                    if (isTagged(writer)) {
+                    if (isTagged(writer) && !((Image)element).isImgTemplate()) {
                         flushLines();
                         text.closeMCBlock((Image)element);
                     }
@@ -1218,6 +1219,23 @@ public class PdfDocument extends Document {
     }
 
     /**
+     * line.height() is usually the same as the leading
+     * We should take leading into account if it is not the same as the line.height
+     *
+     * @return float combined height of the line
+     * @since 5.5.1
+     */
+    protected float calculateLineHeight() {
+        float tempHeight = line.height();
+
+        if ( tempHeight != leading) {
+            tempHeight += leading;
+        }
+
+        return tempHeight;
+    }
+
+    /**
      * If the current line is not empty or null, it is added to the arraylist
      * of lines and a new empty line is added.
      */
@@ -1229,7 +1247,7 @@ public class PdfDocument extends Document {
         // If the current line is not null or empty
         if (line != null && line.size() > 0) {
             // we check if the end of the page is reached (bugfix by Francois Gravel)
-            if (currentHeight + line.height() + leading > indentTop() - indentBottom()) {
+            if (currentHeight + calculateLineHeight() > indentTop() - indentBottom()) {
             	// if the end of the line is reached, we start a newPage which will flush existing lines
             	// then move to next page but before then we need to exclude the current one that does not fit
             	// After the new page we add the current line back in
@@ -1568,26 +1586,13 @@ public class PdfDocument extends Document {
                         }
                         text.addAnnotation(annot, true);
                         if (isTagged(writer) && chunk.accessibleElement != null) {
-                            int structParent = getStructParentIndex(annot);
-                            annot.put(PdfName.STRUCTPARENT, new PdfNumber(structParent));
                             PdfStructureElement strucElem = structElements.get(chunk.accessibleElement.getId());
                             if (strucElem != null) {
-                                PdfArray kArray = strucElem.getAsArray(PdfName.K);
-                                if (kArray == null) {
-                                    kArray = new PdfArray();
-                                    PdfObject k = strucElem.get(PdfName.K);
-                                    if (k != null) {
-                                        kArray.add(k);
-                                    }
-                                    strucElem.put(PdfName.K, kArray);
-                                }
-                                PdfDictionary dict = new PdfDictionary();
-                                dict.put(PdfName.TYPE, PdfName.OBJR);
-                                dict.put(PdfName.OBJ, annot.getIndirectReference());
-                                kArray.add(dict);
+                                int structParent = getStructParentIndex(annot);
+                                annot.put(PdfName.STRUCTPARENT, new PdfNumber(structParent));
+                                strucElem.setAnnotation(annot, writer.getCurrentPage());
                                 writer.getStructureTreeRoot().setAnnotationMark(structParent, strucElem.getReference());
                             }
-
                         }
                     }
                     if (chunk.isAttribute(Chunk.REMOTEGOTO)) {
@@ -1879,7 +1884,12 @@ public class PdfDocument extends Document {
     protected void addSpacing(final float extraspace, final float oldleading, Font f) {
     	if (extraspace == 0) return;
     	if (pageEmpty) return;
-    	if (currentHeight + line.height() + leading > indentTop() - indentBottom()) return;
+
+    	if (currentHeight + calculateLineHeight() > indentTop() - indentBottom()) {
+            newPage();
+            return;
+        }
+
         leading = extraspace;
         carriageReturn();
         if (f.isUnderlined() || f.isStrikethru()) {

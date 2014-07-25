@@ -1,5 +1,5 @@
 /*
- * $Id: PdfStream.java 6134 2013-12-23 13:15:14Z blowagie $
+ * $Id: PdfStream.java 6291 2014-02-25 14:49:48Z blowagie $
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2014 iText Group NV
@@ -255,7 +255,7 @@ public class PdfStream extends PdfDictionary {
             }
             else {
                 PdfArray filters = new PdfArray(filter);
-                filters.add(PdfName.FLATEDECODE);
+                filters.add(0, PdfName.FLATEDECODE);
                 put(PdfName.FILTER, filters);
             }
             compressed = true;

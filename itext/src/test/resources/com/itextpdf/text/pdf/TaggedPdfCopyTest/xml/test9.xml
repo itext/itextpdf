@@ -4,9 +4,9 @@
 
 
 <TextBlock>Quick brown </TextBlock>
-<Image></Image>
+<Image><alt>Fox image</alt></Image>
 <Span> jumped over a lazy </Span>
-<Figure></Figure>
+<Figure><alt>Dog image</alt></Figure>
 </Paragraph>
 </Document>
 <Document><Table><TBody><TR>
@@ -20,14 +20,14 @@ long line appears
 here because we
 need new line.</Span>
 </TD>
-<TD><Figure></Figure>
+<TD><Figure><alt>Fox image</alt></Figure>
 </TD>
 </TR>
 <TR>
 <TD><Span>jumped over a
 lazy</Span>
 </TD>
-<TD><Figure></Figure>
+<TD><Figure><alt>Dog image</alt></Figure>
 </TD>
 </TR>
 <TR>
@@ -507,9 +507,9 @@ typically be used to gain the benefits of compression. </Span>
 
 
 <TextBlock>Quick brown </TextBlock>
-<Image></Image>
+<Image><alt>Fox image</alt></Image>
 <Span> jumped over a lazy </Span>
-<Figure></Figure>
+<Figure><alt>Dog image</alt></Figure>
 </Paragraph>
 </Document>
 <Book><Document><Article_A><TextSection><Figure-title><Normal><ExampleN-><Span>xref</Span>
@@ -1175,13 +1175,13 @@ tempus eget dolor.</Span>
 dog. A very long line appears here
 because we need new line.</Span>
 </TD>
-<TD><Figure></Figure>
+<TD><Figure><alt>Fox image</alt></Figure>
 </TD>
 </TR>
 <TR>
 <TD><Span>jumped over a lazy</Span>
 </TD>
-<TD><Figure></Figure>
+<TD><Figure><alt>Dog image</alt></Figure>
 </TD>
 </TR>
 </TBody>
@@ -1614,9 +1614,9 @@ white space for indentation is purely for clarity of exposition and need not be 
 
 
 <TextBlock>Quick brown </TextBlock>
-<Image></Image>
+<Image><alt>Fox image</alt></Image>
 <Span> jumped over a lazy </Span>
-<Figure></Figure>
+<Figure><alt>Dog image</alt></Figure>
 </Paragraph>
 </Document>
 <Document><Table><TBody><TR>

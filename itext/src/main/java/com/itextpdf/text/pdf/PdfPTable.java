@@ -1,5 +1,5 @@
 /*
- * $Id: PdfPTable.java 6192 2014-01-29 14:37:53Z eugenemark $
+ * $Id: PdfPTable.java 6326 2014-03-28 10:16:52Z michaeldemey $
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2014 iText Group NV
@@ -44,18 +44,26 @@
  */
 package com.itextpdf.text.pdf;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import com.itextpdf.text.*;
+import com.itextpdf.text.AccessibleElementId;
+import com.itextpdf.text.Chunk;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Element;
+import com.itextpdf.text.ElementListener;
+import com.itextpdf.text.Image;
+import com.itextpdf.text.LargeElement;
+import com.itextpdf.text.Phrase;
+import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.api.Spaceable;
 import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.log.Logger;
 import com.itextpdf.text.log.LoggerFactory;
 import com.itextpdf.text.pdf.events.PdfPTableEventForwarder;
 import com.itextpdf.text.pdf.interfaces.IAccessibleElement;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * This is a table that can be put at an absolute position but can also
@@ -283,6 +291,7 @@ public class PdfPTable implements LargeElement, Spaceable, IAccessibleElement {
      * @since 2.1.6 private is now protected
      */
     protected void copyFormat(final PdfPTable sourceTable) {
+        rowsNotChecked = sourceTable.rowsNotChecked;
         relativeWidths = new float[sourceTable.getNumberOfColumns()];
         absoluteWidths = new float[sourceTable.getNumberOfColumns()];
         System.arraycopy(sourceTable.relativeWidths, 0, relativeWidths, 0, getNumberOfColumns());
@@ -1310,11 +1319,10 @@ public class PdfPTable implements LargeElement, Spaceable, IAccessibleElement {
      * Defines where the table may be broken (if necessary).
      *
      * @param breakPoints int[]
+     * @throws java.lang.IndexOutOfBoundsException if a row index is passed that is out of bounds
      */
     public void setBreakPoints(int... breakPoints) {
-        for ( int i = 0; i < rows.size(); i++ ) {
-            getRow(i).setMayNotBreak(true);
-        }
+        keepRowsTogether(0, rows.size()); // sets all rows as unbreakable
 
         for ( int i = 0; i < breakPoints.length; i++ ) {
             getRow(breakPoints[i]).setMayNotBreak(false);
@@ -1325,6 +1333,7 @@ public class PdfPTable implements LargeElement, Spaceable, IAccessibleElement {
      * Defines which rows should not allow a page break (if possible).
      *
      * @param rows int[]
+     * @throws java.lang.IndexOutOfBoundsException if a row index is passed that is out of bounds
      */
     public void keepRowsTogether(int[] rows) {
         for (int i = 0; i < rows.length; i++) {
@@ -1337,6 +1346,7 @@ public class PdfPTable implements LargeElement, Spaceable, IAccessibleElement {
      *
      * @param start int
      * @param end int
+     * @throws java.lang.IndexOutOfBoundsException if a row index is passed that is out of bounds
      */
     public void keepRowsTogether(int start, int end) {
         if (start < end) {
@@ -1349,15 +1359,13 @@ public class PdfPTable implements LargeElement, Spaceable, IAccessibleElement {
 
     /**
      * Defines a range of rows (from the parameter to the last row) that should not allow a page break (if possible).
+     * The equivalent of calling {@link #keepRowsTogether(int,int) keepRowsTogether(start, rows.size()}.
      *
      * @param start int
+     * @throws java.lang.IndexOutOfBoundsException if a row index is passed that is out of bounds
      */
     public void keepRowsTogether(int start) {
-        if (start < rows.size()) {
-            for (int i = start; i < rows.size(); i++) {
-                getRow(i).setMayNotBreak(true);
-            }
-        }
+        keepRowsTogether(start, rows.size());
     }
     
     /**

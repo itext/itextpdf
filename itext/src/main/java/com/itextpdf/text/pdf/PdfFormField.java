@@ -1,5 +1,5 @@
 /*
- * $Id: PdfFormField.java 6134 2013-12-23 13:15:14Z blowagie $
+ * $Id: PdfFormField.java 6330 2014-04-10 13:03:21Z eugenemark $
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2014 iText Group NV
@@ -117,6 +117,7 @@ public class PdfFormField extends PdfAnnotation {
         super(writer, null);
         form = true;
         annotation = false;
+        role = PdfName.FORM;
     }
 
     public void setWidget(Rectangle rect, PdfName highlight) {

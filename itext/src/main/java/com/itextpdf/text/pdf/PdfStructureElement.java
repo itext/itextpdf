@@ -1,5 +1,5 @@
 /*
- * $Id: PdfStructureElement.java 6213 2014-02-06 09:08:25Z achingarev $
+ * $Id: PdfStructureElement.java 6330 2014-04-10 13:03:21Z eugenemark $
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2014 iText Group NV
@@ -177,6 +177,24 @@ public class PdfStructureElement extends PdfDictionary implements IPdfStructureE
         if (mark >= 0)
             put(PdfName.K, new PdfNumber(mark));
         top.setPageMark(page, reference);
+    }
+
+    void setAnnotation(PdfAnnotation annot, PdfIndirectReference currentPage) {
+        PdfArray kArray = getAsArray(PdfName.K);
+        if (kArray == null) {
+            kArray = new PdfArray();
+            PdfObject k = get(PdfName.K);
+            if (k != null) {
+                kArray.add(k);
+            }
+            put(PdfName.K, kArray);
+        }
+        PdfDictionary dict = new PdfDictionary();
+        dict.put(PdfName.TYPE, PdfName.OBJR);
+        dict.put(PdfName.OBJ, annot.getIndirectReference());
+        if (annot.getRole() == PdfName.FORM)
+            dict.put(PdfName.PG, currentPage);
+        kArray.add(dict);
     }
 
     /**

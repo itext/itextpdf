@@ -1,5 +1,5 @@
 /*
- * $Id: PdfArtifact.java 6192 2014-01-29 14:37:53Z eugenemark $
+ * $Id: PdfArtifact.java 6322 2014-03-13 15:47:02Z asubach $
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2014 iText Group NV
@@ -45,11 +45,14 @@
 package com.itextpdf.text.pdf;
 
 import com.itextpdf.text.AccessibleElementId;
+import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.pdf.interfaces.IAccessibleElement;
 
-import java.util.HashMap;
+import java.util.*;
 
 public class PdfArtifact implements IAccessibleElement {
+
+    private static final HashSet<String> allowedArtifactTypes = new HashSet<String>(Arrays.asList("Pagination", "Layout", "Page", "Background"));
 
     protected PdfName role = PdfName.ARTIFACT;
     protected HashMap<PdfName, PdfObject> accessibleAttributes = null;
@@ -96,7 +99,28 @@ public class PdfArtifact implements IAccessibleElement {
     }
 
     public void setType(PdfString type) {
+        if (!allowedArtifactTypes.contains(type.toString()))
+            throw new IllegalArgumentException(MessageLocalization.getComposedMessage("the.artifact.type.1.is.invalid", type));
         setAccessibleAttribute(PdfName.TYPE, type);
+    }
+
+    public void setType(PdfArtifact.ArtifactType type) {
+        PdfString artifactType = null;
+        switch (type) {
+            case BACKGROUND:
+                artifactType = new PdfString("Background");
+                break;
+            case LAYOUT:
+                artifactType = new PdfString("Layout");
+                break;
+            case PAGE:
+                artifactType = new PdfString("Page");
+                break;
+            case PAGINATION:
+                artifactType = new PdfString("Pagination");
+                break;
+        }
+        setAccessibleAttribute(PdfName.TYPE, artifactType);
     }
 
     public PdfArray getBBox() {
@@ -115,5 +139,10 @@ public class PdfArtifact implements IAccessibleElement {
         setAccessibleAttribute(PdfName.ATTACHED, attached);
     }
 
-
+    public static enum ArtifactType {
+        PAGINATION,
+        LAYOUT,
+        PAGE,
+        BACKGROUND
+    }
 }

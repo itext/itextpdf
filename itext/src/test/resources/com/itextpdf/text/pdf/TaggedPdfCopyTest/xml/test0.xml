@@ -1,4 +1,5 @@
-<root><P></P>
+<root><P><alt>Apple, Inc. logo.
+</alt></P>
 <P>iPhone </P>
 <Part><H1>User&#8217;s Guide
 </H1>
@@ -336,7 +337,8 @@ Unless your keyboard has a high-powered USB 2.0 port, you must connect iPhone to
 USB 2.0 port on your computer.
 </P>
 </Sect>
-<P></P>
+<P><alt>begin artwork description: An iPhone connected to a Mac computer using the Dock and cable that come with iPhone.
+:end description</alt></P>
 <Sect><P><Link></Link>
 </P>
 </Sect>
@@ -370,7 +372,9 @@ depending on your location and previous carrier.
 <P>When you connect iPhone to your computer, iTunes syncs iPhone with the information 
 and media on your computer, according to how you&#8217;ve configured the iPhone sync 
 settings in iTunes. </P>
-<P></P>
+<P><alt>begin artwork description: An iPhone and a Mac computer with an arrow between the two showing that you can sync information between your iPhone and your computer.
+:end description.
+</alt></P>
 <P>You can set iTunes to sync any or all of the following: 
 &#194; Contacts&#8212;names, phone numbers, addresses, email addresses, and so on 
 &#194; Calendars&#8212;appointments and events 
@@ -408,7 +412,8 @@ same user account, use the same sync settings for each. </P>
 <Sect><H4>Setting Up Syncing </H4>
 <P>You use the iPhone settings panes in iTunes to specify the iTunes content and other 
 information you want to sync to iPhone. </P>
-<P></P>
+<P><alt>begin screenshot description: The iTunes application icon
+:end description.</alt></P>
 <P>Set up syncing </P>
 <P>1	 Connect iPhone to your computer, and open iTunes (if it doesn&#8217;t open automatically). 
 Unless your keyboard has a high-powered USB 2.0 port, you must connect iPhone to a 
@@ -418,7 +423,11 @@ USB 2.0 port on your computer. </P>
 <P>4	 Click Apply in the lower-right corner of the screen. 
 The following sections provide an overview of each of the iPhone settings panes. 
 For more information, open iTunes and choose Help &gt; iTunes Help. </P>
-<P></P>
+<P><alt>begin screenshot description: 
+The iPhone settings panes in iTunes. A series of tabs runs across
+the top of the pane. The tabs from left to right are: Summary (selected), Info, Ringtones, Music, Photos, Podcasts, Video. The Summary tab shows three sections from top to bottom: iPhone which shows general information about your iPhone, such as the software version or serial number; Version which contains a Check for Update button and a Restore button; and Options which
+contains three sync option checkboxes.
+:end description.</alt></P>
 </Sect>
 <Sect><P><Link></Link>
 </P>
@@ -539,7 +548,8 @@ answer the call. Connect iPhone after the call to finish syncing. </P>
 <H2>Basics </H2>
 <P>12 </P>
 <H3>iPhone at a Glance </H3>
-<P>Headset jack Sleep/Wake 
+<P><alt>begin artwork description: iPhone at a glance, illustrating the top, front, and bottom of an iPhone. The top indicates the location of the headset jack, the SIM card tray, and the Sleep/Wake button. The front indicates the location of the Receiver, Camera (on back), Status bar, Home button, and the standard set of buttons; the location of the Ring/Silent switch and the volume buttons on the left side of the iPhone are also indicated. The bottom shows the location of the speaker, microphone, and Dock connecter.
+:end description.</alt>Headset jack Sleep/Wake 
 button 
 Receiver 
 SIM card tray 
@@ -557,7 +567,8 @@ Dock connector
 Speaker Microphone </P>
 <Sect><P>Chapter 2 Basics </P>
 <P>13 </P>
-<P>Dock connector to USB cable 
+<P><alt>begin artwork description: The items that come with the iPhone. The items are iPhone, stereo headset, Dock connector to USB cable, Dock, USB power adapter, and polishing cloth.
+:end description.</alt>Dock connector to USB cable 
 Dock 
 Stereo headset 
 USB power adapter 
@@ -788,7 +799,8 @@ Safari Web Clips to the Home Screen&#8221; on page 56. </Link>
 <P>While arranging icons, drag an icon to the right edge of the screen until a new screen 
 appears. You can flick to return to the original screen and drag more icons to the new 
 screen. </P>
-<P></P>
+<P><alt>begin artwork description: A hand with the forefinger dragging an icon to the right edge of the screen (as indicated by an arrow). To the right is another image of the iPhone showing the dragged icon on a new screen.
+:end description.</alt></P>
 <P>You can create up to nine screens. The number of dots at the bottom shows the 
 
 number of screens you have, and indicates which screen you are viewing.
@@ -812,7 +824,8 @@ play or pause a song, or answer or end a call. </P>
 <P>18 </P>
 <P>By default, if you don&#8217;t touch the screen for a minute, iPhone locks automatically.
 </P>
-<P>Sleep/Wake 
+<P><alt>begin artwork description:  The upper portion of iPhone with a close-up of the Sleep/Wake button.
+:end description.</alt>Sleep/Wake 
 button </P>
 <Table><TR><TD>To </TD>
 <TD>Do this </TD>
@@ -849,7 +862,8 @@ page 97. For information about setting iPhone to require a passcode to unlock it
 <P>The controls on the iPhone touchscreen change dynamically depending on the task 
 you are performing. </P>
 <P>Tap any application to open it. </P>
-<P></P>
+<P><alt>begin artwork description: A hand with the forefinger tapping an application button on iPhone.
+:end description.</alt></P>
 <P>Press the Home  button below the display at any time to return to the Home screen. </P>
 </Sect>
 <P>Chapter 2 Basics </P>
@@ -858,10 +872,12 @@ you are performing. </P>
 
 to side.
 </P>
-<P></P>
+<P><alt>begin artwork description: A hand with the forefinger dragging up and down (as indicated by up and down arrows) through the list of artists in the iPod application. To the right is another image of a hand with the forefinger dragging up, down, left, and right (as indicated by four arrows) on a webpage in Safari.
+:end description.</alt></P>
 <P>Dragging your finger to scroll won&#8217;t choose or activate anything on the screen. </P>
 <P>Flick to scroll quickly. </P>
-<P></P>
+<P><alt>begin artwork description: A hand with the forefinger flicking up across the touchscreen (as indicated by an up arrow) through the list of artists in the iPod application. 
+:end description.</alt></P>
 <P>You can wait for the scrolling to come to a stop, or tap or touch anywhere on the 
 screen to stop it immediately. Tapping or touching to stop scrolling won&#8217;t choose or 
 activate anything on the screen. </P>
@@ -871,7 +887,8 @@ activate anything on the screen. </P>
 <P>20 </P>
 <P>m Some lists have an index along the right side. Tap a letter to jump to items starting with 
 that letter. Drag your finger along the index to scroll quickly through the list. </P>
-<P>Index </P>
+<P><alt>begin screenshot description: The Artists screen in the iPod application showing the list of artists and an alphabetized column of letters along the right edge of the screen.
+:end description.</alt>Index </P>
 <P>m	 Tap an item in the list to choose it. Depending on the list, tapping an item can do 
 different things&#8212;for example, it may open a new list, play a song, open an email, 
 or show someone&#8217;s contact information so you can call that person. 
@@ -881,7 +898,9 @@ m	 When viewing photos, web pages, email, or maps, you can zoom in and out. Pinc
 fingers together or apart. For photos and web pages, you can double-tap (tap twice 
 quickly) to zoom in, then double-tap again to zoom out. For maps, double-tap to zoom 
 in and tap once with two fingers to zoom out. </P>
-<P></P>
+<P><alt>begin artwork description: A hand with the forefinger and thumb pinched together (as indicated by inward pointing arrows) to zoom out (or make smaller) a photo. To the right is another image of a hand with the forefinger and thumb pinched apart (as indicated
+by outward pointing arrows) to zoom in (or make larger) a photo. 
+:end description.</alt></P>
 <H2>Onscreen Keyboard </H2>
 <P>Use the onscreen keyboard to enter text, such as contact information, text messages, or 
 URLs. Depending on the application you&#8217;re using, the intelligent keyboard may 
@@ -911,7 +930,8 @@ more quickly using two thumbs. </P>
 As you type, each letter appears above your thumb or finger. If you touch the wrong 
 key, you can slide your finger to the correct key. The letter is not entered until you 
 release your finger from the key. </P>
-<P></P>
+<P><alt>begin artwork description: iPhone showing a note being typed in the Notes application. iPhone is held with two hands, each thumb poised over the keyboard. The left thumb is pressing the "E" key and the letter "E" appears on the screen above the thumb.  
+:end description.</alt></P>
 <Table><TR><TH>To </TH>
 <TH>Do this </TH>
 </TR>
@@ -942,7 +962,8 @@ additional punctuation and symbols. </TD>
 appropriate dictionary is activated automatically when you select a keyboard on 
 iPhone. iPhone uses the active dictionary to suggest corrections or complete the word 
 you&#8217;re typing. </P>
-<P>Suggested word </P>
+<P><alt>begin artwork description: The upper portion of iPhone showing a note in the Notes application. The note contains the misspelled word "wrotten" and the suggested correction "written" appears just below it in red. 
+:end description.</alt>Suggested word </P>
 <P>You don&#8217;t need to interrupt your typing to accept the suggested word.
 </P>
 <P>&#194; To use the suggested word, type a space, punctuation mark, or return character.
@@ -953,7 +974,8 @@ dismiss the suggestion before typing anything else. Each time you reject a
 suggestion for the same word, iPhone becomes more likely to accept your word. </P>
 <P>Editing text </P>
 <P>Touch and hold to see a magnified view, then drag to position the insertion point. </P>
-<P></P>
+<P><alt>begin artwork description:  The upper portion of iPhone showing a note in the Notes application. A hand with the forefinger touching the screen displays a magnified view of text and the insertion point in a word of the note.
+:end description.</alt></P>
 </Sect>
 <P>Chapter 2 Basics </P>
 <P>23 </P>
@@ -967,7 +989,8 @@ Product Information Guide at www.apple.com/support/manuals/iphone. </P>
 </P>
 <P>To adjust the volume, use the buttons on the side of iPhone.
 </P>
-<P>Volume 
+<P><alt>begin artwork description:  The upper portion of iPhone with a close-up of the Volume up and Volume down buttons.
+:end description.</alt>Volume 
 up 
 Volume 
 down </P>
@@ -975,7 +998,8 @@ down </P>
 To set a volume limit for music and videos on iPhone, see page 105. </Link>
 </P>
 <P>Flip the Ring/Silent switch to change between ring  and silent  modes. </P>
-<P>Ring 
+<P><alt>begin artwork description:  The upper portion of iPhone with a with a close-up of the Silent/Ring switch in the Ring position and a second close-up in the Silent position.
+:end description.</alt>Ring 
 Silent </P>
 <P>When set to ring mode, iPhone plays all sounds. When set to silent mode, iPhone 
 doesn&#8217;t ring or sound any alerts or sound effects. Alarms set using Clock do sound, 
@@ -996,7 +1020,9 @@ that allows you to answer and end calls easily, and control audio and video play
 <P>Plug in the headset to listen to music or a phone call. Callers hear you through the 
 headset microphone. Click the mic button to control music playback and answer or 
 end calls, even when iPhone is locked. </P>
-<P>Mic button </P>
+<P><alt>begin artwork description:  The stereo headset with a callout to
+the location of the Mic button.
+:end description.</alt>Mic button </P>
 <Table><TR><TH>To </TH>
 <TH>Do this </TH>
 </TR>
@@ -1039,7 +1065,7 @@ order, until connected: </P>
 networks in range. Tap a network and, if necessary, enter the password to join. 
 Networks that require a password show <Figure></Figure>
 </P>
-<P>&#165;</P>
+<P><alt>the Lock icon</alt>&#165;</P>
 <P> next to them. You can prevent iPhone </P>
 <P><Link>
 from automatically showing available networks. See &#8220;Set iPhone to ask if you want to </Link>
@@ -1091,7 +1117,7 @@ directly to voicemail. </P>
 <P>Chapter 2 Basics </P>
 <P>26 </P>
 </Sect>
-<P>You can tell iPhone is connected to the Internet over EDGE if you see 
+<P><alt>the GPRS icon</alt>You can tell iPhone is connected to the Internet over EDGE if you see 
  
 in the status 
 bar at the top of the screen. If iPhone is connected to the Internet over GPRS,
@@ -1158,14 +1184,16 @@ Charge the battery and sync iPhone
 Connect iPhone to your computer using the included cable and dock. 
 Unless your keyboard has a high-powered USB 2.0 port, you must connect iPhone to a 
 USB 2.0 port on your computer. </P>
-<P></P>
+<P><alt>begin artwork description: iPhone connected to a Mac computer using the Dock and cable that come with iPhone, and a second illustration of iPhone connected to a power outlet using the cable and USB power adapter.
+:end description.</alt></P>
 <P>Note: If iPhone is connected to a computer that&#8217;s turned off or is in sleep or standby 
 
 mode, the iPhone battery may drain.
 
 An icon in the upper-right corner of the screen shows battery charging status.
 </P>
-<P>Charging Charged </P>
+<P><alt>begin artwork description:  A lightning bolt icon that indicates the battery is charging. To the right is a plug icon that indicates the battery is fully charged.
+:end description.</alt>Charging Charged </P>
 <P>If you charge the battery while syncing or using iPhone, it may take longer to charge. </P>
 <P>Chapter 2 Basics </P>
 <P>28 </P>
@@ -1173,7 +1201,8 @@ An icon in the upper-right corner of the screen shows battery charging status.
 indicating that iPhone needs to charge for up to ten minutes before you can use it. 
 If iPhone is extremely low on power, the display may be blank for up to two minutes 
 before one of the low-battery images appears. </P>
-<P>or </P>
+<P><alt>begin screenshot description:  Two iPhone screens, each showing a nearly empty battery with a thin red line indicating the remaining charge and either a lightning bolt icon or a plug and a lightning bolt icon below the battery.
+:end description.</alt>or </P>
 <P>Rechargeable batteries have a limited number of charge cycles and may eventually 
 need to be replaced. The iPhone battery is not user replaceable; it can only be replaced 
 by an authorized service provider. For more information, go to: 
@@ -1195,7 +1224,8 @@ solvents, alcohol, ammonia, or abrasives to clean iPhone. </P>
 <P>29 </P>
 <Sect><H3>Tap Phone to make calls, view and add contacts, and 
 check voicemail. </H3>
-<P></P>
+<P><alt>begin screenshot description: The Phone application icon
+:end description.</alt></P>
 <P>Making a call on iPhone is as simple as tapping a name or number in your contacts list 
 or tapping a contact in your favorites list. Or tap the name of a recent caller to return 
 the call. If you&#8217;ve set up iTunes to sync contacts automatically, your contacts are synced 
@@ -1244,7 +1274,9 @@ Tap Missed to see only missed calls. </P>
 you dialed. </P>
 <H3>While You&#8217;re On a Call </H3>
 <P>When you&#8217;re on a call, the screen shows call options. </P>
-<P></P>
+<P><alt>begin screenshot description:  The portion of the iPhone screen showing buttons for options while you're on a call. The buttons are arranged in two rows of three columns and are from top left to bottom right: mute, keypad, speaker, add call, hold,
+contacts. Below the buttons is the End Call button.
+:end description.</alt></P>
 <Table><TR><TH>To </TH>
 <TH>Do this </TH>
 </TR>
@@ -1308,7 +1340,9 @@ also click the mic button to end a call. </TD>
 &#194; Tap Answer. Or, if iPhone is locked, drag the slider. 
 &#194; If you&#8217;re listening through the stereo headset, you can click the mic button to answer. </P>
 </Sect>
-<Sect><P>Mic button </P>
+<Sect><P><alt>begin artwork description:  The stereo headset with the location of the Mic button indicated.
+:end description.
+</alt>Mic button </P>
 <H2>Silencing or Declining a Call </H2>
 <P>When a call comes in, you may not want to answer it, or you may need to stop iPhone 
 from ringing or vibrating. You can silence or decline an incoming call. When you silence 
@@ -1322,7 +1356,8 @@ decline a call, the call is silenced and sent directly to voicemail. </P>
 <Sect><P>Decline a call </P>
 <P>	 Do one of the following: 
 &#194; Press the Sleep/Wake button twice quickly. </P>
-<P>Sleep/Wake 
+<P><alt>begin artwork description:  The upper portion of iPhone with a close-up of the Sleep/Wake button.
+:end description.</alt>Sleep/Wake 
 button </P>
 <P>&#194;	 Press and hold the mic button on the headset for about two seconds, then let go. 
 When you let go, two low beeps confirm that the call was declined. </P>
@@ -1418,10 +1453,13 @@ prior messages or voice instructions. </P>
 <P>Note: Visual voicemail may not be available in all regions. </P>
 <P>The Phone icon on the Home screen shows the total number of missed calls and 
 unheard voicemail messages you have. </P>
-<P></P>
+<P><alt>begin screenshot description:  The Phone button with a counter on the upper-right corner that indicates the number of missed calls and unheard voicemail messages.
+:end description.</alt></P>
 <P>When you tap Phone, the Voicemail button shows the number of unheard voicemail 
 messages and the Recents button shows the number of missed calls. </P>
-<P>Number of unheard 
+<P><alt>begin screenshot description:  A portion of the iPhone screen showing buttons for options while using the Phone application. The buttons from left to right are: Favorites, Recents, Contacts, Keypad, and Voicemail. The Recents button has a counter on the upper-right corner that indicates the number of missed calls. The Voicemail button has a counter that indicates the number of unheard
+voicemail messages. 
+:end description.</alt>Number of unheard 
 voicemail messages 
 Number of missed calls </P>
 <Sect><H3>Setting Up Voicemail </H3>
@@ -1445,7 +1483,10 @@ Unheard messages have a blue dot </P>
 <P>
  next to them. <Figure></Figure>
 </P>
-<P></P>
+<P><alt>begin screenshot description:  The Voicemail screen. At the top of the screen is the title bar with the Greeting button on the left and the Speaker button on the right. Below the title bar is a list of callers who have left voicemail messages. Preceding each caller name is a symbol indicating whether a message is unheard or is currently paused or playing. After each caller name is the time the message was recorded and a button to tap to display the caller's contact information. Below the list is a scrubber bar that shows 
+how much of the message has been heard and how much remains to hear, and that contains a playhead that you can use to skip to any part of the message. Below the scrubber bar is a Call Back button and a Delete button. Across the bottom of the screen from left to
+right are: Favorites, Recents, Contacts, Keypad, and Voicemail (selected).
+:end description.</alt></P>
 <P>Listen to a new voicemail message </P>
 </Sect>
 <P>If you receive visual voicemail, tap Voicemail, then tap the new message. The message 
@@ -1624,7 +1665,9 @@ Drag the photo up, down, or sideways. </P>
 tap, create a new email message addressed to your contact, visit their website, or locate 
 their home or business in Maps. </P>
 <P>Tap contacts and choose a contact. Then tap an item. </P>
-<P></P>
+<P><alt>begin screenshot description:  The Info screen for a contact. At the top of the screen is an All Contacts button on the left and an Edit button on the right. Below the buttons are the contact's photo and name. Sections from top to bottom show: mobile phone number for calling; home email address for sending an email message; 
+home page to visit a website; work address to view a map and get directions; a Text Message button for sending a text message; and an Add to Favorites button for adding a phone number to your favorites list. Across the bottom of the screen from left to right are: Favorites, Recents, Contacts (selected), Keypad, and Voicemail.
+:end description.</alt></P>
 </Sect>
 <Sect><H2>Adding Entries to Your Favorites List for Quick Access </H2>
 <P>Add a contact&#8217;s number to your favorites list </P>
@@ -1687,7 +1730,8 @@ either mode or both. </P>
 the Ring/Silent switch to silent. </P>
 <P>Switch between ring mode and silent mode </P>
 <P>Flip the Ring/Silent switch on the side of iPhone. </P>
-<P>Ring 
+<P><alt>begin artwork description:  The upper portion of iPhone with a close-up of the Silent/Ring switch  in the Ring position and a second close-up of the switch in the Silent position.
+:end description.</alt>Ring 
 Silent </P>
 <P>You can tell by feel if iPhone is set to ring or be silent. The Ring/Silent switch is aligned 
 with the volume buttons when it is set to ring. In silent mode, the button is offset. </P>
@@ -1728,7 +1772,8 @@ headset, preventing connections with other headsets. </P>
 <P>Pair iPhone with the iPhone Bluetooth Headset </P>
 <P>	 Connect the iPhone Dual Dock to your computer, then place iPhone and the headset in 
 the dock. </P>
-<P>Dock </P>
+<P><alt>begin artwork description:  The bottom portion of iPhone placed in a Dock and an iPhone Bluetooth headset with a callout showing where to place the headset in the Dock.
+:end description.</alt>Dock </P>
 <P>The first time you connect the headset, let it charge for about an hour until the status 
 light on the headset turns from amber to green. When iPhone and the headset are 
 both in the dock, iPhone displays the battery level for the headset. </P>
@@ -1747,10 +1792,12 @@ appears in the status bar. </P>
 <P>Make or answer a call 
 1 Place the headset in either ear with the microphone pointed towards your mouth. </P>
 </Sect>
-<P>Microphone </P>
+<P><alt>begin artwork description:  An ear with a Bluetooth headset inserted and a callout showing the location of the microphone.
+:end description.</alt>Microphone </P>
 <Sect><P>2 Make a call on iPhone, or press the button on top of the headset to answer an 
 incoming call. </P>
-<P>Button 
+<P><alt>begin artwork description: A Bluetooth headset with callouts showing the location of the button and the status light.
+:end description.</alt>Button 
 Status light </P>
 <P>3 When you finish, press the button to end the call. </P>
 <P>Adjust the volume </P>
@@ -1896,7 +1943,8 @@ page 101</Link>
 <Sect><P>46 </P>
 <H3>Tap Mail to send and check email.
 </H3>
-<P></P>
+<P><alt>begin screenshot description: The Mail application icon
+:end description.</alt></P>
 <P>Mail is a rich HTML email client that retrieves your email in the background while you 
 do other things on iPhone. iPhone works with the most popular email systems&#8212; 
 including Yahoo! Mail, Google email, AOL, and .Mac Mail&#8212;as well as other industry-
@@ -2040,12 +2088,17 @@ original message.
 may have other unread messages in other mailboxes. </P>
 <P>On each account screen, you can see the number of unread messages next to each 
 mailbox. </P>
-<P></P>
-<P><P></P>
+<P><alt>begin screenshot description:  The Mail button with a
+counter on the upper-right corner that indicates the number of unread email messages.
+:end description.</alt></P>
+<P><P><alt>begin screenshot description:  The account screen for a .Mac email account showing a list of mailboxes. At the top of the screen is the title bar with the Accounts button on the left. Below the title bar is a list of mailboxes showing from top to bottom: Inbox, Drafts, Sent, Trash, Friends, Projects, and Travel. At the far right of the row for the Inbox and Projects mailboxes are numbers indicating the number of unread messages in the mailboxes. At the bottom-right of the screen is the Compose button for sending an email message.
+:end description.</alt></P>
 </P>
 <P>Tap a mailbox to see its messages. Unread messages have a blue dot</P>
 <P>next to them. </P>
-<P></P>
+<P><alt>begin screenshot description:  The Inbox screen for a .Mac email account showing a list of messages.  At the top of the screen is the title bar with a .Mac account button on the left  and an Edit button on the right. Below the title bar is the messages list. In the messages list, a blue dot at the start of a row indicates
+an unread message. Each row shows the name of the sender, the subject, when the message was sent, and two lines of message text. A greater than symbol at the end of a row displays the whole message when tapped. Below the messages list at the bottom of the screen from left to right are: the Check Messages button, the date and time when the messages list was last updated, and the Compose button.
+:end description.</alt></P>
 <P>Read a message </P>
 <P>Tap a mailbox, then tap a message. Within a message, tap or  to see the next or 
 previous message. </P>
@@ -2056,7 +2109,9 @@ previous message. </P>
 <P>Delete a message </P>
 <P>You can also delete a message directly from the mailbox message list by swiping left or 
 right over the message title and then tapping Delete. </P>
-<P></P>
+<P><alt>begin screenshot description:  A portion of the Inbox screen listing messages, with a red Delete button to the right of a message.
+:end description.
+</alt></P>
 <P>Or you can tap Edit and tap  next to a message. </P>
 <P>Check for new messages </P>
 <P>Choose a mailbox, or tap  at any time. </P>
@@ -2065,7 +2120,8 @@ right over the message title and then tapping Delete. </P>
 For example, if someone sends you a PDF, Microsoft Word, or Microsoft Excel 
 document, you can read it on iPhone. </P>
 <P> Tap the attachment. It downloads to iPhone and then opens. </P>
-<P></P>
+<P><alt>begin screenshot description:  The top portion of the message screen showing a message that contains an attachment. To the right is another screenshot of the same message now showing the downloaded image.
+:end description.</alt></P>
 <P>You can view attachments in both portrait and landscape orientation. If the format of 
 an attached file isn&#8217;t supported by iPhone, you can see the name of the file but you 
 can&#8217;t open it. iPhone supports the following email attachment file formats: </P>
@@ -2115,7 +2171,8 @@ accounts for iPhone. See page 99. </Link>
 <Sect><P>52 </P>
 <H3>Tap Safari to explore the World Wide Web.
 </H3>
-<P></P>
+<P><alt>begin screenshot description: The Safari application icon
+:end description.</alt></P>
 </Sect>
 <Sect><H2>Surfing the Web </H2>
 <P>Safari lets you see webpages just as they were designed to be seen in computer-based 
@@ -2178,13 +2235,15 @@ account set up on iPhone (see page 46). </TD>
 <Sect><H3>Zooming In to See a Webpage More Easily </H3>
 <P>View a webpage in widescreen orientation </P>
 <P>Rotate iPhone sideways. Safari automatically reorients and expands the page. </P>
-<P></P>
+<P><alt>begin screenshot description:  iPhone in a vertical position with a webpage in Safari. To the right is another screenshot of iPhone in a horizontal position showing the same webpage in widescreen orientation.
+:end description.</alt></P>
 </Sect>
 <P>Chapter 5 Safari </P>
 <P>54 </P>
 <Sect><P>Resize any column to fit the screen </P>
 <P>Double-tap the column. The column expands, so you can read it more easily. </P>
-<P></P>
+<P><alt>begin screenshot description:  A webpage shown in the default size in Safari. To the right is another screenshot of the same webpage showing a single expanded column. 
+:end description.</alt></P>
 <P>Double-tap again to zoom back out. </P>
 <P>Zoom in on part of a webpage </P>
 <P>Double-tap the part of the page you want to zoom in on. Double-tap again to 
@@ -2227,7 +2286,8 @@ For example:</P>
 <P>Tap  and tap New Page. </P>
 <P>See all open pages and go to another page that&#8217;s open </P>
 <P>Tap  and flick left or right. When you get to the page you want, tap it. </P>
-<P></P>
+<P><alt>begin artwork description: A hand with the forefinger flicking left (as indicated by a left arrow) to scroll through open webpages.
+:end description.</alt></P>
 <P>Close a webpage </P>
 <P>Tap and tap . You can&#8217;t close a page if it&#8217;s the only one that&#8217;s open. </P>
 </Sect>
@@ -2322,7 +2382,8 @@ page 106</Link>
 <P>58 </P>
 <Sect><H3>Tap iPod to listen to songs, audiobooks, and podcasts, 
 and watch videos. </H3>
-<P></P>
+<P><alt>begin screenshot description: The iPod application icon
+:end description.</alt></P>
 <P>iPod on iPhone works . . .  just like an iPod! iPhone syncs with iTunes on your computer 
 to get the songs, videos, and other content you&#8217;ve collected in your iTunes library. </P>
 </Sect>
@@ -2400,7 +2461,9 @@ Composers, Genres, or Podcasts. </P>
 <P>Tap the song. </P>
 <P>Controlling Song Playback </P>
 <P>When you play a song, the Now Playing screen appears: </P>
-<P></P>
+<P><alt>begin screenshot description:  The Now Playing Screen showing the song that's playing. At the top of the screen is the title bar containing from left to right: the Back button, the artist's name and the title of the song and album, and the Track List button. 
+Below the title bar is the album cover. At the bottom of the screen are from left to right: the Previous/Rewind button, the Play/Pause button, and the Next/Fast-forward button, with the Volume slider below the buttons.
+:end description.</alt></P>
 <Table><TR><TH>To </TH>
 <TH>Do this </TH>
 </TR>
@@ -2461,7 +2524,8 @@ onscreen, then disappear automatically after you finish using them. <Link>
 The repeat and shuffle controls and the scrubber bar appear. You can see time elapsed, 
 time remaining, and the song number. The song&#8217;s lyrics appear also, if you&#8217;ve added 
 them to the song in iTunes. </P>
-<P></P>
+<P><alt>begin screenshot description:  The top portion of the Now Playing Screen showing at the top of the screen the title bar. Below the title bar from left to right are: the Repeat button, the scrubber bar showing how much of the song has been heard and how much remains to hear, the playhead,  and the Shuffle button.
+:end description.</alt></P>
 <Table><TR><TH>To </TH>
 <TH>Do this </TH>
 </TR>
@@ -2496,7 +2560,8 @@ random order. </TD>
 <H3>Browsing Album Covers in Cover Flow </H3>
 <P>When you&#8217;re browsing music, you can rotate iPhone sideways to see your iTunes 
 content in Cover Flow and browse your music by album artwork. </P>
-<P></P>
+<P><alt>begin screenshot description: iPhone in a vertical position with the iPod Now Playing screen showing an album cover. To the right is another screenshot of iPhone in the horizontal position showing the same album cover in Cover Flow.
+:end description.</alt></P>
 </Sect>
 </Sect>
 </Sect>
@@ -2515,7 +2580,8 @@ content in Cover Flow and browse your music by album artwork. </P>
 </TR>
 </Table>
 </Sect>
-<Part><Sect><Sect><Sect><P></P>
+<Part><Sect><Sect><Sect><P><alt>begin screenshot description:  The Cover Flow screen showing the current album cover. To the right is another screenshot of the Cover Flow screen displaying the list of tracks for the current album cover.
+:end description.</alt></P>
 <Table><TR><TH>To </TH>
 <TH>Do this </TH>
 </TR>
@@ -2538,7 +2604,8 @@ click the mic button. </TD>
 <Sect><P>See all the tracks on the album that contains the current song </P>
 <P>From the Now Playing screen tap . Tap a track to play it. Tap the album cover </P>
 <P>thumbnail to return to the Now Playing screen. </P>
-<P></P>
+<P><alt>begin screenshot description:  A portion of the Track List screen showing tracks for the current album cover. At the top of the screen is the title bar showing from left to right: the Back button, the artist's name and the title of the current track and album, and the Now Playing button. Below the title bar is the Rating Bar, followed by the list of album tracks.
+:end description.</alt></P>
 <P>In track list view, you can assign ratings to songs. You can use ratings to create 
 smart playlists in iTunes that dynamically update to show, for example, your highest 
 rated songs. </P>
@@ -2582,7 +2649,9 @@ features, you can choose an audio language or display subtitles. </P>
 <P>Tap Videos and tap the video. </P>
 <P>Display playback controls </P>
 <P>Tap the screen to show the controls. Tap again to hide them. </P>
-<P></P>
+<P><alt>begin screenshot description:  The video playback screen showing a video that's playing. At the top of the screen from left to right are: the Done button, the scrubber bar showing how much of the video has been played and how much remains to be played,
+the playhead, and the Scale button.  At the bottom of the screen from left to right are: the Restart/Rewind button, the Play/Pause button, and the Fast-forward button, with the Volume slider below the buttons.
+:end description.</alt></P>
 <P>Say It Right by Nelly Furtado is available on iTunes in select countries. </P>
 <Table><TR><TH>To </TH>
 <TH>Do this </TH>
@@ -2708,7 +2777,8 @@ the screen with ones you use more frequently. For example, if you listen to podc
 lot and don&#8217;t watch many videos, you can replace the Videos button with Podcasts. </P>
 <P>Tap More and tap Edit, then drag a button to the bottom of the screen, over the button 
 you want to replace. </P>
-<P></P>
+<P><alt>begin artwork description:  A hand with the forefinger dragging the Podcasts button down (as indicated by a down arrow) across the Configure screen. To the right is another screenshot showing the Podcasts button dragged onto another button on the bottom edge of the screen.
+:end description.</alt></P>
 </Sect>
 </Sect>
 <P>Chapter 6 iPod </P>
@@ -2733,7 +2803,9 @@ playback on your iPod. See page 104. </Link>
 <Sect><P>68 </P>
 <H2>Text
 </H2>
-<P></P>
+<P><alt>begin screenshot description: The Text application icon
+:end description.
+</alt></P>
 <Sect><H3>Sending and Receiving Text Messages </H3>
 <P>You can send and receive text messages anytime you&#8217;re in range of the cell network. 
 If you can make a call, you can send a text message. Depending on your phone plan, 
@@ -2754,7 +2826,8 @@ The Text icon on the Home screen shows the total number of unread text messages
 
 you have.
 </P>
-<P><P></P>
+<P><P><alt>begin screenshot description:  The Text button with a counter on the upper-right corner that indicates the number of unread text messages.
+:end description.</alt></P>
 </P>
 </Sect>
 <Sect><P>Chapter 7 Applications </P>
@@ -2763,7 +2836,9 @@ you have.
 <Sect><P>As you text back and forth with a person over time, your conversation is saved in the 
 Text Messages list. Conversations that contain unread messages have a blue dot 
 next to them. Tap a name in the list to see or add to that conversation. </P>
-<P></P>
+<P><alt>begin screenshot description: A screen showing text messages in a conversation. At the top of the screen is the title bar with a Messages button on the left and a Clear button on the right. Below the title bar is a Call button on the left and a Contact Info
+button on the right, followed by the text messages sent and received during a conversation. At the bottom of the screen is a text entry field on the left and a Send button on the right.
+:end description.</alt></P>
 <P>Send a text message to multiple people </P>
 <P>Tap , then add people one at a time. If you enter a phone number manually (instead </P>
 <P>of selecting it from Contacts), you must tap Return before entering another entry. 
@@ -2777,7 +2852,8 @@ tap Send. </P>
 <P>Tap Edit, then tap  next to a conversation and tap Delete. </P>
 <P>You can also delete a conversation by swiping left or right over a conversation and 
 tapping Delete. </P>
-<P></P>
+<P><alt>begin screenshot description:  A portion of the Text Messages screen listing conversations, with a red Delete button to the right of a conversation.
+:end description.</alt></P>
 <P>Send a text message to someone in your favorites list or to a recent caller
 </P>
 <P>From the Home screen tap Phone, then tap Favorites or Recents. Tap  next to a </P>
@@ -2810,7 +2886,8 @@ in Settings.
 </Sect>
 </Sect>
 <Sect><H2>Calendar </H2>
-<P></P>
+<P><alt>begin screenshot description: The Calendar application icon
+:end description.</alt></P>
 <Sect><H3>Adding Calendar Events to iPhone </H3>
 <P>If you&#8217;ve set iTunes to sync calendars, you can enter appointments and events on your 
 computer and sync them with iPhone. You can also enter appointments and events 
@@ -2878,7 +2955,9 @@ or down to see previous or upcoming days.
 <P>72 </P>
 <Sect><P>&#194;	 Month view: Days with events show a dot below the date. Tap a day to see its events </P>
 <P>in a list below the calendar. Tap or  to see the previous or next month. </P>
-<P></P>
+<P><alt>begin screenshot description:  A portion of the Calendar screen showing a monthly calendar. At the top of the screen is the title bar showing from left to right the buttons: Today, List, Day, and Month (selected); and + (to add an event to the calendar). Below the title bar is a calendar displayed in Month view. A day with a dot indicates that events are scheduled for that day. The selected date appears 
+with a blue background. Below the calendar is a list of events for the selected day, with the time of the event at the left edge of the screen, followed by the event title.
+:end description.</alt></P>
 <P>See today&#8217;s events </P>
 <P>Tap Today. </P>
 <P>See the details of an event </P>
@@ -2895,7 +2974,8 @@ the time zone of your current location. </P>
 <P>73 </P>
 <H2>Photos and Camera
 </H2>
-<Sect><P></P>
+<Sect><P><alt>begin screenshot description: The Photos and Camera application icons.
+:end description.</alt></P>
 <P>iPhone lets you carry your photos with you, so you can share them with your family, 
 friends, and associates on the high-resolution display. You can sync photos from your 
 computer to iPhone and take photos with the built-in 2-megapixel camera. </P>
@@ -2952,12 +3032,15 @@ or Photos. Photos synced from your computer can be viewed in Photos. </P>
 <P>See a photo at full screen </P>
 <P>m	 Tap a thumbnail photo to see it at full screen. Tap the full screen photo to hide 
 the controls. </P>
-<P></P>
+<P><alt>begin screenshot description:  The thumbnail photo screen showing thumbnails of the current roll album. A title bar at the top of the screen contains the Photo Albums button on the left and the current album title in the center. Below the title bar are 20 photo thumbnails. Below the thumbnails is a Right Arrow to continue to the next screen of thumbnails.  To the right is another screenshot showing one of the thumbnails in full screen view. At the top of the photo screen is a title bar with a button on the left to return to the album thumbnails and the number of the current photo (such as 3 of 26). Below the photo from left to right are: the photo options button, Left Arrow to go back, Play button, Right Arrow to go forward. To the right is another screenshot showing the same 
+photo but with no title bar and no buttons at the bottom edge.
+:end description.</alt></P>
 <P>Tap the screen again to show the controls. </P>
 <P>See the next or previous photo </P>
 <P>m	</P>
 <P>Flick left or right. Or tap the screen to show the controls, then tap or . </P>
-<P></P>
+<P><alt>begin artwork description:  A hand with the forefinger flicking left (as indicated by a left arrow) to scroll through photos.
+:end description.</alt></P>
 </Sect>
 <Sect><P>Chapter 7 Applications </P>
 <P>75 </P>
@@ -2965,12 +3048,15 @@ the controls. </P>
 <P>See a photo in landscape orientation </P>
 <P>Rotate iPhone sideways. The photo automatically reorients and, if it&#8217;s in landscape 
 format, expands to fit the screen. </P>
-<P></P>
+<P><alt>begin screenshot description: iPhone in the vertical position with a photo shown in portrait orientation. To the right is iPhone in the horizontal position showing the same photo, expanded in landscape orientation.
+:end description.</alt></P>
 <P>Zoom in on part of a photo </P>
 <P>	 Double-tap the part you want to zoom in on. Double-tap again to zoom out. </P>
 <P>Zoom in or out </P>
 <P>	 Pinch to zoom in or out. </P>
-<P></P>
+<P><alt>begin artwork description:  A hand with the forefinger and thumb pinched together (as indicated by inward pointing arrows) to zoom out (or make smaller) a photo. To the right is another image of a hand with the forefinger and thumb pinched apart (as indicated 
+by outward pointing arrows) to zoom in (or make larger) a photo. 
+:end description.</alt></P>
 <P>Pan around a photo 
 Drag the photo. </P>
 <P>Viewing Slideshows 
@@ -3049,7 +3135,8 @@ the picture icon. </P>
 </Sect>
 </Sect>
 <Sect><H2>YouTube </H2>
-<P></P>
+<P><alt>begin screenshot description: The YouTube application icon
+:end description.</alt></P>
 <Sect><H3>Finding and Viewing Videos </H3>
 <P>YouTube features short videos submitted by people from around the world (not 
 
@@ -3080,7 +3167,8 @@ progress. When enough of the video has downloaded, it begins to play. You can al
 <P>Controlling Video Playback </P>
 <P>When a video starts playing, the controls disappear so they don&#8217;t obscure the video. </P>
 <P>Tap the screen to show or hide the controls. </P>
-<P></P>
+<P><alt>begin screenshot description:  The YouTube video playback screen showing a video playing. At the top of the screen from left to right are: the Done button, the scrubber bar showing how much of the video has been played and how much remains to be played, the playhead, and the Scale button.  At the bottom of the screen from left to right are: the Bookmark button, the Previous/Rewind button, the Play/Pause button, the Next/Fast-forward button, and the Email button. Below the buttons is the Volume slider.
+:end description.</alt></P>
 <Table><TR><TH>To	</TH>
 <TH>Do this </TH>
 </TR>
@@ -3147,7 +3235,8 @@ rated videos often but don&#8217;t watch many featured videos, you could replace
 Featured button with Top Rated. </P>
 <P>Tap More and tap Edit, then drag a button to the bottom of the screen, over the button 
 you want to replace. </P>
-<P></P>
+<P><alt>begin artwork description:  A hand with the forefinger dragging the Top Rated button down (as indicated by a down arrow) across the Configure screen. To the right is another screenshot showing the Top Rated button being dragged onto another button on the bottom edge of the screen.
+:end description.</alt></P>
 <P>You can drag the buttons at the bottom of the screen left or right to rearrange them. 
 When you finish, tap Done. </P>
 <P>When you&#8217;re browsing for videos, tap More to access the browse buttons that aren&#8217;t 
@@ -3166,7 +3255,9 @@ For information about adding your own videos to YouTube, go to www.youtube.com <
 <P>80 </P>
 <H2>Stocks
 </H2>
-<P></P>
+<P><alt>begin screenshot description: The Stocks application icon
+:end description.
+</alt></P>
 <H3>Viewing Stock Quotes </H3>
 <Sect><P>When you tap Stocks from the Home screen, the stock reader shows updated quotes 
 for all your stocks. Quotes are updated every time you open Stocks while connected to 
@@ -3195,7 +3286,9 @@ progress over one day, one week, one, three, or six months, or one or two years.
 <P>81 </P>
 <H2>Maps
 </H2>
-<P></P>
+<P><alt>begin screenshot description: The Maps application icon
+:end description.
+</alt></P>
 <P>Maps provides street maps, satellite photos, and hybrid views of locations in many of 
 the world&#8217;s countries. You can get detailed driving directions and, in some areas, traffic 
 information. Also in some areas, you can find your current approximate location, and 
@@ -3215,7 +3308,8 @@ general area, name of a landmark, bookmark name, name of someone in your contact
 list, or zip code. Then tap Search. </P>
 <P>A pin marks the location on the map. Tap the pin to see the name or description of the 
 location. </P>
-<P></P>
+<P><alt>begin screenshot description:  The map screen showing a map of Boston, Massachusetts. At the top of the screen is a search field. Below the search field is a map with a red pushpin indicating the location; above the pushpin is a gray field that contains the location name followed by a greater than symbol inside a blue dot that you can tap for more information about the location. At the bottom of the screen from left to right are the buttons: Current Location, Search, Directions (selected), and Options.  
+:end description.</alt></P>
 <P>Find your current approximate location on a map </P>
 <P>Tap . A circle appears at your current approximate location. Your approximate </P>
 <P>location is determined using information from cellular network data and some local 
@@ -3236,7 +3330,8 @@ www.apple.com/iphone. In order to provide your location, data is collected in a 
 </P>
 <Sect><P>Tap , then tap Drop Pin. A pin drops down on the map, which you can then drag to </P>
 <P>any location you choose. </P>
-<P></P>
+<P><alt>begin screenshot description:  The map screen curled up revealing a screen of option buttons. From top to bottom, Drop Pin and Hide Traffic. From left to right: Map (selected), Satellite, Hybrid, and List. At the bottom of the screen from left to right are the buttons: Current Location, Search, Directions, and Options.
+:end description.</alt></P>
 <P>To quickly move the pin to the area currently displayed, tap , then tap Replace Pin. </P>
 <P>Zoom in to a part of a map </P>
 <P>m	</P>
@@ -3251,7 +3346,8 @@ out further. </P>
 <P>Tap , then tap Satellite or Hybrid to see just a satellite view or a combined street </P>
 <P>map and satellite view. </P>
 </Sect>
-<P></P>
+<P><alt>begin screenshot description:  The map screen showing Boston in Map view. To the right is another screenshot showing Boston in Satellite view.
+:end description.</alt></P>
 </Sect>
 <Sect><P>Chapter 7 Applications </P>
 <P>83 </P>
@@ -3310,7 +3406,10 @@ available, the driving time is adjusted accordingly. </P>
 </P>
 <P>Highways are color-coded according to the flow of traffic:
 </P>
-<P></P>
+<P><alt>begin screenshot description:  The map screen showing traffic conditions for San Francisco, California. At the top of the screen is a search field. Below the search field is the map with a pushpin indicating the location. Highways are color-coded to 
+indicate traffic flow and speed. Green indicates more than 50 miles an hour, yellow indicates 25-50 miles per hour, and red indicates less than 25 miles per hour. Gray indicates that no data is currently available. At the bottom of the screen from left to right are the
+buttons: Current Location, Search, Directions, and Options. 
+:end description. </alt></P>
 <P>If you tap Show Traffic and don&#8217;t see color-coded highways, you may need to zoom out 
 to a level where you can see major roads, or traffic conditions may not be available for 
 that area. </P>
@@ -3338,7 +3437,8 @@ Pins appears for matching locations. For example, if you locate your city and th
 <P>	</P>
 <P>Tap the pin that marks a business, then tap  next to the name. </P>
 </Sect>
-<P></P>
+<P><alt>begin screenshot description:  The map screen showing several pushpins for Apple Inc. in New York. One pushpin has a field above it showing the location name, Apple Inc.,  and the symbol to tap for more information. To the right is another screenshot showing the Info screen for the location. At the top of the Info screen is a Map button on the left. Below the button are sections that show from top to bottom: the location name, phone number, home page to visit a website, address, a Directions To Here button, and a Directions From Here button.
+:end description.</alt></P>
 </Sect>
 <Sect><P>From there, you can do the following: </P>
 <P>&#194;	 Depending on what information is stored for that business, you can tap a phone 
@@ -3355,11 +3455,14 @@ number to call, email address to email, or web address to visit a website. </P>
 <P>86 </P>
 <H2>Weather
 </H2>
-<P></P>
+<P><alt>begin screenshot description: The Weather application icon
+:end description.
+</alt></P>
 <H3>Viewing Weather Summaries </H3>
 <Sect><P>Tap Weather from the Home screen to see the current temperature and a six-day 
 forecast for a city of your choice. You can store multiple cities, for quick access. </P>
-<P></P>
+<P><alt>begin screenshot description:   The Weather screen showing weather conditions for Paris, France. On the screen from top to bottom are: the current weather conditions, the name of the city and today's high and low temperatures and the current temperature, the six-day forecast with each day on a separate row showing expected weather conditions and high and low temperatures, when the weather information was last retrieved from Yahoo!, and an information button for adding and deleting cities. At the bottom of the screen is a row of dots indicating how many cities are in your weather list. 
+:end description.</alt></P>
 </Sect>
 <Sect><P>If the weather board is light blue, it&#8217;s daytime in that city&#8212;between 6:00 a.m. and </P>
 <P>6:00
@@ -3386,7 +3489,8 @@ are stored. </P>
 and more. </P>
 </Sect>
 <H2>Clock </H2>
-<P></P>
+<P><alt>begin screenshot description: The Clock application icon
+:end description.</alt></P>
 <H3>Adding and Viewing Clocks for Locations Around the World </H3>
 </Sect>
 <Sect><Sect><P>You can add multiple clocks to show the time in major cities and time zones around 
@@ -3468,7 +3572,8 @@ If you start the timer and go to another iPhone application, the timer continues
 <P>89 </P>
 <H2>Calculator
 </H2>
-<P></P>
+<P><alt>begin screenshot description: The Calculator application icon
+:end description.</alt></P>
 <Sect><H3>Using the calculator </H3>
 <P>Add, subtract, multiply, and divide, as with a standard calculator. 
 When you tap the add, subtract, multiply, or divide button, a white ring appears around 
@@ -3490,7 +3595,8 @@ is a number stored in memory. </P>
 <P>90 </P>
 <H2>Notes
 </H2>
-<P></P>
+<P><alt>begin screenshot description: The Notes application icon
+:end description.</alt></P>
 <H3>Writing, Reading, and Emailing Notes </H3>
 <Sect><P>Notes are listed by date added, with the most recent note at the top. You can see the 
 first few words of each note in the list. </P>
@@ -3519,7 +3625,8 @@ page 46</Link>
 <P>91 </P>
 <Sect><H3>Tap Settings to adjust iPhone settings.
 </H3>
-<P></P>
+<P><alt>begin screenshot description: The Settings application icon
+:end description.</alt></P>
 <P>Settings allows you to customize iPhone applications, set the date and time, configure 
 your network connection, and enter other preferences for iPhone. </P>
 </Sect>
@@ -4218,7 +4325,8 @@ iPhone doesn&#8217;t need to be connected to your computer. </P>
 <P>108 </P>
 <Sect><H3>Tap iTunes to purchase songs and albums from the 
 iTunes Wi-Fi Music Store. </H3>
-<P></P>
+<P><alt>begin screenshot description: The iTunes Wi-Fi Music Store application icon
+:end description.</alt></P>
 <P>You can search for, browse, preview, purchase, and download songs and albums from 
 the iTunes Wi-Fi Music Store directly to iPhone. Your purchased content is automatically 
 copied to your iTunes library the next time you sync iPhone with your computer. </P>
@@ -4243,10 +4351,14 @@ Top Tens lets you see the most popular songs and albums in each of several categ
 If you&#8217;re looking for a specific song, album, or artist, use Search. </P>
 <P>Browse featured songs and albums </P>
 <P>Tap Featured and select a category at the top of the screen. </P>
-<P></P>
+<P><alt>begin screenshot description:  The featured screen showing new releases. At the top of the screen from left to right are the buttons: New Releases (selected), What's Hot, Genres. Below the buttons is a list of songs or albums in the selected category. At the bottom of the screen from left to right are the buttons: Featured
+(selected), Top Tens, Search, and Downloads.
+:end description.</alt></P>
 <P>Browse top ten songs and albums </P>
 <P>Tap Top Tens, then choose a category and tap Top Songs or Top Albums. </P>
-<P></P>
+<P><alt>begin screenshot description:  The top tens screen showing top songs. At the top of the screen from left to right are the Top Songs button (selected) and the Top Albums button. Below the buttons is a list of songs followed by a volume slider. At the bottom of the screen from left to right are the buttons: Featured, 
+Top Tens (selected), Search, Downloads.
+:end description.</alt></P>
 </Sect>
 <Sect><Sect><P>Chapter 9 iTunes Wi-Fi Music Store </P>
 <P>110 </P>
@@ -4255,7 +4367,8 @@ If you&#8217;re looking for a specific song, album, or artist, use Search. </P>
 </P>
 <P>Tap Search, tap the search field and enter one or more words, then tap Search.
 </P>
-<P></P>
+<P><alt>begin screenshot description:  The search screen showing search results. At the top of the screen is the search field with a search string in it. Belowthe field is the list of results, organized by Albums and then by Songs. At the bottom of the screen from left to right are the buttons: Featured, Top Tens, Search  (selected), and Downloads.
+:end description.</alt></P>
 <P>See the songs on an album </P>
 <P>Tap the album. </P>
 <P>See the album a song is on </P>
@@ -4277,7 +4390,8 @@ www.apple.com/itunes/starbucks.
 <P>Tap Starbucks. </P>
 <P>The currently playing song appears at the top of the screen. Tap the song to see the 
 album the song is on and the other songs on the album. </P>
-<P></P>
+<P><alt>begin screenshot description:  The Starbucks screen showing the currently playing and other Starbucks songs. At the top of the screen is the title bar followed by the currently playing song with a Buy Now button. The next rows list the song categories Recently Played, The Coffeehouse Sound, Must Haves, Opus Collection. At the bottom of the screen from left to right are the buttons: Starbucks (selected), Featured, Top Tens, Search, and Downloads.
+:end description.</alt></P>
 <P>View Recently Played and other Starbucks playlists </P>
 <P>Tap Starbucks, then choose Recently Played or one of the Starbucks playlists. </P>
 </Sect>
@@ -4372,7 +4486,8 @@ following the advice in this chapter. </P>
 <Link>
 it. For information about charging iPhone, see &#8220;Charging the Battery&#8221; on page 27. </Link>
 </P>
-<P>or </P>
+<P><alt>begin screenshot description: Two iPhone screens, each showing a nearly empty battery with a thin red line indicating the remaining charge and either a lightning bolt icon or a plug and a lightning bolt icon below the battery.
+:end description.</alt>or </P>
 <P>If iPhone doesn&#8217;t appear in iTunes or you can&#8217;t sync iPhone </P>
 <P>&#194;	 The iPhone battery might need to be recharged. For information about charging 
 <Link>
@@ -4624,7 +4739,13 @@ card inside iPhone with another GSM phone. </P>
 <P>Remove the SIM card </P>
 <P>Insert the end of a small paper clip (or the SIM eject tool if it came with your iPhone) 
 into the hole on the SIM tray. Press firmly and push it straight in until the tray pops out. </P>
-<P>Paper clip SIM tray 
+<P><alt>begin artwork description:   The back of iPhone with the camera on
+the top left side, and an arrow indicating a location on the top right 
+edge where you use a paper clip to open the SIM tray. Another
+image to the right shows the SIM tray partially open. Another
+image to the right shows the SIM tray removed from iPhone and
+the SIM card removed from the SIM tray.
+:end description.</alt>Paper clip SIM tray 
 SIM 
 card </P>
 </Sect>

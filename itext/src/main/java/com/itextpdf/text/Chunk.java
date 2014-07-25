@@ -1,5 +1,5 @@
 /*
- * $Id: Chunk.java 6192 2014-01-29 14:37:53Z eugenemark $
+ * $Id: Chunk.java 6325 2014-03-21 11:05:18Z eugenemark $
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2014 iText Group NV
@@ -864,7 +864,9 @@ public class Chunk implements Element, IAccessibleElement {
 
 	public Chunk setAnchor(final URL url) {
         setRole(PdfName.LINK);
-		return setAttribute(ACTION, new PdfAction(url.toExternalForm()));
+        String urlStr = url.toExternalForm();
+        setAccessibleAttribute(PdfName.ALT, new PdfString(urlStr));
+		return setAttribute(ACTION, new PdfAction(urlStr));
 	}
 
 	/**
@@ -877,6 +879,7 @@ public class Chunk implements Element, IAccessibleElement {
 
 	public Chunk setAnchor(final String url) {
         setRole(PdfName.LINK);
+        setAccessibleAttribute(PdfName.ALT, new PdfString(url));
         return setAttribute(ACTION, new PdfAction(url));
 	}
 

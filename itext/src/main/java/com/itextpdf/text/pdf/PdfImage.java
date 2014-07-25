@@ -1,5 +1,5 @@
 /*
- * $Id: PdfImage.java 6134 2013-12-23 13:15:14Z blowagie $
+ * $Id: PdfImage.java 6293 2014-02-25 15:24:31Z blowagie $
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2014 iText Group NV
@@ -250,6 +250,8 @@ public class PdfImage extends PdfStream {
                 default:
                     throw new BadPdfFormatException(MessageLocalization.getComposedMessage("1.is.an.unknown.image.format", errorID));
             }
+            if (image.getCompressionLevel() > NO_COMPRESSION)
+            	flateCompress(image.getCompressionLevel());
             put(PdfName.LENGTH, new PdfNumber(streamBytes.size()));
         }
         catch(IOException ioe) {

@@ -1,5 +1,5 @@
 /*
- * $Id: BaseColor.java 6134 2013-12-23 13:15:14Z blowagie $
+ * $Id: BaseColor.java 6379 2014-05-16 10:12:59Z eugenemark $
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2014 iText Group NV
@@ -65,7 +65,7 @@ public class BaseColor {
     public static final BaseColor CYAN = new BaseColor(0, 255, 255);
     public static final BaseColor BLUE = new BaseColor(0, 0, 255);
     private static final double FACTOR = 0.7;
-    private final int value;
+    private int value;
 
     /**
      * Construct a new BaseColor.
@@ -75,11 +75,7 @@ public class BaseColor {
      * @param alpha the value for the alpha gamma
      */
     public BaseColor(final int red, final int green, final int blue, final int alpha) {
-        validate(red);
-        validate(green);
-        validate(blue);
-        validate(alpha);
-        value = ((alpha & 0xFF) << 24) | ((red & 0xFF) << 16) | ((green & 0xFF) << 8) | ((blue & 0xFF) << 0);
+        setValue(red, green, blue, alpha);
     }
 
     /**
@@ -197,6 +193,14 @@ public class BaseColor {
     @Override
     public int hashCode() {
         return value;
+    }
+
+    protected void setValue(final int red, final int green, final int blue, final int alpha) {
+        validate(red);
+        validate(green);
+        validate(blue);
+        validate(alpha);
+        value = ((alpha & 0xFF) << 24) | ((red & 0xFF) << 16) | ((green & 0xFF) << 8) | ((blue & 0xFF) << 0);
     }
 
 

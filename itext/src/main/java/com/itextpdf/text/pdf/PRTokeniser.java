@@ -1,5 +1,5 @@
 /*
- * $Id: PRTokeniser.java 6134 2013-12-23 13:15:14Z blowagie $
+ * $Id: PRTokeniser.java 6289 2014-02-24 10:00:44Z michaeldemey $
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2014 iText Group NV
@@ -163,8 +163,26 @@ public class PRTokeniser {
         return buf.toString();
     }
 
+    /**
+     * Is a certain character a whitespace? Currently checks on the following: '0', '9', '10', '12', '13', '32'.
+     * <br />The same as calling {@link #isWhitespace(int, boolean) isWhiteSpace(ch, true)}.
+     * @param ch int
+     * @return boolean
+     * @since 5.5.1
+     */
     public static final boolean isWhitespace(int ch) {
-        return (ch == 0 || ch == 9 || ch == 10 || ch == 12 || ch == 13 || ch == 32);
+        return isWhitespace(ch, true);
+    }
+
+    /**
+     * Checks whether a character is a whitespace. Currently checks on the following: '0', '9', '10', '12', '13', '32'.
+     * @param ch int
+     * @param isWhitespace boolean
+     * @return boolean
+     * @since 5.5.1
+     */
+    public static final boolean isWhitespace(int ch, boolean isWhitespace) {
+        return ( ( isWhitespace && ch == 0 ) || ch == 9 || ch == 10 || ch == 12 || ch == 13 || ch == 32);
     }
     
     public static final boolean isDelimiter(int ch) {
@@ -539,20 +557,47 @@ public class PRTokeniser {
     public int intValue() {
         return Integer.parseInt(stringValue);
     }
-    
-    public boolean readLineSegment(byte input[]) throws IOException {
+
+    /**
+     * Reads data into the provided byte[]. Checks on leading whitespace.
+     * See {@link #isWhitespace(int) isWhiteSpace(int)} or {@link #isWhitespace(int, boolean) isWhiteSpace(int, boolean)}
+     * for a list of whitespace characters.
+     * <br />The same as calling {@link #readLineSegment(byte[], boolean) readLineSegment(input, true)}.
+     *
+     * @param input byte[]
+     * @return boolean
+     * @throws IOException
+     * @since 5.5.1
+     */
+    public boolean readLineSegment(byte[] input) throws IOException {
+        return readLineSegment(input, true);
+    }
+
+    /**
+     * Reads data into the provided byte[]. Checks on leading whitespace.
+     * See {@link #isWhitespace(int) isWhiteSpace(int)} or {@link #isWhitespace(int, boolean) isWhiteSpace(int, boolean)}
+     * for a list of whitespace characters.
+     *
+     * @param input byte[]
+     * @param isNullWhitespace boolean to indicate whether '0' is whitespace or not.
+     *                         If in doubt, use true or overloaded method {@link #readLineSegment(byte[]) readLineSegment(input)}
+     * @return boolean
+     * @throws IOException
+     * @since 5.5.1
+     */
+    public boolean readLineSegment(byte input[], boolean isNullWhitespace) throws IOException {
         int c = -1;
         boolean eol = false;
         int ptr = 0;
         int len = input.length;
-	// ssteward, pdftk-1.10, 040922: 
-	// skip initial whitespace; added this because PdfReader.rebuildXref()
-	// assumes that line provided by readLineSegment does not have init. whitespace;
-	if ( ptr < len ) {
-	    while ( isWhitespace( (c = read()) ) );
-	}
-	while ( !eol && ptr < len ) {
-	    switch (c) {
+        // ssteward, pdftk-1.10, 040922:
+        // skip initial whitespace; added this because PdfReader.rebuildXref()
+        // assumes that line provided by readLineSegment does not have init. whitespace;
+        if ( ptr < len ) {
+            while ( isWhitespace( (c = read()), isNullWhitespace ) );
+        }
+        while ( !eol && ptr < len ) {
+            switch (c) {
                 case -1:
                 case '\n':
                     eol = true;
@@ -569,13 +614,12 @@ public class PRTokeniser {
                     break;
             }
 
-	    // break loop? do it before we read() again
-	    if( eol || len <= ptr ) {
-		break;
-	    }
-	    else {
-		c = read();
-	    }
+            // break loop? do it before we read() again
+            if ( eol || len <= ptr ) {
+                break;
+            } else {
+                c = read();
+            }
         }
         if (ptr >= len) {
             eol = false;

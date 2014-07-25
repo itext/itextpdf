@@ -1,5 +1,5 @@
 /*
- * $Id: PdfShading.java 6134 2013-12-23 13:15:14Z blowagie $
+ * $Id: PdfShading.java 6365 2014-05-13 09:04:57Z eugenemark $
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2014 iText Group NV
@@ -97,6 +97,12 @@ public class PdfShading {
                 colorSpace = colorDetails.getIndirectReference();
                 break;
             }
+            case ExtendedColor.TYPE_DEVICEN: {
+                DeviceNColor deviceNColor = (DeviceNColor)color;
+                colorDetails = writer.addSimple(deviceNColor.getPdfDeviceNColor());
+                colorSpace = colorDetails.getIndirectReference();
+                break;
+            }
             case ExtendedColor.TYPE_PATTERN:
             case ExtendedColor.TYPE_SHADING: {
                 throwColorSpaceError();
@@ -139,6 +145,9 @@ public class PdfShading {
             }
             case ExtendedColor.TYPE_SEPARATION: {
                 return new float[]{((SpotColor)color).getTint()};
+            }
+            case ExtendedColor.TYPE_DEVICEN: {
+                return ((DeviceNColor)color).getTints();
             }
             case ExtendedColor.TYPE_RGB: {
                 return new float[]{color.getRed() / 255f, color.getGreen() / 255f, color.getBlue() / 255f};

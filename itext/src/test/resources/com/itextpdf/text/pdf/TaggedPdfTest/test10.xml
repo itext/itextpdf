@@ -4,12 +4,12 @@
 dog. A very long line appears here
 because we need new line.</Span>
 </TD>
-<TD width="209.2" o="/Table"><Figure bBox="[299.5, 664.91, 504.7, 783]" width="106" o="/Layout" height="61"></Figure>
+<TD width="209.2" o="/Table"><Figure bBox="[299.5, 664.91, 504.7, 783]" width="106" o="/Layout" height="61"><alt>Fox image</alt></Figure>
 </TD>
 </TR>
 <TR o="/Table"><TD width="209.2" o="/Table"><Span>jumped over a lazy</Span>
 </TD>
-<TD width="209.2" o="/Table"><Figure bBox="[299.5, 542.83, 504.7, 660.91]" width="106" o="/Layout" height="61"></Figure>
+<TD width="209.2" o="/Table"><Figure bBox="[299.5, 542.83, 504.7, 660.91]" width="106" o="/Layout" height="61"><alt>Dog image</alt></Figure>
 </TD>
 </TR>
 <TR o="/Table"><TD width="209.2" o="/Table" height="770"><Table width="205.2" height="3344.74"><TBody><TR o="/Table"><TD width="102.6" o="/Table"><Span>Quick brown fox
@@ -19,13 +19,13 @@ long line appears
 here because we
 need new line.</Span>
 </TD>
-<TD width="102.6" o="/Table"><Figure bBox="[194.9, 745.26, 293.5, 802]" width="106" o="/Layout" height="61"></Figure>
+<TD width="102.6" o="/Table"><Figure bBox="[194.9, 745.26, 293.5, 802]" width="106" o="/Layout" height="61"><alt>Fox image</alt></Figure>
 </TD>
 </TR>
 <TR o="/Table"><TD width="102.6" o="/Table"><Span>jumped over a
 lazy</Span>
 </TD>
-<TD width="102.6" o="/Table"><Figure bBox="[194.9, 669.26, 293.5, 726]" width="106" o="/Layout" height="61"></Figure>
+<TD width="102.6" o="/Table"><Figure bBox="[194.9, 669.26, 293.5, 726]" width="106" o="/Layout" height="61"><alt>Dog image</alt></Figure>
 </TD>
 </TR>
 <TR o="/Table"><TD width="102.6" o="/Table" height="766"><Span>Lorem ipsum

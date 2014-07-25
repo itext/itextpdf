@@ -1,5 +1,5 @@
 /*
- * $Id: ExtendedColor.java 6134 2013-12-23 13:15:14Z blowagie $
+ * $Id: ExtendedColor.java 6379 2014-05-16 10:12:59Z eugenemark $
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2014 iText Group NV
@@ -65,7 +65,11 @@ public abstract class ExtendedColor extends BaseColor{
     public static final int TYPE_PATTERN = 4;
     /** a type of extended color. */
     public static final int TYPE_SHADING = 5;
-    
+    /** a type of extended color. */
+    public static final int TYPE_DEVICEN = 6;
+    /** a type of extended color. */
+    public static final int TYPE_LAB = 7;
+
     protected int type;
 
     /**

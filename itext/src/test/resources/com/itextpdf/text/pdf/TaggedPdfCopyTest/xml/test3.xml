@@ -7,13 +7,13 @@
 dog. A very long line appears here
 because we need new line.</Span>
 </TD>
-<TD><Figure></Figure>
+<TD><Figure><alt>Fox image</alt></Figure>
 </TD>
 </TR>
 <TR>
 <TD><Span>jumped over a lazy</Span>
 </TD>
-<TD><Figure></Figure>
+<TD><Figure><alt>Dog image</alt></Figure>
 </TD>
 </TR>
 <TR>
@@ -27,14 +27,14 @@ long line appears
 here because we
 need new line.</Span>
 </TD>
-<TD><Figure></Figure>
+<TD><Figure><alt>Fox image</alt></Figure>
 </TD>
 </TR>
 <TR>
 <TD><Span>jumped over a
 lazy</Span>
 </TD>
-<TD><Figure></Figure>
+<TD><Figure><alt>Dog image</alt></Figure>
 </TD>
 </TR>
 <TR>

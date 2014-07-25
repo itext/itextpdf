@@ -1,5 +1,5 @@
 /*
- * $Id: PdfWriter.java 6228 2014-02-11 11:13:47Z achingarev $
+ * $Id: PdfWriter.java 6379 2014-05-16 10:12:59Z eugenemark $
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2014 iText Group NV
@@ -1370,7 +1370,7 @@ public class PdfWriter extends DocWriter implements
         currentPdfReaderInstance = null;
         // [F6] add the spotcolors
         for (ColorDetails color : documentColors.values()) {
-            addToBody(color.getSpotColor(this), color.getIndirectReference());
+            addToBody(color.getPdfObject(this), color.getIndirectReference());
         }
         // [F7] add the pattern
         for (PdfPatternPainter pat : documentPatterns.keySet()) {
@@ -2438,7 +2438,7 @@ public class PdfWriter extends DocWriter implements
 //  [F6] spot colors
 
     /** The colors of this document */
-    protected HashMap<PdfSpotColor, ColorDetails> documentColors = new HashMap<PdfSpotColor, ColorDetails>();
+    protected HashMap<ICachedColorSpace, ColorDetails> documentColors = new HashMap<ICachedColorSpace, ColorDetails>();
 
     /** The color number counter for the colors in the document. */
     protected int colorNumber = 1;
@@ -2453,10 +2453,13 @@ public class PdfWriter extends DocWriter implements
      * @return an <CODE>Object[]</CODE> where position 0 is a <CODE>PdfName</CODE>
      * and position 1 is an <CODE>PdfIndirectReference</CODE>
      */
-    ColorDetails addSimple(final PdfSpotColor spc) {
+    ColorDetails addSimple(final ICachedColorSpace spc) {
         ColorDetails ret = documentColors.get(spc);
         if (ret == null) {
             ret = new ColorDetails(getColorspaceName(), body.getPdfIndirectReference(), spc);
+            if (spc instanceof IPdfSpecialColorSpace) {
+                ((IPdfSpecialColorSpace) spc).getColorantDetails(this);
+            }
             documentColors.put(spc, ret);
         }
         return ret;
@@ -2872,7 +2875,7 @@ public class PdfWriter extends DocWriter implements
     /**
      * Checks if a newPage() will actually generate a new page.
      * @return true if a new page will be generated, false otherwise
-     * @since 2.1.8
+     * @since 5.0.0
      */
     public boolean isPageEmpty() {
         return pdf.isPageEmpty();

@@ -7,6 +7,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import sandbox.WrapToTest;
+
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Font;
@@ -19,14 +21,14 @@ import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.PdfStamper;
 import com.itextpdf.text.pdf.PdfWriter;
 
+@WrapToTest
 public class UnembedFont {
 
-    public static final String SRC = "results/fonts/withTimesNewRoman.pdf";
-    public static final String DEST = "results/fonts/withoutTimesNewRoman.pdf";
+    public static final String SRC = "results/fonts/withSerifFont.pdf";
+    public static final String DEST = "results/fonts/withoutSerifFont.pdf";
 
     public static void main(String[] args) throws DocumentException, IOException {
         UnembedFont app = new UnembedFont();
-        app.createPdf(SRC);
         app.manipulatePdf(SRC, DEST);
     }
     
@@ -42,7 +44,7 @@ public class UnembedFont {
         // step 3
         document.open();
         // step 4
-        BaseFont bf = BaseFont.createFont("c:/windows/fonts/times.ttf", BaseFont.WINANSI, BaseFont.EMBEDDED);
+        BaseFont bf = BaseFont.createFont("resources/fonts/PT_Serif-Web-Regular.ttf", BaseFont.WINANSI, BaseFont.EMBEDDED);
         Font f = new Font(bf, 12);
         document.add(new Paragraph("This is a test with Times New Roman.", f));
         // step 5
@@ -53,6 +55,7 @@ public class UnembedFont {
      * Removes the embedded font
      */
     public void manipulatePdf(String src, String dest) throws IOException, DocumentException {
+	    createPdf(src);
         // we create a reader instance
         PdfReader reader = new PdfReader(src);
         // we loop over all objects

@@ -2,8 +2,7 @@
  * Example written by Bruno Lowagie in answer to:
  * http://stackoverflow.com/questions/20016630/how-to-create-a-table-in-a-generated-pdf-using-itextsharp
  * 
- * We create a table with two columns and two cells.
- * This way, we can add two images next to each other.
+ * We create a table with five columns, combining rowspan and colspan
  */
 package sandbox.tables;
 

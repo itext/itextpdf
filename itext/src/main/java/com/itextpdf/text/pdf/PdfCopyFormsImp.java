@@ -1,5 +1,5 @@
 /*
- * $Id: PdfCopyFormsImp.java 6134 2013-12-23 13:15:14Z blowagie $
+ * $Id: PdfCopyFormsImp.java 6409 2014-05-29 11:49:28Z asubach $
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2014 iText Group NV
@@ -86,6 +86,9 @@ class PdfCopyFormsImp extends PdfCopyFieldsImp {
         }
         reader.shuffleSubsetNames();
         readers2intrefs.put(reader, new IntHashtable());
+
+        visited.put(reader, new IntHashtable());
+
         fields.add(reader.getAcroFields());
         updateCalculationOrder(reader);
     }

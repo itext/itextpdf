@@ -1,6 +1,8 @@
 package com.itextpdf.text.pdf;
 
 import com.itextpdf.text.*;
+import com.itextpdf.text.xml.xmp.PdfAXmpWriter;
+import com.itextpdf.xmp.XMPException;
 import junit.framework.Assert;
 import org.junit.Test;
 
@@ -177,4 +179,77 @@ public class PdfA3CheckerTest {
         stamper.close();
         reader.close();
     }
+
+    @Test
+    public void barcodesTest1() throws DocumentException, IOException {
+        Document document = new Document();
+        PdfAWriter writer = PdfAWriter.getInstance(document,new
+                FileOutputStream(outputDir + "barcodesTest1.pdf"), PdfAConformanceLevel.PDF_A_3A);
+
+        writer.setTagged();
+        document.open();
+        writer.setViewerPreferences(PdfWriter.DisplayDocTitle);
+        document.addTitle("Some title");
+        document.addLanguage("en-us");
+        writer.createXmpMetadata();
+
+        document.newPage();
+
+        // Set output intent. PDF/A requirement.
+        ICC_Profile icc = ICC_Profile.getInstance(new FileInputStream("./src/test/resources/com/itextpdf/text/pdf/sRGB Color Space Profile.icm"));
+        writer.setOutputIntents("Custom", "", "http://www.color.org",
+                "sRGB IEC61966-2.1", icc);
+
+        // All fonts shall be embedded. PDF/A requirement.
+        Font normal9 = FontFactory.getFont("./src/test/resources/com/itextpdf/text/pdf/FreeMonoBold.ttf", BaseFont.WINANSI, BaseFont.EMBEDDED, 9);
+        Font normal8 = FontFactory.getFont("./src/test/resources/com/itextpdf/text/pdf/FreeMonoBold.ttf", BaseFont.WINANSI, BaseFont.EMBEDDED, 8);
+
+        BaseColor color = new BaseColor(111,211,11);
+        normal8.setColor(color);
+
+        PdfContentByte cb = writer.getDirectContent();
+
+        String code = "119716-500023718";
+        Barcode barcode = new Barcode39();
+        barcode.setCode(code);
+        barcode.setStartStopText(false);
+        barcode.setFont(normal9.getBaseFont());
+        barcode.setExtended(true);
+
+        Image image = barcode.createImageWithBarcode(cb, color, color);
+        image.setAlt("Bla Bla");
+        document.add(image);
+
+        document.close();
+    }
+
+    @Test
+    public void zugferdInvoiceTest() throws DocumentException, IOException, XMPException {
+        Document document = new Document();
+        PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream(outputDir + "zugferdInvoiceTest.pdf"), PdfAConformanceLevel.ZUGFeRD);
+        writer.createXmpMetadata();
+        writer.getXmpWriter().setProperty(PdfAXmpWriter.zugferdSchemaNS, PdfAXmpWriter.zugferdDocumentFileName, "invoice.xml");
+        document.open();
+
+        Font font = FontFactory.getFont("./src/test/resources/com/itextpdf/text/pdf/FreeMonoBold.ttf", BaseFont.WINANSI, BaseFont.EMBEDDED, 12);
+        document.add(new Paragraph("Hello World", font));
+        ICC_Profile icc = ICC_Profile.getInstance(new FileInputStream("./src/test/resources/com/itextpdf/text/pdf/sRGB Color Space Profile.icm"));
+        writer.setOutputIntents("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", icc);
+
+        PdfDictionary parameters = new PdfDictionary();
+        parameters.put(PdfName.MODDATE, new PdfDate());
+        PdfFileSpecification fileSpec = PdfFileSpecification.fileEmbedded(
+                writer, "./src/test/resources/com/itextpdf/text/pdf/invoice.xml",
+                "invoice.xml", null, "application/xml", parameters, 0);
+        fileSpec.put(PdfName.AFRELATIONSHIP, AFRelationshipValue.Alternative);
+        writer.addFileAttachment("invoice.xml", fileSpec);
+        PdfArray array = new PdfArray();
+        array.add(fileSpec.getReference());
+        writer.getExtraCatalog().put(new PdfName("AF"), array);
+
+        document.close();
+    }
+
+
+
 }

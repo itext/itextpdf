@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import sandbox.WrapToTest;
+
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Paragraph;
@@ -11,6 +13,7 @@ import com.itextpdf.text.pdf.PdfFileSpecification;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.text.pdf.collection.PdfCollection;
 
+@WrapToTest
 public class PortableCollection {
 
     public static final String DEST = "results/collections/portable_collection.pdf";
@@ -34,13 +37,13 @@ public class PortableCollection {
         PdfCollection collection = new PdfCollection(PdfCollection.TILE);
         writer.setCollection(collection);
         PdfFileSpecification fileSpec = PdfFileSpecification.fileEmbedded(
-        		writer, DATA, "united_states.csv", null);
+                writer, DATA, "united_states.csv", null);
         writer.addFileAttachment("united_states.csv", fileSpec);
         fileSpec = PdfFileSpecification.fileEmbedded(
-        		writer, HELLO, "hello.pdf", null);
+                writer, HELLO, "hello.pdf", null);
         writer.addFileAttachment("hello.pdf", fileSpec);
         fileSpec = PdfFileSpecification.fileEmbedded(
-        		writer, IMG, "berlin2013.jpg", null);
+                writer, IMG, "berlin2013.jpg", null);
         writer.addFileAttachment("berlin2013.jpg", fileSpec);
         document.close();
     }

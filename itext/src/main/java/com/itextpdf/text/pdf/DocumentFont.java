@@ -1,5 +1,5 @@
 /*
- * $Id: DocumentFont.java 6134 2013-12-23 13:15:14Z blowagie $
+ * $Id: DocumentFont.java 6337 2014-04-23 09:45:44Z eugenemark $
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2014 iText Group NV

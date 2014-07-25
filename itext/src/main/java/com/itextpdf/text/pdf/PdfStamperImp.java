@@ -1,5 +1,5 @@
 /*
- * $Id: PdfStamperImp.java 6224 2014-02-09 22:35:42Z rafhens $
+ * $Id: PdfStamperImp.java 6260 2014-02-14 15:21:28Z michaeldemey $
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2014 iText Group NV
@@ -845,22 +845,6 @@ class PdfStamperImp extends PdfWriter {
     AcroFields getAcroFields() {
         if (acroFields == null) {
             acroFields = new AcroFields(reader, this);
-            try {
-            	for (String key : acroFields.getFields().keySet()) {
-	                if (AcroFields.FIELD_TYPE_TEXT != acroFields.getFieldType(key))
-	                	continue;
-	                String value = acroFields.getField(key).trim();
-	                if (value.length() > 0) {
-	                	acroFields.setField(key, value, value);
-	                }
-	            }
-            }
-            catch (DocumentException de) {
-            	// do nothing
-            }
-            catch (IOException ioe) {
-            	// do nothing
-            }
         }
         return acroFields;
     }

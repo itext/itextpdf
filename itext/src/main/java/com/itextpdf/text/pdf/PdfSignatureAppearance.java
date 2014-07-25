@@ -1,5 +1,5 @@
 /*
- * $Id: PdfSignatureAppearance.java 6134 2013-12-23 13:15:14Z blowagie $
+ * $Id: PdfSignatureAppearance.java 6344 2014-04-29 13:06:21Z michaeldemey $
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2014 iText Group NV
@@ -404,18 +404,6 @@ public class PdfSignatureAppearance {
         return name;
     }
 
-    /** Indicates if a new field was created. */
-    private boolean newField;
-
-    /**
-     * Checks if a new field was created.
-     * @return <CODE>true</CODE> if a new field was created, <CODE>false</CODE> if signing
-     * an existing field or if the signature is invisible
-     */
-    public boolean isNewField() {
-        return this.newField;
-    }
-
     /**
      * The page where the signature will appear.
      */
@@ -485,7 +473,6 @@ public class PdfSignatureAppearance {
         this.pageRect.normalize();
         rect = new Rectangle(this.pageRect.getWidth(), this.pageRect.getHeight());
         this.page = page;
-        newField = true;
     }
 
     /**
@@ -1260,7 +1247,7 @@ public class PdfSignatureAppearance {
         preClosed = true;
         AcroFields af = writer.getAcroFields();
         String name = getFieldName();
-        boolean fieldExists = !(isInvisible() || isNewField());
+        boolean fieldExists = af.doesSignatureFieldExist(name);
         PdfIndirectReference refSig = writer.getPdfIndirectReference();
         writer.setSigFlags(3);
         PdfDictionary fieldLock = null;

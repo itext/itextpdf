@@ -1,5 +1,5 @@
 /*
- * $Id: PdfStamper.java 6134 2013-12-23 13:15:14Z blowagie $
+ * $Id: PdfStamper.java 6318 2014-03-12 10:23:11Z blowagie $
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2014 iText Group NV
@@ -474,6 +474,15 @@ public class PdfStamper
      */
     public void addJavaScript(final String js) {
         stamper.addJavaScript(js, !PdfEncodings.isPdfDocEncoding(js));
+    }
+
+    /** Adds a JavaScript action at the document level. When the document
+     * opens all this JavaScript runs. The existing JavaScript will be replaced.
+     * @param name the name for the JavaScript snippet in the name tree
+     * @param js the JavaScript code
+     */
+    public void addJavaScript(final String name, final String js) {
+        stamper.addJavaScript(name, PdfAction.javaScript(js, stamper, !PdfEncodings.isPdfDocEncoding(js)));
     }
 
     /** Adds a file attachment at the document level. Existing attachments will be kept.

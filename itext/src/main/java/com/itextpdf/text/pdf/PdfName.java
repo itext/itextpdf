@@ -1,5 +1,5 @@
 /*
- * $Id: PdfName.java 6229 2014-02-11 11:27:04Z michaeldemey $
+ * $Id: PdfName.java 6365 2014-05-13 09:04:57Z eugenemark $
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2014 iText Group NV
@@ -408,6 +408,7 @@ public class
      * @since 5.3.4
      */
     public static final PdfName COLOR = new PdfName("Color");
+    public static final PdfName COLORANTS = new PdfName("Colorants");
     /** A name */
     public static final PdfName COLORS = new PdfName("Colors");
     /** A name */
@@ -1292,6 +1293,7 @@ public class
      * @since 2.1.6
      */
     public static final PdfName NAVIGATIONPANE = new PdfName("NavigationPane");
+    public static final PdfName NCHANNEL = new PdfName("NChannel");
     /**
      * A name.
      * @since 2.1.6
@@ -1379,7 +1381,7 @@ public class
     /** A name */
     public static final PdfName OFF = new PdfName("OFF");
     /** A name */
-    public static final PdfName ON = new PdfName("ON");
+    public static final PdfName ON = new PdfName("on");
     /** A name */
     public static final PdfName ONECOLUMN = new PdfName("OneColumn");
     /** A name */
@@ -1530,7 +1532,7 @@ public class
      * A name.
      * @since 5.0.2
      */
-    public static final PdfName POLYLINE = new PdfName("Polyline");
+    public static final PdfName POLYLINE = new PdfName("PolyLine");
     /** A name */
     public static final PdfName POPUP = new PdfName("Popup");
     /**
@@ -1884,6 +1886,8 @@ public class
     public static final PdfName ST = new PdfName("St");
     /** A name */
     public static final PdfName STAMP = new PdfName("Stamp");
+    /** A name */
+    public static final PdfName STATUS = new PdfName("Status");
     /** A name */
     public static final PdfName STANDARD = new PdfName("Standard");
     /**

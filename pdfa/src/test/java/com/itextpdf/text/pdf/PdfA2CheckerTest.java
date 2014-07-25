@@ -1098,10 +1098,7 @@ public class PdfA2CheckerTest {
         try {
             document.close();
         } catch (PdfAConformanceException e) {
-            if (e.getObject() instanceof PdfDictionary
-                    && ((PdfDictionary)e.getObject()).get(PdfName.TYPE) == PdfName.OUTPUTINTENT) {
-                exceptionThrown = true;
-            }
+            exceptionThrown = true;
         }
         if (!exceptionThrown)
             Assert.fail("PdfAConformanceException should be thrown.");
