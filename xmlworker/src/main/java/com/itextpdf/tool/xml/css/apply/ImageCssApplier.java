@@ -90,11 +90,7 @@ public class ImageCssApplier {
             img.setScaleToFitLineWhenOverflow(false);
         }
 
-        if (heightValue == null) {
-            img.setScaleToFitHeight(true);
-        } else {
-            img.setScaleToFitHeight(false);
-        }
+        img.setScaleToFitHeight(false);
 
 
         CssUtils utils = CssUtils.getInstance();
