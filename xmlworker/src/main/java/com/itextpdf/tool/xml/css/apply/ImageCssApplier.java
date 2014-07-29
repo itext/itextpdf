@@ -45,44 +45,56 @@
 package com.itextpdf.tool.xml.css.apply;
 
 import com.itextpdf.text.Image;
+import com.itextpdf.text.html.HtmlUtilities;
 import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.css.CSS;
 import com.itextpdf.tool.xml.css.CssUtils;
 import com.itextpdf.tool.xml.html.HTML;
 
+import java.util.Map;
+
 /**
- * @author redlab_b
+ * Class that applies the parsed CSS to an Image object.
  *
+ * @author redlab_b
  */
 public class ImageCssApplier {
 
-	/**
-	 * Applies CSS to an Image
-	 * 
-	 * @param img the image
-	 * @param tag the tag with the css
-	 * @return a styled Image
-	 */
-	public Image apply(final Image img, final Tag tag) {
-        String widthValue = tag.getCSS().get(HTML.Attribute.WIDTH);
+    /**
+     * Applies CSS to an Image. Currently supported:
+     * - width
+     * - height
+     * - borders (color, width)
+     * - spacing before and after
+     *
+     * @param img the image
+     * @param tag the tag with the css
+     * @return a styled Image
+     */
+    public Image apply(final Image img, final Tag tag) {
+        Map<String, String> cssMap = tag.getCSS();
+
+        String widthValue = cssMap.get(HTML.Attribute.WIDTH);
         if (widthValue == null) {
             widthValue = tag.getAttributes().get(HTML.Attribute.WIDTH);
         }
 
-        String heightValue = tag.getCSS().get(HTML.Attribute.HEIGHT);
+        String heightValue = cssMap.get(HTML.Attribute.HEIGHT);
         if (heightValue == null) {
             heightValue = tag.getAttributes().get(HTML.Attribute.HEIGHT);
         }
 
-        if (widthValue == null)
+        if (widthValue == null) {
             img.setScaleToFitLineWhenOverflow(true);
-        else
+        } else {
             img.setScaleToFitLineWhenOverflow(false);
+        }
 
-        if (heightValue == null)
+        if (heightValue == null) {
             img.setScaleToFitHeight(true);
-        else
+        } else {
             img.setScaleToFitHeight(false);
+        }
 
 
         CssUtils utils = CssUtils.getInstance();
@@ -100,16 +112,58 @@ public class ImageCssApplier {
             img.scaleAbsolute(widthInPoints, heightInPoints);
         }
 
-		 String before = tag.getCSS().get(CSS.Property.BEFORE);
-         if (before != null) {
-         	img.setSpacingBefore(Float.parseFloat(before));
-         }
-         String after = tag.getCSS().get(CSS.Property.AFTER);
-         if (after != null) {
-         	img.setSpacingAfter(Float.parseFloat(after));
-         }
-         img.setWidthPercentage(0);
-		return img;
-	}
+        // apply border CSS
+        String borderTopColor = cssMap.get(CSS.Property.BORDER_TOP_COLOR);
+        if (borderTopColor != null) {
+            img.setBorderColorTop(HtmlUtilities.decodeColor(borderTopColor));
+        }
 
+        String borderTopWidth = cssMap.get(CSS.Property.BORDER_TOP_WIDTH);
+        if (borderTopWidth != null) {
+            img.setBorderWidthTop(utils.parseValueToPt(borderTopWidth, 1f));
+        }
+
+        String borderRightColor = cssMap.get(CSS.Property.BORDER_RIGHT_COLOR);
+        if (borderRightColor != null) {
+            img.setBorderColorRight(HtmlUtilities.decodeColor(borderRightColor));
+        }
+
+        String borderRightWidth = cssMap.get(CSS.Property.BORDER_RIGHT_WIDTH);
+        if (borderRightWidth != null) {
+            img.setBorderWidthRight(utils.parseValueToPt(borderRightWidth, 1f));
+        }
+
+        String borderBottomColor = cssMap.get(CSS.Property.BORDER_BOTTOM_COLOR);
+        if (borderBottomColor != null) {
+            img.setBorderColorBottom(HtmlUtilities.decodeColor(borderBottomColor));
+        }
+
+        String borderBottomWidth = cssMap.get(CSS.Property.BORDER_BOTTOM_WIDTH);
+        if (borderBottomWidth != null) {
+            img.setBorderWidthBottom(utils.parseValueToPt(borderBottomWidth, 1f));
+        }
+
+        String borderLeftColor = cssMap.get(CSS.Property.BORDER_LEFT_COLOR);
+        if (borderLeftColor != null) {
+            img.setBorderColorLeft(HtmlUtilities.decodeColor(borderLeftColor));
+        }
+
+        String borderLeftWidth = cssMap.get(CSS.Property.BORDER_LEFT_WIDTH);
+        if (borderLeftWidth != null) {
+            img.setBorderWidthLeft(utils.parseValueToPt(borderLeftWidth, 1f));
+        }
+        // end of border CSS
+
+        String before = cssMap.get(CSS.Property.BEFORE);
+        if (before != null) {
+            img.setSpacingBefore(Float.parseFloat(before));
+        }
+        String after = cssMap.get(CSS.Property.AFTER);
+        if (after != null) {
+            img.setSpacingAfter(Float.parseFloat(after));
+        }
+
+        img.setWidthPercentage(0);
+        return img;
+    }
 }
