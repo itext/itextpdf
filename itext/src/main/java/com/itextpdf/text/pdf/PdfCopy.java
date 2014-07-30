@@ -136,7 +136,7 @@ public class PdfCopy extends PdfWriter {
     private static final PdfName iTextTag = new PdfName("_iTextTag_");
     private static final Integer zero = Integer.valueOf(0);
     private HashSet<Object> mergedRadioButtons = new HashSet<Object>();
-    private HashMap<Object, PdfObject> mergedTextFields = new HashMap<Object, PdfObject>();
+    private HashMap<Object, PdfString> mergedTextFields = new HashMap<Object, PdfString>();
 
     private HashSet<PdfReader> readersWithImportedStructureTreeRootKids = new HashSet<PdfReader>();
 
@@ -358,7 +358,7 @@ public class PdfCopy extends PdfWriter {
         if (currentPdfReaderInstance != null) {
             if (currentPdfReaderInstance.getReader() != reader) {
 
-// TODO: Removed - the user should be responsible for closing all PdfReaders.  But, this could cause a lot of memory leaks in code out there that hasn't been properly closing things - maybe add a finalizer to PdfReader that calls PdfReader#close() ??
+//  TODO: Removed - the user should be responsible for closing all PdfReaders.  But, this could cause a lot of memory leaks in code out there that hasn't been properly closing things - maybe add a finalizer to PdfReader that calls PdfReader#close() ??
 //             	  try {
 //                    currentPdfReaderInstance.getReader().close();
 //                    currentPdfReaderInstance.getReaderFile().close();
@@ -1505,8 +1505,7 @@ public class PdfCopy extends PdfWriter {
                     dic.remove(iTextTag);
                     dic.put(PdfName.TYPE, PdfName.ANNOT);
                     adjustTabOrder(annots, ind, nn);
-                }
-                else {
+                } else {
                     PdfDictionary field = (PdfDictionary)list.get(0);
                     PdfArray kids = new PdfArray();
                     for (int k = 1; k < list.size(); k += 2) {
@@ -1519,13 +1518,24 @@ public class PdfCopy extends PdfWriter {
                         widget.remove(iTextTag);
                         if (PdfCopy.isTextField(field)) {
                             PdfString v = field.getAsString(PdfName.V);
-                            PdfObject ap = widget.get(PdfName.AP);
+                            PdfObject ap = widget.getDirectObject(PdfName.AP);
                             if (v != null && ap != null) {
                                 if (!mergedTextFields.containsKey(list)) {
-                                    mergedTextFields.put(list, ap);
+                                    mergedTextFields.put(list, v);
                                 } else {
-                                    PdfObject ap1 = mergedTextFields.get(list);
-                                    widget.put(PdfName.AP, copyObject(ap1));
+                                    try {
+                                        TextField tx = new TextField(this, null, null);
+                                        fields.get(0).decodeGenericDictionary(widget, tx);
+                                        Rectangle box = PdfReader.getNormalizedRectangle(widget.getAsArray(PdfName.RECT));
+                                        if (tx.getRotation() == 90 || tx.getRotation() == 270)
+                                            box = box.rotate();
+                                        tx.setBox(box);
+                                        tx.setText(mergedTextFields.get(list).toUnicodeString());
+                                        PdfAppearance app = tx.getAppearance();
+                                        ((PdfDictionary)ap).put(PdfName.N, app.getIndirectReference());
+                                    } catch (DocumentException e) {
+                                        //do nothing
+                                    }
                                 }
                             }
                         } else if (PdfCopy.isCheckButton(field)) {
@@ -1552,7 +1562,7 @@ public class PdfCopy extends PdfWriter {
                     }
                     dic.put(PdfName.KIDS, kids);
                 }
-                    arr.add(ind);
+                arr.add(ind);
                 addToBody(dic, ind, true);
             }
         }
@@ -1668,7 +1678,7 @@ public class PdfCopy extends PdfWriter {
         if (open) {
             pdf.close();
             super.close();
-// Users are responsible for closing PdfReader
+//  Users are responsible for closing PdfReader
 //            if (ri != null) {
 //                try {
 //                    ri.getReader().close();
@@ -1697,7 +1707,7 @@ public class PdfCopy extends PdfWriter {
     	if (array != null)
     		originalFileID = array.getAsString(0).getBytes();
         indirectMap.remove(reader);
-// TODO: Removed - the user should be responsible for closing all PdfReaders.  But, this could cause a lot of memory leaks in code out there that hasn't been properly closing things - maybe add a finalizer to PdfReader that calls PdfReader#close() ??            	
+//  TODO: Removed - the user should be responsible for closing all PdfReaders.  But, this could cause a lot of memory leaks in code out there that hasn't been properly closing things - maybe add a finalizer to PdfReader that calls PdfReader#close() ??
 //        if (currentPdfReaderInstance != null) {
 //            if (currentPdfReaderInstance.getReader() == reader) {
 //                try {
