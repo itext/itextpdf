@@ -290,10 +290,11 @@ public class PdfReader implements PdfViewerPreferences {
     /**
      * Reads and parses a PDF document.
      * @param filename the file name of the document
+     * @param certificate
      * @param externalDecryptionProcess
      * @throws IOException on error
      */
-    public PdfReader(final String filename, final ExternalDecryptionProcess externalDecryptionProcess) throws IOException {
+    public PdfReader(final String filename, Certificate certificate, final ExternalDecryptionProcess externalDecryptionProcess) throws IOException {
         this(
                 new RandomAccessSourceFactory()
                         .setForceRead(false)
@@ -301,7 +302,7 @@ public class PdfReader implements PdfViewerPreferences {
                         .createBestSource(filename),
                 false,
                 null,
-                null,
+                certificate,
                 null,
                 null,
                 externalDecryptionProcess,
