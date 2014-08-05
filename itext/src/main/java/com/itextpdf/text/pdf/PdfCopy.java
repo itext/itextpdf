@@ -803,7 +803,7 @@ public class PdfCopy extends PdfWriter {
             boolean needapp = !acro.isGenerateAppearances();
             if (needapp)
                 needAppearances = true;
-            fields.add(reader.getAcroFields());
+            fields.add(acro);
             updateCalculationOrder(reader);
         }
         boolean tagged = this.tagged && PdfStructTreeController.checkTagged(reader);
@@ -1185,9 +1185,10 @@ public class PdfCopy extends PdfWriter {
             PdfArray array = (PdfArray)obj;
             for (int i = 0; i < array.size(); i++) {
                 PdfObject o = array.getPdfObject(i);
-                if (o instanceof PdfIndirectReference) {
+                if (o != null && o.type() == 0) {
                     for (PdfIndirectObject entry : unmergedSet) {
-                        if (entry.getIndirectReference().toString().equals(o.toString())) {
+                        if (entry.getIndirectReference().getNumber() == ((PdfIndirectReference)o).getNumber() &&
+                                entry.getIndirectReference().getGeneration() == ((PdfIndirectReference)o).getGeneration()) {
                             if (entry.object.isDictionary()) {
                                 PdfNumber annotId = ((PdfDictionary)entry.object).getAsNumber(PdfCopy.annotId);
                                 if (annotId != null) {
