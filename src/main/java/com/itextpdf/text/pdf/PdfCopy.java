@@ -1187,7 +1187,8 @@ public class PdfCopy extends PdfWriter {
                 PdfObject o = array.getPdfObject(i);
                 if (o != null && o.type() == 0) {
                     for (PdfIndirectObject entry : unmergedSet) {
-                        if (entry.getIndirectReference().toString().equals(o.toString())) {
+                        if (entry.getIndirectReference().getNumber() == ((PdfIndirectReference)o).getNumber() &&
+                                entry.getIndirectReference().getGeneration() == ((PdfIndirectReference)o).getGeneration()) {
                             if (entry.object.isDictionary()) {
                                 PdfNumber annotId = ((PdfDictionary)entry.object).getAsNumber(PdfCopy.annotId);
                                 if (annotId != null) {
