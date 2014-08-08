@@ -131,7 +131,7 @@ public class PdfReader implements PdfViewerPreferences {
     protected boolean consolidateNamedDestinations = false;
     protected boolean remoteToLocalNamedDestinations = false;
     protected int rValue;
-    protected int pValue;
+    protected long pValue;
     private int objNum;
     private int objGen;
     private long fileLength;
@@ -779,7 +779,7 @@ public class PdfReader implements PdfViewerPreferences {
             o = enc.get(PdfName.P);
             if (!o.isNumber())
             	throw new InvalidPdfException(MessageLocalization.getComposedMessage("illegal.p.value"));
-            pValue = ((PdfNumber)o).intValue();
+            pValue = ((PdfNumber)o).longValue();
 
             o = enc.get(PdfName.R);
             if (!o.isNumber())
@@ -2703,7 +2703,7 @@ public class PdfReader implements PdfViewerPreferences {
      * <CODE>PdfWriter.setEncryption()</CODE>.
      * @return the encryption permissions
      */
-    public int getPermissions() {
+    public long getPermissions() {
         return pValue;
     }
 
