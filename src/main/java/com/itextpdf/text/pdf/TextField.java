@@ -44,16 +44,10 @@
  */
 package com.itextpdf.text.pdf;
 
+import com.itextpdf.text.*;
+
 import java.io.IOException;
 import java.util.ArrayList;
-
-import com.itextpdf.text.BaseColor;
-import com.itextpdf.text.Chunk;
-import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.Element;
-import com.itextpdf.text.Font;
-import com.itextpdf.text.Phrase;
-import com.itextpdf.text.Rectangle;
 
 /**
  * Supports text, combo and list fields generating the correct appearances.
@@ -75,6 +69,8 @@ public class TextField extends BaseField {
     private ArrayList<Integer> choiceSelections = new ArrayList<Integer>();
 
     private int topFirst;
+    /** Represents the /TI value */
+    private int visibleTopChoice = -1;
 
     private float extraMarginLeft;
     private float extraMarginTop;
@@ -494,7 +490,11 @@ public class TextField extends BaseField {
 
     	int topChoice = 0;
     	if (choices != null) {
-    		topChoice = firstValue.intValue();
+            if ( visibleTopChoice != -1 ) {
+                return visibleTopChoice;
+            }
+
+            topChoice = firstValue.intValue();
     		topChoice = Math.min( topChoice, choices.length );
     		topChoice = Math.max( 0, topChoice);
     	} // else topChoice still 0
@@ -514,7 +514,7 @@ public class TextField extends BaseField {
 
         if (text == null)
         	text = "";
-        
+
         PdfFormField field = null;
         String mix[][] = null;
 
@@ -694,6 +694,33 @@ public class TextField extends BaseField {
     }
 
     /**
+     * Sets the top visible choice for lists;
+     *
+     * @since 5.5.3
+     * @param visibleTopChoice index of the first visible item (zero-based array)
+     */
+    public void setVisibleTopChoice(int visibleTopChoice) {
+        if ( visibleTopChoice < 0 ) {
+            return;
+        }
+
+        if (choices != null) {
+            if ( visibleTopChoice < choices.length ) {
+                this.visibleTopChoice = visibleTopChoice;
+            }
+        }
+    }
+
+
+    /**
+     * Returns the index of the top visible choice of a list. Default is -1.
+     * @return the index of the top visible choice
+     */
+    public int getVisibleTopChoice() {
+        return visibleTopChoice;
+    }
+
+    /**
      * Sets the zero based index of the selected item.
      * @param choiceSelection the zero based index of the selected item
      */
@@ -703,7 +730,7 @@ public class TextField extends BaseField {
     }
 
     /**
-     * adds another (or a first I suppose) selection to a MULTISELECT list.
+     * Adds another (or a first I suppose) selection to a MULTISELECT list.
      * This doesn't do anything unless this.options & MUTLISELECT != 0
      * @param selection new selection
      */
@@ -714,7 +741,7 @@ public class TextField extends BaseField {
     }
 
     /**
-     * replaces the existing selections with the param. If this field isn't a MULTISELECT
+     * Replaces the existing selections with the param. If this field isn't a MULTISELECT
      * list, all but the first element will be removed.
      * @param selections new selections.  If null, it clear()s the underlying ArrayList.
      */
