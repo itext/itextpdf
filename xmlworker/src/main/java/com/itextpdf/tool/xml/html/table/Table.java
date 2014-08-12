@@ -160,15 +160,13 @@ public class Table extends AbstractTagProcessor {
 			} else {
 				Collections.sort(tableRows, new RepeatedRowComparator());
 			}
-			PdfPTable table = new PdfPTable(numberOfColumns);
-			table.setHeaderRows(headerRows + footerRows);
-			table.setFooterRows(footerRows);
-            table.setHorizontalAlignment(Element.ALIGN_LEFT);
-            table.setSplitLate(false);
-			TableStyleValues styleValues = setStyleValues(tag);
-			table.setTableEvent(new TableBorderEvent(styleValues));
-			setVerticalMargin(table, tag, styleValues, ctx);
-			widenLastCell(tableRows, styleValues.getHorBorderSpacing());
+            PdfPTable table = intPdfPTable(numberOfColumns);
+            table.setHeaderRows(headerRows + footerRows);
+            table.setFooterRows(footerRows);
+            TableStyleValues styleValues = setStyleValues(tag);
+            table.setTableEvent(new TableBorderEvent(styleValues));
+            setVerticalMargin(table, tag, styleValues, ctx);
+            widenLastCell(tableRows, styleValues.getHorBorderSpacing());
 			float[] columnWidths = new float[numberOfColumns];
 			float[] widestWords = new float[numberOfColumns];
 			float[] fixedWidths = new float[numberOfColumns];
@@ -477,6 +475,15 @@ public class Table extends AbstractTagProcessor {
 			throw new RuntimeWorkerException(LocaleMessages.getInstance().getMessage(LocaleMessages.NO_CUSTOM_CONTEXT), e);
 		}
 	}
+
+    protected PdfPTable intPdfPTable(int numberOfColumn) {
+        PdfPTable table = new PdfPTable(numberOfColumn);
+
+        table.setHorizontalAlignment(Element.ALIGN_LEFT);
+        table.setSplitLate(false);
+
+        return table;
+    }
 
 	/**
 	 * Calculates the target width. First checks:
