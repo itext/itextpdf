@@ -872,11 +872,29 @@ public class PdfCopy extends PdfWriter {
     protected void flushAcroFields() throws IOException, BadPdfFormatException {
         if (mergeFields) {
             try {
+                //save annotations that appear just at page level (comments, popups)
+                for (ImportedPage page : importedPages) {
+                    PdfDictionary pageDict = page.reader.getPageN(page.pageNumber);
+                    if (pageDict != null) {
+                        PdfArray pageFields = pageDict.getAsArray(PdfName.ANNOTS);
+                        if (pageFields == null || pageFields.size() == 0)
+                            continue;
+                        for (AcroFields.Item items: page.reader.getAcroFields().getFields().values()) {
+                            for(PdfIndirectReference ref: items.widget_refs) {
+                                pageFields.arrayList.remove(ref);
+                            }
+                        }
+                        for (PdfObject ref: pageFields.arrayList)
+                            page.mergedFields.add(copyObject(ref));
+                    }
+                }
+                //ok, remove old fields and build create new one
                 for (PdfReader reader : indirectMap.keySet()) {
                     reader.removeFields();
                 }
                 mergeFields();
                 createAcroForms();
+
             } catch (ClassCastException ex) {
             } finally {
                 if (!tagged)
@@ -1128,13 +1146,16 @@ public class PdfCopy extends PdfWriter {
             indirectObjects.remove(new RefKey(iobj.number, iobj.generation));
         HashSet<RefKey> inactives = new HashSet<RefKey>();
         for(Map.Entry<RefKey, PdfIndirectObject> entry: indirectObjects.entrySet()) {
-            if (entry.getValue() != null) writeObjectToBody(entry.getValue());
-            else inactives.add(entry.getKey());
+            if (entry.getValue() != null)
+                writeObjectToBody(entry.getValue());
+            else
+                inactives.add(entry.getKey());
         }
         ArrayList<PdfBody.PdfCrossReference> pdfCrossReferences = new ArrayList<PdfBody.PdfCrossReference>(body.xrefs);
         for (PdfBody.PdfCrossReference cr : pdfCrossReferences) {
             RefKey key = new RefKey(cr.getRefnum(), 0);
-            if (inactives.contains(key)) body.xrefs.remove(cr);
+            if (inactives.contains(key))
+                body.xrefs.remove(cr);
         }
         indirectObjects = null;
     }
@@ -1208,9 +1229,10 @@ public class PdfCopy extends PdfWriter {
             PdfDictionary dictionary = (PdfDictionary)obj;
             for (PdfName key : dictionary.getKeys()) {
                 PdfObject o = dictionary.get(key);
-                if (o instanceof PdfIndirectReference) {
+                if (o != null && o.type() == 0) {
                     for (PdfIndirectObject entry : unmergedSet) {
-                        if (entry.getIndirectReference().toString().equals(o.toString())) {
+                        if (entry.getIndirectReference().getNumber() == ((PdfIndirectReference)o).getNumber() &&
+                                entry.getIndirectReference().getGeneration() == ((PdfIndirectReference)o).getGeneration()) {
                             if (entry.object.isDictionary()) {
                                 PdfNumber annotId = ((PdfDictionary)entry.object).getAsNumber(PdfCopy.annotId);
                                 if (annotId != null) {
@@ -1413,8 +1435,14 @@ public class PdfCopy extends PdfWriter {
     }
 
     private void createAcroForms() throws IOException, BadPdfFormatException {
-        if (fieldTree.isEmpty())
+        if (fieldTree.isEmpty()) {
+            //write annotations that appear just at page level (comments, popups)
+            for (ImportedPage importedPage : importedPages) {
+                if (importedPage.mergedFields.size() > 0)
+                    addToBody(importedPage.mergedFields, importedPage.annotsIndirectReference);
+            }
             return;
+        }
         PdfDictionary form = new PdfDictionary();
         form.put(PdfName.DR, propagate(resources));
 
