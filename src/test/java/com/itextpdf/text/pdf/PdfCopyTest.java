@@ -315,6 +315,42 @@ public class PdfCopyTest {
         }
     }
 
+    @Test
+    public void copyFields2Test() throws DocumentException, IOException, InterruptedException {
+        Document pdfDocument = new Document();
+        new File("./target/com/itextpdf/test/pdf/PdfCopyTest/").mkdirs();
+        PdfCopy copier = new PdfCopy(pdfDocument, new FileOutputStream("./target/com/itextpdf/test/pdf/PdfCopyTest/copyFields2.pdf"));
+        copier.setMergeFields();
+        pdfDocument.open();
+
+        PdfReader reader = new PdfReader("./src/test/resources/com/itextpdf/text/pdf/PdfCopyTest/hello_with_comments.pdf");
+        copier.addDocument(reader);
+        copier.close();
+        CompareTool compareTool = new CompareTool("./target/com/itextpdf/test/pdf/PdfCopyTest/copyFields2.pdf", "./src/test/resources/com/itextpdf/text/pdf/PdfCopyTest/cmp_copyFields2.pdf");
+        String errorMessage = compareTool.compareByContent("./target/com/itextpdf/test/pdf/PdfCopyTest/", "diff");
+        if (errorMessage != null) {
+            Assert.fail(errorMessage);
+        }
+    }
+
+    @Test
+    public void copyFields3Test() throws DocumentException, IOException, InterruptedException {
+        Document pdfDocument = new Document();
+        new File("./target/com/itextpdf/test/pdf/PdfCopyTest/").mkdirs();
+        PdfCopy copier = new PdfCopy(pdfDocument, new FileOutputStream("./target/com/itextpdf/test/pdf/PdfCopyTest/copyFields3.pdf"));
+        copier.setMergeFields();
+        pdfDocument.open();
+
+        PdfReader reader = new PdfReader("./src/test/resources/com/itextpdf/text/pdf/PdfCopyTest/hello2_with_comments.pdf");
+        copier.addDocument(reader);
+        copier.close();
+        CompareTool compareTool = new CompareTool("./target/com/itextpdf/test/pdf/PdfCopyTest/copyFields3.pdf", "./src/test/resources/com/itextpdf/text/pdf/PdfCopyTest/cmp_copyFields3.pdf");
+        String errorMessage = compareTool.compareByContent("./target/com/itextpdf/test/pdf/PdfCopyTest/", "diff");
+        if (errorMessage != null) {
+            Assert.fail(errorMessage);
+        }
+    }
+
     private static byte[] createImagePdf() throws Exception {
 
         final ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
