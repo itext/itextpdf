@@ -669,6 +669,7 @@ public class PdfCopy extends PdfWriter {
         root.addPage(newPage);
         iPage.setCopied();
         ++currentPageNumber;
+        pdf.setPageCount(currentPageNumber);
         structTreeRootReference = null;
     }
 
@@ -689,6 +690,7 @@ public class PdfCopy extends PdfWriter {
     	page.put(PdfName.TABS, getTabs());
     	root.addPage(page);
     	++currentPageNumber;
+        pdf.setPageCount(currentPageNumber);
     }
 
     public void addDocument(PdfReader reader, List<Integer> pagesToKeep) throws DocumentException, IOException {
