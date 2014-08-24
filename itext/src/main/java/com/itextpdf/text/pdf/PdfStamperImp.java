@@ -897,6 +897,15 @@ class PdfStamperImp extends PdfWriter {
                 if (page < 1)
                 	continue;
                 PdfDictionary appDic = merged.getAsDict(PdfName.AP);
+                if ((appDic == null || appDic.get(PdfName.N) == null) && acroFields.isGenerateAppearances()) {
+                    try {
+                        acroFields.regenerateField(name);
+                        appDic = acroFields.getFieldItem(name).getMerged(k).getAsDict(PdfName.AP);
+                    }
+                    // if we can't create appearances for some reason, we'll just continue
+                    catch (IOException e) {}
+                    catch (DocumentException e) {}
+                }
                 if (appDic != null && (flags & PdfFormField.FLAGS_PRINT) != 0 && (flags & PdfFormField.FLAGS_HIDDEN) == 0) {
                     PdfObject obj = appDic.get(PdfName.N);
                     PdfAppearance app = null;
