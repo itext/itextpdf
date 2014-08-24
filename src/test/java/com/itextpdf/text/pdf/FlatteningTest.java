@@ -50,6 +50,7 @@ import junit.framework.Assert;
 import org.junit.Test;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
@@ -59,12 +60,13 @@ import java.io.IOException;
  */
 public class FlatteningTest {
 
-    private static final String INPUT_FOLDER = "./src/test/resources/com/itextpdf/text/pdf/FlatteningTest/input/";
-    private static final String CMP_FOLDER = "./src/test/resources/com/itextpdf/text/pdf/FlatteningTest/cmp/";
+    private static final String RESOURCES_FOLDER = "./src/test/resources/com/itextpdf/text/pdf/FlatteningTest/";
     private static final String OUTPUT_FOLDER = "./target/com/itextpdf/test/pdf/FlatteningTest/";
 
     @Test
     public void testFlattening() throws IOException, DocumentException, InterruptedException {
+        final String INPUT_FOLDER = RESOURCES_FOLDER + "input/";
+        final String CMP_FOLDER = RESOURCES_FOLDER + "cmp/";
         File inputFolder = new File(INPUT_FOLDER);
 
         if ( !inputFolder.exists() )
@@ -92,5 +94,104 @@ public class FlatteningTest {
                 Assert.fail(errorMessage);
             }
         }
+    }
+
+    @Test
+    public void testFlatteningGenerateAppearances1() throws IOException, DocumentException, InterruptedException {
+        
+        new File(OUTPUT_FOLDER).mkdirs();
+
+        final String OUT = "noappearances-needapp-false_override-false.pdf";
+        testFlatteningGenerateAppearance(RESOURCES_FOLDER + "noappearances-needapp-false.pdf", OUTPUT_FOLDER + OUT, false);
+        
+        CompareTool compareTool = new CompareTool(OUTPUT_FOLDER + OUT, RESOURCES_FOLDER + "cmp_" + OUT);
+        String errorMessage = compareTool.compare(OUTPUT_FOLDER, "diff");
+        if (errorMessage != null) {
+            Assert.fail(errorMessage);
+        }
+    }
+
+    @Test
+    public void testFlatteningGenerateAppearances2() throws IOException, DocumentException, InterruptedException {
+        
+        new File(OUTPUT_FOLDER).mkdirs();
+
+        final String OUT = "noappearances-needapp-false_override-true.pdf";
+        testFlatteningGenerateAppearance(RESOURCES_FOLDER + "noappearances-needapp-false.pdf", OUTPUT_FOLDER + OUT, true);
+        
+        CompareTool compareTool = new CompareTool(OUTPUT_FOLDER + OUT, RESOURCES_FOLDER + "cmp_" + OUT);
+        String errorMessage = compareTool.compare(OUTPUT_FOLDER, "diff");
+        if (errorMessage != null) {
+            Assert.fail(errorMessage);
+        }
+    }
+
+    @Test
+    public void testFlatteningGenerateAppearances3() throws IOException, DocumentException, InterruptedException {
+        
+        new File(OUTPUT_FOLDER).mkdirs();
+
+        final String OUT = "noappearances-needapp-false_override-none.pdf";
+        testFlatteningGenerateAppearance(RESOURCES_FOLDER + "noappearances-needapp-false.pdf", OUTPUT_FOLDER + OUT, null);
+
+        CompareTool compareTool = new CompareTool(OUTPUT_FOLDER + OUT, RESOURCES_FOLDER + "cmp_" + OUT);
+        String errorMessage = compareTool.compare(OUTPUT_FOLDER, "diff");
+        if (errorMessage != null) {
+            Assert.fail(errorMessage);
+        }
+    }
+
+    @Test
+    public void testFlatteningGenerateAppearances4() throws IOException, DocumentException, InterruptedException {
+        
+        new File(OUTPUT_FOLDER).mkdirs();
+
+        final String OUT = "noappearances-needapp-true_override-false.pdf";
+        testFlatteningGenerateAppearance(RESOURCES_FOLDER + "noappearances-needapp-true.pdf", OUTPUT_FOLDER + OUT, false);
+     
+        CompareTool compareTool = new CompareTool(OUTPUT_FOLDER + OUT, RESOURCES_FOLDER + "cmp_" + OUT);
+        String errorMessage = compareTool.compare(OUTPUT_FOLDER, "diff");
+        if (errorMessage != null) {
+            Assert.fail(errorMessage);
+        }
+    }
+
+    @Test
+    public void testFlatteningGenerateAppearances5() throws IOException, DocumentException, InterruptedException {
+        
+        new File(OUTPUT_FOLDER).mkdirs();
+
+        final String OUT = "noappearances-needapp-true_override-true.pdf";
+        testFlatteningGenerateAppearance(RESOURCES_FOLDER + "noappearances-needapp-true.pdf", OUTPUT_FOLDER + OUT, true);
+
+        CompareTool compareTool = new CompareTool(OUTPUT_FOLDER + OUT, RESOURCES_FOLDER + "cmp_" + OUT);
+        String errorMessage = compareTool.compare(OUTPUT_FOLDER, "diff");
+        if (errorMessage != null) {
+            Assert.fail(errorMessage);
+        }
+    }
+
+    @Test
+    public void testFlatteningGenerateAppearances6() throws IOException, DocumentException, InterruptedException {
+        
+        new File(OUTPUT_FOLDER).mkdirs();
+
+        final String OUT = "noappearances-needapp-true_override-none.pdf";
+        testFlatteningGenerateAppearance(RESOURCES_FOLDER + "noappearances-needapp-true.pdf", OUTPUT_FOLDER + OUT, null);
+        
+        CompareTool compareTool = new CompareTool(OUTPUT_FOLDER + OUT, RESOURCES_FOLDER + "cmp_" + OUT);
+        String errorMessage = compareTool.compare(OUTPUT_FOLDER, "diff");
+        if (errorMessage != null) {
+            Assert.fail(errorMessage);
+        }
+    }
+
+    public void testFlatteningGenerateAppearance(String in, String out, Boolean gen) throws FileNotFoundException, DocumentException, IOException {
+        PdfReader reader = new PdfReader(in);
+        PdfStamper stamper = new PdfStamper(reader, new FileOutputStream(out));
+        if (gen != null)
+            stamper.getAcroFields().setGenerateAppearances(gen);
+        stamper.setFormFlattening(true);
+        stamper.close();
     }
 }
