@@ -897,21 +897,39 @@ class PdfStamperImp extends PdfWriter {
                 if (page < 1)
                 	continue;
                 PdfDictionary appDic = merged.getAsDict(PdfName.AP);
-                if ((appDic == null || appDic.get(PdfName.N) == null) && acroFields.isGenerateAppearances()) {
-                    try {
-                        acroFields.regenerateField(name);
-                        appDic = acroFields.getFieldItem(name).getMerged(k).getAsDict(PdfName.AP);
+                if (acroFields.isGenerateAppearances()) {
+                    boolean regenerate = false;
+                    PdfObject as;
+                    if (appDic == null || (as = appDic.getDirectObject(PdfName.N)) == null) {
+                        regenerate = true;
+                    } else if (as.isStream()){
+                        PdfArray bbox = ((PdfDictionary)as).getAsArray(PdfName.BBOX);
+                        PdfArray rect = merged.getAsArray(PdfName.RECT);
+                        if (bbox != null && rect != null) {
+                            float widthDiff = (bbox.getAsNumber(2).floatValue() - bbox.getAsNumber(0).floatValue()) -
+                                    (rect.getAsNumber(2).floatValue() - rect.getAsNumber(0).floatValue());
+                            float heightDiff = (bbox.getAsNumber(3).floatValue() - bbox.getAsNumber(1).floatValue()) -
+                                    (rect.getAsNumber(3).floatValue() - rect.getAsNumber(1).floatValue());
+                            if (Math.abs(widthDiff) > 1 || Math.abs(heightDiff) > 1)
+                                regenerate = true;
+                        }
                     }
-                    // if we can't create appearances for some reason, we'll just continue
-                    catch (IOException e) {}
-                    catch (DocumentException e) {}
+                    if (regenerate) {
+                        try {
+                            acroFields.regenerateField(name);
+                            appDic = acroFields.getFieldItem(name).getMerged(k).getAsDict(PdfName.AP);
+                        }
+                        // if we can't create appearances for some reason, we'll just continue
+                        catch (IOException e) {}
+                        catch (DocumentException e) {}
+                    }
                 }
                 if (appDic != null && (flags & PdfFormField.FLAGS_PRINT) != 0 && (flags & PdfFormField.FLAGS_HIDDEN) == 0) {
                     PdfObject obj = appDic.get(PdfName.N);
                     PdfAppearance app = null;
                     if (obj != null) {
                         PdfObject objReal = PdfReader.getPdfObject(obj);
-                        if (obj instanceof PdfIndirectReference && !obj.isIndirect())
+                        if (obj.type() == 0)//PdfIndirectReference
                             app = new PdfAppearance((PdfIndirectReference)obj);
                         else if (objReal instanceof PdfStream) {
                             ((PdfDictionary)objReal).put(PdfName.SUBTYPE, PdfName.FORM);
@@ -1410,7 +1428,7 @@ class PdfStamperImp extends PdfWriter {
      */
     void makePackage( PdfCollection collection ) {
         PdfDictionary catalog = reader.getCatalog();
-       	catalog.put( PdfName.COLLECTION, collection );
+       	catalog.put(PdfName.COLLECTION, collection);
     }
 
     protected void setOutlines() throws IOException {
