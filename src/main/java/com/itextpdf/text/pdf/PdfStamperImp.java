@@ -929,7 +929,7 @@ class PdfStamperImp extends PdfWriter {
                     PdfAppearance app = null;
                     if (obj != null) {
                         PdfObject objReal = PdfReader.getPdfObject(obj);
-                        if (obj.type() == 0)//PdfIndirectReference
+                        if (obj instanceof PdfIndirectReference && !obj.isIndirect())
                             app = new PdfAppearance((PdfIndirectReference)obj);
                         else if (objReal instanceof PdfStream) {
                             ((PdfDictionary)objReal).put(PdfName.SUBTYPE, PdfName.FORM);
