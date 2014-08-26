@@ -55,7 +55,6 @@ import com.itextpdf.tool.xml.WorkerContext;
 import com.itextpdf.tool.xml.exceptions.LocaleMessages;
 import com.itextpdf.tool.xml.exceptions.RuntimeWorkerException;
 import com.itextpdf.tool.xml.html.AbstractTagProcessor;
-import com.itextpdf.tool.xml.html.HTMLUtils;
 import com.itextpdf.tool.xml.html.pdfelement.HtmlCell;
 import com.itextpdf.tool.xml.html.pdfelement.NoNewLineParagraph;
 import com.itextpdf.tool.xml.pipeline.html.HtmlPipelineContext;
@@ -146,7 +145,9 @@ public class TableData extends AbstractTagProcessor {
             }
 
             if (e instanceof Paragraph) {
-                ((Paragraph)e).setAlignment(cell.getHorizontalAlignment());
+                if ( ((Paragraph)e).getAlignment() == Element.ALIGN_UNDEFINED ) {
+                    ((Paragraph)e).setAlignment(cell.getHorizontalAlignment());
+                }
             }
 
 			cell.addElement(e);
