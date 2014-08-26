@@ -1026,6 +1026,11 @@ public class
     public static final PdfName IDENTITY = new PdfName("Identity");
     /** A name */
     public static final PdfName IF = new PdfName("IF");
+    /**
+     * A name
+     * @since 5.5.3
+     */
+    public static final PdfName IM = new PdfName("IM");
     /** A name */
     public static final PdfName IMAGE = new PdfName("Image");
     /** A name */
