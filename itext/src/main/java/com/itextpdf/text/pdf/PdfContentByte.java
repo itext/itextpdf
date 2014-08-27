@@ -1982,7 +1982,7 @@ public class PdfContentByte {
      * @param b the <CODE>byte</CODE> array to escape
      * @return an escaped <CODE>byte</CODE> array
      */
-    static byte[] escapeString(final byte b[]) {
+    public static byte[] escapeString(final byte b[]) {
         ByteBuffer content = new ByteBuffer();
         escapeString(b, content);
         return content.toByteArray();
@@ -1994,7 +1994,7 @@ public class PdfContentByte {
      * @param b the <CODE>byte</CODE> array to escape
      * @param content the content
      */
-    static void escapeString(final byte b[], final ByteBuffer content) {
+    public static void escapeString(final byte b[], final ByteBuffer content) {
         content.append_i('(');
         for (int k = 0; k < b.length; ++k) {
             byte c = b[k];
