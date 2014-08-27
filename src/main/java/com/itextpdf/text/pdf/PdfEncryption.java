@@ -660,9 +660,9 @@ public class PdfEncryption {
                 setupByEncryptionKey(mdResult, keyLength);
 		} else {
 			dic.put(PdfName.FILTER, PdfName.STANDARD);
-			dic.put(PdfName.O, new PdfLiteral(PdfContentByte
+			dic.put(PdfName.O, new PdfLiteral(StringUtils
 					.escapeString(ownerKey)));
-			dic.put(PdfName.U, new PdfLiteral(PdfContentByte
+			dic.put(PdfName.U, new PdfLiteral(StringUtils
 					.escapeString(userKey)));
 			dic.put(PdfName.P, new PdfNumber(permissions));
 			dic.put(PdfName.R, new PdfNumber(revision));
@@ -677,11 +677,11 @@ public class PdfEncryption {
             else if (revision == AES_256) {
 				if (!encryptMetadata)
 					dic.put(PdfName.ENCRYPTMETADATA, PdfBoolean.PDFFALSE);
-                dic.put(PdfName.OE, new PdfLiteral(PdfContentByte
+                dic.put(PdfName.OE, new PdfLiteral(StringUtils
                         .escapeString(oeKey)));
-                dic.put(PdfName.UE, new PdfLiteral(PdfContentByte
+                dic.put(PdfName.UE, new PdfLiteral(StringUtils
                         .escapeString(ueKey)));
-                dic.put(PdfName.PERMS, new PdfLiteral(PdfContentByte
+                dic.put(PdfName.PERMS, new PdfLiteral(StringUtils
                         .escapeString(perms)));
 				dic.put(PdfName.V, new PdfNumber(revision));
 				dic.put(PdfName.LENGTH, new PdfNumber(256));
