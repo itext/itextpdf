@@ -74,8 +74,8 @@ public class TextFieldTest {
         document.close();
 
         // compare
-        CompareTool compareTool = new CompareTool(OUTPUT_FOLDER + file, CMP_FOLDER + file);
-        String errorMessage = compareTool.compareByContent(OUTPUT_FOLDER, "diff");
+        CompareTool compareTool = new CompareTool();
+        String errorMessage = compareTool.compareByContent(OUTPUT_FOLDER + file, CMP_FOLDER + file, OUTPUT_FOLDER, "diff");
         if (errorMessage != null) {
             Assert.fail(errorMessage);
         }
