@@ -45,10 +45,17 @@
 package com.itextpdf.text.pdf;
 
 import com.itextpdf.testutils.CompareTool;
+import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.PageSize;
+import com.itextpdf.text.Phrase;
+import com.itextpdf.text.Rectangle;
+import com.itextpdf.text.pdf.events.FieldPositioningEvents;
 import junit.framework.Assert;
 import org.junit.Test;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -193,5 +200,101 @@ public class FlatteningTest {
             stamper.getAcroFields().setGenerateAppearances(gen);
         stamper.setFormFlattening(true);
         stamper.close();
+    }
+
+    @Test
+    public void testRegeneratingFieldsFalse() throws IOException, DocumentException, InterruptedException {
+        String file = "regenerateField_false.pdf";
+
+        Document doc = new Document(PageSize.A4);
+        ByteArrayOutputStream fs = new ByteArrayOutputStream();
+        PdfWriter writer = PdfWriter.getInstance(doc, fs);
+
+        doc.open();
+        PdfPTable myTable = new PdfPTable(1);
+        myTable.setTotalWidth(300f);
+        myTable.setLockedWidth(true);
+        myTable.setHorizontalAlignment(0);
+
+        //Create the textfield that will sit on a cell in the table
+        TextField tf = new TextField(writer, new Rectangle(0, 0, 70, 200), "cellTextBox");
+        tf.setText("text field");
+        //Create the table cell
+        PdfPCell tbCell = new PdfPCell(new Phrase(" "));
+        FieldPositioningEvents events = new FieldPositioningEvents(writer, tf.getTextField());
+        tbCell.setCellEvent(events);
+        myTable.addCell(tbCell);
+        PdfContentByte cb = writer.getDirectContent();
+        //Write out the table to the middle of the document
+        myTable.writeSelectedRows(0, -1, 0, -1, 20, 700, cb);
+        doc.close();
+
+        PdfReader reader2 = new PdfReader(new ByteArrayInputStream(fs.toByteArray()));
+        fs.reset();
+        PdfStamper stamper2 = new PdfStamper(reader2, fs);
+        stamper2.getAcroFields().setGenerateAppearances(false);
+        stamper2.close();
+        reader2.close();
+
+        PdfReader reader = new PdfReader(new ByteArrayInputStream(fs.toByteArray()));
+        PdfStamper stamper = new PdfStamper(reader, new FileOutputStream(OUTPUT_FOLDER + file));
+        stamper.setFormFlattening(true);
+        stamper.close();
+        reader.close();
+
+        // compare
+        CompareTool compareTool = new CompareTool(OUTPUT_FOLDER + file, RESOURCES_FOLDER + file);
+        String errorMessage = compareTool.compareByContent(OUTPUT_FOLDER, "diff");
+        if (errorMessage != null) {
+            Assert.fail(errorMessage);
+        }
+    }
+
+    @Test
+    public void testRegeneratingFieldsTrue() throws IOException, DocumentException, InterruptedException {
+        String file = "regenerateField_true.pdf";
+
+        Document doc = new Document(PageSize.A4);
+        ByteArrayOutputStream fs = new ByteArrayOutputStream();
+        PdfWriter writer = PdfWriter.getInstance(doc, fs);
+
+        doc.open();
+        PdfPTable myTable = new PdfPTable(1);
+        myTable.setTotalWidth(300f);
+        myTable.setLockedWidth(true);
+        myTable.setHorizontalAlignment(0);
+
+        //Create the textfield that will sit on a cell in the table
+        TextField tf = new TextField(writer, new Rectangle(0, 0, 70, 200), "cellTextBox");
+        tf.setText("text field");
+        //Create the table cell
+        PdfPCell tbCell = new PdfPCell(new Phrase(" "));
+        FieldPositioningEvents events = new FieldPositioningEvents(writer, tf.getTextField());
+        tbCell.setCellEvent(events);
+        myTable.addCell(tbCell);
+        PdfContentByte cb = writer.getDirectContent();
+        //Write out the table to the middle of the document
+        myTable.writeSelectedRows(0, -1, 0, -1, 20, 700, cb);
+        doc.close();
+
+        PdfReader reader2 = new PdfReader(new ByteArrayInputStream(fs.toByteArray()));
+        fs.reset();
+        PdfStamper stamper2 = new PdfStamper(reader2, fs);
+        stamper2.getAcroFields().setGenerateAppearances(true);
+        stamper2.close();
+        reader2.close();
+
+        PdfReader reader = new PdfReader(new ByteArrayInputStream(fs.toByteArray()));
+        PdfStamper stamper = new PdfStamper(reader, new FileOutputStream(OUTPUT_FOLDER + file));
+        stamper.setFormFlattening(true);
+        stamper.close();
+        reader.close();
+
+        // compare
+        CompareTool compareTool = new CompareTool(OUTPUT_FOLDER + file, RESOURCES_FOLDER + file);
+        String errorMessage = compareTool.compareByContent(OUTPUT_FOLDER, "diff");
+        if (errorMessage != null) {
+            Assert.fail(errorMessage);
+        }
     }
 }

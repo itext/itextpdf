@@ -897,24 +897,9 @@ class PdfStamperImp extends PdfWriter {
                 if (page < 1)
                 	continue;
                 PdfDictionary appDic = merged.getAsDict(PdfName.AP);
+                PdfObject as_n;
                 if (acroFields.isGenerateAppearances()) {
-                    boolean regenerate = false;
-                    PdfObject as;
-                    if (appDic == null || (as = appDic.getDirectObject(PdfName.N)) == null) {
-                        regenerate = true;
-                    } else if (as.isStream()){
-                        PdfArray bbox = ((PdfDictionary)as).getAsArray(PdfName.BBOX);
-                        PdfArray rect = merged.getAsArray(PdfName.RECT);
-                        if (bbox != null && rect != null) {
-                            float widthDiff = (bbox.getAsNumber(2).floatValue() - bbox.getAsNumber(0).floatValue()) -
-                                    (rect.getAsNumber(2).floatValue() - rect.getAsNumber(0).floatValue());
-                            float heightDiff = (bbox.getAsNumber(3).floatValue() - bbox.getAsNumber(1).floatValue()) -
-                                    (rect.getAsNumber(3).floatValue() - rect.getAsNumber(1).floatValue());
-                            if (Math.abs(widthDiff) > 1 || Math.abs(heightDiff) > 1)
-                                regenerate = true;
-                        }
-                    }
-                    if (regenerate) {
+                    if (appDic == null || (as_n = appDic.getDirectObject(PdfName.N)) == null) {
                         try {
                             acroFields.regenerateField(name);
                             appDic = acroFields.getFieldItem(name).getMerged(k).getAsDict(PdfName.AP);
@@ -922,8 +907,48 @@ class PdfStamperImp extends PdfWriter {
                         // if we can't create appearances for some reason, we'll just continue
                         catch (IOException e) {}
                         catch (DocumentException e) {}
+                    } else if (as_n.isStream()){
+                        PdfStream stream = (PdfStream)as_n;
+                        PdfArray bbox = stream.getAsArray(PdfName.BBOX);
+                        PdfArray rect = merged.getAsArray(PdfName.RECT);
+                        if (bbox != null && rect != null) {
+                            float rectWidth = rect.getAsNumber(2).floatValue() - rect.getAsNumber(0).floatValue();
+                            float bboxWidth = bbox.getAsNumber(2).floatValue() - bbox.getAsNumber(0).floatValue();
+                            float rectHeight = rect.getAsNumber(3).floatValue() - rect.getAsNumber(1).floatValue();
+                            float bboxHeight = bbox.getAsNumber(3).floatValue() - bbox.getAsNumber(1).floatValue();
+                            float widthCoef = Math.abs(bboxWidth != 0 ? rectWidth / bboxWidth : Float.MAX_VALUE);
+                            float heightCoef = Math.abs(bboxHeight != 0 ? rectHeight / bboxHeight : Float.MAX_VALUE);
+
+                            if (widthCoef != 1 || heightCoef != 1) {
+                                NumberArray array = new NumberArray(widthCoef, 0, 0, heightCoef, 0, 0);
+                                stream.put(PdfName.MATRIX, array);
+                                markUsed(stream);
+                            }
+                        }
+                    }
+                } else if (appDic != null && (as_n = appDic.getDirectObject(PdfName.N)) != null) {
+                    PdfArray bbox = ((PdfDictionary)as_n).getAsArray(PdfName.BBOX);
+                    PdfArray rect = merged.getAsArray(PdfName.RECT);
+                    if (bbox != null && rect != null) {
+                        float widthDiff = (bbox.getAsNumber(2).floatValue() - bbox.getAsNumber(0).floatValue()) -
+                                (rect.getAsNumber(2).floatValue() - rect.getAsNumber(0).floatValue());
+                        float heightDiff = (bbox.getAsNumber(3).floatValue() - bbox.getAsNumber(1).floatValue()) -
+                                (rect.getAsNumber(3).floatValue() - rect.getAsNumber(1).floatValue());
+                        if (Math.abs(widthDiff) > 1 || Math.abs(heightDiff) > 1) {
+                            try {
+                                //simulate Adobe behavior.
+                                acroFields.setGenerateAppearances(true);
+                                acroFields.regenerateField(name);
+                                acroFields.setGenerateAppearances(false);
+                                appDic = acroFields.getFieldItem(name).getMerged(k).getAsDict(PdfName.AP);
+                            }
+                            // if we can't create appearances for some reason, we'll just continue
+                            catch (IOException e) {}
+                            catch (DocumentException e) {}
+                        }
                     }
                 }
+
                 if (appDic != null && (flags & PdfFormField.FLAGS_PRINT) != 0 && (flags & PdfFormField.FLAGS_HIDDEN) == 0) {
                     PdfObject obj = appDic.get(PdfName.N);
                     PdfAppearance app = null;
