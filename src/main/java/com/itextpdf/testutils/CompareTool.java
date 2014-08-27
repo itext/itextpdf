@@ -446,6 +446,7 @@ public class CompareTool {
     }
 
     public String compareXmp(String outPdf, String cmpPdf, boolean ignoreDateAndProducerProperties){
+        init(outPdf, cmpPdf);
         PdfReader cmpReader = null;
         PdfReader outReader = null;
         try {
