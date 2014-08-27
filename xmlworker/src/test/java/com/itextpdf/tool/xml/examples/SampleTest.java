@@ -82,8 +82,8 @@ public class SampleTest extends ITextTest {
     @Override
     protected void comparePdf(String outPdf, String cmpPdf) throws Exception {
         if (!detectCrashesAndHangUpsOnly()) {
-            CompareTool compareTool = new CompareTool(outPdf, cmpPdf);
-            String errorMessage = compareTool.compareByContent(outPath, differenceImagePrefix);
+            CompareTool compareTool = new CompareTool();
+            String errorMessage = compareTool.compareByContent(outPdf, cmpPdf, outPath, differenceImagePrefix);
             if (errorMessage != null) {
                 Assert.fail(errorMessage);
             }
