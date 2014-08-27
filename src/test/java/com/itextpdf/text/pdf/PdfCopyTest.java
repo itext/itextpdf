@@ -80,26 +80,26 @@ public class PdfCopyTest {
      */
     public void testExtraXObjects() throws Exception {
         PdfReader sourceR = new PdfReader(createImagePdf());
-        try{
-		        int sourceXRefCount = sourceR.getXrefSize();
-		        
-		        final Document document = new Document();
-		        ByteArrayOutputStream out = new ByteArrayOutputStream();
-		        PdfCopy copy = new PdfCopy(document, out);
-		        document.open();
-		        PdfImportedPage importedPage = copy.getImportedPage(sourceR, 1);
-		        copy.addPage(importedPage);
-		        document.close();
-		        
-		        PdfReader targetR = new PdfReader(out.toByteArray());
-		        int destinationXRefCount = targetR.getXrefSize();
-		        
-		//        TestResourceUtils.saveBytesToFile(createImagePdf(), new File("./source.pdf"));
-		//        TestResourceUtils.saveBytesToFile(out.toByteArray(), new File("./result.pdf"));
-		        
-		        Assert.assertEquals(sourceXRefCount, destinationXRefCount);
+        try {
+            int sourceXRefCount = sourceR.getXrefSize();
+
+            final Document document = new Document();
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            PdfCopy copy = new PdfCopy(document, out);
+            document.open();
+            PdfImportedPage importedPage = copy.getImportedPage(sourceR, 1);
+            copy.addPage(importedPage);
+            document.close();
+
+            PdfReader targetR = new PdfReader(out.toByteArray());
+            int destinationXRefCount = targetR.getXrefSize();
+
+            //        TestResourceUtils.saveBytesToFile(createImagePdf(), new File("./source.pdf"));
+            //        TestResourceUtils.saveBytesToFile(out.toByteArray(), new File("./result.pdf"));
+
+            Assert.assertEquals(sourceXRefCount, destinationXRefCount);
         } finally {
-        	sourceR.close();
+            sourceR.close();
         }
     }
 
@@ -130,7 +130,7 @@ public class PdfCopyTest {
 
         reader.close();
     }
-    
+
     @Test
     public void testNeedAppearances() throws DocumentException, IOException, InterruptedException {
         String f1 = "./src/test/resources/com/itextpdf/text/pdf/PdfCopyTest/appearances1.pdf";
@@ -144,13 +144,13 @@ public class PdfCopyTest {
         PdfCopy copy = new PdfCopy(document, outputPdfStream);
         copy.setMergeFields();
         document.open();
-        for (String f : new String[] {f1, f2, f3, f4}) {
+        for (String f : new String[]{f1, f2, f3, f4}) {
             PdfReader r = new PdfReader(f);
             copy.addDocument(r);
         }
         copy.close();
-        CompareTool compareTool = new CompareTool("./target/com/itextpdf/test/pdf/PdfCopyTest/appearances.pdf", "./src/test/resources/com/itextpdf/text/pdf/PdfCopyTest/cmp_appearances.pdf");
-        String errorMessage = compareTool.compareByContent("./target/com/itextpdf/test/pdf/PdfCopyTest/", "diff");
+        CompareTool compareTool = new CompareTool();
+        String errorMessage = compareTool.compareByContent("./target/com/itextpdf/test/pdf/PdfCopyTest/appearances.pdf", "./src/test/resources/com/itextpdf/text/pdf/PdfCopyTest/cmp_appearances.pdf", "./target/com/itextpdf/test/pdf/PdfCopyTest/", "diff");
         if (errorMessage != null) {
             Assert.fail(errorMessage);
         }
@@ -169,13 +169,13 @@ public class PdfCopyTest {
         PdfCopy copy = new PdfCopy(document, outputPdfStream);
         copy.setMergeFields();
         document.open();
-        for (String f : new String[] {f1, f2, f3, f4}) {
+        for (String f : new String[]{f1, f2, f3, f4}) {
             PdfReader r = new PdfReader(f);
             copy.addDocument(r);
         }
         copy.close();
-        CompareTool compareTool = new CompareTool("./target/com/itextpdf/test/pdf/PdfCopyTest/appearances(needAppearancesFalse).pdf", "./src/test/resources/com/itextpdf/text/pdf/PdfCopyTest/cmp_appearances(needAppearancesFalse).pdf");
-        String errorMessage = compareTool.compareByContent("./target/com/itextpdf/test/pdf/PdfCopyTest/", "diff");
+        CompareTool compareTool = new CompareTool();
+        String errorMessage = compareTool.compareByContent("./target/com/itextpdf/test/pdf/PdfCopyTest/appearances(needAppearancesFalse).pdf", "./src/test/resources/com/itextpdf/text/pdf/PdfCopyTest/cmp_appearances(needAppearancesFalse).pdf", "./target/com/itextpdf/test/pdf/PdfCopyTest/", "diff");
         if (errorMessage != null) {
             Assert.fail(errorMessage);
         }
@@ -194,13 +194,13 @@ public class PdfCopyTest {
         PdfCopy copy = new PdfCopy(document, outputPdfStream);
         copy.setMergeFields();
         document.open();
-        for (String f : new String[] {f1, f2, f3, f4}) {
+        for (String f : new String[]{f1, f2, f3, f4}) {
             PdfReader r = new PdfReader(f);
             copy.addDocument(r);
         }
         copy.close();
-        CompareTool compareTool = new CompareTool("./target/com/itextpdf/test/pdf/PdfCopyTest/appearances(needAppearancesFalseWithStreams).pdf", "./src/test/resources/com/itextpdf/text/pdf/PdfCopyTest/cmp_appearances(needAppearancesFalseWithStreams).pdf");
-        String errorMessage = compareTool.compareByContent("./target/com/itextpdf/test/pdf/PdfCopyTest/", "diff");
+        CompareTool compareTool = new CompareTool();
+        String errorMessage = compareTool.compareByContent("./target/com/itextpdf/test/pdf/PdfCopyTest/appearances(needAppearancesFalseWithStreams).pdf", "./src/test/resources/com/itextpdf/text/pdf/PdfCopyTest/cmp_appearances(needAppearancesFalseWithStreams).pdf", "./target/com/itextpdf/test/pdf/PdfCopyTest/", "diff");
         if (errorMessage != null) {
             Assert.fail(errorMessage);
         }
@@ -219,13 +219,13 @@ public class PdfCopyTest {
         PdfCopy copy = new PdfCopy(document, outputPdfStream);
         copy.setMergeFields();
         document.open();
-        for (String f : new String[] {f1, f2, f3, f4}) {
+        for (String f : new String[]{f1, f2, f3, f4}) {
             PdfReader r = new PdfReader(f);
             copy.addDocument(r);
         }
         copy.close();
-        CompareTool compareTool = new CompareTool("./target/com/itextpdf/test/pdf/PdfCopyTest/appearances(mixed).pdf", "./src/test/resources/com/itextpdf/text/pdf/PdfCopyTest/cmp_appearances(mixed).pdf");
-        String errorMessage = compareTool.compareByContent("./target/com/itextpdf/test/pdf/PdfCopyTest/", "diff");
+        CompareTool compareTool = new CompareTool();
+        String errorMessage = compareTool.compareByContent("./target/com/itextpdf/test/pdf/PdfCopyTest/appearances(mixed).pdf", "./src/test/resources/com/itextpdf/text/pdf/PdfCopyTest/cmp_appearances(mixed).pdf", "./target/com/itextpdf/test/pdf/PdfCopyTest/", "diff");
         if (errorMessage != null) {
             Assert.fail(errorMessage);
         }
@@ -308,8 +308,8 @@ public class PdfCopyTest {
         readerMain.close();
         secondSourceReader.close();
         thirdReader.close();
-        CompareTool compareTool = new CompareTool("./target/com/itextpdf/test/pdf/PdfCopyTest/copyFields.pdf", "./src/test/resources/com/itextpdf/text/pdf/PdfCopyTest/cmp_copyFields.pdf");
-        String errorMessage = compareTool.compareByContent("./target/com/itextpdf/test/pdf/PdfCopyTest/", "diff");
+        CompareTool compareTool = new CompareTool();
+        String errorMessage = compareTool.compareByContent("./target/com/itextpdf/test/pdf/PdfCopyTest/copyFields.pdf", "./src/test/resources/com/itextpdf/text/pdf/PdfCopyTest/cmp_copyFields.pdf", "./target/com/itextpdf/test/pdf/PdfCopyTest/", "diff");
         if (errorMessage != null) {
             Assert.fail(errorMessage);
         }
@@ -326,8 +326,8 @@ public class PdfCopyTest {
         PdfReader reader = new PdfReader("./src/test/resources/com/itextpdf/text/pdf/PdfCopyTest/hello_with_comments.pdf");
         copier.addDocument(reader);
         copier.close();
-        CompareTool compareTool = new CompareTool("./target/com/itextpdf/test/pdf/PdfCopyTest/copyFields2.pdf", "./src/test/resources/com/itextpdf/text/pdf/PdfCopyTest/cmp_copyFields2.pdf");
-        String errorMessage = compareTool.compareByContent("./target/com/itextpdf/test/pdf/PdfCopyTest/", "diff");
+        CompareTool compareTool = new CompareTool();
+        String errorMessage = compareTool.compareByContent("./target/com/itextpdf/test/pdf/PdfCopyTest/copyFields2.pdf", "./src/test/resources/com/itextpdf/text/pdf/PdfCopyTest/cmp_copyFields2.pdf", "./target/com/itextpdf/test/pdf/PdfCopyTest/", "diff");
         if (errorMessage != null) {
             Assert.fail(errorMessage);
         }
@@ -344,8 +344,8 @@ public class PdfCopyTest {
         PdfReader reader = new PdfReader("./src/test/resources/com/itextpdf/text/pdf/PdfCopyTest/hello2_with_comments.pdf");
         copier.addDocument(reader);
         copier.close();
-        CompareTool compareTool = new CompareTool("./target/com/itextpdf/test/pdf/PdfCopyTest/copyFields3.pdf", "./src/test/resources/com/itextpdf/text/pdf/PdfCopyTest/cmp_copyFields3.pdf");
-        String errorMessage = compareTool.compareByContent("./target/com/itextpdf/test/pdf/PdfCopyTest/", "diff");
+        CompareTool compareTool = new CompareTool();
+        String errorMessage = compareTool.compareByContent("./target/com/itextpdf/test/pdf/PdfCopyTest/copyFields3.pdf", "./src/test/resources/com/itextpdf/text/pdf/PdfCopyTest/cmp_copyFields3.pdf", "./target/com/itextpdf/test/pdf/PdfCopyTest/", "diff");
         if (errorMessage != null) {
             Assert.fail(errorMessage);
         }
@@ -360,15 +360,15 @@ public class PdfCopyTest {
         document.setPageSize(PageSize.LETTER);
 
         document.open();
-        
-        BufferedImage awtImg = new BufferedImage(100, 100, BufferedImage.TYPE_INT_RGB); 
+
+        BufferedImage awtImg = new BufferedImage(100, 100, BufferedImage.TYPE_INT_RGB);
         Graphics2D g2d = awtImg.createGraphics();
         g2d.setColor(Color.green);
         g2d.fillRect(10, 10, 80, 80);
         g2d.dispose();
-        
+
         com.itextpdf.text.Image itextImg = com.itextpdf.text.Image.getInstance(awtImg, null);
-        document.add(itextImg);               
+        document.add(itextImg);
 
         document.close();
 

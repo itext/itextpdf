@@ -95,8 +95,8 @@ public class FlatteningTest {
             stamper.close();
 
             // compare
-            CompareTool compareTool = new CompareTool(OUTPUT_FOLDER + file, CMP_FOLDER + file);
-            String errorMessage = compareTool.compare(OUTPUT_FOLDER, "diff");
+            CompareTool compareTool = new CompareTool();
+            String errorMessage = compareTool.compare(OUTPUT_FOLDER + file, CMP_FOLDER + file, OUTPUT_FOLDER, "diff");
             if (errorMessage != null) {
                 Assert.fail(errorMessage);
             }
@@ -111,8 +111,8 @@ public class FlatteningTest {
         final String OUT = "noappearances-needapp-false_override-false.pdf";
         testFlatteningGenerateAppearance(RESOURCES_FOLDER + "noappearances-needapp-false.pdf", OUTPUT_FOLDER + OUT, false);
         
-        CompareTool compareTool = new CompareTool(OUTPUT_FOLDER + OUT, RESOURCES_FOLDER + "cmp_" + OUT);
-        String errorMessage = compareTool.compare(OUTPUT_FOLDER, "diff");
+        CompareTool compareTool = new CompareTool();
+        String errorMessage = compareTool.compare(OUTPUT_FOLDER + OUT, RESOURCES_FOLDER + "cmp_" + OUT, OUTPUT_FOLDER, "diff");
         if (errorMessage != null) {
             Assert.fail(errorMessage);
         }
@@ -126,8 +126,8 @@ public class FlatteningTest {
         final String OUT = "noappearances-needapp-false_override-true.pdf";
         testFlatteningGenerateAppearance(RESOURCES_FOLDER + "noappearances-needapp-false.pdf", OUTPUT_FOLDER + OUT, true);
         
-        CompareTool compareTool = new CompareTool(OUTPUT_FOLDER + OUT, RESOURCES_FOLDER + "cmp_" + OUT);
-        String errorMessage = compareTool.compare(OUTPUT_FOLDER, "diff");
+        CompareTool compareTool = new CompareTool();
+        String errorMessage = compareTool.compare(OUTPUT_FOLDER + OUT, RESOURCES_FOLDER + "cmp_" + OUT, OUTPUT_FOLDER, "diff");
         if (errorMessage != null) {
             Assert.fail(errorMessage);
         }
@@ -141,8 +141,8 @@ public class FlatteningTest {
         final String OUT = "noappearances-needapp-false_override-none.pdf";
         testFlatteningGenerateAppearance(RESOURCES_FOLDER + "noappearances-needapp-false.pdf", OUTPUT_FOLDER + OUT, null);
 
-        CompareTool compareTool = new CompareTool(OUTPUT_FOLDER + OUT, RESOURCES_FOLDER + "cmp_" + OUT);
-        String errorMessage = compareTool.compare(OUTPUT_FOLDER, "diff");
+        CompareTool compareTool = new CompareTool();
+        String errorMessage = compareTool.compare(OUTPUT_FOLDER + OUT, RESOURCES_FOLDER + "cmp_" + OUT, OUTPUT_FOLDER, "diff");
         if (errorMessage != null) {
             Assert.fail(errorMessage);
         }
@@ -156,8 +156,8 @@ public class FlatteningTest {
         final String OUT = "noappearances-needapp-true_override-false.pdf";
         testFlatteningGenerateAppearance(RESOURCES_FOLDER + "noappearances-needapp-true.pdf", OUTPUT_FOLDER + OUT, false);
      
-        CompareTool compareTool = new CompareTool(OUTPUT_FOLDER + OUT, RESOURCES_FOLDER + "cmp_" + OUT);
-        String errorMessage = compareTool.compare(OUTPUT_FOLDER, "diff");
+        CompareTool compareTool = new CompareTool();
+        String errorMessage = compareTool.compare(OUTPUT_FOLDER + OUT, RESOURCES_FOLDER + "cmp_" + OUT, OUTPUT_FOLDER, "diff");
         if (errorMessage != null) {
             Assert.fail(errorMessage);
         }
@@ -171,8 +171,8 @@ public class FlatteningTest {
         final String OUT = "noappearances-needapp-true_override-true.pdf";
         testFlatteningGenerateAppearance(RESOURCES_FOLDER + "noappearances-needapp-true.pdf", OUTPUT_FOLDER + OUT, true);
 
-        CompareTool compareTool = new CompareTool(OUTPUT_FOLDER + OUT, RESOURCES_FOLDER + "cmp_" + OUT);
-        String errorMessage = compareTool.compare(OUTPUT_FOLDER, "diff");
+        CompareTool compareTool = new CompareTool();
+        String errorMessage = compareTool.compare(OUTPUT_FOLDER + OUT, RESOURCES_FOLDER + "cmp_" + OUT, OUTPUT_FOLDER, "diff");
         if (errorMessage != null) {
             Assert.fail(errorMessage);
         }
@@ -186,8 +186,8 @@ public class FlatteningTest {
         final String OUT = "noappearances-needapp-true_override-none.pdf";
         testFlatteningGenerateAppearance(RESOURCES_FOLDER + "noappearances-needapp-true.pdf", OUTPUT_FOLDER + OUT, null);
         
-        CompareTool compareTool = new CompareTool(OUTPUT_FOLDER + OUT, RESOURCES_FOLDER + "cmp_" + OUT);
-        String errorMessage = compareTool.compare(OUTPUT_FOLDER, "diff");
+        CompareTool compareTool = new CompareTool();
+        String errorMessage = compareTool.compare(OUTPUT_FOLDER + OUT, RESOURCES_FOLDER + "cmp_" + OUT, OUTPUT_FOLDER, "diff");
         if (errorMessage != null) {
             Assert.fail(errorMessage);
         }
@@ -243,8 +243,8 @@ public class FlatteningTest {
         reader.close();
 
         // compare
-        CompareTool compareTool = new CompareTool(OUTPUT_FOLDER + file, RESOURCES_FOLDER + file);
-        String errorMessage = compareTool.compareByContent(OUTPUT_FOLDER, "diff");
+        CompareTool compareTool = new CompareTool();
+        String errorMessage = compareTool.compareByContent(OUTPUT_FOLDER + file, RESOURCES_FOLDER + file, OUTPUT_FOLDER, "diff");
         if (errorMessage != null) {
             Assert.fail(errorMessage);
         }
@@ -291,8 +291,8 @@ public class FlatteningTest {
         reader.close();
 
         // compare
-        CompareTool compareTool = new CompareTool(OUTPUT_FOLDER + file, RESOURCES_FOLDER + file);
-        String errorMessage = compareTool.compareByContent(OUTPUT_FOLDER, "diff");
+        CompareTool compareTool = new CompareTool();
+        String errorMessage = compareTool.compareByContent(OUTPUT_FOLDER + file, RESOURCES_FOLDER + file, OUTPUT_FOLDER, "diff");
         if (errorMessage != null) {
             Assert.fail(errorMessage);
         }

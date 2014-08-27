@@ -112,8 +112,8 @@ public class LabColorSpaceTest {
         // step 5
         document.close();
 
-        CompareTool compareTool = new CompareTool(dest_file, "./src/test/resources/com/itextpdf/text/pdf/cs/LabColorSpaceTest/cmp_lab_spot_based_gradient.pdf");
-        String error = compareTool.compareByContent(DEST_FOLDER, "diff");
+        CompareTool compareTool = new CompareTool();
+        String error = compareTool.compareByContent(dest_file, "./src/test/resources/com/itextpdf/text/pdf/cs/LabColorSpaceTest/cmp_lab_spot_based_gradient.pdf", DEST_FOLDER, "diff");
         if (error != null) {
             Assert.fail(error);
         }
