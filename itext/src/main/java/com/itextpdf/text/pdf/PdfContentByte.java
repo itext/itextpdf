@@ -1748,7 +1748,7 @@ public class PdfContentByte {
         if (state.fontDetails == null)
             throw new NullPointerException(MessageLocalization.getComposedMessage("font.and.size.must.be.set.before.writing.any.text"));
         byte b[] = state.fontDetails.convertToBytes(text);
-        escapeString(b, content);
+        StringUtils.escapeString(b, content);
     }
 
     /**
@@ -1974,56 +1974,6 @@ public class PdfContentByte {
             return content.size();
         else
             return content.size() - markedContentSize;
-    }
-
-    /**
-     * Escapes a <CODE>byte</CODE> array according to the PDF conventions.
-     *
-     * @param b the <CODE>byte</CODE> array to escape
-     * @return an escaped <CODE>byte</CODE> array
-     */
-    public static byte[] escapeString(final byte b[]) {
-        ByteBuffer content = new ByteBuffer();
-        escapeString(b, content);
-        return content.toByteArray();
-    }
-
-    /**
-     * Escapes a <CODE>byte</CODE> array according to the PDF conventions.
-     *
-     * @param b the <CODE>byte</CODE> array to escape
-     * @param content the content
-     */
-    public static void escapeString(final byte b[], final ByteBuffer content) {
-        content.append_i('(');
-        for (int k = 0; k < b.length; ++k) {
-            byte c = b[k];
-            switch (c) {
-                case '\r':
-                    content.append("\\r");
-                    break;
-                case '\n':
-                    content.append("\\n");
-                    break;
-                case '\t':
-                    content.append("\\t");
-                    break;
-                case '\b':
-                    content.append("\\b");
-                    break;
-                case '\f':
-                    content.append("\\f");
-                    break;
-                case '(':
-                case ')':
-                case '\\':
-                    content.append_i('\\').append_i(c);
-                    break;
-                default:
-                    content.append_i(c);
-            }
-        }
-        content.append(")");
     }
 
     /**
