@@ -1766,6 +1766,19 @@ public class PdfContentByte {
         content.append("Tj").append_i(separator);
     }
 
+    public void showTextGid(final String gids) {
+        checkState();
+        if (!inText && isTagged()) {
+            beginText(true);
+        }
+        if (state.fontDetails == null)
+            throw new NullPointerException(MessageLocalization.getComposedMessage("font.and.size.must.be.set.before.writing.any.text"));
+        Object[] objs = state.fontDetails.convertToBytesGid(gids);
+        StringUtils.escapeString((byte[])objs[0], content);
+        state.tx += ((Integer)objs[2]).intValue() * 0.001f * state.size;
+        content.append("Tj").append_i(separator);
+    }
+
     /**
      * Constructs a kern array for a text in a certain font
      * @param text the text
