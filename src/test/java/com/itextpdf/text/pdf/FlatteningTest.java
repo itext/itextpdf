@@ -204,6 +204,9 @@ public class FlatteningTest {
 
     @Test
     public void testRegeneratingFieldsFalse() throws IOException, DocumentException, InterruptedException {
+
+        new File(OUTPUT_FOLDER).mkdirs();
+
         String file = "regenerateField_false.pdf";
 
         Document doc = new Document(PageSize.A4);
@@ -252,6 +255,9 @@ public class FlatteningTest {
 
     @Test
     public void testRegeneratingFieldsTrue() throws IOException, DocumentException, InterruptedException {
+        
+        new File(OUTPUT_FOLDER).mkdirs();
+
         String file = "regenerateField_true.pdf";
 
         Document doc = new Document(PageSize.A4);
