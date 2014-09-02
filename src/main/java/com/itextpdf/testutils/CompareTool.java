@@ -411,7 +411,14 @@ public class CompareTool {
     }
 
     private boolean objectsAreEqual(PRStream outStream, PRStream cmpStream) throws IOException {
-        return Arrays.equals(PdfReader.getStreamBytesRaw(outStream), PdfReader.getStreamBytesRaw(cmpStream));
+        boolean decodeStreams = PdfName.FLATEDECODE.equals(outStream.get(PdfName.FILTER));
+        byte[] outStreamBytes = PdfReader.getStreamBytesRaw(outStream);
+        byte[] cmpStreamBytes = PdfReader.getStreamBytesRaw(cmpStream);
+        if (decodeStreams) {
+            outStreamBytes = PdfReader.decodeBytes(outStreamBytes, outStream);
+            cmpStreamBytes = PdfReader.decodeBytes(cmpStreamBytes, cmpStream);
+        }
+        return Arrays.equals(outStreamBytes, cmpStreamBytes);
     }
 
     private boolean objectsAreEqual(PdfArray outArray, PdfArray cmpArray) throws IOException {
