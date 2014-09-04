@@ -591,6 +591,9 @@ public class PdfDocument extends Document {
                         pageEvent.onParagraphEnd(writer, this, indentTop() - currentHeight);
 
                     alignment = Element.ALIGN_LEFT;
+                    if ( floatingElements != null && floatingElements.size() != 0 ) {
+                        flushFloatingElements();
+                    }
                     indentation.indentLeft -= paragraph.getIndentationLeft();
                     indentation.indentRight -= paragraph.getIndentationRight();
                     carriageReturn();
@@ -2697,6 +2700,7 @@ public class PdfDocument extends Document {
             FloatLayout fl = new FloatLayout(cachedFloatingElements, false);
             int loop = 0;
             while (true) {
+                float left = indentLeft();
                 fl.setSimpleColumn(indentLeft(), indentBottom(), indentRight(), indentTop() - currentHeight);
                 try {
                     int status = fl.layout(isTagged(writer) ? text : writer.getDirectContent(), false);
