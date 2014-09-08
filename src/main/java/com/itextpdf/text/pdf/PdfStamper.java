@@ -395,6 +395,11 @@ public class PdfStamper
     	stamper.setFreeTextFlattening(flat);
 	}
 
+    /**
+     * Flatten annotations with an appearance stream on close().
+     *
+     * @param flat boolean to indicate whether iText should flatten annotations or not.
+     */
     public void setAnnotationFlattening(final boolean flat) {
         stamper.setFlatAnnotations(flat);
     }
