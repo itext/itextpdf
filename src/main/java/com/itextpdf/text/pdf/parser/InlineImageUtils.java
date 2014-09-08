@@ -44,18 +44,13 @@
  */
 package com.itextpdf.text.pdf.parser;
 
+import com.itextpdf.text.exceptions.UnsupportedPdfException;
+import com.itextpdf.text.pdf.*;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-
-import com.itextpdf.text.pdf.PRTokeniser;
-import com.itextpdf.text.pdf.PdfArray;
-import com.itextpdf.text.pdf.PdfContentParser;
-import com.itextpdf.text.pdf.PdfDictionary;
-import com.itextpdf.text.pdf.PdfName;
-import com.itextpdf.text.pdf.PdfNumber;
-import com.itextpdf.text.pdf.PdfObject;
 
 /**
  * Utility methods to help with processing of inline images
@@ -367,8 +362,10 @@ public final class InlineImageUtils {
             	try {
             		new PdfImageObject(imageDictionary, tmp, colorSpaceDic);
             		return tmp;
-            	}
-            	catch(Exception e) {
+                } catch ( UnsupportedPdfException u) {
+                    // image has ended, it just isn't supported
+                    return tmp;
+                } catch(Exception e) {
                     baos.write(accumulated.toByteArray());
                     accumulated.reset();
                     
