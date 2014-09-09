@@ -905,9 +905,14 @@ class PdfStamperImp extends PdfWriter {
                 if (page < 1)
                 	continue;
                 PdfDictionary appDic = merged.getAsDict(PdfName.AP);
-                PdfObject as_n;
+                PdfObject as_n = null;
+                if (appDic != null) {
+                    as_n = appDic.getAsStream(PdfName.N);
+                    if (as_n == null)
+                        as_n = appDic.getAsDict(PdfName.N);
+                }
                 if (acroFields.isGenerateAppearances()) {
-                    if (appDic == null || (as_n = appDic.getDirectObject(PdfName.N)) == null) {
+                    if (appDic == null || as_n == null) {
                         try {
                             acroFields.regenerateField(name);
                             appDic = acroFields.getFieldItem(name).getMerged(k).getAsDict(PdfName.AP);
@@ -934,7 +939,7 @@ class PdfStamperImp extends PdfWriter {
                             }
                         }
                     }
-                } else if (appDic != null && (as_n = appDic.getAsStream(PdfName.N)) != null) {
+                } else if (appDic != null && as_n != null) {
                     PdfArray bbox = ((PdfDictionary)as_n).getAsArray(PdfName.BBOX);
                     PdfArray rect = merged.getAsArray(PdfName.RECT);
                     if (bbox != null && rect != null) {
