@@ -934,7 +934,7 @@ class PdfStamperImp extends PdfWriter {
                             }
                         }
                     }
-                } else if (appDic != null && (as_n = appDic.getDirectObject(PdfName.N)) != null) {
+                } else if (appDic != null && (as_n = appDic.getAsDict(PdfName.N)) != null) {
                     PdfArray bbox = ((PdfDictionary)as_n).getAsArray(PdfName.BBOX);
                     PdfArray rect = merged.getAsArray(PdfName.RECT);
                     if (bbox != null && rect != null) {
