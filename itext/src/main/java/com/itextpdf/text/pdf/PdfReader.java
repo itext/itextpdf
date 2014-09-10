@@ -648,7 +648,7 @@ public class PdfReader implements PdfViewerPreferences {
     	if (markInfo == null)
     		return false;
     	if ( PdfBoolean.PDFTRUE.equals(markInfo.getAsBoolean(PdfName.MARKED))) {
-            return catalog.getAsDict(PdfName.STRUCTTREEROOT) == null;
+            return catalog.getAsDict(PdfName.STRUCTTREEROOT) != null;
         } else {
             return false;
         }
