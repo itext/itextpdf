@@ -49,6 +49,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.itextpdf.text.pdf.FilterHandlers;
 import com.itextpdf.text.pdf.PRTokeniser;
 import com.itextpdf.text.pdf.PdfArray;
 import com.itextpdf.text.pdf.PdfContentParser;
@@ -56,6 +57,7 @@ import com.itextpdf.text.pdf.PdfDictionary;
 import com.itextpdf.text.pdf.PdfName;
 import com.itextpdf.text.pdf.PdfNumber;
 import com.itextpdf.text.pdf.PdfObject;
+import com.itextpdf.text.pdf.PdfReader;
 
 /**
  * Utility methods to help with processing of inline images
@@ -364,17 +366,15 @@ public final class InlineImageUtils {
                 accumulated.write(ch);
             } else if (found == 3 && PRTokeniser.isWhitespace(ch)){
             	byte[] tmp = baos.toByteArray();
-            	try {
-            		new PdfImageObject(imageDictionary, tmp, colorSpaceDic);
+            	if (inlineImageStreamBytesAreComplete(tmp, imageDictionary)){
             		return tmp;
             	}
-            	catch(Exception e) {
-                    baos.write(accumulated.toByteArray());
-                    accumulated.reset();
-                    
-                    baos.write(ch);
-                    found = 0;
-            	}
+                baos.write(accumulated.toByteArray());
+                accumulated.reset();
+                
+                baos.write(ch);
+                found = 0;
+
             } else {
                 baos.write(accumulated.toByteArray());
                 accumulated.reset();
@@ -384,5 +384,14 @@ public final class InlineImageUtils {
             }
         }
         throw new InlineImageParseException("Could not find image data or EI");
+    }
+    
+    private static boolean inlineImageStreamBytesAreComplete(byte[] samples, PdfDictionary imageDictionary){
+    	try{
+    		PdfReader.decodeBytes(samples, imageDictionary, FilterHandlers.getDefaultFilterHandlers());
+    		return true;
+    	} catch (IOException e){
+    		return false;
+    	}
     }
 }

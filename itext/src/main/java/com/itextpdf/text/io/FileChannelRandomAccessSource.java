@@ -68,6 +68,8 @@ public class FileChannelRandomAccessSource implements RandomAccessSource {
      */
     public FileChannelRandomAccessSource(FileChannel channel) throws IOException {
 		this.channel = channel;
+		if(channel.size() == 0)
+			throw new IOException("File size is 0 bytes");
 		source = new MappedChannelRandomAccessSource(channel, 0, channel.size());
 		source.open();
 	}

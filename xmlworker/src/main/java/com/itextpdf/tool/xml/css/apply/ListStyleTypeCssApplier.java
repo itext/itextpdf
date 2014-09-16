@@ -213,6 +213,14 @@ public class ListStyleTypeCssApplier {
 		leftIndent += css.get(CSS.Property.MARGIN_LEFT)!=null?utils.parseValueToPt(css.get(CSS.Property.MARGIN_LEFT),fontSize):0;
 		leftIndent += css.get(CSS.Property.PADDING_LEFT)!=null?utils.parseValueToPt(css.get(CSS.Property.PADDING_LEFT),fontSize):0;
 		lst.setIndentationLeft(leftIndent);
+        String startAtr = t.getAttributes().get(HTML.Attribute.START);
+        if (startAtr != null) {
+            try {
+                int start = Integer.parseInt(startAtr);
+                lst.setFirst(start);
+            } catch (NumberFormatException exc) {}
+
+        }
 		return lst;
 	}
 
