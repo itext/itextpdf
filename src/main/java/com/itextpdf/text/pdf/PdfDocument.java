@@ -1255,12 +1255,14 @@ public class PdfDocument extends Document {
                 // if the end of the line is reached, we start a newPage which will flush existing lines
                 // then move to next page but before then we need to exclude the current one that does not fit
                 // After the new page we add the current line back in
-                PdfLine overflowLine = line;
-                line = null;
-                newPage();
-                line = overflowLine;
-                //update left indent because of mirror margins.
-                overflowLine.left = indentLeft();
+                if ( currentHeight != 0 ) {
+                    PdfLine overflowLine = line;
+                    line = null;
+                    newPage();
+                    line = overflowLine;
+                    //update left indent because of mirror margins.
+                    overflowLine.left = indentLeft();
+                }
             }
             currentHeight += line.height();
             lines.add(line);
