@@ -332,6 +332,7 @@ public final class HTML {
         public static final String FACE  = "face";
         public static final String SIZE  = "size";
         public static final String COLOR  = "color";
+        public static final String START  = "start";
 
 		/**
 		 * Possible attribute values.

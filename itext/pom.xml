@@ -7,9 +7,8 @@
     <version>1.0.0</version>
   </parent>
 
-  <groupId>com.itextpdf</groupId>
   <artifactId>itextg</artifactId>
-  <version>5.5.2</version>
+  <version>5.5.3</version>
   <packaging>jar</packaging>
 
   <name>iText, a Free Java-PDF library</name>

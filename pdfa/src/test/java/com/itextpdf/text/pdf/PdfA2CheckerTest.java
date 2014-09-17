@@ -1453,4 +1453,21 @@ public class PdfA2CheckerTest {
         if (!exceptionThrown)
             Assert.fail("PdfAConformanceException with correct message should be thrown.");
     }
+
+    @Test
+    public void textFieldTest() throws IOException, DocumentException {
+        Document d = new Document();
+        PdfWriter w = PdfAWriter.getInstance(d, new FileOutputStream(outputDir + "textField.pdf"), PdfAConformanceLevel.PDF_A_2B);
+        w.createXmpMetadata();
+        d.open();
+        ICC_Profile icc = ICC_Profile.getInstance(new FileInputStream("./src/test/resources/com/itextpdf/text/pdf/sRGB Color Space Profile.icm"));
+        w.setOutputIntents("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", icc);
+        TextField text = new TextField(w, new Rectangle(50,700,150,750), "text1");
+        Font font = FontFactory.getFont("./src/test/resources/com/itextpdf/text/pdf/FreeMonoBold.ttf", BaseFont.WINANSI, BaseFont.EMBEDDED, 12);
+        text.setFont(font.getBaseFont());
+        text.setText("test");
+        PdfFormField field = text.getTextField();
+        w.addAnnotation(field);
+        d.close();
+    }
 }

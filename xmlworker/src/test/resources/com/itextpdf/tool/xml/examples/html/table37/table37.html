@@ -1,0 +1,40 @@
+<html>
+<body>
+<p>td : center aligned & p right aligned & p left aligned should result in p right aligned and p left aligned</p>
+<table width="100%" cellpadding="7" border="1">
+    <tr>
+        <td style="width: 50%; text-align: center">
+            <p style="text-align: right">
+                right aligned
+            </p>
+            <p style="text-align: left">
+                left aligned
+            </p>
+        </td>
+        <td style="width: 50%;">
+            <p>
+                left aligned
+            </p>
+        </td>
+    </tr>
+</table>
+<p>td : center aligned & p not aligned & p right aligned should result in p center aligned and p right aligned</p>
+<table width="100%" cellpadding="7" border="1">
+    <tr>
+        <td style="width: 50%; text-align: center">
+            <p>
+                not aligned
+            </p>
+            <p style="text-align: right">
+                right aligned
+            </p>
+        </td>
+        <td style="width: 50%;">
+            <p>
+                left aligned
+            </p>
+        </td>
+    </tr>
+</table>
+</body>
+</html>

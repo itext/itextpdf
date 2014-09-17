@@ -52,8 +52,8 @@ public class XmpWriterTest {
         // step 5
         document.close();
 
-        CompareTool ct = new CompareTool(CMP_FOLDER + fileName, OUT_FOLDER + fileName);
-        Assert.assertNull(ct.compareXmp(true));
+        CompareTool ct = new CompareTool();
+        Assert.assertNull(ct.compareXmp(OUT_FOLDER + fileName, CMP_FOLDER + fileName, true));
     }
 
     @Test
@@ -75,8 +75,8 @@ public class XmpWriterTest {
         document.add(new Paragraph("Hello World"));
         // step 5
         document.close();
-        CompareTool ct = new CompareTool(CMP_FOLDER + fileName, OUT_FOLDER + fileName);
-        Assert.assertNull(ct.compareXmp(true));
+        CompareTool ct = new CompareTool();
+        Assert.assertNull(ct.compareXmp(OUT_FOLDER + fileName, CMP_FOLDER + fileName, true));
     }
 
     @Test
@@ -92,8 +92,8 @@ public class XmpWriterTest {
         stamper.close();
         reader.close();
 
-        CompareTool ct = new CompareTool(CMP_FOLDER + fileName, OUT_FOLDER + fileName);
-        Assert.assertNull(ct.compareXmp(true));
+        CompareTool ct = new CompareTool();
+        Assert.assertNull(ct.compareXmp(OUT_FOLDER + fileName, CMP_FOLDER + fileName, true));
     }
 
     @Test
@@ -111,8 +111,8 @@ public class XmpWriterTest {
         stamper.close();
         reader.close();
 
-        CompareTool ct = new CompareTool(CMP_FOLDER + fileName, OUT_FOLDER + fileName);
-        Assert.assertNull(ct.compareXmp(true));
+        CompareTool ct = new CompareTool();
+        Assert.assertNull(ct.compareXmp(OUT_FOLDER + fileName, CMP_FOLDER + fileName, true));
     }
 
     @Test
@@ -143,7 +143,7 @@ public class XmpWriterTest {
         document.add(new Paragraph("Hello World"));
         // step 5
         document.close();
-        CompareTool ct = new CompareTool(CMP_FOLDER + "xmp_metadata.pdf", OUT_FOLDER + fileName);
-        Assert.assertNull(ct.compareXmp(true));
+        CompareTool ct = new CompareTool();
+        Assert.assertNull(ct.compareXmp(OUT_FOLDER + fileName, CMP_FOLDER + "xmp_metadata.pdf", true));
     }
 }

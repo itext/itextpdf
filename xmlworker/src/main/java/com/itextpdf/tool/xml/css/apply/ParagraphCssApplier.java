@@ -52,6 +52,7 @@ import com.itextpdf.tool.xml.css.CSS;
 import com.itextpdf.tool.xml.css.CssUtils;
 import com.itextpdf.tool.xml.css.FontSizeTranslator;
 import com.itextpdf.tool.xml.html.CssAppliers;
+import com.itextpdf.tool.xml.html.HTML;
 
 import java.util.Map;
 import java.util.Map.Entry;
@@ -136,6 +137,22 @@ public class ParagraphCssApplier {
                     p.setLeading(utils.parseRelativeValue(value, fontSize));
                 } else if (utils.isMetricValue(value)){
                     p.setLeading(utils.parsePxInCmMmPcToPt(value));
+                }
+            }
+        }
+
+        if ( t.getAttributes().containsKey(HTML.Attribute.ALIGN)) {
+            String value = t.getAttributes().get(HTML.Attribute.ALIGN);
+
+            if ( value != null ) {
+                if ( value.equalsIgnoreCase(CSS.Value.RIGHT)) {
+                    p.setAlignment(Element.ALIGN_RIGHT);
+                } else if ( value.equalsIgnoreCase(CSS.Value.LEFT)) {
+                    p.setAlignment(Element.ALIGN_LEFT);
+                } else if ( value.equalsIgnoreCase(CSS.Value.CENTER)) {
+                    p.setAlignment(Element.ALIGN_CENTER);
+                } else if ( value.equalsIgnoreCase(CSS.Value.JUSTIFY)) {
+                    p.setAlignment(Element.ALIGN_JUSTIFIED);
                 }
             }
         }

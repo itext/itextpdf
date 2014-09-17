@@ -213,7 +213,7 @@ public class PdfPublicKeySecurityHandler {
         for (int i=0; i<recipients.size(); i++)
         try {
             cms = getEncodedRecipient(i);
-            EncodedRecipients.add(new PdfLiteral(PdfContentByte.escapeString(cms)));
+            EncodedRecipients.add(new PdfLiteral(StringUtils.escapeString(cms)));
         } catch (GeneralSecurityException e) {
             EncodedRecipients = null;
         } catch (IOException e) {

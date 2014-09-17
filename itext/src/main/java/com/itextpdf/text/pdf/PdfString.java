@@ -156,7 +156,7 @@ public class PdfString extends PdfObject {
             os.write(buf.toByteArray());
         }
         else
-            os.write(PdfContentByte.escapeString(b));
+            os.write(StringUtils.escapeString(b));
     }
     
     /**

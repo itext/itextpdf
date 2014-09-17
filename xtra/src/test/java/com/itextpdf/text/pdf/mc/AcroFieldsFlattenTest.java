@@ -70,8 +70,8 @@ public class AcroFieldsFlattenTest {
     }
 
     private void compare(String outPdf, String cmpPdf) throws IOException, ParserConfigurationException, SAXException, InterruptedException, DocumentException {
-        CompareTool ct = new CompareTool(outPdf, cmpPdf);
-        Assert.assertNull(ct.compare(OUT_FOLDER, "difference"));
+        CompareTool ct = new CompareTool();
+        Assert.assertNull(ct.compare(outPdf, cmpPdf, OUT_FOLDER, "difference"));
 
         String outXml = new File(outPdf).getName();
         String cmpXml = new File(cmpPdf).getName();

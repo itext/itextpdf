@@ -116,7 +116,7 @@ public class PdfEncryption {
 	/** The public key security handler for certificate encryption */
 	protected PdfPublicKeySecurityHandler publicKeyHandler = null;
 
-	int permissions;
+	long permissions;
 
 	byte documentID[];
 
@@ -209,7 +209,7 @@ public class PdfEncryption {
 		return encryptMetadata;
 	}
 
-    public int getPermissions() {
+    public long getPermissions() {
         return permissions;
     }
 
@@ -270,7 +270,7 @@ public class PdfEncryption {
 	 * ownerKey, documentID must be setup
 	 */
 	private void setupGlobalEncryptionKey(byte[] documentID, byte userPad[],
-			byte ownerKey[], int permissions) {
+			byte ownerKey[], long permissions) {
 		this.documentID = documentID;
 		this.ownerKey = ownerKey;
 		this.permissions = permissions;
@@ -493,7 +493,7 @@ public class PdfEncryption {
 	/**
 	 */
 	public void setupByUserPassword(byte[] documentID, byte userPassword[],
-			byte ownerKey[], int permissions) {
+			byte ownerKey[], long permissions) {
 		setupByUserPad(documentID, padPassword(userPassword), ownerKey,
 				permissions);
 	}
@@ -501,7 +501,7 @@ public class PdfEncryption {
 	/**
 	 */
 	private void setupByUserPad(byte[] documentID, byte userPad[],
-			byte ownerKey[], int permissions) {
+			byte ownerKey[], long permissions) {
 		setupGlobalEncryptionKey(documentID, userPad, ownerKey, permissions);
 		setupUserKey();
 	}
@@ -509,13 +509,13 @@ public class PdfEncryption {
 	/**
 	 */
 	public void setupByOwnerPassword(byte[] documentID, byte ownerPassword[],
-			byte userKey[], byte ownerKey[], int permissions) {
+			byte userKey[], byte ownerKey[], long permissions) {
 		setupByOwnerPad(documentID, padPassword(ownerPassword), userKey,
 				ownerKey, permissions);
 	}
 
 	private void setupByOwnerPad(byte[] documentID, byte ownerPad[],
-			byte userKey[], byte ownerKey[], int permissions) {
+			byte userKey[], byte ownerKey[], long permissions) {
 		byte userPad[] = computeOwnerKey(ownerKey, ownerPad); // userPad will
 																// be set in
 																// this.ownerKey
@@ -660,9 +660,9 @@ public class PdfEncryption {
                 setupByEncryptionKey(mdResult, keyLength);
 		} else {
 			dic.put(PdfName.FILTER, PdfName.STANDARD);
-			dic.put(PdfName.O, new PdfLiteral(PdfContentByte
+			dic.put(PdfName.O, new PdfLiteral(StringUtils
 					.escapeString(ownerKey)));
-			dic.put(PdfName.U, new PdfLiteral(PdfContentByte
+			dic.put(PdfName.U, new PdfLiteral(StringUtils
 					.escapeString(userKey)));
 			dic.put(PdfName.P, new PdfNumber(permissions));
 			dic.put(PdfName.R, new PdfNumber(revision));
@@ -677,11 +677,11 @@ public class PdfEncryption {
             else if (revision == AES_256) {
 				if (!encryptMetadata)
 					dic.put(PdfName.ENCRYPTMETADATA, PdfBoolean.PDFFALSE);
-                dic.put(PdfName.OE, new PdfLiteral(PdfContentByte
+                dic.put(PdfName.OE, new PdfLiteral(StringUtils
                         .escapeString(oeKey)));
-                dic.put(PdfName.UE, new PdfLiteral(PdfContentByte
+                dic.put(PdfName.UE, new PdfLiteral(StringUtils
                         .escapeString(ueKey)));
-                dic.put(PdfName.PERMS, new PdfLiteral(PdfContentByte
+                dic.put(PdfName.PERMS, new PdfLiteral(StringUtils
                         .escapeString(perms)));
 				dic.put(PdfName.V, new PdfNumber(revision));
 				dic.put(PdfName.LENGTH, new PdfNumber(256));

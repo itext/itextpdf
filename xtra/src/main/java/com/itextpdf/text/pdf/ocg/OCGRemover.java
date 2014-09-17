@@ -99,6 +99,13 @@ public class OCGRemover {
 				removeOCGsFromArray(d, PdfName.ORDER, ocgs);
 				removeOCGsFromArray(d, PdfName.AS, ocgs);
 			}
+            PdfArray ocgsArray = ocproperties.getAsArray(PdfName.OCGS);
+            if ( ocgsArray != null && ocgsArray.isEmpty() ) {
+                root.remove(PdfName.OCPROPERTIES);
+                if ( PdfName.USEOC.equals(root.getAsName(PdfName.PAGEMODE)) ) {
+                    root.remove(PdfName.PAGEMODE);
+                }
+            }
 		}
 		reader.removeUnusedObjects();
 	}

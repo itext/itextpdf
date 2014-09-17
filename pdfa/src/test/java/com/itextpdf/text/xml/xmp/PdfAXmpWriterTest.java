@@ -49,8 +49,8 @@ public class PdfAXmpWriterTest {
         // step 5
         document.close();
 
-        CompareTool ct = new CompareTool(CMP_FOLDER + fileName, OUT_FOLDER + fileName);
-        Assert.assertNull(ct.compareXmp(true));
+        CompareTool ct = new CompareTool();
+        Assert.assertNull(ct.compareXmp(OUT_FOLDER + fileName, CMP_FOLDER + fileName, true));
     }
 
     @Test
@@ -74,8 +74,8 @@ public class PdfAXmpWriterTest {
         writer.setOutputIntents("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", icc);
         // step 5
         document.close();
-        CompareTool ct = new CompareTool(CMP_FOLDER + fileName, OUT_FOLDER + fileName);
-        Assert.assertNull(ct.compareXmp(true));
+        CompareTool ct = new CompareTool();
+        Assert.assertNull(ct.compareXmp(OUT_FOLDER + fileName, CMP_FOLDER + fileName, true));
     }
 
     @Test
@@ -93,8 +93,8 @@ public class PdfAXmpWriterTest {
         stamper.close();
         reader.close();
 
-        CompareTool ct = new CompareTool(CMP_FOLDER + fileName, OUT_FOLDER + fileName);
-        Assert.assertNull(ct.compareXmp(true));
+        CompareTool ct = new CompareTool();
+        Assert.assertNull(ct.compareXmp(OUT_FOLDER + fileName, CMP_FOLDER + fileName, true));
     }
 
     @Test
@@ -114,8 +114,8 @@ public class PdfAXmpWriterTest {
         stamper.close();
         reader.close();
 
-        CompareTool ct = new CompareTool(CMP_FOLDER + fileName, OUT_FOLDER + fileName);
-        Assert.assertNull(ct.compareXmp(true));
+        CompareTool ct = new CompareTool();
+        Assert.assertNull(ct.compareXmp(OUT_FOLDER + fileName, CMP_FOLDER + fileName, true));
     }
 
     @Test
@@ -127,8 +127,8 @@ public class PdfAXmpWriterTest {
         stamper.close();
         reader.close();
 
-        CompareTool ct = new CompareTool(CMP_FOLDER + fileName, OUT_FOLDER + fileName);
-        Assert.assertNull(ct.compareXmp(true));
+        CompareTool ct = new CompareTool();
+        Assert.assertNull(ct.compareXmp(OUT_FOLDER + fileName, CMP_FOLDER + fileName, true));
     }
 
     @Test
@@ -163,8 +163,8 @@ public class PdfAXmpWriterTest {
         writer.setOutputIntents("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", icc);
         // step 5
         document.close();
-        CompareTool ct = new CompareTool(CMP_FOLDER + "xmp_metadata_deprecated.pdf", OUT_FOLDER + fileName);
-        Assert.assertNull(ct.compareXmp(true));
+        CompareTool ct = new CompareTool();
+        Assert.assertNull(ct.compareXmp(OUT_FOLDER + fileName, CMP_FOLDER + "xmp_metadata_deprecated.pdf", true));
     }
 }
 

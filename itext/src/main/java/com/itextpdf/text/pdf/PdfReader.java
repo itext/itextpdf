@@ -148,7 +148,7 @@ public class PdfReader implements PdfViewerPreferences {
     protected boolean consolidateNamedDestinations = false;
     protected boolean remoteToLocalNamedDestinations = false;
     protected int rValue;
-    protected int pValue;
+    protected long pValue;
     private int objNum;
     private int objGen;
     private long fileLength;
@@ -307,10 +307,11 @@ public class PdfReader implements PdfViewerPreferences {
     /**
      * Reads and parses a PDF document.
      * @param filename the file name of the document
+     * @param certificate
      * @param externalDecryptionProcess
      * @throws IOException on error
      */
-    public PdfReader(final String filename, final ExternalDecryptionProcess externalDecryptionProcess) throws IOException {
+    public PdfReader(final String filename, Certificate certificate, final ExternalDecryptionProcess externalDecryptionProcess) throws IOException {
         this(
                 new RandomAccessSourceFactory()
                         .setForceRead(false)
@@ -318,7 +319,7 @@ public class PdfReader implements PdfViewerPreferences {
                         .createBestSource(filename),
                 false,
                 null,
-                null,
+                certificate,
                 null,
                 null,
                 externalDecryptionProcess,
@@ -663,7 +664,11 @@ public class PdfReader implements PdfViewerPreferences {
     	PdfDictionary markInfo = catalog.getAsDict(PdfName.MARKINFO);
     	if (markInfo == null)
     		return false;
-    	return PdfBoolean.PDFTRUE.equals(markInfo.getAsBoolean(PdfName.MARKED));
+    	if ( PdfBoolean.PDFTRUE.equals(markInfo.getAsBoolean(PdfName.MARKED))) {
+            return catalog.getAsDict(PdfName.STRUCTTREEROOT) != null;
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -795,7 +800,7 @@ public class PdfReader implements PdfViewerPreferences {
             o = enc.get(PdfName.P);
             if (!o.isNumber())
             	throw new InvalidPdfException(MessageLocalization.getComposedMessage("illegal.p.value"));
-            pValue = ((PdfNumber)o).intValue();
+            pValue = ((PdfNumber)o).longValue();
 
             o = enc.get(PdfName.R);
             if (!o.isNumber())
@@ -2719,7 +2724,7 @@ public class PdfReader implements PdfViewerPreferences {
      * <CODE>PdfWriter.setEncryption()</CODE>.
      * @return the encryption permissions
      */
-    public int getPermissions() {
+    public long getPermissions() {
         return pValue;
     }
 

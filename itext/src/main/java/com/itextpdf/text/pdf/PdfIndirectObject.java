@@ -158,4 +158,9 @@ public class PdfIndirectObject {
         object.toPdf(writer, os);
         os.write(ENDOBJ);
     }
+
+    @Override
+    public String toString() {
+        return new StringBuffer().append(number).append(' ').append(generation).append(" R: ").append(object != null ? object.toString(): "null").toString();
+    }
 }
