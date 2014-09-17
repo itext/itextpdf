@@ -1,5 +1,5 @@
 /*
- * $Id: BarcodeDatamatrix.java 6134 2013-12-23 13:15:14Z blowagie $
+ * $Id: BarcodeDatamatrix.java 6486 2014-07-25 14:15:18Z pavel-alay $
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2014 iText Group NV
@@ -382,8 +382,7 @@ public class BarcodeDatamatrix {
                 }
                 else
                     pedi -= 6;
-            }
-            else {
+            } else {
                 if (!ascii) {
                     edi |= ('_' & 0x3f) << pedi;
                     if (ptrOut + 3 - pedi / 8 > dataLength)
@@ -410,7 +409,29 @@ public class BarcodeDatamatrix {
         }
         if (ptrIn != textLength)
             return -1;
-        if (!ascii) {
+        int dataSize = Integer.MAX_VALUE;
+        for (int i = 0; i < dmSizes.length; ++i) {
+            if (dmSizes[i].dataSize >= dataOffset + ptrOut + (3-pedi/6)) {
+                dataSize = dmSizes[i].dataSize;
+                break;
+            }
+        }
+
+        if (dataSize - dataOffset - ptrOut <= 2 && pedi >= 6) {
+            //have to write up to 2 bytes and up to 2 symbols
+            if (pedi <= 12) {
+                byte val = (byte) ((edi >> 18) & 0x3F);
+                if ((val & 0x20) == 0)
+                    val |= 0x40;
+                data[dataOffset + ptrOut++] = (byte)(val + 1);
+            }
+            if (pedi <= 6) {
+                byte val = (byte) ((edi >> 12) & 0x3F);
+                if ((val & 0x20) == 0)
+                    val |= 0x40;
+                data[dataOffset + ptrOut++] = (byte)(val + 1);
+            }
+        } else if (!ascii) {
             edi |= ('_' & 0x3f) << pedi;
             if (ptrOut + 3 - pedi / 8 > dataLength)
                 return -1;

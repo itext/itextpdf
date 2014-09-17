@@ -1,5 +1,5 @@
 /*
- * $Id: PdfPublicKeySecurityHandler.java 6134 2013-12-23 13:15:14Z blowagie $
+ * $Id: PdfPublicKeySecurityHandler.java 6520 2014-08-27 15:19:32Z achingarev $
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2014 iText Group NV
@@ -213,7 +213,7 @@ public class PdfPublicKeySecurityHandler {
         for (int i=0; i<recipients.size(); i++)
         try {
             cms = getEncodedRecipient(i);
-            EncodedRecipients.add(new PdfLiteral(PdfContentByte.escapeString(cms)));
+            EncodedRecipients.add(new PdfLiteral(StringUtils.escapeString(cms)));
         } catch (GeneralSecurityException e) {
             EncodedRecipients = null;
         } catch (IOException e) {

@@ -45,11 +45,19 @@
 package com.itextpdf.text.pdf;
 
 import com.itextpdf.testutils.CompareTool;
+import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.PageSize;
+import com.itextpdf.text.Phrase;
+import com.itextpdf.text.Rectangle;
+import com.itextpdf.text.pdf.events.FieldPositioningEvents;
 import junit.framework.Assert;
 import org.junit.Test;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
@@ -59,12 +67,13 @@ import java.io.IOException;
  */
 public class FlatteningTest {
 
-    private static final String INPUT_FOLDER = "./src/test/resources/com/itextpdf/text/pdf/FlatteningTest/input/";
-    private static final String CMP_FOLDER = "./src/test/resources/com/itextpdf/text/pdf/FlatteningTest/cmp/";
+    private static final String RESOURCES_FOLDER = "./src/test/resources/com/itextpdf/text/pdf/FlatteningTest/";
     private static final String OUTPUT_FOLDER = "./target/com/itextpdf/test/pdf/FlatteningTest/";
 
     @Test
     public void testFlattening() throws IOException, DocumentException, InterruptedException {
+        final String INPUT_FOLDER = RESOURCES_FOLDER + "input/";
+        final String CMP_FOLDER = RESOURCES_FOLDER + "cmp/";
         File inputFolder = new File(INPUT_FOLDER);
 
         if ( !inputFolder.exists() )
@@ -86,11 +95,212 @@ public class FlatteningTest {
             stamper.close();
 
             // compare
-            CompareTool compareTool = new CompareTool(OUTPUT_FOLDER + file, CMP_FOLDER + file);
-            String errorMessage = compareTool.compare(OUTPUT_FOLDER, "diff");
+            CompareTool compareTool = new CompareTool();
+            String errorMessage = compareTool.compare(OUTPUT_FOLDER + file, CMP_FOLDER + file, OUTPUT_FOLDER, "diff");
             if (errorMessage != null) {
                 Assert.fail(errorMessage);
             }
+        }
+    }
+
+    @Test
+    public void testFlatteningGenerateAppearances1() throws IOException, DocumentException, InterruptedException {
+        
+        new File(OUTPUT_FOLDER).mkdirs();
+
+        final String OUT = "noappearances-needapp-false_override-false.pdf";
+        testFlatteningGenerateAppearance(RESOURCES_FOLDER + "noappearances-needapp-false.pdf", OUTPUT_FOLDER + OUT, false);
+        
+        CompareTool compareTool = new CompareTool();
+        String errorMessage = compareTool.compare(OUTPUT_FOLDER + OUT, RESOURCES_FOLDER + "cmp_" + OUT, OUTPUT_FOLDER, "diff");
+        if (errorMessage != null) {
+            Assert.fail(errorMessage);
+        }
+    }
+
+    @Test
+    public void testFlatteningGenerateAppearances2() throws IOException, DocumentException, InterruptedException {
+        
+        new File(OUTPUT_FOLDER).mkdirs();
+
+        final String OUT = "noappearances-needapp-false_override-true.pdf";
+        testFlatteningGenerateAppearance(RESOURCES_FOLDER + "noappearances-needapp-false.pdf", OUTPUT_FOLDER + OUT, true);
+        
+        CompareTool compareTool = new CompareTool();
+        String errorMessage = compareTool.compare(OUTPUT_FOLDER + OUT, RESOURCES_FOLDER + "cmp_" + OUT, OUTPUT_FOLDER, "diff");
+        if (errorMessage != null) {
+            Assert.fail(errorMessage);
+        }
+    }
+
+    @Test
+    public void testFlatteningGenerateAppearances3() throws IOException, DocumentException, InterruptedException {
+        
+        new File(OUTPUT_FOLDER).mkdirs();
+
+        final String OUT = "noappearances-needapp-false_override-none.pdf";
+        testFlatteningGenerateAppearance(RESOURCES_FOLDER + "noappearances-needapp-false.pdf", OUTPUT_FOLDER + OUT, null);
+
+        CompareTool compareTool = new CompareTool();
+        String errorMessage = compareTool.compare(OUTPUT_FOLDER + OUT, RESOURCES_FOLDER + "cmp_" + OUT, OUTPUT_FOLDER, "diff");
+        if (errorMessage != null) {
+            Assert.fail(errorMessage);
+        }
+    }
+
+    @Test
+    public void testFlatteningGenerateAppearances4() throws IOException, DocumentException, InterruptedException {
+        
+        new File(OUTPUT_FOLDER).mkdirs();
+
+        final String OUT = "noappearances-needapp-true_override-false.pdf";
+        testFlatteningGenerateAppearance(RESOURCES_FOLDER + "noappearances-needapp-true.pdf", OUTPUT_FOLDER + OUT, false);
+     
+        CompareTool compareTool = new CompareTool();
+        String errorMessage = compareTool.compare(OUTPUT_FOLDER + OUT, RESOURCES_FOLDER + "cmp_" + OUT, OUTPUT_FOLDER, "diff");
+        if (errorMessage != null) {
+            Assert.fail(errorMessage);
+        }
+    }
+
+    @Test
+    public void testFlatteningGenerateAppearances5() throws IOException, DocumentException, InterruptedException {
+        
+        new File(OUTPUT_FOLDER).mkdirs();
+
+        final String OUT = "noappearances-needapp-true_override-true.pdf";
+        testFlatteningGenerateAppearance(RESOURCES_FOLDER + "noappearances-needapp-true.pdf", OUTPUT_FOLDER + OUT, true);
+
+        CompareTool compareTool = new CompareTool();
+        String errorMessage = compareTool.compare(OUTPUT_FOLDER + OUT, RESOURCES_FOLDER + "cmp_" + OUT, OUTPUT_FOLDER, "diff");
+        if (errorMessage != null) {
+            Assert.fail(errorMessage);
+        }
+    }
+
+    @Test
+    public void testFlatteningGenerateAppearances6() throws IOException, DocumentException, InterruptedException {
+        
+        new File(OUTPUT_FOLDER).mkdirs();
+
+        final String OUT = "noappearances-needapp-true_override-none.pdf";
+        testFlatteningGenerateAppearance(RESOURCES_FOLDER + "noappearances-needapp-true.pdf", OUTPUT_FOLDER + OUT, null);
+        
+        CompareTool compareTool = new CompareTool();
+        String errorMessage = compareTool.compare(OUTPUT_FOLDER + OUT, RESOURCES_FOLDER + "cmp_" + OUT, OUTPUT_FOLDER, "diff");
+        if (errorMessage != null) {
+            Assert.fail(errorMessage);
+        }
+    }
+
+    public void testFlatteningGenerateAppearance(String in, String out, Boolean gen) throws FileNotFoundException, DocumentException, IOException {
+        PdfReader reader = new PdfReader(in);
+        PdfStamper stamper = new PdfStamper(reader, new FileOutputStream(out));
+        if (gen != null)
+            stamper.getAcroFields().setGenerateAppearances(gen);
+        stamper.setFormFlattening(true);
+        stamper.close();
+    }
+
+    @Test
+    public void testRegeneratingFieldsFalse() throws IOException, DocumentException, InterruptedException {
+
+        new File(OUTPUT_FOLDER).mkdirs();
+
+        String file = "regenerateField_false.pdf";
+
+        Document doc = new Document(PageSize.A4);
+        ByteArrayOutputStream fs = new ByteArrayOutputStream();
+        PdfWriter writer = PdfWriter.getInstance(doc, fs);
+
+        doc.open();
+        PdfPTable myTable = new PdfPTable(1);
+        myTable.setTotalWidth(300f);
+        myTable.setLockedWidth(true);
+        myTable.setHorizontalAlignment(0);
+
+        //Create the textfield that will sit on a cell in the table
+        TextField tf = new TextField(writer, new Rectangle(0, 0, 70, 200), "cellTextBox");
+        tf.setText("text field");
+        //Create the table cell
+        PdfPCell tbCell = new PdfPCell(new Phrase(" "));
+        FieldPositioningEvents events = new FieldPositioningEvents(writer, tf.getTextField());
+        tbCell.setCellEvent(events);
+        myTable.addCell(tbCell);
+        PdfContentByte cb = writer.getDirectContent();
+        //Write out the table to the middle of the document
+        myTable.writeSelectedRows(0, -1, 0, -1, 20, 700, cb);
+        doc.close();
+
+        PdfReader reader2 = new PdfReader(new ByteArrayInputStream(fs.toByteArray()));
+        fs.reset();
+        PdfStamper stamper2 = new PdfStamper(reader2, fs);
+        stamper2.getAcroFields().setGenerateAppearances(false);
+        stamper2.close();
+        reader2.close();
+
+        PdfReader reader = new PdfReader(new ByteArrayInputStream(fs.toByteArray()));
+        PdfStamper stamper = new PdfStamper(reader, new FileOutputStream(OUTPUT_FOLDER + file));
+        stamper.setFormFlattening(true);
+        stamper.close();
+        reader.close();
+
+        // compare
+        CompareTool compareTool = new CompareTool();
+        String errorMessage = compareTool.compareByContent(OUTPUT_FOLDER + file, RESOURCES_FOLDER + file, OUTPUT_FOLDER, "diff");
+        if (errorMessage != null) {
+            Assert.fail(errorMessage);
+        }
+    }
+
+    @Test
+    public void testRegeneratingFieldsTrue() throws IOException, DocumentException, InterruptedException {
+        
+        new File(OUTPUT_FOLDER).mkdirs();
+
+        String file = "regenerateField_true.pdf";
+
+        Document doc = new Document(PageSize.A4);
+        ByteArrayOutputStream fs = new ByteArrayOutputStream();
+        PdfWriter writer = PdfWriter.getInstance(doc, fs);
+
+        doc.open();
+        PdfPTable myTable = new PdfPTable(1);
+        myTable.setTotalWidth(300f);
+        myTable.setLockedWidth(true);
+        myTable.setHorizontalAlignment(0);
+
+        //Create the textfield that will sit on a cell in the table
+        TextField tf = new TextField(writer, new Rectangle(0, 0, 70, 200), "cellTextBox");
+        tf.setText("text field");
+        //Create the table cell
+        PdfPCell tbCell = new PdfPCell(new Phrase(" "));
+        FieldPositioningEvents events = new FieldPositioningEvents(writer, tf.getTextField());
+        tbCell.setCellEvent(events);
+        myTable.addCell(tbCell);
+        PdfContentByte cb = writer.getDirectContent();
+        //Write out the table to the middle of the document
+        myTable.writeSelectedRows(0, -1, 0, -1, 20, 700, cb);
+        doc.close();
+
+        PdfReader reader2 = new PdfReader(new ByteArrayInputStream(fs.toByteArray()));
+        fs.reset();
+        PdfStamper stamper2 = new PdfStamper(reader2, fs);
+        stamper2.getAcroFields().setGenerateAppearances(true);
+        stamper2.close();
+        reader2.close();
+
+        PdfReader reader = new PdfReader(new ByteArrayInputStream(fs.toByteArray()));
+        PdfStamper stamper = new PdfStamper(reader, new FileOutputStream(OUTPUT_FOLDER + file));
+        stamper.setFormFlattening(true);
+        stamper.close();
+        reader.close();
+
+        // compare
+        CompareTool compareTool = new CompareTool();
+        String errorMessage = compareTool.compareByContent(OUTPUT_FOLDER + file, RESOURCES_FOLDER + file, OUTPUT_FOLDER, "diff");
+        if (errorMessage != null) {
+            Assert.fail(errorMessage);
         }
     }
 }

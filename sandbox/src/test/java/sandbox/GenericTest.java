@@ -202,7 +202,7 @@ public /*abstract*/ class GenericTest {
 	 */
     protected void comparePdf(String dest, String cmp) throws Exception {
     	if (cmp == null || cmp.length() == 0) return;
-        CompareTool compareTool = new CompareTool(dest, cmp);
+        CompareTool compareTool = new CompareTool();
         String outPath = "./target/" + new File(dest).getParent();
         new File(outPath).mkdirs();
         if (compareRenders) {

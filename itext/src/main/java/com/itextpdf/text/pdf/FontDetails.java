@@ -1,5 +1,5 @@
 /*
- * $Id: FontDetails.java 6134 2013-12-23 13:15:14Z blowagie $
+ * $Id: FontDetails.java 6525 2014-08-30 22:50:33Z psoares33 $
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2014 iText Group NV
@@ -169,6 +169,30 @@ class FontDetails {
         return baseFont;
     }
 
+    Object[] convertToBytesGid(String gids) {
+        if (fontType != BaseFont.FONT_TYPE_TTUNI)
+            throw new IllegalArgumentException("GID require TT Unicode");
+        try {
+            StringBuilder sb = new StringBuilder();
+            int totalWidth = 0;
+            for (char gid : gids.toCharArray()) {
+                int width = ttu.getGlyphWidth(gid);
+                totalWidth += width;
+                int vchar = ttu.GetCharFromGlyphId(gid);
+                if (vchar != 0) {
+                    sb.append(Utilities.convertFromUtf32(vchar));
+                }
+                Integer gl = Integer.valueOf(gid);
+                if (!longTag.containsKey(gl))
+                    longTag.put(gl, new int[]{gid, width, vchar});
+            }
+            return new Object[]{gids.getBytes(CJKFont.CJK_ENCODING), sb.toString(), Integer.valueOf(totalWidth)};
+        }
+        catch (Exception e) {
+            throw new ExceptionConverter(e);
+        }
+    }
+    
     /**
      * Converts the text into bytes to be placed in the document.
      * The conversion is done according to the font and the encoding and the characters

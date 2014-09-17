@@ -1,5 +1,5 @@
 /*
- * $Id: PdfString.java 6134 2013-12-23 13:15:14Z blowagie $
+ * $Id: PdfString.java 6520 2014-08-27 15:19:32Z achingarev $
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2014 iText Group NV
@@ -156,7 +156,7 @@ public class PdfString extends PdfObject {
             os.write(buf.toByteArray());
         }
         else
-            os.write(PdfContentByte.escapeString(b));
+            os.write(StringUtils.escapeString(b));
     }
     
     /**

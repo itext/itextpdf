@@ -1,5 +1,5 @@
 /*
- * $Id: PdfName.java 6460 2014-07-10 09:11:08Z achingarev $
+ * $Id: PdfName.java 6511 2014-08-26 13:35:39Z achingarev $
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2014 iText Group NV
@@ -1026,6 +1026,11 @@ public class
     public static final PdfName IDENTITY = new PdfName("Identity");
     /** A name */
     public static final PdfName IF = new PdfName("IF");
+    /**
+     * A name
+     * @since 5.5.3
+     */
+    public static final PdfName IM = new PdfName("IM");
     /** A name */
     public static final PdfName IMAGE = new PdfName("Image");
     /** A name */

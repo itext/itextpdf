@@ -1,5 +1,5 @@
 /*
- * $Id: FileChannelRandomAccessSource.java 6134 2013-12-23 13:15:14Z blowagie $
+ * $Id: FileChannelRandomAccessSource.java 6498 2014-08-21 21:32:58Z trumpetinc $
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2014 iText Group NV
@@ -68,6 +68,8 @@ public class FileChannelRandomAccessSource implements RandomAccessSource {
      */
     public FileChannelRandomAccessSource(FileChannel channel) throws IOException {
 		this.channel = channel;
+		if(channel.size() == 0)
+			throw new IOException("File size is 0 bytes");
 		source = new MappedChannelRandomAccessSource(channel, 0, channel.size());
 		source.open();
 	}

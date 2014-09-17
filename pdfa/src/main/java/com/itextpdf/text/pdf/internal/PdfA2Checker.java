@@ -1,5 +1,5 @@
 /*
- * $Id: PdfA2Checker.java 6308 2014-03-05 13:31:12Z eugenemark $
+ * $Id: PdfA2Checker.java 6528 2014-09-02 10:14:37Z pavel-alay $
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2014 iText Group NV
@@ -715,10 +715,10 @@ public class PdfA2Checker extends PdfAChecker {
                 }
                 PdfObject n = getDirectObject(ap.get(PdfName.N));
                 if (PdfName.WIDGET.equals(annot.getAsName(PdfName.SUBTYPE)) && new PdfName("Btn").equals(annot.getAsName(PdfName.FT))) {
-                    if (n == null || !n.isDictionary())
+                    if (n == null || (!n.isDictionary() && n.type() != 0))
                         throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("appearance.dictionary.of.widget.subtype.and.btn.field.type.shall.contain.only.the.n.key.with.dictionary.value"));
                 } else {
-                    if (n == null || !n.isStream())
+                    if (n == null || (!n.isStream() && n.type() != 0))
                         throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("appearance.dictionary.shall.contain.only.the.n.key.with.stream.value"));
                 }
             } else {

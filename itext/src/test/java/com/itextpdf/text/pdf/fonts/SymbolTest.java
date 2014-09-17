@@ -37,15 +37,16 @@ public class SymbolTest {
         p = new Paragraph(new Chunk(origText, new Font(f, 16)));
         doc.add(p);
         doc.close();
-        CompareTool compareTool = new CompareTool("./target/com/itextpdf/text/pdf/fonts/SymbolFontTest/textWithSymbolEncoding.pdf", "./src/test/resources/com/itextpdf/text/pdf/fonts/SymbolFontTest/cmp_textWithSymbolEncoding.pdf");
-        String errorMessage = compareTool.compareByContent("./target/com/itextpdf/text/pdf/fonts/SymbolFontTest/", "diff");
-        if (errorMessage != null) {
-            Assert.fail(errorMessage);
-        }
 
         PdfReader reader = new PdfReader("./target/com/itextpdf/text/pdf/fonts/SymbolFontTest/textWithSymbolEncoding.pdf");
         String text = PdfTextExtractor.getTextFromPage(reader, 1, new SimpleTextExtractionStrategy());
         reader.close();
         Assert.assertEquals(origText, text);
+
+        CompareTool compareTool = new CompareTool();
+        String errorMessage = compareTool.compareByContent("./target/com/itextpdf/text/pdf/fonts/SymbolFontTest/textWithSymbolEncoding.pdf", "./src/test/resources/com/itextpdf/text/pdf/fonts/SymbolFontTest/cmp_textWithSymbolEncoding.pdf", "./target/com/itextpdf/text/pdf/fonts/SymbolFontTest/", "diff");
+        if (errorMessage != null) {
+            Assert.fail(errorMessage);
+        }
     }
 }

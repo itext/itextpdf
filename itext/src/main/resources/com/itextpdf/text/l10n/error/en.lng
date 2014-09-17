@@ -194,6 +194,7 @@ font.and.size.must.be.set.before.writing.any.text=Font and size must be set befo
 font.size.too.small.1=Font size too small: {1}
 fontfactoryimp.cannot.be.null=FontFactoryImp cannot be null.
 freetext.flattening.is.not.supported.in.append.mode=FreeText flattening is not supported in append mode.
+annotation.flattening.is.not.supported.in.append.mode=Annotation flattening is not supported in append mode.
 getcell.at.illegal.index.1.max.is.2=getCell at illegal index :{1} max is {2}
 getcell.at.illegal.index.1=getCell at illegal index : {1}
 gif.signature.nor.found=Gif signature nor found.

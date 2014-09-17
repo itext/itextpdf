@@ -1,5 +1,5 @@
 /*
- * $Id: TrueTypeFont.java 6134 2013-12-23 13:15:14Z blowagie $
+ * $Id: TrueTypeFont.java 6525 2014-08-30 22:50:33Z psoares33 $
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2014 iText Group NV
@@ -191,6 +191,10 @@ class TrueTypeFont extends BaseFont {
 
     protected HashMap<Integer, int[]> cmapExt;
     
+    protected int[] glyphIdToChar;
+    
+    protected int maxGlyphId;
+    
     /** The map containing the kerning information. It represents the content of
      * table 'kern'. The key is an <CODE>Integer</CODE> where the top 16 bits
      * are the glyph number for the first character and the lower 16 bits are the
@@ -198,6 +202,7 @@ class TrueTypeFont extends BaseFont {
      * normalized 1000 units as an <CODE>Integer</CODE>. This value is usually negative.
      */
     protected IntHashtable kerning = new IntHashtable();
+    
     /**
      * The font name.
      * This name is usually extracted from the table 'name' with
@@ -394,7 +399,7 @@ class TrueTypeFont extends BaseFont {
 
 
     /**
-     * Reads the tables 'head', 'hhea', 'OS/2' and 'post' filling several variables.
+     * Reads the tables 'head', 'hhea', 'OS/2', 'post' and 'maxp' filling several variables.
      * @throws DocumentException the font is invalid
      * @throws IOException the font file could not be read
      */
@@ -478,15 +483,25 @@ class TrueTypeFont extends BaseFont {
         table_location = tables.get("post");
         if (table_location == null) {
             italicAngle = -Math.atan2(hhea.caretSlopeRun, hhea.caretSlopeRise) * 180 / Math.PI;
-            return;
         }
-        rf.seek(table_location[0] + 4);
-        short mantissa = rf.readShort();
-        int fraction = rf.readUnsignedShort();
-        italicAngle = mantissa + fraction / 16384.0d;
-        underlinePosition = rf.readShort();
-        underlineThickness = rf.readShort();
-        isFixedPitch = rf.readInt() != 0;
+        else {
+            rf.seek(table_location[0] + 4);
+            short mantissa = rf.readShort();
+            int fraction = rf.readUnsignedShort();
+            italicAngle = mantissa + fraction / 16384.0d;
+            underlinePosition = rf.readShort();
+            underlineThickness = rf.readShort();
+            isFixedPitch = rf.readInt() != 0;
+        }
+
+        table_location = tables.get("maxp");
+        if (table_location == null) {
+            maxGlyphId = 65536;
+        }
+        else {
+            rf.seek(table_location[0] + 4);
+            maxGlyphId = rf.readUnsignedShort();
+        }
     }
 
     /**
@@ -1569,5 +1584,7 @@ class TrueTypeFont extends BaseFont {
             return null;
         return bboxes[metric[0]];
     }
+    
+    
     
 }

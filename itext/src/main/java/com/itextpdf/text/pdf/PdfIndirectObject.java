@@ -1,5 +1,5 @@
 /*
- * $Id: PdfIndirectObject.java 6134 2013-12-23 13:15:14Z blowagie $
+ * $Id: PdfIndirectObject.java 6489 2014-08-05 12:42:01Z pavel-alay $
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2014 iText Group NV
@@ -157,5 +157,10 @@ public class PdfIndirectObject {
         os.write(STARTOBJ);
         object.toPdf(writer, os);
         os.write(ENDOBJ);
+    }
+
+    @Override
+    public String toString() {
+        return new StringBuffer().append(number).append(' ').append(generation).append(" R: ").append(object != null ? object.toString(): "null").toString();
     }
 }

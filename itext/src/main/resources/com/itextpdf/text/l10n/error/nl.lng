@@ -194,6 +194,7 @@ font.and.size.must.be.set.before.writing.any.text=Font en size moeten bepaald zi
 font.size.too.small.1=Font size te klein: {1}
 fontfactoryimp.cannot.be.null=FontFactoryImp kan niet null zijn.
 freetext.flattening.is.not.supported.in.append.mode=FreeText flattening is niet ondersteund in append mode.
+annotation.flattening.is.not.supported.in.append.mode=Het flattenen van annotations is niet ondersteund in append mode.
 getcell.at.illegal.index.1.max.is.2=getCell op ongeldige index:{1} maximum: {2}
 getcell.at.illegal.index.1=getCell op ongeldige index : {1}
 gif.signature.nor.found=Gif signature niet gevonden.

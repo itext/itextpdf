@@ -1,5 +1,5 @@
 /*
- * $Id: TrueTypeFontUnicode.java 6134 2013-12-23 13:15:14Z blowagie $
+ * $Id: TrueTypeFontUnicode.java 6525 2014-08-30 22:50:33Z psoares33 $
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2014 iText Group NV
@@ -319,6 +319,26 @@ class TrueTypeFontUnicode extends TrueTypeFont implements Comparator<int[]>{
         return dic;
     }
 
+    public int GetCharFromGlyphId(int gid) {
+        if (glyphIdToChar == null) {
+            int[] g2 = new int[maxGlyphId];
+            HashMap<Integer, int[]> map = null;
+            if (cmapExt != null) {
+                map = cmapExt;
+            }
+            else if (cmap31 != null) {
+                map = cmap31;
+            }
+            if (map != null) {
+                for (Map.Entry<Integer, int[]> entry : map.entrySet()) {
+                    g2[entry.getValue()[0]] = entry.getKey().intValue();
+                }
+            }
+            glyphIdToChar = g2;
+        }
+        return glyphIdToChar[gid];
+    }
+    
     /** The method used to sort the metrics array.
      * @param o1 the first element
      * @param o2 the second element

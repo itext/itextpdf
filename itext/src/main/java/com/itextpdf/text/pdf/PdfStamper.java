@@ -1,5 +1,5 @@
 /*
- * $Id: PdfStamper.java 6318 2014-03-12 10:23:11Z blowagie $
+ * $Id: PdfStamper.java 6543 2014-09-08 12:59:11Z michaeldemey $
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2014 iText Group NV
@@ -44,15 +44,6 @@
  */
 package com.itextpdf.text.pdf;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.security.cert.Certificate;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import com.itextpdf.text.DocWriter;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Image;
@@ -63,6 +54,15 @@ import com.itextpdf.text.pdf.interfaces.PdfEncryptionSettings;
 import com.itextpdf.text.pdf.interfaces.PdfViewerPreferences;
 import com.itextpdf.text.pdf.security.LtvVerification;
 import com.itextpdf.text.xml.xmp.XmpWriter;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.security.cert.Certificate;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /** Applies extra content to the pages of a PDF document.
  * This extra content can be all the objects allowed in PdfContentByte
@@ -394,6 +394,15 @@ public class PdfStamper
     public void setFreeTextFlattening(final boolean flat) {
     	stamper.setFreeTextFlattening(flat);
 	}
+
+    /**
+     * Flatten annotations with an appearance stream on close().
+     *
+     * @param flat boolean to indicate whether iText should flatten annotations or not.
+     */
+    public void setAnnotationFlattening(final boolean flat) {
+        stamper.setFlatAnnotations(flat);
+    }
 
     /**
      * Adds an annotation of form field in a specific page. This page number
