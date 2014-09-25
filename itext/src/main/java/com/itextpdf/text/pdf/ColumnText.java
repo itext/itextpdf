@@ -44,11 +44,6 @@
  */
 package com.itextpdf.text.pdf;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Stack;
-
 import com.itextpdf.text.*;
 import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.log.Logger;
@@ -57,6 +52,11 @@ import com.itextpdf.text.pdf.PdfPTable.FittingRows;
 import com.itextpdf.text.pdf.draw.DrawInterface;
 import com.itextpdf.text.pdf.interfaces.IAccessibleElement;
 import com.itextpdf.text.pdf.languages.ArabicLigaturizer;
+
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Stack;
 
 /**
  * Formats text in a columnwise form. The text is bound
@@ -180,6 +180,8 @@ public class ColumnText {
     /** The chunks that form the text. */
 //    protected ArrayList chunks = new ArrayList();
     protected BidiLine bidiLine;
+
+    protected boolean isWordSplit;
 
     /** The current y line location. Text will be written at this line minus the leading. */
     protected float yLine;
@@ -879,6 +881,7 @@ public class ColumnText {
     }
 
     public int go(final boolean simulate, final IAccessibleElement elementToGo) throws DocumentException {
+        isWordSplit = false;
         if (composite)
             return goComposite(simulate);
 
@@ -947,6 +950,7 @@ public class ColumnText {
         			break;
         		}
                 line = bidiLine.processLine(leftX, rectangularWidth - firstIndent - rightIndent, alignment, localRunDirection, arabicOptions, minY, yLine, descender);
+                isWordSplit |= bidiLine.isWordSplit();
                 if (line == null) {
                 	status = NO_MORE_TEXT;
                 	break;
@@ -1035,6 +1039,14 @@ public class ColumnText {
                 canvas.add(text);
         }
         return status;
+    }
+
+    /**
+     * Call this after go() to know if any word was split into several lines.
+     * @return
+     */
+    public boolean isWordSplit() {
+        return isWordSplit;
     }
 
     /**
@@ -1400,6 +1412,7 @@ public class ColumnText {
                     yLine = compositeColumn.yLine;
                     linesWritten += compositeColumn.linesWritten;
                     descender = compositeColumn.descender;
+                    isWordSplit |= compositeColumn.isWordSplit();
                 }
                 currentLeading = compositeColumn.currentLeading;
                 if ((status & NO_MORE_TEXT) != 0) {
