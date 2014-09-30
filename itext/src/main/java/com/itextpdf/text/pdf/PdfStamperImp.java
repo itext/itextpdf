@@ -1147,7 +1147,8 @@ class PdfStamperImp extends PdfWriter {
                 PdfObject annoto = annots.getDirectObject(idx);
                 if (annoto instanceof PdfIndirectReference && !annoto.isIndirect())
                     continue;
-
+                if (!(annoto instanceof PdfDictionary))
+                    continue;
                 PdfDictionary annDic = (PdfDictionary)annoto;
                 if ( flattenFreeTextAnnotations ) {
                     if (!(annDic.get(PdfName.SUBTYPE)).equals(PdfName.FREETEXT)) {
