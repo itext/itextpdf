@@ -1585,10 +1585,10 @@ public class PdfDocument extends Document {
                             subtract += hangingCorrection;
                         PdfAnnotation annot = null;
                         if (chunk.isImage()) {
-                            annot = new PdfAnnotation(writer, xMarker, yMarker + chunk.getImageOffsetY(), xMarker + width - subtract, yMarker + chunk.getImageHeight() + chunk.getImageOffsetY(), (PdfAction)chunk.getAttribute(Chunk.ACTION));
+                            annot = writer.createAnnotation(xMarker, yMarker + chunk.getImageOffsetY(), xMarker + width - subtract, yMarker + chunk.getImageHeight() + chunk.getImageOffsetY(), (PdfAction) chunk.getAttribute(Chunk.ACTION), null);
                         }
                         else {
-                            annot = new PdfAnnotation(writer, xMarker, yMarker + descender + chunk.getTextRise(), xMarker + width - subtract, yMarker + ascender + chunk.getTextRise(), (PdfAction)chunk.getAttribute(Chunk.ACTION));
+                            annot = writer.createAnnotation(xMarker, yMarker + descender + chunk.getTextRise(), xMarker + width - subtract, yMarker + ascender + chunk.getTextRise(), (PdfAction)chunk.getAttribute(Chunk.ACTION), null);
                         }
                         text.addAnnotation(annot, true);
                         if (isTagged(writer) && chunk.accessibleElement != null) {
@@ -2155,7 +2155,7 @@ public class PdfDocument extends Document {
      */
     void localGoto(final String name, final float llx, final float lly, final float urx, final float ury) {
         PdfAction action = getLocalGotoAction(name);
-        annotationsImp.addPlainAnnotation(new PdfAnnotation(writer, llx, lly, urx, ury, action));
+        annotationsImp.addPlainAnnotation(writer.createAnnotation(llx, lly, urx, ury, action, null));
     }
 
     /**
@@ -2168,7 +2168,7 @@ public class PdfDocument extends Document {
      * @param ury the upper right y corner of the activation area
      */
     void remoteGoto(final String filename, final String name, final float llx, final float lly, final float urx, final float ury) {
-        annotationsImp.addPlainAnnotation(new PdfAnnotation(writer, llx, lly, urx, ury, new PdfAction(filename, name)));
+        annotationsImp.addPlainAnnotation(writer.createAnnotation(llx, lly, urx, ury, new PdfAction(filename, name), null));
     }
 
     /**
@@ -2181,7 +2181,7 @@ public class PdfDocument extends Document {
      * @param ury the upper right y corner of the activation area
      */
     void remoteGoto(final String filename, final int page, final float llx, final float lly, final float urx, final float ury) {
-        addAnnotation(new PdfAnnotation(writer, llx, lly, urx, ury, new PdfAction(filename, page)));
+        addAnnotation(writer.createAnnotation(llx, lly, urx, ury, new PdfAction(filename, page), null));
     }
 
     /** Implements an action in an area.
@@ -2192,7 +2192,7 @@ public class PdfDocument extends Document {
      * @param ury the upper right y corner of the activation area
      */
     void setAction(final PdfAction action, final float llx, final float lly, final float urx, final float ury) {
-        addAnnotation(new PdfAnnotation(writer, llx, lly, urx, ury, action));
+        addAnnotation(writer.createAnnotation(llx, lly, urx, ury, action, null));
     }
 
     /**

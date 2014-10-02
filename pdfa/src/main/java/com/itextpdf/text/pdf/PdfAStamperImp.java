@@ -46,6 +46,7 @@ package com.itextpdf.text.pdf;
 
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.ExceptionConverter;
+import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.log.Counter;
 import com.itextpdf.text.log.CounterFactory;
@@ -226,4 +227,29 @@ public class PdfAStamperImp extends PdfStamperImp {
         super.close(moreInfo);
         getPdfAChecker().close(this);
     }
+
+    @Override
+    public PdfAnnotation createAnnotation(Rectangle rect, PdfName subtype) {
+        PdfAnnotation a = super.createAnnotation(rect, subtype);
+        if (!PdfName.POPUP.equals(subtype))
+            a.put(PdfName.F, new PdfNumber(PdfAnnotation.FLAGS_PRINT));
+        return a;
+    }
+
+    @Override
+    public PdfAnnotation createAnnotation(float llx, float lly, float urx, float ury, PdfString title, PdfString content, PdfName subtype) {
+        PdfAnnotation a = super.createAnnotation(llx, lly, urx, ury, title, content, subtype);
+        if (!PdfName.POPUP.equals(subtype))
+            a.put(PdfName.F, new PdfNumber(PdfAnnotation.FLAGS_PRINT));
+        return a;
+    }
+
+    @Override
+    public PdfAnnotation createAnnotation(float llx, float lly, float urx, float ury, PdfAction action, PdfName subtype) {
+        PdfAnnotation a = super.createAnnotation(llx, lly, urx, ury, action, subtype);
+        if (!PdfName.POPUP.equals(subtype))
+            a.put(PdfName.F, new PdfNumber(PdfAnnotation.FLAGS_PRINT));
+        return a;
+    }
+
 }

@@ -370,7 +370,7 @@ public class PdfFormField extends PdfAnnotation {
             dupField.kids = srcField.kids;
         }
         else
-            dup = new PdfAnnotation(annot.writer, null);
+            dup = annot.writer.createAnnotation(null, (PdfName)annot.get(PdfName.SUBTYPE));
         dup.merge(annot);
         dup.form = annot.form;
         dup.annotation = annot.annotation;
