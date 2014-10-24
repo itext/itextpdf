@@ -181,25 +181,15 @@ public final class RandomAccessSourceFactory {
         String openMode = exclusivelyLockFile ? "rw" : "r";
         
 		RandomAccessFile raf = new RandomAccessFile(file, openMode);
+		
     	if (exclusivelyLockFile){
     		raf.getChannel().lock();
     	}
     	
-        if (usePlainRandomAccess){
-        	return new RAFRandomAccessSource(raf);
-        }
-        
         try{
-        	if (raf.length() <= 0) // files with zero length can't be mapped and will throw an IllegalArgumentException.  Just open using a simple RAF source.
-        		return new RAFRandomAccessSource(raf); 
-        	
-			try{
-				// ownership of the RAF passes to whatever source is created by createBestSource. 
-				return createBestSource(raf.getChannel());
-			} catch (MapFailedException e){
-				return new RAFRandomAccessSource(raf);
-			}
-        } catch (IOException e){ // If RAFRandomAccessSource constructor or createBestSource throws, then we must close the RAF we created.
+        	// ownership of the RAF passes to whatever source is created by createBestSource.
+        	return createBestSource(raf);
+        } catch (IOException e){ // If creation of the source throws, we must close the RAF we created.
         	try{
         		raf.close();
         	} catch (IOException ignore){}
@@ -210,6 +200,31 @@ public final class RandomAccessSourceFactory {
         	} catch (IOException ignore){}
         	throw e;
         }
+	}
+	
+	/**
+	 * Creates a {@link RandomAccessSource} based on a RandomAccessFile.
+	 * The source will be opened using memory mapped file channel (if usePlainRandomAccess is false), or opened using {@link RandomAccessFile} access (if usePlainRandomAccess is true)
+	 * This call will automatically failover to using {@link RandomAccessFile} if the memory map operation fails
+	 * If the source couldn't be opened, the RandomAccessFile will be closed
+	 * @param raf the RandomAccessFile to create a {@link RandomAccessSource} for
+	 * @return the newly created {@link RandomAccessSource}
+	 */
+	public RandomAccessSource createBestSource(RandomAccessFile raf) throws IOException{
+    	
+        if (usePlainRandomAccess){
+        	return new RAFRandomAccessSource(raf);
+        }
+        
+    	if (raf.length() <= 0) // files with zero length can't be mapped and will throw an IllegalArgumentException.  Just open using a simple RAF source.
+    		return new RAFRandomAccessSource(raf); 
+    	
+		try{
+			// ownership of the RAF passes to whatever source is created by createBestSource. 
+			return createBestSource(raf.getChannel());
+		} catch (MapFailedException e){
+			return new RAFRandomAccessSource(raf);
+		}
 	}
 	
 	/**
