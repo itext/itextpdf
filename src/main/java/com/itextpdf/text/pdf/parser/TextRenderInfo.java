@@ -444,7 +444,7 @@ public class TextRenderInfo {
         for (int i = 0; i < stringValue.length(); i++) {
             PdfString newString = new PdfString(stringValue.substring(i, i + 1), string.getEncoding());
             String text = decode(newString);
-            if (text.isEmpty() && i < stringValue.length() - 1) {
+            if (text.length() == 0 && i < stringValue.length() - 1) {
                 newString = new PdfString(stringValue.substring(i, i + 2), string.getEncoding());
                 i++;
             }
