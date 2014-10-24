@@ -2647,6 +2647,7 @@ public class PdfDocument extends Document {
      */
     void addPTable(final PdfPTable ptable) throws DocumentException {
         ColumnText ct = new ColumnText(isTagged(writer) ? text : writer.getDirectContent());
+        ct.setRunDirection(ptable.getRunDirection());
         // if the table prefers to be on a single page, and it wouldn't
         //fit on the current page, start a new page.
         if (ptable.getKeepTogether() && !fitsPage(ptable, 0f) && currentHeight > 0)  {

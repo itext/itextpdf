@@ -144,6 +144,7 @@ public final class CSS {
 		public static final String RIGHT = "right";
 		public static final String BOTTOM = "bottom";
 		public static final String FLOAT = "float";
+        public static final String DIR = "dir";
 	}
 
 	/**
@@ -227,5 +228,7 @@ public final class CSS {
 		public static final String BLOCK = "block";
         public static final String SEPARATE = "separate";
         public static final String COLLAPSE = "collapse";
+        public static final String RTL = "rtl";
+        public static final String LTR = "ltr";
 	}
 }

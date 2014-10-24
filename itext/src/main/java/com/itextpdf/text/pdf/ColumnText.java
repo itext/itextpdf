@@ -1347,6 +1347,7 @@ public class ColumnText {
     	linesWritten = 0;
         descender = 0;
         boolean firstPass = true;
+        boolean isRTL = runDirection == PdfWriter.RUN_DIRECTION_RTL;
         main_loop:
         while (true) {
             if (compositeElements.isEmpty())
@@ -1530,7 +1531,11 @@ public class ColumnText {
                 if (!isTagged(canvas)) {
                     if (!Float.isNaN(compositeColumn.firstLineY) && !compositeColumn.firstLineYDone) {
                         if (!simulate) {
-                            showTextAligned(canvas, Element.ALIGN_LEFT, new Phrase(item.getListSymbol()), compositeColumn.leftX + listIndentation, compositeColumn.firstLineY, 0);
+                            if (isRTL)
+                                showTextAligned(canvas, Element.ALIGN_RIGHT, new Phrase(item.getListSymbol()), compositeColumn.lastX + item.getIndentationLeft(), compositeColumn.firstLineY, 0, runDirection, arabicOptions);
+                            else
+                                showTextAligned(canvas, Element.ALIGN_LEFT, new Phrase(item.getListSymbol()), compositeColumn.leftX + listIndentation, compositeColumn.firstLineY, 0);
+
                         }
                         compositeColumn.firstLineYDone = true;
                     }
@@ -1702,13 +1707,17 @@ public class ColumnText {
                 if (!simulate) {
                 	// set the alignment
                     switch (table.getHorizontalAlignment()) {
-                        case Element.ALIGN_LEFT:
-                            break;
                         case Element.ALIGN_RIGHT:
-                            x1 += rectangularWidth - tableWidth;
+                            if (!isRTL)
+                                x1 += rectangularWidth - tableWidth;
                             break;
-                        default:
+                        case Element.ALIGN_CENTER:
                             x1 += (rectangularWidth - tableWidth) / 2f;
+                            break ;
+                        case Element.ALIGN_LEFT:
+                        default:
+                            if (isRTL)
+                                x1 += rectangularWidth - tableWidth;
                     }
                     // copy the rows that fit on the page in a new table nt
                     PdfPTable nt = PdfPTable.shallowCopy(table);
