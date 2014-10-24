@@ -893,7 +893,7 @@ public abstract class BaseFont {
         }
         else {
             int total = 0;
-            byte mbytes[] = convertToBytes((char)char1);
+            byte mbytes[] = convertToBytes(/*(char)*/char1);
             for (int k = 0; k < mbytes.length; ++k)
                 total += widths[0xff & mbytes[k]];
             return total;
