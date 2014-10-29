@@ -1718,6 +1718,7 @@ public class ColumnText {
                         default:
                             if (isRTL)
                                 x1 += rectangularWidth - tableWidth;
+                            break;
                     }
                     // copy the rows that fit on the page in a new table nt
                     PdfPTable nt = PdfPTable.shallowCopy(table);
