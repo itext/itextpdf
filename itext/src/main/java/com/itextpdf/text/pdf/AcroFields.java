@@ -2725,7 +2725,7 @@ public class AcroFields {
         }
         for (Object element : button.getKeys()) {
             PdfName key = (PdfName)element;
-            if (key.equals(PdfName.T) || key.equals(PdfName.RECT))
+            if (key.equals(PdfName.T))
                 continue;
             if (key.equals(PdfName.FF))
                 values.put(key, button.get(key));
