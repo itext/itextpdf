@@ -2518,19 +2518,21 @@ public class PdfContentByte {
      * Adds a form XObject to this content.
      *
      * @param formXObj the form XObject
-     * @param name the name of form XObject in content stream
+     * @param name the name of form XObject in content stream. The name is changed, if if it already exists in page resources
      * @param a an element of the transformation matrix
      * @param b an element of the transformation matrix
      * @param c an element of the transformation matrix
      * @param d an element of the transformation matrix
      * @param e an element of the transformation matrix
      * @param f an element of the transformation matrix
+     *
+     * @return Name under which XObject was stored in resources. See <code>name</code> parameter
      */
-    public void addFormXObj(final PdfStream formXObj, final PdfName name, final float a, final float b, final float c, final float d, final float e, final float f) throws IOException {
+    public PdfName addFormXObj(final PdfStream formXObj, final PdfName name, final float a, final float b, final float c, final float d, final float e, final float f) throws IOException {
         checkWriter();
         PdfWriter.checkPdfIsoConformance(writer, PdfIsoKeys.PDFISOKEY_STREAM, formXObj);
         PageResources prs = getPageResources();
-        prs.addXObject(name, writer.addToBody(formXObj).getIndirectReference());
+        PdfName translatedName = prs.addXObject(name, writer.addToBody(formXObj).getIndirectReference());
         PdfArtifact artifact = null;
         if (isTagged()) {
             if (inText)
@@ -2546,11 +2548,13 @@ public class PdfContentByte {
         content.append(d).append(' ');
         content.append(e).append(' ');
         content.append(f).append(" cm ");
-        content.append(name.getBytes()).append(" Do Q").append_i(separator);
+        content.append(translatedName.getBytes()).append(" Do Q").append_i(separator);
 
         if (isTagged()) {
             closeMCBlock(artifact);
         }
+
+        return translatedName;
     }
 
     /**

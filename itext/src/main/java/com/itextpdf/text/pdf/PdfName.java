@@ -1664,6 +1664,11 @@ public class
     public static final PdfName RECIPIENTS = new PdfName("Recipients");
     /** A name */
     public static final PdfName RECT = new PdfName("Rect");
+    /**
+     * A name
+     * @since 5.4.4
+     */
+    public static final PdfName REDACT = new PdfName("Redact");
     /** A name */
     public static final PdfName REFERENCE = new PdfName("Reference");
     /** A name */
@@ -1764,6 +1769,11 @@ public class
      * @since 5.4.4
      */
     public static final PdfName ROLE = new PdfName("Role");
+    /**
+     * A name
+     * @since 5.4.4
+     */
+    public static final PdfName RO = new PdfName("RO");
     /** A name */
     public static final PdfName ROLEMAP = new PdfName("RoleMap");
     /** A name */
