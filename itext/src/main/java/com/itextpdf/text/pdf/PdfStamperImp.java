@@ -146,6 +146,11 @@ class PdfStamperImp extends PdfWriter {
             else
                 super.setPdfVersion(pdfVersion);
         }
+
+        if ( reader.isTagged() ) {
+            this.setTagged();
+        }
+
         super.open();
         pdf.addWriter(this);
         if (append) {
