@@ -1,7 +1,7 @@
-<Document><Table width="418.4" height="96"><THead o="/Table"><TR o="/Table"><TD colspan="2" width="418.4" o="/Table"><Span>h1</Span>
+<Document><Table width="418.4" height="96"><THead o="/Table"><TR o="/Table"><TD colSpan="2" width="418.4" o="/Table"><Span>h1</Span>
 </TD>
 </TR>
-<TR o="/Table"><TD colspan="2" width="418.4" o="/Table"><Span>h2</Span>
+<TR o="/Table"><TD colSpan="2" width="418.4" o="/Table"><Span>h2</Span>
 </TD>
 </TR>
 </THead>
@@ -16,10 +16,10 @@
 </TD>
 </TR>
 </TBody>
-<TFoot><TR o="/Table"><TD colspan="2" width="418.4" o="/Table"><Span>footer 1</Span>
+<TFoot><TR o="/Table"><TD colSpan="2" width="418.4" o="/Table"><Span>footer 1</Span>
 </TD>
 </TR>
-<TR o="/Table"><TD colspan="2" width="418.4" o="/Table"><Span>footer 2</Span>
+<TR o="/Table"><TD colSpan="2" width="418.4" o="/Table"><Span>footer 2</Span>
 </TD>
 </TR>
 </TFoot>
