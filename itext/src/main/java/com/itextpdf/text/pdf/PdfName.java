@@ -439,7 +439,7 @@ public class
      * A name.
      * @since 5.4.0
      */
-    public static final PdfName COLSPAN = new PdfName("Colspan");
+    public static final PdfName COLSPAN = new PdfName("ColSpan");
     /**
      * A name.
      * @since 5.4.0
