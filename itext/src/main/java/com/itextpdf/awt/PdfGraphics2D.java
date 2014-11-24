@@ -483,25 +483,23 @@ public class PdfGraphics2D extends Graphics2D {
                         || font.getFontName().equals(font.getName()))) {
                     // Simulate a bold font.
                     float strokeWidth = font.getSize2D() * (weight.floatValue() - TextAttribute.WEIGHT_REGULAR.floatValue()) / 20f;
-                    if (strokeWidth != 1) {
-                        if(realPaint instanceof Color){
-                            cb.setTextRenderingMode(PdfContentByte.TEXT_RENDER_MODE_FILL_STROKE);
-                            cb.setLineWidth(strokeWidth);
-                            Color color = (Color)realPaint;
-                            int alpha = color.getAlpha();
-                            if (alpha != currentStrokeGState) {
-                                currentStrokeGState = alpha;
-                                PdfGState gs = strokeGState[alpha];
-                                if (gs == null) {
-                                    gs = new PdfGState();
-                                    gs.setStrokeOpacity(alpha / 255f);
-                                    strokeGState[alpha] = gs;
-                                }
-                                cb.setGState(gs);
+                    if(realPaint instanceof Color){
+                        cb.setTextRenderingMode(PdfContentByte.TEXT_RENDER_MODE_FILL_STROKE);
+                        cb.setLineWidth(strokeWidth);
+                        Color color = (Color)realPaint;
+                        int alpha = color.getAlpha();
+                        if (alpha != currentStrokeGState) {
+                            currentStrokeGState = alpha;
+                            PdfGState gs = strokeGState[alpha];
+                            if (gs == null) {
+                                gs = new PdfGState();
+                                gs.setStrokeOpacity(alpha / 255f);
+                                strokeGState[alpha] = gs;
                             }
-                            cb.setColorStroke(new BaseColor(color.getRGB()));
-                            restoreTextRenderingMode = true;
+                            cb.setGState(gs);
                         }
+                        cb.setColorStroke(new BaseColor(color.getRGB()));
+                        restoreTextRenderingMode = true;
                     }
                 }
             }
