@@ -1440,6 +1440,11 @@ public class
     public static final PdfName OUTPUTINTENT = new PdfName("OutputIntent");
     /** A name */
     public static final PdfName OUTPUTINTENTS = new PdfName("OutputIntents");
+    /**
+     * A name
+     * @since 5.5.4
+     */
+    public static final PdfName OVERLAYTEXT = new PdfName("OverlayText");
     /** A name */
     public static final PdfName P = new PdfName("P");
     /** A name */
@@ -1682,6 +1687,11 @@ public class
     public static final PdfName RELATIVECOLORIMETRIC = new PdfName("RelativeColorimetric");
     /** A name */
     public static final PdfName RENDITION = new PdfName("Rendition");
+    /**
+     * A name
+     * @since 5.5.4
+     */
+    public static final PdfName REPEAT = new PdfName("Repeat");
     /** A name */
     public static final PdfName RESETFORM = new PdfName("ResetForm");
     /** A name */
