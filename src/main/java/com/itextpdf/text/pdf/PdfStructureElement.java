@@ -240,8 +240,11 @@ public class PdfStructureElement extends PdfDictionary implements IPdfStructureE
     }
 
     public void writeAttributes(final IAccessibleElement element) {
-        if (top.getWriter().getPdfVersion().getVersion() < PdfWriter.VERSION_1_7)
-            return;
+// I do remember that these lines were necessary to avoid creation of files which are not valid from Acrobat 10 preflight perspective.
+// Now it seems that in Acrobat 11 there's no such problem (I think Acrobat 10 behavior can be considered as a bug) and we can remove those lines.
+//        if (top.getWriter().getPdfVersion().getVersion() < PdfWriter.VERSION_1_7)
+//            return;
+
         if (element instanceof ListItem) {
             writeAttributes((ListItem)element);
         } else if (element instanceof Paragraph) {
