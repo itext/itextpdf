@@ -1597,6 +1597,21 @@ public class ColumnText {
 
                 // do we need to skip the header?
                 boolean skipHeader = table.isSkipFirstHeader() && rowIdx <= realHeaderRows && (table.isComplete() || rowIdx != realHeaderRows);
+
+                if (!table.isComplete() ) {
+
+                    float tempHeaderHeight = table.getTotalHeight();
+
+                    if ( skipHeader ) {
+                        tempHeaderHeight -= headerHeight;
+                    }
+
+                    if ( table.getTotalHeight() > yTemp - minY ) {
+                        table.setSkipFirstHeader(false);
+                        return NO_MORE_COLUMN;
+                    }
+                }
+
                 // if not, we wan't to be able to add more than just a header and a footer
                 if (!skipHeader) {
                     yTemp -= headerHeight;
@@ -1797,6 +1812,10 @@ public class ColumnText {
                         if (isTagged(canvas)) {
                             canvas.closeMCBlock(table);
                         }
+                    }
+
+                    if ( !table.isComplete() ) {
+                        table.addNumberOfRowsWritten(k);
                     }
 
                     // if the row was split, we copy the content of the last row

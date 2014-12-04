@@ -213,6 +213,8 @@ public class PdfPTable implements LargeElement, Spaceable, IAccessibleElement {
     private PdfPTableBody body = null;
     private PdfPTableFooter footer = null;
 
+    private int numberOfWrittenRows;
+
 
 	protected PdfPTable() {
     }
@@ -1790,7 +1792,21 @@ public class PdfPTable implements LargeElement, Spaceable, IAccessibleElement {
      */
     public void flushContent() {
         deleteBodyRows();
-        setSkipFirstHeader(true);
+
+        // setSkipFirstHeader(boolean) shouldn't be set to true if the table hasn't been added yet.
+        if ( this.numberOfWrittenRows > 0 ) {
+            setSkipFirstHeader(true);
+        }
+    }
+
+    /**
+     * Adds the number of written rows to the counter.
+     *
+     * @param numberOfWrittenRows number of newly written rows
+     * @since 5.5.4
+     */
+    void addNumberOfRowsWritten(final int numberOfWrittenRows) {
+        this.numberOfWrittenRows += numberOfWrittenRows;
     }
 
     /**
