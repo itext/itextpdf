@@ -1599,14 +1599,7 @@ public class ColumnText {
                 boolean skipHeader = table.isSkipFirstHeader() && rowIdx <= realHeaderRows && (table.isComplete() || rowIdx != realHeaderRows);
 
                 if (!table.isComplete() ) {
-
-                    float tempHeaderHeight = table.getTotalHeight();
-
-                    if ( skipHeader ) {
-                        tempHeaderHeight -= headerHeight;
-                    }
-
-                    if ( table.getTotalHeight() > yTemp - minY ) {
+                    if ( table.getTotalHeight() - headerHeight > yTemp - minY ) {
                         table.setSkipFirstHeader(false);
                         return NO_MORE_COLUMN;
                     }
