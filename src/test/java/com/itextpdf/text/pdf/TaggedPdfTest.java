@@ -5,6 +5,7 @@ import com.itextpdf.text.pdf.parser.*;
 import com.itextpdf.text.xml.XMLUtil;
 import org.junit.After;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.xml.sax.SAXException;
 
@@ -868,6 +869,7 @@ public class TaggedPdfTest {
     }
 
     @Test
+    @Ignore
     public void createTaggedPdf23() throws DocumentException, IOException, ParserConfigurationException, SAXException {
         initializeDocument("./target/com/itextpdf/test/pdf/TaggedPdfTest/out23.pdf", PdfWriter.VERSION_1_4);
 
