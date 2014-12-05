@@ -1,8 +1,8 @@
-<Document><Table width="418.4" height="864"><TR o="/Table"><TD colspan="2" width="418.4" o="/Table"><Span>header 1
+<Document><Table o="/Table" width="418.4" height="864"><TR o="/Table"><TD colSpan="2" width="418.4" o="/Table"><Span>header 1
 header 1</Span>
 </TD>
 </TR>
-<TR o="/Table"><TD colspan="2" width="418.4" o="/Table"><Span>header 2
+<TR o="/Table"><TD colSpan="2" width="418.4" o="/Table"><Span>header 2
 header 2</Span>
 </TD>
 </TR>
@@ -226,11 +226,11 @@ header 2</Span>
 <TD width="209.2" o="/Table"><Span>row 44, column 2</Span>
 </TD>
 </TR>
-<TR o="/Table"><TD colspan="2" width="418.4" o="/Table"><Span>footer 1
+<TR o="/Table"><TD colSpan="2" width="418.4" o="/Table"><Span>footer 1
 footer 1</Span>
 </TD>
 </TR>
-<TR o="/Table"><TD colspan="2" width="418.4" o="/Table"><Span>footer 2
+<TR o="/Table"><TD colSpan="2" width="418.4" o="/Table"><Span>footer 2
 footer 2</Span>
 </TD>
 </TR>

@@ -5,6 +5,7 @@ import com.itextpdf.text.pdf.parser.*;
 import com.itextpdf.text.xml.XMLUtil;
 import org.junit.After;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.xml.sax.SAXException;
 
