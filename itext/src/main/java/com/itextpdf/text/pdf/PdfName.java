@@ -1963,6 +1963,10 @@ public class
     public static final PdfName SUBMITFORM = new PdfName("SubmitForm");
     /** A name */
     public static final PdfName SUBTYPE = new PdfName("Subtype");
+    /**
+     * A name
+     */
+    public static final PdfName SUMMARY = new PdfName("Summary");
     /** A name */
     public static final PdfName SUPPLEMENT = new PdfName("Supplement");
     /** A name */

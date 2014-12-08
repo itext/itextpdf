@@ -543,6 +543,9 @@ public class PdfStructureElement extends PdfDictionary implements IPdfStructureE
             if (table.getTotalWidth() > 0){
                 this.setAttribute(PdfName.WIDTH, new PdfNumber(table.getTotalWidth()));
             }
+            if (table.getSummary() != null) {
+                this.setAttribute(PdfName.SUMMARY, new PdfString(table.getSummary()));
+            }
         }
     }
 

@@ -164,6 +164,11 @@ public class PdfPTable implements LargeElement, Spaceable, IAccessibleElement {
     protected float spacingAfter;
 
     /**
+     * A textual summary of the table's contents, in Tagged PDF.
+     */
+    private String summary;
+
+    /**
      * Holds value of property extendLastRow.
      */
     private boolean[] extendLastRow = {false, false};
@@ -1249,6 +1254,14 @@ public class PdfPTable implements LargeElement, Spaceable, IAccessibleElement {
         } catch (DocumentException de) {
             return false;
         }
+    }
+
+    public String getSummary() {
+        return summary;
+    }
+
+    public void setSummary(final String summary) {
+        this.summary = summary;
     }
 
     /**
