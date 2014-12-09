@@ -530,6 +530,7 @@ public class PdfStructureElement extends PdfDictionary implements IPdfStructureE
 
     private void writeAttributes(final PdfPTable table) {
         if (table != null) {
+            this.setAttribute(PdfName.O, PdfName.TABLE);
             // Setting non-inheritable attributes
             if (Float.compare(table.getSpacingBefore(), 0f) != 0)
                 this.setAttribute(PdfName.SPACEBEFORE, new PdfNumber(table.getSpacingBefore()));
