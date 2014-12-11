@@ -48,10 +48,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.itextpdf.text.Element;
+import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.WorkerContext;
+import com.itextpdf.tool.xml.css.CSS;
 import com.itextpdf.tool.xml.html.AbstractTagProcessor;
 import com.itextpdf.tool.xml.html.HTML;
+import com.itextpdf.tool.xml.html.pdfelement.HtmlCell;
 import com.itextpdf.tool.xml.html.table.TableRowElement.Place;
 
 /**
@@ -76,6 +79,12 @@ public class TableRow extends AbstractTagProcessor {
     	} else {
     		row = new TableRowElement(currentContent, Place.BODY);
     	}
+        int direction = getRunDirection(tag);
+        if (direction != PdfWriter.RUN_DIRECTION_DEFAULT) {
+            for (HtmlCell cell : row.getContent()) {
+                cell.setRunDirection(direction);
+            }
+        }
     	l.add(row);
         return l;
     }
