@@ -102,7 +102,7 @@ public class SampleTest extends ITextTest {
         final String imageRootPath;
 
         public SampleTestImageProvider() {
-            imageRootPath = String.format("./src/test/resources/%s/%s/", testPath, getTestName());
+            imageRootPath = String.format("./target/test-classes/%s/%s/", testPath, getTestName());
         }
 
         public String getImageRootPath() {

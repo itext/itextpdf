@@ -314,6 +314,7 @@ public final class HTML {
 		private Attribute() {
 		}
 
+        public static final String ALT = "alt";
 		public static final String CELLPADDING = "cellpadding";
 		public static final String CELLSPACING = "cellspacing";
 		public static final String STYLE = "style";

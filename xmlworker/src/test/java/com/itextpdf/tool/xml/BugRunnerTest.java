@@ -59,13 +59,12 @@ import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.log.LoggerFactory;
 import com.itextpdf.text.log.SysoLogger;
 import com.itextpdf.text.pdf.PdfWriter;
-import com.itextpdf.tool.xml.XMLWorkerHelper;
 
 /**
  *
  */
 public class BugRunnerTest {
-	public static final String RESOURCE_TEST_PATH = "./src/test/resources";
+	public static final String OUT = "./target/test-classes/";
 	private final List<String> list = new ArrayList<String>();
 
 	static {
@@ -89,7 +88,7 @@ public class BugRunnerTest {
 				final Document doc = new Document();
 				PdfWriter writer = null;
 				try {
-					writer = PdfWriter.getInstance(doc, new FileOutputStream(String.format("%s/bugs/%s.pdf", RESOURCE_TEST_PATH, str)));
+					writer = PdfWriter.getInstance(doc, new FileOutputStream(String.format("%s/bugs/%s.pdf", OUT, str)));
 				} catch (DocumentException e) {
 					e.printStackTrace();
 				}

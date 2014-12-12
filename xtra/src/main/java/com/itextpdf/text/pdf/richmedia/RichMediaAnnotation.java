@@ -101,8 +101,7 @@ public class RichMediaAnnotation {
 	 */
 	public RichMediaAnnotation(PdfWriter writer, Rectangle rect) {
 		this.writer = writer;
-		annot = new PdfAnnotation(writer, rect);
-        annot.put(PdfName.SUBTYPE, PdfName.RICHMEDIA);
+		annot = writer.createAnnotation(rect, PdfName.RICHMEDIA);
         richMediaContent = new PdfDictionary(PdfName.RICHMEDIACONTENT);
 		assetsmap = new HashMap<String, PdfIndirectReference>();
 		configurations = new PdfArray();
@@ -121,8 +120,7 @@ public class RichMediaAnnotation {
 		this.richMediaContentReference = richMediaContentReference;
 		richMediaContent = null;
 		this.writer = writer;
-		annot = new PdfAnnotation(writer, rect);
-		annot.put(PdfName.SUBTYPE, PdfName.RICHMEDIA);
+		annot = writer.createAnnotation(rect, PdfName.RICHMEDIA);
 	}
 
 	/**

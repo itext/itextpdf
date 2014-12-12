@@ -91,5 +91,20 @@ public enum PdfAConformanceLevel {
     /**
      * ZUGFeRD
      */
-    ZUGFeRD
+    ZUGFeRD,
+
+    /**
+     * ZUGFeRDBasic Version 
+     */
+    ZUGFeRDBasic,
+    
+    /**
+     * ZUGFeRDComfort Version
+     */
+    ZUGFeRDComfort,
+    
+    /**
+     * ZUGFeRDExtended Version
+     */
+    ZUGFeRDExtended
 }

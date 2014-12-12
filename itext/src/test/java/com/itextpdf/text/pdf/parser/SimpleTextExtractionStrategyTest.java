@@ -45,7 +45,10 @@
 package com.itextpdf.text.pdf.parser;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
+import com.itextpdf.testutils.TestResourceUtils;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -81,7 +84,7 @@ public class SimpleTextExtractionStrategyTest {
     public TextExtractionStrategy createRenderListenerForTest(){
         return new SimpleTextExtractionStrategy();
     }
-    
+
     @Test
     public void testCoLinnearText() throws Exception{
         byte[] bytes = createPdfWithRotatedText(TEXT1, TEXT2, 0, false, 0);
@@ -184,9 +187,35 @@ public class SimpleTextExtractionStrategyTest {
         String text = PdfTextExtractor.getTextFromPage(new PdfReader(bytes), 1, createRenderListenerForTest());
         Assert.assertTrue("extracted text (" + text + ") must contain '" + text1 + "'", text.indexOf(text1) >= 0);
     }
-    
 
-    
+    @Test
+    public void extractFromPage229() throws IOException {
+        if (this.getClass() != SimpleTextExtractionStrategyTest.class)
+            return;
+        InputStream is = TestResourceUtils.getResourceAsStream(this, "page229.pdf");
+        PdfReader reader = new PdfReader(is);
+        String text1 = PdfTextExtractor.getTextFromPage(reader, 1, new SimpleTextExtractionStrategy());
+        String text2 = PdfTextExtractor.getTextFromPage(reader, 1, new SingleCharacterSimpleTextExtractionStrategy());
+        Assert.assertEquals(text1, text2);
+        reader.close();
+    }
+
+    @Test
+    public void extractFromIsoTc171() throws IOException {
+        if (this.getClass() != SimpleTextExtractionStrategyTest.class)
+            return;
+        InputStream is = TestResourceUtils.getResourceAsStream(this, "ISO-TC171-SC2_N0896_SC2WG5_Edinburgh_Agenda.pdf");
+        PdfReader reader = new PdfReader(is);
+        String text1 = PdfTextExtractor.getTextFromPage(reader, 1, new SimpleTextExtractionStrategy()) +
+                "\n" +
+                PdfTextExtractor.getTextFromPage(reader, 2, new SimpleTextExtractionStrategy());
+        String text2 = PdfTextExtractor.getTextFromPage(reader, 1, new SingleCharacterSimpleTextExtractionStrategy()) +
+                "\n" +
+                PdfTextExtractor.getTextFromPage(reader, 2, new SingleCharacterSimpleTextExtractionStrategy());
+        Assert.assertEquals(text1, text2);
+        reader.close();
+    }
+
     byte[] createPdfWithXObject(String xobjectText) throws Exception {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         Document doc = new Document();
@@ -315,6 +344,14 @@ public class SimpleTextExtractionStrategyTest {
         final byte[] pdfBytes = byteStream.toByteArray();
 
         return pdfBytes;
+    }
+
+    private static class SingleCharacterSimpleTextExtractionStrategy extends SimpleTextExtractionStrategy {
+        @Override
+        public void renderText(TextRenderInfo renderInfo) {
+            for (TextRenderInfo tri : renderInfo.getCharacterRenderInfos())
+                super.renderText(tri);
+        }
     }
   
 }

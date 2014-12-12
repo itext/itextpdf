@@ -56,7 +56,7 @@ public class StampContent extends PdfContentByte {
     }
     
     public void setAction(PdfAction action, float llx, float lly, float urx, float ury) {
-        ((PdfStamperImp)writer).addAnnotation(new PdfAnnotation(writer, llx, lly, urx, ury, action), ps.pageN);
+        ((PdfStamperImp)writer).addAnnotation(writer.createAnnotation(llx, lly, urx, ury, action, null), ps.pageN);
     }
 
     /**

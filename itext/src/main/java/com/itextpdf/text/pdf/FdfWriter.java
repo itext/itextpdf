@@ -303,7 +303,7 @@ public class FdfWriter {
     }
 
     public boolean setFieldAsJavascript(String field, PdfName jsTrigName, String js) {
-        PdfAnnotation dict = new PdfAnnotation(wrt, null);
+        PdfAnnotation dict = wrt.createAnnotation(null, null);
         PdfAction javascript = PdfAction.javaScript(js, wrt);
         dict.put(jsTrigName, javascript);
         return setField(field, dict);

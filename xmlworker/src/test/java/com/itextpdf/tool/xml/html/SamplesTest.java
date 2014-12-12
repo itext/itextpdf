@@ -67,7 +67,7 @@ import com.itextpdf.tool.xml.XMLWorkerHelper;
  * Added to visually check all snippets. (see target/text-classes/*.pdf )
  */
 public class SamplesTest {
-	public static final String RESOURCE_TEST_PATH = "./src/test/resources";
+    public static final String OUT = "./target/test-classes/com/itextpdf/tool/xml/html/";
 	private final List<String> list = new ArrayList<String>();
 
 	static {
@@ -115,7 +115,7 @@ public class SamplesTest {
 			final Document doc = new Document();
 			PdfWriter writer = null;
 			try {
-				writer = PdfWriter.getInstance(doc, new FileOutputStream(String.format("%s/%sTest.pdf", RESOURCE_TEST_PATH, str)));
+				writer = PdfWriter.getInstance(doc, new FileOutputStream(String.format("%s/%sTest.pdf", OUT, str)));
 			} catch (DocumentException e) {
 				e.printStackTrace();
 			}

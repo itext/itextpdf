@@ -1,6 +1,6 @@
 <Document><H1 o="/Layout" color="[0, 0, 1]"><Span>Document Header</Span>
 </H1>
-<Table width="418.4" height="1640.17"><TBody><TR o="/Table"><TD width="209.2" o="/Table"><Span>Quick brown fox jumped over a lazy
+<Table o="/Table" width="418.4" height="1640.17"><TBody><TR o="/Table"><TD width="209.2" o="/Table"><Span>Quick brown fox jumped over a lazy
 dog. A very long line appears here
 because we need new line.</Span>
 </TD>

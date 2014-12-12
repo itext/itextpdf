@@ -1425,6 +1425,10 @@ public class PdfReader implements PdfViewerPreferences {
             tokens.seek(pos - 1);
             if (tokens.read() == 10)
             	streamLength--;
+
+            if ( streamLength < 0 ) {
+                streamLength = 0;
+            }
         }
         stream.setLength((int)streamLength);
     }

@@ -287,18 +287,6 @@ public class PdfContentStreamProcessor {
     }
 
     /**
-     * Decodes a PdfString (which will contain glyph ids encoded in the font's encoding)
-     * based on the active font, and determine the unicode equivalent
-     * @param in	the String that needs to be encoded
-     * @return	the encoded String
-     * @since 2.1.7
-     */
-    private String decode(PdfString in){
-        byte[] bytes = in.getBytes();
-        return gs().font.decode(bytes, 0, bytes.length);
-    }
-
-    /**
      * Used to trigger beginTextBlock on the renderListener
      */
     private void beginText(){
@@ -318,9 +306,7 @@ public class PdfContentStreamProcessor {
      */
     private void displayPdfString(PdfString string){
 
-        String unicode = decode(string);
-
-        TextRenderInfo renderInfo = new TextRenderInfo(unicode, gs(), textMatrix, markedContentStack);
+        TextRenderInfo renderInfo = new TextRenderInfo(string, gs(), textMatrix, markedContentStack);
 
         renderListener.renderText(renderInfo);
 

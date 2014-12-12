@@ -293,7 +293,7 @@ public class CompareTool {
 
         List<Integer> equalPages = new ArrayList<Integer>(cmpPages.size());
         for (int i = 0; i < cmpPages.size(); i++) {
-            if (objectsAreEqual(outPages.get(i), cmpPages.get(i)))
+            if (compareDictionaries(outPages.get(i), cmpPages.get(i)))
                 equalPages.add(i);
         }
         outReader.close();
@@ -342,29 +342,7 @@ public class CompareTool {
         }
     }
 
-    private boolean objectsAreEqual(PdfDictionary outDict, PdfDictionary cmpDict) throws IOException {
-        for (PdfName key : cmpDict.getKeys()) {
-            if (key.compareTo(PdfName.PARENT) == 0) continue;
-            if (key.compareTo(PdfName.BASEFONT) == 0 || key.compareTo(PdfName.FONTNAME) == 0) {
-                PdfObject cmpObj = cmpDict.getDirectObject(key);
-                if (cmpObj.isName() && cmpObj.toString().indexOf('+') > 0) {
-                    PdfObject outObj = outDict.getDirectObject(key);
-                    if (!outObj.isName() || outObj.toString().indexOf('+') == -1)
-                        return false;
-                    String cmpName = cmpObj.toString().substring(cmpObj.toString().indexOf('+'));
-                    String outName = outObj.toString().substring(outObj.toString().indexOf('+'));
-                    if (!cmpName.equals(outName))
-                        return false;
-                    continue;
-                }
-            }
-            if (!objectsAreEqual(outDict.get(key), cmpDict.get(key)))
-                return false;
-        }
-        return true;
-    }
-
-    private boolean objectsAreEqual(PdfObject outObj, PdfObject cmpObj) throws IOException {
+    private boolean compareObjects(PdfObject outObj, PdfObject cmpObj) throws IOException {
         PdfObject outDirectObj = PdfReader.getPdfObject(outObj);
         PdfObject cmpDirectObj = PdfReader.getPdfObject(cmpObj);
 
@@ -382,25 +360,25 @@ public class CompareTool {
                     return true;
                 return false;
             }
-            if (!objectsAreEqual(outDict, cmpDict))
+            if (!compareDictionaries(outDict, cmpDict))
                 return false;
         } else if (cmpDirectObj.isStream()) {
-            if (!objectsAreEqual((PRStream) outDirectObj, (PRStream) cmpDirectObj))
+            if (!compareStreams((PRStream) outDirectObj, (PRStream) cmpDirectObj))
                 return false;
         } else if (cmpDirectObj.isArray()) {
-            if (!objectsAreEqual((PdfArray) outDirectObj, (PdfArray) cmpDirectObj))
+            if (!compareArrays((PdfArray) outDirectObj, (PdfArray) cmpDirectObj))
                 return false;
         } else if (cmpDirectObj.isName()) {
-            if (!objectsAreEqual((PdfName) outDirectObj, (PdfName) cmpDirectObj))
+            if (!compareNames((PdfName) outDirectObj, (PdfName) cmpDirectObj))
                 return false;
         } else if (cmpDirectObj.isNumber()) {
-            if (!objectsAreEqual((PdfNumber) outDirectObj, (PdfNumber) cmpDirectObj))
+            if (!compareNumbers((PdfNumber) outDirectObj, (PdfNumber) cmpDirectObj))
                 return false;
         } else if (cmpDirectObj.isString()) {
-            if (!objectsAreEqual((PdfString) outDirectObj, (PdfString) cmpDirectObj))
+            if (!compareStrings((PdfString) outDirectObj, (PdfString) cmpDirectObj))
                 return false;
         } else if (cmpDirectObj.isBoolean()) {
-            if (!objectsAreEqual((PdfBoolean) outDirectObj, (PdfBoolean) cmpDirectObj))
+            if (!compareBooleans((PdfBoolean) outDirectObj, (PdfBoolean) cmpDirectObj))
                 return false;
         } else if (outDirectObj.isNull() && cmpDirectObj.isNull()) {
 
@@ -410,7 +388,29 @@ public class CompareTool {
         return true;
     }
 
-    private boolean objectsAreEqual(PRStream outStream, PRStream cmpStream) throws IOException {
+    public boolean compareDictionaries(PdfDictionary outDict, PdfDictionary cmpDict) throws IOException {
+        for (PdfName key : cmpDict.getKeys()) {
+            if (key.compareTo(PdfName.PARENT) == 0) continue;
+            if (key.compareTo(PdfName.BASEFONT) == 0 || key.compareTo(PdfName.FONTNAME) == 0) {
+                PdfObject cmpObj = cmpDict.getDirectObject(key);
+                if (cmpObj.isName() && cmpObj.toString().indexOf('+') > 0) {
+                    PdfObject outObj = outDict.getDirectObject(key);
+                    if (!outObj.isName() || outObj.toString().indexOf('+') == -1)
+                        return false;
+                    String cmpName = cmpObj.toString().substring(cmpObj.toString().indexOf('+'));
+                    String outName = outObj.toString().substring(outObj.toString().indexOf('+'));
+                    if (!cmpName.equals(outName))
+                        return false;
+                    continue;
+                }
+            }
+            if (!compareObjects(outDict.get(key), cmpDict.get(key)))
+                return false;
+        }
+        return true;
+    }
+
+    public boolean compareStreams(PRStream outStream, PRStream cmpStream) throws IOException {
         boolean decodeStreams = PdfName.FLATEDECODE.equals(outStream.get(PdfName.FILTER));
         byte[] outStreamBytes = PdfReader.getStreamBytesRaw(outStream);
         byte[] cmpStreamBytes = PdfReader.getStreamBytesRaw(cmpStream);
@@ -421,30 +421,30 @@ public class CompareTool {
         return Arrays.equals(outStreamBytes, cmpStreamBytes);
     }
 
-    private boolean objectsAreEqual(PdfArray outArray, PdfArray cmpArray) throws IOException {
+    public boolean compareArrays(PdfArray outArray, PdfArray cmpArray) throws IOException {
         if (outArray == null || outArray.size() != cmpArray.size())
             return false;
         for (int i = 0; i < cmpArray.size(); i++) {
-            if (!objectsAreEqual(outArray.getPdfObject(i), cmpArray.getPdfObject(i)))
+            if (!compareObjects(outArray.getPdfObject(i), cmpArray.getPdfObject(i)))
                 return false;
         }
 
         return true;
     }
 
-    private boolean objectsAreEqual(PdfName outName, PdfName cmpName) {
+    public boolean compareNames(PdfName outName, PdfName cmpName) {
         return cmpName.compareTo(outName) == 0;
     }
 
-    private boolean objectsAreEqual(PdfNumber outNumber, PdfNumber cmpNumber) {
+    public boolean compareNumbers(PdfNumber outNumber, PdfNumber cmpNumber) {
         return cmpNumber.doubleValue() == outNumber.doubleValue();
     }
 
-    private boolean objectsAreEqual(PdfString outString, PdfString cmpString) {
+    public boolean compareStrings(PdfString outString, PdfString cmpString) {
         return Arrays.equals(cmpString.getBytes(), outString.getBytes());
     }
 
-    private boolean objectsAreEqual(PdfBoolean outBoolean, PdfBoolean cmpBoolean) {
+    public boolean compareBooleans(PdfBoolean outBoolean, PdfBoolean cmpBoolean) {
         return Arrays.equals(cmpBoolean.getBytes(), outBoolean.getBytes());
     }
 
