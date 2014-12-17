@@ -99,6 +99,9 @@ public class PdfAConformanceImp implements PdfAConformance {
                 pdfAChecker = new PdfA3Checker(conformanceLevel);
                 break;
             case ZUGFeRD:
+            case ZUGFeRDComfort:
+            case ZUGFeRDBasic:
+            case ZUGFeRDExtended:
                 pdfAChecker = new ZugferdChecker(conformanceLevel);
                 break;
             default:

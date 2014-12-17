@@ -39,7 +39,7 @@ public class HtmlPipelineCloneTest {
 
 	@Test
 	public void verifyNewImageProvider() throws NoImageProviderException {
-		Assert.assertNotSame(ctx.getImageProvider(), clone.getImageProvider());
+		Assert.assertSame(ctx.getImageProvider(), clone.getImageProvider());
 	}
 	@Test
 	public void verifyNewRoottags() throws NoImageProviderException {

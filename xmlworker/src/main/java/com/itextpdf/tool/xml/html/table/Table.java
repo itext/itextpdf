@@ -125,6 +125,7 @@ public class Table extends AbstractTagProcessor {
 			if(widthValue != null && widthValue.trim().endsWith("%")) {
 				percentage = true;
 			}
+
 			int numberOfColumns = 0;
 			List<TableRowElement> tableRows = new ArrayList<TableRowElement>(currentContent.size());
 			List<Element> invalidRowElements = new ArrayList<Element>(1);
@@ -163,6 +164,11 @@ public class Table extends AbstractTagProcessor {
             PdfPTable table = intPdfPTable(numberOfColumns);
             table.setHeaderRows(headerRows + footerRows);
             table.setFooterRows(footerRows);
+            
+            int direction = getRunDirection(tag);
+            if (direction != PdfWriter.RUN_DIRECTION_DEFAULT) {
+                table.setRunDirection(direction);
+            }
             TableStyleValues styleValues = setStyleValues(tag);
             table.setTableEvent(new TableBorderEvent(styleValues));
             setVerticalMargin(table, tag, styleValues, ctx);

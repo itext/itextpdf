@@ -48,6 +48,7 @@ import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.ListItem;
 import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.text.pdf.draw.LineSeparator;
 import com.itextpdf.tool.xml.NoCustomContextException;
 import com.itextpdf.tool.xml.Tag;
@@ -92,6 +93,10 @@ public class TableData extends AbstractTagProcessor {
 	public List<Element> end(final WorkerContext ctx, final Tag tag,
 			final List<Element> currentContent) {
 		HtmlCell cell = new HtmlCell();
+                int direction = getRunDirection(tag);
+                if (direction != PdfWriter.RUN_DIRECTION_DEFAULT) {
+                    cell.setRunDirection(direction);
+                }
         try {
             HtmlPipelineContext htmlPipelineContext = getHtmlPipelineContext(ctx);
             cell = (HtmlCell) getCssAppliers().apply(cell, tag, htmlPipelineContext);

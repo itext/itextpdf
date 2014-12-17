@@ -292,15 +292,17 @@ public class PdfLine {
     float indentLeft() {
         if (isRTL) {
             switch (alignment) {
-                case Element.ALIGN_LEFT:
-                    return left + width;
                 case Element.ALIGN_CENTER:
                     return left + width / 2f;
-                default:
+                case Element.ALIGN_RIGHT:
                     return left;
+                case Element.ALIGN_JUSTIFIED:
+                    return left + (hasToBeJustified() ? 0 : width);
+                case Element.ALIGN_LEFT:
+                default:
+                    return left + width;
             }
-        }
-        else if (this.getSeparatorCount() <= 0) {
+        } else if (this.getSeparatorCount() <= 0) {
             switch (alignment) {
                 case Element.ALIGN_RIGHT:
                     return left + width;

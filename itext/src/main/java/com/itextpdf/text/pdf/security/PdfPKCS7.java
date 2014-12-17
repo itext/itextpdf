@@ -130,7 +130,7 @@ public class PdfPKCS7 {
      * Assembles all the elements needed to create a signature, except for the data.
      * @param privKey the private key
      * @param certChain the certificate chain
-     * @param crlList the certificate revocation list
+     * @param interfaceDigest the interface digest
      * @param hashAlgorithm the hash algorithm
      * @param provider the provider or <code>null</code> for the default provider
      * @param hasRSAdata <CODE>true</CODE> if the sub-filter is adbe.pkcs7.sha1
@@ -204,15 +204,22 @@ public class PdfPKCS7 {
             signCerts = certs;
             signCert = (X509Certificate)certs.iterator().next();
             crls = new ArrayList<CRL>();
+
             ASN1InputStream in = new ASN1InputStream(new ByteArrayInputStream(contentsKey));
             digest = ((ASN1OctetString)in.readObject()).getOctets();
-            if (provider == null)
+
+            if (provider == null) {
                 sig = Signature.getInstance("SHA1withRSA");
-            else
+            } else {
                 sig = Signature.getInstance("SHA1withRSA", provider);
+            }
+
             sig.initVerify(signCert.getPublicKey());
-        }
-        catch (Exception e) {
+
+            // setting the oid to SHA1withRSA
+            digestAlgorithmOid = "1.2.840.10040.4.3";
+            digestEncryptionAlgorithmOid = "1.3.36.3.3.1.2";
+        } catch (Exception e) {
             throw new ExceptionConverter(e);
         }
     }
@@ -220,7 +227,7 @@ public class PdfPKCS7 {
     /**
      * Use this constructor if you want to verify a signature.
      * @param contentsKey the /Contents key
-     * @param tsp set to true if there's a PAdES LTV time stamp.
+     * @param filterSubtype the filtersubtype
      * @param provider the provider or <code>null</code> for the default provider
      */
 	@SuppressWarnings({ "unchecked" })
@@ -1067,7 +1074,7 @@ public class PdfPKCS7 {
      * Verify the digest.
      * @throws SignatureException on error
      * @return <CODE>true</CODE> if the signature checks out, <CODE>false</CODE> otherwise
-     * @throws SignatureException
+     * @throws java.security.GeneralSecurityException
      */
     public boolean verify() throws GeneralSecurityException {
         if (verified)

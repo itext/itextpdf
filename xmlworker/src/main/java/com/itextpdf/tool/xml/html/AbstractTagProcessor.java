@@ -38,6 +38,7 @@ import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.Font;
 import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.text.pdf.draw.LineSeparator;
 import com.itextpdf.tool.xml.NoCustomContextException;
 import com.itextpdf.tool.xml.Tag;
@@ -150,6 +151,20 @@ public abstract class AbstractTagProcessor implements TagProcessor, CssAppliersA
 	public List<Element> content(final WorkerContext ctx, final Tag tag, final String content) {
 		return new ArrayList<Element>(0);
 	}
+        
+        protected int getRunDirection(Tag tag) {
+            String dirValue = tag.getCSS().get(CSS.Property.DIR);
+            if (dirValue == null) {
+                dirValue = tag.getAttributes().get(CSS.Property.DIR);
+            }
+            if (CSS.Value.RTL.equalsIgnoreCase(dirValue)) {
+                return PdfWriter.RUN_DIRECTION_RTL;
+            }
+            if (CSS.Value.LTR.equalsIgnoreCase(dirValue)) {
+                return PdfWriter.RUN_DIRECTION_LTR;
+            }
+            return PdfWriter.RUN_DIRECTION_DEFAULT;
+        }
 
     protected List<Element> textContent(final WorkerContext ctx, final Tag tag, final String content) {
 		List<Chunk> sanitizedChunks = HTMLUtils.sanitize(content, false);

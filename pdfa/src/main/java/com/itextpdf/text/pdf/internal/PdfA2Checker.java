@@ -492,7 +492,7 @@ public class PdfA2Checker extends PdfAChecker {
                             if (signatureDict != null) {
                                 PdfArray references = getDirectArray(signatureDict.get(PdfName.REFERENCE));
                                 if (references != null) {
-                                    for (int i = 0; i < references.length(); i++) {
+                                    for (int i = 0; i < references.size(); i++) {
                                         PdfDictionary referenceDict = getDirectDictionary(references.getPdfObject(i));
                                         if (referenceDict.contains(DIGESTLOCATION)
                                                 || referenceDict.contains(DIGESTMETHOD)

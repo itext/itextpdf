@@ -272,13 +272,7 @@ public class HtmlPipelineContext implements CustomContext, Cloneable, MarginMemo
         CssAppliers cloneCssApliers = this.cssAppliers.clone();
 		HtmlPipelineContext newCtx = new HtmlPipelineContext(cloneCssApliers);
 		if (this.imageProvider != null) {
-			final String rootPath =  imageProvider.getImageRootPath();
-			newCtx.setImageProvider(new AbstractImageProvider() {
-
-				public String getImageRootPath() {
-					return rootPath;
-				}
-			});
+                    newCtx.setImageProvider(imageProvider);
 		}
 		if (null != this.charset) {
 			newCtx.charSet(Charset.forName(this.charset.name()));

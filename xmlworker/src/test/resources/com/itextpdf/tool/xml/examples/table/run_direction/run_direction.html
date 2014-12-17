@@ -1,0 +1,116 @@
+<html>
+  <head>
+  <title>Document</title>
+  <style type="text/css">
+  * {font-family:'FreeSerif';
+  font-size:10;
+  }
+  </style>
+  </head>
+  <body>
+	<p>This entire table is tagged as RTL, so every Arabic item should be portrayed correctly. Columns should be counted RTL</p>
+	<br/>
+    <table dir="rtl">
+	  <thead><tr>
+	    <td>Column 1</td>
+	    <td>Column 2</td>
+	  </tr></thead>
+      <tr>
+        <td><p>افضل تصفح هذا الموقع بواسطة فايرفوكس.</p></td>
+        <td><p>افضل تصفح هذا الموقع بواسطة فايرفوكس.</p></td>
+      </tr>
+      <tr>
+        <td><p>افضل تصفح هذا الموقع بواسطة فايرفوكس.</p></td>
+        <td><p>افضل تصفح هذا الموقع بواسطة فايرفوكس.</p></td>
+      </tr>
+      <tr>
+        <td><p>This site is best viewed with Firefox.</p></td>
+        <td><p>This site is best viewed with Firefox.</p></td>
+      </tr>
+    </table>
+	<br/>
+    <p>This entire table is tagged as LTR, so every Arabic item should be portrayed correctly except for punctuation and alignment. Columns should be counted LTR</p>
+	<br/>
+    <table dir="ltr">
+	  <thead><tr>
+	    <td>Column 1</td>
+	    <td>Column 2</td>
+	  </tr></thead>
+      <tr>
+        <td><p>افضل تصفح هذا الموقع بواسطة فايرفوكس.</p></td>
+        <td><p>افضل تصفح هذا الموقع بواسطة فايرفوكس.</p></td>
+      </tr>
+      <tr>
+        <td><p>افضل تصفح هذا الموقع بواسطة فايرفوكس.</p></td>
+        <td><p>افضل تصفح هذا الموقع بواسطة فايرفوكس.</p></td>
+      </tr>
+      <tr>
+        <td><p>This site is best viewed with Firefox.</p></td>
+        <td><p>This site is best viewed with Firefox.</p></td>
+      </tr>
+    </table>
+	<br/>
+	<p>This table is not tagged, which defaults to non-ligaturized LTR 'Arabic'.</p>
+	<br/>
+    <table>
+	  <thead><tr>
+	    <td>Column 1</td>
+	    <td>Column 2</td>
+	  </tr></thead>
+      <tr>
+        <td><p>افضل تصفح هذا الموقع بواسطة فايرفوكس.</p></td>
+        <td><p>افضل تصفح هذا الموقع بواسطة فايرفوكس.</p></td>
+      </tr>
+      <tr>
+        <td><p>افضل تصفح هذا الموقع بواسطة فايرفوكس.</p></td>
+        <td><p>افضل تصفح هذا الموقع بواسطة فايرفوكس.</p></td>
+      </tr>
+      <tr>
+        <td><p>This site is best viewed with Firefox.</p></td>
+        <td><p>This site is best viewed with Firefox.</p></td>
+      </tr>
+    </table>
+	<br/>
+    <p>This table is not tagged. The first row, and the second item of the second row, are tagged as RTL. The first item of the second row should be shown incorrectly: ligatures, writing order, punctuation, and alignment.</p>
+	<br/>
+	<table>
+	  <thead><tr>
+	    <td>Column 1</td>
+	    <td>Column 2</td>
+	  </tr></thead>
+      <tr dir="rtl">
+        <td><p>افضل تصفح هذا الموقع بواسطة فايرفوكس.</p></td>
+        <td><p>افضل تصفح هذا الموقع بواسطة فايرفوكس.</p></td>
+      </tr>
+      <tr>
+        <td><p>افضل تصفح هذا الموقع بواسطة فايرفوكس.</p></td>
+        <td dir="rtl"><p>افضل تصفح هذا الموقع بواسطة فايرفوكس.</p></td>
+      </tr>
+      <tr>
+        <td><p>This site is best viewed with Firefox.</p></td>
+        <td><p>This site is best viewed with Firefox.</p></td>
+      </tr>
+    </table>
+	<br/>
+    <p>This entire table is tagged as RTL, but the first row, and the second item of the second row, are tagged as LTR (override). The first item of the second row should be shown correctly, all others with incorrect punctuation and alignment.</p>
+	<br/>
+	<table dir="rtl">
+	  <thead><tr>
+	    <td>Column 1</td>
+	    <td>Column 2</td>
+	  </tr></thead>
+      <tr dir="ltr">
+        <td><p>افضل تصفح هذا الموقع بواسطة فايرفوكس.</p></td>
+        <td><p>افضل تصفح هذا الموقع بواسطة فايرفوكس.</p></td>
+      </tr>
+      <tr>
+        <td><p>افضل تصفح هذا الموقع بواسطة فايرفوكس.</p></td>
+        <td dir="ltr"><p>افضل تصفح هذا الموقع بواسطة فايرفوكس.</p></td>
+      </tr>
+      <tr>
+        <td><p>This site is best viewed with Firefox.</p></td>
+        <td dir="ltr"><p>This site is best viewed with Firefox.</p></td>
+      </tr>
+    </table>
+  </body>
+</html>
