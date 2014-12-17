@@ -1,5 +1,5 @@
 /*
- * $Id: PdfWriter.java 6435 2014-06-25 09:18:18Z michaeldemey $
+ * $Id: PdfWriter.java 6575 2014-10-02 15:03:02Z achingarev $
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2014 iText Group NV
@@ -3415,6 +3415,60 @@ public class PdfWriter extends DocWriter implements
 
     protected XmpWriter createXmpWriter(ByteArrayOutputStream baos, HashMap<String, String> info) throws IOException {
         return new XmpWriter(baos, info);
+    }
+
+    /**
+     * A wrapper around PdfAnnotation constructor.
+     * It is recommended to use this wrapper instead of direct constructor as this is a convenient way to override PdfAnnotation construction when needed.
+     *
+     * @param rect
+     * @param subtype
+     * @return
+     */
+    public PdfAnnotation createAnnotation(Rectangle rect, PdfName subtype) {
+        PdfAnnotation a = new PdfAnnotation(this, rect);
+        if (subtype != null)
+            a.put(PdfName.SUBTYPE, subtype);
+        return a;
+    }
+
+    /**
+     * A wrapper around PdfAnnotation constructor.
+     * It is recommended to use this wrapper instead of direct constructor as this is a convenient way to override PdfAnnotation construction when needed.
+     *
+     * @param llx
+     * @param lly
+     * @param urx
+     * @param ury
+     * @param title
+     * @param content
+     * @param subtype
+     * @return
+     */
+    public PdfAnnotation createAnnotation(float llx, float lly, float urx, float ury, PdfString title, PdfString content, PdfName subtype) {
+        PdfAnnotation a = new PdfAnnotation(this, llx, lly, urx, ury, title, content);
+        if (subtype != null)
+            a.put(PdfName.SUBTYPE, subtype);
+        return a;
+    }
+
+    /**
+     * A wrapper around PdfAnnotation constructor.
+     * It is recommended to use this wrapper instead of direct constructor as this is a convenient way to override PdfAnnotation construction when needed.
+     *
+     * @param llx
+     * @param lly
+     * @param urx
+     * @param ury
+     * @param action
+     * @param subtype
+     * @return
+     */
+    public PdfAnnotation createAnnotation(float llx, float lly, float urx, float ury, PdfAction action, PdfName subtype) {
+        PdfAnnotation a = new PdfAnnotation(this, llx, lly, urx, ury, action);
+        if (subtype != null)
+            a.put(PdfName.SUBTYPE, subtype);
+        return a;
     }
 
     public static void checkPdfIsoConformance(PdfWriter writer, int key, Object obj1) {

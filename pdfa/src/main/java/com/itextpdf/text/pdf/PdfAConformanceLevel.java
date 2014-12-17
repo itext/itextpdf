@@ -1,5 +1,5 @@
 /*
- * $Id: PdfAConformanceLevel.java 6355 2014-05-07 11:56:03Z achingarev $
+ * $Id: PdfAConformanceLevel.java 6593 2014-10-30 15:36:57Z achingarev $
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2014 iText Group NV
@@ -91,5 +91,20 @@ public enum PdfAConformanceLevel {
     /**
      * ZUGFeRD
      */
-    ZUGFeRD
+    ZUGFeRD,
+
+    /**
+     * ZUGFeRDBasic Version 
+     */
+    ZUGFeRDBasic,
+    
+    /**
+     * ZUGFeRDComfort Version
+     */
+    ZUGFeRDComfort,
+    
+    /**
+     * ZUGFeRDExtended Version
+     */
+    ZUGFeRDExtended
 }

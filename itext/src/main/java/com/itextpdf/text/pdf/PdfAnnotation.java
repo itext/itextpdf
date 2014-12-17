@@ -1,5 +1,5 @@
 /*
- * $Id: PdfAnnotation.java 6410 2014-05-29 13:05:23Z rafhens $
+ * $Id: PdfAnnotation.java 6575 2014-10-02 15:03:02Z achingarev $
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2014 iText Group NV
@@ -211,8 +211,7 @@ public class PdfAnnotation extends PdfDictionary implements IAccessibleElement {
      */
     public static PdfAnnotation createScreen(PdfWriter writer, Rectangle rect, String clipTitle, PdfFileSpecification fs,
                                              String mimeType, boolean playOnDisplay) throws IOException {
-        PdfAnnotation ann = new PdfAnnotation(writer, rect);
-        ann.put(PdfName.SUBTYPE, PdfName.SCREEN);
+        PdfAnnotation ann = writer.createAnnotation(rect, PdfName.SCREEN);
         ann.put (PdfName.F, new PdfNumber(FLAGS_PRINT));
         ann.put(PdfName.TYPE, PdfName.ANNOT);
         ann.setPage();
@@ -251,8 +250,7 @@ public class PdfAnnotation extends PdfDictionary implements IAccessibleElement {
      * @return a PdfAnnotation
      */
     public static PdfAnnotation createText(PdfWriter writer, Rectangle rect, String title, String contents, boolean open, String icon) {
-        PdfAnnotation annot = new PdfAnnotation(writer, rect);
-        annot.put(PdfName.SUBTYPE, PdfName.TEXT);
+        PdfAnnotation annot = writer.createAnnotation(rect, PdfName.TEXT);
         if (title != null)
             annot.put(PdfName.T, new PdfString(title, PdfObject.TEXT_UNICODE));
         if (contents != null)
@@ -273,8 +271,7 @@ public class PdfAnnotation extends PdfDictionary implements IAccessibleElement {
      * @return A PdfAnnotation
      */
     protected static PdfAnnotation createLink(PdfWriter writer, Rectangle rect, PdfName highlight) {
-        PdfAnnotation annot = new PdfAnnotation(writer, rect);
-        annot.put(PdfName.SUBTYPE, PdfName.LINK);
+        PdfAnnotation annot = writer.createAnnotation(rect, PdfName.LINK);
         if (!highlight.equals(HIGHLIGHT_INVERT))
             annot.put(PdfName.H, highlight);
         return annot;
@@ -334,8 +331,7 @@ public class PdfAnnotation extends PdfDictionary implements IAccessibleElement {
      * @return A PdfAnnotation
      */
     public static PdfAnnotation createFreeText(PdfWriter writer, Rectangle rect, String contents, PdfContentByte defaultAppearance) {
-        PdfAnnotation annot = new PdfAnnotation(writer, rect);
-        annot.put(PdfName.SUBTYPE, PdfName.FREETEXT);
+        PdfAnnotation annot = writer.createAnnotation(rect, PdfName.FREETEXT);
         annot.put(PdfName.CONTENTS, new PdfString(contents, PdfObject.TEXT_UNICODE));
         annot.setDefaultAppearanceString(defaultAppearance);
         return annot;
@@ -353,8 +349,7 @@ public class PdfAnnotation extends PdfDictionary implements IAccessibleElement {
      * @return A PdfAnnotation
      */
     public static PdfAnnotation createLine(PdfWriter writer, Rectangle rect, String contents, float x1, float y1, float x2, float y2) {
-        PdfAnnotation annot = new PdfAnnotation(writer, rect);
-        annot.put(PdfName.SUBTYPE, PdfName.LINE);
+        PdfAnnotation annot = writer.createAnnotation(rect, PdfName.LINE);
         annot.put(PdfName.CONTENTS, new PdfString(contents, PdfObject.TEXT_UNICODE));
         PdfArray array = new PdfArray(new PdfNumber(x1));
         array.add(new PdfNumber(y1));
@@ -373,17 +368,16 @@ public class PdfAnnotation extends PdfDictionary implements IAccessibleElement {
      * @return A PdfAnnotation
      */
     public static PdfAnnotation createSquareCircle(PdfWriter writer, Rectangle rect, String contents, boolean square) {
-        PdfAnnotation annot = new PdfAnnotation(writer, rect);
+        PdfAnnotation annot;
         if (square)
-            annot.put(PdfName.SUBTYPE, PdfName.SQUARE);
+            annot = writer.createAnnotation(rect, PdfName.SQUARE);
         else
-            annot.put(PdfName.SUBTYPE, PdfName.CIRCLE);
+            annot = writer.createAnnotation(rect, PdfName.CIRCLE);
         annot.put(PdfName.CONTENTS, new PdfString(contents, PdfObject.TEXT_UNICODE));
         return annot;
     }
 
     public static PdfAnnotation createMarkup(PdfWriter writer, Rectangle rect, String contents, int type, float quadPoints[]) {
-        PdfAnnotation annot = new PdfAnnotation(writer, rect);
         PdfName name = PdfName.HIGHLIGHT;
         switch (type) {
             case MARKUP_UNDERLINE:
@@ -396,7 +390,7 @@ public class PdfAnnotation extends PdfDictionary implements IAccessibleElement {
                 name = PdfName.SQUIGGLY;
                 break;
         }
-        annot.put(PdfName.SUBTYPE, name);
+        PdfAnnotation annot = writer.createAnnotation(rect, name);
         annot.put(PdfName.CONTENTS, new PdfString(contents, PdfObject.TEXT_UNICODE));
         PdfArray array = new PdfArray();
         for (int k = 0; k < quadPoints.length; ++k)
@@ -414,16 +408,14 @@ public class PdfAnnotation extends PdfDictionary implements IAccessibleElement {
      * @return A PdfAnnotation
      */
     public static PdfAnnotation createStamp(PdfWriter writer, Rectangle rect, String contents, String name) {
-        PdfAnnotation annot = new PdfAnnotation(writer, rect);
-        annot.put(PdfName.SUBTYPE, PdfName.STAMP);
+        PdfAnnotation annot = writer.createAnnotation(rect, PdfName.STAMP);
         annot.put(PdfName.CONTENTS, new PdfString(contents, PdfObject.TEXT_UNICODE));
         annot.put(PdfName.NAME, new PdfName(name));
         return annot;
     }
 
     public static PdfAnnotation createInk(PdfWriter writer, Rectangle rect, String contents, float inkList[][]) {
-        PdfAnnotation annot = new PdfAnnotation(writer, rect);
-        annot.put(PdfName.SUBTYPE, PdfName.INK);
+        PdfAnnotation annot = writer.createAnnotation(rect, PdfName.INK);
         annot.put(PdfName.CONTENTS, new PdfString(contents, PdfObject.TEXT_UNICODE));
         PdfArray outer = new PdfArray();
         for (int k = 0; k < inkList.length; ++k) {
@@ -462,8 +454,7 @@ public class PdfAnnotation extends PdfDictionary implements IAccessibleElement {
      * @throws IOException
      */
     public static PdfAnnotation createFileAttachment(PdfWriter writer, Rectangle rect, String contents, PdfFileSpecification fs) throws IOException {
-        PdfAnnotation annot = new PdfAnnotation(writer, rect);
-        annot.put(PdfName.SUBTYPE, PdfName.FILEATTACHMENT);
+        PdfAnnotation annot = writer.createAnnotation(rect, PdfName.FILEATTACHMENT);
         if (contents != null)
             annot.put(PdfName.CONTENTS, new PdfString(contents, PdfObject.TEXT_UNICODE));
         annot.put(PdfName.FS, fs.getReference());
@@ -479,8 +470,7 @@ public class PdfAnnotation extends PdfDictionary implements IAccessibleElement {
      * @return A PdfAnnotation
      */
     public static PdfAnnotation createPopup(PdfWriter writer, Rectangle rect, String contents, boolean open) {
-        PdfAnnotation annot = new PdfAnnotation(writer, rect);
-        annot.put(PdfName.SUBTYPE, PdfName.POPUP);
+        PdfAnnotation annot = writer.createAnnotation(rect, PdfName.POPUP);
         if (contents != null)
             annot.put(PdfName.CONTENTS, new PdfString(contents, PdfObject.TEXT_UNICODE));
         if (open)
@@ -499,11 +489,11 @@ public class PdfAnnotation extends PdfDictionary implements IAccessibleElement {
      */
     public static PdfAnnotation createPolygonPolyline(
         PdfWriter writer, Rectangle rect, String contents, boolean polygon, PdfArray vertices) {
-    	PdfAnnotation annot = new PdfAnnotation(writer, rect);
+    	PdfAnnotation annot = null;
     	if (polygon)
-    		annot.put(PdfName.SUBTYPE, PdfName.POLYGON);
+    		annot = writer.createAnnotation(rect, PdfName.POLYGON);
     	else
-    		annot.put(PdfName.SUBTYPE, PdfName.POLYLINE);
+            annot = writer.createAnnotation(rect, PdfName.POLYLINE);
     	annot.put(PdfName.CONTENTS, new PdfString(contents, PdfObject.TEXT_UNICODE));
     	annot.put(PdfName.VERTICES, new PdfArray(vertices));
         return annot;
@@ -941,7 +931,7 @@ public class PdfAnnotation extends PdfDictionary implements IAccessibleElement {
     	}
 
     	public PdfAnnotation createAnnotation(PdfWriter writer) {
-    		PdfAnnotation annotation = new PdfAnnotation(writer, new Rectangle(llx, lly, urx, ury));
+    		PdfAnnotation annotation = writer.createAnnotation(new Rectangle(llx, lly, urx, ury), null);
     		if (newPage != 0) {
     	        PdfIndirectReference ref = writer.getPageReference(newPage);
     	        destination.set(0, ref);

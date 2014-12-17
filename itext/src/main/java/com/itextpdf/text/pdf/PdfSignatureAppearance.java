@@ -1,5 +1,5 @@
 /*
- * $Id: PdfSignatureAppearance.java 6344 2014-04-29 13:06:21Z michaeldemey $
+ * $Id: PdfSignatureAppearance.java 6574 2014-10-02 12:55:20Z achingarev $
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2014 iText Group NV
@@ -58,6 +58,7 @@ import com.itextpdf.text.io.RASInputStream;
 import com.itextpdf.text.io.RandomAccessSource;
 import com.itextpdf.text.io.RandomAccessSourceFactory;
 import com.itextpdf.text.pdf.AcroFields.Item;
+import com.itextpdf.text.pdf.interfaces.PdfVersion;
 import com.itextpdf.text.pdf.security.CertificateInfo;
 import com.itextpdf.text.pdf.security.CertificateInfo.X500Name;
 
@@ -1374,12 +1375,14 @@ public class PdfSignatureAppearance {
         reference.put(PdfName.TRANSFORMMETHOD, PdfName.DOCMDP);
         reference.put(PdfName.TYPE, PdfName.SIGREF);
         reference.put(PdfName.TRANSFORMPARAMS, transformParams);
-        reference.put(new PdfName("DigestValue"), new PdfString("aa"));
-        PdfArray loc = new PdfArray();
-        loc.add(new PdfNumber(0));
-        loc.add(new PdfNumber(0));
-        reference.put(new PdfName("DigestLocation"), loc);
-        reference.put(new PdfName("DigestMethod"), new PdfName("MD5"));
+        if (writer.getPdfVersion().getVersion() < PdfWriter.VERSION_1_6) {
+            reference.put(new PdfName("DigestValue"), new PdfString("aa"));
+            PdfArray loc = new PdfArray();
+            loc.add(new PdfNumber(0));
+            loc.add(new PdfNumber(0));
+            reference.put(new PdfName("DigestLocation"), loc);
+            reference.put(new PdfName("DigestMethod"), new PdfName("MD5"));
+        }
         reference.put(PdfName.DATA, writer.reader.getTrailer().get(PdfName.ROOT));
         PdfArray types = new PdfArray();
         types.add(reference);

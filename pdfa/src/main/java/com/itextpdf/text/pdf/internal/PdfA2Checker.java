@@ -1,5 +1,5 @@
 /*
- * $Id: PdfA2Checker.java 6528 2014-09-02 10:14:37Z pavel-alay $
+ * $Id: PdfA2Checker.java 6573 2014-10-01 14:09:33Z achingarev $
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2014 iText Group NV
@@ -492,7 +492,7 @@ public class PdfA2Checker extends PdfAChecker {
                             if (signatureDict != null) {
                                 PdfArray references = getDirectArray(signatureDict.get(PdfName.REFERENCE));
                                 if (references != null) {
-                                    for (int i = 0; i < references.length(); i++) {
+                                    for (int i = 0; i < references.size(); i++) {
                                         PdfDictionary referenceDict = getDirectDictionary(references.getPdfObject(i));
                                         if (referenceDict.contains(DIGESTLOCATION)
                                                 || referenceDict.contains(DIGESTMETHOD)

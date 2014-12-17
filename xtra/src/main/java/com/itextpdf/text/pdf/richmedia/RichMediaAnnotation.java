@@ -1,5 +1,5 @@
 /*
- * $Id: RichMediaAnnotation.java 6134 2013-12-23 13:15:14Z blowagie $
+ * $Id: RichMediaAnnotation.java 6575 2014-10-02 15:03:02Z achingarev $
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2014 iText Group NV
@@ -101,8 +101,7 @@ public class RichMediaAnnotation {
 	 */
 	public RichMediaAnnotation(PdfWriter writer, Rectangle rect) {
 		this.writer = writer;
-		annot = new PdfAnnotation(writer, rect);
-        annot.put(PdfName.SUBTYPE, PdfName.RICHMEDIA);
+		annot = writer.createAnnotation(rect, PdfName.RICHMEDIA);
         richMediaContent = new PdfDictionary(PdfName.RICHMEDIACONTENT);
 		assetsmap = new HashMap<String, PdfIndirectReference>();
 		configurations = new PdfArray();
@@ -121,8 +120,7 @@ public class RichMediaAnnotation {
 		this.richMediaContentReference = richMediaContentReference;
 		richMediaContent = null;
 		this.writer = writer;
-		annot = new PdfAnnotation(writer, rect);
-		annot.put(PdfName.SUBTYPE, PdfName.RICHMEDIA);
+		annot = writer.createAnnotation(rect, PdfName.RICHMEDIA);
 	}
 
 	/**

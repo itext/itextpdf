@@ -1,5 +1,5 @@
 /*
- * $Id: PdfFormField.java 6330 2014-04-10 13:03:21Z eugenemark $
+ * $Id: PdfFormField.java 6575 2014-10-02 15:03:02Z achingarev $
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2014 iText Group NV
@@ -370,7 +370,7 @@ public class PdfFormField extends PdfAnnotation {
             dupField.kids = srcField.kids;
         }
         else
-            dup = new PdfAnnotation(annot.writer, null);
+            dup = annot.writer.createAnnotation(null, (PdfName)annot.get(PdfName.SUBTYPE));
         dup.merge(annot);
         dup.form = annot.form;
         dup.annotation = annot.annotation;

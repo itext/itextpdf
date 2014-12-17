@@ -1,5 +1,5 @@
 /*
- * $Id: PdfName.java 6511 2014-08-26 13:35:39Z achingarev $
+ * $Id: PdfName.java 6636 2014-12-08 13:18:43Z blagae $
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2014 iText Group NV
@@ -439,7 +439,7 @@ public class
      * A name.
      * @since 5.4.0
      */
-    public static final PdfName COLSPAN = new PdfName("Colspan");
+    public static final PdfName COLSPAN = new PdfName("ColSpan");
     /**
      * A name.
      * @since 5.4.0
@@ -1440,6 +1440,11 @@ public class
     public static final PdfName OUTPUTINTENT = new PdfName("OutputIntent");
     /** A name */
     public static final PdfName OUTPUTINTENTS = new PdfName("OutputIntents");
+    /**
+     * A name
+     * @since 5.5.4
+     */
+    public static final PdfName OVERLAYTEXT = new PdfName("OverlayText");
     /** A name */
     public static final PdfName P = new PdfName("P");
     /** A name */
@@ -1664,6 +1669,11 @@ public class
     public static final PdfName RECIPIENTS = new PdfName("Recipients");
     /** A name */
     public static final PdfName RECT = new PdfName("Rect");
+    /**
+     * A name
+     * @since 5.4.4
+     */
+    public static final PdfName REDACT = new PdfName("Redact");
     /** A name */
     public static final PdfName REFERENCE = new PdfName("Reference");
     /** A name */
@@ -1677,6 +1687,11 @@ public class
     public static final PdfName RELATIVECOLORIMETRIC = new PdfName("RelativeColorimetric");
     /** A name */
     public static final PdfName RENDITION = new PdfName("Rendition");
+    /**
+     * A name
+     * @since 5.5.4
+     */
+    public static final PdfName REPEAT = new PdfName("Repeat");
     /** A name */
     public static final PdfName RESETFORM = new PdfName("ResetForm");
     /** A name */
@@ -1764,6 +1779,11 @@ public class
      * @since 5.4.4
      */
     public static final PdfName ROLE = new PdfName("Role");
+    /**
+     * A name
+     * @since 5.4.4
+     */
+    public static final PdfName RO = new PdfName("RO");
     /** A name */
     public static final PdfName ROLEMAP = new PdfName("RoleMap");
     /** A name */
@@ -1943,6 +1963,10 @@ public class
     public static final PdfName SUBMITFORM = new PdfName("SubmitForm");
     /** A name */
     public static final PdfName SUBTYPE = new PdfName("Subtype");
+    /**
+     * A name
+     */
+    public static final PdfName SUMMARY = new PdfName("Summary");
     /** A name */
     public static final PdfName SUPPLEMENT = new PdfName("Supplement");
     /** A name */

@@ -1,5 +1,5 @@
 /*
- * $Id: ColumnText.java 6192 2014-01-29 14:37:53Z eugenemark $
+ * $Id: ColumnText.java 6631 2014-12-04 11:11:30Z michaeldemey $
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2014 iText Group NV
@@ -44,11 +44,6 @@
  */
 package com.itextpdf.text.pdf;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Stack;
-
 import com.itextpdf.text.*;
 import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.log.Logger;
@@ -57,6 +52,11 @@ import com.itextpdf.text.pdf.PdfPTable.FittingRows;
 import com.itextpdf.text.pdf.draw.DrawInterface;
 import com.itextpdf.text.pdf.interfaces.IAccessibleElement;
 import com.itextpdf.text.pdf.languages.ArabicLigaturizer;
+
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Stack;
 
 /**
  * Formats text in a columnwise form. The text is bound
@@ -180,6 +180,8 @@ public class ColumnText {
     /** The chunks that form the text. */
 //    protected ArrayList chunks = new ArrayList();
     protected BidiLine bidiLine;
+
+    protected boolean isWordSplit;
 
     /** The current y line location. Text will be written at this line minus the leading. */
     protected float yLine;
@@ -879,6 +881,7 @@ public class ColumnText {
     }
 
     public int go(final boolean simulate, final IAccessibleElement elementToGo) throws DocumentException {
+        isWordSplit = false;
         if (composite)
             return goComposite(simulate);
 
@@ -947,6 +950,7 @@ public class ColumnText {
         			break;
         		}
                 line = bidiLine.processLine(leftX, rectangularWidth - firstIndent - rightIndent, alignment, localRunDirection, arabicOptions, minY, yLine, descender);
+                isWordSplit |= bidiLine.isWordSplit();
                 if (line == null) {
                 	status = NO_MORE_TEXT;
                 	break;
@@ -1035,6 +1039,14 @@ public class ColumnText {
                 canvas.add(text);
         }
         return status;
+    }
+
+    /**
+     * Call this after go() to know if any word was split into several lines.
+     * @return
+     */
+    public boolean isWordSplit() {
+        return isWordSplit;
     }
 
     /**
@@ -1335,6 +1347,7 @@ public class ColumnText {
     	linesWritten = 0;
         descender = 0;
         boolean firstPass = true;
+        boolean isRTL = runDirection == PdfWriter.RUN_DIRECTION_RTL;
         main_loop:
         while (true) {
             if (compositeElements.isEmpty())
@@ -1400,6 +1413,7 @@ public class ColumnText {
                     yLine = compositeColumn.yLine;
                     linesWritten += compositeColumn.linesWritten;
                     descender = compositeColumn.descender;
+                    isWordSplit |= compositeColumn.isWordSplit();
                 }
                 currentLeading = compositeColumn.currentLeading;
                 if ((status & NO_MORE_TEXT) != 0) {
@@ -1517,7 +1531,11 @@ public class ColumnText {
                 if (!isTagged(canvas)) {
                     if (!Float.isNaN(compositeColumn.firstLineY) && !compositeColumn.firstLineYDone) {
                         if (!simulate) {
-                            showTextAligned(canvas, Element.ALIGN_LEFT, new Phrase(item.getListSymbol()), compositeColumn.leftX + listIndentation, compositeColumn.firstLineY, 0);
+                            if (isRTL)
+                                showTextAligned(canvas, Element.ALIGN_RIGHT, new Phrase(item.getListSymbol()), compositeColumn.lastX + item.getIndentationLeft(), compositeColumn.firstLineY, 0, runDirection, arabicOptions);
+                            else
+                                showTextAligned(canvas, Element.ALIGN_LEFT, new Phrase(item.getListSymbol()), compositeColumn.leftX + listIndentation, compositeColumn.firstLineY, 0);
+
                         }
                         compositeColumn.firstLineYDone = true;
                     }
@@ -1579,6 +1597,14 @@ public class ColumnText {
 
                 // do we need to skip the header?
                 boolean skipHeader = table.isSkipFirstHeader() && rowIdx <= realHeaderRows && (table.isComplete() || rowIdx != realHeaderRows);
+
+                if (!table.isComplete() ) {
+                    if ( table.getTotalHeight() - headerHeight > yTemp - minY ) {
+                        table.setSkipFirstHeader(false);
+                        return NO_MORE_COLUMN;
+                    }
+                }
+
                 // if not, we wan't to be able to add more than just a header and a footer
                 if (!skipHeader) {
                     yTemp -= headerHeight;
@@ -1689,13 +1715,18 @@ public class ColumnText {
                 if (!simulate) {
                 	// set the alignment
                     switch (table.getHorizontalAlignment()) {
-                        case Element.ALIGN_LEFT:
-                            break;
                         case Element.ALIGN_RIGHT:
-                            x1 += rectangularWidth - tableWidth;
+                            if (!isRTL)
+                                x1 += rectangularWidth - tableWidth;
                             break;
-                        default:
+                        case Element.ALIGN_CENTER:
                             x1 += (rectangularWidth - tableWidth) / 2f;
+                            break ;
+                        case Element.ALIGN_LEFT:
+                        default:
+                            if (isRTL)
+                                x1 += rectangularWidth - tableWidth;
+                            break;
                     }
                     // copy the rows that fit on the page in a new table nt
                     PdfPTable nt = PdfPTable.shallowCopy(table);
@@ -1774,6 +1805,10 @@ public class ColumnText {
                         if (isTagged(canvas)) {
                             canvas.closeMCBlock(table);
                         }
+                    }
+
+                    if ( !table.isComplete() ) {
+                        table.addNumberOfRowsWritten(k);
                     }
 
                     // if the row was split, we copy the content of the last row

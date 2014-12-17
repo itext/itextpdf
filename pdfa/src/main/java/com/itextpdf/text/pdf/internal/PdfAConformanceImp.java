@@ -1,5 +1,5 @@
 /*
- * $Id: PdfAConformanceImp.java 6355 2014-05-07 11:56:03Z achingarev $
+ * $Id: PdfAConformanceImp.java 6593 2014-10-30 15:36:57Z achingarev $
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2014 iText Group NV
@@ -99,6 +99,9 @@ public class PdfAConformanceImp implements PdfAConformance {
                 pdfAChecker = new PdfA3Checker(conformanceLevel);
                 break;
             case ZUGFeRD:
+            case ZUGFeRDComfort:
+            case ZUGFeRDBasic:
+            case ZUGFeRDExtended:
                 pdfAChecker = new ZugferdChecker(conformanceLevel);
                 break;
             default:

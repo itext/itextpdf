@@ -1,5 +1,5 @@
 /*
- * $Id: PdfLine.java 6464 2014-07-10 15:25:20Z eugenemark $
+ * $Id: PdfLine.java 6588 2014-10-29 08:01:38Z asubach $
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2014 iText Group NV
@@ -292,15 +292,17 @@ public class PdfLine {
     float indentLeft() {
         if (isRTL) {
             switch (alignment) {
-                case Element.ALIGN_LEFT:
-                    return left + width;
                 case Element.ALIGN_CENTER:
                     return left + width / 2f;
-                default:
+                case Element.ALIGN_RIGHT:
                     return left;
+                case Element.ALIGN_JUSTIFIED:
+                    return left + (hasToBeJustified() ? 0 : width);
+                case Element.ALIGN_LEFT:
+                default:
+                    return left + width;
             }
-        }
-        else if (this.getSeparatorCount() <= 0) {
+        } else if (this.getSeparatorCount() <= 0) {
             switch (alignment) {
                 case Element.ALIGN_RIGHT:
                     return left + width;

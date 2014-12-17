@@ -1,5 +1,5 @@
 /*
- * $Id: AcroFields.java 6344 2014-04-29 13:06:21Z michaeldemey $
+ * $Id: AcroFields.java 6603 2014-11-07 16:55:39Z blowagie $
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2014 iText Group NV
@@ -2725,7 +2725,7 @@ public class AcroFields {
         }
         for (Object element : button.getKeys()) {
             PdfName key = (PdfName)element;
-            if (key.equals(PdfName.T) || key.equals(PdfName.RECT))
+            if (key.equals(PdfName.T))
                 continue;
             if (key.equals(PdfName.FF))
                 values.put(key, button.get(key));

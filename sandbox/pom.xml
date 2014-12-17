@@ -7,7 +7,7 @@
         <version>1.0.0</version>
     </parent>
     <artifactId>sandbox</artifactId>
-    <version>5.5.3</version>
+    <version>5.5.4</version>
     <name>iText Examples (Sandbox)</name>
     <description>iText Examples (Sandbox)</description>
     <url>http://itextpdf.com</url>
@@ -34,6 +34,22 @@
     </build>
     <dependencies>
         <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcprov-jdk15on</artifactId>
+            <version>1.49</version>
+            <type>jar</type>
+            <scope>compile</scope>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcpkix-jdk15on</artifactId>
+            <version>1.49</version>
+            <type>jar</type>
+            <scope>compile</scope>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.11</version>
@@ -43,17 +59,17 @@
         <dependency>
             <groupId>com.itextpdf</groupId>
             <artifactId>itextpdf</artifactId>
-            <version>5.5.3</version>
+            <version>5.5.4</version>
         </dependency>
         <dependency>
             <groupId>com.itextpdf.tool</groupId>
             <artifactId>xmlworker</artifactId>
-            <version>5.5.3</version>
+            <version>5.5.4</version>
         </dependency>
         <dependency>
             <groupId>com.itextpdf</groupId>
             <artifactId>itext-pdfa</artifactId>
-            <version>5.5.3</version>
+            <version>5.5.4</version>
         </dependency>
         <dependency>
             <groupId>com.itextpdf</groupId>

@@ -1,5 +1,5 @@
 /*
- * $Id: PdfAWriter.java 6420 2014-06-12 06:27:55Z rafhens $
+ * $Id: PdfAWriter.java 6575 2014-10-02 15:03:02Z achingarev $
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2014 iText Group NV
@@ -47,6 +47,7 @@ package com.itextpdf.text.pdf;
 import com.itextpdf.text.DocListener;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.log.Counter;
 import com.itextpdf.text.log.CounterFactory;
@@ -335,5 +336,29 @@ public class PdfAWriter extends PdfWriter {
     public void close() {
         super.close();
         getPdfAChecker().close(this);
+    }
+
+    @Override
+    public PdfAnnotation createAnnotation(Rectangle rect, PdfName subtype) {
+        PdfAnnotation a = super.createAnnotation(rect, subtype);
+        if (!PdfName.POPUP.equals(subtype))
+            a.put(PdfName.F, new PdfNumber(PdfAnnotation.FLAGS_PRINT));
+        return a;
+    }
+
+    @Override
+    public PdfAnnotation createAnnotation(float llx, float lly, float urx, float ury, PdfString title, PdfString content, PdfName subtype) {
+        PdfAnnotation a = super.createAnnotation(llx, lly, urx, ury, title, content, subtype);
+        if (!PdfName.POPUP.equals(subtype))
+            a.put(PdfName.F, new PdfNumber(PdfAnnotation.FLAGS_PRINT));
+        return a;
+    }
+
+    @Override
+    public PdfAnnotation createAnnotation(float llx, float lly, float urx, float ury, PdfAction action, PdfName subtype) {
+        PdfAnnotation a = super.createAnnotation(llx, lly, urx, ury, action, subtype);
+        if (!PdfName.POPUP.equals(subtype))
+            a.put(PdfName.F, new PdfNumber(PdfAnnotation.FLAGS_PRINT));
+        return a;
     }
 }

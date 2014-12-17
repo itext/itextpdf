@@ -1,5 +1,5 @@
 /*
- * $Id: BidiLine.java 6134 2013-12-23 13:15:14Z blowagie $
+ * $Id: BidiLine.java 6565 2014-09-25 09:44:57Z asubach $
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2014 iText Group NV
@@ -44,15 +44,15 @@
  */
 package com.itextpdf.text.pdf;
 
-import java.util.ArrayList;
-
+import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Image;
 import com.itextpdf.text.TabStop;
 import com.itextpdf.text.Utilities;
-import com.itextpdf.text.Chunk;
 import com.itextpdf.text.pdf.draw.DrawInterface;
 import com.itextpdf.text.pdf.draw.LineSeparator;
 import com.itextpdf.text.pdf.languages.ArabicLigaturizer;
+
+import java.util.ArrayList;
 
 /** Does all the line bidirectional processing with PdfChunk assembly.
  *
@@ -85,6 +85,8 @@ public class BidiLine {
     protected int storedIndexChunk = 0;
     protected int storedIndexChunkChar = 0;
     protected int storedCurrentChar = 0;
+
+    protected boolean isWordSplit = false;
 
     protected boolean shortStore;
 //    protected ArabicShaping arabic = new ArabicShaping(ArabicShaping.LETTERS_SHAPE | ArabicShaping.LENGTH_GROW_SHRINK | ArabicShaping.TEXT_DIRECTION_LOGICAL);
@@ -327,6 +329,7 @@ public class BidiLine {
     }
 
     public PdfLine processLine(float leftX, float width, int alignment, int runDirection, int arabicOptions, float minY, float yLine, float descender) {
+        isWordSplit = false;
         this.arabicOptions = arabicOptions;
         save();
         boolean isRTL = runDirection == PdfWriter.RUN_DIRECTION_RTL;
@@ -505,6 +508,8 @@ public class BidiLine {
                 }
             }
         }
+        if (lastSplit == -1)
+            isWordSplit = true;
         if (lastSplit == -1 || lastSplit >= newCurrentChar) {
             // no split point or split point ahead of end
             return new PdfLine(0, originalWidth, width + getWidth(newCurrentChar + 1, currentChar - 1), alignment, false, createArrayOfPdfChunks(oldCurrentChar, newCurrentChar), isRTL);
@@ -517,6 +522,14 @@ public class BidiLine {
             newCurrentChar = currentChar - 1;
         }
         return new PdfLine(0, originalWidth, originalWidth - getWidth(oldCurrentChar, newCurrentChar), alignment, false, createArrayOfPdfChunks(oldCurrentChar, newCurrentChar), isRTL);
+    }
+
+    /**
+     * Call this after processLine() to know if any word was split into several lines.
+     * @return
+     */
+    public boolean isWordSplit() {
+        return isWordSplit;
     }
 
     /** Gets the width of a range of characters.

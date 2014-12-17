@@ -1,5 +1,5 @@
 /*
- * $Id: BarcodeCodabar.java 6134 2013-12-23 13:15:14Z blowagie $
+ * $Id: BarcodeCodabar.java 6629 2014-12-02 15:28:41Z achingarev $
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2014 iText Group NV
@@ -293,6 +293,8 @@ public class BarcodeCodabar extends Barcode{
         }
         return getBarcodeSize();
     }
+
+    // AWT related methods (remove this if you port to Android / GAE)
 
     /** Creates a <CODE>java.awt.Image</CODE>. This image only
      * contains the bars without any text.

@@ -22,7 +22,7 @@ public class AddLinkAnnotation {
     public static void main(String[] args) throws IOException, DocumentException {
         File file = new File(DEST);
         file.getParentFile().mkdirs();
-        new AddLinkAnnotation().manipulatePdf(SRC, DEST);;
+        new AddLinkAnnotation().manipulatePdf(SRC, DEST);
     }
     public void manipulatePdf(String src, String dest) throws IOException, DocumentException {
         PdfReader reader = new PdfReader(src);

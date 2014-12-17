@@ -1,5 +1,5 @@
 /*
- * $Id: StampContent.java 6134 2013-12-23 13:15:14Z blowagie $
+ * $Id: StampContent.java 6575 2014-10-02 15:03:02Z achingarev $
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2014 iText Group NV
@@ -56,7 +56,7 @@ public class StampContent extends PdfContentByte {
     }
     
     public void setAction(PdfAction action, float llx, float lly, float urx, float ury) {
-        ((PdfStamperImp)writer).addAnnotation(new PdfAnnotation(writer, llx, lly, urx, ury, action), ps.pageN);
+        ((PdfStamperImp)writer).addAnnotation(writer.createAnnotation(llx, lly, urx, ury, action, null), ps.pageN);
     }
 
     /**

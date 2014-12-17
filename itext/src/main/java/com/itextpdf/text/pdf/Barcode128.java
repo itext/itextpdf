@@ -1,5 +1,5 @@
 /*
- * $Id: Barcode128.java 6134 2013-12-23 13:15:14Z blowagie $
+ * $Id: Barcode128.java 6559 2014-09-17 08:54:00Z asubach $
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2014 iText Group NV
@@ -43,12 +43,11 @@
  * address: sales@itextpdf.com
  */
 package com.itextpdf.text.pdf;
-import com.itextpdf.text.error_messages.MessageLocalization;
-
+import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.ExceptionConverter;
 import com.itextpdf.text.Rectangle;
-import com.itextpdf.text.BaseColor;
+import com.itextpdf.text.error_messages.MessageLocalization;
 
 /**
  * Implements the code 128 and UCC/EAN-128. Other symbologies are allowed in raw mode.<p>
@@ -239,6 +238,36 @@ public class Barcode128 extends Barcode{
         }
     }
 
+    public enum Barcode128CodeSet {
+        A,
+        B,
+        C,
+        AUTO;
+
+        public char getStartSymbol() {
+            switch (this) {
+                case A:
+                    return START_A;
+                case B:
+                    return START_B;
+                case C:
+                    return START_C;
+                default:
+                    return START_B;
+            }
+        }
+    }
+
+    public void setCodeSet(Barcode128CodeSet codeSet) {
+        this.codeSet = codeSet;
+    }
+
+    public Barcode128CodeSet getCodeSet() {
+        return this.codeSet;
+    }
+
+    private Barcode128CodeSet codeSet = Barcode128CodeSet.AUTO;
+
     /**
      * Removes the FNC1 codes in the text.
      * @param code the text to clean
@@ -356,19 +385,20 @@ public class Barcode128 extends Barcode{
         }
         return (char)(textIndex - start) + out.toString();
     }
-    
+
     /** Converts the human readable text to the characters needed to
-     * create a barcode. Some optimization is done to get the shortest code.
+     * create a barcode using the specified code set.
      * @param text the text to convert
      * @param ucc <CODE>true</CODE> if it is an UCC/EAN-128. In this case
      * the character FNC1 is added
+     * @param codeSet forced code set, or AUTO for optimized barcode.
      * @return the code ready to be fed to getBarsCode128Raw()
-     */    
-    public static String getRawText(String text, boolean ucc) {
+     */
+    public static String getRawText(String text, boolean ucc, Barcode128CodeSet codeSet) {
         String out = "";
         int tLen = text.length();
         if (tLen == 0) {
-            out += START_B;
+            out += codeSet.getStartSymbol();
             if (ucc)
                 out += FNC1_INDEX;
             return out;
@@ -382,7 +412,7 @@ public class Barcode128 extends Barcode{
         c = text.charAt(0);
         char currentCode = START_B;
         int index = 0;
-        if (isNextDigits(text, index, 2)) {
+        if ((codeSet == Barcode128CodeSet.AUTO || codeSet == Barcode128CodeSet.C) && isNextDigits(text, index, 2)) {
             currentCode = START_C;
             out += currentCode;
             if (ucc)
@@ -409,84 +439,96 @@ public class Barcode128 extends Barcode{
                 out += (char)(c - ' ');
             ++index;
         }
+        if (currentCode != codeSet.getStartSymbol())
+            throw new RuntimeException(MessageLocalization.getComposedMessage("there.are.illegal.characters.for.barcode.128.in.1", text));
         while (index < tLen) {
             switch (currentCode) {
-                case START_A:
-                    {
-                        if (isNextDigits(text, index, 4)) {
-                            currentCode = START_C;
-                            out += CODE_AB_TO_C;
-                            String out2 = getPackedRawDigits(text, index, 4);
-                            index += out2.charAt(0);
-                            out += out2.substring(1);
+                case START_A: {
+                    if (codeSet == Barcode128CodeSet.AUTO && isNextDigits(text, index, 4)) {
+                        currentCode = START_C;
+                        out += CODE_AB_TO_C;
+                        String out2 = getPackedRawDigits(text, index, 4);
+                        index += out2.charAt(0);
+                        out += out2.substring(1);
+                    }
+                    else {
+                        c = text.charAt(index++);
+                        if (c == FNC1)
+                            out += FNC1_INDEX;
+                        else if (c > '_') {
+                            currentCode = START_B;
+                            out += CODE_AC_TO_B;
+                            out += (char)(c - ' ');
+                        }
+                        else if (c < ' ')
+                            out += (char)(c + 64);
+                        else
+                            out += (char)(c - ' ');
+                    }
+                }
+                break;
+                case START_B: {
+                    if (codeSet == Barcode128CodeSet.AUTO && isNextDigits(text, index, 4)) {
+                        currentCode = START_C;
+                        out += CODE_AB_TO_C;
+                        String out2 = getPackedRawDigits(text, index, 4);
+                        index += out2.charAt(0);
+                        out += out2.substring(1);
+                    }
+                    else {
+                        c = text.charAt(index++);
+                        if (c == FNC1)
+                            out += FNC1_INDEX;
+                        else if (c < ' ') {
+                            currentCode = START_A;
+                            out += CODE_BC_TO_A;
+                            out += (char)(c + 64);
                         }
                         else {
-                            c = text.charAt(index++);
-                            if (c == FNC1)
-                                out += FNC1_INDEX;
-                            else if (c > '_') {
-                                currentCode = START_B;
-                                out += CODE_AC_TO_B;
-                                out += (char)(c - ' ');
-                            }
-                            else if (c < ' ')
-                                out += (char)(c + 64);
-                            else
-                                out += (char)(c - ' ');
+                            out += (char)(c - ' ');
                         }
                     }
-                    break;
-                case START_B:
-                    {
-                        if (isNextDigits(text, index, 4)) {
-                            currentCode = START_C;
-                            out += CODE_AB_TO_C;
-                            String out2 = getPackedRawDigits(text, index, 4);
-                            index += out2.charAt(0);
-                            out += out2.substring(1);
+                }
+                break;
+                case START_C: {
+                    if (isNextDigits(text, index, 2)) {
+                        String out2 = getPackedRawDigits(text, index, 2);
+                        index += out2.charAt(0);
+                        out += out2.substring(1);
+                    }
+                    else {
+                        c = text.charAt(index++);
+                        if (c == FNC1)
+                            out += FNC1_INDEX;
+                        else if (c < ' ') {
+                            currentCode = START_A;
+                            out += CODE_BC_TO_A;
+                            out += (char)(c + 64);
                         }
                         else {
-                            c = text.charAt(index++);
-                            if (c == FNC1)
-                                out += FNC1_INDEX;
-                            else if (c < ' ') {
-                                currentCode = START_A;
-                                out += CODE_BC_TO_A;
-                                out += (char)(c + 64);
-                            }
-                            else {
-                                out += (char)(c - ' ');
-                            }
+                            currentCode = START_B;
+                            out += CODE_AC_TO_B;
+                            out += (char)(c - ' ');
                         }
                     }
-                    break;
-                case START_C:
-                    {
-                        if (isNextDigits(text, index, 2)) {
-                            String out2 = getPackedRawDigits(text, index, 2);
-                            index += out2.charAt(0);
-                            out += out2.substring(1);
-                        }
-                        else {
-                            c = text.charAt(index++);
-                            if (c == FNC1)
-                                out += FNC1_INDEX;
-                            else if (c < ' ') {
-                                currentCode = START_A;
-                                out += CODE_BC_TO_A;
-                                out += (char)(c + 64);
-                            }
-                            else {
-                                currentCode = START_B;
-                                out += CODE_AC_TO_B;
-                                out += (char)(c - ' ');
-                            }
-                        }
-                    }
-                    break;
+                }
+                break;
             }
+            if (codeSet != Barcode128CodeSet.AUTO && currentCode != codeSet.getStartSymbol())
+                throw new RuntimeException(MessageLocalization.getComposedMessage("there.are.illegal.characters.for.barcode.128.in.1", text));
         }
         return out;
+    }
+    
+    /** Converts the human readable text to the characters needed to
+     * create a barcode. Some optimization is done to get the shortest code.
+     * @param text the text to convert
+     * @param ucc <CODE>true</CODE> if it is an UCC/EAN-128. In this case
+     * the character FNC1 is added
+     * @return the code ready to be fed to getBarsCode128Raw()
+     */    
+    public static String getRawText(String text, boolean ucc) {
+        return getRawText(text, ucc, Barcode128CodeSet.AUTO);
     }
     
     /** Generates the bars. The input has the actual barcodes, not
@@ -545,7 +587,7 @@ public class Barcode128 extends Barcode{
                 fullCode = code;
         }
         else {
-            fullCode = getRawText(code, codeType == CODE128_UCC);
+            fullCode = getRawText(code, codeType == CODE128_UCC, codeSet);
         }
         int len = fullCode.length();
         float fullWidth = (len + 2) * 11 * x + 2 * x;
@@ -616,7 +658,7 @@ public class Barcode128 extends Barcode{
                 bCode = code;
         }
         else {
-            bCode = getRawText(code, codeType == CODE128_UCC);
+            bCode = getRawText(code, codeType == CODE128_UCC, codeSet);
         }
         int len = bCode.length();
         float fullWidth = (len + 2) * 11 * x + 2 * x;

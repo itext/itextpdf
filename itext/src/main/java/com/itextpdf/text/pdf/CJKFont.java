@@ -1,5 +1,5 @@
 /*
- * $Id: CJKFont.java 6134 2013-12-23 13:15:14Z blowagie $
+ * $Id: CJKFont.java 6584 2014-10-24 14:08:55Z achingarev $
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2014 iText Group NV
@@ -57,13 +57,8 @@ import com.itextpdf.text.pdf.fonts.cmaps.CMapUniCid;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Properties;
-import java.util.Set;
-import java.util.StringTokenizer;
 
 /**
  * Creates a CJK font compatible with the fonts in the Adobe Asian font Pack.
@@ -209,14 +204,11 @@ class CJKFont extends BaseFont {
         for (Entry<String,Set<String>> e : registryNames.entrySet()) {
             if (e.getValue().contains(enc)) {
                 registry = e.getKey();
-                break;
+                for (Entry<String, HashMap<String, Object>> e1 : allFonts.entrySet()) {
+                    if (registry.equals(e1.getValue().get("Registry")))
+                        return e1.getKey();
+                }
             }
-        }
-        if (registry == null)
-            return null;
-        for (Entry<String, HashMap<String, Object>> e : allFonts.entrySet()) {
-            if (registry.equals(e.getValue().get("Registry")))
-                return e.getKey();
         }
         return null;
     }

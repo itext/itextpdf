@@ -1,5 +1,5 @@
 /*
- * $Id: PdfGraphics2D.java 6134 2013-12-23 13:15:14Z blowagie $
+ * $Id: PdfGraphics2D.java 6623 2014-11-24 10:43:31Z blagae $
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2014 iText Group NV
@@ -409,45 +409,58 @@ public class PdfGraphics2D extends Graphics2D {
 //            drawGlyphVector(this.font.createGlyphVector(getFontRenderContext(), s), x, y);
         }
         else {
-        	boolean restoreTextRenderingMode = false;
+            boolean restoreTextRenderingMode = false;
+            // we want an untarnished clone of the transformation for use with
+            // underline & strikethrough
             AffineTransform at = getTransform();
+            // this object will be manipulated in case of rotation, skewing, etc.
             AffineTransform at2 = getTransform();
             at2.translate(x, y);
             at2.concatenate(font.getTransform());
             setTransform(at2);
             AffineTransform inverse = this.normalizeMatrix();
-            AffineTransform flipper = AffineTransform.getScaleInstance(1,-1);
+            AffineTransform flipper = AffineTransform.getScaleInstance(1, -1);
             inverse.concatenate(flipper);
-            double[] mx = new double[6];
-            inverse.getMatrix(mx);
             cb.beginText();
             cb.setFontAndSize(baseFont, fontSize);
             // Check if we need to simulate an italic font.
-            // When there are different fonts for italic, bold, italic bold
-            // the font.getName() will be different from the font.getFontName()
-            // value. When they are the same value then we are normally dealing
-            // with a single font that has been made into an italic or bold
-            // font.
-            if (font.isItalic() && font.getFontName().equals(font.getName())) {
+            if (font.isItalic()) {
                 float angle = baseFont.getFontDescriptor(BaseFont.ITALICANGLE, 1000);
                 float angle2 = font.getItalicAngle();
-                // We don't have an italic version of this font so we need
-                // to set the font angle ourselves to produce an italic font.
-                if (angle2 == 0) {
-                    // The JavaVM didn't have an angle setting for making
-                    // the font an italic font so use a default of
-                    // italic angle of 15 degrees.
-                    angle2 = 15.0f;
-                } else {
-                    // This sign of the angle for Java and PDF seams
-                    // seams to be reversed.
-                    angle2 = -angle2;
-                }
-                if (angle == 0) {
-                    mx[2] = angle2 / 100.0f;
+                // When there are different fonts for italic, bold, italic bold
+                // the font.getName() will be different from the font.getFontName()
+                // value. When they are the same value then we are normally dealing
+                // with a single font that has been made into an italic or bold
+                // font. When there are only a plain and a bold font available,
+                // we need to enter this logic too. This should be identifiable
+                // by the baseFont's and font's italic angles being 0.
+                if (font.getFontName().equals(font.getName()) || (angle == 0f && angle2 == 0f)) {
+                    // We don't have an italic version of this font, so we need
+                    // to set the font angle ourselves to produce an italic font.
+                    if (angle2 == 0) {
+                        // The JavaVM didn't find an angle setting for making
+                        // the font an italic font so use a default italic
+                        // angle of 10 degrees.
+                        angle2 = 10.0f;
+                    } else {
+                        // This sign of the angle for Java and PDF
+                        // seems to be reversed.
+                        angle2 = -angle2;
+                    }
+                    if (angle == 0) {
+                        // We need to concatenate the skewing transformation to
+                        // the original ones.
+                        AffineTransform skewing = new AffineTransform();
+                        skewing.setTransform(1f, 0f, (float) Math.tan(angle2 * Math.PI / 180), 1f, 0f, 0f);
+                        inverse.concatenate(skewing);
+                    }
                 }
             }
-            cb.setTextMatrix((float)mx[0], (float)mx[1], (float)mx[2], (float)mx[3], (float)mx[4], (float)mx[5]);
+            // We must wait to fetch the transformation matrix until after the
+            // potential skewing transformation
+            double[] mx = new double[6];
+            inverse.getMatrix(mx);
+            cb.setTextMatrix((float) mx[0], (float) mx[1], (float) mx[2], (float) mx[3], (float) mx[4], (float) mx[5]);
             Float fontTextAttributeWidth = (Float)font.getAttributes().get(TextAttribute.WIDTH);
             fontTextAttributeWidth = fontTextAttributeWidth == null
                                      ? TextAttribute.WIDTH_REGULAR
@@ -459,35 +472,34 @@ public class PdfGraphics2D extends Graphics2D {
             // Do nothing if the BaseFont is already bold. This test is not foolproof but it will work most of the times.
             if (baseFont.getPostscriptFontName().toLowerCase().indexOf("bold") < 0) {
                 // Get the weight of the font so we can detect fonts with a weight
-                // that makes them bold, but the Font.isBold() value is false.
+                // that makes them bold, while there is only a single font file.
                 Float weight = (Float) font.getAttributes().get(TextAttribute.WEIGHT);
                 if (weight == null) {
                     weight = font.isBold() ? TextAttribute.WEIGHT_BOLD
                                              : TextAttribute.WEIGHT_REGULAR;
                 }
-                if ((font.isBold() || weight.floatValue() >= TextAttribute.WEIGHT_SEMIBOLD.floatValue())
-                    && font.getFontName().equals(font.getName())) {
+                if (font.isBold()
+                        && (weight.floatValue() >= TextAttribute.WEIGHT_SEMIBOLD.floatValue()
+                        || font.getFontName().equals(font.getName()))) {
                     // Simulate a bold font.
-                    float strokeWidth = font.getSize2D() * (weight.floatValue() - TextAttribute.WEIGHT_REGULAR.floatValue()) / 30f;
-                    if (strokeWidth != 1) {
-                        if(realPaint instanceof Color){
-                            cb.setTextRenderingMode(PdfContentByte.TEXT_RENDER_MODE_FILL_STROKE);
-                            cb.setLineWidth(strokeWidth);
-                            Color color = (Color)realPaint;
-                            int alpha = color.getAlpha();
-                            if (alpha != currentStrokeGState) {
-                                currentStrokeGState = alpha;
-                                PdfGState gs = strokeGState[alpha];
-                                if (gs == null) {
-                                    gs = new PdfGState();
-                                    gs.setStrokeOpacity(alpha / 255f);
-                                    strokeGState[alpha] = gs;
-                                }
-                                cb.setGState(gs);
+                    float strokeWidth = font.getSize2D() * (weight.floatValue() - TextAttribute.WEIGHT_REGULAR.floatValue()) / 20f;
+                    if(realPaint instanceof Color){
+                        cb.setTextRenderingMode(PdfContentByte.TEXT_RENDER_MODE_FILL_STROKE);
+                        cb.setLineWidth(strokeWidth);
+                        Color color = (Color)realPaint;
+                        int alpha = color.getAlpha();
+                        if (alpha != currentStrokeGState) {
+                            currentStrokeGState = alpha;
+                            PdfGState gs = strokeGState[alpha];
+                            if (gs == null) {
+                                gs = new PdfGState();
+                                gs.setStrokeOpacity(alpha / 255f);
+                                strokeGState[alpha] = gs;
                             }
-                            cb.setColorStroke(new BaseColor(color.getRGB()));
-                            restoreTextRenderingMode = true;
+                            cb.setGState(gs);
                         }
+                        cb.setColorStroke(new BaseColor(color.getRGB()));
+                        restoreTextRenderingMode = true;
                     }
                 }
             }
@@ -532,16 +544,19 @@ public class PdfGraphics2D extends Graphics2D {
 
             cb.endText();
             setTransform(at);
-            if(underline) {
+            if (underline) {
                 // These two are supposed to be taken from the .AFM file
                 //int UnderlinePosition = -100;
                 int UnderlineThickness = 50;
                 //
-                double d = asPoints(UnderlineThickness, (int)fontSize);
+                double d = asPoints(UnderlineThickness, (int) fontSize);
                 Stroke savedStroke = originalStroke;
-                setStroke(new BasicStroke((float)d));
-                y = (float)(y + asPoints(UnderlineThickness, (int)fontSize));
-                Line2D line = new Line2D.Double(x, y, width+x, y);
+                setStroke(new BasicStroke((float) d));
+                // Setting of the underline must be 2 times the d-value, 
+                // otherwise it might be too close to the text
+                // esp. in case of a manually created bold font.
+                float lineY = (float) (y + d * 2);
+                Line2D line = new Line2D.Double(x, lineY, width + x, lineY);
                 draw(line);
                 setStroke(savedStroke);
             }

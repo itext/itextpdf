@@ -1,5 +1,5 @@
 /*
- * $Id: PdfReader.java 6551 2014-09-10 09:47:44Z rafhens $
+ * $Id: PdfReader.java 6624 2014-11-28 13:43:58Z michaeldemey $
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2014 iText Group NV
@@ -1425,6 +1425,10 @@ public class PdfReader implements PdfViewerPreferences {
             tokens.seek(pos - 1);
             if (tokens.read() == 10)
             	streamLength--;
+
+            if ( streamLength < 0 ) {
+                streamLength = 0;
+            }
         }
         stream.setLength((int)streamLength);
     }

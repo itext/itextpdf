@@ -1,5 +1,5 @@
 /*
- * $Id: Version.java 6557 2014-09-16 13:14:25Z achingarev $
+ * $Id: Version.java 6643 2014-12-12 12:49:12Z achingarev $
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2014 iText Group NV
@@ -68,7 +68,7 @@ public final class Version {
 	 * This String contains the version number of this iText release.
 	 * For debugging purposes, we request you NOT to change this constant.
 	 */
-	private String release = "5.5.3";
+	private String release = "5.5.4";
 	/**
 	 * This String contains the iText version as shown in the producer line.
 	 * iText is a product developed by iText Group NV.

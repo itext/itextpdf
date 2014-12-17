@@ -1,5 +1,5 @@
 /*
- * $Id: FdfWriter.java 6404 2014-05-26 15:43:23Z pavel-alay $
+ * $Id: FdfWriter.java 6575 2014-10-02 15:03:02Z achingarev $
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2014 iText Group NV
@@ -303,7 +303,7 @@ public class FdfWriter {
     }
 
     public boolean setFieldAsJavascript(String field, PdfName jsTrigName, String js) {
-        PdfAnnotation dict = new PdfAnnotation(wrt, null);
+        PdfAnnotation dict = wrt.createAnnotation(null, null);
         PdfAction javascript = PdfAction.javaScript(js, wrt);
         dict.put(jsTrigName, javascript);
         return setField(field, dict);

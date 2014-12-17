@@ -1,5 +1,5 @@
 /*
- * $Id: BaseFont.java 6134 2013-12-23 13:15:14Z blowagie $
+ * $Id: BaseFont.java 6582 2014-10-24 09:59:17Z achingarev $
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2014 iText Group NV
@@ -893,7 +893,7 @@ public abstract class BaseFont {
         }
         else {
             int total = 0;
-            byte mbytes[] = convertToBytes((char)char1);
+            byte mbytes[] = convertToBytes(/*(char)*/char1);
             for (int k = 0; k < mbytes.length; ++k)
                 total += widths[0xff & mbytes[k]];
             return total;

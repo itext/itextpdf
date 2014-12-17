@@ -10,7 +10,7 @@
     <artifactId>itextpdf</artifactId>
     <packaging>jar</packaging>
     <name>iText, a Free Java-PDF library</name>
-    <version>5.5.3</version>
+    <version>5.5.4</version>
     <description>iText, a free Java-PDF library</description>
     <!-- General Info -->
     <url>http://itextpdf.com</url>
@@ -91,6 +91,21 @@
                 </includes>
             </resource>
         </resources>
+        <testResources>
+            <testResource>
+                <directory>src/main/resources</directory>
+                <includes>
+                    <include>com/itextpdf/text/pdf/fonts/cmaps/**</include>
+                    <include>**/cmap_info.txt</include>
+                </includes>
+            </testResource>
+            <testResource>
+                <directory>src/test/resources</directory>
+                <includes>
+                    <include>**/*.*</include>
+                </includes>
+            </testResource>
+        </testResources>
         <plugins>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>

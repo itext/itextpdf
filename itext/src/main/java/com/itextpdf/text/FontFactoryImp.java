@@ -1,5 +1,5 @@
 /*
- * $Id: FontFactoryImp.java 6134 2013-12-23 13:15:14Z blowagie $
+ * $Id: FontFactoryImp.java 6581 2014-10-21 13:06:38Z eugenemark $
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2014 iText Group NV
@@ -189,19 +189,10 @@ public class FontFactoryImp implements FontProvider {
         }
         BaseFont basefont = null;
         try {
-            try {
-                // the font is a type 1 font or CJK font
-                basefont = BaseFont.createFont(fontname, encoding, embedded, cached, null, null, true);
-            }
-            catch(DocumentException de) {
-            }
+            basefont = getBaseFont(fontname, encoding, embedded, cached);
             if (basefont == null) {
-                // the font is a true type font or an unknown font
-                fontname = trueTypeFonts.get(fontname.toLowerCase());
                 // the font is not registered as truetype font
-                if (fontname == null) return new Font(FontFamily.UNDEFINED, size, style, color);
-                // the font is registered as truetype font
-                basefont = BaseFont.createFont(fontname, encoding, embedded, cached, null, null);
+                return new Font(FontFamily.UNDEFINED, size, style, color);
             }
         }
         catch(DocumentException de) {
@@ -217,6 +208,24 @@ public class FontFactoryImp implements FontProvider {
             return new Font(FontFamily.UNDEFINED, size, style, color);
         }
         return new Font(basefont, size, style, color);
+    }
+
+    protected BaseFont getBaseFont(String fontname, final String encoding, final boolean embedded, final boolean cached) throws IOException, DocumentException {
+        BaseFont basefont = null;
+            try {
+                // the font is a type 1 font or CJK font
+                basefont = BaseFont.createFont(fontname, encoding, embedded, cached, null, null, true);
+            } catch (DocumentException de) {
+            }
+            if (basefont == null) {
+                // the font is a true type font or an unknown font
+                fontname = trueTypeFonts.get(fontname.toLowerCase());
+                // the font is not registered as truetype font
+                if (fontname != null)
+                    basefont = BaseFont.createFont(fontname, encoding, embedded, cached, null, null);
+            }
+
+        return basefont;
     }
 
 /**

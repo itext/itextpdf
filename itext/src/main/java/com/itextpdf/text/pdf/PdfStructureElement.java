@@ -1,5 +1,5 @@
 /*
- * $Id: PdfStructureElement.java 6330 2014-04-10 13:03:21Z eugenemark $
+ * $Id: PdfStructureElement.java 6637 2014-12-09 14:03:18Z blagae $
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2014 iText Group NV
@@ -240,8 +240,11 @@ public class PdfStructureElement extends PdfDictionary implements IPdfStructureE
     }
 
     public void writeAttributes(final IAccessibleElement element) {
-        if (top.getWriter().getPdfVersion().getVersion() < PdfWriter.VERSION_1_7)
-            return;
+// I do remember that these lines were necessary to avoid creation of files which are not valid from Acrobat 10 preflight perspective.
+// Now it seems that in Acrobat 11 there's no such problem (I think Acrobat 10 behavior can be considered as a bug) and we can remove those lines.
+//        if (top.getWriter().getPdfVersion().getVersion() < PdfWriter.VERSION_1_7)
+//            return;
+
         if (element instanceof ListItem) {
             writeAttributes((ListItem)element);
         } else if (element instanceof Paragraph) {
@@ -527,6 +530,7 @@ public class PdfStructureElement extends PdfDictionary implements IPdfStructureE
 
     private void writeAttributes(final PdfPTable table) {
         if (table != null) {
+            this.setAttribute(PdfName.O, PdfName.TABLE);
             // Setting non-inheritable attributes
             if (Float.compare(table.getSpacingBefore(), 0f) != 0)
                 this.setAttribute(PdfName.SPACEBEFORE, new PdfNumber(table.getSpacingBefore()));
@@ -539,6 +543,9 @@ public class PdfStructureElement extends PdfDictionary implements IPdfStructureE
             }
             if (table.getTotalWidth() > 0){
                 this.setAttribute(PdfName.WIDTH, new PdfNumber(table.getTotalWidth()));
+            }
+            if (table.getSummary() != null) {
+                this.setAttribute(PdfName.SUMMARY, new PdfString(table.getSummary()));
             }
         }
     }

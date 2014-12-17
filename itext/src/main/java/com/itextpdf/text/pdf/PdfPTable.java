@@ -1,5 +1,5 @@
 /*
- * $Id: PdfPTable.java 6326 2014-03-28 10:16:52Z michaeldemey $
+ * $Id: PdfPTable.java 6636 2014-12-08 13:18:43Z blagae $
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2014 iText Group NV
@@ -164,6 +164,11 @@ public class PdfPTable implements LargeElement, Spaceable, IAccessibleElement {
     protected float spacingAfter;
 
     /**
+     * A textual summary of the table's contents, in Tagged PDF.
+     */
+    private String summary;
+
+    /**
      * Holds value of property extendLastRow.
      */
     private boolean[] extendLastRow = {false, false};
@@ -212,6 +217,8 @@ public class PdfPTable implements LargeElement, Spaceable, IAccessibleElement {
     private PdfPTableHeader header = null;
     private PdfPTableBody body = null;
     private PdfPTableFooter footer = null;
+
+    private int numberOfWrittenRows;
 
 
 	protected PdfPTable() {
@@ -1249,6 +1256,14 @@ public class PdfPTable implements LargeElement, Spaceable, IAccessibleElement {
         }
     }
 
+    public String getSummary() {
+        return summary;
+    }
+
+    public void setSummary(final String summary) {
+        this.summary = summary;
+    }
+
     /**
      * Gets the width percentage that the table will occupy in the page.
      *
@@ -1790,7 +1805,21 @@ public class PdfPTable implements LargeElement, Spaceable, IAccessibleElement {
      */
     public void flushContent() {
         deleteBodyRows();
-        setSkipFirstHeader(true);
+
+        // setSkipFirstHeader(boolean) shouldn't be set to true if the table hasn't been added yet.
+        if ( this.numberOfWrittenRows > 0 ) {
+            setSkipFirstHeader(true);
+        }
+    }
+
+    /**
+     * Adds the number of written rows to the counter.
+     *
+     * @param numberOfWrittenRows number of newly written rows
+     * @since 5.5.4
+     */
+    void addNumberOfRowsWritten(final int numberOfWrittenRows) {
+        this.numberOfWrittenRows += numberOfWrittenRows;
     }
 
     /**

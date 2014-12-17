@@ -1,5 +1,5 @@
 /*
- * $Id: PdfContentStreamProcessor.java 6134 2013-12-23 13:15:14Z blowagie $
+ * $Id: PdfContentStreamProcessor.java 6582 2014-10-24 09:59:17Z achingarev $
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2014 iText Group NV
@@ -287,18 +287,6 @@ public class PdfContentStreamProcessor {
     }
 
     /**
-     * Decodes a PdfString (which will contain glyph ids encoded in the font's encoding)
-     * based on the active font, and determine the unicode equivalent
-     * @param in	the String that needs to be encoded
-     * @return	the encoded String
-     * @since 2.1.7
-     */
-    private String decode(PdfString in){
-        byte[] bytes = in.getBytes();
-        return gs().font.decode(bytes, 0, bytes.length);
-    }
-
-    /**
      * Used to trigger beginTextBlock on the renderListener
      */
     private void beginText(){
@@ -318,9 +306,7 @@ public class PdfContentStreamProcessor {
      */
     private void displayPdfString(PdfString string){
 
-        String unicode = decode(string);
-
-        TextRenderInfo renderInfo = new TextRenderInfo(unicode, gs(), textMatrix, markedContentStack);
+        TextRenderInfo renderInfo = new TextRenderInfo(string, gs(), textMatrix, markedContentStack);
 
         renderListener.renderText(renderInfo);
 
