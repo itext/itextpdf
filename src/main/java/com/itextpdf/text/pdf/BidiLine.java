@@ -642,14 +642,14 @@ public class BidiLine {
         int first = idx;
         // forward
         for (; last < totalTextLength; ++last) {
-            if (!Character.isLetter(text[last]))
+            if (!Character.isLetter(text[last]) && !Character.isDigit(text[first]))
                 break;
         }
         if (last == idx)
             return null;
         // backward
         for (; first >= startIdx; --first) {
-            if (!Character.isLetter(text[first]))
+            if (!Character.isLetter(text[first]) && !Character.isDigit(text[first]))
                 break;
         }
         ++first;
