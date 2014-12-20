@@ -718,6 +718,21 @@ public class AcroFields {
     }
 
     PdfAppearance getAppearance(PdfDictionary merged, String values[], String fieldName) throws IOException, DocumentException {
+        PdfName fieldType = merged.getAsName(PdfName.FT);
+
+        if (PdfName.BTN.equals(fieldType)) {
+            RadioCheckField field = new RadioCheckField(writer, null, null, null);
+            decodeGenericDictionary(merged, field);
+            //rect
+            PdfArray rect = merged.getAsArray(PdfName.RECT);
+            Rectangle box = PdfReader.getNormalizedRectangle(rect);
+            if (field.getRotation() == 90 || field.getRotation() == 270)
+                box = box.rotate();
+            field.setBox(box);
+            field.setCheckType(RadioCheckField.TYPE_CROSS);
+            return field.getAppearance(false, !(merged.getAsName(PdfName.AS).equals(PdfName.Off)));
+        }
+
         topFirst = 0;
         String text = values.length > 0 ? values[0] : null;
 
@@ -741,7 +756,6 @@ public class AcroFields {
             tx = fieldCache.get(fieldName);
             tx.setWriter(writer);
         }
-        PdfName fieldType = merged.getAsName(PdfName.FT);
         if (PdfName.TX.equals(fieldType)) {
             if (values.length > 0 && values[0] != null) {
                 tx.setText(values[0]);
@@ -1519,6 +1533,14 @@ public class AcroFields {
                 else {
                     merged.put(PdfName.AS, PdfName.Off);
                     widget.put(PdfName.AS, PdfName.Off);
+                }
+                if (generateAppearances) {
+                    PdfAppearance app = getAppearance(merged, display, name);
+                    if (normal != null)
+                        normal.put(merged.getAsName(PdfName.AS), app.getIndirectReference());
+                    else
+                        appDic.put(PdfName.N, app.getIndirectReference());
+                    writer.releaseTemplate(app);
                 }
             }
             return true;
