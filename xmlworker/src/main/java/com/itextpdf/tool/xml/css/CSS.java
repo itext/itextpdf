@@ -76,6 +76,10 @@ public final class CSS {
 		public static final String MARGIN_TOP = "margin-top";
 		public static final String MARGIN_BOTTOM = "margin-bottom";
 		public static final String BORDER = "border";
+        public static final String BORDER_LEFT = "border-left";
+        public static final String BORDER_TOP = "border-top";
+        public static final String BORDER_RIGHT = "border-right";
+        public static final String BORDER_BOTTOM = "border-bottom";
 		public static final String BORDER_WIDTH = "border-width";
 		public static final String BORDER_STYLE = "border-style";
 		public static final String BORDER_COLOR = "border-color";
