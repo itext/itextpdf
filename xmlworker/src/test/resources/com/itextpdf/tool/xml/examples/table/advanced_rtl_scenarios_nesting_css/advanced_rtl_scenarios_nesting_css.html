@@ -1,0 +1,60 @@
+<html>
+  <head>
+    <title>Document</title>
+    <meta charset="UTF-8"/>
+    <style type="text/css">
+      * {font-family:'FreeSerif';
+      font-size:12;
+      }
+    </style>
+  </head>
+  <body>
+	<h1>Advanced nested table scenarios with style="direction:rtl;"</h1>
+    <p>This table has a table-wide RTL setting in the CSS property. However, the first row is overridden to be LTR, which must also be the default for the nested table. In the nested table, both entries in column 2 are overridden to be RTL, while both entries in column 1 use the default LTR.</p>
+	<p>In the other rows, following cells are RTL: R2C2, R3C2, R4C2.</p>
+    <table style="direction:rtl;">
+      <thead><tr>
+        <td>Column 1</td>
+        <td>Column 2</td>
+      </tr></thead>
+      <tbody>
+        <tr style="direction:ltr;">
+          <td><b><p><table style="border: 1px solid black;border-collapse: separate;">
+						<thead>
+						  <tr>
+							<td>Column 1</td>
+							<td>Column 2</td>
+						  </tr>
+						</thead>
+						<tbody>
+						  <tr>
+						    <td><p>فايرفوكس.</p></td>
+						    <td style="direction:rtl;"><p>فايرفوكس.</p></td>
+						  </tr>
+						  <tr style="direction:rtl;">
+						    <td style="direction:ltr;"><p>فايرفوكس.</p></td>
+						    <td><p>فايرفوكس.</p></td>
+						  </tr>
+						</tbody>
+          </table></p></b></td>
+          <td><p>افضل تصفح هذا الموقع بواسطة فايرفوكس.</p></td>
+        </tr>
+        <tr>
+          <td style="direction:rtl;"><p>افضل تصفح هذا الموقع بواسطة فايرفوكس.</p></td>
+          <td><p>افضل تصفح هذا الموقع بواسطة فايرفوكس.</p></td>
+        </tr>
+        <tr style="direction:rtl;">
+          <td><p>افضل تصفح هذا الموقع بواسطة فايرفوكس.</p></td>
+          <td style="direction:ltr;"><p>افضل تصفح هذا الموقع بواسطة فايرفوكس.</p></td>
+        </tr>
+        <tr>
+          <td><p>This site is best viewed with Firefox.</p></td>
+          <td style="direction:rtl;"><p>This site is best viewed with Firefox.</p></td>
+        </tr>
+      </tbody>
+    </table>
+	<br/>
+	<br/>
+	<br/>
+  </body>
+</html>

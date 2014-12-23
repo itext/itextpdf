@@ -148,7 +148,7 @@ public final class CSS {
 		public static final String RIGHT = "right";
 		public static final String BOTTOM = "bottom";
 		public static final String FLOAT = "float";
-        public static final String DIR = "dir";
+                public static final String DIRECTION = "direction";
 	}
 
 	/**

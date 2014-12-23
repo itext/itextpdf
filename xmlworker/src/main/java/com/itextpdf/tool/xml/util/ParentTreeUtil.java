@@ -57,18 +57,36 @@ import com.itextpdf.tool.xml.html.HTML;
  */
 public class ParentTreeUtil {
 	
-	/**
-	 * creates a parentTree of all parents of a given Tag
-	 * 
-	 * @param t Tag the tag where you want to know it's parentTree of
-	 * @return parentTree a arrayList<String> containing the parents of Tag t
-	 */
-	public List<String> getParentTree(Tag t){
-		List<String> parentTree = new ArrayList<String>();
-		while(t.getParent()!=null&&!(t.getParent().getName().equals(HTML.Tag.BODY))){
-			parentTree.add(t.getParent().getName());
-			t=t.getParent();
-		}
-		return parentTree;
-	}
+    /**
+     * creates a parentTree of all parents of a given Tag
+     * 
+     * @param t Tag the tag where you want to know it's parentTree of
+     * @return parentTree a arrayList<String> containing the parents of Tag t
+     */
+    public List<String> getParentTree(Tag t){
+        List<String> parentTree = new ArrayList<String>();
+        Tag parent = t.getParent();
+        while(parent!=null&&!(parent.getName().equals(HTML.Tag.BODY))){
+            parentTree.add(parent.getName());
+            parent = parent.getParent();
+        }
+        return parentTree;
+    }
+
+    /**
+     * creates a parentTree of all parent Tag objects of a given Tag
+     * 
+     * @param tag Tag the tag where you want to know it's parentTree of
+     * @param tree
+     * @return parentTree arrayList<Tag> containing the parent tags of Tag t
+     */
+    public List<Tag> getParentTagTree(final Tag tag, final List<Tag> tree) {
+        List<Tag> parentTree = new ArrayList<Tag>();
+        Tag parent = tag.getParent();
+        while (parent != null && !(parent.getName().equals(HTML.Tag.HTML))) {
+            parentTree.add(parent);
+            parent = parent.getParent();
+        }
+        return parentTree;
+    }
 }
