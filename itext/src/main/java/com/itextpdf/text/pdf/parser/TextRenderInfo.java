@@ -426,7 +426,9 @@ public class TextRenderInfo {
                 value += b[i] & 0xff;
                 value <<= 8;
             }
-            value += b[b.length - 1] & 0xff;
+            if (b.length > 0) {
+                value += b[b.length - 1] & 0xff;
+            }
             return value;
         } catch (UnsupportedEncodingException e) {
         }
