@@ -62,7 +62,7 @@ public abstract class RenderFilter {
     /**
      * 
      * @param renderInfo
-     * @return true is the image render operation should be performed
+     * @return true if the image render operation should be performed
      */
     public boolean allowImage(ImageRenderInfo renderInfo){
         return true;

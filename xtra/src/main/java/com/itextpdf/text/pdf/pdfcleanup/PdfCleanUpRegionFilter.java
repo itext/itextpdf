@@ -24,17 +24,14 @@ public class PdfCleanUpRegionFilter extends RenderFilter {
     public boolean allowText(TextRenderInfo renderInfo) {
         LineSegment ascent = renderInfo.getAscentLine();
         LineSegment descent = renderInfo.getDescentLine();
-        Vector startPoint = new Vector((ascent.getStartPoint().get(0) + descent.getStartPoint().get(0)) / 2,
-                (ascent.getStartPoint().get(1) + descent.getStartPoint().get(1)) / 2, 0);
-        Vector endPoint = new Vector((ascent.getEndPoint().get(0) + descent.getEndPoint().get(0)) / 2,
-                (ascent.getEndPoint().get(1) + descent.getEndPoint().get(1)) / 2, 0);
-        float x1 = startPoint.get(Vector.I1);
-        float y1 = startPoint.get(Vector.I2);
-        float x2 = endPoint.get(Vector.I1);
-        float y2 = endPoint.get(Vector.I2);
-        Rectangle r1 = new Rectangle(Math.min(x1, x2), Math.min(y1, y2), Math.max(x1, x2), Math.max(y1, y2));
+
+        Rectangle r1 = new Rectangle(Math.min(descent.getStartPoint().get(0), descent.getEndPoint().get(0)),
+                descent.getStartPoint().get(1),
+                Math.max(descent.getStartPoint().get(0), descent.getEndPoint().get(0)),
+                ascent.getEndPoint().get(1));
         Rectangle r2 = rectangle;
-        return b(r1, r2);
+
+        return intersect(r1, r2);
     }
 
     /**
@@ -73,6 +70,11 @@ public class PdfCleanUpRegionFilter extends RenderFilter {
             return false;
     }
 
+    private boolean intersect(Rectangle r1, Rectangle r2) {
+        return (r1.getLeft() < r2.getRight() && r1.getRight() > r2.getLeft() &&
+                r1.getBottom() < r2.getTop() && r1.getTop() > r2.getBottom());
+    }
+
     /**
      * Checks if r1 is completely inside r2.
      *
@@ -100,6 +102,4 @@ public class PdfCleanUpRegionFilter extends RenderFilter {
                 max = num;
         return max;
     }
-
-
 }

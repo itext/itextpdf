@@ -84,7 +84,7 @@ public class PdfContentStreamProcessor {
 	 */
     public static final String DEFAULTOPERATOR = "DefaultOperator";
 
-	/** A map with all supported operators operators (PDF syntax). */
+	/** A map with all supported operators (PDF syntax). */
     final private Map<String, ContentOperator> operators;
     /** Resources for the content stream. */
     private ResourceDictionary resources;

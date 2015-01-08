@@ -6,6 +6,7 @@ import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.PdfStamper;
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.File;
@@ -39,7 +40,10 @@ public class PdfCleanUpProcessorTest {
 
         String cmp = "./src/test/resources/com/itextpdf/text/pdf/pdfcleanup/cmp_page229_01.pdf";
         CompareTool cmpTool = new CompareTool();
-        org.junit.Assert.assertNull(cmpTool.compareByContent(output, cmp, "./target/test/com/itextpdf/text/pdf/pdfcleanup", "diff"));
+        String errorMessage = cmpTool.compareByContent(output, cmp, "./target/test/com/itextpdf/text/pdf/pdfcleanup", "diff");
+        if (errorMessage != null) {
+            Assert.fail(errorMessage);
+        }
     }
 
     @Test
@@ -59,7 +63,10 @@ public class PdfCleanUpProcessorTest {
 
         String cmp = "./src/test/resources/com/itextpdf/text/pdf/pdfcleanup/cmp_page166_03.pdf";
         CompareTool cmpTool = new CompareTool();
-        org.junit.Assert.assertNull(cmpTool.compareByContent(output, cmp, "./target/test/com/itextpdf/text/pdf/pdfcleanup", "diff"));
+        String errorMessage = cmpTool.compareByContent(output, cmp, "./target/test/com/itextpdf/text/pdf/pdfcleanup", "diff");
+        if (errorMessage != null) {
+            Assert.fail(errorMessage);
+        }
     }
 
     @Test
@@ -79,7 +86,10 @@ public class PdfCleanUpProcessorTest {
 
         String cmp = "./src/test/resources/com/itextpdf/text/pdf/pdfcleanup/cmp_page166_04.pdf";
         CompareTool cmpTool = new CompareTool();
-        org.junit.Assert.assertNull(cmpTool.compareByContent(output, cmp, "./target/test/com/itextpdf/text/pdf/pdfcleanup", "diff"));
+        String errorMessage = cmpTool.compareByContent(output, cmp, "./target/test/com/itextpdf/text/pdf/pdfcleanup", "diff");
+        if (errorMessage != null) {
+            Assert.fail(errorMessage);
+        }
     }
 
     @Test
@@ -99,6 +109,9 @@ public class PdfCleanUpProcessorTest {
 
         String cmp = "./src/test/resources/com/itextpdf/text/pdf/pdfcleanup/cmp_hello_05.pdf";
         CompareTool cmpTool = new CompareTool();
-        org.junit.Assert.assertNull(cmpTool.compareByContent(output, cmp, "./target/test/com/itextpdf/text/pdf/pdfcleanup", "diff"));
+        String errorMessage = cmpTool.compareByContent(output, cmp, "./target/test/com/itextpdf/text/pdf/pdfcleanup", "diff");
+        if (errorMessage != null) {
+            Assert.fail(errorMessage);
+        }
     }
 }
