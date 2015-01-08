@@ -201,16 +201,18 @@ public class Table extends AbstractTagProcessor {
 					int colspan = cell.getColspan();
 					if (cell.getFixedWidth() != 0) {
 						float fixedWidth = cell.getFixedWidth() + getCellStartWidth(cell);
-						fixedWidth /= colspan;
-						for (int i = 0; i < colspan; i++) {
-							int c = column + i;
-                            // Contribution made by Arnost Havelka (Asseco)
-                            if (c > numberOfColumns - 1) {
-                                break;
-                            }
-							if (fixedWidth > fixedWidths[c]) {
-								fixedWidths[c] = fixedWidth;
-								columnWidths[c] = fixedWidth;
+						float colSpanWidthSum = 0;
+						int nonZeroColspanCols = 0;
+						// Contribution made by Arnost Havelka (Asseco) (modified)
+						for (int c = column; c < column + colspan && c < numberOfColumns; c++) {
+							colSpanWidthSum += fixedWidths[c];
+							if (fixedWidths[c] != 0)
+								nonZeroColspanCols++;
+						}
+						for (int c = column; c < column + colspan && c < numberOfColumns; c++) {
+							if (fixedWidths[c] == 0) {
+								fixedWidths[c] = (fixedWidth - colSpanWidthSum) / (colspan - nonZeroColspanCols);
+								columnWidths[c] = (fixedWidth - colSpanWidthSum) / (colspan - nonZeroColspanCols);
 							}
 						}
 					}
