@@ -114,11 +114,23 @@ public class DocumentFont extends BaseFont {
         font = (PdfDictionary)PdfReader.getPdfObject(refFont);
         init();
     }
+    /** Creates a new instance of DocumentFont */
+    DocumentFont(PRIndirectReference refFont, PdfDictionary drEncoding) {
+        this.refFont = refFont;
+        font = (PdfDictionary)PdfReader.getPdfObject(refFont);
+        if (font.getAsName(PdfName.ENCODING) == null
+                && drEncoding != null) {
+            for (PdfName key : drEncoding.getKeys()) {
+                font.put(PdfName.ENCODING, drEncoding.get(key));
+            }
+        }
+        init();
+    }
 
     public PdfDictionary getFontDictionary() {
         return font;
     } 
-
+    
     private void init() {
         encoding = "";
         fontSpecific = false;

@@ -582,14 +582,14 @@ public class AcroFields {
             if (dab[DA_COLOR] != null)
                 tx.setTextColor((BaseColor)dab[DA_COLOR]);
             if (dab[DA_FONT] != null) {
-                PdfDictionary font = merged.getAsDict(PdfName.DR);
-                if (font != null) {
-                    font = font.getAsDict(PdfName.FONT);
+                PdfDictionary dr = merged.getAsDict(PdfName.DR);
+                if (dr != null) {
+                    PdfDictionary font = dr.getAsDict(PdfName.FONT);
                     if (font != null) {
                         PdfObject po = font.get(new PdfName((String)dab[DA_FONT]));
                         if (po != null && po.type() == PdfObject.INDIRECT) {
                             PRIndirectReference por = (PRIndirectReference)po;
-                            BaseFont bp = new DocumentFont((PRIndirectReference)po);
+                            BaseFont bp = new DocumentFont((PRIndirectReference)po, dr.getAsDict(PdfName.ENCODING));
                             tx.setFont(bp);
                             Integer porkey = Integer.valueOf(por.getNumber());
                             BaseFont porf = extensionFonts.get(porkey);
