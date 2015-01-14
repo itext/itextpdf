@@ -33,7 +33,7 @@ public class TextRenderInfoTest {
          * Japanese. TextRenderInfo threw an AIOOBE for some characters.
          * @throws java.lang.Exception
          * @since 5.5.5-SNAPSHOT
-         * 
+         */
         @Test
         public void testUnicodeEmptyString() throws Exception {
             StringBuilder sb = new StringBuilder();
@@ -52,7 +52,7 @@ public class TextRenderInfoTest {
                     + "\u30a9\u30fc\u30de\u30f3\u30b9\u306f\u0053\uff06\u0050"
                     + "\u0035\u0030\u0030\u6307\u6570\u3092\u4e0a\u56de\u308b";
             Assert.assertEquals(result, origText);
-        }*/ // TODO: awaiting clearance from customer
+        }
 
 	private static class CharacterPositionRenderListener implements TextExtractionStrategy{
 
