@@ -72,9 +72,7 @@ public class PdfCleanUpContentOperator implements ContentOperator {
             if (chunks.size() > 0 && chunks.get(0).isImage() && !chunks.get(0).isVisible())
                 disableOutput = true;
         } else if ("Tc".equals(operator.toString())) {
-            cleanUpStrategy.getContext().setCharSpacing((PdfNumber)operands.get(0));
-        } else if ("\"".equals(operator.toString())) {
-            cleanUpStrategy.getContext().setCharSpacing((PdfNumber)operands.get(1));
+            cleanUpStrategy.getContext().setCharSpacing((PdfNumber) operands.get(0));
         } else if (textShowingOperators.contains(operator.toString()) && !allChunksAreVisible(cleanUpStrategy.getChunks())) {
             disableOutput = true;
             if (operator.toString().equals("'")) {
@@ -84,24 +82,30 @@ public class PdfCleanUpContentOperator implements ContentOperator {
                 canvas.getInternalBuffer().append(Tw);
                 operands.get(1).toPdf(canvas.getPdfWriter(), canvas.getInternalBuffer());
                 canvas.getInternalBuffer().append(TcTStar);
-                cleanUpStrategy.getContext().setCharSpacing((PdfNumber)operands.get(1));
+                cleanUpStrategy.getContext().setCharSpacing((PdfNumber) operands.get(1));
             }
             canvas.setCharacterSpacing(0);
             canvas.getInternalBuffer().append((byte) '[');
             PdfCleanUpContentChunk prevChunk = null;
+            float shift = 0;
             for (PdfCleanUpContentChunk chunk : chunks) {
                 if (prevChunk != null) {
-                    canvas.getInternalBuffer().append(-(chunk.getStartX() - prevChunk.getEndX()) * 1000 / chunk.getSize()).append(' ');
+                    shift = shift + (-(chunk.getStartX() - prevChunk.getEndX()) * 1000 / chunk.getSize());
                 }
                 if (chunk.isVisible()) {
+                    if (shift != 0)
+                        canvas.getInternalBuffer().append(shift).append(' ');
                     chunk.getString().toPdf(canvas.getPdfWriter(), canvas.getInternalBuffer());
                     canvas.getInternalBuffer().append(' ');
+                    shift = 0;
                 } else {
                     float length = chunk.getEndX() - chunk.getStartX();
-                    canvas.getInternalBuffer().append(-length * 1000 / chunk.getSize()).append(' ');
+                    shift = shift + -length * 1000 / chunk.getSize();
                 }
                 prevChunk = chunk;
             }
+            if (shift != 0)
+                canvas.getInternalBuffer().append(shift);
             canvas.getInternalBuffer().append(TJ);
             cleanUpStrategy.getContext().getCharSpacing().toPdf(canvas.getPdfWriter(), canvas.getInternalBuffer());
             canvas.getInternalBuffer().append(Tc);
@@ -129,11 +133,11 @@ public class PdfCleanUpContentOperator implements ContentOperator {
         if (object instanceof PdfDictionary) {
             os.write('<');
             os.write('<');
-            List<PdfName> keys = new ArrayList<PdfName>(((PdfDictionary)object).getKeys());
+            List<PdfName> keys = new ArrayList<PdfName>(((PdfDictionary) object).getKeys());
             Collections.sort(keys);
             for (PdfName key : keys) {
                 toPdf(key, writer, os);
-                PdfObject value = ((PdfDictionary)object).get(key);
+                PdfObject value = ((PdfDictionary) object).get(key);
                 int type = value.type();
                 if (type != PdfObject.ARRAY && type != PdfObject.DICTIONARY && type != PdfObject.NAME && type != PdfObject.STRING)
                     os.write(' ');

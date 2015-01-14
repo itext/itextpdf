@@ -2,6 +2,7 @@ package com.itextpdf.text.pdf.pdfcleanup;
 
 import com.itextpdf.testutils.CompareTool;
 import com.itextpdf.text.BaseColor;
+import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.pdf.PdfReader;
@@ -24,6 +25,7 @@ public class PdfCleanUpProcessorTest {
         PdfReader reader = new PdfReader(input);
         FileOutputStream fos = new FileOutputStream(output);
         PdfStamper stamper = new PdfStamper(reader, fos);
+        Document.compress = false;
 
         List<PdfCleanUpLocation> cleanUpLocations = new ArrayList<PdfCleanUpLocation>();
         cleanUpLocations.add(new PdfCleanUpLocation(1, new Rectangle(240.0f, 602.3f, 275.7f, 614.8f), BaseColor.GRAY));
