@@ -1,6 +1,7 @@
 package com.itextpdf.text.pdf.pdfcleanup;
 
 import com.itextpdf.text.DocWriter;
+import com.itextpdf.text.Image;
 import com.itextpdf.text.pdf.*;
 import com.itextpdf.text.pdf.parser.ContentOperator;
 import com.itextpdf.text.pdf.parser.PdfContentStreamProcessor;
@@ -69,8 +70,19 @@ public class PdfCleanUpContentOperator implements ContentOperator {
             canvas = cleanUpStrategy.getContext().getCanvas();
         }
         if ("Do".equals(operator.toString())) {
-            if (chunks.size() > 0 && chunks.get(0).isImage() && !chunks.get(0).isVisible())
+            if (chunks.size() > 0 && chunks.get(0).isImage()) {
+                PdfCleanUpContentChunk chunk = chunks.get(0);
+
+                if (chunk.isVisible()) {
+                    PdfDictionary xObjResources = cleanUpStrategy.getContext().getResources().getAsDict(PdfName.XOBJECT);
+                    xObjResources.remove((PdfName) operands.get(0));
+
+                    Image image = Image.getInstance(chunk.getNewImageData());
+                    cleanUpStrategy.getContext().getCanvas().addImage(image, 1, 0, 0, 1, 0, 0);
+                }
+
                 disableOutput = true;
+            }
         } else if ("Tc".equals(operator.toString())) {
             cleanUpStrategy.getContext().setCharSpacing((PdfNumber) operands.get(0));
         } else if (textShowingOperators.contains(operator.toString()) && !allChunksAreVisible(cleanUpStrategy.getChunks())) {
@@ -109,6 +121,8 @@ public class PdfCleanUpContentOperator implements ContentOperator {
             canvas.getInternalBuffer().append(TJ);
             cleanUpStrategy.getContext().getCharSpacing().toPdf(canvas.getPdfWriter(), canvas.getInternalBuffer());
             canvas.getInternalBuffer().append(Tc);
+        } else if ("\"".equals(operator.toString())) {
+            cleanUpStrategy.getContext().setCharSpacing((PdfNumber) operands.get(1));
         }
         if (!disableOutput) {
             int index = 0;

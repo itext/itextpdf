@@ -9,109 +9,75 @@ import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.PdfStamper;
 import org.junit.Assert;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.*;
 
+@RunWith(Parameterized.class)
 public class PdfCleanUpProcessorTest {
 
-    @Test
-    public void cleanUpTest01() throws IOException, DocumentException, InterruptedException {
-        String input = "./src/test/resources/com/itextpdf/text/pdf/pdfcleanup/page229.pdf";
-        String output = "./target/test/com/itextpdf/text/pdf/pdfcleanup/page229_01.pdf";
-        new File(output).getParentFile().mkdirs();
-        PdfReader reader = new PdfReader(input);
-        FileOutputStream fos = new FileOutputStream(output);
-        PdfStamper stamper = new PdfStamper(reader, fos);
-        Document.compress = false;
+    private static final String INPUT_PATH = "./src/test/resources/com/itextpdf/text/pdf/pdfcleanup/";
+    private static final String OUTPUT_PATH = "./target/test/com/itextpdf/text/pdf/pdfcleanup/";
 
-        List<PdfCleanUpLocation> cleanUpLocations = new ArrayList<PdfCleanUpLocation>();
-        cleanUpLocations.add(new PdfCleanUpLocation(1, new Rectangle(240.0f, 602.3f, 275.7f, 614.8f), BaseColor.GRAY));
-        cleanUpLocations.add(new PdfCleanUpLocation(1, new Rectangle(171.3f, 550.3f, 208.4f, 562.8f), BaseColor.GRAY));
-        cleanUpLocations.add(new PdfCleanUpLocation(1, new Rectangle(270.7f, 459.2f, 313.1f, 471.7f), BaseColor.GRAY));
-        cleanUpLocations.add(new PdfCleanUpLocation(1, new Rectangle(249.9f, 329.3f, 279.6f, 341.8f), BaseColor.GRAY));
-        cleanUpLocations.add(new PdfCleanUpLocation(1, new Rectangle(216.2f, 303.3f, 273.0f, 315.8f), BaseColor.GRAY));
-        PdfCleanUpProcessor cleaner = new PdfCleanUpProcessor(cleanUpLocations, stamper);
-        cleaner.cleanUp();
+    private String input;
+    private String output;
+    private String cmp;
+    private List<PdfCleanUpLocation> cleanUpLocations;
 
-        stamper.close();
-        fos.close();
-        reader.close();
+    public PdfCleanUpProcessorTest(Object inputFileName, Object outputFileName, Object cmpFileName, Object cleanUpLocations) {
+        this.input = INPUT_PATH + inputFileName;
+        this.output = OUTPUT_PATH + outputFileName;
+        this.cmp = INPUT_PATH + cmpFileName;
+        this.cleanUpLocations = (List<PdfCleanUpLocation>) cleanUpLocations;
+    }
 
-        String cmp = "./src/test/resources/com/itextpdf/text/pdf/pdfcleanup/cmp_page229_01.pdf";
-        CompareTool cmpTool = new CompareTool();
-        String errorMessage = cmpTool.compareByContent(output, cmp, "./target/test/com/itextpdf/text/pdf/pdfcleanup", "diff");
-        if (errorMessage != null) {
-            Assert.fail(errorMessage);
-        }
+    @Parameterized.Parameters
+    public static Collection<Object[]> data() {
+        List<PdfCleanUpLocation> cleanUpLocations1 = Arrays.asList(new PdfCleanUpLocation(1, new Rectangle(240.0f, 602.3f, 275.7f, 614.8f), BaseColor.GRAY),
+                                                                   new PdfCleanUpLocation(1, new Rectangle(171.3f, 550.3f, 208.4f, 562.8f), BaseColor.GRAY),
+                                                                   new PdfCleanUpLocation(1, new Rectangle(270.7f, 459.2f, 313.1f, 471.7f), BaseColor.GRAY),
+                                                                   new PdfCleanUpLocation(1, new Rectangle(249.9f, 329.3f, 279.6f, 341.8f), BaseColor.GRAY),
+                                                                   new PdfCleanUpLocation(1, new Rectangle(216.2f, 303.3f, 273.0f, 315.8f), BaseColor.GRAY));
+
+        return Arrays.asList(new Object[][] {{"page229.pdf", "page229_01.pdf", "cmp_page229_01.pdf", cleanUpLocations1},
+                                             {"page166_03.pdf", "page166_03.pdf", "cmp_page166_03.pdf", null},
+                                             {"page166_04.pdf", "page166_04.pdf", "cmp_page166_04.pdf", null},
+                                             {"hello_05.pdf", "hello_05.pdf", "cmp_hello_05.pdf", null},
+                                             {"BigImage-jpg.pdf", "BigImage-jpg.pdf", "cmp_BigImage-jpg.pdf", null},
+                                             {"BigImage-png.pdf", "BigImage-png.pdf", "cmp_BigImage-png.pdf", null},
+                                             {"BigImage-tif.pdf", "BigImage-tif.pdf", "cmp_BigImage-tif.pdf", null},
+                                             {"BigImage-tif-lzw.pdf", "BigImage-tif-lzw.pdf", "cmp_BigImage-tif-lzw.pdf", null}});
     }
 
     @Test
-    public void cleanUpTest02() throws IOException, DocumentException, InterruptedException {
-        String input = "./src/test/resources/com/itextpdf/text/pdf/pdfcleanup/page166_03.pdf";
-        String output = "./target/test/com/itextpdf/text/pdf/pdfcleanup/page166_03.pdf";
-        new File(output).getParentFile().mkdirs();
-        PdfReader reader = new PdfReader(input);
-        FileOutputStream fos = new FileOutputStream(output);
-        PdfStamper stamper = new PdfStamper(reader, fos);
-        PdfCleanUpProcessor cleaner = new PdfCleanUpProcessor(stamper);
-        cleaner.cleanUp();
+    public void cleanUp() throws IOException, DocumentException, InterruptedException {
+        cleanUp(input, output, cleanUpLocations);
+        compareByContent(cmp, output, OUTPUT_PATH, "diff");
 
-        stamper.close();
-        fos.close();
-        reader.close();
-
-        String cmp = "./src/test/resources/com/itextpdf/text/pdf/pdfcleanup/cmp_page166_03.pdf";
-        CompareTool cmpTool = new CompareTool();
-        String errorMessage = cmpTool.compareByContent(output, cmp, "./target/test/com/itextpdf/text/pdf/pdfcleanup", "diff");
-        if (errorMessage != null) {
-            Assert.fail(errorMessage);
-        }
     }
 
-    @Test
-    public void cleanUpTest03() throws IOException, DocumentException, InterruptedException {
-        String input = "./src/test/resources/com/itextpdf/text/pdf/pdfcleanup/page166_04.pdf";
-        String output = "./target/test/com/itextpdf/text/pdf/pdfcleanup/page166_04.pdf";
+    private void cleanUp(String input, String output, List<PdfCleanUpLocation> cleanUpLocations) throws IOException, DocumentException {
         new File(output).getParentFile().mkdirs();
         PdfReader reader = new PdfReader(input);
         FileOutputStream fos = new FileOutputStream(output);
         PdfStamper stamper = new PdfStamper(reader, fos);
-        PdfCleanUpProcessor cleaner = new PdfCleanUpProcessor(stamper);
+
+        PdfCleanUpProcessor cleaner = (cleanUpLocations == null)? new PdfCleanUpProcessor(stamper) : new PdfCleanUpProcessor(cleanUpLocations, stamper);
         cleaner.cleanUp();
 
         stamper.close();
         fos.close();
         reader.close();
-
-        String cmp = "./src/test/resources/com/itextpdf/text/pdf/pdfcleanup/cmp_page166_04.pdf";
-        CompareTool cmpTool = new CompareTool();
-        String errorMessage = cmpTool.compareByContent(output, cmp, "./target/test/com/itextpdf/text/pdf/pdfcleanup", "diff");
-        if (errorMessage != null) {
-            Assert.fail(errorMessage);
-        }
     }
 
-    @Test
-    public void cleanUpTest04() throws IOException, DocumentException, InterruptedException {
-        String input = "./src/test/resources/com/itextpdf/text/pdf/pdfcleanup/hello_05.pdf";
-        String output = "./target/test/com/itextpdf/text/pdf/pdfcleanup/hello_05.pdf";
-        new File(output).getParentFile().mkdirs();
-        PdfReader reader = new PdfReader(input);
-        FileOutputStream fos = new FileOutputStream(output);
-        PdfStamper stamper = new PdfStamper(reader, fos);
-        PdfCleanUpProcessor cleaner = new PdfCleanUpProcessor(stamper);
-        cleaner.cleanUp();
-
-        stamper.close();
-        fos.close();
-        reader.close();
-
-        String cmp = "./src/test/resources/com/itextpdf/text/pdf/pdfcleanup/cmp_hello_05.pdf";
+    private void compareByContent(String cmp, String output, String targetDir, String operation) throws DocumentException, InterruptedException, IOException {
         CompareTool cmpTool = new CompareTool();
-        String errorMessage = cmpTool.compareByContent(output, cmp, "./target/test/com/itextpdf/text/pdf/pdfcleanup", "diff");
+        String errorMessage = cmpTool.compareByContent(output, cmp, targetDir, operation);
+
         if (errorMessage != null) {
             Assert.fail(errorMessage);
         }

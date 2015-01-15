@@ -1363,12 +1363,13 @@ public class PdfContentByte {
      */
     public void addImage(final Image image, final float a, final float b, final float c, final float d, final float e, final float f, final boolean inlineImage) throws DocumentException {
         try {
+            AffineTransform transform = new AffineTransform(a, b, c, d, e, f);
+
             if (image.getLayer() != null)
                 beginLayer(image.getLayer());
             if (isTagged()) {
                 if (inText)
                     endText();
-                AffineTransform transform = new AffineTransform(a, b, c, d, e, f);
                 Point2D[] src = new Point2D.Float[] {new Point2D.Float(0, 0), new Point2D.Float(1, 0), new Point2D.Float(1, 1), new Point2D.Float(0, 1)};
                 Point2D[] dst = new Point2D.Float[4];
                 transform.transform(src, 0, dst, 0, 4);
@@ -1402,12 +1403,16 @@ public class PdfContentByte {
             }
             else {
                 content.append("q ");
-                content.append(a).append(' ');
-                content.append(b).append(' ');
-                content.append(c).append(' ');
-                content.append(d).append(' ');
-                content.append(e).append(' ');
-                content.append(f).append(" cm");
+
+                if (!transform.isIdentity()) {
+                    content.append(a).append(' ');
+                    content.append(b).append(' ');
+                    content.append(c).append(' ');
+                    content.append(d).append(' ');
+                    content.append(e).append(' ');
+                    content.append(f).append(" cm");
+                }
+
                 if (inlineImage) {
                     content.append("\nBI\n");
                     PdfImage pimage = new PdfImage(image, "", null);

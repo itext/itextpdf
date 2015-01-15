@@ -5,6 +5,7 @@ import com.itextpdf.awt.geom.Point;
 import com.itextpdf.awt.geom.Point2D;
 import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.pdf.parser.*;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 public class PdfCleanUpRegionFilter extends RenderFilter {
 
@@ -21,7 +22,7 @@ public class PdfCleanUpRegionFilter extends RenderFilter {
      * @return
      */
     @Override
-    public boolean allowText(TextRenderInfo renderInfo) {
+    public boolean allowText(TextRenderInfo renderInfo) { // TODO: a little bit confusing name regarding to logic, isn't it?
         LineSegment ascent = renderInfo.getAscentLine();
         LineSegment descent = renderInfo.getDescentLine();
 
@@ -34,17 +35,44 @@ public class PdfCleanUpRegionFilter extends RenderFilter {
         return intersect(r1, r2);
     }
 
-    /**
-     * Checks if the image is inside render filter region.
-     *
-     * @param renderInfo
-     * @return
-     */
     @Override
     public boolean allowImage(ImageRenderInfo renderInfo) {
+        throw new NotImplementedException();
+    }
+
+    /**
+     * Calculates intersection of the image and the render filter region in the coordinate system relative to image.
+     * The transformed coordinate system here is the coordinate system center of which is in (image.leftX, image.topY) and
+     * y' = -y
+     *
+     * @return intersection
+     */
+    public PdfCleanUpCoveredArea intersection(ImageRenderInfo renderInfo) {
+        Rectangle imageRect = calcImageRect(renderInfo);
+
+        if (imageRect == null) {
+            return null;
+        }
+
+        Rectangle intersectionRect = intersection(imageRect, rectangle);
+        Rectangle transformedIntersection = null;
+
+        if (intersectionRect != null) {
+            transformedIntersection = shearCoordinatesAndInverseY(imageRect.getLeft(), imageRect.getTop(), intersectionRect);
+        }
+
+        return new PdfCleanUpCoveredArea(transformedIntersection, imageRect.equals(intersectionRect));
+    }
+
+    private boolean intersect(Rectangle r1, Rectangle r2) {
+        return (r1.getLeft() < r2.getRight() && r1.getRight() > r2.getLeft() &&
+                r1.getBottom() < r2.getTop() && r1.getTop() > r2.getBottom());
+    }
+
+    private Rectangle calcImageRect(ImageRenderInfo renderInfo) {
         Matrix ctm = renderInfo.getImageCTM();
         if (ctm == null)
-            return false;
+            return null;
         AffineTransform t = new AffineTransform(ctm.get(0), ctm.get(1), ctm.get(3), ctm.get(4), ctm.get(6), ctm.get(7));
         Point2D p1 = t.transform(new Point(0, 0), null);
         Point2D p2 = t.transform(new Point(0, 1), null);
@@ -56,35 +84,29 @@ public class PdfCleanUpRegionFilter extends RenderFilter {
         double bottom = min(ys);
         double right = max(xs);
         double top = max(ys);
-        Rectangle r1 = new Rectangle((float) left, (float) bottom, (float) right, (float) top);
-        Rectangle r2 = rectangle;
-        return b(r1, r2);
-    }
 
-    public boolean allowObject(Object renderInfo) {
-        if (renderInfo instanceof TextRenderInfo)
-            return allowText((TextRenderInfo)renderInfo);
-        else if (renderInfo instanceof ImageRenderInfo)
-            return allowImage((ImageRenderInfo)renderInfo);
-        else
-            return false;
-    }
-
-    private boolean intersect(Rectangle r1, Rectangle r2) {
-        return (r1.getLeft() < r2.getRight() && r1.getRight() > r2.getLeft() &&
-                r1.getBottom() < r2.getTop() && r1.getTop() > r2.getBottom());
+        return new Rectangle((float) left, (float) bottom, (float) right, (float) top);
     }
 
     /**
-     * Checks if r1 is completely inside r2.
-     *
-     * @param r1
-     * @param r2
-     * @return
+     * @return null if the intersection is empty, {@link com.itextpdf.text.Rectangle} representing intersection otherwise
      */
-    private boolean b(Rectangle r1, Rectangle r2) {
-        return r1.getLeft() >= r2.getLeft() && r1.getBottom() >= r2.getBottom() && r1.getRight() <= r2.getRight() &&
-                r1.getTop() <= r2.getTop();
+    private Rectangle intersection(Rectangle rect1, Rectangle rect2) {
+        com.itextpdf.awt.geom.Rectangle awtRect1 = new com.itextpdf.awt.geom.Rectangle(rect1);
+        com.itextpdf.awt.geom.Rectangle awtRect2 = new com.itextpdf.awt.geom.Rectangle(rect2);
+        com.itextpdf.awt.geom.Rectangle awtIntersection = awtRect1.intersection(awtRect2);
+
+        return awtIntersection.isEmpty() ? null : new Rectangle(awtIntersection);
+    }
+
+    private Rectangle shearCoordinatesAndInverseY(float dx, float dy, Rectangle rect) {
+        AffineTransform affineTransform = new AffineTransform(1, 0, 0, -1, -dx, dy);
+
+        Point2D leftBottom = affineTransform.transform(new Point(rect.getLeft(), rect.getBottom()), null);
+        Point2D rightTop = affineTransform.transform(new Point(rect.getRight(), rect.getTop()), null);
+
+        return new Rectangle((float) leftBottom.getX(), (float) leftBottom.getY(),
+                             (float) rightTop.getX(), (float) rightTop.getY());
     }
 
     private double min(double[] numbers) {

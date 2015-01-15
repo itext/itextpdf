@@ -1,6 +1,5 @@
 package com.itextpdf.text.pdf.pdfcleanup;
 
-import com.itextpdf.text.pdf.DocumentFont;
 import com.itextpdf.text.pdf.PdfString;
 import com.itextpdf.text.pdf.parser.Vector;
 
@@ -13,6 +12,8 @@ public class PdfCleanUpContentChunk {
     private float startX = 0;
     private float endX = 0;
 
+    private byte[] newImageData;
+
     public PdfCleanUpContentChunk(PdfString string, Vector startLocation, Vector endLocation, float size, boolean visible) {
         this.string = string;
         this.size = size;
@@ -21,9 +22,10 @@ public class PdfCleanUpContentChunk {
         this.visible = visible;
     }
 
-    public PdfCleanUpContentChunk(boolean visible) {
-        image = true;
+    public PdfCleanUpContentChunk(boolean visible, byte[] newImageData) {
+        this.image = true;
         this.visible = visible;
+        this.newImageData = newImageData;
     }
 
     public float getSize() {
@@ -48,5 +50,9 @@ public class PdfCleanUpContentChunk {
 
     public float getEndX() {
         return endX;
+    }
+
+    public byte[] getNewImageData() {
+        return newImageData;
     }
 }
