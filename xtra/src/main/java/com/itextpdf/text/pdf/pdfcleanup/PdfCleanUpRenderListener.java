@@ -38,14 +38,18 @@ public class PdfCleanUpRenderListener implements RenderListener {
     }
 
     public void renderText(TextRenderInfo renderInfo) {
+        PdfCleanUpContext context = contextStack.peek();
+
         for (TextRenderInfo ri : renderInfo.getCharacterRenderInfos()) {
             boolean textIsInsideRegion = textIsInsideRegion(ri);
             LineSegment baseline = ri.getBaseline();
-            LineSegment ascent = ri.getAscentLine();
-            LineSegment descent = ri.getDescentLine();
-            float y1 = descent.getStartPoint().get(1);
-            float y2 = ascent.getStartPoint().get(1);
-            chunks.add(new PdfCleanUpContentChunk(ri.getPdfString(), baseline.getStartPoint(), baseline.getEndPoint(), Math.abs(y2 - y1), !textIsInsideRegion));
+            float chunkSize = context.getFontSize().floatValue();
+
+            if (context.getTextMatrix() != null) {
+                chunkSize *= context.getTextMatrix().get(Matrix.I22);
+            }
+
+            chunks.add(new PdfCleanUpContentChunk(ri.getPdfString(), baseline.getStartPoint(), baseline.getEndPoint(), chunkSize, !textIsInsideRegion));
         }
     }
 
@@ -225,6 +229,9 @@ public class PdfCleanUpRenderListener implements RenderListener {
         protected PdfContentByte canvas = null;
         protected PdfNumber charSpacing = new PdfNumber(0);
 
+        protected PdfNumber fontSize;
+        protected Matrix textMatrix;
+
         public PdfCleanUpContext(PdfDictionary resources, PdfContentByte canvas) {
             this.resources = resources;
             this.canvas = canvas;
@@ -242,8 +249,32 @@ public class PdfCleanUpRenderListener implements RenderListener {
             return charSpacing;
         }
 
+        public Matrix getTextMatrix() {
+            return textMatrix;
+        }
+
+        public PdfNumber getFontSize() {
+            return fontSize;
+        }
+
         public void setCharSpacing(PdfNumber charSpacing) {
             this.charSpacing = charSpacing;
+        }
+
+        public void setResources(PdfDictionary resources) {
+            this.resources = resources;
+        }
+
+        public void setCanvas(PdfContentByte canvas) {
+            this.canvas = canvas;
+        }
+
+        public void setFontSize(PdfNumber fontSize) {
+            this.fontSize = fontSize;
+        }
+
+        public void setTextMatrix(Matrix textMatrix) {
+            this.textMatrix = textMatrix;
         }
     }
 

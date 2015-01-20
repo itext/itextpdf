@@ -4,6 +4,7 @@ import com.itextpdf.text.DocWriter;
 import com.itextpdf.text.Image;
 import com.itextpdf.text.pdf.*;
 import com.itextpdf.text.pdf.parser.ContentOperator;
+import com.itextpdf.text.pdf.parser.Matrix;
 import com.itextpdf.text.pdf.parser.PdfContentStreamProcessor;
 
 import java.io.IOException;
@@ -60,7 +61,17 @@ public class PdfCleanUpContentOperator implements ContentOperator {
                     }
                 }
             }
+        } else if ("Tf".equals(operator.toString())) {
+            cleanUpStrategy.getContext().setFontSize((PdfNumber) operands.get(1));
+        } else if ("Tm".equals(operator.toString())) {
+            cleanUpStrategy.getContext().setTextMatrix(new Matrix(((PdfNumber) operands.get(0)).floatValue(),
+                                                                  ((PdfNumber) operands.get(1)).floatValue(),
+                                                                  ((PdfNumber) operands.get(2)).floatValue(),
+                                                                  ((PdfNumber) operands.get(3)).floatValue(),
+                                                                  ((PdfNumber) operands.get(4)).floatValue(),
+                                                                  ((PdfNumber) operands.get(5)).floatValue()));
         }
+
         originalContentOperator.invoke(pdfContentStreamProcessor, operator, operands);
         List<PdfCleanUpContentChunk> chunks = cleanUpStrategy.getChunks();
         boolean disableOutput = false;
