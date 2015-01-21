@@ -4,7 +4,6 @@ import com.itextpdf.text.DocWriter;
 import com.itextpdf.text.Image;
 import com.itextpdf.text.pdf.*;
 import com.itextpdf.text.pdf.parser.ContentOperator;
-import com.itextpdf.text.pdf.parser.Matrix;
 import com.itextpdf.text.pdf.parser.PdfContentStreamProcessor;
 
 import java.io.IOException;
@@ -47,9 +46,11 @@ public class PdfCleanUpContentOperator implements ContentOperator {
     }
 
     public void invoke(PdfContentStreamProcessor pdfContentStreamProcessor, PdfLiteral operator, ArrayList<PdfObject> operands) throws Exception {
+        String operatorStr = operator.toString();
         PdfContentByte canvas = cleanUpStrategy.getContext().getCanvas();
         PRStream xFormStream = null;
-        if ("Do".equals(operator.toString())) {
+
+        if ("Do".equals(operatorStr)) {
             if (operands.size() == 2 && operands.get(0).isName()) {
                 PdfDictionary xObjResources = cleanUpStrategy.getContext().getResources().getAsDict(PdfName.XOBJECT);
                 if (xObjResources != null) {
@@ -61,15 +62,16 @@ public class PdfCleanUpContentOperator implements ContentOperator {
                     }
                 }
             }
-        } else if ("Tf".equals(operator.toString())) {
-            cleanUpStrategy.getContext().setFontSize((PdfNumber) operands.get(1));
-        } else if ("Tm".equals(operator.toString())) {
-            cleanUpStrategy.getContext().setTextMatrix(new Matrix(((PdfNumber) operands.get(0)).floatValue(),
-                                                                  ((PdfNumber) operands.get(1)).floatValue(),
-                                                                  ((PdfNumber) operands.get(2)).floatValue(),
-                                                                  ((PdfNumber) operands.get(3)).floatValue(),
-                                                                  ((PdfNumber) operands.get(4)).floatValue(),
-                                                                  ((PdfNumber) operands.get(5)).floatValue()));
+        } else if ("ET".equals(operatorStr)) {
+            cleanUpStrategy.getContext().resetTextMatrixElement22();
+        } else if ("q".equals(operatorStr)) {
+            cleanUpStrategy.getContext().saveGraphicsState();
+        } else if ("Q".equals(operatorStr)) {
+            cleanUpStrategy.getContext().restoreGraphicsState();
+        } else if ("Tf".equals(operatorStr)) {
+            cleanUpStrategy.getContext().setFontSize(((PdfNumber) operands.get(1)).floatValue());
+        } else if ("Tm".equals(operatorStr)) {
+            cleanUpStrategy.getContext().setTextMatrixElement22(((PdfNumber) operands.get(3)).floatValue());
         }
 
         originalContentOperator.invoke(pdfContentStreamProcessor, operator, operands);
@@ -80,7 +82,7 @@ public class PdfCleanUpContentOperator implements ContentOperator {
             cleanUpStrategy.popContext();
             canvas = cleanUpStrategy.getContext().getCanvas();
         }
-        if ("Do".equals(operator.toString())) {
+        if ("Do".equals(operatorStr)) {
             if (chunks.size() > 0 && chunks.get(0).isImage()) {
                 PdfCleanUpContentChunk chunk = chunks.get(0);
 
@@ -94,18 +96,18 @@ public class PdfCleanUpContentOperator implements ContentOperator {
 
                 disableOutput = true;
             }
-        } else if ("Tc".equals(operator.toString())) {
-            cleanUpStrategy.getContext().setCharSpacing((PdfNumber) operands.get(0));
-        } else if (textShowingOperators.contains(operator.toString()) && !allChunksAreVisible(cleanUpStrategy.getChunks())) {
+        } else if ("Tc".equals(operatorStr)) {
+            cleanUpStrategy.getContext().setCharacterSpacing(((PdfNumber) operands.get(0)).floatValue());
+        } else if (textShowingOperators.contains(operatorStr) && !allChunksAreVisible(cleanUpStrategy.getChunks())) {
             disableOutput = true;
-            if (operator.toString().equals("'")) {
+            if (operatorStr.equals("'")) {
                 canvas.getInternalBuffer().append(TStar);
-            } else if ("\"".equals(operator.toString())) {
+            } else if ("\"".equals(operatorStr)) {
                 operands.get(0).toPdf(canvas.getPdfWriter(), canvas.getInternalBuffer());
                 canvas.getInternalBuffer().append(Tw);
                 operands.get(1).toPdf(canvas.getPdfWriter(), canvas.getInternalBuffer());
                 canvas.getInternalBuffer().append(TcTStar);
-                cleanUpStrategy.getContext().setCharSpacing((PdfNumber) operands.get(1));
+                cleanUpStrategy.getContext().setCharacterSpacing(((PdfNumber) operands.get(1)).floatValue());
             }
             canvas.setCharacterSpacing(0);
             canvas.getInternalBuffer().append((byte) '[');
@@ -130,10 +132,15 @@ public class PdfCleanUpContentOperator implements ContentOperator {
             if (shift != 0)
                 canvas.getInternalBuffer().append(shift);
             canvas.getInternalBuffer().append(TJ);
-            cleanUpStrategy.getContext().getCharSpacing().toPdf(canvas.getPdfWriter(), canvas.getInternalBuffer());
-            canvas.getInternalBuffer().append(Tc);
-        } else if ("\"".equals(operator.toString())) {
-            cleanUpStrategy.getContext().setCharSpacing((PdfNumber) operands.get(1));
+
+            float characterSpacing = cleanUpStrategy.getContext().getCharacterSpacing();
+
+            if (characterSpacing != 0) {
+                new PdfNumber(characterSpacing).toPdf(canvas.getPdfWriter(), canvas.getInternalBuffer());
+                canvas.getInternalBuffer().append(Tc);
+            }
+        } else if ("\"".equals(operatorStr)) {
+            cleanUpStrategy.getContext().setCharacterSpacing(((PdfNumber) operands.get(1)).floatValue());
         }
         if (!disableOutput) {
             int index = 0;
@@ -153,7 +160,7 @@ public class PdfCleanUpContentOperator implements ContentOperator {
         return true;
     }
 
-    //Overriding standard PdfObject.toPdf because we need sorted PdfDictionaries.
+    // Overriding standard PdfObject.toPdf because we need sorted PdfDictionaries.
     static private void toPdf(PdfObject object, PdfWriter writer, OutputStream os) throws IOException {
         if (object instanceof PdfDictionary) {
             os.write('<');
