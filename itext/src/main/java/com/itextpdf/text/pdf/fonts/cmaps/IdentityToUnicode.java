@@ -44,7 +44,6 @@
  */
 package com.itextpdf.text.pdf.fonts.cmaps;
 
-import com.itextpdf.text.Utilities;
 import java.io.IOException;
 
 /**
@@ -56,6 +55,7 @@ public class IdentityToUnicode {
     private static CMapToUnicode identityJapan;
     private static CMapToUnicode identityKorea;
     private static CMapToUnicode identityGB;
+    private static CMapToUnicode identityH;
     
     public static CMapToUnicode GetMapFromOrdering(String ordering) throws IOException {
         if (ordering.equals("CNS1")) {
@@ -93,6 +93,12 @@ public class IdentityToUnicode {
                 identityGB = uni.exportToUnicode();
             }
             return identityGB;
+        }
+        else if (ordering.equals("Identity")) {
+            if (identityH == null) {
+                identityH = CMapUniCid.getIdentity();
+            }
+            return identityH;
         }
         return null;
     }
