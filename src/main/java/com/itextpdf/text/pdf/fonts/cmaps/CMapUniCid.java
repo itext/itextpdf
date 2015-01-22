@@ -82,4 +82,13 @@ public class CMapUniCid extends AbstractCMap {
         }
         return uni;
     }
+    
+    public static CMapToUnicode getIdentity() {
+        CMapToUnicode uni = new CMapToUnicode();
+        for (int i = 0; i < 65537; i++) {
+            uni.addChar(i, Utilities.convertFromUtf32(i));
+        }
+        return uni;
+    }
 }
+
