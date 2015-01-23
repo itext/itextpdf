@@ -1673,7 +1673,7 @@ public class ColumnText {
 
             	// INITIALISATIONS
                 // get the PdfPTable element
-                PdfPTable table = (PdfPTable) element;
+                PdfPTable table = new PdfPTable((PdfPTable)element);
 
                 // tables without a body are dismissed
                 if (table.size() <= table.getHeaderRows()) {
