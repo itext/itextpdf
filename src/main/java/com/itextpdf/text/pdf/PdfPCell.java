@@ -56,77 +56,105 @@ import java.util.List;
 /**
  * A cell in a PdfPTable.
  */
-
 public class PdfPCell extends Rectangle implements IAccessibleElement {
 
     private ColumnText column = new ColumnText(null);
 
-    /** Vertical alignment of the cell. */
+    /**
+     * Vertical alignment of the cell.
+     */
     private int verticalAlignment = Element.ALIGN_TOP;
 
-    /** Left padding of the cell. */
+    /**
+     * Left padding of the cell.
+     */
     private float paddingLeft = 2;
 
-    /** Right padding of the cell. */
+    /**
+     * Right padding of the cell.
+     */
     private float paddingRight = 2;
 
-    /** Top padding of the cell. */
+    /**
+     * Top padding of the cell.
+     */
     private float paddingTop = 2;
 
-    /** Bottom padding of the cell. */
+    /**
+     * Bottom padding of the cell.
+     */
     private float paddingBottom = 2;
 
-    /** Fixed height of the cell. */
+    /**
+     * Fixed height of the cell.
+     */
     private float fixedHeight = 0;
 
-    /** Minimum height of the cell. */
+    /**
+     * Minimum height of the cell.
+     */
     private float minimumHeight;
 
-    /** Holds value of property noWrap. */
+    /**
+     * Holds value of property noWrap.
+     */
     private boolean noWrap = false;
 
-    /** Holds value of property table. */
+    /**
+     * Holds value of property table.
+     */
     private PdfPTable table;
 
-    /** Holds value of property colspan. */
+    /**
+     * Holds value of property colspan.
+     */
     private int colspan = 1;
 
     /**
      * Holds value of property rowspan.
+     *
      * @since	2.1.6
      */
     private int rowspan = 1;
 
-    /** Holds value of property image. */
+    /**
+     * Holds value of property image.
+     */
     private Image image;
 
-    /** Holds value of property cellEvent. */
+    /**
+     * Holds value of property cellEvent.
+     */
     private PdfPCellEvent cellEvent;
 
-    /** Holds value of property useDescender. */
+    /**
+     * Holds value of property useDescender.
+     */
     private boolean useDescender = false;
 
-    /** Increases padding to include border if true */
+    /**
+     * Increases padding to include border if true
+     */
     private boolean useBorderPadding = false;
 
-    /** The text in the cell. */
+    /**
+     * The text in the cell.
+     */
     protected Phrase phrase;
 
     /**
-     * The rotation of the cell. Possible values are
-     * 0, 90, 180 and 270.
+     * The rotation of the cell. Possible values are 0, 90, 180 and 270.
      */
     private int rotation;
 
     protected PdfName role = PdfName.TD;
     protected HashMap<PdfName, PdfObject> accessibleAttributes = null;
     protected AccessibleElementId id = new AccessibleElementId();
-    
+
     protected ArrayList<PdfPHeaderCell> headers = null;
 
     /**
-     * Constructs an empty <CODE>PdfPCell</CODE>.
-     * The default padding is 2.
+     * Constructs an empty <CODE>PdfPCell</CODE>. The default padding is 2.
      */
     public PdfPCell() {
         super(0, 0, 0, 0);
@@ -136,8 +164,8 @@ public class PdfPCell extends Rectangle implements IAccessibleElement {
     }
 
     /**
-     * Constructs a <CODE>PdfPCell</CODE> with a <CODE>Phrase</CODE>.
-     * The default padding is 2.
+     * Constructs a <CODE>PdfPCell</CODE> with a <CODE>Phrase</CODE>. The
+     * default padding is 2.
      *
      * @param phrase the text
      */
@@ -150,8 +178,8 @@ public class PdfPCell extends Rectangle implements IAccessibleElement {
     }
 
     /**
-     * Constructs a <CODE>PdfPCell</CODE> with an <CODE>Image</CODE>.
-     * The default padding is 0.
+     * Constructs a <CODE>PdfPCell</CODE> with an <CODE>Image</CODE>. The
+     * default padding is 0.
      *
      * @param image the <CODE>Image</CODE>
      */
@@ -160,8 +188,8 @@ public class PdfPCell extends Rectangle implements IAccessibleElement {
     }
 
     /**
-     * Constructs a <CODE>PdfPCell</CODE> with an <CODE>Image</CODE>.
-     * The default padding is 0.25 for a border width of 0.5.
+     * Constructs a <CODE>PdfPCell</CODE> with an <CODE>Image</CODE>. The
+     * default padding is 0.25 for a border width of 0.5.
      *
      * @param image the <CODE>Image</CODE>
      * @param fit <CODE>true</CODE> to fit the image to the cell
@@ -174,18 +202,16 @@ public class PdfPCell extends Rectangle implements IAccessibleElement {
         if (fit) {
             this.image = image;
             setPadding(borderWidth / 2);
-        }
-        else {
-        	image.setScaleToFitLineWhenOverflow(false);
+        } else {
+            image.setScaleToFitLineWhenOverflow(false);
             column.addText(this.phrase = new Phrase(new Chunk(image, 0, 0, true)));
             setPadding(0);
         }
     }
 
     /**
-     * Constructs a <CODE>PdfPCell</CODE> with a <CODE>PdfPtable</CODE>.
-     * This constructor allows nested tables.
-     * The default padding is 0.
+     * Constructs a <CODE>PdfPCell</CODE> with a <CODE>PdfPtable</CODE>. This
+     * constructor allows nested tables. The default padding is 0.
      *
      * @param table The <CODE>PdfPTable</CODE>
      */
@@ -194,11 +220,12 @@ public class PdfPCell extends Rectangle implements IAccessibleElement {
     }
 
     /**
-     * Constructs a <CODE>PdfPCell</CODE> with a <CODE>PdfPtable</CODE>.
-     * This constructor allows nested tables.
+     * Constructs a <CODE>PdfPCell</CODE> with a <CODE>PdfPtable</CODE>. This
+     * constructor allows nested tables.
      *
      * @param table The <CODE>PdfPTable</CODE>
-     * @param style	The style to apply to the cell (you could use getDefaultCell())
+     * @param style	The style to apply to the cell (you could use
+     * getDefaultCell())
      * @since 2.1.0
      */
     public PdfPCell(PdfPTable table, PdfPCell style) {
@@ -211,21 +238,21 @@ public class PdfPCell extends Rectangle implements IAccessibleElement {
         table.setExtendLastRow(true);
         column.addElement(table);
         if (style != null) {
-        	cloneNonPositionParameters(style);
-        	verticalAlignment = style.verticalAlignment;
-        	paddingLeft = style.paddingLeft;
-        	paddingRight = style.paddingRight;
-        	paddingTop = style.paddingTop;
-        	paddingBottom = style.paddingBottom;
-        	colspan = style.colspan;
-        	rowspan = style.rowspan;
-        	cellEvent = style.cellEvent;
-        	useDescender = style.useDescender;
-        	useBorderPadding = style.useBorderPadding;
-        	rotation = style.rotation;
+            cloneNonPositionParameters(style);
+            verticalAlignment = style.verticalAlignment;
+            paddingLeft = style.paddingLeft;
+            paddingRight = style.paddingRight;
+            paddingTop = style.paddingTop;
+            paddingBottom = style.paddingBottom;
+            colspan = style.colspan;
+            rowspan = style.rowspan;
+            cellEvent = style.cellEvent;
+            useDescender = style.useDescender;
+            useBorderPadding = style.useBorderPadding;
+            rotation = style.rotation;
+        } else {
+            setPadding(0);
         }
-        else
-        	setPadding(0);
     }
 
     /**
@@ -247,8 +274,9 @@ public class PdfPCell extends Rectangle implements IAccessibleElement {
         noWrap = cell.noWrap;
         colspan = cell.colspan;
         rowspan = cell.rowspan;
-        if (cell.table != null)
+        if (cell.table != null) {
             table = new PdfPTable(cell.table);
+        }
         image = Image.getInstance(cell.image);
         cellEvent = cell.cellEvent;
         useDescender = cell.useDescender;
@@ -257,8 +285,9 @@ public class PdfPCell extends Rectangle implements IAccessibleElement {
         rotation = cell.rotation;
         id = cell.id;
         role = cell.role;
-        if (cell.accessibleAttributes != null)
+        if (cell.accessibleAttributes != null) {
             accessibleAttributes = new HashMap<PdfName, PdfObject>(cell.accessibleAttributes);
+        }
         headers = cell.headers;
     }
 
@@ -275,7 +304,7 @@ public class PdfPCell extends Rectangle implements IAccessibleElement {
         if (element instanceof PdfPTable) {
             ((PdfPTable) element).setSplitLate(false);
         } else if (element instanceof PdfDiv) {
-            for (Element divChildElement : ((PdfDiv)element).getContent()) {
+            for (Element divChildElement : ((PdfDiv) element).getContent()) {
                 if (divChildElement instanceof PdfPTable) {
                     ((PdfPTable) divChildElement).setSplitLate(false);
                 }
@@ -339,24 +368,24 @@ public class PdfPCell extends Rectangle implements IAccessibleElement {
      * @param verticalAlignment The vertical alignment
      */
     public void setVerticalAlignment(int verticalAlignment) {
-        if (table != null)
+        if (table != null) {
             table.setExtendLastRow(verticalAlignment == Element.ALIGN_TOP);
+        }
         this.verticalAlignment = verticalAlignment;
     }
 
     /**
-     * Gets the effective left padding.
-     * This will include the left border width if
-     * {@link #isUseBorderPadding()} is true.
+     * Gets the effective left padding. This will include the left border width
+     * if {@link #isUseBorderPadding()} is true.
      *
      * @return effective value of property paddingLeft.
      */
     public float getEffectivePaddingLeft() {
-    	if (isUseBorderPadding()) {
-    		float border = getBorderWidthLeft() / (isUseVariableBorders() ? 1f : 2f);
-    	    return paddingLeft + border;
-    	}
-    	return paddingLeft;
+        if (isUseBorderPadding()) {
+            float border = getBorderWidthLeft() / (isUseVariableBorders() ? 1f : 2f);
+            return paddingLeft + border;
+        }
+        return paddingLeft;
     }
 
     /**
@@ -376,17 +405,17 @@ public class PdfPCell extends Rectangle implements IAccessibleElement {
     }
 
     /**
-     * Gets the effective right padding.  This will include
-     * the right border width if {@link #isUseBorderPadding()} is true.
+     * Gets the effective right padding. This will include the right border
+     * width if {@link #isUseBorderPadding()} is true.
      *
      * @return effective value of property paddingRight.
      */
     public float getEffectivePaddingRight() {
-    	if (isUseBorderPadding()) {
-    		float border = getBorderWidthRight() / (isUseVariableBorders() ? 1f : 2f);
-    		return paddingRight + border;
-    	}
-    	return paddingRight;
+        if (isUseBorderPadding()) {
+            float border = getBorderWidthRight() / (isUseVariableBorders() ? 1f : 2f);
+            return paddingRight + border;
+        }
+        return paddingRight;
     }
 
     /**
@@ -408,16 +437,16 @@ public class PdfPCell extends Rectangle implements IAccessibleElement {
     }
 
     /**
-     * Gets the effective top padding.  This will include
-     * the top border width if {@link #isUseBorderPadding()} is true.
+     * Gets the effective top padding. This will include the top border width if
+     * {@link #isUseBorderPadding()} is true.
      *
      * @return effective value of property paddingTop.
      */
     public float getEffectivePaddingTop() {
-    	if (isUseBorderPadding()) {
-    		float border = getBorderWidthTop()/(isUseVariableBorders()?1f:2f);
-    		return paddingTop + border;
-    	}
+        if (isUseBorderPadding()) {
+            float border = getBorderWidthTop() / (isUseVariableBorders() ? 1f : 2f);
+            return paddingTop + border;
+        }
         return paddingTop;
     }
 
@@ -440,17 +469,16 @@ public class PdfPCell extends Rectangle implements IAccessibleElement {
     }
 
     /**
-     * Gets the effective bottom padding.
-     * This will include  the bottom border width if
-     * {@link #isUseBorderPadding()} is true.
+     * Gets the effective bottom padding. This will include the bottom border
+     * width if {@link #isUseBorderPadding()} is true.
      *
      * @return effective value of property paddingBottom.
      */
     public float getEffectivePaddingBottom() {
-    	if (isUseBorderPadding()) {
-    		float border = getBorderWidthBottom()/(isUseVariableBorders()?1f:2f);
-    		return paddingBottom + border;
-    	}
+        if (isUseBorderPadding()) {
+            float border = getBorderWidthBottom() / (isUseVariableBorders() ? 1f : 2f);
+            return paddingBottom + border;
+        }
         return paddingBottom;
     }
 
@@ -473,7 +501,8 @@ public class PdfPCell extends Rectangle implements IAccessibleElement {
     }
 
     /**
-     * Sets the padding of the contents in the cell (space between content and border).
+     * Sets the padding of the contents in the cell (space between content and
+     * border).
      *
      * @param padding
      */
@@ -503,10 +532,9 @@ public class PdfPCell extends Rectangle implements IAccessibleElement {
     }
 
     /**
-     * Sets the leading fixed and variable.
-     * The resultant leading will be:
-     * fixedLeading+multipliedLeading*maxFontSize
-     * where maxFontSize is the size of the biggest font in the line.
+     * Sets the leading fixed and variable. The resultant leading will be:
+     * fixedLeading+multipliedLeading*maxFontSize where maxFontSize is the size
+     * of the biggest font in the line.
      *
      * @param fixedLeading the fixed leading
      * @param multipliedLeading the variable leading
@@ -570,8 +598,8 @@ public class PdfPCell extends Rectangle implements IAccessibleElement {
     }
 
     /**
-     * Set a fixed height for the cell.
-     * This will automatically unset minimumHeight, if set.
+     * Set a fixed height for the cell. This will automatically unset
+     * minimumHeight, if set.
      *
      * @param fixedHeight New value of property fixedHeight.
      */
@@ -596,12 +624,12 @@ public class PdfPCell extends Rectangle implements IAccessibleElement {
      * @since 2.1.5
      */
     public boolean hasFixedHeight() {
-    	return getFixedHeight() > 0;
+        return getFixedHeight() > 0;
     }
 
     /**
-     * Set a minimum height for the cell.
-     * This will automatically unset fixedHeight, if set.
+     * Set a minimum height for the cell. This will automatically unset
+     * fixedHeight, if set.
      *
      * @param minimumHeight New value of property minimumHeight.
      */
@@ -626,7 +654,7 @@ public class PdfPCell extends Rectangle implements IAccessibleElement {
      * @since 2.1.5
      */
     public boolean hasMinimumHeight() {
-    	return getMinimumHeight() > 0;
+        return getMinimumHeight() > 0;
     }
 
     /**
@@ -751,24 +779,25 @@ public class PdfPCell extends Rectangle implements IAccessibleElement {
         return column.getSpaceCharRatio();
     }
 
-    /** Sets the ratio between the extra word spacing and the
-     * extra character spacing when the text is fully justified.
-     * Extra word spacing will grow <CODE>spaceCharRatio</CODE> times more
-     * than extra character spacing.
-     * If the ratio is <CODE>PdfWriter.NO_SPACE_CHAR_RATIO</CODE> then the
-     * extra character spacing will be zero.
+    /**
+     * Sets the ratio between the extra word spacing and the extra character
+     * spacing when the text is fully justified. Extra word spacing will grow
+     * <CODE>spaceCharRatio</CODE> times more than extra character spacing. If
+     * the ratio is <CODE>PdfWriter.NO_SPACE_CHAR_RATIO</CODE> then the extra
+     * character spacing will be zero.
      *
-     * @param spaceCharRatio the ratio between the extra word spacing and the extra character spacing
+     * @param spaceCharRatio the ratio between the extra word spacing and the
+     * extra character spacing
      */
     public void setSpaceCharRatio(float spaceCharRatio) {
         column.setSpaceCharRatio(spaceCharRatio);
     }
 
     /**
-     * Sets the run direction of the text content in the cell.
-     * May be either of:
+     * Sets the run direction of the text content in the cell. May be either of:
      * PdfWriter.RUN_DIRECTION_DEFAULT, PdfWriter.RUN_DIRECTION_NO_BIDI,
      * PdfWriter.RUN_DIRECTION_LTR or PdfWriter.RUN_DIRECTION_RTL.
+     *
      * @param runDirection
      */
     public void setRunDirection(int runDirection) {
@@ -778,9 +807,9 @@ public class PdfPCell extends Rectangle implements IAccessibleElement {
     /**
      * Gets the run direction of the text content in the cell
      *
-     * @return One of the following values:
-     * PdfWriter.RUN_DIRECTION_DEFAULT, PdfWriter.RUN_DIRECTION_NO_BIDI,
-     * PdfWriter.RUN_DIRECTION_LTR or PdfWriter.RUN_DIRECTION_RTL.
+     * @return One of the following values: PdfWriter.RUN_DIRECTION_DEFAULT,
+     * PdfWriter.RUN_DIRECTION_NO_BIDI, PdfWriter.RUN_DIRECTION_LTR or
+     * PdfWriter.RUN_DIRECTION_RTL.
      */
     public int getRunDirection() {
         return column.getRunDirection();
@@ -821,18 +850,18 @@ public class PdfPCell extends Rectangle implements IAccessibleElement {
      * @param cellEvent the cell event
      */
     public void setCellEvent(PdfPCellEvent cellEvent) {
-    	if (cellEvent == null)
-    		this.cellEvent = null;
-    	else if (this.cellEvent == null)
-    		this.cellEvent = cellEvent;
-    	else if (this.cellEvent instanceof PdfPCellEventForwarder)
-    		((PdfPCellEventForwarder)this.cellEvent).addCellEvent(cellEvent);
-    	else {
-    		PdfPCellEventForwarder forward = new PdfPCellEventForwarder();
-    		forward.addCellEvent(this.cellEvent);
-    		forward.addCellEvent(cellEvent);
-    		this.cellEvent = forward;
-    	}
+        if (cellEvent == null) {
+            this.cellEvent = null;
+        } else if (this.cellEvent == null) {
+            this.cellEvent = cellEvent;
+        } else if (this.cellEvent instanceof PdfPCellEventForwarder) {
+            ((PdfPCellEventForwarder) this.cellEvent).addCellEvent(cellEvent);
+        } else {
+            PdfPCellEventForwarder forward = new PdfPCellEventForwarder();
+            forward.addCellEvent(this.cellEvent);
+            forward.addCellEvent(cellEvent);
+            this.cellEvent = forward;
+        }
     }
 
     /**
@@ -845,8 +874,8 @@ public class PdfPCell extends Rectangle implements IAccessibleElement {
     }
 
     /**
-     * Sets the arabic shaping options.
-     * The option can be AR_NOVOWEL, AR_COMPOSEDTASHKEEL and AR_LIG.
+     * Sets the arabic shaping options. The option can be AR_NOVOWEL,
+     * AR_COMPOSEDTASHKEEL and AR_LIG.
      *
      * @param arabicOptions the arabic shaping options
      */
@@ -871,7 +900,6 @@ public class PdfPCell extends Rectangle implements IAccessibleElement {
     public void setUseAscender(boolean useAscender) {
         column.setUseAscender(useAscender);
     }
-
 
     /**
      * Getter for property useDescender.
@@ -907,7 +935,7 @@ public class PdfPCell extends Rectangle implements IAccessibleElement {
      * @since	2.1.1
      */
     public List<Element> getCompositeElements() {
-    	return getColumn().compositeElements;
+        return getColumn().compositeElements;
     }
 
     /**
@@ -930,91 +958,96 @@ public class PdfPCell extends Rectangle implements IAccessibleElement {
     }
 
     /**
-     * Sets the rotation of the cell.
-     * Possible values are 0, 90, 180 and 270.
+     * Sets the rotation of the cell. Possible values are 0, 90, 180 and 270.
      *
      * @param rotation the rotation of the cell
      */
     public void setRotation(int rotation) {
         rotation %= 360;
-        if (rotation < 0)
+        if (rotation < 0) {
             rotation += 360;
-        if (rotation % 90 != 0)
+        }
+        if (rotation % 90 != 0) {
             throw new IllegalArgumentException(MessageLocalization.getComposedMessage("rotation.must.be.a.multiple.of.90"));
+        }
         this.rotation = rotation;
     }
 
-	/**
-	 * Returns the height of the cell.
-	 * @return	the height of the cell
-	 * @since	3.0.0
-	 */
-	public float getMaxHeight() {
-		boolean pivoted = getRotation() == 90 || getRotation() == 270;
-		Image img = getImage();
-		if (img != null) {
-			img.scalePercent(100);
-			float refWidth = pivoted ? img.getScaledHeight() : img.getScaledWidth();
-			float scale = (getRight() - getEffectivePaddingRight()
+    /**
+     * Returns the height of the cell.
+     *
+     * @return	the height of the cell
+     * @since	3.0.0
+     */
+    public float getMaxHeight() {
+        boolean pivoted = getRotation() == 90 || getRotation() == 270;
+        Image img = getImage();
+        if (img != null) {
+            img.scalePercent(100);
+            float refWidth = pivoted ? img.getScaledHeight() : img.getScaledWidth();
+            float scale = (getRight() - getEffectivePaddingRight()
                     - getEffectivePaddingLeft() - getLeft()) / refWidth;
-			img.scalePercent(scale * 100);
-			float refHeight = pivoted ? img.getScaledWidth() : img.getScaledHeight();
-			setBottom(getTop() - getEffectivePaddingTop() - getEffectivePaddingBottom() - refHeight);
-		}
-		else {
-			if ((pivoted && hasFixedHeight()) || getColumn() == null)
-				setBottom(getTop() - getFixedHeight());
-			else {
-				ColumnText ct = ColumnText.duplicate(getColumn());
-				float right, top, left, bottom;
-				if (pivoted) {
-					right = PdfPRow.RIGHT_LIMIT;
-					top = getRight() - getEffectivePaddingRight();
-					left = 0;
-					bottom = getLeft() + getEffectivePaddingLeft();
-				}
-				else {
-					right = isNoWrap() ? PdfPRow.RIGHT_LIMIT : getRight() - getEffectivePaddingRight();
-					top = getTop() - getEffectivePaddingTop();
-					left = getLeft() + getEffectivePaddingLeft();
-					bottom = hasFixedHeight() ? getTop() + getEffectivePaddingBottom() - getFixedHeight() : PdfPRow.BOTTOM_LIMIT;
-				}
-				PdfPRow.setColumn(ct, left, bottom, right, top);
-				try {
-					ct.go(true);
-				} catch (DocumentException e) {
-					throw new ExceptionConverter(e);
-				}
-				if (pivoted)
-					setBottom(getTop() - getEffectivePaddingTop() - getEffectivePaddingBottom() - ct.getFilledWidth());
-				else {
-					float yLine = ct.getYLine();
-					if (isUseDescender())
-						yLine += ct.getDescender();
-					setBottom(yLine - getEffectivePaddingBottom());
-				}
-			}
-		}
-		float height = getHeight();
-		if (height == getEffectivePaddingTop() + getEffectivePaddingBottom())
-			height = 0;
-		if (hasFixedHeight())
-			height = getFixedHeight();
-		else if (hasMinimumHeight() && height < getMinimumHeight())
-			height = getMinimumHeight();
-		return height;
-	}
+            img.scalePercent(scale * 100);
+            float refHeight = pivoted ? img.getScaledWidth() : img.getScaledHeight();
+            setBottom(getTop() - getEffectivePaddingTop() - getEffectivePaddingBottom() - refHeight);
+        } else {
+            if ((pivoted && hasFixedHeight()) || getColumn() == null) {
+                setBottom(getTop() - getFixedHeight());
+            } else {
+                ColumnText ct = ColumnText.duplicate(getColumn());
+                float right, top, left, bottom;
+                if (pivoted) {
+                    right = PdfPRow.RIGHT_LIMIT;
+                    top = getRight() - getEffectivePaddingRight();
+                    left = 0;
+                    bottom = getLeft() + getEffectivePaddingLeft();
+                } else {
+                    right = isNoWrap() ? PdfPRow.RIGHT_LIMIT : getRight() - getEffectivePaddingRight();
+                    top = getTop() - getEffectivePaddingTop();
+                    left = getLeft() + getEffectivePaddingLeft();
+                    bottom = hasFixedHeight() ? getTop() + getEffectivePaddingBottom() - getFixedHeight() : PdfPRow.BOTTOM_LIMIT;
+                }
+                PdfPRow.setColumn(ct, left, bottom, right, top);
+                try {
+                    ct.go(true);
+                } catch (DocumentException e) {
+                    throw new ExceptionConverter(e);
+                }
+                if (pivoted) {
+                    setBottom(getTop() - getEffectivePaddingTop() - getEffectivePaddingBottom() - ct.getFilledWidth());
+                } else {
+                    float yLine = ct.getYLine();
+                    if (isUseDescender()) {
+                        yLine += ct.getDescender();
+                    }
+                    setBottom(yLine - getEffectivePaddingBottom());
+                }
+            }
+        }
+        float height = getHeight();
+        if (height == getEffectivePaddingTop() + getEffectivePaddingBottom()) {
+            height = 0;
+        }
+        if (hasFixedHeight()) {
+            height = getFixedHeight();
+        } else if (hasMinimumHeight() && height < getMinimumHeight()) {
+            height = getMinimumHeight();
+        }
+        return height;
+    }
 
     public PdfObject getAccessibleAttribute(final PdfName key) {
-        if (accessibleAttributes != null)
+        if (accessibleAttributes != null) {
             return accessibleAttributes.get(key);
-        else
+        } else {
             return null;
+        }
     }
 
     public void setAccessibleAttribute(final PdfName key, final PdfObject value) {
-        if (accessibleAttributes == null)
+        if (accessibleAttributes == null) {
             accessibleAttributes = new HashMap<PdfName, PdfObject>();
+        }
         accessibleAttributes.put(key, value);
     }
 
@@ -1042,13 +1075,14 @@ public class PdfPCell extends Rectangle implements IAccessibleElement {
         return false;
     }
 
-    public void addHeader(PdfPHeaderCell header){
-        if (headers == null)
+    public void addHeader(PdfPHeaderCell header) {
+        if (headers == null) {
             headers = new ArrayList<PdfPHeaderCell>();
+        }
         headers.add(header);
     }
 
-    public ArrayList<PdfPHeaderCell> getHeaders(){
+    public ArrayList<PdfPHeaderCell> getHeaders() {
         return headers;
     }
 }
