@@ -552,6 +552,8 @@ public class ColumnText {
             element = new Paragraph((Chunk) element);
         } else if (element.type() == Element.PHRASE) {
             element = new Paragraph((Phrase) element);
+        } else if (element.type() == Element.PTABLE) {
+            element = new PdfPTable((PdfPTable) element);
         }
         if (element.type() != Element.PARAGRAPH && element.type() != Element.LIST && element.type() != Element.PTABLE && element.type() != Element.YMARK && element.type() != Element.DIV) {
             throw new IllegalArgumentException(MessageLocalization.getComposedMessage("element.not.allowed"));
