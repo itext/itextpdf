@@ -776,7 +776,7 @@ public class PdfPRow implements IAccessibleElement {
                 allEmpty = (allEmpty && thisEmpty);
             }
             newCells[k] = newCell;
-            cell.setFixedHeight(newHeight);
+            cell.setCalculatedHeight(newHeight);
         }
         if (allEmpty) {
             for (int k = 0; k < cells.length; ++k) {

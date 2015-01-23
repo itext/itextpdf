@@ -89,6 +89,11 @@ public class PdfPCell extends Rectangle implements IAccessibleElement {
      * Fixed height of the cell.
      */
     private float fixedHeight = 0;
+    
+    /**
+     * Fixed height of the cell.
+     */
+    //private float calculatedHeight = 0;
 
     /**
      * Minimum height of the cell.
@@ -598,6 +603,35 @@ public class PdfPCell extends Rectangle implements IAccessibleElement {
     }
 
     /**
+     * Set a calculated height for the cell.
+     *
+     * @param fixedHeight New value of property calculatedHeight.
+     */
+    public void setCalculatedHeight(float calculatedHeight) {
+        //this.calculatedHeight = calculatedHeight;
+        this.fixedHeight = calculatedHeight;
+    }
+
+    /**
+     * Get the calculated height of the cell.
+     *
+     * @return Value of property calculatedHeight.
+     */
+    public float getCalculatedHeight() {
+        //return calculatedHeight;
+        return fixedHeight;
+    }
+
+    /**
+     * Tells you whether the height was calculated.
+     *
+     * @return	true if the height was calculated.
+     */
+    public boolean hasCalculatedHeight() {
+        return getCalculatedHeight() > 0;
+    }
+
+    /**
      * Set a fixed height for the cell. This will automatically unset
      * minimumHeight, if set.
      *
@@ -1005,7 +1039,7 @@ public class PdfPCell extends Rectangle implements IAccessibleElement {
                     right = isNoWrap() ? PdfPRow.RIGHT_LIMIT : getRight() - getEffectivePaddingRight();
                     top = getTop() - getEffectivePaddingTop();
                     left = getLeft() + getEffectivePaddingLeft();
-                    bottom = hasFixedHeight() ? getTop() + getEffectivePaddingBottom() - getFixedHeight() : PdfPRow.BOTTOM_LIMIT;
+                    bottom = hasCalculatedHeight() ? getTop() + getEffectivePaddingBottom() - getCalculatedHeight() : PdfPRow.BOTTOM_LIMIT;
                 }
                 PdfPRow.setColumn(ct, left, bottom, right, top);
                 try {
