@@ -280,7 +280,7 @@ public class PdfPTable implements LargeElement, Spaceable, IAccessibleElement {
             PdfPRow row = table.rows.get(k);
             if (row != null) {
                 row = new PdfPRow(row);
-                row.calculated = false;
+                //row.calculated = false;
             }
             rows.add(row);
         }
