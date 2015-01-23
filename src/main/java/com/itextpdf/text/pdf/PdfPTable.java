@@ -285,6 +285,19 @@ public class PdfPTable implements LargeElement, Spaceable, IAccessibleElement {
         }
     }
 
+    public void init() {
+        totalHeight = 0;
+        for (PdfPRow row : getRows()) {
+            if (row == null) continue;
+            row.calculated = false;
+            row.maxHeight = 0;
+            for (PdfPCell cell : row.getCells()) {
+                if (cell == null) continue;
+                cell.setCalculatedHeight(0);
+            }
+        }
+    }
+    
     /**
      * Makes a shallow copy of a table (format without content).
      *
@@ -2093,6 +2106,7 @@ public class PdfPTable implements LargeElement, Spaceable, IAccessibleElement {
      * @since iText 5.4.3
      */
     public FittingRows getFittingRows(float availableHeight, int startIdx) {
+        LOGGER.info(String.format("getFittingRows(%s, %s)", availableHeight, startIdx));
         assert (getRow(startIdx).getCells()[0] != null); // top left cell of current page may not be null
         int cols = getNumberOfColumns();
         ColumnMeasurementState states[] = new ColumnMeasurementState[cols];
@@ -2116,6 +2130,7 @@ public class PdfPTable implements LargeElement, Spaceable, IAccessibleElement {
                     state.consumeRowspan(completedRowsHeight, rowHeight);
                 } else {
                     state.beginCell(cell, completedRowsHeight, rowHeight);
+                    LOGGER.info(String.format("Height after beginCell: %s (cell: %s)", state.height, cell.getMaxHeight()));
                 }
                 if (state.cellEnds() && state.height > maxCompletedRowsHeight) {
                     maxCompletedRowsHeight = state.height;
