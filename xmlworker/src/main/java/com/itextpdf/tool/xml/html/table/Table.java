@@ -279,7 +279,7 @@ public class Table extends AbstractTagProcessor {
 			float max = htmlPipelineContext.getPageSize().getWidth() - outerWidth;
 			boolean tableWidthFixed = false;
 			if (tag.getAttributes().get(CSS.Property.WIDTH) != null || tag.getCSS().get(CSS.Property.WIDTH) != null) {
-				targetWidth = new WidthCalculator().getWidth(tag, htmlPipelineContext.getRootTags(), htmlPipelineContext.getPageSize().getWidth());
+				targetWidth = new WidthCalculator().getWidth(tag, htmlPipelineContext.getRootTags(), htmlPipelineContext.getPageSize().getWidth(), initialTotalWidth);
 				if (targetWidth > max) {
 					targetWidth = max;
 				}

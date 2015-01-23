@@ -65,6 +65,10 @@ public class WidthCalculator {
 	 * @return the width
 	 */
 	public float getWidth(final Tag tag, final List<String> roottags, final float pagewidth){
+		return getWidth(tag, roottags, pagewidth, -1);
+	}
+
+	public float getWidth(final Tag tag, final List<String> roottags, final float pagewidth, final float initialTotalWidth){
 		float width = 0;
 		String widthValue = tag.getCSS().get(HTML.Attribute.WIDTH);
 		if(widthValue == null) {
@@ -78,7 +82,7 @@ public class WidthCalculator {
 				float firstAncestorsWidth = 0;
 				while(firstAncestorsWidth == 0 && ancestor.getParent() != null) {
 					ancestor = ancestor.getParent();
-					firstAncestorsWidth = getWidth(ancestor, roottags, pagewidth);
+					firstAncestorsWidth = getWidth(ancestor, roottags, pagewidth, initialTotalWidth);
 				}
 				if (firstAncestorsWidth == 0) {
 					width = utils.parseRelativeValue(widthValue, pagewidth);
@@ -87,7 +91,10 @@ public class WidthCalculator {
 				}
 			}
 		} else if (roottags.contains(tag.getName())){
-			width = pagewidth;
+			if (Float.compare(initialTotalWidth, -1) == 0)
+				width = pagewidth;
+			else
+			    width = initialTotalWidth;
 		}
 		return width;
 	}

@@ -160,6 +160,40 @@ public class DivCssApplier {
                 } else if (value.equalsIgnoreCase(CSS.Value.RELATIVE)) {
                     div.setPosition(PdfDiv.PositionType.RELATIVE);
                 }
+            } else if (key.equalsIgnoreCase(CSS.Property.DISPLAY)) {
+                if (value.equalsIgnoreCase(CSS.Value.BLOCK)){
+                    div.setDisplay(PdfDiv.DisplayType.BLOCK);
+                } else if (value.equalsIgnoreCase(CSS.Value.INLINE)){
+                    div.setDisplay(PdfDiv.DisplayType.INLINE);
+                } else if (value.equalsIgnoreCase(CSS.Value.INLINE_BLOCK)){
+                    div.setDisplay(PdfDiv.DisplayType.INLINE_BLOCK);
+                }else if (value.equalsIgnoreCase(CSS.Value.INLINE_TABLE)){
+                    div.setDisplay(PdfDiv.DisplayType.INLINE_TABLE);
+                }else if (value.equalsIgnoreCase(CSS.Value.LIST_ITEM)){
+                    div.setDisplay(PdfDiv.DisplayType.LIST_ITEM);
+                } else if (value.equalsIgnoreCase(CSS.Value.NONE)){
+                    div.setDisplay(PdfDiv.DisplayType.NONE);
+                } else if (value.equalsIgnoreCase(CSS.Value.RUN_IN)){
+                    div.setDisplay(PdfDiv.DisplayType.RUN_IN);
+                } else if (value.equalsIgnoreCase(CSS.Value.TABLE)) {
+                    div.setDisplay(PdfDiv.DisplayType.TABLE);
+                } else if (value.equalsIgnoreCase(CSS.Value.TABLE_CAPTION)) {
+                    div.setDisplay(PdfDiv.DisplayType.TABLE_CAPTION);
+                } else if (value.equalsIgnoreCase(CSS.Value.TABLE_CELL)) {
+                    div.setDisplay(PdfDiv.DisplayType.TABLE_CELL);
+                } else if (value.equalsIgnoreCase(CSS.Value.TABLE_COLUMN_GROUP)) {
+                    div.setDisplay(PdfDiv.DisplayType.TABLE_COLUMN_GROUP);
+                } else if (value.equalsIgnoreCase(CSS.Value.TABLE_COLUMN)) {
+                    div.setDisplay(PdfDiv.DisplayType.TABLE_COLUMN);
+                } else if (value.equalsIgnoreCase(CSS.Value.TABLE_FOOTER_GROUP)) {
+                    div.setDisplay(PdfDiv.DisplayType.TABLE_FOOTER_GROUP);
+                } else if (value.equalsIgnoreCase(CSS.Value.TABLE_HEADER_GROUP)) {
+                    div.setDisplay(PdfDiv.DisplayType.TABLE_HEADER_GROUP);
+                } else if (value.equalsIgnoreCase(CSS.Value.TABLE_ROW)) {
+                    div.setDisplay(PdfDiv.DisplayType.TABLE_ROW);
+                } else if (value.equalsIgnoreCase(CSS.Value.TABLE_ROW_GROUP)) {
+                    div.setDisplay(PdfDiv.DisplayType.TABLE_ROW_GROUP);
+                }
             }
 
             //TODO: border, background properties.

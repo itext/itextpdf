@@ -234,5 +234,18 @@ public final class CSS {
         public static final String COLLAPSE = "collapse";
         public static final String RTL = "rtl";
         public static final String LTR = "ltr";
+		public static final String INLINE_BLOCK = "inline-block";
+		public static final String INLINE_TABLE = "inline-table";
+		public static final String LIST_ITEM = "list-item";
+		public static final String RUN_IN = "run-in";
+		public static final String TABLE = "table";
+		public static final String TABLE_CAPTION = "table-caption";
+		public static final String TABLE_CELL = "table-cell";
+		public static final String TABLE_COLUMN_GROUP = "table-column-group";
+		public static final String TABLE_COLUMN = "table-column";
+		public static final String TABLE_FOOTER_GROUP = "table-footer-group";
+		public static final String TABLE_HEADER_GROUP = "table-header-group";
+		public static final String TABLE_ROW = "table-row";
+		public static final String TABLE_ROW_GROUP = "table-row-group";
 	}
 }
