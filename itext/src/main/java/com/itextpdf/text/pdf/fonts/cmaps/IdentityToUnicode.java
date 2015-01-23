@@ -96,7 +96,7 @@ public class IdentityToUnicode {
         }
         else if (ordering.equals("Identity")) {
             if (identityH == null) {
-                identityH = CMapUniCid.getIdentity();
+                identityH = CMapToUnicode.getIdentity();
             }
             return identityH;
         }
