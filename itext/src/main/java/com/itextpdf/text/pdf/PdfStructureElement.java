@@ -576,8 +576,8 @@ public class PdfStructureElement extends PdfDictionary implements IPdfStructureE
                     this.setAttribute(PdfName.HEADERS, headers);
             }
 
-            if (cell.getFixedHeight() > 0){
-                this.setAttribute(PdfName.HEIGHT, new PdfNumber(cell.getFixedHeight()));
+            if (cell.getCalculatedHeight() > 0){
+                this.setAttribute(PdfName.HEIGHT, new PdfNumber(cell.getCalculatedHeight()));
             }
 
             if (cell.getWidth() > 0){
