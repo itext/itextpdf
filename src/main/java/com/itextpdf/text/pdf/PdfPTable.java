@@ -286,7 +286,6 @@ public class PdfPTable implements LargeElement, Spaceable, IAccessibleElement {
     }
 
     public void init() {
-        totalHeight = 0;
         for (PdfPRow row : getRows()) {
             if (row == null) continue;
             row.calculated = false;
