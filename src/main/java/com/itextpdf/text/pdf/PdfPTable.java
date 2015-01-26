@@ -286,18 +286,17 @@ public class PdfPTable implements LargeElement, Spaceable, IAccessibleElement {
     }
 
     public void init() {
-        /*
         LOGGER.info("Initialize row and cell heights");
+        
         for (PdfPRow row : getRows()) {
             if (row == null) continue;
             row.calculated = false;
-            row.maxHeight = 0;
             for (PdfPCell cell : row.getCells()) {
                 if (cell == null) continue;
                 cell.setCalculatedHeight(0);
             }
         }
-        */
+        
     }
     
     /**

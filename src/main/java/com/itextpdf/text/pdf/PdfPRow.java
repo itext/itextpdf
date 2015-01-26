@@ -214,13 +214,19 @@ public class PdfPRow implements IAccessibleElement {
      */
     protected void calculateHeights() {
         maxHeight = 0;
+        LOGGER.info("calculateHeights");
         for (int k = 0; k < cells.length; ++k) {
             PdfPCell cell = cells[k];
             float height = 0;
             if (cell == null) {
                 continue;
             } else {
-                height = cell.getMaxHeight();
+                if (cell.hasCalculatedHeight()) {
+                    height = cell.getCalculatedHeight();
+                }
+                else {
+                    height = cell.getMaxHeight();
+                }
                 if ((height > maxHeight) && (cell.getRowspan() == 1)) {
                     maxHeight = height;
                 }
@@ -704,9 +710,10 @@ public class PdfPRow implements IAccessibleElement {
      * an empty row would result
      */
     public PdfPRow splitRow(PdfPTable table, int rowIndex, float new_height) {
-        LOGGER.info("Splitting " + rowIndex + " " + new_height);
+        LOGGER.info(String.format("Splitting row %s available height: %s", rowIndex, new_height));
         // second part of the row
         PdfPCell newCells[] = new PdfPCell[cells.length];
+        float calHs[] = new float[cells.length];
         float fixHs[] = new float[cells.length];
         float minHs[] = new float[cells.length];
         boolean allEmpty = true;
@@ -730,6 +737,7 @@ public class PdfPRow implements IAccessibleElement {
                 }
                 continue;
             }
+            calHs[k] = cell.getCalculatedHeight();
             fixHs[k] = cell.getFixedHeight();
             minHs[k] = cell.getMinimumHeight();
             Image img = cell.getImage();
@@ -784,6 +792,7 @@ public class PdfPRow implements IAccessibleElement {
                 if (cell == null) {
                     continue;
                 }
+                cell.setCalculatedHeight(calHs[k]);
                 if (fixHs[k] > 0) {
                     cell.setFixedHeight(fixHs[k]);
                 } else {
