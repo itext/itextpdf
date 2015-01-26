@@ -93,7 +93,7 @@ public class PdfPCell extends Rectangle implements IAccessibleElement {
     /**
      * Fixed height of the cell.
      */
-    //private float calculatedHeight = 0;
+    private float calculatedHeight = 0;
 
     /**
      * Minimum height of the cell.
@@ -608,8 +608,7 @@ public class PdfPCell extends Rectangle implements IAccessibleElement {
      * @param fixedHeight New value of property calculatedHeight.
      */
     public void setCalculatedHeight(float calculatedHeight) {
-        //this.calculatedHeight = calculatedHeight;
-        this.fixedHeight = calculatedHeight;
+        this.calculatedHeight = calculatedHeight;
     }
 
     /**
@@ -618,8 +617,7 @@ public class PdfPCell extends Rectangle implements IAccessibleElement {
      * @return Value of property calculatedHeight.
      */
     public float getCalculatedHeight() {
-        //return calculatedHeight;
-        return fixedHeight;
+        return calculatedHeight;
     }
 
     /**
