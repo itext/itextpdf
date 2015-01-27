@@ -53,6 +53,7 @@ import com.itextpdf.text.Font;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.pdf.PdfDiv;
 import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.tool.xml.NoCustomContextException;
 import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.WorkerContext;
@@ -101,6 +102,10 @@ public class Div extends AbstractTagProcessor {
 		try {
 			Paragraph p = null;
 			PdfDiv div = (PdfDiv)getCssAppliers().apply(new PdfDiv(), tag, getHtmlPipelineContext(ctx));
+            int direction = getRunDirection(tag);
+            if (direction != PdfWriter.RUN_DIRECTION_DEFAULT) {
+                div.setRunDirection(direction);
+            }
 			for (Element e : currentContent) {
 				if (e instanceof Paragraph || e instanceof PdfPTable|| e instanceof PdfDiv) {
 					if (p != null) {
@@ -113,6 +118,23 @@ public class Div extends AbstractTagProcessor {
                 } else {
 					if (p == null) {
 						p = new Paragraph();
+                        p.setAlignment(div.getTextAlignment());
+                        if (direction == PdfWriter.RUN_DIRECTION_RTL) {
+                            switch (p.getAlignment()) {
+                                case Element.ALIGN_UNDEFINED:
+                                case Element.ALIGN_CENTER:
+                                case Element.ALIGN_JUSTIFIED:
+                                case Element.ALIGN_JUSTIFIED_ALL:
+                                    break;
+                                case Element.ALIGN_RIGHT:
+                                    p.setAlignment(Element.ALIGN_LEFT);
+                                    break;
+                                case Element.ALIGN_LEFT:
+                                default:
+                                    p.setAlignment(Element.ALIGN_RIGHT);
+                                    break;
+                            }
+                        }
                         p.setMultipliedLeading(1.2f);
 					}
 					p.add(e);

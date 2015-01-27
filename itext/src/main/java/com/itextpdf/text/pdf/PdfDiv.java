@@ -106,6 +106,8 @@ public class PdfDiv implements Element, Spaceable, IAccessibleElement {
 
     private float yLine;
 
+    protected int runDirection = PdfWriter.RUN_DIRECTION_DEFAULT;
+
     protected PdfName role = PdfName.DIV;
     protected HashMap<PdfName, PdfObject> accessibleAttributes = null;
     protected AccessibleElementId id = new AccessibleElementId();
@@ -170,6 +172,14 @@ public class PdfDiv implements Element, Spaceable, IAccessibleElement {
 
     public float getYLine() {
         return yLine;
+    }
+
+    public int getRunDirection() {
+        return runDirection;
+    }
+
+    public void setRunDirection(int runDirection) {
+        this.runDirection = runDirection;
     }
 
     private BaseColor backgroundColor = null;
@@ -505,6 +515,7 @@ public class PdfDiv implements Element, Spaceable, IAccessibleElement {
             if (this.floatLayout == null) {
                 ArrayList<Element> floatingElements = new ArrayList<Element>(content);
                 floatLayout = new FloatLayout(floatingElements, useAscender);
+                floatLayout.setRunDirection(runDirection);
             }
 
             floatLayout.setSimpleColumn(leftX, minY, rightX, yLine);

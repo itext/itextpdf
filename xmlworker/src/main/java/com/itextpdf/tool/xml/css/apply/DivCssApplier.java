@@ -73,6 +73,8 @@ public class DivCssApplier {
         if (align != null) {
             if (align.equalsIgnoreCase(CSS.Value.CENTER)) {
                 div.setTextAlignment(Element.ALIGN_CENTER);
+            } else if (align.equalsIgnoreCase(CSS.Value.LEFT)) {
+                div.setTextAlignment(Element.ALIGN_LEFT);
             } else if (align.equalsIgnoreCase(CSS.Value.RIGHT)) {
                 div.setTextAlignment(Element.ALIGN_RIGHT);
             } else if (align.equalsIgnoreCase(CSS.Value.JUSTIFY)) {
