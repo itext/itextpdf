@@ -1025,6 +1025,8 @@ public class
     /** A name */
     public static final PdfName IDENTITY = new PdfName("Identity");
     /** A name */
+    public static final PdfName IDTREE = new PdfName("IDTree");
+    /** A name */
     public static final PdfName IF = new PdfName("IF");
     /**
      * A name
