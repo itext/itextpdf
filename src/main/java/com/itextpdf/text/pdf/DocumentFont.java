@@ -44,15 +44,17 @@
  */
 package com.itextpdf.text.pdf;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.ExceptionConverter;
 import com.itextpdf.text.Utilities;
 import com.itextpdf.text.io.RandomAccessSourceFactory;
-import com.itextpdf.text.pdf.fonts.cmaps.*;
+import com.itextpdf.text.pdf.fonts.cmaps.CMapParserEx;
+import com.itextpdf.text.pdf.fonts.cmaps.CMapToUnicode;
+import com.itextpdf.text.pdf.fonts.cmaps.CidLocationFromByte;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  *
@@ -198,8 +200,9 @@ public class DocumentFont extends BaseFont {
             fillFontDesc(fontDesc);
             if (toUniObject instanceof PRStream){
                 fillMetrics(PdfReader.getStreamBytes((PRStream)toUniObject), widths, dw);
+            } else if (new PdfName("Identity-H").equals(toUniObject)) {
+                fillMetricsIdentity(widths, dw);
             }
-
         } catch (Exception e) {
             throw new ExceptionConverter(e);
         }
@@ -234,6 +237,15 @@ public class DocumentFont extends BaseFont {
             return PdfEncodings.convertToString(ps.getBytes(), "UnicodeBigUnmarked");
         else
             return ps.toUnicodeString();
+    }
+
+    private void fillMetricsIdentity(IntHashtable widths, int dw) {
+        for (int i = 0; i < 65536; i++) {
+            int w = dw;
+            if (widths.containsKey(i))
+                w = widths.get(i);
+            metrics.put(i, new int[] {i, w});
+        }
     }
 
     private void fillMetrics(byte[] touni, IntHashtable widths, int dw) {
