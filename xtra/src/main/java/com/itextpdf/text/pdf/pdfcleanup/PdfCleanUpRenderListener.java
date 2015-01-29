@@ -32,21 +32,26 @@ public class PdfCleanUpRenderListener implements RenderListener {
     private PdfStamper pdfStamper;
     private Stack<PdfCleanUpContext> contextStack = new Stack<PdfCleanUpContext>();
 
+    private int strNumber = 1; // Represents number of string under processing. Needed for processing TJ operator.
+
     public PdfCleanUpRenderListener(PdfStamper pdfStamper, List<PdfCleanUpRegionFilter> filters) {
         this.pdfStamper = pdfStamper;
         this.filters = filters;
     }
 
     public void renderText(TextRenderInfo renderInfo) {
-        PdfCleanUpContext context = contextStack.peek();
+        if (renderInfo.getPdfString().toUnicodeString().length() == 0) {
+            return;
+        }
 
         for (TextRenderInfo ri : renderInfo.getCharacterRenderInfos()) {
             boolean textIsInsideRegion = textIsInsideRegion(ri);
-            LineSegment baseline = ri.getBaseline();
-            float chunkSize = context.getFontSize() * context.getTextMatrixElement22();
+            LineSegment baseline = ri.getUnscaledBaseline();
 
-            chunks.add(new PdfCleanUpContentChunk(ri.getPdfString(), baseline.getStartPoint(), baseline.getEndPoint(), chunkSize, !textIsInsideRegion));
+            chunks.add(new PdfCleanUpContentChunk(ri.getPdfString(), baseline.getStartPoint(), baseline.getEndPoint(), !textIsInsideRegion, strNumber));
         }
+
+        ++strNumber;
     }
 
     public void renderImage(ImageRenderInfo renderInfo) {
@@ -100,6 +105,11 @@ public class PdfCleanUpRenderListener implements RenderListener {
 
     public void popContext() {
         contextStack.pop();
+    }
+
+    public void clearChunks() {
+        chunks.clear();
+        strNumber = 1;
     }
 
     private boolean textIsInsideRegion(TextRenderInfo renderInfo) {

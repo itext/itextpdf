@@ -5,7 +5,6 @@ import com.itextpdf.text.pdf.parser.Vector;
 
 public class PdfCleanUpContentChunk {
 
-    private float size;
     private PdfString string;
     private boolean visible;
     private boolean image = false;
@@ -14,22 +13,20 @@ public class PdfCleanUpContentChunk {
 
     private byte[] newImageData;
 
-    public PdfCleanUpContentChunk(PdfString string, Vector startLocation, Vector endLocation, float size, boolean visible) {
+    private int numOfStrChunkBelongsTo;
+
+    public PdfCleanUpContentChunk(PdfString string, Vector startLocation, Vector endLocation, boolean visible, int numOfStrChunkBelongsTo) {
         this.string = string;
-        this.size = size;
         this.startX = startLocation.get(0);
         this.endX = endLocation.get(0);
         this.visible = visible;
+        this.numOfStrChunkBelongsTo = numOfStrChunkBelongsTo;
     }
 
     public PdfCleanUpContentChunk(boolean visible, byte[] newImageData) {
         this.image = true;
         this.visible = visible;
         this.newImageData = newImageData;
-    }
-
-    public float getSize() {
-        return size;
     }
 
     public PdfString getString() {
@@ -54,5 +51,9 @@ public class PdfCleanUpContentChunk {
 
     public byte[] getNewImageData() {
         return newImageData;
+    }
+
+    public int getNumOfStrChunkBelongsTo() {
+        return numOfStrChunkBelongsTo;
     }
 }

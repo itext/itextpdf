@@ -893,7 +893,7 @@ public class PdfContentStreamProcessor {
     }
 
     /**
-     * A content operator implementation (BMC).
+     * A content operator implementation (EMC).
      * @since 5.0.2
      */
     private static class EndMarkedContent implements ContentOperator{
