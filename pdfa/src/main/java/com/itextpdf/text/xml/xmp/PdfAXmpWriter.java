@@ -210,7 +210,7 @@ public class PdfAXmpWriter extends XmpWriter {
             throw new IOException(xmpExc.getMessage());
         }
     }
-
+    
     /**
      * Adds information about the PDF/A conformance level to the XMP metadata.
      *
