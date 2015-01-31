@@ -136,15 +136,6 @@ public class XmpWriter {
                     throw new IOException(xmpExc.getMessage());
                 }
             }
-            updateAuthorInfo(info);
-        }
-    }
-
-    protected void updateAuthorInfo(PdfDictionary info) {
-        PdfString author = info.getAsString(PdfName.AUTHOR);
-        if (author != null) {
-            String[] parts = author.toUnicodeString().split(",|;");
-            info.put(PdfName.AUTHOR, new PdfString(parts[0]));
         }
     }
     
@@ -170,15 +161,6 @@ public class XmpWriter {
                     throw new IOException(xmpExc.getMessage());
                 }
             }
-            updateAuthorInfo(info);
-        }
-    }
-
-    protected void updateAuthorInfo(Map<String, String> info) {
-        String author = info.get("Author");
-        if (author != null) {
-            String[] parts = author.split(",|;");
-            info.put(PdfName.AUTHOR.toString(), parts[0]);
         }
     }
     
@@ -332,10 +314,7 @@ public class XmpWriter {
         if (PdfName.TITLE.equals(key)) {
             xmpMeta.setLocalizedText(XMPConst.NS_DC, DublinCoreProperties.TITLE, XMPConst.X_DEFAULT, XMPConst.X_DEFAULT, value);
         } else if (PdfName.AUTHOR.equals(key)) {
-            for (String v : value.split(",|;"))
-                if (v.trim().length() > 0)
-                    xmpMeta.appendArrayItem(XMPConst.NS_DC, DublinCoreProperties.CREATOR, new PropertyOptions(PropertyOptions.ARRAY_ORDERED), v.trim(), null);
-            //xmpMeta.appendArrayItem(XMPConst.NS_DC, DublinCoreProperties.CREATOR, new PropertyOptions(PropertyOptions.ARRAY_ORDERED), value, null);
+            xmpMeta.appendArrayItem(XMPConst.NS_DC, DublinCoreProperties.CREATOR, new PropertyOptions(PropertyOptions.ARRAY_ORDERED), value, null);
         } else if (PdfName.SUBJECT.equals(key)) {
             xmpMeta.setLocalizedText(XMPConst.NS_DC, DublinCoreProperties.DESCRIPTION, XMPConst.X_DEFAULT, XMPConst.X_DEFAULT, value);
         } else if (PdfName.KEYWORDS.equals(key)) {
