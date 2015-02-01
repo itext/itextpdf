@@ -44,6 +44,7 @@
  */
 package com.itextpdf.text.pdf.fonts.otf;
 
+import com.itextpdf.text.pdf.RandomAccessFileOrArray;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -57,8 +58,8 @@ import java.util.Set;
  */
 public class GlyphPositioningTableReader extends OpenTypeFontTableReader {
     
-    public GlyphPositioningTableReader(String fontFilePath, int gposTableLocation) throws IOException {
-        super(fontFilePath, gposTableLocation);
+    public GlyphPositioningTableReader(RandomAccessFileOrArray rf, int gposTableLocation) throws IOException {
+        super(rf, gposTableLocation);
     }
     
     public void read() throws FontReadingException  {  
