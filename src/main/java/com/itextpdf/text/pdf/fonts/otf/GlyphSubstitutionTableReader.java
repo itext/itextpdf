@@ -53,6 +53,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.itextpdf.text.pdf.Glyph;
+import com.itextpdf.text.pdf.RandomAccessFileOrArray;
 
 /**
  * <p>
@@ -71,9 +72,9 @@ public class GlyphSubstitutionTableReader extends OpenTypeFontTableReader {
     private final Map<Integer, Character> glyphToCharacterMap;
     private Map<Integer, List<Integer>> rawLigatureSubstitutionMap;
 
-    public GlyphSubstitutionTableReader(String fontFilePath, int gsubTableLocation, 
+    public GlyphSubstitutionTableReader(RandomAccessFileOrArray rf, int gsubTableLocation, 
     		Map<Integer, Character> glyphToCharacterMap, int[] glyphWidthsByIndex) throws IOException {
-        super(fontFilePath, gsubTableLocation);
+        super(rf, gsubTableLocation);
         this.glyphWidthsByIndex = glyphWidthsByIndex;
         this.glyphToCharacterMap = glyphToCharacterMap;
     }
