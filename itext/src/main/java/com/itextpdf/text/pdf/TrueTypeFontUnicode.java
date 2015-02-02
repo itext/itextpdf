@@ -65,7 +65,7 @@ import java.util.Map;
  */
 class TrueTypeFontUnicode extends TrueTypeFont implements Comparator<int[]>{
 	
-	private static final List<Language> SUPPORTED_LANGUAGES_FOR_OTF = Arrays.asList(Language.BENGALI);  
+	private static final List<Language> SUPPORTED_LANGUAGES_FOR_OTF = Arrays.asList(Language.BENGALI, Language.TAMIL);
 	
 	private Map<String, Glyph> glyphSubstitutionMap;
 	private Language supportedLanguage;
