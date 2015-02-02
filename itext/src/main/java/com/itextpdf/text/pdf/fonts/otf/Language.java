@@ -53,7 +53,9 @@ import java.util.List;
  */
 public enum Language {
 	
-	BENGALI("beng", "bng2");
+	BENGALI("beng", "bng2"),
+	//Added support for Tamil
+	TAMIL("tml2", "tml","taml");
 	
 	private final List<String> codes;
 	
