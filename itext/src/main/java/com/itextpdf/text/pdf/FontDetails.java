@@ -59,6 +59,7 @@ import com.itextpdf.text.pdf.fonts.otf.Language;
 import com.itextpdf.text.pdf.languages.BanglaGlyphRepositioner;
 import com.itextpdf.text.pdf.languages.GlyphRepositioner;
 import com.itextpdf.text.pdf.languages.IndicCompositeCharacterComparator;
+import com.itextpdf.text.pdf.languages.TamilGlyphRepositioner;
 
 /**
  * Each font in the document will have an instance of this class
@@ -366,6 +367,9 @@ class FontDetails {
     	switch (language) {
 		case BENGALI:
 			return new BanglaGlyphRepositioner(Collections.unmodifiableMap(ttu.cmap31), ttu.getGlyphSubstitutionMap());
+		case TAMIL:
+			return new TamilGlyphRepositioner(Collections.unmodifiableMap(ttu.cmap31), ttu.getGlyphSubstitutionMap());
+		
 		default:
 			return null;
 		}
