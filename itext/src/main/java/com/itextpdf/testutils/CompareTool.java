@@ -159,12 +159,45 @@ public class CompareTool {
             }
         }
 
+        private class OffsetPathItem extends PathItem {
+            int offset;
+            public OffsetPathItem(int offset) {
+                this.offset = offset;
+            }
+
+            @Override
+            public String toString() {
+                return "Offset: " + String.valueOf(offset);
+            }
+
+            @Override
+            public int hashCode() {
+                return offset;
+            }
+
+            @Override
+            public boolean equals(Object obj) {
+                return obj instanceof OffsetPathItem && offset == ((OffsetPathItem) obj).offset;
+            }
+
+            @Override
+            protected Node toXmlNode(Document document) {
+                Node element = document.createElement("offset");
+                element.appendChild(document.createTextNode(String.valueOf(offset)));
+                return element;
+            }
+        }
+
         public void pushArrayItemToPath(int index) {
             path.add(new ArrayPathItem(index));
         }
 
         public void pushDictItemToPath(String key) {
             path.add(new DictPathItem(key));
+        }
+
+        public void pushOffsetToPath(int offset) {
+            path.add(new OffsetPathItem(offset));
         }
 
         public void pop() {
@@ -715,9 +748,11 @@ public class CompareTool {
                         int l = Math.max(0, i - 10);
                         int r = Math.min(cmpStreamBytes.length, i + 10);
                         if (compareResult != null && currentPath != null) {
+                            currentPath.pushOffsetToPath(i);
                             compareResult.addError(currentPath, String.format("PRStream. The bytes differ at index %s. Expected: %s (%s). Found: %s (%s)",
-                                    i + 1, new String(new byte[] {cmpStreamBytes[i]}), new String(cmpStreamBytes, l, r - l).replace("\n", "\\n"),
+                                    i, new String(new byte[] {cmpStreamBytes[i]}), new String(cmpStreamBytes, l, r - l).replace("\n", "\\n"),
                                     new String(new byte[] {outStreamBytes[i]}), new String(outStreamBytes, l, r - l).replace("\n", "\\n")));
+                            currentPath.pop();
                         }
                     }
                 }
@@ -800,10 +835,13 @@ public class CompareTool {
                     if (cmpStr.charAt(i) != outStr.charAt(i)) {
                         int l = Math.max(0, i - 10);
                         int r = Math.min(cmpStr.length(), i + 10);
-                        if (compareResult != null && currentPath != null)
+                        if (compareResult != null && currentPath != null) {
+                            currentPath.pushOffsetToPath(i);
                             compareResult.addError(currentPath, String.format("PdfString. Characters differ at position %s. Expected: %s (%s). Found: %s (%s).",
-                                    i + 1, Character.toString(cmpStr.charAt(i)), cmpStr.substring(l, r).replace("\n", "\\n"),
+                                    i, Character.toString(cmpStr.charAt(i)), cmpStr.substring(l, r).replace("\n", "\\n"),
                                     Character.toString(outStr.charAt(i)), outStr.substring(l, r).replace("\n", "\\n")));
+                            currentPath.pop();
+                        }
                         break;
                     }
                 }
