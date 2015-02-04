@@ -524,8 +524,14 @@ public class CompareTool {
         return compare(outPdf, cmpPdf, outPath, differenceImagePrefix, null);
     }
 
-    public void setCompareByContentErrorsLimit(int compareByContentMaxErrorCount) {
+    /**
+     * Sets the maximum errors count which will be returned as the result of the comparison.
+     * @param compareByContentMaxErrorCount the errors count.
+     * @return Returns this.
+     */
+    public CompareTool setCompareByContentErrorsLimit(int compareByContentMaxErrorCount) {
         this.compareByContentErrorsLimit = compareByContentMaxErrorCount;
+        return this;
     }
 
     public void setGenerateCompareByContentXmlReport(boolean generateCompareByContentXmlReport) {
@@ -623,10 +629,13 @@ public class CompareTool {
             return true;
 
         if (outDirectObj == null) {
-            compareResult.addError(currentPath, "Found null.");
+            compareResult.addError(currentPath, "Expected object was not found.");
+            return false;
+        } else if (cmpDirectObj == null) {
+            compareResult.addError(currentPath, "Found object which was not expected to be found.");
             return false;
         } else if (cmpDirectObj.type() != outDirectObj.type()) {
-            compareResult.addError(currentPath, String.format("Types do not match. Expected: %s. Found: %s.", cmpDirectObj.type(), outDirectObj.type()));
+            compareResult.addError(currentPath, String.format("Types do not match. Expected: %s. Found: %s.", cmpDirectObj.getClass().getSimpleName(), outDirectObj.getClass().getSimpleName()));
             return false;
         }
 
@@ -691,8 +700,12 @@ public class CompareTool {
             return false;
         }
         boolean dictsAreSame = true;
-        for (PdfName key : cmpDict.getKeys()) {
+        // Iterate through the union of the keys of the cmp and out dictionaries!
+        Set<PdfName> mergedKeys = new HashSet<PdfName>(cmpDict.getKeys());
+        mergedKeys.addAll(outDict.getKeys());
+        for (PdfName key : mergedKeys) {
             if (key.compareTo(PdfName.PARENT) == 0 || key.compareTo(PdfName.P) == 0) continue;
+            if (outDict.isStream() && cmpDict.isStream() && (key.equals(PdfName.FILTER) || key.equals(PdfName.LENGTH))) continue;
             if (key.compareTo(PdfName.BASEFONT) == 0 || key.compareTo(PdfName.FONTNAME) == 0) {
                 PdfObject cmpObj = cmpDict.getDirectObject(key);
                 if (cmpObj.isName() && cmpObj.toString().indexOf('+') > 0) {
@@ -736,7 +749,7 @@ public class CompareTool {
             cmpStreamBytes = PdfReader.decodeBytes(cmpStreamBytes, cmpStream);
         }
         if (Arrays.equals(outStreamBytes, cmpStreamBytes)) {
-            return true;
+            return compareDictionariesExtended(outStream, cmpStream, currentPath, compareResult);
         } else {
             if (cmpStreamBytes.length != outStreamBytes.length) {
                 if (compareResult != null && currentPath != null) {
