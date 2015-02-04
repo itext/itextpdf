@@ -1,5 +1,6 @@
 package com.itextpdf.text.pdf.pdfcleanup;
 
+import com.itextpdf.text.BadElementException;
 import com.itextpdf.text.DocWriter;
 import com.itextpdf.text.Image;
 import com.itextpdf.text.pdf.*;
@@ -84,13 +85,11 @@ public class PdfCleanUpContentOperator implements ContentOperator {
 
                 if (chunk.isVisible()) {
                     PdfDictionary xObjResources = cleanUpStrategy.getContext().getResources().getAsDict(PdfName.XOBJECT);
-                    xObjResources.remove((PdfName) operands.get(0));
-
-                    Image image = Image.getInstance(chunk.getNewImageData());
-                    cleanUpStrategy.getContext().getCanvas().addImage(image, 1, 0, 0, 1, 0, 0);
+                    PRStream imageStream = (PRStream) xObjResources.getAsStream((PdfName) operands.get(0));
+                    updateImage(imageStream, chunk.getNewImageData());
+                } else {
+                    disableOutput = true;
                 }
-
-                disableOutput = true;
             }
         } else if ("q".equals(operatorStr)) {
             cleanUpStrategy.getContext().saveGraphicsState();
@@ -268,5 +267,29 @@ public class PdfCleanUpContentOperator implements ContentOperator {
 
     private boolean isSpace(PdfCleanUpContentChunk chunk) {
         return chunk.getString().toUnicodeString().equals(" ");
+    }
+
+    private void updateImage(PRStream imageStream, byte[] newData) throws BadElementException, IOException, BadPdfFormatException {
+        PdfImage image = new PdfImage(Image.getInstance(newData), "", null);
+
+        if (imageStream.contains(PdfName.SMASK)) {
+            image.put(PdfName.SMASK, imageStream.get(PdfName.SMASK));
+        }
+
+        if (imageStream.contains(PdfName.MASK)) {
+            image.put(PdfName.MASK, imageStream.get(PdfName.MASK));
+        }
+
+        if (imageStream.contains(PdfName.IMAGEMASK)) {
+            image.put(PdfName.IMAGEMASK, imageStream.get(PdfName.IMAGEMASK));
+        }
+
+        if (imageStream.contains(PdfName.SMASKINDATA)) {
+            image.put(PdfName.SMASKINDATA, imageStream.get(PdfName.SMASKINDATA));
+        }
+
+        imageStream.clear();
+        imageStream.putAll(image);
+        imageStream.setDataRaw(image.getBytes());
     }
 }

@@ -52,6 +52,8 @@ public class PdfCleanUpProcessor {
         for (Map.Entry<Integer, List<PdfCleanUpLocation>> entry : pdfCleanUpLocations.entrySet()) {
             cleanUpPage(entry.getKey(), entry.getValue());
         }
+
+        pdfStamper.getReader().removeUnusedObjects();
     }
 
     private void cleanUpPage(int pageNum, List<PdfCleanUpLocation> cleanUpLocations) throws IOException, DocumentException {
@@ -253,8 +255,6 @@ public class PdfCleanUpProcessor {
         if (annotsArray.size() == 0) {
             pageDict.remove(PdfName.ANNOTS);
         }
-
-        reader.removeUnusedObjects();
     }
 
     private void insertFormXObj(PdfContentByte canvas, PdfDictionary pageDict, PdfStream formXObj, List<Rectangle> clippingRects, Rectangle annotRect) throws IOException {
