@@ -59,7 +59,8 @@ public class PdfCleanUpProcessorTest {
                                              {"simpleImmediate.pdf", "simpleImmediate.pdf", "cmp_simpleImmediate.pdf", cleanUpLocations2},
                                              {"simpleImmediate-tm.pdf", "simpleImmediate-tm.pdf", "cmp_simpleImmediate-tm.pdf", cleanUpLocations2},
                                              {"multiUseIndirect.pdf", "multiUseIndirect.pdf", "cmp_multiUseIndirect.pdf", cleanUpLocations3},
-                                             {"multiUseImage.pdf", "multiUseImage.pdf", "cmp_multiUseImage.pdf", cleanUpLocations4}});
+                                             {"multiUseImage.pdf", "multiUseImage.pdf", "cmp_multiUseImage.pdf", cleanUpLocations4},
+                                             {"smaskImage.pdf", "smaskImage.pdf", "cmp_smaskImage.pdf", cleanUpLocations4}});
     }
 
     @Test

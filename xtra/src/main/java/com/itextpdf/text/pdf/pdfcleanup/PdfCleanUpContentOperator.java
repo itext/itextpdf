@@ -280,10 +280,6 @@ public class PdfCleanUpContentOperator implements ContentOperator {
             image.put(PdfName.MASK, imageStream.get(PdfName.MASK));
         }
 
-        if (imageStream.contains(PdfName.IMAGEMASK)) {
-            image.put(PdfName.IMAGEMASK, imageStream.get(PdfName.IMAGEMASK));
-        }
-
         if (imageStream.contains(PdfName.SMASKINDATA)) {
             image.put(PdfName.SMASKINDATA, imageStream.get(PdfName.SMASKINDATA));
         }
