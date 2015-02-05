@@ -563,9 +563,15 @@ public class CompareTool {
 
         PdfObject outStructTree = outReader.getCatalog().get(PdfName.STRUCTTREEROOT);
         PdfObject cmpStructTree = cmpReader.getCatalog().get(PdfName.STRUCTTREEROOT);
-        RefKey outStructTreeRef = outStructTree == null ? null : new RefKey((PdfIndirectReference)cmpStructTree);
-        RefKey cmpStructTreeRef = cmpStructTree == null ? null : new RefKey((PdfIndirectReference)outStructTree);
+        RefKey outStructTreeRef = outStructTree == null ? null : new RefKey((PdfIndirectReference)outStructTree);
+        RefKey cmpStructTreeRef = cmpStructTree == null ? null : new RefKey((PdfIndirectReference)cmpStructTree);
         compareObjects(outStructTree, cmpStructTree, new ObjectPath(outStructTreeRef, cmpStructTreeRef), compareResult);
+
+        PdfObject outOcProperties = outReader.getCatalog().get(PdfName.OCPROPERTIES);
+        PdfObject cmpOcProperties = cmpReader.getCatalog().get(PdfName.OCPROPERTIES);
+        RefKey outOcPropertiesRef = outOcProperties == null ? null : new RefKey((PdfIndirectReference)outOcProperties);
+        RefKey cmpOcPropertiesRef = cmpOcProperties == null ? null : new RefKey((PdfIndirectReference)cmpOcProperties);
+        compareObjects(outOcProperties, cmpOcProperties, new ObjectPath(outOcPropertiesRef, cmpOcPropertiesRef), compareResult);
 
         outReader.close();
         cmpReader.close();
