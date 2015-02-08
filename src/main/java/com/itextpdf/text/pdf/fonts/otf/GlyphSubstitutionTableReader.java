@@ -164,7 +164,18 @@ public class GlyphSubstitutionTableReader extends OpenTypeFontTableReader {
                 rawLigatureSubstitutionMap.put(substituteGlyphId, Arrays.asList(coverageGlyphId)); 
             }
         } else if (substFormat == 2) {
-            System.err.println("LookupType 1 :: substFormat 2 is not yet handled by " + GlyphSubstitutionTableReader.class.getSimpleName());
+            int coverage = rf.readShort();
+            LOG.debug("coverage=" + coverage);
+            int glyphCount = rf.readUnsignedShort();
+            int[] substitute = new int[glyphCount];
+            for (int k = 0; k < glyphCount; ++k) {
+                substitute[k] = rf.readUnsignedShort();
+            }
+            List<Integer> coverageGlyphIds = readCoverageFormat(subTableLocation + coverage);
+            for (int k = 0; k < glyphCount; ++k) {
+                rawLigatureSubstitutionMap.put(substitute[k], Arrays.asList(coverageGlyphIds.get(k))); 
+            }
+            
         } else {
             throw new IllegalArgumentException("Bad substFormat: " + substFormat);
         }
