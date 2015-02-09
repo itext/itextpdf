@@ -152,9 +152,16 @@ public class
     public static final PdfName ALL = new PdfName("All");
     /** A name */
     public static final PdfName ALLPAGES = new PdfName("AllPages");
-    /** A name */
+    /**
+     * Use ALT to specify alternate texts in Tagged PDF.
+     * For alternate ICC profiles, use {@link #ALTERNATE}
+     */
     public static final PdfName ALT = new PdfName("Alt");
-    /** A name */
+    /**
+     * Use ALTERNATE only in ICC profiles. It specifies an alternative color
+     * space, in case the primary one is not supported, for legacy purposes.
+     * For various types of alternate texts in Tagged PDF, use {@link #ALT}
+     */
     public static final PdfName ALTERNATE = new PdfName("Alternate");
     /**
      * A name
@@ -1120,9 +1127,16 @@ public class
      * @since 5.2.1
      */
     public static final PdfName LAB = new PdfName("Lab");
-    /** A name */
+    /**
+     * An entry specifying the natural language, and optionally locale. Use this
+     * to specify the Language attribute on a Tagged Pdf element.
+     * For the content usage dictionary, use {@link #LANGUAGE}
+     */
     public static final PdfName LANG = new PdfName("Lang");
-    /** A name */
+    /**
+     * A dictionary type, strictly for use in the content usage dictionary. For
+     * dictionary entries in Tagged Pdf, use {@link #LANG}
+     */
     public static final PdfName LANGUAGE = new PdfName("Language");
     /** A name */
     public static final PdfName LAST = new PdfName("Last");
@@ -1977,7 +1991,10 @@ public class
     public static final PdfName SW = new PdfName("SW");
     /** A name of a base 14 type 1 font */
     public static final PdfName SYMBOL = new PdfName("Symbol");
-    /** A name */
+    /**
+     * T is very commonly used for various dictionary entries, including title
+     * entries in a Tagged PDF element dictionary, and target dictionaries.
+     */
     public static final PdfName T = new PdfName("T");
     /**
      * A name
@@ -2077,7 +2094,11 @@ public class
     public static final PdfName TIMES_ITALIC = new PdfName("Times-Italic");
     /** A name of a base 14 type 1 font */
     public static final PdfName TIMES_BOLDITALIC = new PdfName("Times-BoldItalic");
-    /** A name */
+    /**
+     * Use Title for the document's top level title (optional), and for document
+     * outline dictionaries, which can store bookmarks.
+     * For all other uses of a title entry, including Tagged PDF, use {@link #T}
+     */
     public static final PdfName TITLE = new PdfName("Title");
     /** A name */
     public static final PdfName TK = new PdfName("TK");
