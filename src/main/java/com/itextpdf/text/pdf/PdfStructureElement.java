@@ -287,7 +287,7 @@ public class PdfStructureElement extends PdfDictionary implements IPdfStructureE
                     put(key, attr);
                     top.putIDTree(attr.toString(), getReference());
                 }
-                else if (key.equals(PdfName.LANG) || key.equals(PdfName.ALT) || key.equals(PdfName.ACTUALTEXT) || key.equals(PdfName.E)) {
+                else if (key.equals(PdfName.LANG) || key.equals(PdfName.ALT) || key.equals(PdfName.ACTUALTEXT) || key.equals(PdfName.E) || key.equals(PdfName.T)) {
                     put(key, element.getAccessibleAttribute(key));
                 } else {
                     setAttribute(key, element.getAccessibleAttribute(key));
