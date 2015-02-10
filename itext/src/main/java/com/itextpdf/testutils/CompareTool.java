@@ -317,7 +317,7 @@ public class CompareTool {
     private String gsExec;
     private String compareExec;
     private final String gsParams = " -dNOPAUSE -dBATCH -sDEVICE=png16m -r150 -sOutputFile=<outputfile> <inputfile>";
-    private final String compareParams = " <image1> <image2> <difference>";
+    private final String compareParams = " \"<image1>\" \"<image2>\" \"<difference>\"";
 
     static private final String cannotOpenTargetDirectory = "Cannot open target directory for <filename>.";
     static private final String gsFailed = "GhostScript failed for <filename>.";
