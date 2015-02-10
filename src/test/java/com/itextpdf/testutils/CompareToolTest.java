@@ -20,8 +20,8 @@ public class CompareToolTest {
         CompareTool compareTool = new CompareTool();
         compareTool.setCompareByContentErrorsLimit(10);
         compareTool.setGenerateCompareByContentXmlReport(true);
-        String outPdf = new File(CompareToolTest.class.getResource("/com/itextpdf/testutils/CompareToolTest/simple_pdf.pdf").getPath()).getCanonicalPath();
-        String cmpPdf = new File(CompareToolTest.class.getResource("/com/itextpdf/testutils/CompareToolTest/cmp_simple_pdf.pdf").getPath()).getCanonicalPath();
+        String outPdf = "./src/test/resources/com/itextpdf/testutils/CompareToolTest/simple_pdf.pdf";
+        String cmpPdf = "./src/test/resources/com/itextpdf/testutils/CompareToolTest/cmp_simple_pdf.pdf";
         String result = compareTool.compareByContent(outPdf, cmpPdf, OUT_PATH, "difference");
         System.out.println(result);
         Assert.assertNotNull(result);
@@ -32,8 +32,8 @@ public class CompareToolTest {
         CompareTool compareTool = new CompareTool();
         compareTool.setCompareByContentErrorsLimit(10);
         compareTool.setGenerateCompareByContentXmlReport(true);
-        String outPdf = new File(CompareToolTest.class.getResource("/com/itextpdf/testutils/CompareToolTest/tagged_pdf.pdf").getPath()).getCanonicalPath();
-        String cmpPdf = new File(CompareToolTest.class.getResource("/com/itextpdf/testutils/CompareToolTest/cmp_tagged_pdf.pdf").getPath()).getCanonicalPath();
+        String outPdf = "./src/test/resources/com/itextpdf/testutils/CompareToolTest/tagged_pdf.pdf";
+        String cmpPdf = "./src/test/resources/com/itextpdf/testutils/CompareToolTest/cmp_tagged_pdf.pdf";
         String result = compareTool.compareByContent(outPdf, cmpPdf, OUT_PATH, "difference");
         System.out.println(result);
         Assert.assertNotNull(result);
