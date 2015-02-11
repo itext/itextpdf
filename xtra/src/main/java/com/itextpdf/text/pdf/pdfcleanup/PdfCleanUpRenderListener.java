@@ -23,15 +23,14 @@ import java.io.OutputStream;
 import java.util.*;
 import java.util.List;
 
-public class PdfCleanUpRenderListener implements RenderListener {
+class PdfCleanUpRenderListener implements RenderListener {
 
     private static final Color CLEANED_AREA_FILL_COLOR = Color.WHITE;
 
-    private List<PdfCleanUpRegionFilter> filters;
-    protected List<PdfCleanUpContentChunk> chunks = new ArrayList<PdfCleanUpContentChunk>();
     private PdfStamper pdfStamper;
+    private List<PdfCleanUpRegionFilter> filters;
+    private List<PdfCleanUpContentChunk> chunks = new ArrayList<PdfCleanUpContentChunk>();
     private Stack<PdfCleanUpContext> contextStack = new Stack<PdfCleanUpContext>();
-
     private int strNumber = 1; // Represents number of string under processing. Needed for processing TJ operator.
 
     public PdfCleanUpRenderListener(PdfStamper pdfStamper, List<PdfCleanUpRegionFilter> filters) {
@@ -65,17 +64,21 @@ public class PdfCleanUpRenderListener implements RenderListener {
                 byte[] imageBytes = processImage(pdfImage.getImageAsBytes(), areasToBeCleaned);
 
                 if (renderInfo.getRef() == null && pdfImage != null) { // true => inline image
-                    Image image = Image.getInstance(imageBytes);
-
                     PdfDictionary dict = pdfImage.getDictionary();
                     PdfObject imageMask = dict.get(PdfName.IMAGEMASK);
-                    if (imageMask == null)
+                    Image image = Image.getInstance(imageBytes);
+
+                    if (imageMask == null) {
                         imageMask = dict.get(PdfName.IM);
-                    if (imageMask != null && imageMask.equals(PdfBoolean.PDFTRUE))
+                    }
+
+                    if (imageMask != null && imageMask.equals(PdfBoolean.PDFTRUE)) {
                         image.makeMask();
+                    }
+
                     PdfContentByte canvas = getContext().getCanvas();
                     canvas.addImage(image, 1, 0, 0, 1, 0, 0, true);
-                } else if (renderInfo.getRef() != null && pdfImage != null && imageBytes != pdfImage.getImageAsBytes()) {
+                } else if (pdfImage != null && imageBytes != pdfImage.getImageAsBytes()) {
                     chunks.add(new PdfCleanUpContentChunk(true, imageBytes));
                 }
             } catch (Exception e) {
@@ -123,8 +126,8 @@ public class PdfCleanUpRenderListener implements RenderListener {
     }
 
     /**
-     * @return null if the image is not allowed (either it is fully covered or ctm == null or something else...).
-     *         List of covered image areas otherwise.
+     * @return null if the image is not allowed (either it is fully covered or ctm == null).
+     * List of covered image areas otherwise.
      */
     private List<Rectangle> getImageAreasToBeCleaned(ImageRenderInfo renderInfo) {
         List<Rectangle> areasToBeCleaned = new ArrayList<Rectangle>();
@@ -149,19 +152,19 @@ public class PdfCleanUpRenderListener implements RenderListener {
 
         try {
             BufferedImage image = Imaging.getBufferedImage(imageBytes);
+            ImageInfo imageInfo = Imaging.getImageInfo(imageBytes);
             cleanImage(image, areasToBeCleaned);
 
-            ImageInfo imageInfo = Imaging.getImageInfo(imageBytes);
-            Map<String, Object> params = new HashMap<String, Object>();
-
-            if (imageInfo.getFormat().getName().equals(ImageFormats.TIFF.getName())) {
-                params.put(ImagingConstants.PARAM_KEY_COMPRESSION, getTiffCompressionAlgoConst(imageInfo.getCompressionAlgorithm()));
-            }
-
             // Apache can only read JPEG, so we should use awt for writing in this format
-            if (imageInfo.getFormat().getName().equals(ImageFormats.JPEG.getName())) {
+            if (imageInfo.getFormat() == ImageFormats.JPEG) {
                 return getJPGBytes(image);
             } else {
+                Map<String, Object> params = new HashMap<String, Object>();
+
+                if (imageInfo.getFormat() == ImageFormats.TIFF) {
+                    params.put(ImagingConstants.PARAM_KEY_COMPRESSION, TiffConstants.TIFF_COMPRESSION_LZW);
+                }
+
                 return Imaging.writeImageToBytes(image, imageInfo.getFormat(), params);
             }
         } catch (Exception e) {
@@ -170,7 +173,7 @@ public class PdfCleanUpRenderListener implements RenderListener {
     }
 
     private void cleanImage(BufferedImage image, List<Rectangle> areasToBeCleaned) {
-        Graphics2D graphics = (Graphics2D) image.getGraphics();
+        Graphics2D graphics = image.createGraphics();
         graphics.setColor(CLEANED_AREA_FILL_COLOR);
 
         for (Rectangle rect : areasToBeCleaned) {
@@ -181,18 +184,9 @@ public class PdfCleanUpRenderListener implements RenderListener {
 
             graphics.fillRect(x, y, width, height);
         }
-    }
 
-    private int getTiffCompressionAlgoConst(ImageInfo.CompressionAlgorithm compressionAlgorithm) {
-        switch (compressionAlgorithm) {
-            case NONE:
-                return TiffConstants.TIFF_COMPRESSION_UNCOMPRESSED;
+        graphics.dispose();
 
-            case LZW:
-                return TiffConstants.TIFF_COMPRESSION_LZW;
-        }
-
-        throw new RuntimeException("Unknown compression");
     }
 
     private byte[] getJPGBytes(BufferedImage image) {

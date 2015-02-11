@@ -3,20 +3,20 @@ package com.itextpdf.text.pdf.pdfcleanup;
 import com.itextpdf.text.pdf.PdfString;
 import com.itextpdf.text.pdf.parser.Vector;
 
-public class PdfCleanUpContentChunk {
+class PdfCleanUpContentChunk {
 
-    private PdfString string;
     private boolean visible;
-    private boolean image = false;
-    private float startX = 0;
-    private float endX = 0;
 
-    private byte[] newImageData;
-
+    private PdfString text;
+    private float startX ;
+    private float endX;
     private int numOfStrChunkBelongsTo;
 
-    public PdfCleanUpContentChunk(PdfString string, Vector startLocation, Vector endLocation, boolean visible, int numOfStrChunkBelongsTo) {
-        this.string = string;
+    private boolean image;
+    private byte[] newImageData;
+
+    public PdfCleanUpContentChunk(PdfString text, Vector startLocation, Vector endLocation, boolean visible, int numOfStrChunkBelongsTo) {
+        this.text = text;
         this.startX = startLocation.get(0);
         this.endX = endLocation.get(0);
         this.visible = visible;
@@ -29,8 +29,8 @@ public class PdfCleanUpContentChunk {
         this.newImageData = newImageData;
     }
 
-    public PdfString getString() {
-        return string;
+    public PdfString getText() {
+        return text;
     }
 
     public boolean isVisible() {

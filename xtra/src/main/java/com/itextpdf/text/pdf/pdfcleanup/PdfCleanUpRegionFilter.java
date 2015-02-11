@@ -7,7 +7,11 @@ import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.pdf.parser.*;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
-public class PdfCleanUpRegionFilter extends RenderFilter {
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
+class PdfCleanUpRegionFilter extends RenderFilter {
 
     private Rectangle rectangle;
 
@@ -22,14 +26,14 @@ public class PdfCleanUpRegionFilter extends RenderFilter {
      * @return
      */
     @Override
-    public boolean allowText(TextRenderInfo renderInfo) { // TODO: a little bit confusing name regarding to logic, isn't it?
+    public boolean allowText(TextRenderInfo renderInfo) {
         LineSegment ascent = renderInfo.getAscentLine();
         LineSegment descent = renderInfo.getDescentLine();
 
         Rectangle r1 = new Rectangle(Math.min(descent.getStartPoint().get(0), descent.getEndPoint().get(0)),
-                descent.getStartPoint().get(1),
-                Math.max(descent.getStartPoint().get(0), descent.getEndPoint().get(0)),
-                ascent.getEndPoint().get(1));
+                                     descent.getStartPoint().get(1),
+                                     Math.max(descent.getStartPoint().get(0), descent.getEndPoint().get(0)),
+                                     ascent.getEndPoint().get(1));
         Rectangle r2 = rectangle;
 
         return intersect(r1, r2);
@@ -47,7 +51,7 @@ public class PdfCleanUpRegionFilter extends RenderFilter {
      *
      * @return intersection
      */
-    public PdfCleanUpCoveredArea intersection(ImageRenderInfo renderInfo) {
+    protected PdfCleanUpCoveredArea intersection(ImageRenderInfo renderInfo) {
         Rectangle imageRect = calcImageRect(renderInfo);
 
         if (imageRect == null) {
@@ -71,19 +75,26 @@ public class PdfCleanUpRegionFilter extends RenderFilter {
 
     private Rectangle calcImageRect(ImageRenderInfo renderInfo) {
         Matrix ctm = renderInfo.getImageCTM();
-        if (ctm == null)
+
+        if (ctm == null) {
             return null;
-        AffineTransform t = new AffineTransform(ctm.get(0), ctm.get(1), ctm.get(3), ctm.get(4), ctm.get(6), ctm.get(7));
+        }
+
+        AffineTransform t = new AffineTransform(ctm.get(Matrix.I11), ctm.get(Matrix.I12),
+                                                ctm.get(Matrix.I21), ctm.get(Matrix.I22),
+                                                ctm.get(Matrix.I31), ctm.get(Matrix.I32));
         Point2D p1 = t.transform(new Point(0, 0), null);
         Point2D p2 = t.transform(new Point(0, 1), null);
         Point2D p3 = t.transform(new Point(1, 0), null);
         Point2D p4 = t.transform(new Point(1, 1), null);
-        double[] xs = new double[]{p1.getX(), p2.getX(), p3.getX(), p4.getX()};
-        double[] ys = new double[]{p1.getY(), p2.getY(), p3.getY(), p4.getY()};
-        double left = min(xs);
-        double bottom = min(ys);
-        double right = max(xs);
-        double top = max(ys);
+
+        List<Double> xs = Arrays.asList(p1.getX(), p2.getX(), p3.getX(), p4.getX());
+        List<Double> ys = Arrays.asList(p1.getY(), p2.getY(), p3.getY(), p4.getY());
+
+        double left = Collections.min(xs);
+        double bottom = Collections.min(ys);
+        double right = Collections.max(xs);
+        double top = Collections.max(ys);
 
         return new Rectangle((float) left, (float) bottom, (float) right, (float) top);
     }
@@ -107,21 +118,5 @@ public class PdfCleanUpRegionFilter extends RenderFilter {
 
         return new Rectangle((float) leftBottom.getX(), (float) leftBottom.getY(),
                              (float) rightTop.getX(), (float) rightTop.getY());
-    }
-
-    private double min(double[] numbers) {
-        double min = Float.MAX_VALUE;
-        for (double num : numbers)
-            if (num < min)
-                min = num;
-        return min;
-    }
-
-    private double max(double[] numbers) {
-        double max = -Float.MAX_VALUE;
-        for (double num : numbers)
-            if (num > max)
-                max = num;
-        return max;
     }
 }

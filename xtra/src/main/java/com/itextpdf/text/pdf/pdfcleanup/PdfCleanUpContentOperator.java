@@ -11,7 +11,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.*;
 
-public class PdfCleanUpContentOperator implements ContentOperator {
+class PdfCleanUpContentOperator implements ContentOperator {
 
     static private final byte[] TStar = DocWriter.getISOBytes("T*\n");
     static private final byte[] Tw = DocWriter.getISOBytes(" Tw ");
@@ -31,11 +31,12 @@ public class PdfCleanUpContentOperator implements ContentOperator {
 
     public static void populateOperators(PdfContentStreamProcessor contentProcessor,
                                          PdfCleanUpRenderListener pdfCleanUpRenderListener) {
-        String[] operators = new String[]{
+        String[] operators = {
                 PdfContentStreamProcessor.DEFAULTOPERATOR, "q", "Q", "g", "G", "rg", "RG", "k", "K",
                 "cs", "CS", "sc", "SC", "scn", "SCN", "cm", "gs", "Tc", "Tw", "Tz", "TL", "Tf", "Tr",
                 "Ts", "BT", "ET", "BMC", "BDC", "EMC", "Td", "TD", "Tm", "T*", "Tj", "'", "\"", "TJ", "Do"
         };
+
         for (String operator : operators) {
             PdfCleanUpContentOperator contentOperator = new PdfCleanUpContentOperator(pdfCleanUpRenderListener);
             contentOperator.originalContentOperator = contentProcessor.registerContentOperator(operator, contentOperator);
@@ -58,8 +59,10 @@ public class PdfCleanUpContentOperator implements ContentOperator {
         if ("Do".equals(operatorStr)) {
             if (operands.size() == 2 && operands.get(0).isName()) {
                 PdfDictionary xObjResources = cleanUpStrategy.getContext().getResources().getAsDict(PdfName.XOBJECT);
+
                 if (xObjResources != null) {
                     PdfStream xObj = xObjResources.getAsStream((PdfName) operands.get(0));
+
                     if (xObj instanceof PRStream && xObj.getAsName(PdfName.SUBTYPE) != null &&
                             xObj.getAsName(PdfName.SUBTYPE).compareTo(PdfName.FORM) == 0) {
                         xFormStream = (PRStream) xObj;
@@ -111,8 +114,10 @@ public class PdfCleanUpContentOperator implements ContentOperator {
             } else if ("\"".equals(operatorStr)) {
                 operands.get(0).toPdf(canvas.getPdfWriter(), canvas.getInternalBuffer());
                 canvas.getInternalBuffer().append(Tw);
+
                 operands.get(1).toPdf(canvas.getPdfWriter(), canvas.getInternalBuffer());
                 canvas.getInternalBuffer().append(TcTStar);
+
                 cleanUpStrategy.getContext().setCharacterSpacing(((PdfNumber) operands.get(1)).floatValue());
             } else if ("TJ".equals(operatorStr)) {
                 structuredTJoperands = structureTJarray((PdfArray) operands.get(0));
@@ -125,6 +130,7 @@ public class PdfCleanUpContentOperator implements ContentOperator {
 
         if (!disableOutput) {
             int index = 0;
+
             for (PdfObject o : operands) {
                 toPdf(o, canvas.getPdfWriter(), canvas.getInternalBuffer());
                 canvas.getInternalBuffer().append(operands.size() > ++index ? (byte) ' ' : (byte) '\n');
@@ -136,27 +142,38 @@ public class PdfCleanUpContentOperator implements ContentOperator {
 
     private boolean allChunksAreVisible(List<PdfCleanUpContentChunk> chunks) {
         for (PdfCleanUpContentChunk chunk : chunks) {
-            if (!chunk.isVisible())
+            if (!chunk.isVisible()) {
                 return false;
+            }
         }
+
         return true;
     }
 
-    // Overriding standard PdfObject.toPdf because we need sorted PdfDictionaries.
+    /**
+     * Overriding standard PdfObject.toPdf because we need sorted PdfDictionaries.
+     */
     static private void toPdf(PdfObject object, PdfWriter writer, OutputStream os) throws IOException {
         if (object instanceof PdfDictionary) {
             os.write('<');
             os.write('<');
+
             List<PdfName> keys = new ArrayList<PdfName>(((PdfDictionary) object).getKeys());
             Collections.sort(keys);
+
             for (PdfName key : keys) {
                 toPdf(key, writer, os);
                 PdfObject value = ((PdfDictionary) object).get(key);
                 int type = value.type();
-                if (type != PdfObject.ARRAY && type != PdfObject.DICTIONARY && type != PdfObject.NAME && type != PdfObject.STRING)
+
+                if (type != PdfObject.ARRAY && type != PdfObject.DICTIONARY && type != PdfObject.NAME &&
+                        type != PdfObject.STRING) {
                     os.write(' ');
+                }
+
                 toPdf(value, writer, os);
             }
+
             os.write('>');
             os.write('>');
         } else {
@@ -210,11 +227,11 @@ public class PdfCleanUpContentOperator implements ContentOperator {
             }
 
             if (chunk.isVisible()) {
-                if (shift != 0) {
+                if (Float.compare(shift, 0.0f) != 0 && Float.compare(shift, -0.0f) != 0) {
                     canvas.getInternalBuffer().append(shift).append(' ');
                 }
 
-                chunk.getString().toPdf(canvas.getPdfWriter(), canvas.getInternalBuffer());
+                chunk.getText().toPdf(canvas.getPdfWriter(), canvas.getInternalBuffer());
                 canvas.getInternalBuffer().append(' ');
 
                 shift = convertedCharacterSpacing + (isSpace(chunk) ? convertedWordSpacing : 0);
@@ -226,18 +243,18 @@ public class PdfCleanUpContentOperator implements ContentOperator {
             prevChunk = chunk;
         }
 
-        if (shift != 0) {
+        if (Float.compare(shift, 0.0f) != 0 && Float.compare(shift, -0.0f) != 0) {
             canvas.getInternalBuffer().append(shift);
         }
 
         canvas.getInternalBuffer().append(TJ);
 
-        if (characterSpacing != 0) {
+        if (Float.compare(characterSpacing, 0.0f) != 0 && Float.compare(characterSpacing, -0.0f) != 0) {
             new PdfNumber(characterSpacing).toPdf(canvas.getPdfWriter(), canvas.getInternalBuffer());
             canvas.getInternalBuffer().append(Tc);
         }
 
-        if (wordSpacing != 0) {
+        if (Float.compare(wordSpacing, 0.0f) != 0 && Float.compare(wordSpacing, -0.0f) != 0) {
             new PdfNumber(wordSpacing).toPdf(canvas.getPdfWriter(), canvas.getInternalBuffer());
             canvas.getInternalBuffer().append(Tw);
         }
@@ -266,7 +283,7 @@ public class PdfCleanUpContentOperator implements ContentOperator {
     }
 
     private boolean isSpace(PdfCleanUpContentChunk chunk) {
-        return chunk.getString().toUnicodeString().equals(" ");
+        return chunk.getText().toUnicodeString().equals(" ");
     }
 
     private void updateImage(PRStream imageStream, byte[] newData) throws BadElementException, IOException, BadPdfFormatException {

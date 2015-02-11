@@ -5,10 +5,10 @@ import com.itextpdf.text.pdf.PdfDictionary;
 
 import java.util.Stack;
 
-public class PdfCleanUpContext {
+class PdfCleanUpContext {
 
-    private PdfDictionary resources = null;
-    private PdfContentByte canvas = null;
+    private PdfDictionary resources;
+    private PdfContentByte canvas;
 
     private Stack<PdfCleanUpGraphicsState> graphicsStateStack = new Stack<PdfCleanUpGraphicsState>();
 
@@ -68,7 +68,7 @@ public class PdfCleanUpContext {
     }
 
     public void saveGraphicsState() {
-        graphicsStateStack.push( new PdfCleanUpGraphicsState(graphicsStateStack.peek()) );
+        graphicsStateStack.push(new PdfCleanUpGraphicsState(graphicsStateStack.peek()));
     }
 
     public void restoreGraphicsState() {

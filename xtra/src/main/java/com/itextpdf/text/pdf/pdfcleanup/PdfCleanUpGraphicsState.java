@@ -3,7 +3,7 @@ package com.itextpdf.text.pdf.pdfcleanup;
 /**
  * Represents subset of graphics state parameters
  */
-public class PdfCleanUpGraphicsState {
+class PdfCleanUpGraphicsState {
 
     private float fontSize = 1;
     private float horizontalScaling = 100; // in percents
