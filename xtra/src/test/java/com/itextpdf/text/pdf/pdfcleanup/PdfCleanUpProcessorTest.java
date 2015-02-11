@@ -2,7 +2,6 @@ package com.itextpdf.text.pdf.pdfcleanup;
 
 import com.itextpdf.testutils.CompareTool;
 import com.itextpdf.text.BaseColor;
-import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.pdf.PdfReader;
@@ -15,7 +14,9 @@ import org.junit.runners.Parameterized;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 
 @RunWith(Parameterized.class)
 public class PdfCleanUpProcessorTest {
@@ -45,7 +46,6 @@ public class PdfCleanUpProcessorTest {
 
         List<PdfCleanUpLocation> cleanUpLocations2 = Arrays.asList(new PdfCleanUpLocation(1, new Rectangle(97f, 405f, 480f, 445f), BaseColor.GRAY));
         List<PdfCleanUpLocation> cleanUpLocations3 = Arrays.asList(new PdfCleanUpLocation(1, new Rectangle(97f, 605f, 480f, 645f), BaseColor.GRAY));
-        List<PdfCleanUpLocation> cleanUpLocations4 = Arrays.asList(new PdfCleanUpLocation(1, new Rectangle(97f, 405f, 480f, 445f), BaseColor.GRAY));
 
         return Arrays.asList(new Object[][] {{"page229.pdf", "page229_01.pdf", "cmp_page229_01.pdf", cleanUpLocations1},
                                              {"page229-modified-Tc-Tw.pdf", "page229-modified-Tc-Tw.pdf", "cmp_page229-modified-Tc-Tw.pdf", cleanUpLocations1},
@@ -59,8 +59,8 @@ public class PdfCleanUpProcessorTest {
                                              {"simpleImmediate.pdf", "simpleImmediate.pdf", "cmp_simpleImmediate.pdf", cleanUpLocations2},
                                              {"simpleImmediate-tm.pdf", "simpleImmediate-tm.pdf", "cmp_simpleImmediate-tm.pdf", cleanUpLocations2},
                                              {"multiUseIndirect.pdf", "multiUseIndirect.pdf", "cmp_multiUseIndirect.pdf", cleanUpLocations3},
-                                             {"multiUseImage.pdf", "multiUseImage.pdf", "cmp_multiUseImage.pdf", cleanUpLocations4},
-                                             {"smaskImage.pdf", "smaskImage.pdf", "cmp_smaskImage.pdf", cleanUpLocations4}});
+                                             {"multiUseImage.pdf", "multiUseImage.pdf", "cmp_multiUseImage.pdf", cleanUpLocations2},
+                                             {"smaskImage.pdf", "smaskImage.pdf", "cmp_smaskImage.pdf", cleanUpLocations2}});
     }
 
     @Test
@@ -71,7 +71,12 @@ public class PdfCleanUpProcessorTest {
     }
 
     private void cleanUp(String input, String output, List<PdfCleanUpLocation> cleanUpLocations) throws IOException, DocumentException {
-        new File(output).getParentFile().mkdirs();
+        File outDir = new File(OUTPUT_PATH);
+
+        if (!outDir.exists()) {
+            outDir.mkdirs();
+        }
+
         PdfReader reader = new PdfReader(input);
         FileOutputStream fos = new FileOutputStream(output);
         PdfStamper stamper = new PdfStamper(reader, fos);
