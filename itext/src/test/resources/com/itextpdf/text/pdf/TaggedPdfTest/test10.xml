@@ -12,7 +12,7 @@ because we need new line.</Span>
 <TD width="209.2" o="/Table"><Figure bBox="[299.5, 542.83, 504.7, 660.91]" width="106" o="/Layout" height="61"><alt>Dog image</alt></Figure>
 </TD>
 </TR>
-<TR o="/Table"><TD width="209.2" o="/Table" height="770"><Table o="/Table" width="205.2" height="3344.74"><TBody><TR o="/Table"><TD width="102.6" o="/Table"><Span>Quick brown fox
+<TR o="/Table"><TD width="209.2" o="/Table"><Table o="/Table" width="205.2" height="3344.74"><TBody><TR o="/Table"><TD width="102.6" o="/Table"><Span>Quick brown fox
 jumped over a
 lazy dog. A very
 long line appears
@@ -28,7 +28,7 @@ lazy</Span>
 <TD width="102.6" o="/Table"><Figure bBox="[194.9, 669.26, 293.5, 726]" width="106" o="/Layout" height="61"><alt>Dog image</alt></Figure>
 </TD>
 </TR>
-<TR o="/Table"><TD width="102.6" o="/Table" height="766"><Span>Lorem ipsum
+<TR o="/Table"><TD width="102.6" o="/Table"><Span>Lorem ipsum
 dolor sit
 amet,consectetur
 adipiscing
@@ -296,13 +296,13 @@ semper vitae,
 tempus eget
 dolor.</Span>
 </TD>
-<TD width="102.6" o="/Table" height="766"><Span>Hello World</Span>
+<TD width="102.6" o="/Table"><Span>Hello World</Span>
 </TD>
 </TR>
 </TBody>
 </Table>
 </TD>
-<TD width="209.2" o="/Table" height="770"><Span>Lorem ipsum dolor sit
+<TD width="209.2" o="/Table"><Span>Lorem ipsum dolor sit
 amet,consectetur adipiscing
 elit.Pellentesque a lectus sit amet
 lectus accumsan aliquam.Quisque

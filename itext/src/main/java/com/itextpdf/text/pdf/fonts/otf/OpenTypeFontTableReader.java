@@ -71,10 +71,9 @@ public abstract class OpenTypeFontTableReader {
 	
 	private List<String> supportedLanguages;
 
-	public OpenTypeFontTableReader(String fontFilePath, int tableLocation)
+	public OpenTypeFontTableReader(RandomAccessFileOrArray rf, int tableLocation)
 			throws IOException {
-		this.rf = new RandomAccessFileOrArray(
-				new RandomAccessSourceFactory().createBestSource(fontFilePath));
+		this.rf = rf;
 		this.tableLocation = tableLocation;
 	}
 	

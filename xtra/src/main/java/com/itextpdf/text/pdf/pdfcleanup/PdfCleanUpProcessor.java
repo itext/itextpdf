@@ -52,26 +52,27 @@ public class PdfCleanUpProcessor {
         for (Map.Entry<Integer, List<PdfCleanUpLocation>> entry : pdfCleanUpLocations.entrySet()) {
             cleanUpPage(entry.getKey(), entry.getValue());
         }
+
+        pdfStamper.getReader().removeUnusedObjects();
     }
 
     private void cleanUpPage(int pageNum, List<PdfCleanUpLocation> cleanUpLocations) throws IOException, DocumentException {
-        if (cleanUpLocations.size() <= 0)
+        if (cleanUpLocations.size() == 0) {
             return;
+        }
 
         PdfReader pdfReader = pdfStamper.getReader();
         PdfDictionary page = pdfReader.getPageN(pageNum);
         PdfContentByte canvas = pdfStamper.getUnderContent(pageNum);
         byte[] pageContentInput = ContentByteUtils.getContentBytesForPage(pdfReader, pageNum);
         page.remove(PdfName.CONTENTS);
+
         canvas.saveState();
 
-        List<PdfCleanUpRegionFilter> filters = new ArrayList<PdfCleanUpRegionFilter>();
-        for (PdfCleanUpLocation cleanUpLocation : cleanUpLocations) {
-            Rectangle region = cleanUpLocation.getRegion();
-            filters.add(new PdfCleanUpRegionFilter(region));
-        }
+        List<PdfCleanUpRegionFilter> filters = createFilters(cleanUpLocations);
         PdfCleanUpRenderListener pdfCleanUpRenderListener = new PdfCleanUpRenderListener(pdfStamper, filters);
         pdfCleanUpRenderListener.registerNewContext(pdfReader.getPageResources(page), canvas);
+
         PdfContentStreamProcessor contentProcessor = new PdfContentStreamProcessor(pdfCleanUpRenderListener);
         PdfCleanUpContentOperator.populateOperators(contentProcessor, pdfCleanUpRenderListener);
         contentProcessor.processContent(pageContentInput, page.getAsDict(PdfName.RESOURCES));
@@ -84,6 +85,17 @@ public class PdfCleanUpProcessor {
         if (redactAnnotIndirRefs != null) { // if it isn't null, then we are in "extract locations from redact annots" mode
             deleteRedactAnnots(pageNum);
         }
+    }
+
+    private List<PdfCleanUpRegionFilter> createFilters(List<PdfCleanUpLocation> cleanUpLocations) {
+        List<PdfCleanUpRegionFilter> filters = new ArrayList<PdfCleanUpRegionFilter>();
+
+        for (PdfCleanUpLocation cleanUpLocation : cleanUpLocations) {
+            Rectangle region = cleanUpLocation.getRegion();
+            filters.add(new PdfCleanUpRegionFilter(region));
+        }
+
+        return filters;
     }
 
     private void colorCleanedLocations(PdfContentByte canvas, List<PdfCleanUpLocation> cleanUpLocations) {
@@ -114,7 +126,7 @@ public class PdfCleanUpProcessor {
         for (PdfCleanUpLocation location : pdfCleanUpLocations) {
             Integer page = location.getPage();
 
-            if (organizedLocations.get(page) == null) {
+            if (!organizedLocations.containsKey(page)) {
                 organizedLocations.put(page, new ArrayList<PdfCleanUpLocation>());
             }
 
@@ -136,7 +148,6 @@ public class PdfCleanUpProcessor {
 
     private List<PdfCleanUpLocation> extractLocationsFromRedactAnnots(int page, PdfDictionary pageDict) {
         List<PdfCleanUpLocation> locations = new ArrayList<PdfCleanUpLocation>();
-        PdfName redactName = PdfName.REDACT;
 
         if (pageDict.contains(PdfName.ANNOTS)) {
             PdfArray annotsArray = pageDict.getAsArray(PdfName.ANNOTS);
@@ -146,7 +157,7 @@ public class PdfCleanUpProcessor {
                 PdfDictionary annotDict = annotsArray.getAsDict(i);
                 PdfName annotSubtype = annotDict.getAsName(PdfName.SUBTYPE);
 
-                if (annotSubtype.equals(redactName)) {
+                if (annotSubtype.equals(PdfName.REDACT)) {
                     saveRedactAnnotIndirRef(page, annotIndirRef.toString());
                     locations.addAll(extractLocationsFromRedactAnnot(page, i, annotDict));
                 }
@@ -157,7 +168,7 @@ public class PdfCleanUpProcessor {
     }
 
     private void saveRedactAnnotIndirRef(int page, String indRefStr) {
-        if (redactAnnotIndirRefs.get(page) == null) {
+        if (!redactAnnotIndirRefs.containsKey(page)) {
             redactAnnotIndirRefs.put(page, new HashSet<String>());
         }
 
@@ -216,6 +227,10 @@ public class PdfCleanUpProcessor {
     private void deleteRedactAnnots(int pageNum) throws IOException, DocumentException {
         Set<String> indirRefs = redactAnnotIndirRefs.get(pageNum);
 
+        if (indirRefs == null || indirRefs.isEmpty()) {
+            return;
+        }
+
         PdfReader reader = pdfStamper.getReader();
         PdfContentByte canvas = pdfStamper.getOverContent(pageNum);
         PdfDictionary pageDict = reader.getPageN(pageNum);
@@ -241,9 +256,9 @@ public class PdfCleanUpProcessor {
                     insertFormXObj(canvas, pageDict, formXObj, clippingRects.get(j), annotRect);
                 } else if (overlayText != null && overlayText.toUnicodeString().length() > 0) {
                     drawOverlayText(canvas, clippingRects.get(j), overlayText,
-                                                                  annotDict.getAsString(PdfName.DA),
-                                                                  annotDict.getAsNumber(PdfName.Q),
-                                                                  annotDict.getAsBoolean(PdfName.REPEAT));
+                                    annotDict.getAsString(PdfName.DA),
+                                    annotDict.getAsNumber(PdfName.Q),
+                                    annotDict.getAsBoolean(PdfName.REPEAT));
                 }
 
                 annotsArray.remove(i--); // array size is changed, so we need to decrease i
@@ -253,8 +268,6 @@ public class PdfCleanUpProcessor {
         if (annotsArray.size() == 0) {
             pageDict.remove(PdfName.ANNOTS);
         }
-
-        reader.removeUnusedObjects();
     }
 
     private void insertFormXObj(PdfContentByte canvas, PdfDictionary pageDict, PdfStream formXObj, List<Rectangle> clippingRects, Rectangle annotRect) throws IOException {
@@ -273,7 +286,8 @@ public class PdfCleanUpProcessor {
         canvas.restoreState();
     }
 
-    private void drawOverlayText(PdfContentByte canvas, List<Rectangle> textRectangles, PdfString overlayText, PdfString otDA, PdfNumber otQ, PdfBoolean otRepeat) throws DocumentException, IOException {
+    private void drawOverlayText(PdfContentByte canvas, List<Rectangle> textRectangles, PdfString overlayText,
+                                 PdfString otDA, PdfNumber otQ, PdfBoolean otRepeat) throws DocumentException, IOException {
         ColumnText ct = new ColumnText(canvas);
         ct.setLeading(0, 1.2F);
         ct.setUseAscender(true);
@@ -389,7 +403,6 @@ public class PdfCleanUpProcessor {
         PdfDictionary xobjDict = resourcesDict.getAsDict(PdfName.XOBJECT);
 
         if (xobjDict != null) {
-
             for (PdfName xobjName : xobjDict.getKeys()) {
                 int xobjNum = getXObjNum(xobjName);
 
@@ -421,15 +434,15 @@ public class PdfCleanUpProcessor {
 
             case 3:
                 canvas.setRGBColorFillF(((PdfNumber) fillColorArgs.get(0)).floatValue(),
-                        ((PdfNumber) fillColorArgs.get(1)).floatValue(),
-                        ((PdfNumber) fillColorArgs.get(2)).floatValue());
+                                        ((PdfNumber) fillColorArgs.get(1)).floatValue(),
+                                        ((PdfNumber) fillColorArgs.get(2)).floatValue());
                 break;
 
             case 4:
                 canvas.setCMYKColorFillF(((PdfNumber) fillColorArgs.get(0)).floatValue(),
-                        ((PdfNumber) fillColorArgs.get(1)).floatValue(),
-                        ((PdfNumber) fillColorArgs.get(2)).floatValue(),
-                        ((PdfNumber) fillColorArgs.get(3)).floatValue());
+                                         ((PdfNumber) fillColorArgs.get(1)).floatValue(),
+                                         ((PdfNumber) fillColorArgs.get(2)).floatValue(),
+                                         ((PdfNumber) fillColorArgs.get(3)).floatValue());
                 break;
 
         }
@@ -443,15 +456,15 @@ public class PdfCleanUpProcessor {
 
             case 3:
                 canvas.setRGBColorStrokeF(((PdfNumber) strokeColorArgs.get(0)).floatValue(),
-                        ((PdfNumber) strokeColorArgs.get(1)).floatValue(),
-                        ((PdfNumber) strokeColorArgs.get(2)).floatValue());
+                                          ((PdfNumber) strokeColorArgs.get(1)).floatValue(),
+                                          ((PdfNumber) strokeColorArgs.get(2)).floatValue());
                 break;
 
             case 4:
                 canvas.setCMYKColorFillF(((PdfNumber) strokeColorArgs.get(0)).floatValue(),
-                        ((PdfNumber) strokeColorArgs.get(1)).floatValue(),
-                        ((PdfNumber) strokeColorArgs.get(2)).floatValue(),
-                        ((PdfNumber) strokeColorArgs.get(3)).floatValue());
+                                         ((PdfNumber) strokeColorArgs.get(1)).floatValue(),
+                                         ((PdfNumber) strokeColorArgs.get(2)).floatValue(),
+                                         ((PdfNumber) strokeColorArgs.get(3)).floatValue());
                 break;
 
         }

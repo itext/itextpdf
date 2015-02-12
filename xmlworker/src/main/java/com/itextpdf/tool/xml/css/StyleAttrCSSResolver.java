@@ -303,7 +303,15 @@ public class StyleAttrCSSResolver implements CSSResolver {
 	private void splitRules(final Map<String, String> css, final String key, final String value) {
 		if (CSS.Property.BORDER.equalsIgnoreCase(key)) {
 			css.putAll(utils.parseBorder(value));
-		} else if (CSS.Property.MARGIN.equalsIgnoreCase(key)) {
+		} else if (CSS.Property.BORDER_TOP.equalsIgnoreCase(key)) {
+            css.putAll(utils.parseBorder(value, CSS.Property.BORDER_TOP));
+        } else if (CSS.Property.BORDER_BOTTOM.equalsIgnoreCase(key)) {
+            css.putAll(utils.parseBorder(value, CSS.Property.BORDER_BOTTOM));
+        } else if (CSS.Property.BORDER_LEFT.equalsIgnoreCase(key)) {
+            css.putAll(utils.parseBorder(value, CSS.Property.BORDER_LEFT));
+        } else if (CSS.Property.BORDER_RIGHT.equalsIgnoreCase(key)) {
+            css.putAll(utils.parseBorder(value, CSS.Property.BORDER_RIGHT));
+        } else if (CSS.Property.MARGIN.equalsIgnoreCase(key)) {
 			css.putAll(utils.parseBoxValues(value, "margin-", ""));
 		} else if (CSS.Property.BORDER_WIDTH.equalsIgnoreCase(key)) {
 			css.putAll(utils.parseBoxValues(value, "border-", "-width"));

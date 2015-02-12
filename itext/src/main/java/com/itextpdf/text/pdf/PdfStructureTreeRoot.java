@@ -62,6 +62,7 @@ public class PdfStructureTreeRoot extends PdfDictionary implements IPdfStructure
     private PdfDictionary classMap = null;
     protected HashMap<PdfName,PdfObject> classes = null;
     private HashMap<Integer, PdfIndirectReference> numTree = null;
+    private HashMap<String, PdfObject> idTreeMap;
 
     /**
      * Holds value of property writer.
@@ -111,6 +112,12 @@ public class PdfStructureTreeRoot extends PdfDictionary implements IPdfStructure
         }
         classes.put(name,object);
     }
+    
+    void putIDTree(String record, PdfObject reference) {
+        if (idTreeMap == null)
+            idTreeMap = new HashMap<String, PdfObject>();
+        idTreeMap.put(record, reference);
+    }
 
     public PdfObject getMappedClass(PdfName name) {
         if (classes == null)
@@ -153,7 +160,7 @@ public class PdfStructureTreeRoot extends PdfDictionary implements IPdfStructure
     void setAnnotationMark(int structParentIndex, PdfIndirectReference struc) {
         parentTree.put(Integer.valueOf(structParentIndex), struc);
     }
-
+    
     private void nodeProcess(PdfDictionary struc, PdfIndirectReference reference) throws IOException {
         PdfObject obj = struc.get(PdfName.K);
         if (obj != null && obj.isArray()) {
@@ -196,6 +203,10 @@ public class PdfStructureTreeRoot extends PdfDictionary implements IPdfStructure
                 }
             }
             put(PdfName.CLASSMAP, writer.addToBody(classMap).getIndirectReference());
+        }
+        if (idTreeMap != null && !idTreeMap.isEmpty()) {
+            PdfDictionary dic = PdfNameTree.writeTree(idTreeMap, writer);
+            this.put(PdfName.IDTREE, dic);
         }
         nodeProcess(this, reference);
     }

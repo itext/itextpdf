@@ -53,6 +53,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.itextpdf.text.pdf.Glyph;
+import com.itextpdf.text.pdf.RandomAccessFileOrArray;
 
 /**
  * <p>
@@ -71,9 +72,9 @@ public class GlyphSubstitutionTableReader extends OpenTypeFontTableReader {
     private final Map<Integer, Character> glyphToCharacterMap;
     private Map<Integer, List<Integer>> rawLigatureSubstitutionMap;
 
-    public GlyphSubstitutionTableReader(String fontFilePath, int gsubTableLocation, 
+    public GlyphSubstitutionTableReader(RandomAccessFileOrArray rf, int gsubTableLocation, 
     		Map<Integer, Character> glyphToCharacterMap, int[] glyphWidthsByIndex) throws IOException {
-        super(fontFilePath, gsubTableLocation);
+        super(rf, gsubTableLocation);
         this.glyphWidthsByIndex = glyphWidthsByIndex;
         this.glyphToCharacterMap = glyphToCharacterMap;
     }
@@ -163,7 +164,18 @@ public class GlyphSubstitutionTableReader extends OpenTypeFontTableReader {
                 rawLigatureSubstitutionMap.put(substituteGlyphId, Arrays.asList(coverageGlyphId)); 
             }
         } else if (substFormat == 2) {
-            System.err.println("LookupType 1 :: substFormat 2 is not yet handled by " + GlyphSubstitutionTableReader.class.getSimpleName());
+            int coverage = rf.readShort();
+            LOG.debug("coverage=" + coverage);
+            int glyphCount = rf.readUnsignedShort();
+            int[] substitute = new int[glyphCount];
+            for (int k = 0; k < glyphCount; ++k) {
+                substitute[k] = rf.readUnsignedShort();
+            }
+            List<Integer> coverageGlyphIds = readCoverageFormat(subTableLocation + coverage);
+            for (int k = 0; k < glyphCount; ++k) {
+                rawLigatureSubstitutionMap.put(substitute[k], Arrays.asList(coverageGlyphIds.get(k))); 
+            }
+            
         } else {
             throw new IllegalArgumentException("Bad substFormat: " + substFormat);
         }

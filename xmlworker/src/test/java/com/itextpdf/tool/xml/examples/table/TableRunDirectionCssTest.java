@@ -11,8 +11,9 @@ import com.itextpdf.tool.xml.examples.SampleTest;
  *
  * @author Benoit
  */
-public class TableRunDirectionTest extends SampleTest {
+public class TableRunDirectionCssTest extends SampleTest {
+    @Override
     protected String getTestName() {
-        return  "run_direction";
+        return  "basic_rtl_scenarios_css";
     }
 }

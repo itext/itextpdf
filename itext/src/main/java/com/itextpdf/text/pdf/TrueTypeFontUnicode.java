@@ -477,7 +477,7 @@ class TrueTypeFontUnicode extends TrueTypeFont implements Comparator<int[]>{
             }
         
             GlyphSubstitutionTableReader gsubReader = new GlyphSubstitutionTableReader(
-            		fileName, tables.get("GSUB")[0], glyphToCharacterMap, glyphWidthsByIndex);
+            		rf, tables.get("GSUB")[0], glyphToCharacterMap, glyphWidthsByIndex);
             
             try {
             	gsubReader.read();

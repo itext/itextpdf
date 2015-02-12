@@ -109,32 +109,53 @@ public class CssUtils {
 	 *            the post key part
 	 * @return a map with the parsed properties
 	 */
-	public Map<String, String> parseBoxValues(final String box,
-			final String pre, final String post) {
+    public Map<String, String> parseBoxValues(final java.lang.String box,
+                                             final java.lang.String pre, final java.lang.String post) {
+
+        return parseBoxValues(box, pre, post, null);
+    }
+    public Map<String, String> parseBoxValues(final String box,
+                                              final String pre, final String post, String preKey) {
 		String[] props = box.split(" ");
 		int length = props.length;
 		Map<String, String> map = new HashMap<String, String>(4);
 		if (length == 1) {
 			String value = props[0];
-			map.put(MessageFormat.format(_0_TOP_1, pre, post), value);
-			map.put(MessageFormat.format(_0_BOTTOM_1, pre, post), value);
-			map.put(MessageFormat.format(_0_RIGHT_1, pre, post), value);
-			map.put(MessageFormat.format(_0_LEFT_1, pre, post), value);
+            if (preKey == null) {
+                map.put(MessageFormat.format(_0_TOP_1, pre, post), value);
+                map.put(MessageFormat.format(_0_BOTTOM_1, pre, post), value);
+                map.put(MessageFormat.format(_0_RIGHT_1, pre, post), value);
+                map.put(MessageFormat.format(_0_LEFT_1, pre, post), value);
+            } else {
+                map.put(MessageFormat.format(preKey + "{0}", post), value);
+            }
 		} else if (length == 2) {
-			map.put(MessageFormat.format(_0_TOP_1, pre, post), props[0]);
-			map.put(MessageFormat.format(_0_BOTTOM_1, pre, post), props[0]);
-			map.put(MessageFormat.format(_0_RIGHT_1, pre, post), props[1]);
-			map.put(MessageFormat.format(_0_LEFT_1, pre, post), props[1]);
+            if (preKey == null) {
+                map.put(MessageFormat.format(_0_TOP_1, pre, post), props[0]);
+                map.put(MessageFormat.format(_0_BOTTOM_1, pre, post), props[0]);
+                map.put(MessageFormat.format(_0_RIGHT_1, pre, post), props[1]);
+                map.put(MessageFormat.format(_0_LEFT_1, pre, post), props[1]);
+            } else {
+                map.put(MessageFormat.format(preKey + "{0}", post), props[0]);
+            }
 		} else if (length == 3) {
-			map.put(MessageFormat.format(_0_TOP_1, pre, post), props[0]);
-			map.put(MessageFormat.format(_0_BOTTOM_1, pre, post), props[2]);
-			map.put(MessageFormat.format(_0_RIGHT_1, pre, post), props[1]);
-			map.put(MessageFormat.format(_0_LEFT_1, pre, post), props[1]);
+            if (preKey == null) {
+                map.put(MessageFormat.format(_0_TOP_1, pre, post), props[0]);
+                map.put(MessageFormat.format(_0_BOTTOM_1, pre, post), props[2]);
+                map.put(MessageFormat.format(_0_RIGHT_1, pre, post), props[1]);
+                map.put(MessageFormat.format(_0_LEFT_1, pre, post), props[1]);
+            } else {
+                map.put(MessageFormat.format(preKey + "{0}", post), props[0]);
+            }
 		} else if (length == 4) {
-			map.put(MessageFormat.format(_0_TOP_1, pre, post), props[0]);
-			map.put(MessageFormat.format(_0_BOTTOM_1, pre, post), props[2]);
-			map.put(MessageFormat.format(_0_RIGHT_1, pre, post), props[1]);
-			map.put(MessageFormat.format(_0_LEFT_1, pre, post), props[3]);
+            if (preKey == null) {
+                map.put(MessageFormat.format(_0_TOP_1, pre, post), props[0]);
+                map.put(MessageFormat.format(_0_BOTTOM_1, pre, post), props[2]);
+                map.put(MessageFormat.format(_0_RIGHT_1, pre, post), props[1]);
+                map.put(MessageFormat.format(_0_LEFT_1, pre, post), props[3]);
+            } else {
+                map.put(MessageFormat.format(preKey + "{0}", post), props[0]);
+            }
 		}
 		return map;
 	}
@@ -149,25 +170,28 @@ public class CssUtils {
 	 * @return a map of the border property parsed to each property (width,
 	 *         style, color).
 	 */
-	public Map<String, String> parseBorder(final String border) {
+    public Map<String, String> parseBorder(final String border) {
+        return parseBorder(border, null);
+    }
+	public Map<String, String> parseBorder(final String border, final String borderKey) {
 		HashMap<String, String> map = new HashMap<String, String>(0);
 		String split[] = splitComplexCssStyle(border);
 		int length = split.length;
 		if (length == 1) {
 			if (borderwidth.contains(split[0]) || isNumericValue(split[0]) || isMetricValue(split[0])) {
-				map.putAll(parseBoxValues(split[0], BORDER2, WIDTH));
+				map.putAll(parseBoxValues(split[0], BORDER2, WIDTH, borderKey));
 			} else {
-				map.putAll(parseBoxValues(split[0], BORDER2, STYLE));
+				map.putAll(parseBoxValues(split[0], BORDER2, STYLE, borderKey));
 			}
 		} else {
 			for(int i = 0 ; i<length ; i++) {
 				String value = split[i];
 				if (borderwidth.contains(value) || isNumericValue(value) || isMetricValue(value)) {
-					map.putAll(parseBoxValues(value, BORDER2, WIDTH));
+					map.putAll(parseBoxValues(value, BORDER2, WIDTH, borderKey));
 				} else if(borderstyle.contains(value)){
-					map.putAll(parseBoxValues(value, BORDER2, STYLE));
+					map.putAll(parseBoxValues(value, BORDER2, STYLE, borderKey));
 				} else if(value.contains("rgb(") || value.contains("#") || WebColors.NAMES.containsKey(value.toLowerCase())){
-					map.putAll(parseBoxValues(value, BORDER2, COLOR));
+					map.putAll(parseBoxValues(value, BORDER2, COLOR, borderKey));
 				}
 			}
 		}

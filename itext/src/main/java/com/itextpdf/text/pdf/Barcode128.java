@@ -439,7 +439,7 @@ public class Barcode128 extends Barcode{
                 out += (char)(c - ' ');
             ++index;
         }
-        if (currentCode != codeSet.getStartSymbol())
+        if (codeSet != Barcode128CodeSet.AUTO && currentCode != codeSet.getStartSymbol())
             throw new RuntimeException(MessageLocalization.getComposedMessage("there.are.illegal.characters.for.barcode.128.in.1", text));
         while (index < tLen) {
             switch (currentCode) {

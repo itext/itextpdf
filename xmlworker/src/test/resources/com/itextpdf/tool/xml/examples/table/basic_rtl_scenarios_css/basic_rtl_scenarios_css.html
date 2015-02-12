@@ -1,0 +1,99 @@
+<html>
+  <head>
+    <title>Document</title>
+    <meta charset="UTF-8"/>
+    <style type="text/css">
+      * {
+	    font-family:'FreeSerif';
+        font-size:12;
+	  }
+    </style>
+  </head>
+  <body style="direction:rtl;">
+  <h1>Basic HTML scenarios with style="direction:rtl;"</h1>
+    <p>This is a very basic table with no customizations to the &lt;body style="direction:rtl;"&gt; style property. All values in this table should be shown right-to-left. In the case of Latin characters, this means preserving the reading order but aligning to the right, and putting punctuation marks on the left side of the sentence.</p>
+	<table>
+      <thead><tr>
+        <td>Column 1</td>
+        <td>Column 2</td>
+      </tr></thead>
+      <tbody>
+        <tr>
+          <td><p>افضل تصفح هذا الموقع بواسطة فايرفوكس.</p></td>
+          <td><p>افضل تصفح هذا الموقع بواسطة فايرفوكس.</p></td>
+        </tr>
+        <tr>
+          <td><p>افضل تصفح هذا الموقع بواسطة فايرفوكس.</p></td>
+          <td><p>افضل تصفح هذا الموقع بواسطة فايرفوكس.</p></td>
+        </tr>
+        <tr>
+          <td><p>افضل تصفح هذا الموقع بواسطة فايرفوكس.</p></td>
+          <td><p>افضل تصفح هذا الموقع بواسطة فايرفوكس.</p></td>
+        </tr>
+        <tr>
+          <td><p>This site is best viewed with Firefox.</p></td>
+          <td><p>This site is best viewed with Firefox.</p></td>
+        </tr>
+      </tbody>
+    </table>
+	<br/>
+	<br/>
+	<br/>
+    <p>This table has field and row level alterations to the RTL standard, which is of course still defined on the &lt;body&gt; tag. The rows and fields that should be aligned and punctuated LTR are R1, R2C2, R3C1 (through repeated overrides), and R4C1.</p>
+    <table>
+      <thead><tr>
+        <td>Column 1</td>
+        <td>Column 2</td>
+      </tr></thead>
+      <tbody>
+        <tr style="direction:ltr;">
+          <td><p>افضل تصفح هذا الموقع بواسطة فايرفوكس.</p></td>
+          <td><p>افضل تصفح هذا الموقع بواسطة فايرفوكس.</p></td>
+        </tr>
+        <tr>
+          <td><p>افضل تصفح هذا الموقع بواسطة فايرفوكس.</p></td>
+          <td style="direction:ltr;"><p>افضل تصفح هذا الموقع بواسطة فايرفوكس.</p></td>
+        </tr>
+        <tr style="direction:ltr;">
+          <td><p>افضل تصفح هذا الموقع بواسطة فايرفوكس.</p></td>
+          <td style="direction:rtl;"><p>افضل تصفح هذا الموقع بواسطة فايرفوكس.</p></td>
+        </tr>
+        <tr>
+          <td style="direction:ltr;"><p>This site is best viewed with Firefox.</p></td>
+          <td><p>This site is best viewed with Firefox.</p></td>
+        </tr>
+      </tbody>
+    </table>
+	<br/>
+	<br/>
+	<br/>
+	<p>This instance has a table-wide override of the &lt;body&gt;'s RTL property. On top of that, several fields have been altered to again override the table-wide setting. The fields that should be aligned and punctuated LTR are again R1, R2C2, R3C1 (through repeated overrides), and R4C1 - but the columns of the table are reversed to their LTR order.</p>
+    <table style="direction:ltr;">
+      <thead><tr>
+        <td>Column 1</td>
+        <td>Column 2</td>
+      </tr></thead>
+      <tbody>
+        <tr>
+          <td><p>افضل تصفح هذا الموقع بواسطة فايرفوكس.</p></td>
+          <td><p>افضل تصفح هذا الموقع بواسطة فايرفوكس.</p></td>
+        </tr>
+        <tr>
+          <td style="direction:rtl;"><p>افضل تصفح هذا الموقع بواسطة فايرفوكس.</p></td>
+          <td><p>افضل تصفح هذا الموقع بواسطة فايرفوكس.</p></td>
+        </tr>
+        <tr style="direction:rtl;">
+          <td style="direction:ltr;"><p>افضل تصفح هذا الموقع بواسطة فايرفوكس.</p></td>
+          <td><p>افضل تصفح هذا الموقع بواسطة فايرفوكس.</p></td>
+        </tr>
+        <tr>
+          <td><p>This site is best viewed with Firefox.</p></td>
+          <td style="direction:rtl;"><p>This site is best viewed with Firefox.</p></td>
+        </tr>
+      </tbody>
+    </table>
+	<br/>
+	<br/>
+	<br/>
+  </body>
+</html>

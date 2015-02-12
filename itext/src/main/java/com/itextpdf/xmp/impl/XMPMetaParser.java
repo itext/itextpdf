@@ -60,14 +60,14 @@ import com.itextpdf.xmp.options.ParseOptions;
  * This class replaces the <code>ExpatAdapter.cpp</code> and does the
  * XML-parsing and fixes the prefix. After the parsing several normalisations
  * are applied to the XMPTree.
- * 
+ *
  * @since 01.02.2006
  */
 public class XMPMetaParser
 {
 	/**  */
 	private static final Object XMP_RDF = new Object();
-	/** the DOM Parser Factory, options are set */ 
+	/** the DOM Parser Factory, options are set */
 	private static DocumentBuilderFactory factory = createDocumentBuilderFactory();
 
 	/**
@@ -78,13 +78,13 @@ public class XMPMetaParser
 		// EMPTY
 	}
 
-	
+
 
 	/**
 	 * Parses the input source into an XMP metadata object, including
 	 * de-aliasing and normalisation.
-	 * 
-	 * @param input the input can be an <code>InputStream</code>, a <code>String</code> or 
+	 *
+	 * @param input the input can be an <code>InputStream</code>, a <code>String</code> or
 	 * 			a byte buffer containing the XMP packet.
 	 * @param options the parse options
 	 * @return Returns the resulting XMP metadata object
@@ -100,12 +100,12 @@ public class XMPMetaParser
 		boolean xmpmetaRequired = options.getRequireXMPMeta();
 		Object[] result = new Object[3];
 		result = findRootNode(document, xmpmetaRequired, result);
-		
+
 		if (result != null  &&  result[1] == XMP_RDF)
 		{
 			XMPMetaImpl xmp = ParseRDF.parse((Node) result[0]);
 			xmp.setPacketHeader((String) result[2]);
-			
+
 			// Check if the XMP object shall be normalized
 			if (!options.getOmitNormalization())
 			{
@@ -123,19 +123,19 @@ public class XMPMetaParser
 		}
 	}
 
-	
+
 	/**
 	 * Parses the raw XML metadata packet considering the parsing options.
-	 * Latin-1/ISO-8859-1 can be accepted when the input is a byte stream 
-	 * (some old toolkits versions such packets). The stream is 
+	 * Latin-1/ISO-8859-1 can be accepted when the input is a byte stream
+	 * (some old toolkits versions such packets). The stream is
 	 * then wrapped in another stream that converts Latin-1 to UTF-8.
 	 * <p>
 	 * If control characters shall be fixed, a reader is used that fixes the chars to spaces
 	 * (if the input is a byte stream is has to be read as character stream).
-	 * <p>   
+	 * <p>
 	 * Both options reduce the performance of the parser.
-	 *  
-	 * @param input the input can be an <code>InputStream</code>, a <code>String</code> or 
+	 *
+	 * @param input the input can be an <code>InputStream</code>, a <code>String</code> or
 	 * 			a byte buffer containing the XMP packet.
 	 * @param options the parsing options
 	 * @return Returns the parsed XML document or an exception.
@@ -151,18 +151,18 @@ public class XMPMetaParser
 		else if (input instanceof byte[])
 		{
 			return parseXmlFromBytebuffer(new ByteBuffer((byte[]) input), options);
-		} 
+		}
 		else
 		{
 			return parseXmlFromString((String) input, options);
 		}
 	}
-	
+
 
 	/**
 	 * Parses XML from an {@link InputStream},
 	 * fixing the encoding (Latin-1 to UTF-8) and illegal control character optionally.
-	 *  
+	 *
 	 * @param stream an <code>InputStream</code>
 	 * @param options the parsing options
 	 * @return Returns an XML DOM-Document.
@@ -191,11 +191,11 @@ public class XMPMetaParser
 		}
 	}
 
-	
+
 	/**
-	 * Parses XML from a byte buffer, 
+	 * Parses XML from a byte buffer,
 	 * fixing the encoding (Latin-1 to UTF-8) and illegal control character optionally.
-	 * 
+	 *
 	 * @param buffer a byte buffer containing the XMP packet
 	 * @param options the parsing options
 	 * @return Returns an XML DOM-Document.
@@ -218,7 +218,7 @@ public class XMPMetaParser
 				{
 					buffer = Latin1Converter.convert(buffer);
 				}
-				
+
 				if (options.getFixControlChars())
 				{
 					try
@@ -242,15 +242,15 @@ public class XMPMetaParser
 			else
 			{
 				throw e;
-			}	
+			}
 		}
 	}
 
 
 	/**
-	 * Parses XML from a {@link String}, 
+	 * Parses XML from a {@link String},
 	 * fixing the illegal control character optionally.
-	 *  
+	 *
 	 * @param input a <code>String</code> containing the XMP packet
 	 * @param options the parsing options
 	 * @return Returns an XML DOM-Document.
@@ -274,13 +274,13 @@ public class XMPMetaParser
 			else
 			{
 				throw e;
-			}	
+			}
 		}
 	}
 
-	
+
 	/**
-	 * Runs the XML-Parser. 
+	 * Runs the XML-Parser.
 	 * @param source an <code>InputSource</code>
 	 * @return Returns an XML DOM-Document.
 	 * @throws XMPException Wraps parsing and I/O-exceptions into an XMPException.
@@ -307,7 +307,7 @@ public class XMPMetaParser
 			throw new XMPException("Error reading the XML-file", XMPError.BADSTREAM, e);
 		}
 	}
-	
+
 
 	/**
 	 * Find the XML node that is the root of the XMP data tree. Generally this
@@ -324,24 +324,24 @@ public class XMPMetaParser
 	 * the rdf:RDF child if an x:xmpmeta element was chosen. The search is
 	 * breadth first, so a higher level candiate is chosen over a lower level
 	 * one that was textually earlier in the serialized XML.
-	 * 
+	 *
 	 * @param root the root of the xml document
-	 * @param xmpmetaRequired flag if the xmpmeta-tag is still required, might be set 
+	 * @param xmpmetaRequired flag if the xmpmeta-tag is still required, might be set
 	 * 		initially to <code>true</code>, if the parse option "REQUIRE_XMP_META" is set
 	 * @param result The result array that is filled during the recursive process.
-	 * @return Returns an array that contains the result or <code>null</code>. 
+	 * @return Returns an array that contains the result or <code>null</code>.
 	 * 		   The array contains:
 	 * <ul>
 	 * 		<li>[0] - the rdf:RDF-node
 	 * 		<li>[1] - an object that is either XMP_RDF or XMP_PLAIN (the latter is decrecated)
 	 * 		<li>[2] - the body text of the xpacket-instruction.
 	 * </ul>
-	 * 
+	 *
 	 */
 	private static Object[] findRootNode(Node root, boolean xmpmetaRequired, Object[] result)
 	{
 		// Look among this parent's content for x:xapmeta or x:xmpmeta.
-		// The recursion for x:xmpmeta is broader than the strictly defined choice, 
+		// The recursion for x:xmpmeta is broader than the strictly defined choice,
 		// but gives us smaller code.
 		NodeList children = root.getChildNodes();
 		for (int i = 0; i < children.getLength(); i++)
@@ -353,18 +353,18 @@ public class XMPMetaParser
 			{
 				// Store the processing instructions content
 				if (result != null)
-				{	
+				{
 					result[2] = ((ProcessingInstruction) root).getData();
-				}	
+				}
 			}
-			else if (Node.TEXT_NODE != root.getNodeType()  &&  
+			else if (Node.TEXT_NODE != root.getNodeType()  &&
 				Node.PROCESSING_INSTRUCTION_NODE != root.getNodeType())
-			{	
+			{
 				String rootNS = root.getNamespaceURI();
 				String rootLocal = root.getLocalName();
 				if (
 						(
-							XMPConst.TAG_XMPMETA.equals(rootLocal)  ||  
+							XMPConst.TAG_XMPMETA.equals(rootLocal)  ||
 							XMPConst.TAG_XAPMETA.equals(rootLocal)
 						)  &&
 						XMPConst.NS_X.equals(rootNS)
@@ -376,12 +376,12 @@ public class XMPMetaParser
 				else if (!xmpmetaRequired  &&
 						"RDF".equals(rootLocal)  &&
 						 XMPConst.NS_RDF.equals(rootNS))
-				{	
+				{
 					if (result != null)
-					{	
+					{
 						result[0] = root;
 						result[1] = XMP_RDF;
-					}	
+					}
 					return result;
 				}
 				else
@@ -395,17 +395,17 @@ public class XMPMetaParser
 					else
 					{
 						continue;
-					}	
+					}
 				}
-			}	
+			}
 		}
 
 		// no appropriate node has been found
 		return null;
-		//     is extracted here in the C++ Toolkit		
+		//     is extracted here in the C++ Toolkit
 	}
 
-	
+
 	/**
 	 * @return Creates, configures and returnes the document builder factory for
 	 *         the Metadata Parser.
@@ -415,18 +415,29 @@ public class XMPMetaParser
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		factory.setNamespaceAware(true);
 		factory.setIgnoringComments(true);
-		
+
 		try
 		{
 			// honor System parsing limits, e.g.
 			// System.setProperty("entityExpansionLimit", "10");
 			factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+
+            //Security stuff. Protecting against XEE attacks as described here: https://www.owasp.org/index.php/XML_External_Entity_%28XXE%29_Processing
+            // Xerces 1 - http://xerces.apache.org/xerces-j/features.html#external-general-entities
+            // Xerces 2 - http://xerces.apache.org/xerces2-j/features.html#external-general-entities
+            factory.setFeature("http://xml.org/sax/features/external-general-entities", false);
+            // Xerces 2 only - http://xerces.apache.org/xerces-j/features.html#external-general-entities
+            factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", false);
+            // and these as well, per Timothy Morgan's 2014 paper: "XML Schema, DTD, and Entity Attacks" (see reference below)
+            factory.setXIncludeAware(false);
+            factory.setExpandEntityReferences(false);
+
 		}
 		catch (Exception e)
 		{
 			// Ignore IllegalArgumentException and ParserConfigurationException
 			// in case the configured XML-Parser does not implement the feature.
-		}		
+		}
 		return factory;
 	}
 }

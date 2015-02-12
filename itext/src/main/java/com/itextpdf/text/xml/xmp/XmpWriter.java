@@ -138,7 +138,7 @@ public class XmpWriter {
             }
         }
     }
-
+    
     /**
      * @param os
      * @param info
@@ -163,7 +163,7 @@ public class XmpWriter {
             }
         }
     }
-
+    
     public XMPMeta getXmpMeta() {
         return xmpMeta;
     }

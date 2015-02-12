@@ -94,6 +94,14 @@ public class FloatLayout {
 
     protected final boolean useAscender;
 
+    public int getRunDirection() {
+        return compositeColumn.getRunDirection();
+    }
+
+    public void setRunDirection(int runDirection) {
+        compositeColumn.setRunDirection(runDirection);
+    }
+
     public FloatLayout(List<Element> elements, boolean useAscender) {
         compositeColumn = new ColumnText(null);
         compositeColumn.setUseAscender(useAscender);

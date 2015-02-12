@@ -115,6 +115,14 @@ public class CssFilesImpl implements CssFiles {
             String value = utils.stripDoubleSpacesAndTrim(e.getValue());
             if (CSS.Property.BORDER.equalsIgnoreCase(key)) {
                 css.putAll(utils.parseBorder(value));
+            }  else if (CSS.Property.BORDER_TOP.equalsIgnoreCase(key)) {
+                css.putAll(utils.parseBorder(value, CSS.Property.BORDER_TOP));
+            } else if (CSS.Property.BORDER_BOTTOM.equalsIgnoreCase(key)) {
+                css.putAll(utils.parseBorder(value, CSS.Property.BORDER_BOTTOM));
+            } else if (CSS.Property.BORDER_LEFT.equalsIgnoreCase(key)) {
+                css.putAll(utils.parseBorder(value, CSS.Property.BORDER_LEFT));
+            } else if (CSS.Property.BORDER_RIGHT.equalsIgnoreCase(key)) {
+                css.putAll(utils.parseBorder(value, CSS.Property.BORDER_RIGHT));
             } else if (CSS.Property.MARGIN.equalsIgnoreCase(key)) {
                 Map<String, String> margins = utils.parseBoxValues(value, "margin-", "");
                 for (String marginKey : margins.keySet()) {
