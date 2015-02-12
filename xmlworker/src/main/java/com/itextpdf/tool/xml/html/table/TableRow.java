@@ -82,7 +82,9 @@ public class TableRow extends AbstractTagProcessor {
         int direction = getRunDirection(tag);
         if (direction != PdfWriter.RUN_DIRECTION_DEFAULT) {
             for (HtmlCell cell : row.getContent()) {
-                cell.setRunDirection(direction);
+                if (cell.getRunDirection() == PdfWriter.RUN_DIRECTION_DEFAULT) {
+                    cell.setRunDirection(direction);
+                }
             }
         }
     	l.add(row);

@@ -86,8 +86,8 @@ public class DefaultCssInheritanceRules implements CssInheritanceRules {
 			"font-style", "font-weight",
 			"text-indent",
             CSS.Property.CELLPADDING, CSS.Property.CELLPADDING_LEFT, CSS.Property.CELLPADDING_TOP,
-            CSS.Property.CELLPADDING_RIGHT, CSS.Property.CELLPADDING_BOTTOM});
-	private static final List<String> TABLE_IN_ROW = Arrays.asList(new String[] { "background-color" });
+            CSS.Property.CELLPADDING_RIGHT, CSS.Property.CELLPADDING_BOTTOM, CSS.Property.DIRECTION});
+	private static final List<String> TABLE_IN_ROW = Arrays.asList(new String[] { "background-color", CSS.Property.DIRECTION });
     private static final List<String> DIV_TO_CONTENT = Arrays.asList(new String[] { CSS.Property.BACKGROUND , CSS.Property.BACKGROUND_COLOR, CSS.Property.FLOAT});
 	// styles that should not be applied on the content of a td-tag.
 	private static final List<String> TD_TO_CONTENT = Arrays.asList(new String[] { "vertical-align" });

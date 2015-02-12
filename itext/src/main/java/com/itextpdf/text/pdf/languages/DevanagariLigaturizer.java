@@ -46,6 +46,8 @@ package com.itextpdf.text.pdf.languages;
 
 /**
  * Implementation of the IndicLigaturizer for Devanagari.
+ *
+ * Warning: this is an incomplete and experimental implementation of Devanagari. This implementation should not be used in production.
  */
 public class DevanagariLigaturizer extends IndicLigaturizer {
 

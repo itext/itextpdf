@@ -70,8 +70,9 @@ public class BarcodeQRCode {
      * @param height the barcode height
      * @param hints modifiers to change the way the barcode is create. They can be EncodeHintType.ERROR_CORRECTION
      * and EncodeHintType.CHARACTER_SET. For EncodeHintType.ERROR_CORRECTION the values can be ErrorCorrectionLevel.L, M, Q, H.
-     * For EncodeHintType.CHARACTER_SET the values are strings and can be Cp437, Shift_JIS and ISO-8859-1 to ISO-8859-16. The default value is
-     * ISO-8859-1.
+     * For EncodeHintType.CHARACTER_SET the values are strings and can be Cp437, Shift_JIS and ISO-8859-1 to ISO-8859-16.
+     * You can also use UTF-8, but correct behaviour is not guaranteed as Unicode is not supported in QRCodes.
+     * The default value is ISO-8859-1.
      * @throws WriterException
      */
     public BarcodeQRCode(String content, int width, int height, Map<EncodeHintType,Object> hints) {

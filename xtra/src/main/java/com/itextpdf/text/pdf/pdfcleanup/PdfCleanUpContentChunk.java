@@ -1,37 +1,36 @@
 package com.itextpdf.text.pdf.pdfcleanup;
 
-import com.itextpdf.text.pdf.DocumentFont;
 import com.itextpdf.text.pdf.PdfString;
 import com.itextpdf.text.pdf.parser.Vector;
 
-public class PdfCleanUpContentChunk {
+class PdfCleanUpContentChunk {
 
-    private float size;
-    private PdfString string;
     private boolean visible;
-    private boolean image = false;
-    private float startX = 0;
-    private float endX = 0;
 
-    public PdfCleanUpContentChunk(PdfString string, Vector startLocation, Vector endLocation, float size, boolean visible) {
-        this.string = string;
-        this.size = size;
+    private PdfString text;
+    private float startX ;
+    private float endX;
+    private int numOfStrChunkBelongsTo;
+
+    private boolean image;
+    private byte[] newImageData;
+
+    public PdfCleanUpContentChunk(PdfString text, Vector startLocation, Vector endLocation, boolean visible, int numOfStrChunkBelongsTo) {
+        this.text = text;
         this.startX = startLocation.get(0);
         this.endX = endLocation.get(0);
         this.visible = visible;
+        this.numOfStrChunkBelongsTo = numOfStrChunkBelongsTo;
     }
 
-    public PdfCleanUpContentChunk(boolean visible) {
-        image = true;
+    public PdfCleanUpContentChunk(boolean visible, byte[] newImageData) {
+        this.image = true;
         this.visible = visible;
+        this.newImageData = newImageData;
     }
 
-    public float getSize() {
-        return size;
-    }
-
-    public PdfString getString() {
-        return string;
+    public PdfString getText() {
+        return text;
     }
 
     public boolean isVisible() {
@@ -48,5 +47,13 @@ public class PdfCleanUpContentChunk {
 
     public float getEndX() {
         return endX;
+    }
+
+    public byte[] getNewImageData() {
+        return newImageData;
+    }
+
+    public int getNumOfStrChunkBelongsTo() {
+        return numOfStrChunkBelongsTo;
     }
 }

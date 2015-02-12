@@ -61,6 +61,9 @@ public class PdfDiv implements Element, Spaceable, IAccessibleElement {
 
     public enum PositionType {STATIC, ABSOLUTE, FIXED, RELATIVE};
 
+    public enum DisplayType {NONE, BLOCK, INLINE, INLINE_BLOCK, INLINE_TABLE, LIST_ITEM, RUN_IN, TABLE, TABLE_CAPTION, TABLE_CELL, TABLE_COLUMN_GROUP, TABLE_COLUMN, TABLE_FOOTER_GROUP,
+    TABLE_HEADER_GROUP, TABLE_ROW, TABLE_ROW_GROUP};
+
     private ArrayList<Element> content;
 
     private Float left = null;
@@ -97,9 +100,13 @@ public class PdfDiv implements Element, Spaceable, IAccessibleElement {
 
     private PositionType position = PositionType.STATIC;
 
+    private DisplayType display;
+
     private FloatLayout floatLayout = null;
 
     private float yLine;
+
+    protected int runDirection = PdfWriter.RUN_DIRECTION_DEFAULT;
 
     protected PdfName role = PdfName.DIV;
     protected HashMap<PdfName, PdfObject> accessibleAttributes = null;
@@ -145,6 +152,16 @@ public class PdfDiv implements Element, Spaceable, IAccessibleElement {
         this.percentageWidth = percentageWidth;
     }
 
+
+    public DisplayType getDisplay() {
+        return display;
+    }
+
+    public void setDisplay(DisplayType display) {
+        this.display = display;
+    }
+
+
     public BaseColor getBackgroundColor() {
         return backgroundColor;
     }
@@ -155,6 +172,14 @@ public class PdfDiv implements Element, Spaceable, IAccessibleElement {
 
     public float getYLine() {
         return yLine;
+    }
+
+    public int getRunDirection() {
+        return runDirection;
+    }
+
+    public void setRunDirection(int runDirection) {
+        this.runDirection = runDirection;
     }
 
     private BaseColor backgroundColor = null;
@@ -404,6 +429,12 @@ public class PdfDiv implements Element, Spaceable, IAccessibleElement {
         } else if (percentageWidth != null) {
             contentWidth = (rightX - leftX) * percentageWidth;
             rightX = leftX + contentWidth;
+        } else if (percentageWidth == null) {
+            if (this.floatType == FloatType.NONE && (this.display == null ||
+                this.display == DisplayType.BLOCK || this.display == DisplayType.LIST_ITEM ||
+                this.display == DisplayType.RUN_IN)){
+                contentWidth = rightX - leftX;
+            }
         }
 
         if (height != null && height > 0) {
@@ -455,7 +486,7 @@ public class PdfDiv implements Element, Spaceable, IAccessibleElement {
                     backgroundHeight = height > 0 ? height : 0;
                 }
                 if (backgroundWidth > 0 && backgroundHeight > 0) {
-                    Rectangle background = new Rectangle(leftX, maxY - backgroundHeight, leftX + backgroundWidth, maxY);
+                    Rectangle background = new Rectangle(leftX, maxY - backgroundHeight, backgroundWidth+leftX, maxY);
                     background.setBackgroundColor(backgroundColor);
                     PdfArtifact artifact = new PdfArtifact();
                     canvas.openMCBlock(artifact);
@@ -484,6 +515,7 @@ public class PdfDiv implements Element, Spaceable, IAccessibleElement {
             if (this.floatLayout == null) {
                 ArrayList<Element> floatingElements = new ArrayList<Element>(content);
                 floatLayout = new FloatLayout(floatingElements, useAscender);
+                floatLayout.setRunDirection(runDirection);
             }
 
             floatLayout.setSimpleColumn(leftX, minY, rightX, yLine);

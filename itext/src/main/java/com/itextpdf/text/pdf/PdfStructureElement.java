@@ -282,7 +282,12 @@ public class PdfStructureElement extends PdfDictionary implements IPdfStructureE
         }
         if (element.getAccessibleAttributes() != null) {
             for (PdfName key : element.getAccessibleAttributes().keySet()) {
-                if (key.equals(PdfName.LANG) || key.equals(PdfName.ALT) || key.equals(PdfName.ACTUALTEXT) || key.equals(PdfName.E)) {
+                if (key.equals(PdfName.ID)) {
+                    PdfObject attr = element.getAccessibleAttribute(key);
+                    put(key, attr);
+                    top.putIDTree(attr.toString(), getReference());
+                }
+                else if (key.equals(PdfName.LANG) || key.equals(PdfName.ALT) || key.equals(PdfName.ACTUALTEXT) || key.equals(PdfName.E) || key.equals(PdfName.T)) {
                     put(key, element.getAccessibleAttribute(key));
                 } else {
                     setAttribute(key, element.getAccessibleAttribute(key));
@@ -311,13 +316,13 @@ public class PdfStructureElement extends PdfDictionary implements IPdfStructureE
 
                     // Setting inheritable attributes
                     IPdfStructureElement parent = (IPdfStructureElement) this.getParent(true);
-                    PdfObject obj = parent.getAttribute(PdfName.COLOR);
+                    PdfObject obj = getParentAttribute(parent, PdfName.COLOR);
                     if ((chunk.getFont() != null) && (chunk.getFont().getColor() != null)) {
                         BaseColor c = chunk.getFont().getColor();
                         setColorAttribute(c, obj, PdfName.COLOR);
                     }
-                    PdfObject decorThickness  = parent.getAttribute(PdfName.TEXTDECORATIONTHICKNESS);
-                    PdfObject decorColor  = parent.getAttribute(PdfName.TEXTDECORATIONCOLOR);
+                    PdfObject decorThickness  = getParentAttribute(parent, PdfName.TEXTDECORATIONTHICKNESS);
+                    PdfObject decorColor  = getParentAttribute(parent, PdfName.TEXTDECORATIONCOLOR);
                     if (attr.containsKey(Chunk.UNDERLINE)){
                         Object[][] unders = (Object[][])attr.get(Chunk.UNDERLINE);
                         Object[] arr = unders[unders.length-1];
@@ -342,7 +347,7 @@ public class PdfStructureElement extends PdfDictionary implements IPdfStructureE
                     
                     if (attr.containsKey(Chunk.LINEHEIGHT)){
                         float height = (Float)attr.get(Chunk.LINEHEIGHT);
-                        PdfObject parentLH = parent.getAttribute(PdfName.LINEHEIGHT);
+                        PdfObject parentLH = getParentAttribute(parent, PdfName.LINEHEIGHT);
                         if (parentLH instanceof PdfNumber){
                             float pLH = ((PdfNumber)parentLH).floatValue();
                             if (Float.compare(pLH, height) != 0){
@@ -400,12 +405,12 @@ public class PdfStructureElement extends PdfDictionary implements IPdfStructureE
 
             // Setting inheritable attributes
             IPdfStructureElement parent = (IPdfStructureElement) this.getParent(true);
-            PdfObject obj = parent.getAttribute(PdfName.COLOR);
+            PdfObject obj = getParentAttribute(parent, PdfName.COLOR);
             if ((paragraph.getFont() != null) && (paragraph.getFont().getColor() != null)) {
                 BaseColor c = paragraph.getFont().getColor();
                 setColorAttribute(c, obj, PdfName.COLOR);
             }
-            obj = parent.getAttribute(PdfName.TEXTINDENT);
+            obj = getParentAttribute(parent, PdfName.TEXTINDENT);
             if (Float.compare(paragraph.getFirstLineIndent(), 0f) != 0) {
                 boolean writeIndent = true;
                 if (obj instanceof PdfNumber){
@@ -415,7 +420,7 @@ public class PdfStructureElement extends PdfDictionary implements IPdfStructureE
                 if (writeIndent)
                     this.setAttribute(PdfName.TEXTINDENT, new PdfNumber(paragraph.getFirstLineIndent()));
             }
-            obj = parent.getAttribute(PdfName.STARTINDENT);
+            obj = getParentAttribute(parent, PdfName.STARTINDENT);
             if (obj instanceof PdfNumber) {
                 float startIndent = ((PdfNumber) obj).floatValue();
                 if (Float.compare(startIndent, paragraph.getIndentationLeft()) != 0)
@@ -425,7 +430,7 @@ public class PdfStructureElement extends PdfDictionary implements IPdfStructureE
                     this.setAttribute(PdfName.STARTINDENT, new PdfNumber(paragraph.getIndentationLeft()));
             }
 
-            obj = parent.getAttribute(PdfName.ENDINDENT);
+            obj = getParentAttribute(parent, PdfName.ENDINDENT);
             if (obj instanceof PdfNumber) {
                 float endIndent = ((PdfNumber) obj).floatValue();
                 if (Float.compare(endIndent, paragraph.getIndentationRight()) != 0)
@@ -462,7 +467,7 @@ public class PdfStructureElement extends PdfDictionary implements IPdfStructureE
                             this.setAttribute(PdfName.LISTNUMBERING, PdfName.UPPERALPHA);
                     }
             }
-            PdfObject obj = parent.getAttribute(PdfName.STARTINDENT);
+            PdfObject obj = getParentAttribute(parent, PdfName.STARTINDENT);
             if (obj instanceof PdfNumber) {
                 float startIndent = ((PdfNumber) obj).floatValue();
                 if (Float.compare(startIndent, list.getIndentationLeft()) != 0)
@@ -472,7 +477,7 @@ public class PdfStructureElement extends PdfDictionary implements IPdfStructureE
                     this.setAttribute(PdfName.STARTINDENT, new PdfNumber(list.getIndentationLeft()));
             }
 
-            obj = parent.getAttribute(PdfName.ENDINDENT);
+            obj = getParentAttribute(parent, PdfName.ENDINDENT);
             if (obj instanceof PdfNumber) {
                 float endIndent = ((PdfNumber) obj).floatValue();
                 if (Float.compare(endIndent, list.getIndentationRight()) != 0)
@@ -486,7 +491,7 @@ public class PdfStructureElement extends PdfDictionary implements IPdfStructureE
 
     private void writeAttributes(final ListItem listItem) {
         if (listItem != null) {
-            PdfObject obj = parent.getAttribute(PdfName.STARTINDENT);
+            PdfObject obj = getParentAttribute(parent, PdfName.STARTINDENT);
             if (obj instanceof PdfNumber) {
                 float startIndent = ((PdfNumber) obj).floatValue();
                 if (Float.compare(startIndent, listItem.getIndentationLeft()) != 0)
@@ -496,7 +501,7 @@ public class PdfStructureElement extends PdfDictionary implements IPdfStructureE
                     this.setAttribute(PdfName.STARTINDENT, new PdfNumber(listItem.getIndentationLeft()));
             }
 
-            obj = parent.getAttribute(PdfName.ENDINDENT);
+            obj = getParentAttribute(parent, PdfName.ENDINDENT);
             if (obj instanceof PdfNumber) {
                 float endIndent = ((PdfNumber) obj).floatValue();
                 if (Float.compare(endIndent, listItem.getIndentationRight()) != 0)
@@ -516,7 +521,7 @@ public class PdfStructureElement extends PdfDictionary implements IPdfStructureE
 
     private void writeAttributes(final ListLabel listLabel) {
         if (listLabel != null) {
-            PdfObject obj = parent.getAttribute(PdfName.STARTINDENT);
+            PdfObject obj = getParentAttribute(parent, PdfName.STARTINDENT);
             if (obj instanceof PdfNumber) {
                 float startIndent = ((PdfNumber) obj).floatValue();
                 if (Float.compare(startIndent, listLabel.getIndentation()) != 0)
@@ -543,9 +548,6 @@ public class PdfStructureElement extends PdfDictionary implements IPdfStructureE
             }
             if (table.getTotalWidth() > 0){
                 this.setAttribute(PdfName.WIDTH, new PdfNumber(table.getTotalWidth()));
-            }
-            if (table.getSummary() != null) {
-                this.setAttribute(PdfName.SUMMARY, new PdfString(table.getSummary()));
             }
         }
     }
@@ -576,8 +578,8 @@ public class PdfStructureElement extends PdfDictionary implements IPdfStructureE
                     this.setAttribute(PdfName.HEADERS, headers);
             }
 
-            if (cell.getFixedHeight() > 0){
-                this.setAttribute(PdfName.HEIGHT, new PdfNumber(cell.getFixedHeight()));
+            if (cell.getCalculatedHeight() > 0){
+                this.setAttribute(PdfName.HEIGHT, new PdfNumber(cell.getCalculatedHeight()));
             }
 
             if (cell.getWidth() > 0){
@@ -685,7 +687,7 @@ public class PdfStructureElement extends PdfDictionary implements IPdfStructureE
                 align = PdfName.JUSTIFY;
                 break;
         }
-        PdfObject obj = parent.getAttribute(PdfName.TEXTALIGN);
+        PdfObject obj = getParentAttribute(parent, PdfName.TEXTALIGN);
         if (obj instanceof PdfName) {
             PdfName textAlign = ((PdfName) obj);
             if (align != null && !textAlign.equals(align))
@@ -700,6 +702,12 @@ public class PdfStructureElement extends PdfDictionary implements IPdfStructureE
     public void toPdf(final PdfWriter writer, final OutputStream os) throws IOException {
         PdfWriter.checkPdfIsoConformance(writer, PdfIsoKeys.PDFISOKEY_STRUCTELEM, this);
         super.toPdf(writer, os);
+    }
+
+    private PdfObject getParentAttribute(IPdfStructureElement parent, PdfName name) {
+        if (parent == null)
+            return null;
+        return parent.getAttribute(name);
     }
 
 }

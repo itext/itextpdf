@@ -55,11 +55,20 @@ import com.itextpdf.text.xml.xmp.PdfProperties;
 import com.itextpdf.text.xml.xmp.XmpBasicProperties;
 import com.itextpdf.xmp.*;
 import com.itextpdf.xmp.options.SerializeOptions;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 import java.io.*;
 import java.util.*;
 
@@ -69,10 +78,246 @@ import java.util.*;
 @SuppressWarnings("ResultOfMethodCallIgnored")
 public class CompareTool {
 
+    private class ObjectPath {
+        protected RefKey baseCmpObject;
+        protected RefKey baseOutObject;
+        protected Stack<PathItem> path = new Stack<PathItem>();
+
+        public ObjectPath() {
+        }
+
+        protected ObjectPath(RefKey baseCmpObject, RefKey baseOutObject) {
+            this.baseCmpObject = baseCmpObject;
+            this.baseOutObject = baseOutObject;
+        }
+
+        private ObjectPath(RefKey baseCmpObject, RefKey baseOutObject, Stack<PathItem> path) {
+            this.baseCmpObject = baseCmpObject;
+            this.baseOutObject = baseOutObject;
+            this.path = path;
+        }
+
+        private abstract class PathItem {
+            protected abstract Node toXmlNode(Document document);
+        }
+
+        private class DictPathItem extends PathItem {
+            String key;
+            public DictPathItem(String key) {
+                this.key = key;
+            }
+
+            @Override
+            public String toString() {
+                return "Dict key: " + key;
+            }
+
+            @Override
+            public int hashCode() {
+                return key.hashCode();
+            }
+
+            @Override
+            public boolean equals(Object obj) {
+                return obj instanceof DictPathItem && key.equals(((DictPathItem) obj).key);
+            }
+
+            @Override
+            protected Node toXmlNode(Document document) {
+                Node element = document.createElement("dictKey");
+                element.appendChild(document.createTextNode(key));
+                return element;
+            }
+        }
+
+        private class ArrayPathItem extends PathItem {
+            int index;
+            public ArrayPathItem(int index) {
+                this.index = index;
+            }
+
+            @Override
+            public String toString() {
+                return "Array index: " + String.valueOf(index);
+            }
+
+            @Override
+            public int hashCode() {
+                return index;
+            }
+
+            @Override
+            public boolean equals(Object obj) {
+                return obj instanceof ArrayPathItem && index == ((ArrayPathItem) obj).index;
+            }
+
+            @Override
+            protected Node toXmlNode(Document document) {
+                Node element = document.createElement("arrayIndex");
+                element.appendChild(document.createTextNode(String.valueOf(index)));
+                return element;
+            }
+        }
+
+        private class OffsetPathItem extends PathItem {
+            int offset;
+            public OffsetPathItem(int offset) {
+                this.offset = offset;
+            }
+
+            @Override
+            public String toString() {
+                return "Offset: " + String.valueOf(offset);
+            }
+
+            @Override
+            public int hashCode() {
+                return offset;
+            }
+
+            @Override
+            public boolean equals(Object obj) {
+                return obj instanceof OffsetPathItem && offset == ((OffsetPathItem) obj).offset;
+            }
+
+            @Override
+            protected Node toXmlNode(Document document) {
+                Node element = document.createElement("offset");
+                element.appendChild(document.createTextNode(String.valueOf(offset)));
+                return element;
+            }
+        }
+
+        public void pushArrayItemToPath(int index) {
+            path.add(new ArrayPathItem(index));
+        }
+
+        public void pushDictItemToPath(String key) {
+            path.add(new DictPathItem(key));
+        }
+
+        public void pushOffsetToPath(int offset) {
+            path.add(new OffsetPathItem(offset));
+        }
+
+        public void pop() {
+            path.pop();
+        }
+
+        @Override
+        public String toString() {
+            StringBuilder sb = new StringBuilder();
+            sb.append(String.format("Base cmp object: %s obj. Base out object: %s obj", baseCmpObject, baseOutObject));
+            for (PathItem pathItem : path) {
+                sb.append("\n");
+                sb.append(pathItem.toString());
+            }
+            return sb.toString();
+        }
+
+        @Override
+        public int hashCode() {
+            int hashCode = baseCmpObject.hashCode() * 31 + baseOutObject.hashCode();
+            for (PathItem pathItem : path) {
+                hashCode *= 31;
+                hashCode += pathItem.hashCode();
+            }
+            return hashCode;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            return obj instanceof ObjectPath && baseCmpObject.equals(((ObjectPath) obj).baseCmpObject) && baseOutObject.equals(((ObjectPath) obj).baseOutObject) &&
+                    path.equals(((ObjectPath) obj).path);
+        }
+
+        @Override
+        protected Object clone() {
+            return new ObjectPath(baseCmpObject, baseOutObject, (Stack<PathItem>) path.clone());
+        }
+
+        public Node toXmlNode(Document document) {
+            Element element = document.createElement("path");
+            Element baseNode = document.createElement("base");
+            baseNode.setAttribute("cmp", baseCmpObject.toString() + " obj");
+            baseNode.setAttribute("out", baseOutObject.toString() + " obj");
+            element.appendChild(baseNode);
+            for (PathItem pathItem : path) {
+                element.appendChild(pathItem.toXmlNode(document));
+            }
+            return element;
+        }
+    }
+
+    protected class CompareResult {
+        protected HashMap<ObjectPath, String> differences = new HashMap<ObjectPath, String>();
+        protected int messageLimit = 1;
+
+        public CompareResult(int messageLimit) {
+            this.messageLimit = messageLimit;
+        }
+
+        public boolean isOk() {
+            return differences.size() == 0;
+        }
+
+        public int getErrorCount() {
+            return differences.size();
+        }
+
+        protected boolean isMessageLimitReached() {
+            return differences.size() >= messageLimit;
+        }
+
+        public String getReport() {
+            StringBuilder sb = new StringBuilder();
+            boolean firstEntry = true;
+            for (Map.Entry<ObjectPath, String> entry : differences.entrySet()) {
+                if (!firstEntry)
+                    sb.append("-----------------------------").append("\n");
+                ObjectPath diffPath = entry.getKey();
+                sb.append(entry.getValue()).append("\n").append(diffPath.toString()).append("\n");
+                firstEntry = false;
+            }
+            return sb.toString();
+        }
+
+        protected void addError(ObjectPath path, String message) {
+            if (differences.size() < messageLimit) {
+                differences.put(((ObjectPath) path.clone()), message);
+            }
+        }
+
+        public void writeReportToXml(OutputStream stream) throws ParserConfigurationException, TransformerException {
+            Document xmlReport = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
+            Element root = xmlReport.createElement("report");
+            Element errors = xmlReport.createElement("errors");
+            errors.setAttribute("count", String.valueOf(differences.size()));
+            root.appendChild(errors);
+            for (Map.Entry<ObjectPath, String> entry : differences.entrySet()) {
+                Node errorNode = xmlReport.createElement("error");
+                Node message = xmlReport.createElement("message");
+                message.appendChild(xmlReport.createTextNode(entry.getValue()));
+                Node path = entry.getKey().toXmlNode(xmlReport);
+                errorNode.appendChild(message);
+                errorNode.appendChild(path);
+                errors.appendChild(errorNode);
+            }
+            xmlReport.appendChild(root);
+
+            TransformerFactory tFactory = TransformerFactory.newInstance();
+            Transformer transformer = tFactory.newTransformer();
+            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+            DOMSource source = new DOMSource(xmlReport);
+            StreamResult result = new StreamResult(stream);
+            transformer.transform(source, result);
+        }
+    }
+
     private String gsExec;
     private String compareExec;
     private final String gsParams = " -dNOPAUSE -dBATCH -sDEVICE=png16m -r150 -sOutputFile=<outputfile> <inputfile>";
-    private final String compareParams = " <image1> <image2> <difference>";
+    private final String compareParams = " \"<image1>\" \"<image2>\" \"<difference>\"";
 
     static private final String cannotOpenTargetDirectory = "Cannot open target directory for <filename>.";
     static private final String gsFailed = "GhostScript failed for <filename>.";
@@ -93,6 +338,9 @@ public class CompareTool {
     List<RefKey> outPagesRef;
     List<PdfDictionary> cmpPages;
     List<RefKey> cmpPagesRef;
+
+    private int compareByContentErrorsLimit = 1;
+    private boolean generateCompareByContentXmlReport = false;
 
     public CompareTool() {
         gsExec = System.getProperty("gsExec");
@@ -117,7 +365,7 @@ public class CompareTool {
         File[] cmpImageFiles;
 
         if (!targetDir.exists()) {
-            targetDir.mkdir();
+            targetDir.mkdirs();
         } else {
             imageFiles = targetDir.listFiles(new PngFileFilter());
             for (File file : imageFiles) {
@@ -276,6 +524,20 @@ public class CompareTool {
         return compare(outPdf, cmpPdf, outPath, differenceImagePrefix, null);
     }
 
+    /**
+     * Sets the maximum errors count which will be returned as the result of the comparison.
+     * @param compareByContentMaxErrorCount the errors count.
+     * @return Returns this.
+     */
+    public CompareTool setCompareByContentErrorsLimit(int compareByContentMaxErrorCount) {
+        this.compareByContentErrorsLimit = compareByContentMaxErrorCount;
+        return this;
+    }
+
+    public void setGenerateCompareByContentXmlReport(boolean generateCompareByContentXmlReport) {
+        this.generateCompareByContentXmlReport = generateCompareByContentXmlReport;
+    }
+
     private String compareByContent(String outPath, String differenceImagePrefix, Map<Integer, List<Rectangle>> ignoredAreas) throws DocumentException, InterruptedException, IOException {
         System.out.print("[itext] INFO  Comparing by content..........");
         PdfReader outReader = new PdfReader(outPdf);
@@ -291,21 +553,44 @@ public class CompareTool {
         if (outPages.size() != cmpPages.size())
             return compare(outPath, differenceImagePrefix, ignoredAreas);
 
+        CompareResult compareResult = new CompareResult(compareByContentErrorsLimit);
         List<Integer> equalPages = new ArrayList<Integer>(cmpPages.size());
         for (int i = 0; i < cmpPages.size(); i++) {
-            if (compareDictionaries(outPages.get(i), cmpPages.get(i)))
+            ObjectPath currentPath = new ObjectPath(cmpPagesRef.get(i), outPagesRef.get(i));
+            if (compareDictionariesExtended(outPages.get(i), cmpPages.get(i), currentPath, compareResult))
                 equalPages.add(i);
         }
+
+        PdfObject outStructTree = outReader.getCatalog().get(PdfName.STRUCTTREEROOT);
+        PdfObject cmpStructTree = cmpReader.getCatalog().get(PdfName.STRUCTTREEROOT);
+        RefKey outStructTreeRef = outStructTree == null ? null : new RefKey((PdfIndirectReference)outStructTree);
+        RefKey cmpStructTreeRef = cmpStructTree == null ? null : new RefKey((PdfIndirectReference)cmpStructTree);
+        compareObjects(outStructTree, cmpStructTree, new ObjectPath(outStructTreeRef, cmpStructTreeRef), compareResult);
+
+        PdfObject outOcProperties = outReader.getCatalog().get(PdfName.OCPROPERTIES);
+        PdfObject cmpOcProperties = cmpReader.getCatalog().get(PdfName.OCPROPERTIES);
+        RefKey outOcPropertiesRef = outOcProperties == null ? null : new RefKey((PdfIndirectReference)outOcProperties);
+        RefKey cmpOcPropertiesRef = cmpOcProperties == null ? null : new RefKey((PdfIndirectReference)cmpOcProperties);
+        compareObjects(outOcProperties, cmpOcProperties, new ObjectPath(outOcPropertiesRef, cmpOcPropertiesRef), compareResult);
+
         outReader.close();
         cmpReader.close();
 
+        if (generateCompareByContentXmlReport) {
+            try {
+                compareResult.writeReportToXml(new FileOutputStream(outPath + "/report.xml"));
+            } catch (Exception exc) {}
+        }
 
-        if (equalPages.size() == cmpPages.size()) {
+        if (equalPages.size() == cmpPages.size() && compareResult.isOk()) {
             System.out.println("OK");
             System.out.flush();
             return null;
         } else {
             System.out.println("Fail");
+            System.out.flush();
+            String compareByContentReport = "Compare by content report:\n" + compareResult.getReport();
+            System.out.println(compareByContentReport);
             System.out.flush();
             String message = compare(outPath, differenceImagePrefix, ignoredAreas, equalPages);
             if (message == null || message.length() == 0)
@@ -342,46 +627,69 @@ public class CompareTool {
         }
     }
 
-    private boolean compareObjects(PdfObject outObj, PdfObject cmpObj) throws IOException {
+    private boolean compareObjects(PdfObject outObj, PdfObject cmpObj, ObjectPath currentPath, CompareResult compareResult) throws IOException {
         PdfObject outDirectObj = PdfReader.getPdfObject(outObj);
         PdfObject cmpDirectObj = PdfReader.getPdfObject(cmpObj);
 
-        if (outDirectObj == null || cmpDirectObj.type() != outDirectObj.type())
+        if (cmpDirectObj == null && outDirectObj == null)
+            return true;
+
+        if (outDirectObj == null) {
+            compareResult.addError(currentPath, "Expected object was not found.");
             return false;
+        } else if (cmpDirectObj == null) {
+            compareResult.addError(currentPath, "Found object which was not expected to be found.");
+            return false;
+        } else if (cmpDirectObj.type() != outDirectObj.type()) {
+            compareResult.addError(currentPath, String.format("Types do not match. Expected: %s. Found: %s.", cmpDirectObj.getClass().getSimpleName(), outDirectObj.getClass().getSimpleName()));
+            return false;
+        }
+
+        // This can be commented in order to always see the "full" paths of different objects.
+        if (cmpObj.isIndirect() && outObj.isIndirect()) {
+            currentPath = new ObjectPath(new RefKey((PdfIndirectReference) cmpObj), new RefKey((PdfIndirectReference) outObj));
+        }
+
         if (cmpDirectObj.isDictionary()) {
             PdfDictionary cmpDict = (PdfDictionary)cmpDirectObj;
             PdfDictionary outDict = (PdfDictionary)outDirectObj;
             if (cmpDict.isPage()) {
-                if (!outDict.isPage())
+                if (!outDict.isPage()) {
+                    if (compareResult != null && currentPath != null)
+                        compareResult.addError(currentPath, String.format("Expected a page. Found not a page."));
                     return false;
+                }
                 RefKey cmpRefKey = new RefKey((PRIndirectReference)cmpObj);
                 RefKey outRefKey = new RefKey((PRIndirectReference)outObj);
+                // References to the same page
                 if (cmpPagesRef.contains(cmpRefKey) && cmpPagesRef.indexOf(cmpRefKey) == outPagesRef.indexOf(outRefKey))
                     return true;
+                if (compareResult != null && currentPath != null)
+                    compareResult.addError(currentPath, String.format("The dictionaries refer to different pages. Expected page number: %s. Found: %s",
+                            cmpPagesRef.indexOf(cmpRefKey), outPagesRef.indexOf(outRefKey)));
                 return false;
             }
-            if (!compareDictionaries(outDict, cmpDict))
+            if (!compareDictionariesExtended(outDict, cmpDict, currentPath, compareResult))
                 return false;
         } else if (cmpDirectObj.isStream()) {
-            if (!compareStreams((PRStream) outDirectObj, (PRStream) cmpDirectObj))
+            if (!compareStreamsExtended((PRStream) outDirectObj, (PRStream) cmpDirectObj, currentPath, compareResult))
                 return false;
         } else if (cmpDirectObj.isArray()) {
-            if (!compareArrays((PdfArray) outDirectObj, (PdfArray) cmpDirectObj))
+            if (!compareArraysExtended((PdfArray) outDirectObj, (PdfArray) cmpDirectObj, currentPath, compareResult))
                 return false;
         } else if (cmpDirectObj.isName()) {
-            if (!compareNames((PdfName) outDirectObj, (PdfName) cmpDirectObj))
+            if (!compareNamesExtended((PdfName) outDirectObj, (PdfName) cmpDirectObj, currentPath, compareResult))
                 return false;
         } else if (cmpDirectObj.isNumber()) {
-            if (!compareNumbers((PdfNumber) outDirectObj, (PdfNumber) cmpDirectObj))
+            if (!compareNumbersExtended((PdfNumber) outDirectObj, (PdfNumber) cmpDirectObj, currentPath, compareResult))
                 return false;
         } else if (cmpDirectObj.isString()) {
-            if (!compareStrings((PdfString) outDirectObj, (PdfString) cmpDirectObj))
+            if (!compareStringsExtended((PdfString) outDirectObj, (PdfString) cmpDirectObj, currentPath, compareResult))
                 return false;
         } else if (cmpDirectObj.isBoolean()) {
-            if (!compareBooleans((PdfBoolean) outDirectObj, (PdfBoolean) cmpDirectObj))
+            if (!compareBooleansExtended((PdfBoolean) outDirectObj, (PdfBoolean) cmpDirectObj, currentPath, compareResult))
                 return false;
         } else if (outDirectObj.isNull() && cmpDirectObj.isNull()) {
-
         } else {
             throw new UnsupportedOperationException();
         }
@@ -389,28 +697,56 @@ public class CompareTool {
     }
 
     public boolean compareDictionaries(PdfDictionary outDict, PdfDictionary cmpDict) throws IOException {
-        for (PdfName key : cmpDict.getKeys()) {
-            if (key.compareTo(PdfName.PARENT) == 0) continue;
+        return compareDictionariesExtended(outDict, cmpDict, null, null);
+    }
+
+    private boolean compareDictionariesExtended(PdfDictionary outDict, PdfDictionary cmpDict, ObjectPath currentPath, CompareResult compareResult) throws IOException {
+        if (cmpDict != null && outDict == null || outDict != null && cmpDict == null) {
+            compareResult.addError(currentPath, "One of the dictionaries is null, the other is not.");
+            return false;
+        }
+        boolean dictsAreSame = true;
+        // Iterate through the union of the keys of the cmp and out dictionaries!
+        Set<PdfName> mergedKeys = new HashSet<PdfName>(cmpDict.getKeys());
+        mergedKeys.addAll(outDict.getKeys());
+        for (PdfName key : mergedKeys) {
+            if (key.compareTo(PdfName.PARENT) == 0 || key.compareTo(PdfName.P) == 0) continue;
+            if (outDict.isStream() && cmpDict.isStream() && (key.equals(PdfName.FILTER) || key.equals(PdfName.LENGTH))) continue;
             if (key.compareTo(PdfName.BASEFONT) == 0 || key.compareTo(PdfName.FONTNAME) == 0) {
                 PdfObject cmpObj = cmpDict.getDirectObject(key);
                 if (cmpObj.isName() && cmpObj.toString().indexOf('+') > 0) {
                     PdfObject outObj = outDict.getDirectObject(key);
-                    if (!outObj.isName() || outObj.toString().indexOf('+') == -1)
-                        return false;
+                    if (!outObj.isName() || outObj.toString().indexOf('+') == -1) {
+                        if (compareResult != null && currentPath != null)
+                            compareResult.addError(currentPath, String.format("PdfDictionary %s entry: Expected: %s. Found: %s", key.toString(), cmpObj.toString(), outObj.toString()));
+                        dictsAreSame = false;
+                    }
                     String cmpName = cmpObj.toString().substring(cmpObj.toString().indexOf('+'));
                     String outName = outObj.toString().substring(outObj.toString().indexOf('+'));
-                    if (!cmpName.equals(outName))
-                        return false;
+                    if (!cmpName.equals(outName)) {
+                        if (compareResult != null && currentPath != null)
+                            compareResult.addError(currentPath, String.format("PdfDictionary %s entry: Expected: %s. Found: %s", key.toString(), cmpObj.toString(), outObj.toString()));
+                        dictsAreSame = false;
+                    }
                     continue;
                 }
             }
-            if (!compareObjects(outDict.get(key), cmpDict.get(key)))
+            if (currentPath != null)
+                currentPath.pushDictItemToPath(key.toString());
+            dictsAreSame = compareObjects(outDict.get(key), cmpDict.get(key), currentPath, compareResult) && dictsAreSame;
+            if (currentPath != null)
+                currentPath.pop();
+            if (!dictsAreSame && (currentPath == null || compareResult == null || compareResult.isMessageLimitReached()))
                 return false;
         }
-        return true;
+        return dictsAreSame;
     }
 
     public boolean compareStreams(PRStream outStream, PRStream cmpStream) throws IOException {
+        return compareStreamsExtended(outStream, cmpStream, null, null);
+    }
+
+    private boolean compareStreamsExtended(PRStream outStream, PRStream cmpStream, ObjectPath currentPath, CompareResult compareResult) throws IOException {
         boolean decodeStreams = PdfName.FLATEDECODE.equals(outStream.get(PdfName.FILTER));
         byte[] outStreamBytes = PdfReader.getStreamBytesRaw(outStream);
         byte[] cmpStreamBytes = PdfReader.getStreamBytesRaw(cmpStream);
@@ -418,34 +754,133 @@ public class CompareTool {
             outStreamBytes = PdfReader.decodeBytes(outStreamBytes, outStream);
             cmpStreamBytes = PdfReader.decodeBytes(cmpStreamBytes, cmpStream);
         }
-        return Arrays.equals(outStreamBytes, cmpStreamBytes);
+        if (Arrays.equals(outStreamBytes, cmpStreamBytes)) {
+            return compareDictionariesExtended(outStream, cmpStream, currentPath, compareResult);
+        } else {
+            if (cmpStreamBytes.length != outStreamBytes.length) {
+                if (compareResult != null && currentPath != null) {
+                    compareResult.addError(currentPath, String.format("PRStream. Lengths are different. Expected: %s. Found: %s", cmpStreamBytes.length, outStreamBytes.length));
+                }
+            } else {
+                for (int i = 0; i < cmpStreamBytes.length; i++) {
+                    if (cmpStreamBytes[i] != outStreamBytes[i]) {
+                        int l = Math.max(0, i - 10);
+                        int r = Math.min(cmpStreamBytes.length, i + 10);
+                        if (compareResult != null && currentPath != null) {
+                            currentPath.pushOffsetToPath(i);
+                            compareResult.addError(currentPath, String.format("PRStream. The bytes differ at index %s. Expected: %s (%s). Found: %s (%s)",
+                                    i, new String(new byte[] {cmpStreamBytes[i]}), new String(cmpStreamBytes, l, r - l).replace("\n", "\\n"),
+                                    new String(new byte[] {outStreamBytes[i]}), new String(outStreamBytes, l, r - l).replace("\n", "\\n")));
+                            currentPath.pop();
+                        }
+                    }
+                }
+            }
+            return false;
+        }
     }
 
     public boolean compareArrays(PdfArray outArray, PdfArray cmpArray) throws IOException {
-        if (outArray == null || outArray.size() != cmpArray.size())
+        return compareArraysExtended(outArray, cmpArray, null, null);
+    }
+
+    private boolean compareArraysExtended(PdfArray outArray, PdfArray cmpArray, ObjectPath currentPath, CompareResult compareResult) throws IOException {
+        if (outArray == null) {
+            if (compareResult != null && currentPath != null)
+                compareResult.addError(currentPath, "Found null. Expected PdfArray.");
             return false;
+        } else if (outArray.size() != cmpArray.size()) {
+            if (compareResult != null && currentPath != null)
+                compareResult.addError(currentPath, String.format("PdfArrays. Lengths are different. Expected: %s. Found: %s.", cmpArray.size(), outArray.size()));
+            return false;
+        }
+        boolean arraysAreEqual = true;
         for (int i = 0; i < cmpArray.size(); i++) {
-            if (!compareObjects(outArray.getPdfObject(i), cmpArray.getPdfObject(i)))
+            if (currentPath != null)
+                currentPath.pushArrayItemToPath(i);
+            arraysAreEqual = compareObjects(outArray.getPdfObject(i), cmpArray.getPdfObject(i), currentPath, compareResult) && arraysAreEqual;
+            if (currentPath != null)
+                currentPath.pop();
+            if (!arraysAreEqual && (currentPath == null || compareResult == null || compareResult.isMessageLimitReached()))
                 return false;
         }
 
-        return true;
+        return arraysAreEqual;
     }
 
     public boolean compareNames(PdfName outName, PdfName cmpName) {
         return cmpName.compareTo(outName) == 0;
     }
 
+    private boolean compareNamesExtended(PdfName outName, PdfName cmpName, ObjectPath currentPath, CompareResult compareResult) {
+        if (cmpName.compareTo(outName) == 0) {
+            return true;
+        } else {
+            if (compareResult != null && currentPath != null)
+                compareResult.addError(currentPath, String.format("PdfName. Expected: %s. Found: %s", cmpName.toString(), outName.toString()));
+            return false;
+        }
+    }
+
     public boolean compareNumbers(PdfNumber outNumber, PdfNumber cmpNumber) {
         return cmpNumber.doubleValue() == outNumber.doubleValue();
+    }
+
+    private boolean compareNumbersExtended(PdfNumber outNumber, PdfNumber cmpNumber, ObjectPath currentPath, CompareResult compareResult) {
+        if (cmpNumber.doubleValue() == outNumber.doubleValue()) {
+            return true;
+        } else {
+            if (compareResult != null && currentPath != null)
+                compareResult.addError(currentPath, String.format("PdfNumber. Expected: %s. Found: %s", cmpNumber, outNumber));
+            return false;
+        }
     }
 
     public boolean compareStrings(PdfString outString, PdfString cmpString) {
         return Arrays.equals(cmpString.getBytes(), outString.getBytes());
     }
 
+    private boolean compareStringsExtended(PdfString outString, PdfString cmpString, ObjectPath currentPath, CompareResult compareResult) {
+        if (Arrays.equals(cmpString.getBytes(), outString.getBytes())) {
+            return true;
+        } else {
+            String cmpStr = cmpString.toUnicodeString();
+            String outStr = outString.toUnicodeString();
+            if (cmpStr.length() != outStr.length()) {
+                if (compareResult != null && currentPath != null)
+                    compareResult.addError(currentPath, String.format("PdfString. Lengths are different. Expected: %s. Found: %s", cmpStr.length(), outStr.length()));
+            } else {
+                for (int i = 0; i < cmpStr.length(); i++) {
+                    if (cmpStr.charAt(i) != outStr.charAt(i)) {
+                        int l = Math.max(0, i - 10);
+                        int r = Math.min(cmpStr.length(), i + 10);
+                        if (compareResult != null && currentPath != null) {
+                            currentPath.pushOffsetToPath(i);
+                            compareResult.addError(currentPath, String.format("PdfString. Characters differ at position %s. Expected: %s (%s). Found: %s (%s).",
+                                    i, Character.toString(cmpStr.charAt(i)), cmpStr.substring(l, r).replace("\n", "\\n"),
+                                    Character.toString(outStr.charAt(i)), outStr.substring(l, r).replace("\n", "\\n")));
+                            currentPath.pop();
+                        }
+                        break;
+                    }
+                }
+            }
+            return false;
+        }
+    }
+
     public boolean compareBooleans(PdfBoolean outBoolean, PdfBoolean cmpBoolean) {
         return Arrays.equals(cmpBoolean.getBytes(), outBoolean.getBytes());
+    }
+
+    private boolean compareBooleansExtended(PdfBoolean outBoolean, PdfBoolean cmpBoolean, ObjectPath currentPath, CompareResult compareResult) {
+        if (cmpBoolean.booleanValue() == outBoolean.booleanValue()) {
+            return true;
+        } else {
+            if (compareResult != null && currentPath != null)
+                compareResult.addError(currentPath, String.format("PdfBoolean. Expected: %s. Found: %s.", cmpBoolean.booleanValue(), outBoolean.booleanValue()));
+            return false;
+        }
     }
 
     public String compareXmp(String outPdf, String cmpPdf){

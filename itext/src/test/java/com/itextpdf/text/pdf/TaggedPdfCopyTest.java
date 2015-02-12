@@ -34,6 +34,8 @@ public class TaggedPdfCopyTest {
     public static final String NO_CLASS_MAP = "The document does not contain ClassMap";
     public static final String NO_ROLE_MAP = "The document does not contain RoleMap";
     public static final String NO_STRUCT_TREE_ROOT = "No StructTreeRoot found";
+    public static final String NO_ID_TREE = "The document does not contain ID Tree";
+    public static final String EMPTY_ID_TREE = "The document's ID Tree is empty";
 
     public static final String SOURCE4 =  "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/pdf/source4.pdf";
     public static final String SOURCE10 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/pdf/source10.pdf";
@@ -55,6 +57,7 @@ public class TaggedPdfCopyTest {
     public static final String SOURCE64 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/pdf/source64.pdf";
     public static final String SOURCE72 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/pdf/source72.pdf";
     public static final String SOURCE73 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/pdf/source73.pdf";
+    public static final String SOURCE81 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/pdf/source81.pdf";
     public static final String DEV_805 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/pdf/dev-805.pdf";
     public static final String SOURCE_CF_11 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/pdf/sourceCf11.pdf";
     public static final String SOURCE_CF_12 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/pdf/sourceCf12.pdf";
@@ -807,6 +810,14 @@ public class TaggedPdfCopyTest {
         copy.freeReader(reader);
         document.close();
         reader.close();
+    }
+    
+    @Test
+    public void copyTaggedPdf23() throws IOException, DocumentException {
+        PdfReader reader = new PdfReader(SOURCE81);
+        PdfDictionary structTreeRoot = verifyIsDictionary(reader.getCatalog().getDirectObject(PdfName.STRUCTTREEROOT), NO_STRUCT_TREE_ROOT);
+        PdfDictionary idTree = verifyIsDictionary(PdfStructTreeController.getDirectObject(structTreeRoot.get(PdfName.IDTREE)), NO_ID_TREE);
+        Assert.assertTrue(EMPTY_ID_TREE, idTree.hashMap.size() > 0);
     }
 
     @Test

@@ -184,6 +184,10 @@ public class TextRenderInfo {
         return getUnscaledBaselineWithOffset(0 + gs.rise).transformBy(textToUserSpaceTransformMatrix);
     }
 
+    public LineSegment getUnscaledBaseline() {
+        return getUnscaledBaselineWithOffset(0 + gs.rise);
+    }
+
     /**
      * Gets the ascentline for the text (i.e. the line that represents the topmost extent that a string of the current font could have)
      * This value includes the Rise of the draw operation - see {@link #getRise()} for the amount added by Rise
@@ -208,9 +212,12 @@ public class TextRenderInfo {
     }
 
     private LineSegment getUnscaledBaselineWithOffset(float yOffset){
+    	// we need to correct the width so we don't have an extra character and word spaces at the end.  The extra character and word spaces
+    	// are important for tracking relative text coordinate systems, but should not be part of the baseline
+        String unicodeStr = string.toUnicodeString();
 
-    	// we need to correct the width so we don't have an extra character spacing value at the end.  The extra character space is important for tracking relative text coordinate systems, but should not be part of the baseline
-    	float correctedUnscaledWidth = getUnscaledWidth() - gs.characterSpacing * gs.horizontalScaling;
+    	float correctedUnscaledWidth = getUnscaledWidth() - (gs.characterSpacing +
+                (unicodeStr.length() > 0 && unicodeStr.charAt(unicodeStr.length() - 1) == ' ' ? gs.wordSpacing : 0)) * gs.horizontalScaling;
 
         return new LineSegment(new Vector(0, yOffset, 1), new Vector(correctedUnscaledWidth, yOffset, 1));
     }
@@ -426,7 +433,9 @@ public class TextRenderInfo {
                 value += b[i] & 0xff;
                 value <<= 8;
             }
-            value += b[b.length - 1] & 0xff;
+            if (b.length > 0) {
+                value += b[b.length - 1] & 0xff;
+            }
             return value;
         } catch (UnsupportedEncodingException e) {
         }

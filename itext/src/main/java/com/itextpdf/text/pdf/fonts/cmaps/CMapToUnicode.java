@@ -31,6 +31,7 @@
 package com.itextpdf.text.pdf.fonts.cmaps;
 
 import com.itextpdf.text.ExceptionConverter;
+import com.itextpdf.text.Utilities;
 import com.itextpdf.text.pdf.PdfObject;
 import com.itextpdf.text.pdf.PdfString;
 import java.io.IOException;
@@ -170,5 +171,13 @@ public class CMapToUnicode extends AbstractCMap {
             retval = new String(bytes, "UTF-16BE");
         }
         return retval;
+    }
+
+    public static CMapToUnicode getIdentity() {
+        CMapToUnicode uni = new CMapToUnicode();
+        for (int i = 0; i < 65537; i++) {
+            uni.addChar(i, Utilities.convertFromUtf32(i));
+        }
+        return uni;
     }
 }

@@ -44,12 +44,14 @@
  */
 package com.itextpdf.text.pdf;
 
-import java.util.ArrayList;
-
 import com.itextpdf.text.BadElementException;
+import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Image;
+import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.pdf.codec.CCITTG4Encoder;
+
+import java.util.ArrayList;
 
 /** Generates the 2D barcode PDF417. Supports dimensioning auto-sizing, fixed
  * and variable sizes, automatic and manual error levels, raw codeword input,
@@ -1572,6 +1574,29 @@ public class BarcodePDF417 {
         public int size() {
             return list.size();
         }
+    }
+
+    public void placeBarcode(PdfContentByte cb, BaseColor foreground, float moduleHeight, float moduleWidth) {
+        paintCode();
+        int stride = (bitColumns + 7) / 8;
+        cb.setColorFill(foreground);
+        for (int k = 0; k < codeRows; ++k) {
+            int p = k * stride;
+            for (int j = 0; j < bitColumns; ++j) {
+                int b = outBits[p + j / 8] & 0xff;
+                b <<= j % 8;
+                if ((b & 0x80) != 0) {
+                    cb.rectangle(j * moduleWidth, (codeRows - k - 1) * moduleHeight, moduleWidth, moduleHeight);
+                }
+            }
+        }
+        cb.fill();
+    }
+
+    /** Gets the size of the barcode grid. */
+    public Rectangle getBarcodeSize() {
+        paintCode();
+        return new Rectangle(0, 0, bitColumns, codeRows);
     }
 
 

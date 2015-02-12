@@ -48,7 +48,6 @@ import com.itextpdf.text.pdf.PdfAConformanceLevel;
 import com.itextpdf.text.pdf.PdfDictionary;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.xmp.*;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -211,7 +210,7 @@ public class PdfAXmpWriter extends XmpWriter {
             throw new IOException(xmpExc.getMessage());
         }
     }
-
+    
     /**
      * Adds information about the PDF/A conformance level to the XMP metadata.
      *

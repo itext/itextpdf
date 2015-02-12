@@ -439,7 +439,7 @@ public class PdfA1Checker extends PdfAChecker {
                 } catch (UnsupportedEncodingException e) {
                     throw new ExceptionConverter(e);
                 }
-                if (!"RGB".equalsIgnoreCase(cs)) {
+                if (!"RGB ".equalsIgnoreCase(cs)) {
                     throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("destoutputprofile.in.the.pdfa1.outputintent.dictionary.shall.be.rgb"));
                 }
             }

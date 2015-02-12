@@ -53,6 +53,7 @@ import com.itextpdf.tool.xml.pipeline.css.CssResolverPipeline;
 import com.itextpdf.tool.xml.pipeline.ctx.ObjectContext;
 import com.itextpdf.tool.xml.pipeline.html.HtmlPipeline;
 import com.itextpdf.tool.xml.pipeline.html.HtmlPipelineContext;
+import com.itextpdf.tool.xml.util.ParentTreeUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -152,10 +153,33 @@ public abstract class AbstractTagProcessor implements TagProcessor, CssAppliersA
 		return new ArrayList<Element>(0);
 	}
         
+        private String getParentDirection() {
+            String result = null;
+            for (Tag tag : tree) {
+                result = tag.getAttributes().get(HTML.Attribute.DIR);
+                if (result != null) break;
+                // Nested tables need this check
+                result = tag.getCSS().get(CSS.Property.DIRECTION);
+                if (result != null) break;
+            }
+            return result;
+        }
+        
+        private List<Tag> tree;
+        
         protected int getRunDirection(Tag tag) {
-            String dirValue = tag.getCSS().get(CSS.Property.DIR);
+            /* CSS should get precedence, but a dir attribute defined on the tag
+               itself should take precedence over an inherited style tag
+            */
+            String dirValue = tag.getAttributes().get(HTML.Attribute.DIR);
             if (dirValue == null) {
-                dirValue = tag.getAttributes().get(CSS.Property.DIR);
+                // using CSS is actually discouraged, but still supported
+                dirValue = tag.getCSS().get(CSS.Property.DIRECTION);
+                if (dirValue == null) {
+                    // dir attribute is inheritable in HTML but gets trumped by CSS
+                    tree = new ParentTreeUtil().getParentTagTree(tag, tree);
+                    dirValue = getParentDirection();
+                }// */
             }
             if (CSS.Value.RTL.equalsIgnoreCase(dirValue)) {
                 return PdfWriter.RUN_DIRECTION_RTL;

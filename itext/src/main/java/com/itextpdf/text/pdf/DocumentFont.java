@@ -44,15 +44,17 @@
  */
 package com.itextpdf.text.pdf;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.ExceptionConverter;
 import com.itextpdf.text.Utilities;
 import com.itextpdf.text.io.RandomAccessSourceFactory;
-import com.itextpdf.text.pdf.fonts.cmaps.*;
+import com.itextpdf.text.pdf.fonts.cmaps.CMapParserEx;
+import com.itextpdf.text.pdf.fonts.cmaps.CMapToUnicode;
+import com.itextpdf.text.pdf.fonts.cmaps.CidLocationFromByte;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  *
@@ -114,11 +116,23 @@ public class DocumentFont extends BaseFont {
         font = (PdfDictionary)PdfReader.getPdfObject(refFont);
         init();
     }
+    /** Creates a new instance of DocumentFont */
+    DocumentFont(PRIndirectReference refFont, PdfDictionary drEncoding) {
+        this.refFont = refFont;
+        font = (PdfDictionary)PdfReader.getPdfObject(refFont);
+        if (font.getAsName(PdfName.ENCODING) == null
+                && drEncoding != null) {
+            for (PdfName key : drEncoding.getKeys()) {
+                font.put(PdfName.ENCODING, drEncoding.get(key));
+            }
+        }
+        init();
+    }
 
     public PdfDictionary getFontDictionary() {
         return font;
     } 
-
+    
     private void init() {
         encoding = "";
         fontSpecific = false;
@@ -135,6 +149,7 @@ public class DocumentFont extends BaseFont {
             // For instance: the character a could be mapped to an image of a dog, the character b to an image of a cat
             // When parsing a document that shows a cat and a dog, you shouldn't expect seeing a cat and a dog. Instead you'll get b and a.
             fillEncoding(null);
+            fillDiffMap(font.getAsDict(PdfName.ENCODING), null);
         }
         else {
             PdfName encodingName = font.getAsName(PdfName.ENCODING);
@@ -185,8 +200,9 @@ public class DocumentFont extends BaseFont {
             fillFontDesc(fontDesc);
             if (toUniObject instanceof PRStream){
                 fillMetrics(PdfReader.getStreamBytes((PRStream)toUniObject), widths, dw);
+            } else if (new PdfName("Identity-H").equals(toUniObject)) {
+                fillMetricsIdentity(widths, dw);
             }
-
         } catch (Exception e) {
             throw new ExceptionConverter(e);
         }
@@ -221,6 +237,15 @@ public class DocumentFont extends BaseFont {
             return PdfEncodings.convertToString(ps.getBytes(), "UnicodeBigUnmarked");
         else
             return ps.toUnicodeString();
+    }
+
+    private void fillMetricsIdentity(IntHashtable widths, int dw) {
+        for (int i = 0; i < 65536; i++) {
+            int w = dw;
+            if (widths.containsKey(i))
+                w = widths.get(i);
+            metrics.put(i, new int[] {i, w});
+        }
     }
 
     private void fillMetrics(byte[] touni, IntHashtable widths, int dw) {
@@ -345,39 +370,7 @@ public class DocumentFont extends BaseFont {
                     fillEncoding(null);
                 else
                     fillEncoding((PdfName)enc);
-                PdfArray diffs = encDic.getAsArray(PdfName.DIFFERENCES);
-                if (diffs != null) {
-                    diffmap = new IntHashtable();
-                    int currentNumber = 0;
-                    for (int k = 0; k < diffs.size(); ++k) {
-                        PdfObject obj = diffs.getPdfObject(k);
-                        if (obj.isNumber())
-                            currentNumber = ((PdfNumber)obj).intValue();
-                        else {
-                            int c[] = GlyphList.nameToUnicode(PdfName.decodeName(((PdfName)obj).toString()));
-                            if (c != null && c.length > 0) {
-                                uni2byte.put(c[0], currentNumber);
-                                byte2uni.put(currentNumber, c[0]);
-                                diffmap.put(c[0], currentNumber);
-                            }
-                            else {
-                                if (toUnicode == null) {
-                                    toUnicode = processToUnicode();
-                                    if (toUnicode == null) {
-                                        toUnicode = new CMapToUnicode();
-                                    }
-                                }
-                                final String unicode = toUnicode.lookup(new byte[]{(byte) currentNumber}, 0, 1);
-                                if ((unicode != null) && (unicode.length() == 1)) {
-                                    this.uni2byte.put(unicode.charAt(0), currentNumber);
-                                    this.byte2uni.put(currentNumber, unicode.charAt(0));
-                                    this.diffmap.put(unicode.charAt(0), currentNumber);
-                                }
-                            }
-                            ++currentNumber;
-                        }
-                    }
-                }
+                fillDiffMap(encDic, toUnicode);
             }
         }
         PdfArray newWidths = font.getAsArray(PdfName.WIDTHS);
@@ -429,6 +422,42 @@ public class DocumentFont extends BaseFont {
         fillFontDesc(font.getAsDict(PdfName.FONTDESCRIPTOR));
     }
 
+    private void fillDiffMap(PdfDictionary encDic, CMapToUnicode toUnicode) {
+        PdfArray diffs = encDic.getAsArray(PdfName.DIFFERENCES);
+        if (diffs != null) {
+            diffmap = new IntHashtable();
+            int currentNumber = 0;
+            for (int k = 0; k < diffs.size(); ++k) {
+                PdfObject obj = diffs.getPdfObject(k);
+                if (obj.isNumber())
+                    currentNumber = ((PdfNumber)obj).intValue();
+                else {
+                    int c[] = GlyphList.nameToUnicode(PdfName.decodeName(((PdfName)obj).toString()));
+                    if (c != null && c.length > 0) {
+                        uni2byte.put(c[0], currentNumber);
+                        byte2uni.put(currentNumber, c[0]);
+                        diffmap.put(c[0], currentNumber);
+                    }
+                    else {
+                        if (toUnicode == null) {
+                            toUnicode = processToUnicode();
+                            if (toUnicode == null) {
+                                toUnicode = new CMapToUnicode();
+                            }
+                        }
+                        final String unicode = toUnicode.lookup(new byte[]{(byte) currentNumber}, 0, 1);
+                        if ((unicode != null) && (unicode.length() == 1)) {
+                            this.uni2byte.put(unicode.charAt(0), currentNumber);
+                            this.byte2uni.put(currentNumber, unicode.charAt(0));
+                            this.diffmap.put(unicode.charAt(0), currentNumber);
+                        }
+                    }
+                    ++currentNumber;
+                }
+            }
+        }
+    }
+    
     private CMapToUnicode processToUnicode() {
         CMapToUnicode cmapRet = null;
         PdfObject toUni = PdfReader.getPdfObjectRelease(this.font.get(PdfName.TOUNICODE));

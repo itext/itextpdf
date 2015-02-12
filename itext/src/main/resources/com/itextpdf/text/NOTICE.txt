@@ -444,3 +444,11 @@ APPENDIX: How to apply the Apache License to your work
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
    See the License for the specific language governing permissions and
    limitations under the License.
+   
+Extra information:
+
+if you use the PdfCleanUp tool in the xtra package, you also need the
+following Apache libraries:
+
+- Apache Commons: commons-imaging
+- Apache Commons: commons-io
