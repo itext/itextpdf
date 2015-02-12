@@ -44,8 +44,8 @@
  */
 package com.itextpdf.text.pdf.security;
 
-import org.bouncycastle.cms.Recipient;
-import org.bouncycastle.cms.RecipientId;
+import org.spongycastle.cms.Recipient;
+import org.spongycastle.cms.RecipientId;
 
 public interface ExternalDecryptionProcess {
 
