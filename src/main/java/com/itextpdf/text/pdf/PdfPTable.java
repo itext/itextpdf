@@ -165,6 +165,8 @@ public class PdfPTable implements LargeElement, Spaceable, IAccessibleElement {
      */
     protected float spacingAfter;
 
+    protected float paddingTop;
+
     /**
      * Holds value of property extendLastRow.
      */
@@ -1737,6 +1739,14 @@ public class PdfPTable implements LargeElement, Spaceable, IAccessibleElement {
      */
     public float spacingAfter() {
         return spacingAfter;
+    }
+
+    public float getPaddingTop() {
+        return paddingTop;
+    }
+
+    public void setPaddingTop(float paddingTop) {
+        this.paddingTop = paddingTop;
     }
 
     /**

@@ -104,6 +104,8 @@ public class Paragraph extends Phrase implements Indentable, Spaceable, IAccessi
     /** Does the paragraph has to be kept together on 1 page. */
     protected boolean keeptogether = false;
 
+    protected float paddingTop;
+
     protected PdfName role = PdfName.P;
     protected HashMap<PdfName, PdfObject> accessibleAttributes = null;
     private AccessibleElementId id = null;
@@ -533,5 +535,13 @@ public class Paragraph extends Phrase implements Indentable, Spaceable, IAccessi
 
     public boolean isInline() {
         return false;
+    }
+
+    public float getPaddingTop() {
+        return paddingTop;
+    }
+
+    public void setPaddingTop(float paddingTop) {
+        this.paddingTop = paddingTop;
     }
 }

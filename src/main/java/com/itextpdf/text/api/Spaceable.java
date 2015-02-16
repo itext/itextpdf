@@ -63,6 +63,8 @@ public interface Spaceable {
 	 */
 	void setSpacingAfter(float spacing);
 
+	void setPaddingTop(float paddingTop);
+
 	/**
 	 * Gets the spacing before.
 	 * @return	the spacing
@@ -74,5 +76,9 @@ public interface Spaceable {
 	 * @return	the spacing
 	 */
 	float getSpacingAfter();
+
+	float getPaddingTop();
+
+
 
 }

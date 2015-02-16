@@ -46,6 +46,8 @@ package com.itextpdf.text.pdf;
 
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Element;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.WritableDirectElement;
 import com.itextpdf.text.api.Spaceable;
 
 import java.util.ArrayList;
@@ -188,6 +190,8 @@ public class FloatLayout {
             currentCompositeColumn = ColumnText.duplicate(compositeColumn);
         }
 
+        boolean ignoreSpacingBefore = maxY == yLine;
+
         while (!floatingElements.isEmpty()) {
             Element nextElement = floatingElements.get(0);
             floatingElements.remove(0);
@@ -222,7 +226,7 @@ public class FloatLayout {
                         currentCompositeColumn.setText(null);
                     break;
                 } else {
-                    if (nextElement instanceof Spaceable) {
+                    if (nextElement instanceof Spaceable && (!ignoreSpacingBefore || !currentCompositeColumn.isIgnoreSpacingBefore() || ((Spaceable) nextElement).getPaddingTop() != 0)) {
                         yLine -= ((Spaceable) nextElement).getSpacingBefore();
                     }
                     if (simulate) {
@@ -296,8 +300,25 @@ public class FloatLayout {
                     }
                 }
             }
-        }
 
+            if (ignoreSpacingBefore && nextElement.getChunks().size() == 0) {
+                if (nextElement instanceof Paragraph){
+                    Paragraph p = (Paragraph) nextElement;
+                    Element e = p.get(0);
+                    if (e instanceof WritableDirectElement){
+                        WritableDirectElement writableElement  = (WritableDirectElement) e;
+                        if (writableElement.getDirectElementType() != WritableDirectElement.DIRECT_ELEMENT_TYPE_HEADER) {
+                            ignoreSpacingBefore = false;
+                        }
+                    }
+                } else if (nextElement instanceof Spaceable) {
+                    ignoreSpacingBefore = false;
+                }
+
+            } else {
+                ignoreSpacingBefore = false;
+            }
+        }
 
         if (leftWidth != 0 && rightWidth != 0) {
             filledWidth = rightX - leftX;
