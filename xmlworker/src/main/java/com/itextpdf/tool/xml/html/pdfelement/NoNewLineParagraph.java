@@ -51,6 +51,7 @@ import com.itextpdf.text.List;
 import com.itextpdf.text.ListItem;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.Phrase;
+import com.itextpdf.text.api.Indentable;
 import com.itextpdf.tool.xml.html.Image;
 
 /**
@@ -74,7 +75,7 @@ import com.itextpdf.tool.xml.html.Image;
  * @see		ListItem
  */
 
-public class NoNewLineParagraph extends Phrase {
+public class NoNewLineParagraph extends Phrase implements Indentable {
 
 	 /**
 	 *
