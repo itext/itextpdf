@@ -346,6 +346,8 @@ public class ColumnText {
      */
     private boolean inheritGraphicState = false;
 
+    private boolean ignoreSpacingBefore = true;
+
     /**
      * Creates a <CODE>ColumnText</CODE>.
      *
@@ -440,6 +442,7 @@ public class ColumnText {
         filledWidth = org.filledWidth;
         adjustFirstLine = org.adjustFirstLine;
         inheritGraphicState = org.inheritGraphicState;
+        ignoreSpacingBefore = org.ignoreSpacingBefore;
     }
 
     private void addWaitingPhrase() {
@@ -953,6 +956,14 @@ public class ColumnText {
 
     public void setInheritGraphicState(boolean inheritGraphicState) {
         this.inheritGraphicState = inheritGraphicState;
+    }
+
+    public boolean isIgnoreSpacingBefore() {
+        return ignoreSpacingBefore;
+    }
+
+    public void setIgnoreSpacingBefore(boolean ignoreSpacingBefore) {
+        this.ignoreSpacingBefore = ignoreSpacingBefore;
     }
 
     /**
@@ -2015,6 +2026,7 @@ public class ColumnText {
 
                 FloatLayout fl = new FloatLayout(floatingElements, useAscender);
                 fl.setSimpleColumn(leftX, minY, rightX, yLine);
+                fl.compositeColumn.setIgnoreSpacingBefore(isIgnoreSpacingBefore());
                 int status = fl.layout(canvas, simulate);
 
                 //firstPass = false;

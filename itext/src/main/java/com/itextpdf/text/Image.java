@@ -1280,6 +1280,9 @@ public abstract class Image extends Rectangle implements Indentable, Spaceable, 
 	/** The spacing after the image. */
 	protected float spacingAfter;
 
+	/** Padding top */
+	protected float paddingTop;
+
 	/**
 	 * Gets the left indentation.
 	 *
@@ -1354,6 +1357,14 @@ public abstract class Image extends Rectangle implements Indentable, Spaceable, 
 
 	public void setSpacingAfter(final float spacing) {
 		this.spacingAfter = spacing;
+	}
+
+	public float getPaddingTop() {
+		return paddingTop;
+	}
+
+	public void setPaddingTop(float paddingTop) {
+		this.paddingTop = paddingTop;
 	}
 
     // widthpercentage (for the moment only used in ColumnText)

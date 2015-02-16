@@ -883,6 +883,8 @@ public class Table extends AbstractTagProcessor {
 				float marginBottom = utils.parseValueToPt(value, fst.getFontSize(t));
 				spacingAfter += marginBottom;
 				getHtmlPipelineContext(ctx).getMemory().put(HtmlPipelineContext.LAST_MARGIN_BOTTOM, marginBottom);
+			} else if (CSS.Property.PADDING_TOP.equalsIgnoreCase(key)){
+				table.setPaddingTop(utils.parseValueToPt(value, fst.getFontSize(t)));
 			}
 		}
 		table.setSpacingBefore(spacingBefore);

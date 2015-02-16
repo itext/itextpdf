@@ -111,7 +111,7 @@ public class Header extends AbstractTagProcessor {
 							title.add(w);
 					}
 
-					l.add(new WritableDirectElement() {
+					l.add(new WritableDirectElement(WritableDirectElement.DIRECT_ELEMENT_TYPE_HEADER) {
 
 						public void write(final PdfWriter writer, final Document doc) throws DocumentException {
 							PdfDestination destination = new PdfDestination(PdfDestination.XYZ, 20,

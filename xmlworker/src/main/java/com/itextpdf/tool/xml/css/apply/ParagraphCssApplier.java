@@ -103,6 +103,7 @@ public class ParagraphCssApplier {
                 p.setSpacingBefore(p.getSpacingBefore() + utils.calculateMarginTop(value, fontSize, configuration));
             } else if (CSS.Property.PADDING_TOP.equalsIgnoreCase(key)) {
                 p.setSpacingBefore(p.getSpacingBefore() + utils.parseValueToPt(value, fontSize));
+                p.setPaddingTop(utils.parseValueToPt(value, fontSize));
             } else if (CSS.Property.MARGIN_BOTTOM.equalsIgnoreCase(key)) {
                 float after = utils.parseValueToPt(value, fontSize);
                 p.setSpacingAfter(p.getSpacingAfter() + after);
