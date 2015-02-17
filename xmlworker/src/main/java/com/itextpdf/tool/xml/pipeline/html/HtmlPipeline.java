@@ -117,6 +117,12 @@ public class HtmlPipeline extends AbstractPipeline<HtmlPipelineContext> {
 				} else {
 					for (Element elem : content) {
 						hcc.currentContent().add(elem);
+						if (elem.type() == Element.BODY ){
+							WritableElement writableElement = new WritableElement();
+							writableElement.add(elem);
+							po.add(writableElement);
+							hcc.currentContent().remove(elem);
+						}
 					}
 				}
 			}

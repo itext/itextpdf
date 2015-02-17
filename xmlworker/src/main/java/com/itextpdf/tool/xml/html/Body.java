@@ -36,15 +36,20 @@ package com.itextpdf.tool.xml.html;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
-import com.itextpdf.text.Chunk;
-import com.itextpdf.text.Element;
+import com.itextpdf.text.*;
+import com.itextpdf.text.html.HtmlUtilities;
+import com.itextpdf.text.pdf.PdfBody;
 import com.itextpdf.tool.xml.NoCustomContextException;
 import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.WorkerContext;
+import com.itextpdf.tool.xml.css.CSS;
 import com.itextpdf.tool.xml.exceptions.LocaleMessages;
 import com.itextpdf.tool.xml.exceptions.RuntimeWorkerException;
 import com.itextpdf.tool.xml.html.pdfelement.NoNewLineParagraph;
+import com.itextpdf.tool.xml.pipeline.ctx.MapContext;
+import com.itextpdf.tool.xml.pipeline.end.PdfWriterPipeline;
 
 /**
  * @author redlab_b
@@ -78,7 +83,22 @@ public class Body extends AbstractTagProcessor {
 	}
 
     @Override
-    public List<Element> end(final WorkerContext ctx, final Tag tag, final List<Element> currentContent) {
-        return currentContentToParagraph(currentContent, true, true, tag, ctx);
+    public List<Element> start(final WorkerContext ctx, final Tag tag) {
+        List<Element> l = new ArrayList<Element>(1);
+        try{
+            Map<String, String> css = tag.getCSS();
+            if (css.containsKey(CSS.Property.BACKGROUND_COLOR)){
+                MapContext pipeline = (MapContext) ctx.get(PdfWriterPipeline.class.getName());
+                Document document = (Document) pipeline.get(PdfWriterPipeline.DOCUMENT);
+                Rectangle rectangle = new Rectangle(document.left(), document.bottom(), document.right(), document.top(), document.getPageSize().getRotation());
+                rectangle.setBackgroundColor(HtmlUtilities.decodeColor(css.get(CSS.Property.BACKGROUND_COLOR)));
+                PdfBody body = new PdfBody(rectangle);
+                l.add(body);
+            }
+        }
+        catch (NoCustomContextException e){
+            throw new RuntimeWorkerException(e);
+        }
+        return l;
     }
 }
