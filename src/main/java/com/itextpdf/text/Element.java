@@ -169,6 +169,9 @@ public interface Element {
 	public static final int DIV = 37;
 
 	/** This is a possible type of <CODE>Element</CODE>. */
+	public static final int BODY = 38;
+
+	/** This is a possible type of <CODE>Element</CODE>. */
 	public static final int MARKED = 50;
 
 	/** This is a possible type of <CODE>Element</CODE>.

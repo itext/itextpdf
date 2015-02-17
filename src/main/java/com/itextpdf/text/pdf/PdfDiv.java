@@ -531,7 +531,7 @@ public class PdfDiv implements Element, Spaceable, IAccessibleElement {
             }
 
             floatLayout.setSimpleColumn(leftX, minY, rightX, yLine);
-            if (getBorderTopStyle() != null){
+            if (getBorderTopStyle() != null) {
                 floatLayout.compositeColumn.setIgnoreSpacingBefore(false);
             }
 

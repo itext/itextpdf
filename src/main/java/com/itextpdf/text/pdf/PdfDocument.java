@@ -383,6 +383,8 @@ public class PdfDocument extends Document {
      */
     private Stack<Float> leadingStack = new Stack<Float>();
 
+    private PdfBody body;
+
     /**
      * Save current @leading
      */
@@ -799,6 +801,10 @@ public class PdfDocument extends Document {
                     pageEmpty = false;
                     //newLine();
                     break;
+                case Element.BODY:
+                    body = (PdfBody) element;
+                    graphics.rectangle(body);
+                    pageEmpty = false;
                 default:
                     return false;
             }
@@ -1017,6 +1023,9 @@ public class PdfDocument extends Document {
                 writer.getDirectContentUnder().restoreMCBlocks(mcBlocks);
             }
 
+            if (body != null && body.getBackgroundColor() != null){
+                graphics.rectangle(body);
+            }
         }
         catch(DocumentException de) {
             // maybe this never happens, but it's better to check.
