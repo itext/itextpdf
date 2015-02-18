@@ -1192,11 +1192,13 @@ public class PdfReader implements PdfViewerPreferences {
 
     protected void readPages() throws IOException {
         catalog = trailer.getAsDict(PdfName.ROOT);
-        if (catalog == null)
-        	throw new InvalidPdfException(MessageLocalization.getComposedMessage("the.document.has.no.catalog.object"));
+        if (catalog == null) {
+            throw new InvalidPdfException(MessageLocalization.getComposedMessage("the.document.has.no.catalog.object"));
+        }
         rootPages = catalog.getAsDict(PdfName.PAGES);
-        if (rootPages == null)
-        	throw new InvalidPdfException(MessageLocalization.getComposedMessage("the.document.has.no.page.root"));
+        if (rootPages == null || !PdfName.PAGES.equals(rootPages.get(PdfName.TYPE))) {
+            throw new InvalidPdfException(MessageLocalization.getComposedMessage("the.document.has.no.page.root"));
+        }
         pageRefs = new PageRefs(this);
     }
 
@@ -3782,7 +3784,7 @@ public class PdfReader implements PdfViewerPreferences {
                 PdfDictionary dic = pageInh.get(pageInh.size() - 1);
                 PdfName key;
                 for (Object element : dic.getKeys()) {
-                    key = (PdfName)element;
+                    key = (PdfName) element;
                     if (page.get(key) == null)
                         page.put(key, dic.get(key));
                 }
