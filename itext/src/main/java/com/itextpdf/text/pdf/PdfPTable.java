@@ -284,7 +284,7 @@ public class PdfPTable implements LargeElement, Spaceable, IAccessibleElement {
 
     public void init() {
         LOGGER.info("Initialize row and cell heights");
-        
+
         for (PdfPRow row : getRows()) {
             if (row == null) continue;
             row.calculated = false;
@@ -443,7 +443,7 @@ public class PdfPTable implements LargeElement, Spaceable, IAccessibleElement {
     }
 
     /**
-     * Sets the percentage width of the table from the absolute column width.
+     * Sets the percentage width of the table from the absolute column width. Warning: Don't use this with setLockedWidth(true). These two settings don't mix.
      *
      * @param columnWidth the absolute width of each column
      * @param pageSize the page size
@@ -2126,6 +2126,7 @@ public class PdfPTable implements LargeElement, Spaceable, IAccessibleElement {
         int k;
         for (k = startIdx; k < size(); ++k) {
             PdfPRow row = getRow(k);
+            calculateHeights();
             float rowHeight = row.getMaxRowHeightsWithoutCalculating();
             float maxCompletedRowsHeight = 0;
             int i = 0;
