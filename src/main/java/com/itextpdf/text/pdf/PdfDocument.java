@@ -804,7 +804,6 @@ public class PdfDocument extends Document {
                 case Element.BODY:
                     body = (PdfBody) element;
                     graphics.rectangle(body);
-                    pageEmpty = false;
                 default:
                     return false;
             }
