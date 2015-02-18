@@ -89,11 +89,14 @@ public class Body extends AbstractTagProcessor {
             Map<String, String> css = tag.getCSS();
             if (css.containsKey(CSS.Property.BACKGROUND_COLOR)){
                 MapContext pipeline = (MapContext) ctx.get(PdfWriterPipeline.class.getName());
-                Document document = (Document) pipeline.get(PdfWriterPipeline.DOCUMENT);
-                Rectangle rectangle = new Rectangle(document.left(), document.bottom(), document.right(), document.top(), document.getPageSize().getRotation());
-                rectangle.setBackgroundColor(HtmlUtilities.decodeColor(css.get(CSS.Property.BACKGROUND_COLOR)));
-                PdfBody body = new PdfBody(rectangle);
-                l.add(body);
+                if (pipeline != null){
+                    Document document = (Document) pipeline.get(PdfWriterPipeline.DOCUMENT);
+                    Rectangle rectangle = new Rectangle(document.left(), document.bottom(), document.right(), document.top(), document.getPageSize().getRotation());
+                    rectangle.setBackgroundColor(HtmlUtilities.decodeColor(css.get(CSS.Property.BACKGROUND_COLOR)));
+                    PdfBody body = new PdfBody(rectangle);
+                    l.add(body);
+                }
+
             }
         }
         catch (NoCustomContextException e){
