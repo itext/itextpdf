@@ -2126,7 +2126,6 @@ public class PdfPTable implements LargeElement, Spaceable, IAccessibleElement {
         int k;
         for (k = startIdx; k < size(); ++k) {
             PdfPRow row = getRow(k);
-            calculateHeights();
             float rowHeight = row.getMaxRowHeightsWithoutCalculating();
             float maxCompletedRowsHeight = 0;
             int i = 0;
