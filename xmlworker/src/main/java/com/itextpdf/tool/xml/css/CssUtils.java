@@ -316,41 +316,32 @@ public class CssUtils {
 	 */
 	public Map<String, String> processFont(final String font) {
 		Map<String, String> rules = new HashMap<String, String>();
-		String[] styleAndRest = font.split("\\s", 2);
-		String style = styleAndRest[0];
-		String rest = styleAndRest[1];
-		for(int i = 0 ; i<3 ; i++) {
+		String[] styleAndRest = font.split("\\s");
+
+		for (int i = 0 ; i < styleAndRest.length ; i++){
+			String style = styleAndRest[i];
 			if (style.equalsIgnoreCase(HtmlTags.ITALIC) || style.equalsIgnoreCase(HtmlTags.OBLIQUE)) {
 				rules.put(HtmlTags.FONTSTYLE, style);
-				styleAndRest = rest.split("\\s", 2);
-				style = styleAndRest[0];
-				rest = styleAndRest[1];
-			}
-			if (style.equalsIgnoreCase("small-caps")) {
-				rules.put("font-variant", style); // normal, small-caps, inherit need to be implemented.
-				styleAndRest = rest.split("\\s", 2);
-				style = styleAndRest[0];
-				rest = styleAndRest[1];
-			}
-			if (style.equalsIgnoreCase(HtmlTags.BOLD)) { // enum for all possible font-weight values?
+			} else if (style.equalsIgnoreCase("small-caps")){
+				rules.put("font-variant", style);
+			} else if (style.equalsIgnoreCase(HtmlTags.BOLD)){
 				rules.put(HtmlTags.FONTWEIGHT, style);
-				styleAndRest = rest.split("\\s", 2);
-				style = styleAndRest[0];
-				rest = styleAndRest[1];
+			} else if (isMetricValue(style) || isNumericValue(style)){
+				if (style.contains("/")) {
+					String[] sizeAndLineHeight = style.split("/");
+					style = sizeAndLineHeight[0]; // assuming font-size always is the first parameter
+					rules.put(HtmlTags.LINEHEIGHT, sizeAndLineHeight[1]);
+				}
+				rules.put(HtmlTags.FONTSIZE, style);
+				if (i != styleAndRest.length-1){
+					String rest = styleAndRest[i+1];
+					rest = rest.replaceAll("\"", "");
+					rest = rest.replaceAll("'", "");
+					rules.put(HtmlTags.FONTFAMILY, rest);
+				}
 			}
 		}
 
-		if (isMetricValue(style) || isNumericValue(style)) {
-			if (style.contains("/")) {
-				String[] sizeAndLineHeight = style.split("/");
-				style = sizeAndLineHeight[0]; // assuming font-size always is the first parameter
-				rules.put(HtmlTags.LINEHEIGHT, sizeAndLineHeight[1]);
-			}
-			rules.put(HtmlTags.FONTSIZE, style);
-			rest = rest.replaceAll("\"", "");
-			rest = rest.replaceAll("'", "");
-			rules.put(HtmlTags.FONTFAMILY, rest);
-		}
 		return rules;
 	}
 
