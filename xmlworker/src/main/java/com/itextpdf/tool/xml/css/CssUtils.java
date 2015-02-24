@@ -564,6 +564,8 @@ public class CssUtils {
 				str = urlString.substring(urlString.indexOf("'")+1, urlString.lastIndexOf("'"));
 			} else if ( urlString.startsWith("\"") && urlString.endsWith("\"") ) {
 				str = urlString.substring(urlString.indexOf('"')+1, urlString.lastIndexOf('"'));
+			} else {
+			    str = urlString;
 			}
 		} else {
 			// assume it's an url without url
