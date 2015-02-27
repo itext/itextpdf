@@ -52,6 +52,7 @@ import com.itextpdf.tool.xml.css.parser.State;
 public class Rule implements State {
 
 	private final CssStateController controller;
+	private boolean isCss3AtRule;
 
 	/**
 	 * @param cssStateController the controller
@@ -64,8 +65,13 @@ public class Rule implements State {
 	 * @see com.itextpdf.tool.xml.css.parser.State#process(char)
 	 */
 	public void process(final char c) {
-		if (';' == c) {
+		if ('}' == c && isCss3AtRule){
 			controller.stateUnknown();
+			isCss3AtRule = false;
+		} else if (';' == c && !isCss3AtRule) {
+			controller.stateUnknown();
+		} else if ('{' == c){
+			isCss3AtRule = true;
 		}
 	}
 
