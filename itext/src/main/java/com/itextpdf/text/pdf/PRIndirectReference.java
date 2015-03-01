@@ -82,8 +82,13 @@ public class PRIndirectReference extends PdfIndirectReference {
     // methods
     
     public void toPdf(PdfWriter writer, OutputStream os) throws IOException {
-        int n = writer.getNewObjectNumber(reader, number, generation);
-        os.write(PdfEncodings.convertToBytes(new StringBuffer().append(n).append(" ").append(reader.isAppendable() ? generation : 0).append(" R").toString(), null));
+        if (writer != null) {
+            int n = writer.getNewObjectNumber(reader, number, generation);
+            os.write(PdfEncodings.convertToBytes(new StringBuffer().append(n).append(" ").append(reader.isAppendable() ? generation : 0).append(" R").toString(), null));
+        }
+        else {
+            super.toPdf(null, os);
+        }
     }
 
     public PdfReader getReader() {
