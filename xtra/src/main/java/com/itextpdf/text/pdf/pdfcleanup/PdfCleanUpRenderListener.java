@@ -176,17 +176,22 @@ class PdfCleanUpRenderListener implements RenderListener {
         Graphics2D graphics = image.createGraphics();
         graphics.setColor(CLEANED_AREA_FILL_COLOR);
 
+        // A rectangle in the areasToBeCleaned list is treated to be in standard [0, 1]x[0,1] coordinate system
+        // (y varies from bottom to top and x from left to right), so we should scale the rectangle and also
+        // invert and shear the y axe
         for (Rectangle rect : areasToBeCleaned) {
-            int x = (int) Math.ceil(rect.getLeft());
-            int y = (int) Math.ceil(rect.getTop());
-            int width = (int) Math.floor(rect.getRight()) - x;
-            int height = (int) Math.floor(rect.getBottom()) - y;
+            int scaledBottomY = (int) Math.ceil(rect.getBottom() * image.getHeight());
+            int scaledTopY = (int) Math.floor(rect.getTop() * image.getHeight());
+
+            int x = (int) Math.ceil(rect.getLeft() * image.getWidth());
+            int y = scaledTopY * -1 + image.getHeight();
+            int width = (int) Math.floor(rect.getRight() * image.getWidth()) - x;
+            int height = scaledTopY - scaledBottomY;
 
             graphics.fillRect(x, y, width, height);
         }
 
         graphics.dispose();
-
     }
 
     private byte[] getJPGBytes(BufferedImage image) {

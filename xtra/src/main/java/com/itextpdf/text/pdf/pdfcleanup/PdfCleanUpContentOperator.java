@@ -236,8 +236,7 @@ class PdfCleanUpContentOperator implements ContentOperator {
 
                 shift = convertedCharacterSpacing + (isSpace(chunk) ? convertedWordSpacing : 0);
             } else {
-                float unscaledChunkWidth = getUnscaledChunkWidth(chunk);
-                shift += unscaledChunkWidth;
+                shift += getUnscaledChunkWidth(chunk);
             }
 
             prevChunk = chunk;
@@ -262,9 +261,9 @@ class PdfCleanUpContentOperator implements ContentOperator {
 
     /**
      * We get into this method when the current chunk is not visible.
-     * Here we are calculating Tj coefficient for previous chunk
+     * Here we are calculating a piece of the Tj coefficient for a previous visible chunk.
      * For details see PDF spec., Text Space Details, formula for "tx" coefficient
-     * and TextRenderInfo class (getUnscaledBaseline)
+     * and TextRenderInfo class (getUnscaledBaseline method)
      */
     private float getUnscaledChunkWidth(PdfCleanUpContentChunk chunk) {
         PdfCleanUpContext context = cleanUpStrategy.getContext();
@@ -273,8 +272,8 @@ class PdfCleanUpContentOperator implements ContentOperator {
         float wordSpacing = context.getWordSpacing();
         float horizontalScaling = context.getHorizontalScaling();
 
-        // we should multiply by 100 because iText stores horizontal scaling as the value in [0, 1] interval;
-        // also we need to add character and word spaces because TextRenderInfo class truncates them from the end of the string
+        // We should multiply by 100 because iText stores horizontal scaling as the value in [0, 1] interval;
+        // also we need to add character and word spaces because TextRenderInfo class truncates them from the end of a string
         // (single character string in our case is also truncated)
         float scaledChunkWidth = (chunk.getEndX() - chunk.getStartX()) * 100f +
                 (characterSpacing + (isSpace(chunk) ? wordSpacing : 0)) * horizontalScaling;

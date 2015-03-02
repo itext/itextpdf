@@ -1,6 +1,7 @@
 package com.itextpdf.text.pdf.pdfcleanup;
 
 import com.itextpdf.awt.geom.AffineTransform;
+import com.itextpdf.awt.geom.NoninvertibleTransformException;
 import com.itextpdf.awt.geom.Point;
 import com.itextpdf.awt.geom.Point2D;
 import com.itextpdf.text.Rectangle;
@@ -45,9 +46,7 @@ class PdfCleanUpRegionFilter extends RenderFilter {
     }
 
     /**
-     * Calculates intersection of the image and the render filter region in the coordinate system relative to image.
-     * The transformed coordinate system here is the coordinate system center of which is in (image.leftX, image.topY) and
-     * y' = -y
+     * Calculates intersection of the image and the render filter region in the coordinate system relative to the image.
      *
      * @return intersection
      */
@@ -62,7 +61,7 @@ class PdfCleanUpRegionFilter extends RenderFilter {
         Rectangle transformedIntersection = null;
 
         if (intersectionRect != null) {
-            transformedIntersection = shearCoordinatesAndInverseY(imageRect.getLeft(), imageRect.getTop(), intersectionRect);
+            transformedIntersection = transformIntersection(renderInfo.getImageCTM(), intersectionRect);
         }
 
         return new PdfCleanUpCoveredArea(transformedIntersection, imageRect.equals(intersectionRect));
@@ -88,15 +87,7 @@ class PdfCleanUpRegionFilter extends RenderFilter {
         Point2D p3 = t.transform(new Point(1, 0), null);
         Point2D p4 = t.transform(new Point(1, 1), null);
 
-        List<Double> xs = Arrays.asList(p1.getX(), p2.getX(), p3.getX(), p4.getX());
-        List<Double> ys = Arrays.asList(p1.getY(), p2.getY(), p3.getY(), p4.getY());
-
-        double left = Collections.min(xs);
-        double bottom = Collections.min(ys);
-        double right = Collections.max(xs);
-        double top = Collections.max(ys);
-
-        return new Rectangle((float) left, (float) bottom, (float) right, (float) top);
+        return getRectangle(p1, p2, p3, p4);
     }
 
     /**
@@ -110,13 +101,42 @@ class PdfCleanUpRegionFilter extends RenderFilter {
         return awtIntersection.isEmpty() ? null : new Rectangle(awtIntersection);
     }
 
-    private Rectangle shearCoordinatesAndInverseY(float dx, float dy, Rectangle rect) {
-        AffineTransform affineTransform = new AffineTransform(1, 0, 0, -1, -dx, dy);
+    /**
+     * Transforms the given Rectangle into the image coordinate system which is [0,1]x[0,1] by default
+     */
+    private Rectangle transformIntersection(Matrix imageCTM, Rectangle rect) {
+        AffineTransform t = new AffineTransform(imageCTM.get(Matrix.I11), imageCTM.get(Matrix.I12),
+                                                imageCTM.get(Matrix.I21), imageCTM.get(Matrix.I22),
+                                                imageCTM.get(Matrix.I31), imageCTM.get(Matrix.I32));
+        Point2D p1;
+        Point2D p2;
+        Point2D p3;
+        Point2D p4;
 
-        Point2D leftBottom = affineTransform.transform(new Point(rect.getLeft(), rect.getBottom()), null);
-        Point2D rightTop = affineTransform.transform(new Point(rect.getRight(), rect.getTop()), null);
+        try {
+            p1 = t.inverseTransform(new Point(rect.getLeft(), rect.getBottom()), null);
+            p2 = t.inverseTransform(new Point(rect.getLeft(), rect.getTop()), null);
+            p3 = t.inverseTransform(new Point(rect.getRight(), rect.getBottom()), null);
+            p4 = t.inverseTransform(new Point(rect.getRight(), rect.getTop()), null);
+        } catch (NoninvertibleTransformException e) {
+            throw new RuntimeException(e);
+        }
 
-        return new Rectangle((float) leftBottom.getX(), (float) leftBottom.getY(),
-                             (float) rightTop.getX(), (float) rightTop.getY());
+        return getRectangle(p1, p2, p3, p4);
+    }
+
+    /**
+     * Constructs Rectangle object on the given points
+     */
+    private Rectangle getRectangle(Point2D p1, Point2D p2, Point2D p3, Point2D p4) {
+        List<Double> xs = Arrays.asList(p1.getX(), p2.getX(), p3.getX(), p4.getX());
+        List<Double> ys = Arrays.asList(p1.getY(), p2.getY(), p3.getY(), p4.getY());
+
+        double left = Collections.min(xs);
+        double bottom = Collections.min(ys);
+        double right = Collections.max(xs);
+        double top = Collections.max(ys);
+
+        return new Rectangle((float) left, (float) bottom, (float) right, (float) top);
     }
 }
