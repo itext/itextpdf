@@ -1,5 +1,5 @@
 /*
- * $Id$
+ * $Id: CommentState.java 437 2013-12-23 12:27:00Z blowagie $
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2014 iText Group NV
@@ -44,94 +44,33 @@
  */
 package com.itextpdf.tool.xml.parser.state;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import com.itextpdf.tool.xml.html.HTML;
 import com.itextpdf.tool.xml.parser.State;
-import com.itextpdf.tool.xml.parser.TagState;
 import com.itextpdf.tool.xml.parser.XMLParser;
 
 /**
  * @author redlab_b
  *
  */
-public class InsideTagHTMLState implements State {
+public class StarCommentState implements State {
 
 	private final XMLParser parser;
-	private final List<String> noSanitize = new ArrayList<String>(1);
-	private final List<String> ignoreLastChars = new ArrayList<String>(9);
+
 	/**
 	 * @param parser the XMLParser
 	 */
-	public InsideTagHTMLState(final XMLParser parser) {
+	public StarCommentState(final XMLParser parser) {
 		this.parser = parser;
-		noSanitize.add(HTML.Tag.PRE);
-		ignoreLastChars.add(HTML.Tag.P);
-		ignoreLastChars.add(HTML.Tag.DIV);
-		ignoreLastChars.add(HTML.Tag.H1);
-		ignoreLastChars.add(HTML.Tag.H2);
-		ignoreLastChars.add(HTML.Tag.H3);
-		ignoreLastChars.add(HTML.Tag.H4);
-		ignoreLastChars.add(HTML.Tag.H5);
-		ignoreLastChars.add(HTML.Tag.H6);
-		ignoreLastChars.add(HTML.Tag.TD);
-		ignoreLastChars.add(HTML.Tag.TH);
-		ignoreLastChars.add(HTML.Tag.UL);
-		ignoreLastChars.add(HTML.Tag.OL);
-		ignoreLastChars.add(HTML.Tag.LI);
-		ignoreLastChars.add(HTML.Tag.DD);
-		ignoreLastChars.add(HTML.Tag.DT);
-		ignoreLastChars.add(HTML.Tag.HR);
-		ignoreLastChars.add(HTML.Tag.BR);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
+	/* (non-Javadoc)
 	 * @see com.itextpdf.tool.xml.parser.State#process(int)
 	 */
 	public void process(final char character) {
-		if (character == '<') {
-			if (this.parser.bufferSize() > 0) {
-				this.parser.text(this.parser.current());
-			}
-			this.parser.flush();
-			this.parser.selectState().tagEncountered();
-		} else if (character == '&') {
-			this.parser.selectState().specialChar();
-		} else  {
-			if (character == '*' && this.parser.memory().lastChar() == '/') {
-				this.parser.selectState().starComment();
-				this.parser.memory().current().deleteCharAt(this.parser.memory().current().lastIndexOf("/"));
-				if (this.parser.bufferSize() > 0) {
-					this.parser.memory().setStoredString(this.parser.current());
-				}
-				this.parser.flush();
-			} else {
-				String tag = this.parser.currentTag();
-				TagState state = this.parser.currentTagState();
-				if (noSanitize.contains(tag) && TagState.OPEN == state) {
-					this.parser.append(character);
-				} else {
-					if (this.parser.memory().whitespaceTag().length() != 0) {
-						if (ignoreLastChars.contains(this.parser.memory().whitespaceTag().toLowerCase())) {
-							parser.memory().lastChar(' ');
-						}
-						this.parser.memory().whitespaceTag("");
-					}
-					boolean whitespace = Character.isWhitespace(parser.memory().lastChar());
-					boolean noWhiteSpace = !Character.isWhitespace(character);
-					if (!whitespace || (whitespace && noWhiteSpace)) {
-						if (noWhiteSpace) {
-							this.parser.append(character);
-						} else {
-							this.parser.append(' ');
-						}
-					}
-					parser.memory().lastChar(character);
-				}
-			}
+		if (character == '*') {
+			this.parser.memory().comment().append(character);
+			this.parser.selectState().closeStarComment();
+		} else {
+			this.parser.append(character);
 		}
 	}
 }

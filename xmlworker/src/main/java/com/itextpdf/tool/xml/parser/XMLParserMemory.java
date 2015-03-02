@@ -67,6 +67,7 @@ public class XMLParserMemory {
 	private String currentNameSpace = "";
 	private char lastChar;
     private final boolean isHtml;
+	private String storedString;
 
 	/**
 	 *
@@ -224,4 +225,11 @@ public class XMLParserMemory {
 		return this.lastChar;
 	}
 
+	public String getStoredString() {
+		return storedString;
+	}
+
+	public void setStoredString(String storedString) {
+		this.storedString = storedString;
+	}
 }

@@ -100,7 +100,6 @@ public class Body extends AbstractTagProcessor {
             }
         }
         catch (NoCustomContextException e){
-            throw new RuntimeWorkerException(e);
         }
         return l;
     }
