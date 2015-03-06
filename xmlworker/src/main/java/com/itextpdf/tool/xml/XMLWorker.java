@@ -60,14 +60,14 @@ import com.itextpdf.tool.xml.pipeline.ctx.WorkerContextImpl;
  */
 public class XMLWorker implements XMLParserListener {
 
-	private final Pipeline<?> rootpPipe;
+	protected final Pipeline<?> rootpPipe;
 	private static ThreadLocal<WorkerContextImpl> context = new ThreadLocal<WorkerContextImpl>() {
 		@Override
 		protected WorkerContextImpl initialValue() {
 			return new WorkerContextImpl();
 		};
 	};
-	private final boolean parseHtml;
+	protected final boolean parseHtml;
 
 	/**
 	 * Constructs a new XMLWorker
