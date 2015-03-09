@@ -454,9 +454,8 @@ public class TiffImage {
                 
                 byte[] jpeg = new byte[Math.min(jpegLength, (int)s.length() - jpegOffset)];
 
-                int posFilePointer = (int)s.getFilePointer();
-                posFilePointer += jpegOffset;
-                s.seek(posFilePointer);
+                // tiff files work with offsets based on absolute positioning with regards to the start of the file
+                s.seek(jpegOffset);
                 s.readFully(jpeg);
                 img = new Jpeg(jpeg);
             } 
