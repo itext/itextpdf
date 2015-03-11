@@ -5,6 +5,10 @@ import com.itextpdf.text.pdf.PdfDictionary;
 
 import java.util.Stack;
 
+/**
+ * Stores parameters related to specific context which is either page or xobject
+ * (in other words: which is the object having contents stream)
+ */
 class PdfCleanUpContext {
 
     private PdfDictionary resources;

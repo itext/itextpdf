@@ -3,6 +3,9 @@ package com.itextpdf.text.pdf.pdfcleanup;
 import com.itextpdf.text.pdf.PdfString;
 import com.itextpdf.text.pdf.parser.Vector;
 
+/**
+ * Represents an image or text data.
+ */
 class PdfCleanUpContentChunk {
 
     private boolean visible;

@@ -89,7 +89,7 @@ class PdfCleanUpContentOperator implements ContentOperator {
                 if (chunk.isVisible()) {
                     PdfDictionary xObjResources = cleanUpStrategy.getContext().getResources().getAsDict(PdfName.XOBJECT);
                     PRStream imageStream = (PRStream) xObjResources.getAsStream((PdfName) operands.get(0));
-                    updateImage(imageStream, chunk.getNewImageData());
+                    updateImageStream(imageStream, chunk.getNewImageData());
                 } else {
                     disableOutput = true;
                 }
@@ -118,6 +118,7 @@ class PdfCleanUpContentOperator implements ContentOperator {
                 operands.get(1).toPdf(canvas.getPdfWriter(), canvas.getInternalBuffer());
                 canvas.getInternalBuffer().append(TcTStar);
 
+                cleanUpStrategy.getContext().setWordSpacing(((PdfNumber) operands.get(0)).floatValue());
                 cleanUpStrategy.getContext().setCharacterSpacing(((PdfNumber) operands.get(1)).floatValue());
             } else if ("TJ".equals(operatorStr)) {
                 structuredTJoperands = structureTJarray((PdfArray) operands.get(0));
@@ -125,6 +126,7 @@ class PdfCleanUpContentOperator implements ContentOperator {
 
             renderChunks(structuredTJoperands, chunks, canvas);
         } else if ("\"".equals(operatorStr)) {
+            cleanUpStrategy.getContext().setWordSpacing(((PdfNumber) operands.get(0)).floatValue());
             cleanUpStrategy.getContext().setCharacterSpacing(((PdfNumber) operands.get(1)).floatValue());
         }
 
@@ -181,6 +183,14 @@ class PdfCleanUpContentOperator implements ContentOperator {
         }
     }
 
+    /**
+     * Example.
+     *      TJ = [(h) 3 4 (q) 7 (w) (e)]
+     *      Result = {0:0, 1:7, 2:7, 3:0, 4:0}
+     *
+     * @return Map whose key is an ordinal number of the string in the TJ array and value
+     *         is the position adjustment.
+     */
     private Map<Integer, Float> structureTJarray(PdfArray array) {
         Map<Integer, Float> structuredTJoperands = new HashMap<Integer, Float>();
 
@@ -206,6 +216,9 @@ class PdfCleanUpContentOperator implements ContentOperator {
         return structuredTJoperands;
     }
 
+    /**
+     * Renders parts of text which are visible.
+     */
     private void renderChunks(Map<Integer, Float> structuredTJoperands, List<PdfCleanUpContentChunk> chunks, PdfContentByte canvas) throws IOException {
         canvas.setCharacterSpacing(0);
         canvas.setWordSpacing(0);
@@ -285,7 +298,7 @@ class PdfCleanUpContentOperator implements ContentOperator {
         return chunk.getText().toUnicodeString().equals(" ");
     }
 
-    private void updateImage(PRStream imageStream, byte[] newData) throws BadElementException, IOException, BadPdfFormatException {
+    private void updateImageStream(PRStream imageStream, byte[] newData) throws BadElementException, IOException, BadPdfFormatException {
         PdfImage image = new PdfImage(Image.getInstance(newData), "", null);
 
         if (imageStream.contains(PdfName.SMASK)) {

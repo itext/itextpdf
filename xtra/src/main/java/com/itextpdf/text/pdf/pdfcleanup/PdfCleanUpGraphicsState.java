@@ -1,7 +1,7 @@
 package com.itextpdf.text.pdf.pdfcleanup;
 
 /**
- * Represents subset of graphics state parameters
+ * Represents subset of graphics state parameters.
  */
 class PdfCleanUpGraphicsState {
 

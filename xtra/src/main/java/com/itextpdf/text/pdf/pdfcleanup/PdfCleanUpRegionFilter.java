@@ -22,9 +22,6 @@ class PdfCleanUpRegionFilter extends RenderFilter {
 
     /**
      * Checks if the text is inside render filter region.
-     *
-     * @param renderInfo
-     * @return
      */
     @Override
     public boolean allowText(TextRenderInfo renderInfo) {
@@ -47,8 +44,6 @@ class PdfCleanUpRegionFilter extends RenderFilter {
 
     /**
      * Calculates intersection of the image and the render filter region in the coordinate system relative to the image.
-     *
-     * @return intersection
      */
     protected PdfCleanUpCoveredArea intersection(ImageRenderInfo renderInfo) {
         Rectangle imageRect = calcImageRect(renderInfo);
@@ -72,6 +67,9 @@ class PdfCleanUpRegionFilter extends RenderFilter {
                 r1.getBottom() < r2.getTop() && r1.getTop() > r2.getBottom());
     }
 
+    /**
+     * @return Image boundary rectangle in device space.
+     */
     private Rectangle calcImageRect(ImageRenderInfo renderInfo) {
         Matrix ctm = renderInfo.getImageCTM();
 

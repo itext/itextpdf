@@ -10,6 +10,11 @@ import java.io.IOException;
 import java.util.*;
 import java.util.List;
 
+/**
+ * Represents the main mechanism for cleaning a PDF document.
+ *
+ * @since 5.5.4
+ */
 public class PdfCleanUpProcessor {
 
     private static final String XOBJ_NAME_PREFIX = "Fm";
@@ -19,17 +24,25 @@ public class PdfCleanUpProcessor {
 
     private int currentXObjNum = 0;
 
-    private Map<Integer, List<PdfCleanUpLocation>> pdfCleanUpLocations; // key - page number
     private PdfStamper pdfStamper;
 
-    private Map<Integer, Set<String>> redactAnnotIndirRefs; // key - number of page containing redact annotations
-    private Map<Integer, List<Rectangle>> clippingRects; // stores list of rectangles for annotation identified by it's index in Annots array
+    // key - page number, value - list of locations related to the page
+    private Map<Integer, List<PdfCleanUpLocation>> pdfCleanUpLocations;
+
+    // key - number of page containing redact annotations, value - look at variable name
+    private Map<Integer, Set<String>> redactAnnotIndirRefs;
+
+    // stores list of rectangles for annotation identified by it's index in Annots array
+    private Map<Integer, List<Rectangle>> clippingRects;
 
     /**
-     * Create clean up processor.
+     * Creates a {@link com.itextpdf.text.pdf.pdfcleanup.PdfCleanUpProcessor} object based on the
+     * given {@link java.util.List} of {@link com.itextpdf.text.pdf.pdfcleanup.PdfCleanUpLocation}s
+     * representing regions to be erased from the document.
      *
      * @param pdfCleanUpLocations list of locations to be cleaned up {@see PdfCleanUpLocation}
-     * @param pdfStamper
+     * @param pdfStamper          A{@link com.itextpdf.text.pdf.PdfStamper} object representing the document which redaction
+     *                            applies to.
      */
     public PdfCleanUpProcessor(List<PdfCleanUpLocation> pdfCleanUpLocations, PdfStamper pdfStamper) {
         this.pdfCleanUpLocations = organizeLocationsByPage(pdfCleanUpLocations);
@@ -37,9 +50,11 @@ public class PdfCleanUpProcessor {
     }
 
     /**
-     * CleanUp locations are extracted from Redact annotations.
+     * Creates a {@link com.itextpdf.text.pdf.pdfcleanup.PdfCleanUpProcessor} object. Regions to be erased from
+     * the document are extracted from the redact annotations contained inside the given document.
      *
-     * @param pdfStamper
+     * @param pdfStamper A{@link com.itextpdf.text.pdf.PdfStamper} object representing the document which redaction
+     *                   applies to.
      */
     public PdfCleanUpProcessor(PdfStamper pdfStamper) {
         this.redactAnnotIndirRefs = new HashMap<Integer, Set<String>>();
@@ -48,6 +63,12 @@ public class PdfCleanUpProcessor {
         extractLocationsFromRedactAnnots();
     }
 
+    /**
+     * Cleans the document by erasing all the provided areas from it.
+     *
+     * @throws IOException
+     * @throws DocumentException
+     */
     public void cleanUp() throws IOException, DocumentException {
         for (Map.Entry<Integer, List<PdfCleanUpLocation>> entry : pdfCleanUpLocations.entrySet()) {
             cleanUpPage(entry.getKey(), entry.getValue());
@@ -136,6 +157,9 @@ public class PdfCleanUpProcessor {
         return organizedLocations;
     }
 
+    /**
+     * Extracts locations from the redact annotations contained in the document.
+     */
     private void extractLocationsFromRedactAnnots() {
         this.pdfCleanUpLocations = new HashMap<Integer, List<PdfCleanUpLocation>>();
         PdfReader reader = pdfStamper.getReader();
@@ -146,6 +170,9 @@ public class PdfCleanUpProcessor {
         }
     }
 
+    /**
+     * Extracts locations from the redact annotations contained in the document and applied to the given page.
+     */
     private List<PdfCleanUpLocation> extractLocationsFromRedactAnnots(int page, PdfDictionary pageDict) {
         List<PdfCleanUpLocation> locations = new ArrayList<PdfCleanUpLocation>();
 
@@ -175,13 +202,18 @@ public class PdfCleanUpProcessor {
         redactAnnotIndirRefs.get(page).add(indRefStr);
     }
 
+    /**
+     * Extracts locations from the concrete annotation.
+     * Note: annotation can consist not only of one area specified by the RECT entry, but also of multiple areas specified
+     * by the QuadPoints entry in the annotation dictionary.
+     */
     private List<PdfCleanUpLocation> extractLocationsFromRedactAnnot(int page, int annotIndex, PdfDictionary annotDict) {
         List<PdfCleanUpLocation> locations = new ArrayList<PdfCleanUpLocation>();
         List<Rectangle> markedRectangles = new ArrayList<Rectangle>();
         PdfArray quadPoints = annotDict.getAsArray(PdfName.QUADPOINTS);
 
         if (quadPoints.size() != 0) {
-            markedRectangles.addAll( quadPointsToRectangles(quadPoints) );
+            markedRectangles.addAll( translateQuadPointsToRectangles(quadPoints) );
         } else {
             PdfArray annotRect = annotDict.getAsArray(PdfName.RECT);
             markedRectangles.add(new Rectangle(annotRect.getAsNumber(0).floatValue(),
@@ -211,7 +243,7 @@ public class PdfCleanUpProcessor {
         return locations;
     }
 
-    private List<Rectangle> quadPointsToRectangles(PdfArray quadPoints) {
+    private List<Rectangle> translateQuadPointsToRectangles(PdfArray quadPoints) {
         List<Rectangle> rectangles = new ArrayList<Rectangle>();
 
         for (int i = 0; i < quadPoints.size(); i += 8) {
@@ -224,6 +256,9 @@ public class PdfCleanUpProcessor {
         return rectangles;
     }
 
+    /**
+     * Deletes redact annotations from the page and substitutes them with either OverlayText or RO object if it's needed.
+     */
     private void deleteRedactAnnots(int pageNum) throws IOException, DocumentException {
         Set<String> indirRefs = redactAnnotIndirRefs.get(pageNum);
 
@@ -237,7 +272,7 @@ public class PdfCleanUpProcessor {
         PdfArray annotsArray = pageDict.getAsArray(PdfName.ANNOTS);
 
         // j is for access annotRect (i can be decreased, so we need to store additional index,
-        // indicating current position in array in case if we don't remove anything
+        // indicating current position in ANNOTS array in case if we don't remove anything
         for (int i = 0, j = 0; i < annotsArray.size(); ++i, ++j) {
             PdfIndirectReference annotIndRef = annotsArray.getAsIndirectObject(i);
             PdfDictionary annotDict = annotsArray.getAsDict(i);

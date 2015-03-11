@@ -31,7 +31,7 @@ class PdfCleanUpRenderListener implements RenderListener {
     private List<PdfCleanUpRegionFilter> filters;
     private List<PdfCleanUpContentChunk> chunks = new ArrayList<PdfCleanUpContentChunk>();
     private Stack<PdfCleanUpContext> contextStack = new Stack<PdfCleanUpContext>();
-    private int strNumber = 1; // Represents number of string under processing. Needed for processing TJ operator.
+    private int strNumber = 1; // Represents ordinal number of string under processing. Needed for processing TJ operator.
 
     public PdfCleanUpRenderListener(PdfStamper pdfStamper, List<PdfCleanUpRegionFilter> filters) {
         this.pdfStamper = pdfStamper;
@@ -176,7 +176,7 @@ class PdfCleanUpRenderListener implements RenderListener {
         Graphics2D graphics = image.createGraphics();
         graphics.setColor(CLEANED_AREA_FILL_COLOR);
 
-        // A rectangle in the areasToBeCleaned list is treated to be in standard [0, 1]x[0,1] coordinate system
+        // A rectangle in the areasToBeCleaned list is treated to be in standard [0, 1]x[0,1] image space
         // (y varies from bottom to top and x from left to right), so we should scale the rectangle and also
         // invert and shear the y axe
         for (Rectangle rect : areasToBeCleaned) {
