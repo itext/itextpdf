@@ -174,7 +174,7 @@ public class TableData extends AbstractTagProcessor {
 		return true;
 	}
 
-    private void processChunkItems(List<Element> chunks, HtmlCell cell) {
+    protected void processChunkItems(List<Element> chunks, HtmlCell cell) {
         Paragraph p = new Paragraph();
         p.setMultipliedLeading(1.2f);
         p.addAll(chunks);
@@ -185,7 +185,7 @@ public class TableData extends AbstractTagProcessor {
         chunks.clear();
     }
 
-    private void processListItems(final WorkerContext ctx, final Tag tag, List<ListItem> listItems, HtmlCell cell) {
+    protected void processListItems(final WorkerContext ctx, final Tag tag, List<ListItem> listItems, HtmlCell cell) {
         try {
             com.itextpdf.text.List list = new com.itextpdf.text.List();
             list.setAutoindent(false);
