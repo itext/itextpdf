@@ -106,8 +106,10 @@ public class PdfATtfUnicodeWriter extends TtfUnicodeWriter {
         } else {
             byte[] b;
             if (font.subset || font.directoryOffset != 0) {
-                TrueTypeFontSubSet sb = new TrueTypeFontSubSet(font.fileName, new RandomAccessFileOrArray(font.rf), new HashSet<Integer>(longTag.keySet()), font.directoryOffset, false, false);
-                b = sb.process();
+                synchronized (font.rf) {
+                    TrueTypeFontSubSet sb = new TrueTypeFontSubSet(font.fileName, new RandomAccessFileOrArray(font.rf), new HashSet<Integer>(longTag.keySet()), font.directoryOffset, false, false);
+                    b = sb.process();
+                }
             }
             else {
                 b = font.getFullFont();
