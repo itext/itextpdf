@@ -39,4 +39,16 @@ public class CompareToolTest {
         Assert.assertNotNull(result);
     }
 
+    @Test
+    public void test3() throws DocumentException, InterruptedException, IOException {
+        CompareTool compareTool = new CompareTool();
+        compareTool.setCompareByContentErrorsLimit(10);
+        compareTool.setGenerateCompareByContentXmlReport(true);
+        String outPdf = "./src/test/resources/com/itextpdf/testutils/CompareToolTest/screenAnnotation.pdf";
+        String cmpPdf = "./src/test/resources/com/itextpdf/testutils/CompareToolTest/cmp_screenAnnotation.pdf";
+        String result = compareTool.compareByContent(outPdf, cmpPdf, OUT_PATH, "difference");
+        System.out.println(result);
+        Assert.assertNotNull(result);
+    }
+
 }
