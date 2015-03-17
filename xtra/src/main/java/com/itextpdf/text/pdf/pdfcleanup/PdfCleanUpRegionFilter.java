@@ -6,7 +6,6 @@ import com.itextpdf.awt.geom.Point;
 import com.itextpdf.awt.geom.Point2D;
 import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.pdf.parser.*;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -39,7 +38,7 @@ class PdfCleanUpRegionFilter extends RenderFilter {
 
     @Override
     public boolean allowImage(ImageRenderInfo renderInfo) {
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException();
     }
 
     /**
