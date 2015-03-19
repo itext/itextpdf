@@ -1790,7 +1790,11 @@ public class ColumnText {
                             continue;
                         } // or drop the row
                         else {
-                            table.getRows().remove(k);
+                            // don't drop the row if the table is incomplete and if there's only one row (not counting the header rows)
+                            // if there's only one row and this check wasn't here the row would have been deleted and not added at all
+                            if ( !(!table.isComplete() && k == 1 ) ) {
+                                table.getRows().remove(k);
+                            }
                             return NO_MORE_COLUMN;
                         }
                     }
