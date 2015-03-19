@@ -1732,14 +1732,7 @@ public class ColumnText {
                 // do we need to skip the header?
                 boolean skipHeader = table.isSkipFirstHeader() && rowIdx <= realHeaderRows && (table.isComplete() || rowIdx != realHeaderRows);
 
-                if (!table.isComplete()) {
-                    if (table.getTotalHeight() - headerHeight > yTemp - minY) {
-                        table.setSkipFirstHeader(false);
-                        return NO_MORE_COLUMN;
-                    }
-                }
-
-                // if not, we wan't to be able to add more than just a header and a footer
+                // if not, we want to be able to add more than just a header and a footer
                 if (!skipHeader) {
                     yTemp -= headerHeight;
                     if (yTemp < minY || yTemp > maxY) {
