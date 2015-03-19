@@ -1,4 +1,4 @@
-# default language English
+﻿# default language English
 1.2.does.not.contain.an.usable.cmap={1} {2} does not contain an usable cmap.
 1.2.is.not.a.ttf.font.file={1} {2} is not a TTF font file.
 1.at.file.pointer.2={1} at file pointer {2}
@@ -345,6 +345,7 @@ page.reordering.requires.an.array.with.the.same.size.as.the.number.of.pages=Page
 page.reordering.requires.no.page.repetition.page.1.is.repeated=Page reordering requires no page repetition. Page {1} is repeated.
 page.reordering.requires.pages.between.1.and.1.found.2=Page reordering requires pages between 1 and {1}. Found {2}.
 partial.form.flattening.is.not.supported.with.xfa.forms=Partial form flattening is not supported with XFA forms.
+pdf.array.exceeds.length.set.by.PDFA1.standard=PDF array exceeds length set by the PDF/A1 standard: {1}. Maximum length is 8191.
 pdf.array.is.out.of.bounds=PDF array is out of bounds.
 pdf.dictionary.is.out.of.bounds=PDF dictionary is out of bounds.
 pdf.header.not.found=PDF header signature not found.
