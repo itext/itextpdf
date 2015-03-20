@@ -266,7 +266,7 @@ public class PdfA1Checker extends PdfAChecker {
         } else if (obj1 instanceof PdfArray) {
             PdfArray array = (PdfArray) obj1;
             if (array.size() > maxArrayLength) {
-                throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("pdf.array.is.out.of.bounds"));
+                throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("pdf.array.exceeds.length.set.by.PDFA1.standard", Integer.toString(array.size())));
             }
         } else if (obj1 instanceof PdfDictionary) {
             PdfDictionary dictionary = (PdfDictionary) obj1;

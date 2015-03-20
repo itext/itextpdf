@@ -175,11 +175,11 @@ public class PdfA1CheckerTest {
         writer.getExtraCatalog().put(new PdfName("TestString"), string);
         document.close();
     }
-
-    @Test
-    public void pdfObjectCheckTest4() throws DocumentException, IOException {
+    
+    // This method is used in the PdfA2CheckerTest and PdfA3CheckerTest, too
+    static void pdfObjectCheck(String output, PdfAConformanceLevel level, boolean exceptionExpected) throws DocumentException, IOException {
         Document document = new Document();
-        PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream(outputDir + "pdfObjectCheckTest4.pdf"), PdfAConformanceLevel.PDF_A_1B);
+        PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream(output), level);
         writer.createXmpMetadata();
         document.open();
 
@@ -201,9 +201,17 @@ public class PdfA1CheckerTest {
             if (e.getObject() == array)
                 exceptionThrown = true;
         }
-        if (!exceptionThrown)
-            Assert.fail("PdfAConformanceException should be thrown.");
+        if (exceptionThrown != exceptionExpected) {
+            String error = exceptionExpected ? "" : " not";
+            error = String.format("PdfAConformanceException should%s be thrown.", error);
+            
+            Assert.fail(error);
+        }
+    }
 
+    @Test
+    public void pdfObjectCheckTest4() throws DocumentException, IOException {
+        pdfObjectCheck(outputDir + "pdfObjectCheckTest4.pdf", PdfAConformanceLevel.PDF_A_1B, true);
     }
 
     @Test

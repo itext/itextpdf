@@ -48,12 +48,16 @@ import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.ExceptionConverter;
 import com.itextpdf.text.Jpeg2000;
 import com.itextpdf.text.error_messages.MessageLocalization;
+import com.itextpdf.text.log.Logger;
+import com.itextpdf.text.log.LoggerFactory;
+import com.itextpdf.text.log.SysoLogger;
 import com.itextpdf.text.pdf.*;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.logging.Level;
 
 public class PdfA2Checker extends PdfAChecker {
 
@@ -444,11 +448,6 @@ public class PdfA2Checker extends PdfAChecker {
             PdfString string = (PdfString) obj1;
             if (string.getBytes().length > PdfA1Checker.maxStringLength) {
                 throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("pdf.string.is.too.long"));
-            }
-        } else if (obj1 instanceof PdfArray) {
-            PdfArray array = (PdfArray) obj1;
-            if (array.size() > PdfA1Checker.maxArrayLength) {
-                throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("pdf.array.is.out.of.bounds"));
             }
         }  else if (obj1 instanceof PdfDictionary) {
             PdfDictionary dictionary = (PdfDictionary) obj1;
