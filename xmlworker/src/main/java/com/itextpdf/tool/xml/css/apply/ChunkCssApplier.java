@@ -169,6 +169,8 @@ public class ChunkCssApplier {
         String fontName = null;
         String encoding = BaseFont.CP1252;
         float size = new FontSizeTranslator().getFontSize(t);
+        if (size == Font.UNDEFINED)
+            size = Font.DEFAULTSIZE;
         int style = Font.UNDEFINED;
         BaseColor color = null;
         Map<String, String> rules = t.getCSS();

@@ -92,7 +92,7 @@ public class ParagraphCssApplier {
         }*/
 		final CssUtils utils = CssUtils.getInstance();
         float fontSize = FontSizeTranslator.getInstance().getFontSize(t);
-        if (fontSize < 0) fontSize = 0;
+        if (fontSize == Font.UNDEFINED) fontSize = 0;
         float lmb = 0;
         boolean hasLMB = false;
         Map<String, String> css = t.getCSS();
