@@ -93,11 +93,11 @@ public class LargeTableTest {
     }
 
     @Test
-    public void testIncompleteTable2(String dest) throws IOException, DocumentException, InterruptedException {
+    public void testIncompleteTable2() throws IOException, DocumentException, InterruptedException {
         final String file = "incomplete_table_2.pdf";
 
         Document document = new Document(PageSize.A4.rotate());
-        PdfWriter.getInstance(document, new FileOutputStream(dest));
+        PdfWriter.getInstance(document, new FileOutputStream(outFolder + file));
         document.open();
         Font font = new Font();
         float[] widths = new float[] {50f, 50f};
