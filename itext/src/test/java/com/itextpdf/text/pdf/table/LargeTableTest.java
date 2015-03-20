@@ -2,9 +2,8 @@ package com.itextpdf.text.pdf.table;
 
 import com.itextpdf.testutils.CompareTool;
 import com.itextpdf.testutils.TestResourceUtils;
-import com.itextpdf.text.Document;
-import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.PageSize;
+import com.itextpdf.text.*;
+import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 import junit.framework.Assert;
@@ -81,6 +80,46 @@ public class LargeTableTest {
             table.addCell("Test " + i);
         }
 
+        table.setComplete(true);
+        document.add(table);
+        document.close();
+
+        // compare
+        CompareTool compareTool = new CompareTool();
+        String errorMessage = compareTool.compareByContent(outFolder + file, cmpFolder + file, outFolder, "diff");
+        if (errorMessage != null) {
+            Assert.fail(errorMessage);
+        }
+    }
+
+    @Test
+    public void testIncompleteTable2() throws IOException, DocumentException, InterruptedException {
+        final String file = "incomplete_table_2.pdf";
+
+        Document document = new Document(PageSize.A4.rotate());
+        PdfWriter.getInstance(document, new FileOutputStream(outFolder + file));
+        document.open();
+        Font font = new Font();
+        float[] widths = new float[] {50f, 50f};
+        PdfPTable table = new PdfPTable(widths.length);
+        table.setComplete(false);
+        table.setWidths(widths);
+        table.setWidthPercentage(100);
+        PdfPCell cell = new PdfPCell(new Phrase("Column #1", font));
+        table.addCell(cell);
+        cell = new PdfPCell(new Phrase("Column #2", font));
+        table.addCell(cell);
+        table.setHeaderRows(1);
+
+        for (int i = 0; i < 50; i++) {
+            cell = new PdfPCell(new Phrase("Table cell #" + i, font));
+            table.addCell(cell);
+            cell = new PdfPCell(new Phrase("Blah blah blah", font));
+            table.addCell(cell);
+            if (i % 40 == 0) {
+                document.add(table);
+            }
+        }
         table.setComplete(true);
         document.add(table);
         document.close();
