@@ -175,7 +175,7 @@ public class PdfLine {
                         width = 0;
                     } else {
                         chunk.setTabStop(tabStop);
-                        if (tabStop.getAlignment() == TabStop.Alignment.LEFT) {
+                        if (!isRTL && tabStop.getAlignment() == TabStop.Alignment.LEFT) {
                             width = originalWidth - tabStop.getPosition();
                             tabStop = null;
                             tabPosition = Float.NaN;
@@ -618,7 +618,10 @@ public class PdfLine {
             width = originalWidth - tabStopPosition - textWidth;
             if (width < 0)
                 tabStopPosition += width;
-            tabStop.setPosition(tabStopPosition);
+            if (!isRTL)
+                tabStop.setPosition(tabStopPosition);
+            else
+                tabStop.setPosition(originalWidth - width - tabPosition);
             tabStop = null;
             tabPosition = Float.NaN;
         }
