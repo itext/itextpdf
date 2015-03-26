@@ -244,30 +244,33 @@ public class ParaGraph extends AbstractTagProcessor {
 	 * @param value the value of style "tab-stops".
 	 */
 	private void addTabStopsContent(final List<Element> currentContent, final Paragraph p, final String value) {
-		List<Chunk> tabs = new ArrayList<Chunk>();
-		String[] alignAndWidth = value.split(" ");
-		float tabWidth = 0;
-		for(int i = 0 , j = 1; j < alignAndWidth.length ; i+=2, j+=2) {
-			tabWidth += CssUtils.getInstance().parsePxInCmMmPcToPt(alignAndWidth[j]);
-			TabbedChunk tab = new TabbedChunk(new VerticalPositionMark(), tabWidth, true, alignAndWidth[i]);
-			tabs.add(tab);
-		}
-		int tabsPerRow = tabs.size();
-		int currentTab = 0;
-		for(Element e: currentContent) {
-			if (e instanceof TabbedChunk) {
-				if(currentTab == tabsPerRow) {
-					currentTab = 0;
-				}
-				if(((TabbedChunk) e).getTabCount() != 0 /* == 1*/) {
-					p.add(new Chunk(tabs.get(currentTab)));
-					p.add(new Chunk((TabbedChunk) e));
-					++currentTab;
+            List<Chunk> tabs = new ArrayList<Chunk>();
+            String[] alignAndWidth = value.split(" ");
+            float tabWidth = 0;
+            for(int i = 0 , j = 1; j < alignAndWidth.length ; i+=2, j+=2) {
+                tabWidth += CssUtils.getInstance().parsePxInCmMmPcToPt(alignAndWidth[j]);
+                TabbedChunk tab = new TabbedChunk(new VerticalPositionMark(), tabWidth, true, alignAndWidth[i]);
+                tabs.add(tab);
+            }
+            int tabsPerRow = tabs.size();
+            int currentTab = 0;
+            for(Element e: currentContent) {
+                if (e instanceof TabbedChunk) {
+                        if(currentTab == tabsPerRow) {
+                                currentTab = 0;
+                        }
+                        if(((TabbedChunk) e).getTabCount() != 0 /* == 1*/) {
+                                p.add(new Chunk(tabs.get(currentTab)));
+                                p.add(new Chunk((TabbedChunk) e));
+                                ++currentTab;
 //				} else { // wat doet een tabCount van groter dan 1? sla een tab over of count * tabWidth?
 //					int widthMultiplier = ((TabbedChunk) e).getTabCount();
-				}
-			}
-		}
+                        }
+                }
+                else {
+                    p.add(e);
+                }
+            }
 	}
 
 	/*
