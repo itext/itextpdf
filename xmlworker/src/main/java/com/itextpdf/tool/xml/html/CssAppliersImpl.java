@@ -121,11 +121,7 @@ public class CssAppliersImpl implements CssAppliers {
 	 * @see com.itextpdf.tool.xml.html.CssAppliers#apply(com.itextpdf.text.Element, com.itextpdf.tool.xml.Tag, com.itextpdf.tool.xml.pipeline.html.HtmlPipelineContext)
 	 */
 	public Element apply(final Element e, final Tag t, final HtmlPipelineContext ctx) {
-		try {
-			return this.apply(e, t, ctx, ctx, ctx.getImageProvider());
-		} catch (NoImageProviderException e1) {
-			return this.apply(e, t, ctx, ctx, null);
-		}
+		return this.apply(e, t, ctx, ctx, ctx.getImageProvider());
 	}
 
 	public ChunkCssApplier getChunkCssAplier() {

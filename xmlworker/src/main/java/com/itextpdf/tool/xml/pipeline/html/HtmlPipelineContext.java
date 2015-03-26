@@ -193,16 +193,11 @@ public class HtmlPipelineContext implements CustomContext, Cloneable, MarginMemo
 		return memory;
 	}
 	/**
-	 * @return the image provider.
-	 * @throws NoImageProviderException if there is no {@link ImageProvider}
+	 * @return the image provider or null if there is no {@link ImageProvider}.
 	 *
 	 */
-	public ImageProvider getImageProvider() throws NoImageProviderException{
-		if (null == this.imageProvider) {
-			throw new NoImageProviderException();
-		}
+	public ImageProvider getImageProvider() {
 		return this.imageProvider;
-
 	}
 
 	/**

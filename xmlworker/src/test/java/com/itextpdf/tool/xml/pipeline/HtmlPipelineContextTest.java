@@ -101,13 +101,4 @@ public class HtmlPipelineContextTest {
 		Assert.assertNotNull(ctx.getMemory());
 	}
 
-	/**
-	 * Verifies that NoImageProviderException is thrown
-	 * @throws NoImageProviderException
-	 */
-	@Test(expected=NoImageProviderException.class)
-	public void verifyNoImageProvider() throws NoImageProviderException {
-		ctx.getImageProvider();
-	}
-
 }
