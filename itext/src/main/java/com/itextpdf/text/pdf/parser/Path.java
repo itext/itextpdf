@@ -26,8 +26,10 @@ public class Path {
     }
 
     public Path(Collection<? extends Subpath> subpaths) {
-        this.subpaths.addAll(subpaths);
-        currentPoint = this.subpaths.get(subpaths.size() - 1).getLastPoint();
+        if (subpaths.size() > 0) {
+            this.subpaths.addAll(subpaths);
+            currentPoint = this.subpaths.get(subpaths.size() - 1).getLastPoint();
+        }
     }
 
     /**

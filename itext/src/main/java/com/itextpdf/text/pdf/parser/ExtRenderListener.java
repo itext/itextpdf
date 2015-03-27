@@ -25,4 +25,11 @@ public interface ExtRenderListener extends RenderListener {
      * @return The path which can be used as a new clipping path.
      */
     Path renderPath(PathPaintingRenderInfo renderInfo);
+
+    /**
+     * Called when the current path should be set as a new clipping path.
+     *
+     * @param rule Either {@link PathPaintingRenderInfo#EVEN_ODD_RULE} or {@link PathPaintingRenderInfo#NONZERO_WINDING_RULE}
+     */
+    void clipPath(byte rule);
 }
