@@ -1,5 +1,5 @@
 /*
- * $Id: Type1Font.java 5756 2013-04-12 12:39:00Z michaeldemey $
+ * $Id$
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2014 iText Group NV

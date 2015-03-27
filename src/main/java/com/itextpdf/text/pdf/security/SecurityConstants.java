@@ -1,5 +1,5 @@
 /*
- * $Id: SecurityConstants.java 5831 2013-05-31 09:30:31Z blowagie $
+ * $Id$
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2014 iText Group NV
