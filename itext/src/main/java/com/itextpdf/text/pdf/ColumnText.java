@@ -1579,14 +1579,12 @@ public class ColumnText {
                         k = -1;
                         continue;
                     }
-                    if (k == items.size() - 1) {
-                        if (!stack.isEmpty()) {
-                            Object objs[] = stack.pop();
-                            list = (com.itextpdf.text.List) objs[0];
-                            items = list.getItems();
-                            k = ((Integer) objs[1]).intValue();
-                            listIndentation = ((Float) objs[2]).floatValue();
-                        }
+                    while (k == items.size() - 1 && !stack.isEmpty()) {
+                        Object objs[] = stack.pop();
+                        list = (com.itextpdf.text.List) objs[0];
+                        items = list.getItems();
+                        k = ((Integer) objs[1]).intValue();
+                        listIndentation = ((Float) objs[2]).floatValue();
                     }
                 }
                 int status = 0;
