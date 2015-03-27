@@ -7,9 +7,7 @@ import com.itextpdf.awt.geom.Point2D;
 import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.pdf.parser.*;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 class PdfCleanUpRegionFilter extends RenderFilter {
 
@@ -61,6 +59,58 @@ class PdfCleanUpRegionFilter extends RenderFilter {
         return new PdfCleanUpCoveredArea(transformedIntersection, imageRect.equals(intersectionRect));
     }
 
+    // Current implementation is for completely covered line arts only.
+    protected List<Subpath> filterSubpath(Subpath subpath, Matrix ctm, boolean isContour) {
+        List<Subpath> filteredSubpaths = new ArrayList<Subpath>();
+        com.itextpdf.awt.geom.Rectangle rect = new com.itextpdf.awt.geom.Rectangle(rectangle);
+
+        if (subpath.isSinglePointClosed()) {
+            Point2D transformedStartPoint = transformPoints(ctm, false, subpath.getStartPoint())[0];
+
+            if (!containsAll(rect, transformedStartPoint)) {
+                filteredSubpaths.add(subpath);
+            }
+
+            return filteredSubpaths;
+        } else if (subpath.isSinglePointOpen()) {
+            return filteredSubpaths;
+        }
+
+        Subpath newSubpath = new Subpath();
+        List<Shape> subpathSegments = new ArrayList<Shape>(subpath.getSegments());
+
+        // Create the line which is implicitly added by PDF, when you use 'h' operator
+        if (subpath.isClosed()) {
+            Shape lastSegment = subpathSegments.get(subpathSegments.size() - 1);
+            List<Point2D> segmentBasePoints = lastSegment.getBasePoints();
+            subpathSegments.add(new Line(segmentBasePoints.get(segmentBasePoints.size() - 1), subpath.getStartPoint()));
+        }
+
+        for (Shape segment : subpathSegments) {
+            Point2D[] transformedSegBasePoints = transformPoints(ctm, false, segment.getBasePoints());
+
+            if (containsAll(rect, transformedSegBasePoints)) {
+                if (!newSubpath.isEmpty()) {
+                    filteredSubpaths.add(newSubpath);
+                    newSubpath = new Subpath();
+                }
+            } else {
+                newSubpath.addSegment(segment);
+
+                // if it's filled area and we have got here, then it isn't completely covered
+                if (!isContour) {
+                    break;
+                }
+            }
+        }
+
+        if (!newSubpath.isEmpty()) {
+            filteredSubpaths.add( !isContour ? subpath : newSubpath );
+        }
+
+        return filteredSubpaths;
+    }
+
     private boolean intersect(Rectangle r1, Rectangle r2) {
         return (r1.getLeft() < r2.getRight() && r1.getRight() > r2.getLeft() &&
                 r1.getBottom() < r2.getTop() && r1.getTop() > r2.getBottom());
@@ -76,15 +126,9 @@ class PdfCleanUpRegionFilter extends RenderFilter {
             return null;
         }
 
-        AffineTransform t = new AffineTransform(ctm.get(Matrix.I11), ctm.get(Matrix.I12),
-                                                ctm.get(Matrix.I21), ctm.get(Matrix.I22),
-                                                ctm.get(Matrix.I31), ctm.get(Matrix.I32));
-        Point2D p1 = t.transform(new Point(0, 0), null);
-        Point2D p2 = t.transform(new Point(0, 1), null);
-        Point2D p3 = t.transform(new Point(1, 0), null);
-        Point2D p4 = t.transform(new Point(1, 1), null);
-
-        return getRectangle(p1, p2, p3, p4);
+        Point2D[] points = transformPoints(ctm, false, new Point(0, 0), new Point(0, 1),
+                                                       new Point(1, 0), new Point(1, 1));
+        return getRectangle(points[0], points[1], points[2], points[3]);
     }
 
     /**
@@ -102,24 +146,11 @@ class PdfCleanUpRegionFilter extends RenderFilter {
      * Transforms the given Rectangle into the image coordinate system which is [0,1]x[0,1] by default
      */
     private Rectangle transformIntersection(Matrix imageCTM, Rectangle rect) {
-        AffineTransform t = new AffineTransform(imageCTM.get(Matrix.I11), imageCTM.get(Matrix.I12),
-                                                imageCTM.get(Matrix.I21), imageCTM.get(Matrix.I22),
-                                                imageCTM.get(Matrix.I31), imageCTM.get(Matrix.I32));
-        Point2D p1;
-        Point2D p2;
-        Point2D p3;
-        Point2D p4;
-
-        try {
-            p1 = t.inverseTransform(new Point(rect.getLeft(), rect.getBottom()), null);
-            p2 = t.inverseTransform(new Point(rect.getLeft(), rect.getTop()), null);
-            p3 = t.inverseTransform(new Point(rect.getRight(), rect.getBottom()), null);
-            p4 = t.inverseTransform(new Point(rect.getRight(), rect.getTop()), null);
-        } catch (NoninvertibleTransformException e) {
-            throw new RuntimeException(e);
-        }
-
-        return getRectangle(p1, p2, p3, p4);
+        Point2D[] points = transformPoints(imageCTM, true, new Point(rect.getLeft(), rect.getBottom()),
+                                                           new Point(rect.getLeft(), rect.getTop()),
+                                                           new Point(rect.getRight(), rect.getBottom()),
+                                                           new Point(rect.getRight(), rect.getTop()));
+        return getRectangle(points[0], points[1], points[2], points[3]);
     }
 
     /**
@@ -135,5 +166,41 @@ class PdfCleanUpRegionFilter extends RenderFilter {
         double top = Collections.max(ys);
 
         return new Rectangle((float) left, (float) bottom, (float) right, (float) top);
+    }
+
+    private static boolean containsAll(com.itextpdf.awt.geom.Rectangle rect, Point2D... points) {
+        for (Point2D point : points) {
+            if (!rect.contains(point)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private Point2D[] transformPoints(Matrix transormationMatrix, boolean inverse, Collection<? extends Point2D> points) {
+        Point2D[] pointsArr = new Point2D[points.size()];
+        points.toArray(pointsArr);
+
+        return transformPoints(transormationMatrix, inverse, pointsArr);
+    }
+
+    private Point2D[] transformPoints(Matrix transormationMatrix, boolean inverse, Point2D... points) {
+        AffineTransform t = new AffineTransform(transormationMatrix.get(Matrix.I11), transormationMatrix.get(Matrix.I12),
+                transormationMatrix.get(Matrix.I21), transormationMatrix.get(Matrix.I22),
+                transormationMatrix.get(Matrix.I31), transormationMatrix.get(Matrix.I32));
+        Point2D[] transformed = new Point2D[points.length];
+
+        if (inverse) {
+            try {
+                t = t.createInverse();
+            } catch (NoninvertibleTransformException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        t.transform(points, 0, transformed, 0, points.length);
+
+        return transformed;
     }
 }

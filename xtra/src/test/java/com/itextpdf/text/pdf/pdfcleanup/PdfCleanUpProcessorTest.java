@@ -61,7 +61,8 @@ public class PdfCleanUpProcessorTest {
                                              {"multiUseIndirect.pdf", "multiUseIndirect.pdf", "cmp_multiUseIndirect.pdf", cleanUpLocations3},
                                              {"multiUseImage.pdf", "multiUseImage.pdf", "cmp_multiUseImage.pdf", cleanUpLocations2},
                                              {"smaskImage.pdf", "smaskImage.pdf", "cmp_smaskImage.pdf", cleanUpLocations2},
-                                             {"rotatedImg.pdf", "rotatedImg.pdf", "cmp_rotatedImg.pdf", cleanUpLocations2}});
+                                             {"rotatedImg.pdf", "rotatedImg.pdf", "cmp_rotatedImg.pdf", cleanUpLocations2},
+                                             {"lineArtsCompletely.pdf", "lineArtsCompletely.pdf", "cmp_lineArtsCompletely.pdf", null}});
     }
 
     @Test

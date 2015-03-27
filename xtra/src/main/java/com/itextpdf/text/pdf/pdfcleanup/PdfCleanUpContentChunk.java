@@ -4,59 +4,69 @@ import com.itextpdf.text.pdf.PdfString;
 import com.itextpdf.text.pdf.parser.Vector;
 
 /**
- * Represents an image or text data.
+ * Represents a chunk of a pdf content stream which is under cleanup processing. E.g. image, text.
  */
-class PdfCleanUpContentChunk {
+abstract class PdfCleanUpContentChunk {
 
     private boolean visible;
 
-    private PdfString text;
-    private float startX ;
-    private float endX;
-    private int numOfStrChunkBelongsTo;
-
-    private boolean image;
-    private byte[] newImageData;
-
-    public PdfCleanUpContentChunk(PdfString text, Vector startLocation, Vector endLocation, boolean visible, int numOfStrChunkBelongsTo) {
-        this.text = text;
-        this.startX = startLocation.get(0);
-        this.endX = endLocation.get(0);
+    public PdfCleanUpContentChunk(boolean visible) {
         this.visible = visible;
-        this.numOfStrChunkBelongsTo = numOfStrChunkBelongsTo;
-    }
-
-    public PdfCleanUpContentChunk(boolean visible, byte[] newImageData) {
-        this.image = true;
-        this.visible = visible;
-        this.newImageData = newImageData;
-    }
-
-    public PdfString getText() {
-        return text;
     }
 
     public boolean isVisible() {
         return visible;
     }
 
-    public boolean isImage() {
-        return image;
+    /**
+     * Represents a text fragment from a pdf content stream.
+     */
+    public static class Text extends PdfCleanUpContentChunk {
+
+        private PdfString text;
+        private float startX;
+        private float endX;
+        private int numOfStrTextBelongsTo;
+
+        public Text(PdfString text, Vector startLocation, Vector endLocation, boolean visible, int numOfStrTextBelongsTo) {
+            super(visible);
+            this.text = text;
+            this.startX = startLocation.get(0);
+            this.endX = endLocation.get(0);
+            this.numOfStrTextBelongsTo = numOfStrTextBelongsTo;
+        }
+
+        public PdfString getText() {
+            return text;
+        }
+
+        public float getStartX() {
+            return startX;
+        }
+
+        public float getEndX() {
+            return endX;
+        }
+
+        public int getNumOfStrTextBelongsTo() {
+            return numOfStrTextBelongsTo;
+        }
     }
 
-    public float getStartX() {
-        return startX;
-    }
+    /**
+     * Represents an image used in a pdf content stream.
+     */
+    public static class Image extends PdfCleanUpContentChunk {
 
-    public float getEndX() {
-        return endX;
-    }
+        private byte[] newImageData;
 
-    public byte[] getNewImageData() {
-        return newImageData;
-    }
+        public Image(boolean visible, byte[] newImageData) {
+            super(visible);
+            this.newImageData = newImageData;
+        }
 
-    public int getNumOfStrChunkBelongsTo() {
-        return numOfStrChunkBelongsTo;
+        public byte[] getNewImageData() {
+            return newImageData;
+        }
     }
 }
