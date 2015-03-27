@@ -1,5 +1,5 @@
 /*
- * $Id: FontsResourceAnchor.java 4784 2011-03-15 08:33:00Z blowagie $
+ * $Id$
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2014 iText Group NV

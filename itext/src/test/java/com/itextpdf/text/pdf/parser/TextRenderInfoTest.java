@@ -32,7 +32,7 @@ public class TextRenderInfoTest {
          * Test introduced to exclude a bug related to a Unicode quirk for 
          * Japanese. TextRenderInfo threw an AIOOBE for some characters.
          * @throws java.lang.Exception
-         * @since 5.5.5
+         * @since 5.5.5-SNAPSHOT
          */
         @Test
         public void testUnicodeEmptyString() throws Exception {

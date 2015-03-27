@@ -1,5 +1,5 @@
 /*
- * $Id: ArabicLigaturizer.java 5075 2012-02-27 16:36:18Z blowagie $
+ * $Id$
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2014 iText Group NV
