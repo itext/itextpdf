@@ -222,6 +222,8 @@ public class PdfContentStreamProcessor {
             registerContentOperator("b", new PaintPath(fillStroke, PathPaintingRenderInfo.NONZERO_WINDING_RULE, true));
             registerContentOperator("b*", new PaintPath(fillStroke, PathPaintingRenderInfo.EVEN_ODD_RULE, true));
             registerContentOperator("n", new PaintPath(PathPaintingRenderInfo.NO_OP, (byte) -1, false));
+            registerContentOperator("W", new ClipPath(PathPaintingRenderInfo.NONZERO_WINDING_RULE));
+            registerContentOperator("W*", new ClipPath(PathPaintingRenderInfo.EVEN_ODD_RULE));
         }
     }
 
@@ -361,14 +363,12 @@ public class PdfContentStreamProcessor {
      * @since 5.5.6
      */
     private void paintPath(byte operation, byte rule, boolean close) {
-        if (renderListener instanceof ExtRenderListener) {
-            if (close) {
-                modifyPath(PathConstructionRenderInfo.CLOSE, null);
-            }
-
-            PathPaintingRenderInfo renderInfo = new PathPaintingRenderInfo(operation, rule, gs().getCtm());
-            ((ExtRenderListener) renderListener).renderPath(renderInfo);
+        if (close) {
+            modifyPath(PathConstructionRenderInfo.CLOSE, null);
         }
+
+        PathPaintingRenderInfo renderInfo = new PathPaintingRenderInfo(operation, rule, gs().getCtm());
+        ((ExtRenderListener) renderListener).renderPath(renderInfo);
     }
 
     /**
@@ -381,6 +381,10 @@ public class PdfContentStreamProcessor {
     private void modifyPath(byte operation, List<Float> segmentData) {
         PathConstructionRenderInfo renderInfo = new PathConstructionRenderInfo(operation, segmentData, gs().ctm);
         ((ExtRenderListener) renderListener).modifyPath(renderInfo);
+    }
+
+    private void clipPath(byte rule) {
+        ((ExtRenderListener) renderListener).clipPath(rule);
     }
 
     /**
@@ -1116,6 +1120,19 @@ public class PdfContentStreamProcessor {
         public void invoke(PdfContentStreamProcessor processor, PdfLiteral operator, ArrayList<PdfObject> operands) throws Exception {
             processor.paintPath(operation, rule, close);
             // TODO: add logic for clipping path (before add it to the graphics state)
+        }
+    }
+
+    private static class ClipPath implements ContentOperator {
+
+        private byte rule;
+
+        public ClipPath(byte rule) {
+            this.rule = rule;
+        }
+
+        public void invoke(PdfContentStreamProcessor processor, PdfLiteral operator, ArrayList<PdfObject> operands) throws Exception {
+            processor.clipPath(rule);
         }
     }
 
