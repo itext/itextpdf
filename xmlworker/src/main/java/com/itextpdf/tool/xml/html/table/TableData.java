@@ -48,6 +48,7 @@ import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.ListItem;
 import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.pdf.PdfName;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.text.pdf.draw.LineSeparator;
 import com.itextpdf.tool.xml.NoCustomContextException;
@@ -56,6 +57,7 @@ import com.itextpdf.tool.xml.WorkerContext;
 import com.itextpdf.tool.xml.exceptions.LocaleMessages;
 import com.itextpdf.tool.xml.exceptions.RuntimeWorkerException;
 import com.itextpdf.tool.xml.html.AbstractTagProcessor;
+import com.itextpdf.tool.xml.html.HTML;
 import com.itextpdf.tool.xml.html.pdfelement.HtmlCell;
 import com.itextpdf.tool.xml.html.pdfelement.NoNewLineParagraph;
 import com.itextpdf.tool.xml.pipeline.html.HtmlPipelineContext;
@@ -97,6 +99,10 @@ public class TableData extends AbstractTagProcessor {
                 if (direction != PdfWriter.RUN_DIRECTION_DEFAULT) {
                     cell.setRunDirection(direction);
                 }
+
+        if (HTML.Tag.TH.equalsIgnoreCase(tag.getName())) {
+            cell.setRole(PdfName.TH);
+        }
         try {
             HtmlPipelineContext htmlPipelineContext = getHtmlPipelineContext(ctx);
             cell = (HtmlCell) getCssAppliers().apply(cell, tag, htmlPipelineContext);
