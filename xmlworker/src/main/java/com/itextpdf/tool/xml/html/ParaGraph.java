@@ -145,10 +145,10 @@ public class ParaGraph extends AbstractTagProcessor {
     protected void processParagraphItems(final WorkerContext ctx, final Tag tag, final List<Element> paragraphItems, List<Element> l) {
         Paragraph p = new Paragraph();
         p.setMultipliedLeading(1.2f);
-        Element lastElement = paragraphItems.get(paragraphItems.size() - 1);
-        if (lastElement instanceof Chunk && Chunk.NEWLINE.getContent().equals(((Chunk) lastElement).getContent())) {
-            paragraphItems.remove(paragraphItems.size() - 1);
-        }
+//        Element lastElement = paragraphItems.get(paragraphItems.size() - 1);
+//        if (lastElement instanceof Chunk && Chunk.NEWLINE.getContent().equals(((Chunk) lastElement).getContent())) {
+//            paragraphItems.remove(paragraphItems.size() - 1);
+//        }
         Map<String, String> css = tag.getCSS();
         if (null != css.get(CSS.Property.TAB_INTERVAL)) {
             addTabIntervalContent(ctx, tag, paragraphItems, p, css.get(CSS.Property.TAB_INTERVAL));
