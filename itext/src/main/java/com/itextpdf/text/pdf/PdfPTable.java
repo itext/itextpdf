@@ -2113,7 +2113,9 @@ public class PdfPTable implements LargeElement, Spaceable, IAccessibleElement {
      */
     public FittingRows getFittingRows(float availableHeight, int startIdx) {
         LOGGER.info(String.format("getFittingRows(%s, %s)", availableHeight, startIdx));
-        assert (getRow(startIdx).getCells()[0] != null); // top left cell of current page may not be null
+        if ( startIdx > 0 && startIdx < rows.size() ) {
+            assert (getRow(startIdx).getCells()[0] != null); // top left cell of current page may not be null
+        }
         int cols = getNumberOfColumns();
         ColumnMeasurementState states[] = new ColumnMeasurementState[cols];
         for (int i = 0; i < cols; ++i) {
