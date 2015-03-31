@@ -232,19 +232,17 @@ public class PdfDocument extends Document {
             try {
                 PdfDictionary names = new PdfDictionary();
                 if (!localDestinations.isEmpty()) {
-                    PdfArray ar = new PdfArray();
+                    HashMap<String, PdfObject> destmap = new HashMap<String, PdfObject>();
                     for (Map.Entry<String, Destination> entry : localDestinations.entrySet()) {
                         String name = entry.getKey();
                         Destination dest = entry.getValue();
                         if (dest.destination == null) //no destination
                             continue;
-                        PdfIndirectReference ref = dest.reference;
-                        ar.add(new PdfString(name, PdfObject.TEXT_UNICODE));
-                        ar.add(ref);
+                        destmap.put(name, dest.reference);
                     }
-                    if (ar.size() > 0) {
+                    if (destmap.size() > 0) {
                         PdfDictionary dests = new PdfDictionary();
-                        dests.put(PdfName.NAMES, ar);
+                        dests.put(PdfName.NAMES, PdfNameTree.writeTree(destmap, writer));
                         names.put(PdfName.DESTS, writer.addToBody(dests).getIndirectReference());
                     }
                 }
