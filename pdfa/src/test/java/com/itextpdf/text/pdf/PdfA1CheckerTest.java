@@ -213,6 +213,28 @@ public class PdfA1CheckerTest {
     public void pdfObjectCheckTest4() throws DocumentException, IOException {
         pdfObjectCheck(outputDir + "pdfObjectCheckTest4.pdf", PdfAConformanceLevel.PDF_A_1B, true);
     }
+    
+    @Test
+    public void pdfNamedDestinationsOverflow() throws DocumentException, IOException {
+        Document document = new Document();
+        PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream(outputDir + "pdfNamedDestinationsOverflow.pdf"), PdfAConformanceLevel.PDF_A_1A);
+        writer.createXmpMetadata();
+        writer.setTagged();
+        document.open();
+        document.addLanguage("en-US");
+
+        Font font = FontFactory.getFont("./src/test/resources/com/itextpdf/text/pdf/FreeMonoBold.ttf", BaseFont.WINANSI, BaseFont.EMBEDDED, 12);
+        document.add(new Paragraph("Hello World", font));
+        ICC_Profile icc = ICC_Profile.getInstance(new FileInputStream("./src/test/resources/com/itextpdf/text/pdf/sRGB Color Space Profile.icm"));
+        writer.setOutputIntents("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", icc);
+        
+        PdfDocument pdf = writer.getPdfDocument();
+        for (int i=0;i<8200;i++) {
+            PdfDestination dest = new PdfDestination(PdfDestination.FITV);
+            pdf.localDestination("action" + i, dest);
+        }
+        document.close();
+    }
 
     @Test
     public void pdfObjectCheckTest5() throws DocumentException, IOException {
