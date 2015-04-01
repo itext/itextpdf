@@ -31,7 +31,7 @@ class PdfCleanUpRenderListener implements ExtRenderListener {
     private PdfStamper pdfStamper;
     private List<PdfCleanUpRegionFilter> filters;
     private List<PdfCleanUpContentChunk> chunks = new ArrayList<PdfCleanUpContentChunk>();
-    private Stack<PdfCleanUpContext> contextStack = new Stack<PdfCleanUpContext>();
+    private Deque<PdfCleanUpContext> contextStack = new ArrayDeque<PdfCleanUpContext>();
     private int strNumber = 1; // Represents ordinal number of string under processing. Needed for processing TJ operator.
 
     private Path unfilteredCurrentPath = new Path(); // Represents current path as if there were no segments to cut
@@ -153,7 +153,7 @@ class PdfCleanUpRenderListener implements ExtRenderListener {
         return currentFillPath;
     }
 
-    public void clipPath(byte rule) {
+    public void clipPath(int rule) {
         clipPath = true;
     }
 
@@ -318,7 +318,7 @@ class PdfCleanUpRenderListener implements ExtRenderListener {
             }
         }
 
-        return new Path(filteredSubpaths);
+        return new Path(new ArrayList<Subpath>(filteredSubpaths));
     }
 
     private void closeOutputStream(OutputStream os) {

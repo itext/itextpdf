@@ -246,7 +246,7 @@ public class PdfContentStreamProcessor {
      * @since 5.5.6
      */
     public Collection<String> getRegisteredOperatorStrings() {
-        return operators.keySet();
+        return new ArrayList<String>(operators.keySet());
     }
 
     /**

@@ -41,6 +41,10 @@ class PdfCleanUpContentOperator implements ContentOperator {
     protected PdfCleanUpRenderListener cleanUpStrategy;
     protected ContentOperator originalContentOperator;
 
+    public PdfCleanUpContentOperator(PdfCleanUpRenderListener cleanUpStrategy) {
+        this.cleanUpStrategy = cleanUpStrategy;
+    }
+
     public static void populateOperators(PdfContentStreamProcessor contentProcessor,
                                          PdfCleanUpRenderListener pdfCleanUpRenderListener) {
         for (String operator : contentProcessor.getRegisteredOperatorStrings()) {
@@ -49,19 +53,11 @@ class PdfCleanUpContentOperator implements ContentOperator {
         }
     }
 
-    public PdfCleanUpContentOperator(PdfCleanUpRenderListener cleanUpStrategy) {
-        this.cleanUpStrategy = cleanUpStrategy;
-    }
-
     public void invoke(PdfContentStreamProcessor pdfContentStreamProcessor, PdfLiteral operator, ArrayList<PdfObject> operands) throws Exception {
         String operatorStr = operator.toString();
         PdfContentByte canvas = cleanUpStrategy.getContext().getCanvas();
         PRStream xFormStream = null;
-        boolean disableOutput = false;
-
-        if (pathConstructionOperators.contains(operatorStr) || pathPaintingOperators.contains(operatorStr) || clippingPathOperators.contains(operatorStr)) {
-            disableOutput = true;
-        }
+        boolean disableOutput = pathConstructionOperators.contains(operatorStr) || pathPaintingOperators.contains(operatorStr) || clippingPathOperators.contains(operatorStr);
 
         // key - number of a string in the TJ operator, value - number following the string; the first number without string (if it's presented) is stored under 0.
         // BE AWARE: zero-length strings are ignored!!!
@@ -335,24 +331,24 @@ class PdfCleanUpContentOperator implements ContentOperator {
     private void writePath(String operatorStr, PdfContentByte canvas) throws IOException { // TODO: refactor
         if (cleanUpStrategy.isClipped()) {
             writePath(cleanUpStrategy.getCurrentFillPath(), null, canvas);
-            canvas.getInternalBuffer().write(W);
+            canvas.getInternalBuffer().append(W);
 
             if ("n".equals(operatorStr)) {
-                canvas.getInternalBuffer().write(n);
+                canvas.getInternalBuffer().append(n);
                 cleanUpStrategy.setClipped(false);
                 return;
             }
         }
 
         if (fillOperators.contains(operatorStr) && cleanUpStrategy.isClipped()) {
-            canvas.getInternalBuffer().write(f);
+            canvas.getInternalBuffer().append(f);
         } else if (fillOperators.contains(operatorStr)) {
             writePath(cleanUpStrategy.getCurrentFillPath(), f, canvas);
         }
 
         if (strokeOperators.contains(operatorStr)) {
             if (!fillOperators.contains(operatorStr) && cleanUpStrategy.isClipped()) {
-                canvas.getInternalBuffer().write(n);
+                canvas.getInternalBuffer().append(n);
             }
 
             writePath(cleanUpStrategy.getCurrentStrokePath(), S, canvas);

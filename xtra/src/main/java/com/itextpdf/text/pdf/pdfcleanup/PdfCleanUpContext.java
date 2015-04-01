@@ -3,7 +3,8 @@ package com.itextpdf.text.pdf.pdfcleanup;
 import com.itextpdf.text.pdf.PdfContentByte;
 import com.itextpdf.text.pdf.PdfDictionary;
 
-import java.util.Stack;
+import java.util.ArrayDeque;
+import java.util.Deque;
 
 /**
  * Stores parameters related to specific context which is either page or xobject
@@ -14,7 +15,7 @@ class PdfCleanUpContext {
     private PdfDictionary resources;
     private PdfContentByte canvas;
 
-    private Stack<PdfCleanUpGraphicsState> graphicsStateStack = new Stack<PdfCleanUpGraphicsState>();
+    private Deque<PdfCleanUpGraphicsState> graphicsStateStack = new ArrayDeque<PdfCleanUpGraphicsState>();
 
     public PdfCleanUpContext(PdfDictionary resources, PdfContentByte canvas) {
         this.resources = resources;

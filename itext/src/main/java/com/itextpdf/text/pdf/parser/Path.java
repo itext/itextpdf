@@ -4,7 +4,6 @@ import com.itextpdf.awt.geom.Point2D;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -25,7 +24,7 @@ public class Path {
     public Path() {
     }
 
-    public Path(Collection<? extends Subpath> subpaths) {
+    public Path(List<? extends Subpath> subpaths) {
         if (subpaths.size() > 0) {
             this.subpaths.addAll(subpaths);
             currentPoint = this.subpaths.get(subpaths.size() - 1).getLastPoint();
