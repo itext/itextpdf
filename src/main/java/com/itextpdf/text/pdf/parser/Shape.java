@@ -5,12 +5,11 @@ import com.itextpdf.awt.geom.Point2D;
 import java.util.List;
 
 /**
- * Simply extends the {@link com.itextpdf.text.pdf.parser.Shape} interface to provide
- * additional method.
+ * Represents segment from a PDF path.
  *
- * {@inheritDoc}
+ * @since 5.5.6
  */
-public interface Shape extends com.itextpdf.awt.geom.Shape {
+public interface Shape {
 
     /**
      * Treat base points as the points which are enough to construct a shape.

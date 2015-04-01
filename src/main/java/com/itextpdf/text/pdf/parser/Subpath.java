@@ -19,7 +19,6 @@ public class Subpath {
     private boolean closed;
 
     public Subpath() {
-
     }
 
     public Subpath(Subpath subpath) {
@@ -32,7 +31,7 @@ public class Subpath {
      * Constructs a new subpath starting at the given point.
      */
     public Subpath(Point2D startPoint) {
-        this.startPoint = startPoint;
+        this((float) startPoint.getX(), (float) startPoint.getY());
     }
 
     /**
@@ -43,7 +42,7 @@ public class Subpath {
     }
 
     public void setStartPoint(Point2D startPoint) {
-        this.startPoint = startPoint;
+        setStartPoint((float) startPoint.getX(), (float) startPoint.getY());
     }
 
     public void setStartPoint(float x, float y) {

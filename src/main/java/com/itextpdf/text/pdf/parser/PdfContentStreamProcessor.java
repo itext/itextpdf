@@ -204,7 +204,7 @@ public class PdfContentStreamProcessor {
 
         // Path construction and painting operators
         if (renderListener instanceof ExtRenderListener) {
-            byte fillStroke = PathPaintingRenderInfo.FILL | PathPaintingRenderInfo.STROKE;
+            int fillStroke = PathPaintingRenderInfo.FILL | PathPaintingRenderInfo.STROKE;
             registerContentOperator("m", new MoveTo());
             registerContentOperator("l", new LineTo());
             registerContentOperator("c", new Curve());
@@ -212,8 +212,8 @@ public class PdfContentStreamProcessor {
             registerContentOperator("y", new CurveFourhPointDuplicated());
             registerContentOperator("h", new CloseSubpath());
             registerContentOperator("re", new Rectangle());
-            registerContentOperator("S", new PaintPath(PathPaintingRenderInfo.STROKE, (byte) -1, false));
-            registerContentOperator("s", new PaintPath(PathPaintingRenderInfo.STROKE, (byte) -1, true));
+            registerContentOperator("S", new PaintPath(PathPaintingRenderInfo.STROKE, -1, false));
+            registerContentOperator("s", new PaintPath(PathPaintingRenderInfo.STROKE, -1, true));
             registerContentOperator("f", new PaintPath(PathPaintingRenderInfo.FILL, PathPaintingRenderInfo.NONZERO_WINDING_RULE, false));
             registerContentOperator("F", new PaintPath(PathPaintingRenderInfo.FILL, PathPaintingRenderInfo.NONZERO_WINDING_RULE, false));
             registerContentOperator("f*", new PaintPath(PathPaintingRenderInfo.FILL, PathPaintingRenderInfo.EVEN_ODD_RULE, false));
@@ -221,7 +221,7 @@ public class PdfContentStreamProcessor {
             registerContentOperator("B*", new PaintPath(fillStroke, PathPaintingRenderInfo.EVEN_ODD_RULE, false));
             registerContentOperator("b", new PaintPath(fillStroke, PathPaintingRenderInfo.NONZERO_WINDING_RULE, true));
             registerContentOperator("b*", new PaintPath(fillStroke, PathPaintingRenderInfo.EVEN_ODD_RULE, true));
-            registerContentOperator("n", new PaintPath(PathPaintingRenderInfo.NO_OP, (byte) -1, false));
+            registerContentOperator("n", new PaintPath(PathPaintingRenderInfo.NO_OP, -1, false));
             registerContentOperator("W", new ClipPath(PathPaintingRenderInfo.NONZERO_WINDING_RULE));
             registerContentOperator("W*", new ClipPath(PathPaintingRenderInfo.EVEN_ODD_RULE));
         }
@@ -362,7 +362,7 @@ public class PdfContentStreamProcessor {
      * @param close     Indicates whether the path should be closed or not.
      * @since 5.5.6
      */
-    private void paintPath(byte operation, byte rule, boolean close) {
+    private void paintPath(int operation, int rule, boolean close) {
         if (close) {
             modifyPath(PathConstructionRenderInfo.CLOSE, null);
         }
@@ -378,12 +378,12 @@ public class PdfContentStreamProcessor {
      * @param segmentData Contains x, y components of points of a new segment being added to the current path.
      *                    E.g. x1 y1 x2 y2 x3 y3 etc. It's ignored for "close subpath" operarion (h).
      */
-    private void modifyPath(byte operation, List<Float> segmentData) {
-        PathConstructionRenderInfo renderInfo = new PathConstructionRenderInfo(operation, segmentData, gs().ctm);
+    private void modifyPath(int operation, List<Float> segmentData) {
+        PathConstructionRenderInfo renderInfo = new PathConstructionRenderInfo(operation, segmentData, gs().getCtm());
         ((ExtRenderListener) renderListener).modifyPath(renderInfo);
     }
 
-    private void clipPath(byte rule) {
+    private void clipPath(int rule) {
         ((ExtRenderListener) renderListener).clipPath(rule);
     }
 
@@ -1096,8 +1096,8 @@ public class PdfContentStreamProcessor {
      */
     private static class PaintPath implements ContentOperator {
 
-        private byte operation;
-        private byte rule;
+        private int operation;
+        private int rule;
         private boolean close;
 
         /**
@@ -1111,7 +1111,7 @@ public class PdfContentStreamProcessor {
          *                  In case it isn't applicable pass any value.
          * @param close     Indicates whether the path should be closed or not.
          */
-        public PaintPath(byte operation, byte rule, boolean close) {
+        public PaintPath(int operation, int rule, boolean close) {
             this.operation = operation;
             this.rule = rule;
             this.close = close;
@@ -1123,11 +1123,16 @@ public class PdfContentStreamProcessor {
         }
     }
 
+    /**
+     * A content operator implementation (W, W*)
+     *
+     * @since 5.5.6
+     */
     private static class ClipPath implements ContentOperator {
 
-        private byte rule;
+        private int rule;
 
-        public ClipPath(byte rule) {
+        public ClipPath(int rule) {
             this.rule = rule;
         }
 
@@ -1144,7 +1149,7 @@ public class PdfContentStreamProcessor {
     private static class EndPath implements ContentOperator {
 
         public void invoke(PdfContentStreamProcessor processor, PdfLiteral operator, ArrayList<PdfObject> operands) throws Exception {
-            processor.paintPath(PathPaintingRenderInfo.NO_OP, (byte) -1, false);
+            processor.paintPath(PathPaintingRenderInfo.NO_OP, -1, false);
         }
     }
 
