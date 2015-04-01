@@ -31,5 +31,5 @@ public interface ExtRenderListener extends RenderListener {
      *
      * @param rule Either {@link PathPaintingRenderInfo#EVEN_ODD_RULE} or {@link PathPaintingRenderInfo#NONZERO_WINDING_RULE}
      */
-    void clipPath(byte rule);
+    void clipPath(int rule);
 }

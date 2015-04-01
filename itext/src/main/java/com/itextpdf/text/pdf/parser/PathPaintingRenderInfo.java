@@ -17,7 +17,7 @@ public class PathPaintingRenderInfo {
      *
      * For more details see PDF spec.
      */
-    public static byte NONZERO_WINDING_RULE = 1;
+    public static final int NONZERO_WINDING_RULE = 1;
 
     /**
      * The even-odd rule determines whether a point is inside a path by drawing a ray from that point in
@@ -26,27 +26,27 @@ public class PathPaintingRenderInfo {
      *
      * For more details see PDF spec.
      */
-    public static byte EVEN_ODD_RULE = 2;
+    public static final int EVEN_ODD_RULE = 2;
 
     /**
      * End the path object without filling or stroking it. This operator shall be a path-painting no-op,
      * used primarily for the side effect of changing the current clipping path
      */
-    public static final byte NO_OP = 0;
+    public static final int NO_OP = 0;
 
     /**
      * Value specifying stroke operation to perform on the current path.
      */
-    public static final byte STROKE = 1;
+    public static final int STROKE = 1;
 
     /**
      * Value specifying fill operation to perform on the current path. When the fill operation
      * is performed it should use either nonzero winding or even-odd rule.
      */
-    public static final byte FILL = 2;
+    public static final int FILL = 2;
 
-    private byte operation;
-    private byte rule;
+    private int operation;
+    private int rule;
     private Matrix ctm;
 
     /**
@@ -54,7 +54,7 @@ public class PathPaintingRenderInfo {
      * @param rule      Either {@link #NONZERO_WINDING_RULE} or {@link #EVEN_ODD_RULE}.
      * @param ctm       Current transformation matrix.
      */
-    public PathPaintingRenderInfo(byte operation, byte rule, Matrix ctm) {
+    public PathPaintingRenderInfo(int operation, int rule, Matrix ctm) {
         this.operation = operation;
         this.rule = rule;
         this.ctm = ctm;
@@ -64,24 +64,24 @@ public class PathPaintingRenderInfo {
      * If the operation is {@link #NO_OP} then the rule is ignored,
      * otherwise {@link #NONZERO_WINDING_RULE} is used by default.
      *
-     * See {@link #PathPaintingRenderInfo(byte, byte, Matrix)}
+     * See {@link #PathPaintingRenderInfo(int, int, Matrix)}
      */
-    public PathPaintingRenderInfo(byte operation, Matrix ctm) {
+    public PathPaintingRenderInfo(int operation, Matrix ctm) {
         this(operation, NONZERO_WINDING_RULE, ctm);
     }
 
     /**
-     * @return <CODE>byte</CODE> value which is either {@link #NO_OP} or one of possible
+     * @return <CODE>int</CODE> value which is either {@link #NO_OP} or one of possible
      * combinations of {@link #STROKE} and {@link #FILL}
      */
-    public byte getOperation() {
+    public int getOperation() {
         return operation;
     }
 
     /**
      * @return Either {@link #NONZERO_WINDING_RULE} or {@link #EVEN_ODD_RULE}.
      */
-    public byte getRule() {
+    public int getRule() {
         return rule;
     }
 
