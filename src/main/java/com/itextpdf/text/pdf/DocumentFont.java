@@ -150,6 +150,7 @@ public class DocumentFont extends BaseFont {
             // When parsing a document that shows a cat and a dog, you shouldn't expect seeing a cat and a dog. Instead you'll get b and a.
             fillEncoding(null);
             fillDiffMap(font.getAsDict(PdfName.ENCODING), null);
+            fillWidths();
         }
         else {
             PdfName encodingName = font.getAsName(PdfName.ENCODING);
@@ -373,9 +374,7 @@ public class DocumentFont extends BaseFont {
                 fillDiffMap(encDic, toUnicode);
             }
         }
-        PdfArray newWidths = font.getAsArray(PdfName.WIDTHS);
-        PdfNumber first = font.getAsNumber(PdfName.FIRSTCHAR);
-        PdfNumber last = font.getAsNumber(PdfName.LASTCHAR);
+
         if (BuiltinFonts14.containsKey(fontName)) {
             BaseFont bf;
             try {
@@ -407,19 +406,26 @@ public class DocumentFont extends BaseFont {
             urx = bf.getFontDescriptor(BBOXURX, 1000);
             ury = bf.getFontDescriptor(BBOXURY, 1000);
         }
+        fillWidths();
+        fillFontDesc(font.getAsDict(PdfName.FONTDESCRIPTOR));
+    }
+
+    private void fillWidths() {
+        PdfArray newWidths = font.getAsArray(PdfName.WIDTHS);
+        PdfNumber first = font.getAsNumber(PdfName.FIRSTCHAR);
+        PdfNumber last = font.getAsNumber(PdfName.LASTCHAR);
         if (first != null && last != null && newWidths != null) {
             int f = first.intValue();
             int nSize = f + newWidths.size();
             if (widths.length < nSize) {
-            	int[] tmp = new int[nSize];
-            	System.arraycopy(widths, 0, tmp, 0, f);
-            	widths = tmp;
+                int[] tmp = new int[nSize];
+                System.arraycopy(widths, 0, tmp, 0, f);
+                widths = tmp;
             }
             for (int k = 0; k < newWidths.size(); ++k) {
                 widths[f + k] = newWidths.getAsNumber(k).intValue();
             }
         }
-        fillFontDesc(font.getAsDict(PdfName.FONTDESCRIPTOR));
     }
 
     private void fillDiffMap(PdfDictionary encDic, CMapToUnicode toUnicode) {
@@ -843,6 +849,15 @@ public class DocumentFont extends BaseFont {
         }
         else
             return super.charExists(c);
+    }
+
+    @Override
+    public double[] getFontMatrix() {
+        if (font.getAsArray(PdfName.FONTMATRIX) != null)
+            return font.getAsArray(PdfName.FONTMATRIX).asDoubleArray();
+        else
+            return DEFAULT_FONT_MATRIX;
+
     }
 
     /**

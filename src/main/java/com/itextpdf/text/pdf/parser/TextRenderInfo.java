@@ -69,7 +69,7 @@ public class TextRenderInfo {
     private final Matrix textToUserSpaceTransformMatrix;
     private final GraphicsState gs;
     private Float unscaledWidth = null;
-
+    private double[] fontMatrix = null;
     /**
      * Array containing marked content info for the text.
      * @since 5.0.2
@@ -88,6 +88,7 @@ public class TextRenderInfo {
         this.textToUserSpaceTransformMatrix = textMatrix.multiply(gs.ctm);
         this.gs = gs;
         this.markedContentInfos = new ArrayList<MarkedContentInfo>(markedContentInfo);
+        this.fontMatrix = gs.font.getFontMatrix();
     }
 
     /**
@@ -102,6 +103,7 @@ public class TextRenderInfo {
     	this.textToUserSpaceTransformMatrix = new Matrix(horizontalOffset, 0).multiply(parent.textToUserSpaceTransformMatrix);
     	this.gs = parent.gs;
     	this.markedContentInfos = parent.markedContentInfos;
+        this.fontMatrix = gs.font.getFontMatrix();
     }
 
     /**
@@ -403,7 +405,7 @@ public class TextRenderInfo {
             throw new UnsupportedOperationException();
         float[] result = new float[2];
         String decoded = decode(string);
-        result[0] = gs.font.getWidth(getCharCode(decoded)) / 1000.0f;
+        result[0] = (float)((gs.font.getWidth(getCharCode(decoded)) * fontMatrix[0]));
         result[1] = decoded.equals(" ") ? gs.wordSpacing : 0;
         return result;
     }

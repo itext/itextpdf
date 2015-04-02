@@ -233,6 +233,9 @@ public abstract class BaseFont {
     public static final int[] CHAR_RANGE_HEBREW = {0, 0x7f, 0x0590, 0x05ff, 0x20a0, 0x20cf, 0xfb1d, 0xfb4f};
     public static final int[] CHAR_RANGE_CYRILLIC = {0, 0x7f, 0x0400, 0x052f, 0x2000, 0x206f, 0x20a0, 0x20cf};
 
+    /**default array of six numbers specifying the font matrix, mapping glyph space to text space */
+    public static final double[] DEFAULT_FONT_MATRIX = {0.001, 0, 0,0.001 , 0, 0};
+
     /** if the font has to be embedded */
     public static final boolean EMBEDDED = true;
 
@@ -1506,6 +1509,15 @@ public abstract class BaseFont {
             return charBBoxes[b[0] & 0xff];
     }
 
+    /**
+     *  get default array of six numbers specifying the font matrix, mapping glyph space to text space
+     * @return an array of six values
+     * <code>null</code>
+     */
+    public double[] getFontMatrix() {
+        return DEFAULT_FONT_MATRIX;
+    }
+
     protected abstract int[] getRawCharBBox(int c, String name);
 
     /**
@@ -1561,4 +1573,6 @@ public abstract class BaseFont {
         else
             this.compressionLevel = compressionLevel;
     }
+
+
 }

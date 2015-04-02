@@ -572,4 +572,17 @@ public class PdfArray extends PdfObject implements Iterable<PdfObject> {
         }
         return rslt;
 	}
+
+    /**
+     *
+     * @return this PdfArray's values as a double[]
+     * @since 5.5.6
+     */
+    public double[] asDoubleArray() {
+        double[] rslt = new double[size()];
+        for (int k = 0; k < rslt.length; ++k) {
+            rslt[k] = getAsNumber(k).doubleValue();
+        }
+        return rslt;
+    }
 }
