@@ -2,8 +2,11 @@ package com.itextpdf.text.pdf.parser;
 
 import com.itextpdf.testutils.TestResourceUtils;
 import java.io.ByteArrayOutputStream;
+import java.util.ArrayList;
 import java.util.List;
 
+import com.itextpdf.text.pdf.PdfDictionary;
+import com.itextpdf.text.pdf.PdfName;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -16,20 +19,23 @@ import com.itextpdf.text.pdf.PdfWriter;
 
 public class TextRenderInfoTest {
 
+    public static final int FIRST_PAGE = 1;
+    public static final int FIRST_ELEMENT_INDEX = 0;
+
 	@Test
 	public void testCharacterRenderInfos() throws Exception {
         byte[] bytes = createSimplePdf(PageSize.LETTER.rotate().rotate(), "ABCD");
         //TestResourceUtils.saveBytesToFile(bytes, new File("C:/temp/out.pdf"));
 
         PdfReader r = new PdfReader(bytes);
-        
+
         PdfReaderContentParser parser = new PdfReaderContentParser(r);
-        parser.processContent(1, new CharacterPositionRenderListener());
+        parser.processContent(FIRST_PAGE, new CharacterPositionRenderListener());
 
 	}
-        
+
         /**
-         * Test introduced to exclude a bug related to a Unicode quirk for 
+         * Test introduced to exclude a bug related to a Unicode quirk for
          * Japanese. TextRenderInfo threw an AIOOBE for some characters.
          * @throws java.lang.Exception
          * @since 5.5.5-SNAPSHOT
@@ -39,11 +45,11 @@ public class TextRenderInfoTest {
             StringBuilder sb = new StringBuilder();
             String inFile = "japanese_text.pdf";
 
-    
+
             PdfReader p = TestResourceUtils.getResourceAsPdfReader(this, inFile);
             TextExtractionStrategy strat = new SimpleTextExtractionStrategy();
 
-            sb.append(PdfTextExtractor.getTextFromPage(p, 1, strat));
+            sb.append(PdfTextExtractor.getTextFromPage(p, FIRST_PAGE, strat));
 
             String result = sb.substring(0, sb.indexOf("\n"));
             String origText =
@@ -54,6 +60,55 @@ public class TextRenderInfoTest {
             Assert.assertEquals(result, origText);
         }
 
+    @Test
+    public void testType3FontWidth() throws Exception {
+        String inFile = "type3font_text.pdf";
+        LineSegment origLineSegment = new LineSegment(new Vector(20.3246f, 769.4974f, 1.0f), new Vector(151.22923f, 769.4974f, 1.0f));
+
+        PdfReader reader = TestResourceUtils.getResourceAsPdfReader(this, inFile);
+        TextPositionRenderListener renderListener = new TextPositionRenderListener();
+        PdfContentStreamProcessor processor = new PdfContentStreamProcessor(renderListener);
+
+        PdfDictionary pageDic = reader.getPageN(FIRST_PAGE);
+        PdfDictionary resourcesDic = pageDic.getAsDict(PdfName.RESOURCES);
+        processor.processContent(ContentByteUtils.getContentBytesForPage(reader, FIRST_PAGE), resourcesDic);
+
+
+        Assert.assertEquals(renderListener.getLineSegments().get(FIRST_ELEMENT_INDEX).getStartPoint().get(FIRST_ELEMENT_INDEX),
+                origLineSegment.getStartPoint().get(FIRST_ELEMENT_INDEX), 1 / 2f);
+
+        Assert.assertEquals(renderListener.getLineSegments().get(FIRST_ELEMENT_INDEX).getEndPoint().get(FIRST_ELEMENT_INDEX),
+                origLineSegment.getEndPoint().get(FIRST_ELEMENT_INDEX), 1 / 2f);
+
+    }
+
+
+    private static class TextPositionRenderListener implements RenderListener {
+
+        List<LineSegment> lineSegments = new ArrayList<LineSegment>();
+
+        public List<LineSegment> getLineSegments() {
+            return lineSegments;
+        }
+
+        public void renderText(TextRenderInfo renderInfo) {
+            lineSegments.add(renderInfo.getBaseline());
+        }
+
+        public void beginTextBlock() {
+        }
+
+        public void endTextBlock() {
+
+        }
+
+        public void renderImage(ImageRenderInfo renderInfo) {
+
+        }
+
+
+    }
+
 	private static class CharacterPositionRenderListener implements TextExtractionStrategy{
 
 		public void beginTextBlock() {
@@ -62,7 +117,7 @@ public class TextRenderInfoTest {
 		public void renderText(TextRenderInfo renderInfo) {
 			List<TextRenderInfo> subs = renderInfo.getCharacterRenderInfos();
 			TextRenderInfo previousCharInfo = subs.get(0);
-			
+
 			for(int i = 1; i < subs.size(); i++){
 				TextRenderInfo charInfo = subs.get(i);
 				Vector previousEndPoint = previousCharInfo.getBaseline().getEndPoint();
@@ -70,7 +125,7 @@ public class TextRenderInfoTest {
 				assertVectorsEqual(charInfo.getText(), previousEndPoint, currentStartPoint);
 				previousCharInfo = charInfo;
 			}
-			
+
 		}
 
 		private void assertVectorsEqual(String message, Vector v1, Vector v2){
@@ -86,9 +141,9 @@ public class TextRenderInfoTest {
 		public String getResultantText() {
 			return null;
 		}
-		
+
 	}
-	
+
 	private byte[] createSimplePdf(Rectangle pageSize, final String... text) throws Exception{
         final ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
 
