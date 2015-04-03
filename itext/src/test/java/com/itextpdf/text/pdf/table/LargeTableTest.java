@@ -84,12 +84,7 @@ public class LargeTableTest {
         document.add(table);
         document.close();
 
-        // compare
-        CompareTool compareTool = new CompareTool();
-        String errorMessage = compareTool.compareByContent(outFolder + file, cmpFolder + file, outFolder, "diff");
-        if (errorMessage != null) {
-            Assert.fail(errorMessage);
-        }
+        compareTablePdf(file);
     }
 
     @Test
@@ -124,6 +119,44 @@ public class LargeTableTest {
         document.add(table);
         document.close();
 
+        compareTablePdf(file);
+    }
+
+    @Test
+    public void removeRowFromIncompleteTable() throws IOException, DocumentException, InterruptedException {
+        final String file = "incomplete_table_row_removed.pdf";
+
+        Document document = new Document();
+
+        PdfWriter pdfWriter = PdfWriter.getInstance(document, new FileOutputStream(outFolder + file));
+
+        document.open();
+
+        PdfPTable table = new PdfPTable(1);
+        table.setComplete(false);
+        table.setTotalWidth(500);
+        table.setLockedWidth(true);
+
+        for (int i = 0; i < 21; i++)
+        {
+            PdfPCell cell = new PdfPCell(new Phrase("Test" + i));
+            table.addCell(cell);
+        }
+
+        table.getRows().remove(20);
+        document.add(table);
+
+        table.setComplete(true);
+
+        document.add(table);
+
+        document.close();
+
+        compareTablePdf(file);
+    }
+
+
+    private void compareTablePdf(String file) throws DocumentException, InterruptedException, IOException {
         // compare
         CompareTool compareTool = new CompareTool();
         String errorMessage = compareTool.compareByContent(outFolder + file, cmpFolder + file, outFolder, "diff");
@@ -131,5 +164,4 @@ public class LargeTableTest {
             Assert.fail(errorMessage);
         }
     }
-
 }
