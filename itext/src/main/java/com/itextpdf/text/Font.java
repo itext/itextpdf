@@ -454,12 +454,12 @@ public class Font implements Comparable<Font> {
 	/**
 	 * Gets the leading that can be used with this font.
 	 *
-	 * @param linespacing
-	 *            a certain linespacing
+	 * @param multipliedLeading
+	 *            a certain multipliedLeading
 	 * @return the height of a line
 	 */
-	public float getCalculatedLeading(final float linespacing) {
-		return linespacing * getCalculatedSize();
+	public float getCalculatedLeading(final float multipliedLeading) {
+		return multipliedLeading * getCalculatedSize();
 	}
 
 	/**
