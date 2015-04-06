@@ -99,6 +99,8 @@ public class PdfA2Checker extends PdfAChecker {
     protected boolean transparencyDetectedOnThePage = false;
     protected String pdfaOutputIntentColorSpace = null;
     protected PdfObject pdfaDestOutputIntent = null;
+    static public final int maxStringLength = 32767;
+
 
     PdfA2Checker(PdfAConformanceLevel conformanceLevel) {
         super(conformanceLevel);
@@ -441,12 +443,12 @@ public class PdfA2Checker extends PdfAChecker {
     protected void checkPdfObject(PdfWriter writer, int key, Object obj1) {
         if (obj1 instanceof PdfNumber) {
             PdfNumber number = (PdfNumber) obj1;
-            if (Math.abs(number.doubleValue()) > PdfA1Checker.maxRealValue && number.toString().contains(".")) {
+            if (Math.abs(number.doubleValue()) > Float.MAX_VALUE && number.toString().contains(".")) {
                 throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("real.number.is.out.of.range"));
             }
         } else if (obj1 instanceof PdfString) {
             PdfString string = (PdfString) obj1;
-            if (string.getBytes().length > PdfA1Checker.maxStringLength) {
+            if (string.getBytes().length > maxStringLength) {
                 throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("pdf.string.is.too.long"));
             }
         }  else if (obj1 instanceof PdfDictionary) {
