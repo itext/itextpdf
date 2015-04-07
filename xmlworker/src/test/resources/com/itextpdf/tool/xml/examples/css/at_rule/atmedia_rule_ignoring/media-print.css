@@ -1,0 +1,15 @@
+
+
+	p {
+		color: green;
+	}
+	
+@media screen {
+	p {
+		color: red;
+	}
+}
+
+	.blue {
+	color: blue;
+	}
