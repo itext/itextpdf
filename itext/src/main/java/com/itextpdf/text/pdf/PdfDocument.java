@@ -476,7 +476,7 @@ public class PdfDocument extends Document {
                     // we try to add the chunk to the line, until we succeed
                     {
                         PdfChunk overflow;
-                        while ((overflow = line.add(chunk)) != null) {
+                        while ((overflow = line.add(chunk, leading)) != null) {
                             carriageReturn();
                             boolean newlineSplit = chunk.isNewlineSplit();
                             chunk = overflow;

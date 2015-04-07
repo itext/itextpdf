@@ -140,6 +140,28 @@ public class PdfLine {
     /**
      * Adds a <CODE>PdfChunk</CODE> to the <CODE>PdfLine</CODE>.
      *
+     * @param		chunk		        the <CODE>PdfChunk</CODE> to add
+     * @param		currentLeading		new value for the height of the line
+     * @return		<CODE>null</CODE> if the chunk could be added completely; if not
+     *				a <CODE>PdfChunk</CODE> containing the part of the chunk that could
+     *				not be added is returned
+     */
+
+    PdfChunk add(PdfChunk chunk, float currentLeading) {
+        //we set line height to correspond to the current leading
+        if (chunk != null && !chunk.toString().equals("")) {
+            //whitespace shouldn't change leading
+            if (!chunk.toString().equals(" ")) {
+                if (this.height < currentLeading || this.line.isEmpty())
+                    this.height = currentLeading;
+            }
+        }
+        return add(chunk);
+    }
+
+    /**
+     * Adds a <CODE>PdfChunk</CODE> to the <CODE>PdfLine</CODE>.
+     *
      * @param		chunk		the <CODE>PdfChunk</CODE> to add
      * @return		<CODE>null</CODE> if the chunk could be added completely; if not
      *				a <CODE>PdfChunk</CODE> containing the part of the chunk that could
