@@ -1,14 +1,11 @@
 package com.itextpdf.text.pdf;
 
 import junit.framework.Assert;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
-import com.itextpdf.text.pdf.PRTokeniser;
 import com.itextpdf.text.pdf.PRTokeniser.TokenType;
-import com.itextpdf.text.pdf.RandomAccessFileOrArray;
+import java.io.IOException;
 
 public class PRTokeniserTest {
 
@@ -29,12 +26,20 @@ public class PRTokeniserTest {
 			Assert.assertEquals("Position " + i, expectedTypes[i], tok.getTokenType());
 		}
 	}
+
+	private void checkNumberValue(String data, String expectedValue) throws IOException {
+		PRTokeniser tok = new PRTokeniser(new RandomAccessFileOrArray(data.getBytes()));
+
+		tok.nextValidToken();
+		Assert.assertEquals("Wrong type", TokenType.NUMBER, tok.getTokenType());
+		Assert.assertEquals("Wrong multiple minus signs number handling", expectedValue, tok.getStringValue());
+	}
 	
 	@Test
 	public void testOneNumber() throws Exception {
 		checkTokenTypes(
 				"/Name1 70",
-				TokenType.NAME, 
+				TokenType.NAME,
 				TokenType.NUMBER,
 				TokenType.ENDOFFILE
 		);
@@ -51,7 +56,17 @@ public class PRTokeniserTest {
 				TokenType.ENDOFFILE
 		);
 	}
-	
+
+	@Test
+	public void testMultipleMinusSignsRealNumber() throws Exception {
+		checkNumberValue("----40.25", "-40.25");
+	}
+
+	@Test
+	public void testMultipleMinusSignsIntegerNumber() throws Exception {
+		checkNumberValue("--9", "0");
+	}
+
 	@Test
 	public void test() throws Exception {
 		checkTokenTypes(
