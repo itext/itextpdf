@@ -42,6 +42,7 @@
  */
 package com.itextpdf.tool.xml.parser;
 
+import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -184,7 +185,7 @@ public class XMLParser {
      */
     public void parse(final InputStream in, final boolean detectEncoding) throws IOException {
         if (detectEncoding) {
-            parse(detectEncoding(in));
+            parse(detectEncoding(new BufferedInputStream(in)));
         } else {
             parse(in);
         }
