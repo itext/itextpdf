@@ -1,5 +1,5 @@
 /*
- * $Id: CommentState.java 437 2013-12-23 12:27:00Z blowagie $
+ * $Id$
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2014 iText Group NV

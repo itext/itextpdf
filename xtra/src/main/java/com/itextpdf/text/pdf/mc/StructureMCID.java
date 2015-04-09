@@ -1,5 +1,5 @@
 /*
- * $Id: StructureMCID.java 5952 2013-08-09 13:38:28Z blowagie $
+ * $Id$
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2014 iText Group NV

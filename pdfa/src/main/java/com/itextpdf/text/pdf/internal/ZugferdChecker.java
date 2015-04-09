@@ -1,5 +1,5 @@
 /*
- * $Id: PdfA3Checker.java 6231 2014-02-11 12:21:02Z pavel-alay $
+ * $Id$
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2014 iText Group NV
