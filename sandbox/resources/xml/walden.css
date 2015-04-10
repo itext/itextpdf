@@ -1,0 +1,94 @@
+body {
+    margin: 10%;
+    font-size: 12pt;
+}
+pre {
+	font-family: Courier;
+	font-size: 9pt;
+	line-height: 12pt;
+    margin: 1em 0;
+    white-space: pre;
+}
+p {
+	font-family: lowagie;
+    margin: 0 0;
+}
+blockquote, figure {
+    margin: 1em 40px;
+}
+center {
+    display: block;
+    text-align: center;
+}
+h1 {
+    font-size: 2em;
+    font-weight: bold;
+    margin: 0.67em 0;
+}
+h2 {
+    font-size: 1.5em;
+    font-weight: bold;
+    margin: 0.83em 0;
+}
+h3 {
+    font-size: 1.17em;
+    font-weight: bold;
+    margin: 1em 0;
+}
+h4{
+    font-size: 1em;
+    font-weight: bold;
+    margin: 1.33em 0;
+}
+h5 {
+    font-size: 0.83em;
+    font-weight: bold;
+    margin: 1.67em 0;
+}
+h6 {
+    font-size: 0.67em;
+    font-weight: bold;
+    margin: 2.33em 0;
+}
+b, strong {
+    font-weight: bold;
+}
+i, cite, em {
+    font-style: italic;
+}
+u {
+    text-decoration: underline;
+}
+s, strike {
+    text-decoration: line-through;
+}
+
+big {
+    font-size: larger;
+}
+small {
+    font-size: smaller;
+}
+sub {
+    font-size: smaller;
+    vertical-align: sub;
+}
+sup {
+    font-size: smaller;
+    vertical-align: super;
+}
+ul {
+    list-style-type: disc;
+}
+
+ol {
+    list-style-type: decimal;
+}
+hr {
+    color: gray;
+    height: 2px;
+}
+a {
+	text-decoration: underline;
+	color: gray;
+}

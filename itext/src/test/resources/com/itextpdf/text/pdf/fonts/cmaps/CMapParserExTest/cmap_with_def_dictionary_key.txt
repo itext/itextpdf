@@ -1,0 +1,39 @@
+/CIDInit /ProcSet findresource begin
+12 dict begin
+begincmap
+/CIDSystemInfo <<
+/Registry (NBWVJK+TimesNewRomanPS+0) def
+/Ordering (T1UV) def
+/Supplement 0 def
+>> def
+/CMapName /NBWVJK+TimesNewRomanPS+0 def
+  1 begincodespacerange
+<1e> <94>
+endcodespacerange
+ 22 beginbfrange
+<1e> <1e> <000a>
+<1f> <1f> <00660069>
+<20> <7e> <0020>
+<7f> <7f> <2022>
+<80> <80> <20ac>
+<81> <81> <2022>
+<82> <82> <201a>
+<83> <83> <0192>
+<84> <84> <201e>
+<85> <85> <2026>
+<86> <87> <2020>
+<88> <88> <02c6>
+<89> <89> <2030>
+<8a> <8a> <0160>
+<8b> <8b> <2039>
+<8c> <8c> <0152>
+<8d> <8d> <2022>
+<8e> <8e> <017d>
+<8f> <8f> <2022>
+<90> <90> <2022>
+<91> <92> <2018>
+<93> <94> <201c>
+endbfrange
+endcmap
+CMapName currentdict /CMap defineresource pop
+end end
