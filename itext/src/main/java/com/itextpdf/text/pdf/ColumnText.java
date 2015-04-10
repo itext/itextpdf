@@ -1760,6 +1760,11 @@ public class ColumnText {
                 while (kTemp > rowIdx && kTemp < table.size() && table.getRow(kTemp).isMayNotBreak()) {
                     kTemp--;
                 }
+
+                if ( kTemp < (table.size() - 1) && !table.getRow(kTemp).isMayNotBreak()) {
+                    kTemp++;
+                }
+
                 if ((kTemp > rowIdx && kTemp < k) || (kTemp == headerRows && table.getRow(headerRows).isMayNotBreak() && table.isLoopCheck())) {
                     yTemp = minY;
                     k = kTemp;
