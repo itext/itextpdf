@@ -1,0 +1,310 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>itext-parent</artifactId>
+        <groupId>com.itextpdf</groupId>
+        <version>1.0.0</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>itextpdf</artifactId>
+    <packaging>jar</packaging>
+    <name>iText, a Free Java-PDF library</name>
+    <version>5.5.4</version>
+    <description>iText, a free Java-PDF library</description>
+    <!-- General Info -->
+    <url>http://itextpdf.com</url>
+    <mailingLists>
+        <mailingList>
+            <name>iText Questions</name>
+            <subscribe>
+                http://lists.sourceforge.net/lists/listinfo/itext-questions
+            </subscribe>
+            <post>itext-questions@lists.sourceforge.net</post>
+            <archive>
+                http://news.gmane.org/gmane.comp.java.lib.itext.general
+            </archive>
+            <otherArchives>
+                <otherArchive>http://itext-general.2136553.n4.nabble.com/</otherArchive>
+                <otherArchive>http://www.junlu.com/2.html</otherArchive>
+                <otherArchive>http://sourceforge.net/mailarchive/forum.php?forum_id=3273</otherArchive>
+                <otherArchive>http://www.mail-archive.com/itext-questions%40lists.sourceforge.net/</otherArchive>
+            </otherArchives>
+        </mailingList>
+    </mailingLists>
+    <developers>
+        <developer>
+            <id>blowagie</id>
+            <name>Bruno Lowagie</name>
+            <email>bruno@lowagie.com</email>
+            <url>http://www.lowagie.com</url>
+        </developer>
+        <developer>
+            <id>psoares33</id>
+            <name>Paulo Soares</name>
+            <email>psoares33@users.sourceforge.net</email>
+        </developer>
+        <developer>
+            <id>mstorer</id>
+            <name>Mark Storer</name>
+            <email>mstorer3772@gmail.com</email>
+        </developer>
+        <developer>
+            <id>trumpetinc</id>
+            <name>Kevin Day</name>
+            <email>kevin@trumpetinc.com</email>
+        </developer>
+        <developer>
+            <id>xlv</id>
+            <name>Xavier Le Vourch</name>
+            <email>xavier.levourch@xlv-labs.com</email>
+            <url>http://www.xlv-labs.com</url>
+        </developer>
+        <developer>
+            <id>redlab_b</id>
+            <name>Balder Van Camp</name>
+            <email>balder@redlab.be</email>
+            <url>http://www.redlab.be/</url>
+        </developer>
+    </developers>
+    <licenses>
+        <license>
+            <name>GNU Affero General Public License v3</name>
+            <url>http://www.fsf.org/licensing/licenses/agpl-3.0.html</url>
+        </license>
+    </licenses>
+    <scm>
+        <connection>scm:svn:http://svn.code.sf.net/p/itext/code/trunk/itext</connection>
+        <url>http://sourceforge.net/p/itext/code</url>
+    </scm>
+
+    <!-- Build -->
+    <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <includes>
+                    <include>**/*.lng</include>
+                    <include>**/*.afm</include>
+                    <include>**/*.html</include>
+                    <include>**/*.txt</include>
+                </includes>
+            </resource>
+        </resources>
+        <testResources>
+            <testResource>
+                <directory>src/main/resources</directory>
+                <includes>
+                    <include>com/itextpdf/text/pdf/fonts/cmaps/**</include>
+                    <include>**/cmap_info.txt</include>
+                </includes>
+            </testResource>
+            <testResource>
+                <directory>src/test/resources</directory>
+                <includes>
+                    <include>**/*.*</include>
+                </includes>
+            </testResource>
+        </testResources>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>buildnumber-maven-plugin</artifactId>
+                <version>1.1</version>
+                <executions>
+                    <execution>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>create</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <doCheck>false</doCheck>
+                    <doUpdate>false</doUpdate>
+                </configuration>
+            </plugin>
+            <plugin>
+                <!-- Add osgi meta data to manifest file -->
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <version>2.3.4</version>
+                <extensions>true</extensions>
+                <executions>
+                    <execution>
+                        <id>bundle-manifest</id>
+                        <phase>process-classes</phase>
+                        <!-- bind the manifest.mf generation after the 'compile' phase -->
+                        <goals>
+                            <goal>manifest</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <!-- unpack bundle, so human can see the manifest without unpacking
+                        the jar -->
+                    <unpackBundle>true</unpackBundle>
+                    <!-- All com.itextpdf.text.* package are 'public' -->
+                    <instructions>
+                        <Export-Package>com.itextpdf.text.*, com.itextpdf.awt.*, com.itextpdf.xmp.*</Export-Package>
+                    </instructions>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>2.3</version>
+                <configuration>
+                    <!-- Use the Bnd generated MANIFEST.MF in the jar -->
+                    <archive>
+                        <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
+                        <manifest>
+                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                        </manifest>
+                        <manifestEntries>
+                            <Implementation-Build>${buildNumber}</Implementation-Build>
+                        </manifestEntries>
+                    </archive>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.9</version>
+                <configuration>
+                    <runOrder>random</runOrder>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+    <profiles>
+        <profile>
+            <id>snapshot</id>
+            <build>
+                <finalName>${project.artifactId}-${project.version}-rev${buildNumber}</finalName>
+            </build>
+        </profile>
+        <profile>
+            <id>all</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <version>2.8</version>
+                        <executions>
+                            <execution>
+                                <id>attach-sources</id>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <links>
+                                <link>http://api.itextpdf.com/itext/</link>
+                            </links>
+                            <footer><![CDATA[
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-11854164-1', 'itextpdf.com');
+  ga('send', 'pageview');
+
+</script>
+    ]]></footer>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <!-- BEGIN: Specific to mapping unit tests and covered code -->
+        <profile>
+            <id>coverage-per-test</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <!-- Minimal supported version is 2.4 -->
+                        <version>2.17</version>
+                        <configuration>
+                            <properties>
+                                <property>
+                                    <name>listener</name>
+                                    <value>org.sonar.java.jacoco.JUnitListener</value>
+                                </property>
+                            </properties>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+
+            <dependencies>
+                <dependency>
+                    <groupId>org.codehaus.sonar-plugins.java</groupId>
+                    <artifactId>sonar-jacoco-listeners</artifactId>
+                    <version>1.2</version>
+                    <scope>test</scope>
+                </dependency>
+            </dependencies>
+        </profile>
+        <!-- END: Specific to mapping unit tests and covered code -->
+    </profiles>
+    <!-- Dependencies -->
+    <dependencies>
+        <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcprov-jdk15on</artifactId>
+            <version>1.49</version>
+            <type>jar</type>
+            <scope>compile</scope>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcpkix-jdk15on</artifactId>
+            <version>1.49</version>
+            <type>jar</type>
+            <scope>compile</scope>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.8.2</version>
+            <type>jar</type>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.santuario</groupId>
+            <artifactId>xmlsec</artifactId>
+            <version>1.5.1</version>
+            <scope>compile</scope>
+            <optional>true</optional>
+        </dependency>
+    </dependencies>
+    <reporting>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <version>2.6</version>
+                <configuration>
+                    <configLocation>checkstyle-config.xml</configLocation>
+                </configuration>
+            </plugin>
+        </plugins>
+    </reporting>
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <argLine>-Xms512m -Xmx1024m</argLine>
+        <checkstyle.header.file>license.txt</checkstyle.header.file>
+        <sonar.language>java</sonar.language>
+        <sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
+        <sonar.jacoco.reportPath>${project.basedir}/target/jacoco.exec</sonar.jacoco.reportPath>
+    </properties>
+</project>

@@ -1,0 +1,45 @@
+.title { color: #000080 }
+.country { color: #000080 }
+.column1 { width:10%; text-align: center; }
+.column2 { width:75%; }
+.column3 { width:15%; }
+
+p {
+    font-size: 12pt;
+    margin: 0.6em 0;
+}
+h1 {
+    font-size: 14pt;
+    font-weight: bold;
+    margin: 0.4em 0;
+}
+table {
+	width:90%;
+    margin-bottom: 0.4pt;
+    margin-top: 0;
+    margin-left: 0;
+    margin-right: 0;
+    text-indent: 0;
+}
+tr {
+    vertical-align: inherit;
+}
+table > tr {
+    vertical-align: middle;
+}
+td {
+	background-color:#F7F7F7;
+	font-size:10pt;
+    padding: 1px;
+    text-align: inherit;
+    vertical-align: inherit;
+}
+th {
+	background-color: #000080;
+	font-size:10pt;
+	color:#FFFFFF;
+    display: table-cell;
+    font-weight: bold;
+    padding: 1px;
+    vertical-align: inherit;
+}
