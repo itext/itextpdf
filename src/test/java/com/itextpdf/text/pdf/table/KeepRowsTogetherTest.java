@@ -37,8 +37,8 @@ public class KeepRowsTogetherTest {
      */
     @Test
     public void testKeepRowsTogetherInCombinationWithHeaders() throws DocumentException, IOException, InterruptedException {
-        String file = "withheaders.pdf";
-        createDocument(file, 0, 10, "Header for table 2", true);
+        final String file = "withheaders.pdf";
+        createDocument(file, 0, 10, "Header for table 2", true, false);
         compareDocuments(file);
     }
 
@@ -52,8 +52,20 @@ public class KeepRowsTogetherTest {
     @Test
     public void testKeepRowsTogetherWithoutHeader() throws DocumentException, IOException, InterruptedException {
         final String file = "withoutheader.pdf";
-        createDocument(file, 1, 10, "Header for table 2 (should be on page 1)", false);
+        createDocument(file, 1, 10, "Header for table 2 (should be on page 1)", false, false);
         compareDocuments(file);
+    }
+
+    /**
+     * Creates two tables. The second table has 1 header row and it should skip the first header. 1 line of table 2 should be on page 1, the rest on page 2.
+     *
+     * @throws FileNotFoundException
+     * @throws DocumentException
+     */
+    @Test
+    public void testKeepRowsTogetherInCombinationWithSkipFirstHeader() throws FileNotFoundException, DocumentException {
+        final String file = "withskipfirstheader.pdf";
+        createDocument(file, 2, 10, "Header for Table 2", true, true);
     }
 
     /**
@@ -66,16 +78,16 @@ public class KeepRowsTogetherTest {
      * @throws FileNotFoundException
      * @throws DocumentException
      */
-    private void createDocument(final String file, final int start, final int end, final String header2Text, final boolean headerRows) throws FileNotFoundException, DocumentException {
+    private void createDocument(final String file, final int start, final int end, final String header2Text, final boolean headerRows, final boolean skipFirstHeader) throws FileNotFoundException, DocumentException {
         Document document = new Document();
 
         PdfWriter.getInstance(document, new FileOutputStream(outFolder + file));
 
         document.open();
 
-        document.add(createTable("Header for table 1", true, 1));
+        document.add(createTable("Header for table 1", true, 1, skipFirstHeader));
 
-        PdfPTable table = createTable(header2Text, headerRows, 2);
+        PdfPTable table = createTable(header2Text, headerRows, 2, skipFirstHeader);
         table.keepRowsTogether(start, end);
         document.add(table);
 
@@ -90,7 +102,7 @@ public class KeepRowsTogetherTest {
      * @param tableNumber number of the table
      * @return PdfPTable
      */
-    private PdfPTable createTable(final String headerText, final boolean headerRows, final int tableNumber) {
+    private PdfPTable createTable(final String headerText, final boolean headerRows, final int tableNumber, final boolean skipFirstHeader) {
         PdfPTable table = new PdfPTable(1);
 
         PdfPCell cell1 = new PdfPCell(new Paragraph(headerText));
@@ -98,6 +110,10 @@ public class KeepRowsTogetherTest {
 
         if ( headerRows ) {
             table.setHeaderRows(1);
+
+            if ( skipFirstHeader ) {
+                table.setSkipFirstHeader(skipFirstHeader);
+            }
         }
 
         for (int i = 0; i < 40; i++) {
