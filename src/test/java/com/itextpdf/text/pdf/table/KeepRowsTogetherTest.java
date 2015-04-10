@@ -13,6 +13,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
@@ -27,39 +28,93 @@ public class KeepRowsTogetherTest {
         TestResourceUtils.purgeTempFiles();
     }
 
+    /**
+     * Creates two tables and both should be on their own page.
+     *
+     * @throws DocumentException
+     * @throws IOException
+     * @throws InterruptedException
+     */
     @Test
     public void testKeepRowsTogetherInCombinationWithHeaders() throws DocumentException, IOException, InterruptedException {
         String file = "withheaders.pdf";
+        createDocument(file, 0, 10, "Header for table 2", true);
+        compareDocuments(file);
+    }
+
+    /**
+     * Creates two tables and the second table should have one row on pae 1 and every other row on page 2.
+     *
+     * @throws DocumentException
+     * @throws IOException
+     * @throws InterruptedException
+     */
+    @Test
+    public void testKeepRowsTogetherWithoutHeader() throws DocumentException, IOException, InterruptedException {
+        final String file = "withoutheader.pdf";
+        createDocument(file, 1, 10, "Header for table 2 (should be on page 1)", false);
+        compareDocuments(file);
+    }
+
+    /**
+     * Utility method
+     *
+     * @param file fileName
+     * @param start start index for the keepRowsTogether method
+     * @param end end index for the keepRowsTogether method
+     * @param header2Text text for the second table's header
+     * @throws FileNotFoundException
+     * @throws DocumentException
+     */
+    private void createDocument(final String file, final int start, final int end, final String header2Text, final boolean headerRows) throws FileNotFoundException, DocumentException {
         Document document = new Document();
+
         PdfWriter.getInstance(document, new FileOutputStream(outFolder + file));
 
         document.open();
 
-        PdfPTable table = new PdfPTable(1);
+        document.add(createTable("Header for table 1", true, 1));
 
-        PdfPCell cell1 = new PdfPCell(new Paragraph("Header for table 1"));
-        table.addCell(cell1);
-        table.setHeaderRows(1);
-        for (int i = 0; i < 40; i++) {
-            table.addCell("Tab 1, line " + i);
-        }
-
+        PdfPTable table = createTable(header2Text, headerRows, 2);
+        table.keepRowsTogether(start, end);
         document.add(table);
 
-        PdfPTable table2 = new PdfPTable(1);
+        document.close();
+    }
 
-        PdfPCell cell2 = new PdfPCell(new Paragraph("Header for table 2"));
-        table2.addCell(cell2);
-        table2.setHeaderRows(1);
-        for (int i = 0; i < 40; i++) {
-            table2.addCell("Tab 2, line " + i);
+    /**
+     * Utility ethod that creates a table with 41 rows. One of which may or may not be a header.
+     *
+     * @param headerText text for the first cell
+     * @param headerRows is the first row a header
+     * @param tableNumber number of the table
+     * @return PdfPTable
+     */
+    private PdfPTable createTable(final String headerText, final boolean headerRows, final int tableNumber) {
+        PdfPTable table = new PdfPTable(1);
+
+        PdfPCell cell1 = new PdfPCell(new Paragraph(headerText));
+        table.addCell(cell1);
+
+        if ( headerRows ) {
+            table.setHeaderRows(1);
         }
 
-        table2.keepRowsTogether(0, 10);
-        document.add(table2);
+        for (int i = 0; i < 40; i++) {
+            table.addCell("Tab " + tableNumber + ", line " + i);
+        }
 
-        document.close();
+        return table;
+    }
 
+    /**
+     * Utility method that checks the created file against the cmp file
+     * @param file name of the output document
+     * @throws DocumentException
+     * @throws InterruptedException
+     * @throws IOException
+     */
+    private void compareDocuments(final String file) throws DocumentException, InterruptedException, IOException {
         // compare
         CompareTool compareTool = new CompareTool();
         String errorMessage = compareTool.compareByContent(outFolder + file, cmpFolder + file, outFolder, "diff");
@@ -67,5 +122,4 @@ public class KeepRowsTogetherTest {
             Assert.fail(errorMessage);
         }
     }
-
 }
