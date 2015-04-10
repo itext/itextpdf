@@ -1,0 +1,417 @@
+<moviecountries>
+<title>Countries and Movies</title>
+<description>This is an overview of all the countries in our movie database.</description>
+<moviecountry>
+<country>Argentina</country>
+<description>This is a table containing all the movies that were entirely or partially produced in Argentina:</description>
+<movies>
+<movieheader><columnheader1>Year</columnheader1><columnheader2>Title</columnheader2><columnheader3>Runlength</columnheader3></movieheader>
+<movie><column1>2003</column1><column2>Captive</column2><column3>115</column3></movie>
+<movie><column1>2002</column1><column2>Kamchatka</column2><column3>106</column3></movie>
+<movie><column1>2000</column1><column2>Nine Queens</column2><column3>114</column3></movie>
+</movies>
+</moviecountry>
+<moviecountry>
+<country>Australia</country>
+<description>This is a table containing all the movies that were entirely or partially produced in Australia:</description>
+<movies>
+<movieheader><columnheader1>Year</columnheader1><columnheader2>Title</columnheader2><columnheader3>Runlength</columnheader3></movieheader>
+<movie><column1>2001</column1><column2>Lantana</column2><column3>121</column3></movie>
+<movie><column1>2007</column1><column2>Noise</column2><column3>108</column3></movie>
+<movie><column1>2006</column1><column2>Superman Returns</column2><column3>154</column3></movie>
+</movies>
+</moviecountry>
+<moviecountry>
+<country>Austria</country>
+<description>This is a table containing all the movies that were entirely or partially produced in Austria:</description>
+<movies>
+<movieheader><columnheader1>Year</columnheader1><columnheader2>Title</columnheader2><columnheader3>Runlength</columnheader3></movieheader>
+<movie><column1>2007</column1><column2>The Counterfeiters</column2><column3>98</column3></movie>
+</movies>
+</moviecountry>
+<moviecountry>
+<country>Belgium</country>
+<description>This is a table containing all the movies that were entirely or partially produced in Belgium:</description>
+<movies>
+<movieheader><columnheader1>Year</columnheader1><columnheader2>Title</columnheader2><columnheader3>Runlength</columnheader3></movieheader>
+<movie><column1>2008</column1><column2>Moscou, Belgium</column2><column3>102</column3></movie>
+<movie><column1>2001</column1><column2>No Man's Land</column2><column3>98</column3></movie>
+</movies>
+</moviecountry>
+<moviecountry>
+<country>Bosnia and Herzegovina</country>
+<description>This is a table containing all the movies that were entirely or partially produced in Bosnia and Herzegovina:</description>
+<movies>
+<movieheader><columnheader1>Year</columnheader1><columnheader2>Title</columnheader2><columnheader3>Runlength</columnheader3></movieheader>
+<movie><column1>2001</column1><column2>No Man's Land</column2><column3>98</column3></movie>
+</movies>
+</moviecountry>
+<moviecountry>
+<country>Brazil</country>
+<description>This is a table containing all the movies that were entirely or partially produced in Brazil:</description>
+<movies>
+<movieheader><columnheader1>Year</columnheader1><columnheader2>Title</columnheader2><columnheader3>Runlength</columnheader3></movieheader>
+<movie><column1>2007</column1><column2>The Pope's Toilet</column2><column3>90</column3></movie>
+<movie><column1>2006</column1><column2>The Year My Parents Went on Vacation</column2><column3>104</column3></movie>
+</movies>
+</moviecountry>
+<moviecountry>
+<country>Canada</country>
+<description>This is a table containing all the movies that were entirely or partially produced in Canada:</description>
+<movies>
+<movieheader><columnheader1>Year</columnheader1><columnheader2>Title</columnheader2><columnheader3>Runlength</columnheader3></movieheader>
+<movie><column1>2005</column1><column2>Brokeback Mountain</column2><column3>134</column3></movie>
+<movie><column1>2002</column1><column2>Frida</column2><column3>123</column3></movie>
+<movie><column1>2005</column1><column2>Lie with Me</column2><column3>93</column3></movie>
+<movie><column1>1990</column1><column2>Pump Up the Volume</column2><column3>102</column3></movie>
+<movie><column1>2000</column1><column2>X-Men</column2><column3>104</column3></movie>
+<movie><column1>2006</column1><column2>X-Men: The Last Stand</column2><column3>104</column3></movie>
+<movie><column1>2003</column1><column2>X2</column2><column3>133</column3></movie>
+</movies>
+</moviecountry>
+<moviecountry>
+<country>Chile</country>
+<description>This is a table containing all the movies that were entirely or partially produced in Chile:</description>
+<movies>
+<movieheader><columnheader1>Year</columnheader1><columnheader2>Title</columnheader2><columnheader3>Runlength</columnheader3></movieheader>
+<movie><column1>2004</column1><column2>Machuca</column2><column3>121</column3></movie>
+</movies>
+</moviecountry>
+<moviecountry>
+<country>China</country>
+<description>This is a table containing all the movies that were entirely or partially produced in China:</description>
+<movies>
+<movieheader><columnheader1>Year</columnheader1><columnheader2>Title</columnheader2><columnheader3>Runlength</columnheader3></movieheader>
+<movie><column1>2000</column1><column2>Crouching Tiger, Hidden Dragon</column2><column3>120</column3></movie>
+<movie><column1>2006</column1><column2>Curse of the Golden Flower</column2><column3>114</column3></movie>
+<movie><column1>2002</column1><column2>Hero</column2><column3>99</column3></movie>
+<movie><column1>2004</column1><column2>House of Flying Daggers</column2><column3>119</column3></movie>
+<movie><column1>1990</column1><column2>Ju Dou</column2><column3>95</column3></movie>
+<movie><column1>1987</column1><column2>Red Sorghum</column2><column3>91</column3></movie>
+<movie><column1>1999</column1><column2>The Road Home</column2><column3>89</column3></movie>
+</movies>
+</moviecountry>
+<moviecountry>
+<country>Denmark</country>
+<description>This is a table containing all the movies that were entirely or partially produced in Denmark:</description>
+<movies>
+<movieheader><columnheader1>Year</columnheader1><columnheader2>Title</columnheader2><columnheader3>Runlength</columnheader3></movieheader>
+<movie><column1>1998</column1><column2>The Celebration</column2><column3>105</column3></movie>
+<movie><column1>2003</column1><column2>Kopps</column2><column3>90</column3></movie>
+<movie><column1>1999</column1><column2>Love at First Hiccough</column2><column3>85</column3></movie>
+<movie><column1>2006</column1><column2>Princess</column2><column3>90</column3></movie>
+</movies>
+</moviecountry>
+<moviecountry>
+<country>France</country>
+<description>This is a table containing all the movies that were entirely or partially produced in France:</description>
+<movies>
+<movieheader><columnheader1>Year</columnheader1><columnheader2>Title</columnheader2><columnheader3>Runlength</columnheader3></movieheader>
+<movie><column1>2001</column1><column2>Amélie</column2><column3>122</column3></movie>
+<movie><column1>1986</column1><column2>Betty Blue</column2><column3>120</column3></movie>
+<movie><column1>2004</column1><column2>Brides</column2><column3>128</column3></movie>
+<movie><column1>1988</column1><column2>Cinema Paradiso</column2><column3>155</column3></movie>
+<movie><column1>1991</column1><column2>Delicatessen</column2><column3>99</column3></movie>
+<movie><column1>1999</column1><column2>Himalaya</column2><column3>108</column3></movie>
+<movie><column1>1986</column1><column2>Jean de Florette</column2><column3>120</column3></movie>
+<movie><column1>1995</column1><column2>Leaving Las Vegas</column2><column3>111</column3></movie>
+<movie><column1>2004</column1><column2>Machuca</column2><column3>121</column3></movie>
+<movie><column1>1986</column1><column2>Manon des sources</column2><column3>113</column3></movie>
+<movie><column1>2001</column1><column2>No Man's Land</column2><column3>98</column3></movie>
+<movie><column1>1991</column1><column2>Terminator 2: Judgment Day</column2><column3>137</column3></movie>
+<movie><column1>2007</column1><column2>The Pope's Toilet</column2><column3>90</column3></movie>
+<movie><column1>2004</column1><column2>A Very Long Engagement</column2><column3>133</column3></movie>
+</movies>
+</moviecountry>
+<moviecountry>
+<country>Germany</country>
+<description>This is a table containing all the movies that were entirely or partially produced in Germany:</description>
+<movies>
+<movieheader><columnheader1>Year</columnheader1><columnheader2>Title</columnheader2><columnheader3>Runlength</columnheader3></movieheader>
+<movie><column1>2001</column1><column2>Amélie</column2><column3>122</column3></movie>
+<movie><column1>2002</column1><column2>Confessions of a Dangerous Mind</column2><column3>113</column3></movie>
+<movie><column1>2007</column1><column2>The Counterfeiters</column2><column3>98</column3></movie>
+<movie><column1>1999</column1><column2>Fight Club</column2><column3>139</column3></movie>
+<movie><column1>2003</column1><column2>Good Bye Lenin!</column2><column3>121</column3></movie>
+<movie><column1>2001</column1><column2>Lantana</column2><column3>121</column3></movie>
+<movie><column1>2006</column1><column2>Princess</column2><column3>90</column3></movie>
+<movie><column1>2003</column1><column2>Spring, Summer, Autumn, Winter... and Spring</column2><column3>103</column3></movie>
+<movie><column1>2003</column1><column2>Terminator 3: Rise of the Machines</column2><column3>109</column3></movie>
+</movies>
+</moviecountry>
+<moviecountry>
+<country>Greece</country>
+<description>This is a table containing all the movies that were entirely or partially produced in Greece:</description>
+<movies>
+<movieheader><columnheader1>Year</columnheader1><columnheader2>Title</columnheader2><columnheader3>Runlength</columnheader3></movieheader>
+<movie><column1>2004</column1><column2>Brides</column2><column3>128</column3></movie>
+</movies>
+</moviecountry>
+<moviecountry>
+<country>Hong Kong</country>
+<description>This is a table containing all the movies that were entirely or partially produced in Hong Kong:</description>
+<movies>
+<movieheader><columnheader1>Year</columnheader1><columnheader2>Title</columnheader2><columnheader3>Runlength</columnheader3></movieheader>
+<movie><column1>2000</column1><column2>Crouching Tiger, Hidden Dragon</column2><column3>120</column3></movie>
+<movie><column1>2006</column1><column2>Curse of the Golden Flower</column2><column3>114</column3></movie>
+<movie><column1>2002</column1><column2>Hero</column2><column3>99</column3></movie>
+<movie><column1>2004</column1><column2>House of Flying Daggers</column2><column3>119</column3></movie>
+</movies>
+</moviecountry>
+<moviecountry>
+<country>India</country>
+<description>This is a table containing all the movies that were entirely or partially produced in India:</description>
+<movies>
+<movieheader><columnheader1>Year</columnheader1><columnheader2>Title</columnheader2><columnheader3>Runlength</columnheader3></movieheader>
+<movie><column1>2001</column1><column2>Lagaan: Once Upon a Time in India</column2><column3>224</column3></movie>
+</movies>
+</moviecountry>
+<moviecountry>
+<country>Israel</country>
+<description>This is a table containing all the movies that were entirely or partially produced in Israel:</description>
+<movies>
+<movieheader><columnheader1>Year</columnheader1><columnheader2>Title</columnheader2><columnheader3>Runlength</columnheader3></movieheader>
+<movie><column1>2003</column1><column2>Nina's Tragedies</column2><column3>106</column3></movie>
+</movies>
+</moviecountry>
+<moviecountry>
+<country>Italy</country>
+<description>This is a table containing all the movies that were entirely or partially produced in Italy:</description>
+<movies>
+<movieheader><columnheader1>Year</columnheader1><columnheader2>Title</columnheader2><columnheader3>Runlength</columnheader3></movieheader>
+<movie><column1>1988</column1><column2>Cinema Paradiso</column2><column3>155</column3></movie>
+<movie><column1>1986</column1><column2>Jean de Florette</column2><column3>120</column3></movie>
+<movie><column1>2002</column1><column2>Kamchatka</column2><column3>106</column3></movie>
+<movie><column1>1986</column1><column2>Manon des sources</column2><column3>113</column3></movie>
+<movie><column1>2001</column1><column2>No Man's Land</column2><column3>98</column3></movie>
+</movies>
+</moviecountry>
+<moviecountry>
+<country>Japan</country>
+<description>This is a table containing all the movies that were entirely or partially produced in Japan:</description>
+<movies>
+<movieheader><columnheader1>Year</columnheader1><columnheader2>Title</columnheader2><columnheader3>Runlength</columnheader3></movieheader>
+<movie><column1>1988</column1><column2>Akira</column2><column3>124</column3></movie>
+<movie><column1>2000</column1><column2>Battle Royale</column2><column3>114</column3></movie>
+<movie><column1>1995</column1><column2>Ghost in the Shell</column2><column3>82</column3></movie>
+<movie><column1>1998</column1><column2>Give It All</column2><column3>120</column3></movie>
+<movie><column1>1958</column1><column2>Hidden Fortress</column2><column3>139</column3></movie>
+<movie><column1>2004</column1><column2>Howl's Moving Castle</column2><column3>119</column3></movie>
+<movie><column1>1952</column1><column2>Ikiru</column2><column3>143</column3></movie>
+<movie><column1>1990</column1><column2>Ju Dou</column2><column3>95</column3></movie>
+<movie><column1>1950</column1><column2>Rashômon</column2><column3>88</column3></movie>
+<movie><column1>1962</column1><column2>Sanjuro</column2><column3>96</column3></movie>
+<movie><column1>1954</column1><column2>The Seven Samurai</column2><column3>160</column3></movie>
+<movie><column1>2001</column1><column2>Spirited Away</column2><column3>125</column3></movie>
+<movie><column1>1961</column1><column2>Yojimbo</column2><column3>110</column3></movie>
+</movies>
+</moviecountry>
+<moviecountry>
+<country>Mexico</country>
+<description>This is a table containing all the movies that were entirely or partially produced in Mexico:</description>
+<movies>
+<movieheader><columnheader1>Year</columnheader1><columnheader2>Title</columnheader2><columnheader3>Runlength</columnheader3></movieheader>
+<movie><column1>2000</column1><column2>Amores perros</column2><column3>154</column3></movie>
+<movie><column1>1993</column1><column2>Cronos</column2><column3>94</column3></movie>
+<movie><column1>2001</column1><column2>The Devil's Backbone</column2><column3>106</column3></movie>
+<movie><column1>2002</column1><column2>Frida</column2><column3>123</column3></movie>
+<movie><column1>2006</column1><column2>Pan's Labyrinth</column2><column3>119</column3></movie>
+</movies>
+</moviecountry>
+<moviecountry>
+<country>Nepal</country>
+<description>This is a table containing all the movies that were entirely or partially produced in Nepal:</description>
+<movies>
+<movieheader><columnheader1>Year</columnheader1><columnheader2>Title</columnheader2><columnheader3>Runlength</columnheader3></movieheader>
+<movie><column1>1999</column1><column2>Himalaya</column2><column3>108</column3></movie>
+</movies>
+</moviecountry>
+<moviecountry>
+<country>Norway</country>
+<description>This is a table containing all the movies that were entirely or partially produced in Norway:</description>
+<movies>
+<movieheader><columnheader1>Year</columnheader1><columnheader2>Title</columnheader2><columnheader3>Runlength</columnheader3></movieheader>
+<movie><column1>2001</column1><column2>Elling</column2><column3>89</column3></movie>
+<movie><column1>2003</column1><column2>Kitchen Stories</column2><column3>95</column3></movie>
+</movies>
+</moviecountry>
+<moviecountry>
+<country>Russia</country>
+<description>This is a table containing all the movies that were entirely or partially produced in Russia:</description>
+<movies>
+<movieheader><columnheader1>Year</columnheader1><columnheader2>Title</columnheader2><columnheader3>Runlength</columnheader3></movieheader>
+<movie><column1>2004</column1><column2>You, I Love</column2><column3>86</column3></movie>
+</movies>
+</moviecountry>
+<moviecountry>
+<country>Slovenia</country>
+<description>This is a table containing all the movies that were entirely or partially produced in Slovenia:</description>
+<movies>
+<movieheader><columnheader1>Year</columnheader1><columnheader2>Title</columnheader2><columnheader3>Runlength</columnheader3></movieheader>
+<movie><column1>2001</column1><column2>No Man's Land</column2><column3>98</column3></movie>
+</movies>
+</moviecountry>
+<moviecountry>
+<country>South Korea</country>
+<description>This is a table containing all the movies that were entirely or partially produced in South Korea:</description>
+<movies>
+<movieheader><columnheader1>Year</columnheader1><columnheader2>Title</columnheader2><columnheader3>Runlength</columnheader3></movieheader>
+<movie><column1>2004</column1><column2>3-Iron</column2><column3>88</column3></movie>
+<movie><column1>2003</column1><column2>A Good Lawyer's Wife</column2><column3>104</column3></movie>
+<movie><column1>2000</column1><column2>The Isle</column2><column3>90</column3></movie>
+<movie><column1>2003</column1><column2>Spring, Summer, Autumn, Winter... and Spring</column2><column3>103</column3></movie>
+</movies>
+</moviecountry>
+<moviecountry>
+<country>Spain</country>
+<description>This is a table containing all the movies that were entirely or partially produced in Spain:</description>
+<movies>
+<movieheader><columnheader1>Year</columnheader1><columnheader2>Title</columnheader2><columnheader3>Runlength</columnheader3></movieheader>
+<movie><column1>2001</column1><column2>The Devil's Backbone</column2><column3>106</column3></movie>
+<movie><column1>2002</column1><column2>Kamchatka</column2><column3>106</column3></movie>
+<movie><column1>2004</column1><column2>Machuca</column2><column3>121</column3></movie>
+<movie><column1>2006</column1><column2>Pan's Labyrinth</column2><column3>119</column3></movie>
+<movie><column1>2006</column1><column2>Salvador</column2><column3>134</column3></movie>
+</movies>
+</moviecountry>
+<moviecountry>
+<country>Sweden</country>
+<description>This is a table containing all the movies that were entirely or partially produced in Sweden:</description>
+<movies>
+<movieheader><columnheader1>Year</columnheader1><columnheader2>Title</columnheader2><columnheader3>Runlength</columnheader3></movieheader>
+<movie><column1>1998</column1><column2>The Celebration</column2><column3>105</column3></movie>
+<movie><column1>1999</column1><column2>In Bed With Santa</column2><column3>98</column3></movie>
+<movie><column1>2003</column1><column2>Kitchen Stories</column2><column3>95</column3></movie>
+<movie><column1>2003</column1><column2>Kopps</column2><column3>90</column3></movie>
+</movies>
+</moviecountry>
+<moviecountry>
+<country>Switzerland</country>
+<description>This is a table containing all the movies that were entirely or partially produced in Switzerland:</description>
+<movies>
+<movieheader><columnheader1>Year</columnheader1><columnheader2>Title</columnheader2><columnheader3>Runlength</columnheader3></movieheader>
+<movie><column1>1999</column1><column2>Himalaya</column2><column3>108</column3></movie>
+<movie><column1>1986</column1><column2>Jean de Florette</column2><column3>120</column3></movie>
+<movie><column1>1986</column1><column2>Manon des sources</column2><column3>113</column3></movie>
+</movies>
+</moviecountry>
+<moviecountry>
+<country>Taiwan</country>
+<description>This is a table containing all the movies that were entirely or partially produced in Taiwan:</description>
+<movies>
+<movieheader><columnheader1>Year</columnheader1><columnheader2>Title</columnheader2><columnheader3>Runlength</columnheader3></movieheader>
+<movie><column1>2000</column1><column2>Crouching Tiger, Hidden Dragon</column2><column3>120</column3></movie>
+<movie><column1>1994</column1><column2>Eat Drink Man Woman</column2><column3>123</column3></movie>
+<movie><column1>1992</column1><column2>Pushing Hands</column2><column3>105</column3></movie>
+<movie><column1>1993</column1><column2>The Wedding Banquet</column2><column3>106</column3></movie>
+</movies>
+</moviecountry>
+<moviecountry>
+<country>Thailand</country>
+<description>This is a table containing all the movies that were entirely or partially produced in Thailand:</description>
+<movies>
+<movieheader><columnheader1>Year</columnheader1><columnheader2>Title</columnheader2><columnheader3>Runlength</columnheader3></movieheader>
+<movie><column1>2000</column1><column2>Tears of the Black Tiger</column2><column3>110</column3></movie>
+</movies>
+</moviecountry>
+<moviecountry>
+<country>United Kingdom</country>
+<description>This is a table containing all the movies that were entirely or partially produced in United Kingdom:</description>
+<movies>
+<movieheader><columnheader1>Year</columnheader1><columnheader2>Title</columnheader2><columnheader3>Runlength</columnheader3></movieheader>
+<movie><column1>1968</column1><column2>2001: A Space Odyssey</column2><column3>141</column3></movie>
+<movie><column1>1975</column1><column2>Barry Lyndon</column2><column3>184</column3></movie>
+<movie><column1>1971</column1><column2>A Clockwork Orange</column2><column3>136</column3></movie>
+<movie><column1>2002</column1><column2>Confessions of a Dangerous Mind</column2><column3>113</column3></movie>
+<movie><column1>2008</column1><column2>The Dark Knight</column2><column3>152</column3></movie>
+<movie><column1>1964</column1><column2>Dr. Strangelove or: How I Learned to Stop Worrying and Love the Bomb</column2><column3>93</column3></movie>
+<movie><column1>1999</column1><column2>Eyes Wide Shut</column2><column3>159</column3></movie>
+<movie><column1>1987</column1><column2>Full Metal Jacket</column2><column3>116</column3></movie>
+<movie><column1>1999</column1><column2>Himalaya</column2><column3>108</column3></movie>
+<movie><column1>1962</column1><column2>Lawrence of Arabia</column2><column3>216</column3></movie>
+<movie><column1>1995</column1><column2>Leaving Las Vegas</column2><column3>111</column3></movie>
+<movie><column1>1962</column1><column2>Lolita</column2><column3>152</column3></movie>
+<movie><column1>2004</column1><column2>Machuca</column2><column3>121</column3></movie>
+<movie><column1>2001</column1><column2>No Man's Land</column2><column3>98</column3></movie>
+<movie><column1>2006</column1><column2>Salvador</column2><column3>134</column3></movie>
+<movie><column1>1980</column1><column2>The Shining</column2><column3>142</column3></movie>
+<movie><column1>2003</column1><column2>Terminator 3: Rise of the Machines</column2><column3>109</column3></movie>
+<movie><column1>1984</column1><column2>The Terminator</column2><column3>108</column3></movie>
+<movie><column1>2006</column1><column2>X-Men: The Last Stand</column2><column3>104</column3></movie>
+</movies>
+</moviecountry>
+<moviecountry>
+<country>United States</country>
+<description>This is a table containing all the movies that were entirely or partially produced in United States:</description>
+<movies>
+<movieheader><columnheader1>Year</columnheader1><columnheader2>Title</columnheader2><columnheader3>Runlength</columnheader3></movieheader>
+<movie><column1>1968</column1><column2>2001: A Space Odyssey</column2><column3>141</column3></movie>
+<movie><column1>1986</column1><column2>About Last Night...</column2><column3>113</column3></movie>
+<movie><column1>2002</column1><column2>Adaptation</column2><column3>114</column3></movie>
+<movie><column1>2005</column1><column2>Batman Begins</column2><column3>140</column3></movie>
+<movie><column1>1999</column1><column2>Being John Malkovich</column2><column3>112</column3></movie>
+<movie><column1>1985</column1><column2>The Breakfast Club</column2><column3>97</column3></movie>
+<movie><column1>2004</column1><column2>Brides</column2><column3>128</column3></movie>
+<movie><column1>2005</column1><column2>Brokeback Mountain</column2><column3>134</column3></movie>
+<movie><column1>1941</column1><column2>Citizen Kane</column2><column3>119</column3></movie>
+<movie><column1>1971</column1><column2>A Clockwork Orange</column2><column3>136</column3></movie>
+<movie><column1>2002</column1><column2>Confessions of a Dangerous Mind</column2><column3>113</column3></movie>
+<movie><column1>2000</column1><column2>Crouching Tiger, Hidden Dragon</column2><column3>120</column3></movie>
+<movie><column1>2008</column1><column2>The Dark Knight</column2><column3>152</column3></movie>
+<movie><column1>2001</column1><column2>Donnie Darko</column2><column3>113</column3></movie>
+<movie><column1>1994</column1><column2>Eat Drink Man Woman</column2><column3>123</column3></movie>
+<movie><column1>2004</column1><column2>Eternal Sunshine of the Spotless Mind</column2><column3>108</column3></movie>
+<movie><column1>1999</column1><column2>Eyes Wide Shut</column2><column3>159</column3></movie>
+<movie><column1>1999</column1><column2>Fight Club</column2><column3>139</column3></movie>
+<movie><column1>2002</column1><column2>Frida</column2><column3>123</column3></movie>
+<movie><column1>1987</column1><column2>Full Metal Jacket</column2><column3>116</column3></movie>
+<movie><column1>1995</column1><column2>Ghost in the Shell</column2><column3>82</column3></movie>
+<movie><column1>2007</column1><column2>Gone Baby Gone</column2><column3>114</column3></movie>
+<movie><column1>1997</column1><column2>The Ice Storm</column2><column3>112</column3></movie>
+<movie><column1>1989</column1><column2>Indiana Jones and the Last Crusade</column2><column3>127</column3></movie>
+<movie><column1>1955</column1><column2>Killer's Kiss</column2><column3>67</column3></movie>
+<movie><column1>1956</column1><column2>The Killing</column2><column3>85</column3></movie>
+<movie><column1>1995</column1><column2>Leaving Las Vegas</column2><column3>111</column3></movie>
+<movie><column1>2006</column1><column2>Little Miss Sunshine</column2><column3>101</column3></movie>
+<movie><column1>1991</column1><column2>My Own Private Idaho</column2><column3>104</column3></movie>
+<movie><column1>2006</column1><column2>Pan's Labyrinth</column2><column3>119</column3></movie>
+<movie><column1>1957</column1><column2>Paths of Glory</column2><column3>87</column3></movie>
+<movie><column1>2003</column1><column2>Pieces of April</column2><column3>80</column3></movie>
+<movie><column1>1986</column1><column2>Pretty in Pink</column2><column3>96</column3></movie>
+<movie><column1>1990</column1><column2>Pump Up the Volume</column2><column3>102</column3></movie>
+<movie><column1>1988</column1><column2>Rain Man</column2><column3>133</column3></movie>
+<movie><column1>2000</column1><column2>Requiem for a Dream</column2><column3>102</column3></movie>
+<movie><column1>1988</column1><column2>Running on Empty</column2><column3>116</column3></movie>
+<movie><column1>1980</column1><column2>The Shining</column2><column3>142</column3></movie>
+<movie><column1>1984</column1><column2>Sixteen Candles</column2><column3>93</column3></movie>
+<movie><column1>1987</column1><column2>Some Kind of Wonderful</column2><column3>95</column3></movie>
+<movie><column1>1960</column1><column2>Spartacus</column2><column3>184</column3></movie>
+<movie><column1>2002</column1><column2>Spider-Man</column2><column3>121</column3></movie>
+<movie><column1>2004</column1><column2>Spider-Man 2</column2><column3>127</column3></movie>
+<movie><column1>2007</column1><column2>Spider-Man 3</column2><column3>139</column3></movie>
+<movie><column1>1985</column1><column2>St. Elmo's Fire</column2><column3>110</column3></movie>
+<movie><column1>1986</column1><column2>Stand by Me</column2><column3>89</column3></movie>
+<movie><column1>2001</column1><column2>Stanley Kubrick: A Life in Pictures</column2><column3>142</column3></movie>
+<movie><column1>2006</column1><column2>Superman Returns</column2><column3>154</column3></movie>
+<movie><column1>1991</column1><column2>Terminator 2: Judgment Day</column2><column3>137</column3></movie>
+<movie><column1>2003</column1><column2>Terminator 3: Rise of the Machines</column2><column3>109</column3></movie>
+<movie><column1>1984</column1><column2>The Terminator</column2><column3>108</column3></movie>
+<movie><column1>1993</column1><column2>True Romance</column2><column3>120</column3></movie>
+<movie><column1>2004</column1><column2>A Very Long Engagement</column2><column3>133</column3></movie>
+<movie><column1>1993</column1><column2>The Wedding Banquet</column2><column3>106</column3></movie>
+<movie><column1>1989</column1><column2>When Harry Met Sally...</column2><column3>96</column3></movie>
+<movie><column1>1990</column1><column2>Wild at Heart</column2><column3>124</column3></movie>
+<movie><column1>2000</column1><column2>X-Men</column2><column3>104</column3></movie>
+<movie><column1>2006</column1><column2>X-Men: The Last Stand</column2><column3>104</column3></movie>
+<movie><column1>2003</column1><column2>X2</column2><column3>133</column3></movie>
+</movies>
+</moviecountry>
+<moviecountry>
+<country>Uruguay</country>
+<description>This is a table containing all the movies that were entirely or partially produced in Uruguay:</description>
+<movies>
+<movieheader><columnheader1>Year</columnheader1><columnheader2>Title</columnheader2><columnheader3>Runlength</columnheader3></movieheader>
+<movie><column1>2007</column1><column2>The Pope's Toilet</column2><column3>90</column3></movie>
+</movies>
+</moviecountry>
+</moviecountries>
