@@ -144,6 +144,6 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
-/target/
+target/
 nbactions*.xml
 *.patch
