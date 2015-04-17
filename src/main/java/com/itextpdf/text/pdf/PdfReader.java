@@ -313,6 +313,50 @@ public class PdfReader implements PdfViewerPreferences {
 
     /**
      * Reads and parses a PDF document.
+     *
+     * @param pdfIn the document as a byte array
+     * @param certificate
+     * @param externalDecryptionProcess
+     * @throws IOException on error
+     */
+    public PdfReader(final byte[] pdfIn, Certificate certificate, final ExternalDecryptionProcess externalDecryptionProcess) throws IOException {
+        this(
+                new RandomAccessSourceFactory()
+                        .setForceRead(false)
+                        .setUsePlainRandomAccess(Document.plainRandomAccess)
+                        .createSource(pdfIn),
+                false,
+                null,
+                certificate,
+                null,
+                null,
+                externalDecryptionProcess,
+                true
+        );
+
+    }
+
+    /**
+     * Reads and parses a PDF document.
+     *
+     * @param inputStream the PDF file
+     * @param certificate
+     * @param externalDecryptionProcess
+     * @throws IOException on error
+     */
+    public PdfReader(final InputStream inputStream, final Certificate certificate, final ExternalDecryptionProcess externalDecryptionProcess) throws IOException {
+        this(new RandomAccessSourceFactory().setForceRead(false).setUsePlainRandomAccess(Document.plainRandomAccess).createSource(inputStream),
+                false,
+                null,
+                certificate,
+                null,
+                null,
+                externalDecryptionProcess,
+                true);
+    }
+
+    /**
+     * Reads and parses a PDF document.
      * @param url the URL of the document
      * @throws IOException on error
      */
