@@ -129,7 +129,7 @@ public class PdfCopy extends PdfWriter {
     private ArrayList<String> calculationOrder;
     private HashMap<String, Object> fieldTree;
     private HashMap<Integer, PdfIndirectObject> unmergedMap;
-    private HashSet<PdfIndirectObject> unmergedSet;
+    private HashMap<RefKey, PdfIndirectObject> unmergedIndirectRefsMap;
     private HashMap<Integer, PdfIndirectObject> mergedMap;
     private HashSet<PdfIndirectObject> mergedSet;
     private boolean mergeFieldsInternalCall = false;
@@ -217,7 +217,7 @@ public class PdfCopy extends PdfWriter {
         calculationOrder = new ArrayList<String>();
         fieldTree = new HashMap<String, Object>();
         unmergedMap = new HashMap<Integer, PdfIndirectObject>();
-        unmergedSet = new HashSet<PdfIndirectObject>();
+        unmergedIndirectRefsMap = new HashMap<RefKey, PdfIndirectObject>();
         mergedMap = new HashMap<Integer, PdfIndirectObject>();
         mergedSet = new HashSet<PdfIndirectObject>();
     }
@@ -846,7 +846,7 @@ public class PdfCopy extends PdfWriter {
                     mergedSet.add(iobj);
                 } else {
                     unmergedMap.put(annotId.intValue(), iobj);
-                    unmergedSet.add(iobj);
+                    unmergedIndirectRefsMap.put(new RefKey(iobj.number, iobj.generation), iobj);
                 }
             }
         }
@@ -1168,7 +1168,7 @@ public class PdfCopy extends PdfWriter {
             updateAnnotationReferences(object.object);
             if (object.object.isDictionary() || object.object.isStream()) {
                 PdfDictionary dictionary = (PdfDictionary)object.object;
-                if (unmergedSet.contains(object)) {
+                if (unmergedIndirectRefsMap.containsKey(new RefKey(object.number, object.generation))) {
                     PdfNumber annotId = dictionary.getAsNumber(PdfCopy.annotId);
                     if (annotId != null && mergedMap.containsKey(annotId.intValue()))
                         skipWriting = true;
@@ -1209,16 +1209,14 @@ public class PdfCopy extends PdfWriter {
             for (int i = 0; i < array.size(); i++) {
                 PdfObject o = array.getPdfObject(i);
                 if (o != null && o.type() == 0) {
-                    for (PdfIndirectObject entry : unmergedSet) {
-                        if (entry.getIndirectReference().getNumber() == ((PdfIndirectReference)o).getNumber() &&
-                                entry.getIndirectReference().getGeneration() == ((PdfIndirectReference)o).getGeneration()) {
-                            if (entry.object.isDictionary()) {
-                                PdfNumber annotId = ((PdfDictionary)entry.object).getAsNumber(PdfCopy.annotId);
-                                if (annotId != null) {
-                                    PdfIndirectObject merged = mergedMap.get(annotId.intValue());
-                                    if (merged != null) {
-                                        array.set(i, merged.getIndirectReference());
-                                    }
+                    PdfIndirectObject entry = unmergedIndirectRefsMap.get(new RefKey((PdfIndirectReference)o));
+                    if (entry != null) {
+                        if (entry.object.isDictionary()) {
+                            PdfNumber annotId = ((PdfDictionary) entry.object).getAsNumber(PdfCopy.annotId);
+                            if (annotId != null) {
+                                PdfIndirectObject merged = mergedMap.get(annotId.intValue());
+                                if (merged != null) {
+                                    array.set(i, merged.getIndirectReference());
                                 }
                             }
                         }
@@ -1232,16 +1230,14 @@ public class PdfCopy extends PdfWriter {
             for (PdfName key : dictionary.getKeys()) {
                 PdfObject o = dictionary.get(key);
                 if (o != null && o.type() == 0) {
-                    for (PdfIndirectObject entry : unmergedSet) {
-                        if (entry.getIndirectReference().getNumber() == ((PdfIndirectReference)o).getNumber() &&
-                                entry.getIndirectReference().getGeneration() == ((PdfIndirectReference)o).getGeneration()) {
-                            if (entry.object.isDictionary()) {
-                                PdfNumber annotId = ((PdfDictionary)entry.object).getAsNumber(PdfCopy.annotId);
-                                if (annotId != null) {
-                                    PdfIndirectObject merged = mergedMap.get(annotId.intValue());
-                                    if (merged != null) {
-                                        dictionary.put(key, merged.getIndirectReference());
-                                    }
+                    PdfIndirectObject entry = unmergedIndirectRefsMap.get(new RefKey((PdfIndirectReference)o));
+                    if (entry != null) {
+                        if (entry.object.isDictionary()) {
+                            PdfNumber annotId = ((PdfDictionary) entry.object).getAsNumber(PdfCopy.annotId);
+                            if (annotId != null) {
+                                PdfIndirectObject merged = mergedMap.get(annotId.intValue());
+                                if (merged != null) {
+                                    dictionary.put(key, merged.getIndirectReference());
                                 }
                             }
                         }

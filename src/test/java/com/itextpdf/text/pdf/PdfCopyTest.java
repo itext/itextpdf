@@ -351,6 +351,43 @@ public class PdfCopyTest {
         }
     }
 
+    @Test(timeout = 60000)
+    public void largeFilePerformanceTest() throws IOException, DocumentException, InterruptedException {
+        String target = "./target/com/itextpdf/test/pdf/PdfCopyTest/";
+        String resources = "./src/test/resources/com/itextpdf/text/pdf/PdfCopyTest/";
+        String output = "copyLargeFile.pdf";
+        String cmp = "cmp_copyLargeFile.pdf";
+
+        new File(target).mkdirs();
+
+        long timeStart = System.nanoTime();
+
+        PdfReader firstSourceReader = new PdfReader( resources +"frontpage.pdf");
+        PdfReader secondSourceReader = new PdfReader(resources + "large_pdf.pdf");
+
+        Document document = new Document();
+
+        PdfCopy copy = new PdfCopy(document, new FileOutputStream(target + output));
+        copy.setMergeFields();
+
+        document.open();
+        copy.addDocument(firstSourceReader);
+        copy.addDocument(secondSourceReader);
+
+        copy.close();
+        document.close();
+
+        System.out.println(((System.nanoTime() - timeStart)/1000/1000));
+
+
+        CompareTool cmpTool = new CompareTool();
+        String errorMessage = cmpTool.compareByContent(target + output, resources + cmp, target, "diff");
+
+        if (errorMessage != null) {
+            Assert.fail(errorMessage);
+        }
+    }
+
     private static byte[] createImagePdf() throws Exception {
 
         final ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
