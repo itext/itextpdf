@@ -1112,7 +1112,6 @@ class TrueTypeFont extends BaseFont {
             dic.put(PdfName.SUBTYPE, PdfName.TRUETYPE);
             dic.put(PdfName.BASEFONT, new PdfName(subsetPrefix + fontName + style));
         }
-        dic.put(PdfName.BASEFONT, new PdfName(subsetPrefix + fontName + style));
         if (!fontSpecific) {
             for (int k = firstChar; k <= lastChar; ++k) {
                 if (!differences[k].equals(notdef)) {
