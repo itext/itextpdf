@@ -2,20 +2,20 @@
 * text=auto
 
 # Explicitly declare text files you want to always be normalized and converted
-# to native line endings on checkout.
-*.afm text
-*.cmap text
-*.crt text
-*.cs text
-*.html text
-*.java text ident
-*.lng text
-*.md text
-*.pom text
-*.properties text
-*.txt text
-*.xfdf text
-*.xml text
+# to LF line endings on checkout.
+*.afm text eol=lf
+*.cmap text eol=lf
+*.crt text eol=lf
+*.cs text eol=lf
+*.html text eol=lf
+*.java text eol=lf ident
+*.lng text eol=lf
+*.md text eol=lf
+*.pom text eol=lf
+*.properties text eol=lf
+*.txt text eol=lf
+*.xfdf text eol=lf
+*.xml text eol=lf
 
 # Declare files that will always have CRLF line endings on checkout.
 *.bat text eol=crlf
