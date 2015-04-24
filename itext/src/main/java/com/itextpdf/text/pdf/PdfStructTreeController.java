@@ -166,21 +166,14 @@ public class PdfStructTreeController {
             return returnType.BELOW;
         if (pages.getAsNumber(pages.size() - 2).intValue() < arrayNumber)
             return returnType.ABOVE;
+        int cur = pages.size() / 4;
         int begin = 0;
         int curNumber;
-        // This effectively does log2(x)
-        int maxAttempts = 31 - Integer.numberOfLeadingZeros(pages.size());
-        // We will perform a numeric search in O(log n).
-        int cur = (int) Math.pow(2, maxAttempts-1);
-        // Prevent infinite loops by counting the attempts.
-        int attempts = 0;
+
         while (true) {
-            attempts++;
-            // Watch out for ArrayIndexOutOfBoundsException
-            int index = Math.min((begin + cur) * 2, pages.size() - 2);
-            curNumber = pages.getAsNumber(index).intValue();
+            curNumber = pages.getAsNumber((begin + cur) * 2).intValue();
             if (curNumber == arrayNumber) {
-                PdfObject obj = pages.getPdfObject(index + 1);
+                PdfObject obj = pages.getPdfObject((begin + cur) * 2 + 1);
                 PdfObject obj1 = obj;
                 while (obj.isIndirect()) obj = PdfReader.getPdfObjectRelease(obj);
                 if (obj.isArray()) {
@@ -208,10 +201,11 @@ public class PdfStructTreeController {
                 return returnType.FOUND;
             }
             if (curNumber < arrayNumber) {
-                begin += cur;
-                cur /= 2;
                 if (cur == 0)
-                    cur = 1;
+                    return returnType.NOTFOUND;
+                begin += cur;
+                if (cur != 1)
+                    cur /= 2;
                 if (cur + begin == pages.size())
                     return returnType.NOTFOUND;
                 continue;
@@ -221,12 +215,6 @@ public class PdfStructTreeController {
             if (cur == 0)
                 return returnType.NOTFOUND;
             cur /= 2;
-            if (attempts > maxAttempts)
-            {
-                Logger logger = LoggerFactory.getLogger(PdfCopy.class);
-                logger.warn("Cannot find tagging for page " + (arrayNumber+1));
-                return returnType.NOTFOUND;
-            }
         }
     }
 
