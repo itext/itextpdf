@@ -1,5 +1,6 @@
 package com.itextpdf.text.pdf;
 
+import com.itextpdf.testutils.CompareTool;
 import com.itextpdf.text.*;
 import com.itextpdf.text.error_messages.MessageLocalization;
 
@@ -37,6 +38,8 @@ public class TaggedPdfCopyTest {
     public static final String SOURCE19 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/pdf/source19.pdf";
     public static final String SOURCE22 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/pdf/source22.pdf";
     public static final String SOURCE24 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/pdf/source24.pdf";
+    public static final String SOURCE25 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/pdf/source25.pdf";
+    public static final String SOURCE25_1 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/pdf/source25_1.pdf";
     public static final String SOURCE32 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/pdf/source32.pdf";
     public static final String SOURCE42 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/pdf/source42.pdf";
     public static final String SOURCE51 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/pdf/source51.pdf";
@@ -57,7 +60,10 @@ public class TaggedPdfCopyTest {
     public static final String SOURCE_CF_15 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/pdf/sourceCf15.pdf";
     public static final String SOURCE_CF_16 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/pdf/sourceCf16.pdf";
 
+    public static final String CMP25 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/pdf/cmp_out25.pdf";
+
     public static final String OUT = "./target/com/itextpdf/test/pdf/TaggedPdfCopyTest/out";
+    public static final String OUTPATH = "./target/com/itextpdf/test/pdf/TaggedPdfCopyTest/";
 
     public static final PdfDictionary CM31 = new PdfDictionary();
     public static final PdfDictionary sElem = new PdfDictionary();
@@ -735,7 +741,7 @@ public class TaggedPdfCopyTest {
         PdfDictionary idTree = verifyIsDictionary(PdfStructTreeController.getDirectObject(structTreeRoot.get(PdfName.IDTREE)), NO_ID_TREE);
         Assert.assertTrue(EMPTY_ID_TREE, idTree.hashMap.size() > 0);
     }
-    
+
     @Test(expected = BadPdfFormatException.class)
     public void copyTaggedPdf24() throws IOException, DocumentException {
         initializeDocument("24");
@@ -743,6 +749,32 @@ public class TaggedPdfCopyTest {
         copy.addPage(copy.getImportedPage(reader1, 17, true));
         document.close();
         reader1.close();
+    }
+
+    @Test(timeout = 60000)
+    public void copyTaggedPdf25() throws IOException, DocumentException, InterruptedException {
+        initializeDocument("25");
+        PdfReader reader = new PdfReader(SOURCE25);
+        PdfReader reader1 = new PdfReader(SOURCE25_1);
+
+        copy.addDocument(reader);
+        copy.freeReader(reader);
+
+        copy.addDocument(reader1);
+        copy.freeReader(reader1);
+
+        copy.getStructureTreeRoot();
+        copy.close();
+
+        document.close();
+        reader.close();
+        reader1.close();
+
+        CompareTool compareTool = new CompareTool();
+        String errorMessage = compareTool.compareByContent(output, CMP25, OUTPATH, "diff_");
+        if (errorMessage != null) {
+            Assert.fail(errorMessage);
+        }
     }
 
     @Test
