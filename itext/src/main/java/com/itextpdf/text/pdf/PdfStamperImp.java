@@ -499,8 +499,8 @@ class PdfStamperImp extends PdfWriter {
                 pageN.put(PdfName.CONTENTS, ar);
             }
             else if (content.isArray()) {
-                ar = (PdfArray)content;
-                markUsed(ar);
+                ar = new PdfArray((PdfArray)content);
+                pageN.put(PdfName.CONTENTS, ar);
             }
             else if (content.isStream()) {
                 ar = new PdfArray();
