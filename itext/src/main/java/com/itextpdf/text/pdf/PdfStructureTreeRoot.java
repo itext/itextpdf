@@ -154,7 +154,9 @@ public class PdfStructureTreeRoot extends PdfDictionary implements IPdfStructure
             ar = new PdfArray();
             parentTree.put(i, ar);
         }
-        ar.add(struc);
+        if (!ar.contains(struc)) {
+            ar.add(struc);
+        }
     }
 
     void setAnnotationMark(int structParentIndex, PdfIndirectReference struc) {
