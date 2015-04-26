@@ -107,7 +107,6 @@ import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.pdf.BaseFont;
 import com.itextpdf.text.pdf.ByteBuffer;
 import com.itextpdf.text.pdf.CMYKColor;
-import com.itextpdf.text.pdf.ExtendedColor;
 import com.itextpdf.text.pdf.PdfAction;
 import com.itextpdf.text.pdf.PdfContentByte;
 import com.itextpdf.text.pdf.PdfGState;
