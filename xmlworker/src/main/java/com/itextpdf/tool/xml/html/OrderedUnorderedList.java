@@ -38,6 +38,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.itextpdf.text.Element;
+import com.itextpdf.text.Font;
 import com.itextpdf.text.ListItem;
 import com.itextpdf.tool.xml.NoCustomContextException;
 import com.itextpdf.tool.xml.Tag;
@@ -171,6 +172,8 @@ public class OrderedUnorderedList extends AbstractTagProcessor {
 			HtmlPipelineContext context = getHtmlPipelineContext(ctx);
 			String end = isTop ? "-top" : "-bottom";
 			float ownFontSize = fst.getFontSize(tag);
+			if (ownFontSize == Font.UNDEFINED)
+				ownFontSize = 0;
 			float ownMargin = 0;
 			String marginValue = tag.getCSS().get(CSS.Property.MARGIN + end);
 			if (marginValue == null) {
