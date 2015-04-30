@@ -46,25 +46,28 @@ package com.itextpdf.text.pdf.security;
 
 import com.itextpdf.text.pdf.PdfDictionary;
 import com.itextpdf.text.pdf.PdfName;
+import com.itextpdf.text.pdf.PdfString;
 
 /**
  * A dictionary that stores the name of the application that signs the PDF.
  */
 public class PdfSignatureAppDictionary extends PdfDictionary {
 
-	/** Creates new PdfSignatureAppDictionary */
-	public PdfSignatureAppDictionary() {
-		super();
-	}
+    /**
+     * Creates new PdfSignatureAppDictionary
+     */
+    public PdfSignatureAppDictionary() {
+        super();
+    }
 
-	/**
-	 * Sets the signature created property in the Prop_Build dictionary's App
-	 * dictionary
-	 * 
-	 * @param name
-	 */
-	public void setSignatureCreator(String name) {
-		put(PdfName.NAME, new PdfName(name));
-	}
+    /**
+     * Sets the signature created property in the Prop_Build dictionary's App
+     * dictionary
+     *
+     * @param name
+     */
+    public void setSignatureCreator(String name) {
+        put(PdfName.NAME, new PdfString(name, TEXT_UNICODE));
+    }
 
 }
