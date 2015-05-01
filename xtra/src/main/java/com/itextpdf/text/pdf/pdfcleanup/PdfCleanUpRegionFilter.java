@@ -6,6 +6,7 @@ import com.itextpdf.awt.geom.Point;
 import com.itextpdf.awt.geom.Point2D;
 import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.pdf.parser.*;
+import com.itextpdf.text.pdf.parser.clipper.*;
 
 import java.util.*;
 
@@ -59,56 +60,100 @@ class PdfCleanUpRegionFilter extends RenderFilter {
         return new PdfCleanUpCoveredArea(transformedIntersection, imageRect.equals(intersectionRect));
     }
 
-    // Current implementation is for completely covered line arts only.
-    protected List<Subpath> filterSubpath(Subpath subpath, Matrix ctm, boolean isContour) {
-        List<Subpath> filteredSubpaths = new ArrayList<Subpath>();
-        com.itextpdf.awt.geom.Rectangle rect = new com.itextpdf.awt.geom.Rectangle(rectangle);
+    /**
+     * @param fillingRule If the subpath is contour, pass any value.
+     */
+    protected Path filterPath(Path path, Matrix ctm, Boolean isContour, int fillingRule) {
+        Point2D[] transfRectVertices = transformPoints(ctm, false, getVertices(rectangle));
+        PolyFillType fillType = PolyFillType.pftNonZero;
 
-        if (subpath.isSinglePointClosed()) {
-            Point2D transformedStartPoint = transformPoints(ctm, false, subpath.getStartPoint())[0];
-
-            if (!containsAll(rect, transformedStartPoint)) {
-                filteredSubpaths.add(subpath);
-            }
-
-            return filteredSubpaths;
-        } else if (subpath.isSinglePointOpen()) {
-            return filteredSubpaths;
+        if (fillingRule == PathPaintingRenderInfo.EVEN_ODD_RULE) {
+            fillType = PolyFillType.pftEvenOdd;
         }
 
-        Subpath newSubpath = new Subpath();
-        List<Shape> subpathSegments = new ArrayList<Shape>(subpath.getSegments());
+        Clipper clipper = new Clipper();
+        addPath(clipper, path);
+        addRect(clipper, transfRectVertices);
 
-        // Create the line which is implicitly added by PDF, when you use 'h' operator
-        if (subpath.isClosed()) {
-            Shape lastSegment = subpathSegments.get(subpathSegments.size() - 1);
-            List<Point2D> segmentBasePoints = lastSegment.getBasePoints();
-            subpathSegments.add(new Line(segmentBasePoints.get(segmentBasePoints.size() - 1), subpath.getStartPoint()));
-        }
+        PolyTree resultTree = new PolyTree();
+        clipper.execute(ClipType.ctDifference, resultTree, fillType, PolyFillType.pftNonZero);
 
-        for (Shape segment : subpathSegments) {
-            Point2D[] transformedSegBasePoints = transformPoints(ctm, false, segment.getBasePoints());
+        return convertToPath(resultTree);
+    }
 
-            if (containsAll(rect, transformedSegBasePoints)) {
-                if (!newSubpath.isEmpty()) {
-                    filteredSubpaths.add(newSubpath);
-                    newSubpath = new Subpath();
-                }
-            } else {
-                newSubpath.addSegment(segment);
-
-                // if it's filled area and we have got here, then it isn't completely covered
-                if (!isContour) {
-                    break;
-                }
+    private static void addPath(Clipper clipper, Path path) {
+        for (Subpath subpath : path.getSubpaths()) {
+            if (!subpath.isSinglePointClosed() && !subpath.isSinglePointOpen()) {
+                List<Point2D> linearApproxPoints = subpath.getPiecewiseLinearApproximation();
+                clipper.addPath(convertToIntPoints(linearApproxPoints), PolyType.ptSubject, subpath.isClosed());
             }
         }
+    }
 
-        if (!newSubpath.isEmpty()) {
-            filteredSubpaths.add( !isContour ? subpath : newSubpath );
+    private static void addRect(Clipper clipper, Point2D[] rectVertices) {
+        clipper.addPath(convertToIntPoints(new ArrayList<Point2D>(Arrays.asList(rectVertices))), PolyType.ptClip, true);
+    }
+
+    private static List<IntPoint> convertToIntPoints(List<Point2D> points) {
+        List<IntPoint> convertedPoints = new ArrayList<IntPoint>(points.size());
+
+        for (Point2D point : points) {
+            convertedPoints.add(new IntPoint(PdfCleanUpProcessor.floatMultiplier * point.getX(),
+                                             PdfCleanUpProcessor.floatMultiplier * point.getY()));
         }
 
-        return filteredSubpaths;
+        return convertedPoints;
+    }
+
+    private static List<Point2D> convertToFloatPoints(List<IntPoint> points) {
+        List<Point2D> convertedPoints = new ArrayList<Point2D>(points.size());
+
+        for (IntPoint point : points) {
+            convertedPoints.add(new Point2D.Double(point.X / PdfCleanUpProcessor.floatMultiplier,
+                                                   point.Y / PdfCleanUpProcessor.floatMultiplier));
+        }
+
+        return convertedPoints;
+    }
+
+    private static Path convertToPath(PolyTree result) {
+        Path path = new Path();
+        PolyNode node = result.getFirst();
+
+        while (node != null) {
+            addContour(path, node.getContour(), !node.isOpen());
+            node = node.GetNext();
+        }
+
+        return path;
+    }
+
+    private static void addContour(Path path, List<IntPoint> contour, Boolean close) {
+        List<Point2D> floatContour = convertToFloatPoints(contour);
+        Iterator<Point2D> iter = floatContour.iterator();
+
+        Point2D point = iter.next();
+        path.moveTo((float) point.getX(), (float) point.getY());
+
+        while (iter.hasNext()) {
+            point = iter.next();
+            path.lineTo((float) point.getX(), (float) point.getY());
+        }
+
+        if (close) {
+            path.closeSubpath();
+        }
+    }
+
+    private Point2D[] getVertices(Rectangle rect) {
+        Point2D[] points = {
+                new Point2D.Double(rect.getLeft(), rect.getBottom()),
+                new Point2D.Double(rect.getRight(), rect.getBottom()),
+                new Point2D.Double(rect.getRight(), rect.getTop()),
+                new Point2D.Double(rect.getLeft(), rect.getTop())
+        };
+
+        return points;
     }
 
     private boolean intersect(Rectangle r1, Rectangle r2) {

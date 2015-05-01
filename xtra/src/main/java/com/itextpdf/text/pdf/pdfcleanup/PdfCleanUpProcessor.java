@@ -17,6 +17,14 @@ import java.util.List;
  */
 public class PdfCleanUpProcessor {
 
+    /**
+     * When a document with line arts is being cleaned up, there are lot of
+     * calculations with floating point numbers. All of them are translated
+     * into fixed point numbers by multiplying by this coefficient. Vary it
+     * to adjust the preciseness of the calculations.
+     */
+    public static double floatMultiplier = Math.pow(10, 14);
+
     private static final String XOBJ_NAME_PREFIX = "Fm";
 
     private static final String STROKE_COLOR = "StrokeColor";

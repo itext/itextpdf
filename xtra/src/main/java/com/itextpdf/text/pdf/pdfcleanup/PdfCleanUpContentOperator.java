@@ -24,18 +24,24 @@ class PdfCleanUpContentOperator implements ContentOperator {
     private static final byte[] h = DocWriter.getISOBytes("h\n");
     private static final byte[] S = DocWriter.getISOBytes("S\n");
     private static final byte[] f = DocWriter.getISOBytes("f\n");
+    private static final byte[] eoF = DocWriter.getISOBytes("f*\n");
     private static final byte[] n = DocWriter.getISOBytes("n\n");
     private static final byte[] W = DocWriter.getISOBytes("W\n");
+    private static final byte[] eoW = DocWriter.getISOBytes("W*\n");
 
     private static final Set<String> textShowingOperators = new HashSet<String>(Arrays.asList("TJ", "Tj", "'", "\""));
     private static final Set<String> pathConstructionOperators = new HashSet<String>(Arrays.asList("m", "l", "c", "v", "y", "h", "re"));
+
     private static final Set<String> strokeOperators = new HashSet<String>(Arrays.asList("S", "s", "B", "B*", "b", "b*"));
-    private static final Set<String> fillOperators = new HashSet<String>(Arrays.asList("f", "F", "f*", "B", "B*", "b", "b*"));
+    private static final Set<String> nwFillOperators = new HashSet<String>(Arrays.asList("f", "F", "B", "b"));
+    private static final Set<String> eoFillOperators = new HashSet<String>(Arrays.asList("f*", "B*", "b*"));
     private static final Set<String> pathPaintingOperators = new HashSet<String>() {{
         addAll(strokeOperators);
-        addAll(fillOperators);
+        addAll(nwFillOperators);
+        addAll(eoFillOperators);
         add("n");
     }};
+
     private static final Set<String> clippingPathOperators = new HashSet<String>(Arrays.asList("W", "W*"));
 
     protected PdfCleanUpRenderListener cleanUpStrategy;
@@ -328,10 +334,10 @@ class PdfCleanUpContentOperator implements ContentOperator {
         imageStream.setDataRaw(image.getBytes());
     }
 
-    private void writePath(String operatorStr, PdfContentByte canvas) throws IOException { // TODO: refactor
+    private void writePath(String operatorStr, PdfContentByte canvas) throws IOException {
         if (cleanUpStrategy.isClipped()) {
-            writePath(cleanUpStrategy.getCurrentFillPath(), null, canvas);
-            canvas.getInternalBuffer().append(W);
+            byte[] clippingOperator = (cleanUpStrategy.getClippingRule() == PathPaintingRenderInfo.NONZERO_WINDING_RULE) ? W : eoW;
+            writePath(cleanUpStrategy.getNewClipPath(), clippingOperator, canvas);
 
             if ("n".equals(operatorStr)) {
                 canvas.getInternalBuffer().append(n);
@@ -340,17 +346,17 @@ class PdfCleanUpContentOperator implements ContentOperator {
             }
         }
 
-        if (fillOperators.contains(operatorStr) && cleanUpStrategy.isClipped()) {
-            canvas.getInternalBuffer().append(f);
-        } else if (fillOperators.contains(operatorStr)) {
-            writePath(cleanUpStrategy.getCurrentFillPath(), f, canvas);
+        if (nwFillOperators.contains(operatorStr)) {
+            writeFillAfterClip(canvas, cleanUpStrategy.getCurrentFillPath(), f,
+                               cleanUpStrategy.getClippingRule(), PathPaintingRenderInfo.NONZERO_WINDING_RULE);
+        } else if (eoFillOperators.contains(operatorStr)) {
+            writeFillAfterClip(canvas, cleanUpStrategy.getCurrentFillPath(), eoF,
+                               cleanUpStrategy.getClippingRule(), PathPaintingRenderInfo.EVEN_ODD_RULE);
+        } else if (cleanUpStrategy.isClipped()) {
+            canvas.getInternalBuffer().append(n);
         }
 
         if (strokeOperators.contains(operatorStr)) {
-            if (!fillOperators.contains(operatorStr) && cleanUpStrategy.isClipped()) {
-                canvas.getInternalBuffer().append(n);
-            }
-
             writePath(cleanUpStrategy.getCurrentStrokePath(), S, canvas);
         }
 
@@ -371,6 +377,10 @@ class PdfCleanUpContentOperator implements ContentOperator {
                 } else {
                     writeLine((Line) segment, canvas);
                 }
+            }
+
+            if (subpath.isClosed()) {
+                canvas.getInternalBuffer().append(h);
             }
         }
 
@@ -419,5 +429,14 @@ class PdfCleanUpContentOperator implements ContentOperator {
 
         new PdfNumber(destination.getY()).toPdf(canvas.getPdfWriter(), canvas.getInternalBuffer());
         canvas.getInternalBuffer().append(l);
+    }
+
+    private void writeFillAfterClip(PdfContentByte canvas, Path path, byte[] fillOperator, int clippingRule, int fillRule) throws IOException {
+        if (clippingRule == fillRule) {
+            canvas.getInternalBuffer().append(fillOperator);
+        } else {
+            canvas.getInternalBuffer().append(n);
+            writePath(path, fillOperator, canvas);
+        }
     }
 }

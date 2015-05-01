@@ -34,16 +34,22 @@ class PdfCleanUpRenderListener implements ExtRenderListener {
     private Deque<PdfCleanUpContext> contextStack = new ArrayDeque<PdfCleanUpContext>();
     private int strNumber = 1; // Represents ordinal number of string under processing. Needed for processing TJ operator.
 
-    private Path unfilteredCurrentPath = new Path(); // Represents current path as if there were no segments to cut
-    private Path currentStrokePath = new Path(); // Represents actual current path ("actual" means that it is filtered current path)
+    // Represents current path as if there were no segments to cut
+    private Path unfilteredCurrentPath = new Path();
 
-    /**
-     * Represents actual current path to be filled. In general case in context of cleanup tool it completely differs from
-     * the current path with implicitly closed subpaths.
-     */
+    // Represents actual current path to be stroked ("actual" means that it is filtered current path)
+    private Path currentStrokePath = new Path();
+
+    // Represents actual current path to be filled.
     private Path currentFillPath = new Path();
 
-    private boolean clipPath = false;
+    // Represents new clipping path
+    // In general case, after redaction, it isn't the same as the currentFillPath because of the
+    // possibility to apply different filling rules for clipping and filling.
+    private Path newClippingPath;
+
+    private boolean clipPath;
+    private int clippingRule;
 
     public PdfCleanUpRenderListener(PdfStamper pdfStamper, List<PdfCleanUpRegionFilter> filters) {
         this.pdfStamper = pdfStamper;
@@ -141,28 +147,44 @@ class PdfCleanUpRenderListener implements ExtRenderListener {
     }
 
     public Path renderPath(PathPaintingRenderInfo renderInfo) {
-        if ((renderInfo.getOperation() & PathPaintingRenderInfo.STROKE) != 0) {
-            currentStrokePath = filterCurrentPath(renderInfo.getCtm(), true);
+        boolean stroke = (renderInfo.getOperation() & PathPaintingRenderInfo.STROKE) != 0;
+        boolean fill = (renderInfo.getOperation() & PathPaintingRenderInfo.FILL) != 0;
+
+        if (stroke) {
+            currentStrokePath = filterCurrentPath(renderInfo.getCtm(), true, -1);
         }
 
-        if ((renderInfo.getOperation() & PathPaintingRenderInfo.FILL) != 0 || clipPath) {
-            currentFillPath = filterCurrentPath(renderInfo.getCtm(), false);
+        if (fill) {
+            currentFillPath = filterCurrentPath(renderInfo.getCtm(), false, renderInfo.getRule());
+        }
+
+        if (clipPath) {
+            if (fill && renderInfo.getRule() == clippingRule) {
+                newClippingPath = currentFillPath;
+            } else {
+                newClippingPath = filterCurrentPath(renderInfo.getCtm(), false, clippingRule);
+            }
         }
 
         unfilteredCurrentPath = new Path();
-        return currentFillPath;
+        return newClippingPath;
     }
 
     public void clipPath(int rule) {
         clipPath = true;
-    }
-
-    public void setClipped(boolean clipped) {
-        clipPath = clipped;
+        clippingRule = rule;
     }
 
     public boolean isClipped() {
         return clipPath;
+    }
+
+    public void setClipped(boolean clipPath) {
+        this.clipPath = clipPath;
+    }
+
+    public int getClippingRule() {
+        return clippingRule;
     }
 
     public Path getCurrentStrokePath() {
@@ -171,6 +193,10 @@ class PdfCleanUpRenderListener implements ExtRenderListener {
 
     public Path getCurrentFillPath() {
         return currentFillPath;
+    }
+
+    public Path getNewClipPath() {
+        return newClippingPath;
     }
 
     public List<PdfCleanUpContentChunk> getChunks() {
@@ -299,26 +325,24 @@ class PdfCleanUpRenderListener implements ExtRenderListener {
         }
     }
 
-    private Path filterCurrentPath(Matrix ctm, boolean isContour) {
-        Queue<Subpath> filteredSubpaths = new ArrayDeque<Subpath>(unfilteredCurrentPath.getSubpaths());
+    /**
+     * @param fillingRule If the path is contour, pass any value.
+     */
+    private Path filterCurrentPath(Matrix ctm, boolean isContour, int fillingRule) {
+        Path path = new Path(unfilteredCurrentPath.getSubpaths());
 
-        for (PdfCleanUpRegionFilter filter : filters) {
-            int queueSize = filteredSubpaths.size();
-
-            while (queueSize-- != 0) {
-                Subpath subpath = filteredSubpaths.poll();
-
-                if (!isContour) {
-                    subpath = new Subpath(subpath);
-                    subpath.setClosed(true);
-                }
-
-                List<Subpath> filteredSubpath = filter.filterSubpath(subpath, ctm, isContour);
-                filteredSubpaths.addAll(filteredSubpath);
-            }
+        if (isContour) {
+            // TODO: This block is going to be replaced in the future
+            path.replaceCloseWithLine();
+        } else {
+            path.closeAllSubpaths();
         }
 
-        return new Path(new ArrayList<Subpath>(filteredSubpaths));
+        for (PdfCleanUpRegionFilter filter : filters) {
+            path = filter.filterPath(path, ctm, isContour, fillingRule);
+        }
+
+        return path;
     }
 
     private void closeOutputStream(OutputStream os) {
