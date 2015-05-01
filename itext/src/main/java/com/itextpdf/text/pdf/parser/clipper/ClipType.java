@@ -4,5 +4,5 @@ public enum ClipType {
     ctIntersection,
     ctUnion,
     ctDifference,
-    ctXor;
+    ctXor
 }

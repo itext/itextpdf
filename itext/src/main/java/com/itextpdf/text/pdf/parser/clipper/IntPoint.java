@@ -1,20 +1,20 @@
 package com.itextpdf.text.pdf.parser.clipper;
 
 public class IntPoint {
-    public int X;
-    public int Y;
+    public long X;
+    public long Y;
 
     IntPoint() {
     }
 
-    public IntPoint(int X, int Y) {
+    public IntPoint(long X, long Y) {
         this.X = X;
         this.Y = Y;
     }
 
     public IntPoint(double x, double y) {
-        this.X = (int) x;
-        this.Y = (int) y;
+        this.X = (long) x;
+        this.Y = (long) y;
     }
 
     public IntPoint(IntPoint pt) {
@@ -42,12 +42,5 @@ public class IntPoint {
         if (Y != intPoint.Y) return false;
 
         return true;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = X;
-        result = 31 * result + Y;
-        return result;
     }
 }

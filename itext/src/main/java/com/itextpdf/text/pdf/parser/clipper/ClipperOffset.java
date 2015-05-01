@@ -233,17 +233,13 @@ public class ClipperOffset {
             if (node.getEndtype() == EndType.etClosedPolygon) {
                 int k = len - 1;
                 for (int j = 0; j < len; j++) {
-                    IntWrapper kWrapper = new IntWrapper(k);
-                    OffsetPoint(j, kWrapper, node.getJointype());
-                    k = kWrapper.getVal();
+                    k = OffsetPoint(j, k, node.getJointype());
                 }
                 m_destPolys.add(m_destPoly);
             } else if (node.getEndtype() == EndType.etClosedLine) {
                 int k = len - 1;
                 for (int j = 0; j < len; j++) {
-                    IntWrapper kWrapper = new IntWrapper(k);
-                    OffsetPoint(j, kWrapper, node.getJointype());
-                    k = kWrapper.getVal();
+                    k = OffsetPoint(j, k, node.getJointype());
                 }
                 m_destPolys.add(m_destPoly);
                 m_destPoly = new ArrayList<IntPoint>();
@@ -256,17 +252,13 @@ public class ClipperOffset {
 
                 k = 0;
                 for (int j = len - 1; j >= 0; j--) {
-                    IntWrapper kWrapper = new IntWrapper(k);
-                    OffsetPoint(j, kWrapper, node.getJointype());
-                    k = kWrapper.getVal();
+                    k = OffsetPoint(j, k, node.getJointype());
                 }
                 m_destPolys.add(m_destPoly);
             } else {
                 int k = 0;
                 for (int j = 1; j < len - 1; ++j) {
-                    IntWrapper kWrapper = new IntWrapper(k);
-                    OffsetPoint(j, kWrapper, node.getJointype());
-                    k = kWrapper.getVal();
+                    k = OffsetPoint(j, k, node.getJointype());
                 }
 
                 IntPoint pt1;
@@ -297,9 +289,7 @@ public class ClipperOffset {
 
                 k = len - 1;
                 for (int j = k - 1; j > 0; --j) {
-                    IntWrapper kWrapper = new IntWrapper(k);
-                    OffsetPoint(j, kWrapper, node.getJointype());
-                    k = kWrapper.getVal();
+                    k = OffsetPoint(j, k, node.getJointype());
                 }
 
                 if (node.getEndtype() == EndType.etOpenButt) {
@@ -388,9 +378,8 @@ public class ClipperOffset {
     }
     //------------------------------------------------------------------------------
 
-    void OffsetPoint(int j, IntWrapper ki, JoinType jointype) {
+    int OffsetPoint(int j, int k, JoinType jointype) {
         //cross product ...
-        int k = ki.getVal();
         m_sinA = (m_normals.get(k).X * m_normals.get(j).Y - m_normals.get(j).X * m_normals.get(k).Y);
 
         if (Math.abs(m_sinA * m_delta) < 1.0) {
@@ -400,7 +389,7 @@ public class ClipperOffset {
             {
                 m_destPoly.add(new IntPoint(Round(m_srcPoly.get(j).X + m_normals.get(k).X * m_delta),
                         Round(m_srcPoly.get(j).Y + m_normals.get(k).Y * m_delta)));
-                return;
+                return k;
             }
             //else angle ==> 180 degrees
         } else if (m_sinA > 1.0)
@@ -432,8 +421,7 @@ public class ClipperOffset {
                     DoRound(j, k);
                     break;
             }
-        k = j;
-        ki.setVal(k);
+        return j;
     }
     //------------------------------------------------------------------------------
 

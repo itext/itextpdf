@@ -13,20 +13,20 @@ class ClipperConstant {
 }
 
 class IntWrapper {
-    private int val;
+    private long val;
 
     IntWrapper() {
     }
 
-    IntWrapper(int val) {
+    IntWrapper(long val) {
         this.val = val;
     }
 
-    public int getVal() {
+    public long getVal() {
         return val;
     }
 
-    public void setVal(int val) {
+    public void setVal(long val) {
         this.val = val;
     }
 }
@@ -228,10 +228,10 @@ class Int128 {
 //------------------------------------------------------------------------------
 
 class IntRect {
-    public int left;
-    public int top;
-    public int right;
-    public int bottom;
+    public long left;
+    public long top;
+    public long right;
+    public long bottom;
 
     public IntRect() {
 
@@ -251,10 +251,6 @@ class IntRect {
         this.bottom = ir.bottom;
     }
 }
-
-
-;
-
 
 enum EdgeSide {esLeft, esRight};
 
@@ -279,17 +275,17 @@ class TEdge {
     TEdge PrevInAEL;
     TEdge NextInSEL;
     TEdge PrevInSEL;
-};
+}
 
 class IntersectNode {
     TEdge Edge1;
     TEdge Edge2;
     IntPoint Pt;
-};
+}
 
 class MyIntersectNodeSort implements Comparator<IntersectNode> {
     public int compare(IntersectNode node1, IntersectNode node2) {
-        int i = node2.Pt.Y - node1.Pt.Y;
+        long i = node2.Pt.Y - node1.Pt.Y;
         if (i > 0)
             return 1;
         else if (i < 0)
@@ -299,21 +295,20 @@ class MyIntersectNodeSort implements Comparator<IntersectNode> {
     }
 }
 
-
 class LocalMinima {
-    int Y;
+    long Y;
     TEdge LeftBound;
     TEdge RightBound;
     LocalMinima Next;
 }
 
 class Scanbeam {
-    int Y;
+    long Y;
     Scanbeam Next;
 }
 
 class Maxima {
-    int X;
+    long X;
     Maxima Next;
     Maxima Prev;
 }
@@ -358,8 +353,8 @@ class ClipperBase {
     boolean m_UseFullRange;
     boolean m_HasOpenPaths;
     boolean preserveCollinear;
-    public int val1;
-    public int val2;
+    public long val1;
+    public long val2;
     //------------------------------------------------------------------------------
 
 
@@ -376,8 +371,8 @@ class ClipperBase {
         return (val > -tolerance) && (val < tolerance);
     }
 
-    public void Swap(int val1, int val2) {
-        int tmp = val1;
+    public void Swap(long val1, long val2) {
+        long tmp = val1;
         val1 = val2;
         val2 = tmp;
 
@@ -910,7 +905,7 @@ class ClipperBase {
         //progression of the bounds - ie so their xbots will align with the
         //adjoining lower edge. [Helpful in the ProcessHorizontal() method.]
         //Swap(ref e.Top.X, ref e.Bot.X);
-        int tmp = e.Top.X;
+        long tmp = e.Top.X;
         e.Top.X = e.Bot.X;
         e.Bot.X = tmp;
     }
@@ -1014,7 +1009,7 @@ public class Clipper extends ClipperBase {
     }
 //------------------------------------------------------------------------------
 
-    private void InsertScanbeam(int Y) {
+    private void InsertScanbeam(long Y) {
         //single-linked list: sorted descending, ignoring dups.
         if (m_Scanbeam == null) {
             m_Scanbeam = new Scanbeam();
@@ -1039,7 +1034,7 @@ public class Clipper extends ClipperBase {
     }
 //------------------------------------------------------------------------------
 
-    private void InsertMaxima(int X) {
+    private void InsertMaxima(long X) {
         //double-linked list: sorted ascending, ignoring dups.
         Maxima newMax = new Maxima();
         newMax.X = X;
@@ -1197,14 +1192,14 @@ public class Clipper extends ClipperBase {
             if (m_CurrentLM == null)
                 return false;
 
-            int botY = PopScanbeam();
+            long botY = PopScanbeam();
             do {
                 InsertLocalMinimaIntoAEL(botY);
                 ProcessHorizontals();
                 m_GhostJoins.clear();
                 if (m_Scanbeam == null)
                     break;
-                int topY = PopScanbeam();
+                long topY = PopScanbeam();
                 if (!ProcessIntersections(topY))
                     return false;
                 ProcessEdgesAtTopOfScanbeam(topY);
@@ -1244,8 +1239,8 @@ public class Clipper extends ClipperBase {
     }
 //------------------------------------------------------------------------------
 
-    private int PopScanbeam() {
-        int Y = m_Scanbeam.Y;
+    private long PopScanbeam() {
+        long Y = m_Scanbeam.Y;
         m_Scanbeam = m_Scanbeam.Next;
         return Y;
     }
@@ -1285,7 +1280,7 @@ public class Clipper extends ClipperBase {
     //------------------------------------------------------------------------------
 
 
-    private void InsertLocalMinimaIntoAEL(int botY) {
+    private void InsertLocalMinimaIntoAEL(long botY) {
         while (m_CurrentLM != null && (m_CurrentLM.Y == botY)) {
             TEdge lb = m_CurrentLM.LeftBound;
             TEdge rb = m_CurrentLM.RightBound;
@@ -1840,15 +1835,15 @@ public class Clipper extends ClipperBase {
     }
 //------------------------------------------------------------------------------
 
-    private boolean HorzSegmentsOverlap(int seg1a, int seg1b, int seg2a, int seg2b) {
+    private boolean HorzSegmentsOverlap(long seg1a, long seg1b, long seg2a, long seg2b) {
         if (seg1a > seg1b) {
-            int tmp = seg1a;
+            long tmp = seg1a;
             seg1a = seg1b;
             seg1b = tmp;
         }
         if (seg2a > seg2b) {
             Swap(seg2a, seg2b);
-            int tmp = seg2a;
+            long tmp = seg2a;
             seg2a = seg2b;
             seg2b = tmp;
         }
@@ -2368,13 +2363,12 @@ public class Clipper extends ClipperBase {
 
     private void ProcessHorizontal(TEdge horzEdge) throws ClipperException {
         Direction dir = Direction.dLeftToRight;
-        int horzLeft = 0, horzRight = 0;
         boolean IsOpen = horzEdge.OutIdx >= 0 && m_PolyOuts.get(horzEdge.OutIdx).IsOpen;
         IntWrapper horzLeftWrapper = new IntWrapper();
         IntWrapper horzRightWrapper = new IntWrapper();
         GetHorzDirection(horzEdge, dir, horzLeftWrapper, horzRightWrapper);
-        horzLeft = horzLeftWrapper.getVal();
-        horzRight = horzRightWrapper.getVal();
+        long horzLeft = horzLeftWrapper.getVal();
+        long horzRight = horzRightWrapper.getVal();
         TEdge eLastHorz = horzEdge, eMaxPair = null;
         while (eLastHorz.NextInLML != null && IsHorizontal(eLastHorz.NextInLML))
             eLastHorz = eLastHorz.NextInLML;
@@ -2422,7 +2416,6 @@ public class Clipper extends ClipperBase {
                         }
                     }
                 }
-                ;
 
                 if ((dir == Direction.dLeftToRight && e.Curr.X > horzRight) ||
                         (dir == Direction.dRightToLeft && e.Curr.X < horzLeft))
@@ -2566,7 +2559,7 @@ public class Clipper extends ClipperBase {
     }
 //------------------------------------------------------------------------------
 
-    private boolean ProcessIntersections(int topY) throws ClipperException {
+    private boolean ProcessIntersections(long topY) throws ClipperException {
         if (m_ActiveEdges == null)
             return true;
         try {
@@ -2587,7 +2580,7 @@ public class Clipper extends ClipperBase {
     }
 //------------------------------------------------------------------------------
 
-    private void BuildIntersectList(int topY) {
+    private void BuildIntersectList(long topY) {
         if (m_ActiveEdges == null)
             return;
 
@@ -2689,7 +2682,7 @@ public class Clipper extends ClipperBase {
     }
 //------------------------------------------------------------------------------
 
-    private static int TopX(TEdge edge, int currentY) {
+    private static long TopX(TEdge edge, long currentY) {
         if (currentY == edge.Top.Y)
             return edge.Top.X;
         return edge.Bot.X + Round(edge.Dx * (currentY - edge.Bot.Y));
@@ -2756,7 +2749,7 @@ public class Clipper extends ClipperBase {
     }
 //------------------------------------------------------------------------------
 
-    private void ProcessEdgesAtTopOfScanbeam(int topY) throws ClipperException {
+    private void ProcessEdgesAtTopOfScanbeam(long topY) throws ClipperException {
         TEdge e = m_ActiveEdges;
         while (e != null) {
             //1. process maxima, treating them as if they're 'bent' horizontal edges,
@@ -3043,7 +3036,7 @@ public class Clipper extends ClipperBase {
     }
     //------------------------------------------------------------------------------
 
-    boolean GetOverlap(int a1, int a2, int b1, int b2, IntWrapper Left, IntWrapper Right) {
+    boolean GetOverlap(long a1, long a2, long b1, long b2, IntWrapper Left, IntWrapper Right) {
         if (a1 < a2) {
             if (b1 < b2) {
                 Left.setVal(Math.max(a1, b1));
@@ -3217,15 +3210,14 @@ public class Clipper extends ClipperBase {
             if (op2b.Next == op2 || op2b.Next == op1)
                 return false; //a flat 'polygon'
 
-            int Left = 0, Right = 0;
             IntWrapper LeftWrapper = new IntWrapper();
             IntWrapper RightWrapper = new IntWrapper();
             //Op1 -. Op1b & Op2 -. Op2b are the extremites of the horizontal edges
             if (!GetOverlap(op1.Pt.X, op1b.Pt.X, op2.Pt.X, op2b.Pt.X, LeftWrapper, RightWrapper))
                 return false;
 
-            Left = LeftWrapper.getVal();
-            Right = RightWrapper.getVal();
+            long Left = LeftWrapper.getVal();
+            long Right = RightWrapper.getVal();
             //DiscardLeftSide: when overlapping edges are joined, a spike will created
             //which needs to be cleaned up. However, we don't want Op1 or Op2 caught up
             //on the discard Side as either may still be needed for other joins ...
@@ -3360,11 +3352,11 @@ public class Clipper extends ClipperBase {
         //returns 0 if false, +1 if true, -1 if pt ON polygon boundary
         int result = 0;
         OutPt startOp = op;
-        int ptx = pt.X, pty = pt.Y;
-        int poly0x = op.Pt.X, poly0y = op.Pt.Y;
+        long ptx = pt.X, pty = pt.Y;
+        long poly0x = op.Pt.X, poly0y = op.Pt.Y;
         do {
             op = op.Next;
-            int poly1x = op.Pt.X, poly1y = op.Pt.Y;
+            long poly1x = op.Pt.X, poly1y = op.Pt.Y;
 
             if (poly1y == pty) {
                 if ((poly1x == ptx) || (poly0y == pty &&
