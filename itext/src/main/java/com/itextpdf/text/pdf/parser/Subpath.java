@@ -146,7 +146,13 @@ public class Subpath {
         return segments.size() > 0 || closed;
     }
 
+    /**
+     * @return {@link java.util.List} containing points of piecewise linear approximation
+     *         for this subpath.
+     * @since 5.5.6
+     */
     public List<Point2D> getPiecewiseLinearApproximation() {
+        // TODO: at this moment it duplicates points in the resultant approximation. Fix this.
         List<Point2D> result = new ArrayList<Point2D>();
 
         for (Shape segment : segments) {

@@ -131,8 +131,7 @@ public class Path {
     }
 
     /**
-     * Close the current subpath by appending a straight line segment from the current
-     * point to the starting point of the subpath.
+     * Closes the current subpath.
      */
     public void closeSubpath() {
         Subpath lastSubpath = getLastSubpath();
@@ -140,6 +139,33 @@ public class Path {
 
         Point2D startPoint = lastSubpath.getStartPoint();
         moveTo((float) startPoint.getX(), (float) startPoint.getY());
+    }
+
+    /**
+     * Closes all subpathes contained in this path.
+     */
+    public void closeAllSubpaths() {
+        for (Subpath subpath : subpaths) {
+            subpath.setClosed(true);
+        }
+    }
+
+    /**
+     * DO NOT USE THIS METHOD! IT'S TEMPORARY WORKAROUND
+     * IT WILL BE DELETED IN THE FUTURE
+     *
+     * Adds additional line to each closed subpath and makes the subpath unclosed.
+     * The line connects the last and the first points of the subpaths.
+     */
+
+    @Deprecated
+    public void replaceCloseWithLine() {
+        for (Subpath subpath : subpaths) {
+            if (subpath.isClosed()) {
+                subpath.setClosed(false);
+                subpath.addSegment(new Line(subpath.getLastPoint(), subpath.getStartPoint()));
+            }
+        }
     }
 
     private Subpath getLastSubpath() {
