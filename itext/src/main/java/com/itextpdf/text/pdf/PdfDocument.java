@@ -2657,6 +2657,9 @@ public class PdfDocument extends Document {
         //fit on the current page, start a new page.
         if (ptable.getKeepTogether() && !fitsPage(ptable, 0f) && currentHeight > 0)  {
             newPage();
+            if (isTagged(writer)) {
+                ct.setCanvas(text);
+            }
         }
         if (currentHeight == 0) {
             ct.setAdjustFirstLine(false);
