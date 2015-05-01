@@ -50,6 +50,15 @@ public class BezierCurve implements Shape {
         return controlPoints;
     }
 
+    /**
+     * You can adjust precision of the approximation by varying the following
+     * parameters: {@link #curveCollinearityEpsilon}, {@link #distanceToleranceSquare},
+     * {@link #distanceToleranceManhattan}
+     *
+     * @return {@link java.util.List} containing points of piecewise linear approximation
+     *         for this bezier curve.
+     * @since 5.5.6
+     */
     public List<Point2D> getPiecewiseLinearApproximation() {
         List<Point2D> points = new ArrayList<Point2D>();
         points.add(controlPoints.get(0));
