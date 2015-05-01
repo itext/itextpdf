@@ -494,10 +494,10 @@ class ClipperBase {
 
     //------------------------------------------------------------------------------
     //todo: reference in java
-    void RangeTest(IntPoint Pt, BooleanWrapper useFullRange) throws ClipperException {
+    void RangeTest(IntPoint Pt, BooleanWrapper useFullRange) {
         if (useFullRange.isVal()) {
             if (Pt.X > hiRange || Pt.Y > hiRange || -Pt.X > hiRange || -Pt.Y > hiRange)
-                throw new ClipperException("Coordinate outside allowed range");
+                throw new RuntimeException("Coordinate outside allowed range");
         } else if (Pt.X > loRange || Pt.Y > loRange || -Pt.X > loRange || -Pt.Y > loRange) {
             useFullRange.setVal(true);
             RangeTest(Pt, useFullRange);
@@ -656,13 +656,13 @@ class ClipperBase {
     //------------------------------------------------------------------------------
 
 
-    public boolean AddPath(List<IntPoint> pg, PolyType polyType, boolean Closed) throws ClipperException {
+    public boolean addPath(List<IntPoint> pg, PolyType polyType, boolean Closed) {
         if (ClipperConstant.UseLines) {
             if (!Closed && polyType == PolyType.ptClip)
-                throw new ClipperException("AddPath: Open paths must be subject.");
+                throw new RuntimeException("addPath: Open paths must be subject.");
         } else {
             if (!Closed)
-                throw new ClipperException("AddPath: Open paths have been disabled.");
+                throw new RuntimeException("addPath: Open paths have been disabled.");
         }
 
         int highI = (int) pg.size() - 1;
@@ -841,7 +841,7 @@ class ClipperBase {
     public boolean AddPaths(List<List<IntPoint>> ppg, PolyType polyType, boolean closed) throws ClipperException {
         boolean result = false;
         for (int i = 0; i < ppg.size(); ++i)
-            if (AddPath(ppg.get(i), polyType, closed))
+            if (addPath(ppg.get(i), polyType, closed))
                 result = true;
         return result;
     }
@@ -1096,19 +1096,19 @@ public class Clipper extends ClipperBase {
 
 //------------------------------------------------------------------------------
 
-    public boolean Execute(ClipType clipType, List<List<IntPoint>> solution,
+    public boolean execute(ClipType clipType, List<List<IntPoint>> solution,
                            PolyFillType FillType) throws ClipperException {
-        return Execute(clipType, solution, FillType, FillType);
+        return execute(clipType, solution, FillType, FillType);
     }
 //------------------------------------------------------------------------------
 
-    public boolean Execute(ClipType clipType, PolyTree polytree,
+    public boolean execute(ClipType clipType, PolyTree polytree,
                            PolyFillType FillType) throws ClipperException {
-        return Execute(clipType, polytree, FillType, FillType);
+        return execute(clipType, polytree, FillType, FillType);
     }
 //------------------------------------------------------------------------------
 
-    public boolean Execute(ClipType clipType, List<List<IntPoint>> solution,
+    public boolean execute(ClipType clipType, List<List<IntPoint>> solution,
                            PolyFillType subjFillType, PolyFillType clipFillType) throws ClipperException {
         if (clipFillType == null) {
             clipFillType = PolyFillType.pftEvenOdd;
@@ -1141,8 +1141,8 @@ public class Clipper extends ClipperBase {
     }
 //------------------------------------------------------------------------------
 
-    public boolean Execute(ClipType clipType, PolyTree polytree,
-                           PolyFillType subjFillType, PolyFillType clipFillType) throws ClipperException {
+    public boolean execute(ClipType clipType, PolyTree polytree,
+                           PolyFillType subjFillType, PolyFillType clipFillType) {
         if (clipFillType == null) {
             clipFillType = PolyFillType.pftEvenOdd;
         }
@@ -1163,6 +1163,8 @@ public class Clipper extends ClipperBase {
             //build the return polygons ...
             if (succeeded)
                 BuildResult2(polytree);
+        } catch (ClipperException e) {
+            throw new RuntimeException(e);
         } finally {
             DisposeAllPolyPts();
             m_ExecuteLocked = false;
@@ -3645,8 +3647,8 @@ public class Clipper extends ClipperBase {
         List<List<IntPoint>> result = new ArrayList<List<IntPoint>>();
         Clipper c = new Clipper();
         c.StrictlySimple = true;
-        c.AddPath(poly, PolyType.ptSubject, true);
-        c.Execute(ClipType.ctUnion, result, fillType, fillType);
+        c.addPath(poly, PolyType.ptSubject, true);
+        c.execute(ClipType.ctUnion, result, fillType, fillType);
         return result;
     }
 //------------------------------------------------------------------------------
@@ -3659,7 +3661,7 @@ public class Clipper extends ClipperBase {
         Clipper c = new Clipper();
         c.StrictlySimple = true;
         c.AddPaths(polys, PolyType.ptSubject, true);
-        c.Execute(ClipType.ctUnion, result, fillType, fillType);
+        c.execute(ClipType.ctUnion, result, fillType, fillType);
         return result;
     }
 //------------------------------------------------------------------------------
@@ -3826,7 +3828,7 @@ public class Clipper extends ClipperBase {
         List<List<IntPoint>> paths = Minkowski(pattern, path, true, pathIsClosed);
         Clipper c = new Clipper();
         c.AddPaths(paths, PolyType.ptSubject, true);
-        c.Execute(ClipType.ctUnion, paths, PolyFillType.pftNonZero, PolyFillType.pftNonZero);
+        c.execute(ClipType.ctUnion, paths, PolyFillType.pftNonZero, PolyFillType.pftNonZero);
         return paths;
     }
 //------------------------------------------------------------------------------
@@ -3847,10 +3849,10 @@ public class Clipper extends ClipperBase {
             c.AddPaths(tmp, PolyType.ptSubject, true);
             if (pathIsClosed) {
                 List<IntPoint> path = TranslatePath(paths.get(i), pattern.get(0));
-                c.AddPath(path, PolyType.ptClip, true);
+                c.addPath(path, PolyType.ptClip, true);
             }
         }
-        c.Execute(ClipType.ctUnion, solution,
+        c.execute(ClipType.ctUnion, solution,
                 PolyFillType.pftNonZero, PolyFillType.pftNonZero);
         return solution;
     }
@@ -3860,7 +3862,7 @@ public class Clipper extends ClipperBase {
         List<List<IntPoint>> paths = Minkowski(poly1, poly2, false, true);
         Clipper c = new Clipper();
         c.AddPaths(paths, PolyType.ptSubject, true);
-        c.Execute(ClipType.ctUnion, paths, PolyFillType.pftNonZero, PolyFillType.pftNonZero);
+        c.execute(ClipType.ctUnion, paths, PolyFillType.pftNonZero, PolyFillType.pftNonZero);
         return paths;
     }
     //------------------------------------------------------------------------------

@@ -321,7 +321,7 @@ public class ClipperOffset {
         Clipper clpr = new Clipper();
         clpr.AddPaths(m_destPolys, PolyType.ptSubject, true);
         if (delta > 0) {
-            clpr.Execute(ClipType.ctUnion, solution,
+            clpr.execute(ClipType.ctUnion, solution,
                     PolyFillType.pftPositive, PolyFillType.pftPositive);
         } else {
             IntRect r = Clipper.GetBounds(m_destPolys);
@@ -332,9 +332,9 @@ public class ClipperOffset {
             outer.add(new IntPoint(r.right + 10, r.top - 10));
             outer.add(new IntPoint(r.left - 10, r.top - 10));
 
-            clpr.AddPath(outer, PolyType.ptSubject, true);
+            clpr.addPath(outer, PolyType.ptSubject, true);
             clpr.setReverseSolution(true);
-            clpr.Execute(ClipType.ctUnion, solution, PolyFillType.pftNegative, PolyFillType.pftNegative);
+            clpr.execute(ClipType.ctUnion, solution, PolyFillType.pftNegative, PolyFillType.pftNegative);
             if (solution.size() > 0)
                 solution.remove(0);
         }
@@ -350,7 +350,7 @@ public class ClipperOffset {
         Clipper clpr = new Clipper();
         clpr.AddPaths(m_destPolys, PolyType.ptSubject, true);
         if (delta > 0) {
-            clpr.Execute(ClipType.ctUnion, solution,
+            clpr.execute(ClipType.ctUnion, solution,
                     PolyFillType.pftPositive, PolyFillType.pftPositive);
         } else {
             IntRect r = Clipper.GetBounds(m_destPolys);
@@ -361,9 +361,9 @@ public class ClipperOffset {
             outer.add(new IntPoint(r.right + 10, r.top - 10));
             outer.add(new IntPoint(r.left - 10, r.top - 10));
 
-            clpr.AddPath(outer, PolyType.ptSubject, true);
+            clpr.addPath(outer, PolyType.ptSubject, true);
             clpr.setReverseSolution(true);
-            clpr.Execute(ClipType.ctUnion, solution, PolyFillType.pftNegative, PolyFillType.pftNegative);
+            clpr.execute(ClipType.ctUnion, solution, PolyFillType.pftNegative, PolyFillType.pftNegative);
             //remove the outer PolyNode rectangle ...
             if (solution.getChildCount() == 1 && solution.getChilds().get(0).getChildCount() > 0) {
                 PolyNode outerNode = solution.getChilds().get(0);
