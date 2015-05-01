@@ -145,4 +145,18 @@ public class Subpath {
         // the second clause is for case when we have single point
         return segments.size() > 0 || closed;
     }
+
+    public List<Point2D> getPiecewiseLinearApproximation() {
+        List<Point2D> result = new ArrayList<Point2D>();
+
+        for (Shape segment : segments) {
+            if (segment instanceof Line) {
+                result.addAll(segment.getBasePoints());
+            } else {
+                result.addAll(((BezierCurve) segment).getPiecewiseLinearApproximation());
+            }
+        }
+
+        return result;
+    }
 }
