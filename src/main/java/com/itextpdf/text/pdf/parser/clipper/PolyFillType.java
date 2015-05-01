@@ -5,14 +5,8 @@ package com.itextpdf.text.pdf.parser.clipper;
 //Others rules include Positive, Negative and ABS_GTR_EQ_TWO (only in OpenGL)
 //see http://glprogramming.com/red/chapter11.html
 public enum PolyFillType {
-    pftEvenOdd("pftEvenOdd"),
-    pftNonZero("pftNonZero"),
-    pftPositive("pftPositive"),
-    pftNegative("pftNegative");
-
-    private String name;
-
-    PolyFillType(String name) {
-        this.name = name;
-    }
+    pftEvenOdd,
+    pftNonZero,
+    pftPositive,
+    pftNegative
 }
