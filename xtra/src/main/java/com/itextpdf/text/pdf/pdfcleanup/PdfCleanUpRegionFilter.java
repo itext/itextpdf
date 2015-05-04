@@ -49,10 +49,10 @@ import com.itextpdf.awt.geom.NoninvertibleTransformException;
 import com.itextpdf.awt.geom.Point;
 import com.itextpdf.awt.geom.Point2D;
 import com.itextpdf.text.Rectangle;
+import com.itextpdf.text.pdf.PdfArray;
 import com.itextpdf.text.pdf.PdfContentByte;
 import com.itextpdf.text.pdf.parser.*;
 import com.itextpdf.text.pdf.parser.clipper.*;
-import com.itextpdf.text.pdf.pdfcleanup.PdfCleanUpGraphicsState.LineDashPattern;
 
 import java.util.*;
 
@@ -110,6 +110,16 @@ class PdfCleanUpRegionFilter extends RenderFilter {
                                     int lineJoinStyle, float miterLimit, LineDashPattern lineDashPattern) {
         JoinType joinType = getJoinType(lineJoinStyle);
         EndType endType = getEndType(lineCapStyle);
+
+        if (lineDashPattern != null) {
+            if (isZeroDash(lineDashPattern)) {
+                return new Path();
+            }
+
+            if (!isSolid(lineDashPattern)) {
+                path = applyDashPattern(path, lineDashPattern);
+            }
+        }
 
         ClipperOffset offset = new ClipperOffset(miterLimit, PdfCleanUpProcessor.arcTolerance * PdfCleanUpProcessor.floatMultiplier);
         addPath(offset, path, joinType, endType);
@@ -208,8 +218,8 @@ class PdfCleanUpRegionFilter extends RenderFilter {
         List<Point2D> convertedPoints = new ArrayList<Point2D>(points.size());
 
         for (IntPoint point : points) {
-            convertedPoints.add(new Point2D.Double(point.X / PdfCleanUpProcessor.floatMultiplier,
-                                                   point.Y / PdfCleanUpProcessor.floatMultiplier));
+            convertedPoints.add(new Point2D.Float((float) (point.X / PdfCleanUpProcessor.floatMultiplier),
+                                                  (float) (point.Y / PdfCleanUpProcessor.floatMultiplier)));
         }
 
         return convertedPoints;
@@ -310,6 +320,111 @@ class PdfCleanUpRegionFilter extends RenderFilter {
         double top = Collections.max(ys);
 
         return new Rectangle((float) left, (float) bottom, (float) right, (float) top);
+    }
+
+    private static boolean isZeroDash(LineDashPattern lineDashPattern) {
+        PdfArray dashArray = lineDashPattern.getDashArray();
+        float total = 0;
+
+        // We should only iterate over the numbers specifying lengths of dashes
+        for (int i = 0; i < dashArray.size(); i += 2) {
+            float currentDash = dashArray.getAsNumber(i).floatValue();
+            // Should be nonnegative according to spec.
+            if (currentDash < 0) {
+                currentDash = 0;
+            }
+
+            total += currentDash;
+        }
+
+        return Float.compare(total, 0) == 0;
+    }
+
+    private static boolean isSolid(LineDashPattern lineDashPattern) {
+        return lineDashPattern.getDashArray().isEmpty();
+    }
+
+    private static Path applyDashPattern(Path path, LineDashPattern lineDashPattern) {
+        path.replaceCloseWithLine();
+        Path dashedPath = new Path();
+
+        for (Subpath subpath : path.getSubpaths()) {
+            List<Point2D> subpathApprox = subpath.getPiecewiseLinearApproximation();
+
+            if (subpathApprox.size() > 1) {
+                dashedPath.moveTo((float) subpathApprox.get(0).getX(), (float) subpathApprox.get(0).getY());
+                float remainingDist = 0;
+                boolean remainingIsGap = false;
+
+                for (int i = 1; i < subpathApprox.size(); ++i) {
+                    Point2D nextPoint = null;
+
+                    if (remainingDist != 0) {
+                        nextPoint = getNextPoint(subpathApprox.get(i - 1), subpathApprox.get(i), remainingDist);
+                        remainingDist = applyDash(dashedPath, subpathApprox.get(i - 1), subpathApprox.get(i), nextPoint, remainingIsGap);
+                    }
+
+                    while (Float.compare(remainingDist, 0) == 0 && !dashedPath.getCurrentPoint().equals(subpathApprox.get(i))) {
+                        LineDashPattern.DashArrayElem currentElem = lineDashPattern.next();
+                        nextPoint = getNextPoint(nextPoint != null? nextPoint : subpathApprox.get(i - 1), subpathApprox.get(i), currentElem.getVal());
+                        remainingDist = applyDash(dashedPath, subpathApprox.get(i - 1), subpathApprox.get(i), nextPoint, currentElem.isGap());
+                        remainingIsGap = currentElem.isGap();
+                    }
+                }
+            }
+
+            // According to PDF spec. line dash pattern should be restarted for each new subpath.
+            lineDashPattern.reset();
+        }
+
+        return dashedPath;
+    }
+
+    private static Point2D getNextPoint(Point2D segStart, Point2D segEnd, float dist) {
+        Point2D vector = componentwiseDiff(segEnd, segStart);
+        Point2D unitVector = getUnitVector(vector);
+
+        return new Point2D.Float((float) (segStart.getX() + dist * unitVector.getX()),
+                                 (float) (segStart.getY() + dist * unitVector.getY()));
+    }
+
+    private static Point2D componentwiseDiff(Point2D minuend, Point2D subtrahend) {
+        return new Point2D.Float((float) (minuend.getX() - subtrahend.getX()),
+                                 (float) (minuend.getY() - subtrahend.getY()));
+    }
+
+    private static Point2D getUnitVector(Point2D vector) {
+        double vectorLength = getVectorEuclideanNorm(vector);
+        return new Point2D.Float((float) (vector.getX() / vectorLength),
+                                 (float) (vector.getY() / vectorLength));
+    }
+
+    private static double getVectorEuclideanNorm(Point2D vector) {
+        return vector.distance(0, 0);
+    }
+
+    private static float applyDash(Path dashedPath, Point2D segStart, Point2D segEnd, Point2D dashTo, boolean isGap) {
+        float remainingDist = 0;
+
+        if (!liesOnSegment(segStart, segEnd, dashTo)) {
+            remainingDist = (float) dashTo.distance(segEnd);
+            dashTo = segEnd;
+        }
+
+        if (isGap) {
+            dashedPath.moveTo((float) dashTo.getX(), (float) dashTo.getY());
+        } else {
+            dashedPath.lineTo((float) dashTo.getX(), (float) dashTo.getY());
+        }
+
+        return remainingDist;
+    }
+
+    private static boolean liesOnSegment(Point2D segStart, Point2D segEnd, Point2D point) {
+        return point.getX() >= Math.min(segStart.getX(), segEnd.getX()) &&
+               point.getX() <= Math.max(segStart.getX(), segEnd.getX()) &&
+               point.getY() >= Math.min(segStart.getY(), segEnd.getY()) &&
+               point.getY() <= Math.max(segStart.getY(), segEnd.getY());
     }
 
     private static boolean containsAll(com.itextpdf.awt.geom.Rectangle rect, Point2D... points) {

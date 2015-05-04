@@ -46,7 +46,6 @@ package com.itextpdf.text.pdf.pdfcleanup;
 
 import com.itextpdf.text.pdf.PdfContentByte;
 import com.itextpdf.text.pdf.PdfDictionary;
-import com.itextpdf.text.pdf.pdfcleanup.PdfCleanUpGraphicsState.LineDashPattern;
 
 import java.util.ArrayDeque;
 import java.util.Deque;

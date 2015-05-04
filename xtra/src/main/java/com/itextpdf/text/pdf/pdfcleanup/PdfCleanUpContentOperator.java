@@ -50,7 +50,6 @@ import com.itextpdf.text.DocWriter;
 import com.itextpdf.text.Image;
 import com.itextpdf.text.pdf.*;
 import com.itextpdf.text.pdf.parser.*;
-import com.itextpdf.text.pdf.pdfcleanup.PdfCleanUpGraphicsState.LineDashPattern;
 
 import java.io.IOException;
 import java.io.OutputStream;

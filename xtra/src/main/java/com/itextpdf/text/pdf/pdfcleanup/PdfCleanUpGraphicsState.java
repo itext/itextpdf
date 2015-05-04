@@ -150,31 +150,4 @@ class PdfCleanUpGraphicsState {
     public void setLineDashPattern(LineDashPattern lineDashPattern) {
         this.lineDashPattern = lineDashPattern;
     }
-
-    public static class LineDashPattern {
-
-        private PdfArray dashArray;
-        private float dashPhase;
-
-        public LineDashPattern(PdfArray dashArray, float dashPhase) {
-            this.dashArray = new PdfArray(dashArray);
-            this.dashPhase = dashPhase;
-        }
-
-        public PdfArray getDashArray() {
-            return dashArray;
-        }
-
-        public void setDashArray(PdfArray dashArray) {
-            this.dashArray = dashArray;
-        }
-
-        public float getDashPhase() {
-            return dashPhase;
-        }
-
-        public void setDashPhase(float dashPhase) {
-            this.dashPhase = dashPhase;
-        }
-    }
 }
