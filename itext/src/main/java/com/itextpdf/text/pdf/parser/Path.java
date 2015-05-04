@@ -195,14 +195,9 @@ public class Path {
     }
 
     /**
-     * DO NOT USE THIS METHOD! IT'S TEMPORARY WORKAROUND
-     * IT WILL BE DELETED IN THE FUTURE
-     *
      * Adds additional line to each closed subpath and makes the subpath unclosed.
      * The line connects the last and the first points of the subpaths.
      */
-
-    @Deprecated
     public void replaceCloseWithLine() {
         for (Subpath subpath : subpaths) {
             if (subpath.isClosed()) {
