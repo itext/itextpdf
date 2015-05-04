@@ -69,6 +69,8 @@ public class PdfCleanUpProcessor {
      */
     public static double floatMultiplier = Math.pow(10, 14);
 
+    public static boolean fillCleanedArea = true;
+
     /**
      * Used as the criterion of a good approximation of rounded line joins
      * and line caps.
@@ -178,9 +180,11 @@ public class PdfCleanUpProcessor {
     }
 
     private void colorCleanedLocations(PdfContentByte canvas, List<PdfCleanUpLocation> cleanUpLocations) {
-        for (PdfCleanUpLocation location : cleanUpLocations) {
-            if (location.getCleanUpColor() != null) {
-                addColoredRectangle(canvas, location);
+        if (fillCleanedArea) {
+            for (PdfCleanUpLocation location : cleanUpLocations) {
+                if (location.getCleanUpColor() != null) {
+                    addColoredRectangle(canvas, location);
+                }
             }
         }
     }
@@ -339,7 +343,7 @@ public class PdfCleanUpProcessor {
                 PdfStream formXObj = annotDict.getAsStream(PdfName.RO);
                 PdfString overlayText = annotDict.getAsString(PdfName.OVERLAYTEXT);
 
-                if (formXObj != null) {
+                if (fillCleanedArea && formXObj != null) {
                     PdfArray rectArray = annotDict.getAsArray(PdfName.RECT);
                     Rectangle annotRect = new Rectangle(rectArray.getAsNumber(0).floatValue(),
                                                         rectArray.getAsNumber(1).floatValue(),
@@ -347,7 +351,7 @@ public class PdfCleanUpProcessor {
                                                         rectArray.getAsNumber(3).floatValue());
 
                     insertFormXObj(canvas, pageDict, formXObj, clippingRects.get(j), annotRect);
-                } else if (overlayText != null && overlayText.toUnicodeString().length() > 0) {
+                } else if (fillCleanedArea && overlayText != null && overlayText.toUnicodeString().length() > 0) {
                     drawOverlayText(canvas, clippingRects.get(j), overlayText,
                                     annotDict.getAsString(PdfName.DA),
                                     annotDict.getAsNumber(PdfName.Q),
