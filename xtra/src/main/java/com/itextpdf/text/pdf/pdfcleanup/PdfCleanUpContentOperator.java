@@ -74,18 +74,6 @@ class PdfCleanUpContentOperator implements ContentOperator {
     private static final byte[] eoW = DocWriter.getISOBytes("W*\n");
     private static final byte[] q = DocWriter.getISOBytes("q\n");
     private static final byte[] Q = DocWriter.getISOBytes("Q\n");
-    private static final byte[] CS = DocWriter.getISOBytes("CS\n");
-    private static final byte[] cs = DocWriter.getISOBytes("cs\n");
-    private static final byte[] SC = DocWriter.getISOBytes("SC\n");
-    private static final byte[] SCN = DocWriter.getISOBytes("SCN\n");
-    private static final byte[] sc = DocWriter.getISOBytes("sc\n");
-    private static final byte[] scn = DocWriter.getISOBytes("scn\n");
-    private static final byte[] G = DocWriter.getISOBytes("G\n");
-    private static final byte[] g = DocWriter.getISOBytes("g\n");
-    private static final byte[] RG = DocWriter.getISOBytes("RG\n");
-    private static final byte[] rg = DocWriter.getISOBytes("rg\n");
-    private static final byte[] K = DocWriter.getISOBytes("K\n");
-    private static final byte[] k = DocWriter.getISOBytes("k\n");
 
     private static final Set<String> textShowingOperators = new HashSet<String>(Arrays.asList("TJ", "Tj", "'", "\""));
     private static final Set<String> pathConstructionOperators = new HashSet<String>(Arrays.asList("m", "l", "c", "v", "y", "h", "re"));
@@ -103,6 +91,8 @@ class PdfCleanUpContentOperator implements ContentOperator {
     private static final Set<String> clippingPathOperators = new HashSet<String>(Arrays.asList("W", "W*"));
 
     private static final Set<String> lineStyleOperators = new HashSet<String>(Arrays.asList("w", "J", "j", "M", "d"));
+
+    private static final Set<String> strokeColorOperators = new HashSet<String>(Arrays.asList("CS", "SC", "SCN", "G", "RG", "K"));
 
     protected PdfCleanUpRenderListener cleanUpStrategy;
     protected ContentOperator originalContentOperator;
@@ -189,18 +179,30 @@ class PdfCleanUpContentOperator implements ContentOperator {
                     gs.getFontSize(), gs.getHorizontalScaling());
         } else if (pathPaintingOperators.contains(operatorStr)) {
             writePath(operatorStr, canvas);
+        } else if (strokeColorOperators.contains(operatorStr)) {
+            // Replace current color with the new one.
+            cleanUpStrategy.getContext().popStrokeColor();
+            cleanUpStrategy.getContext().pushStrokeColor(operands);
+        } else if ("q" == operatorStr) {
+            cleanUpStrategy.getContext().pushStrokeColor(cleanUpStrategy.getContext().peekStrokeColor());
+        } else if ("Q" == operatorStr) {
+            cleanUpStrategy.getContext().popStrokeColor();
         }
 
         if (!disableOutput) {
-            int index = 0;
-
-            for (PdfObject o : operands) {
-                toPdf(o, canvas.getPdfWriter(), canvas.getInternalBuffer());
-                canvas.getInternalBuffer().append(operands.size() > ++index ? (byte) ' ' : (byte) '\n');
-            }
+            writeOperands(canvas, operands);
         }
 
         cleanUpStrategy.clearChunks();
+    }
+
+    private void writeOperands(PdfContentByte canvas, List<PdfObject> operands) throws IOException {
+        int index = 0;
+
+        for (PdfObject o : operands) {
+            toPdf(o, canvas.getPdfWriter(), canvas.getInternalBuffer());
+            canvas.getInternalBuffer().append(operands.size() > ++index ? (byte) ' ' : (byte) '\n');
+        }
     }
 
     private boolean allChunksAreVisible(List<PdfCleanUpContentChunk> chunks) {
@@ -388,17 +390,21 @@ class PdfCleanUpContentOperator implements ContentOperator {
         }
 
         if (nwFillOperators.contains(operatorStr)) {
-            writeFillAfterClip(canvas, cleanUpStrategy.getCurrentFillPath(), f,
-                               cleanUpStrategy.getClippingRule(), PathPaintingRenderInfo.NONZERO_WINDING_RULE);
+            /* If clipping path isn't applied, then clippingRule will never be equal
+               to PathPaintingRenderInfo.NONZERO_WINDING_RULE and the path will be
+               written to the content stream. */
+            int clippingRule = cleanUpStrategy.isClipped() ? cleanUpStrategy.getClippingRule() : PathPaintingRenderInfo.NONZERO_WINDING_RULE + 1;
+            writeFillAfterClip(canvas, cleanUpStrategy.getCurrentFillPath(), f, clippingRule, PathPaintingRenderInfo.NONZERO_WINDING_RULE);
         } else if (eoFillOperators.contains(operatorStr)) {
-            writeFillAfterClip(canvas, cleanUpStrategy.getCurrentFillPath(), eoF,
-                               cleanUpStrategy.getClippingRule(), PathPaintingRenderInfo.EVEN_ODD_RULE);
+            // Similarly to the previous.
+            int clippingRule = cleanUpStrategy.isClipped() ? cleanUpStrategy.getClippingRule() : PathPaintingRenderInfo.EVEN_ODD_RULE + 1;
+            writeFillAfterClip(canvas, cleanUpStrategy.getCurrentFillPath(), eoF, clippingRule, PathPaintingRenderInfo.EVEN_ODD_RULE);
         } else if (cleanUpStrategy.isClipped()) {
             canvas.getInternalBuffer().append(n);
         }
 
         if (strokeOperators.contains(operatorStr)) {
-            writePath(cleanUpStrategy.getCurrentStrokePath(), f, canvas);
+            writeStroke(canvas, cleanUpStrategy.getCurrentStrokePath());
         }
 
         cleanUpStrategy.setClipped(false);
@@ -479,5 +485,19 @@ class PdfCleanUpContentOperator implements ContentOperator {
             canvas.getInternalBuffer().append(n);
             writePath(path, fillOperator, canvas);
         }
+    }
+
+    private void writeStroke(PdfContentByte canvas, Path path) throws IOException {
+        canvas.getInternalBuffer().append(q);
+
+        List<PdfObject> strokeColorOperands = cleanUpStrategy.getContext().peekStrokeColor();
+        String strokeOperatorStr = strokeColorOperands.get(strokeColorOperands.size() - 1).toString();
+        // Below expression converts stroke color operator to its fill analogue.
+        strokeColorOperands.set(strokeColorOperands.size() - 1, new PdfLiteral(strokeOperatorStr.toLowerCase()));
+        writeOperands(canvas, strokeColorOperands);
+
+        writePath(path, f, canvas);
+
+        canvas.getInternalBuffer().append(Q);
     }
 }

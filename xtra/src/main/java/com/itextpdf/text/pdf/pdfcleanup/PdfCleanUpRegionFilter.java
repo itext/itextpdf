@@ -134,7 +134,7 @@ class PdfCleanUpRegionFilter extends RenderFilter {
      * @param fillingRule If the subpath is contour, pass any value.
      */
     protected Path filterFillPath(Path path, Matrix ctm, int fillingRule) {
-        Point2D[] transfRectVertices = transformPoints(ctm, false, getVertices(rectangle));
+        Point2D[] transfRectVertices = transformPoints(ctm, true, getVertices(rectangle));
         PolyFillType fillType = PolyFillType.pftNonZero;
 
         if (fillingRule == PathPaintingRenderInfo.EVEN_ODD_RULE) {
@@ -178,13 +178,17 @@ class PdfCleanUpRegionFilter extends RenderFilter {
     private static void addPath(ClipperOffset offset, Path path, JoinType joinType, EndType endType) {
         for (Subpath subpath : path.getSubpaths()) {
             if (!subpath.isSinglePointClosed() && !subpath.isSinglePointOpen()) {
-                // Offsetting is never used for path to be filled
+                EndType et;
+
                 if (subpath.isClosed()) {
-                    endType = EndType.etClosedLine;
+                    // Offsetting is never used for path being filled
+                    et = EndType.etClosedLine;
+                } else {
+                    et = endType;
                 }
 
                 List<Point2D> linearApproxPoints = subpath.getPiecewiseLinearApproximation();
-                offset.AddPath(convertToIntPoints(linearApproxPoints), joinType, endType);
+                offset.AddPath(convertToIntPoints(linearApproxPoints), joinType, et);
             }
         }
     }

@@ -44,8 +44,12 @@
  */
 package com.itextpdf.text.pdf.pdfcleanup;
 
-import com.itextpdf.text.pdf.PdfContentByte;
-import com.itextpdf.text.pdf.PdfDictionary;
+import com.itextpdf.text.pdf.*;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Stack;
 
 /**
  * Stores parameters related to specific context which is either page or xobject
@@ -56,7 +60,20 @@ class PdfCleanUpContext {
     private PdfDictionary resources;
     private PdfContentByte canvas;
 
+    /**
+     * PdfContentStreamProcessor is able to process only Device* color spaces,
+     * so I had to add this workaround.
+     */
+    private Stack<List<PdfObject>> strokeColorOperands;
+
+    public PdfCleanUpContext() {
+        List<PdfObject> initialStrokeColor = new ArrayList<PdfObject>(Arrays.asList(PdfName.DEVICEGRAY, new PdfLiteral("CS")));
+        strokeColorOperands = new Stack<List<PdfObject>>();
+        strokeColorOperands.push(initialStrokeColor);
+    }
+
     public PdfCleanUpContext(PdfDictionary resources, PdfContentByte canvas) {
+        this();
         this.resources = resources;
         this.canvas = canvas;
     }
@@ -75,5 +92,21 @@ class PdfCleanUpContext {
 
     public void setCanvas(PdfContentByte canvas) {
         this.canvas = canvas;
+    }
+
+    public void pushStrokeColor(List<PdfObject> strokeColorOperands) {
+        this.strokeColorOperands.push(strokeColorOperands);
+    }
+
+    public List<PdfObject> peekStrokeColor() {
+        if (strokeColorOperands.size() == 0) {
+            return null;
+        } else {
+            return strokeColorOperands.peek();
+        }
+    }
+
+    public List<PdfObject> popStrokeColor() {
+        return strokeColorOperands.pop();
     }
 }
