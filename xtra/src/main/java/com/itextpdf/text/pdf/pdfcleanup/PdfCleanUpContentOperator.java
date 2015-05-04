@@ -378,40 +378,26 @@ class PdfCleanUpContentOperator implements ContentOperator {
     }
 
     private void writePath(String operatorStr, PdfContentByte canvas) throws IOException {
-        if (cleanUpStrategy.isClipped()) {
-            byte[] clippingOperator = (cleanUpStrategy.getClippingRule() == PathPaintingRenderInfo.NONZERO_WINDING_RULE) ? W : eoW;
-            writePath(cleanUpStrategy.getNewClipPath(), clippingOperator, canvas);
-
-            if ("n".equals(operatorStr)) {
-                canvas.getInternalBuffer().append(n);
-                cleanUpStrategy.setClipped(false);
-                return;
-            }
-        }
-
         if (nwFillOperators.contains(operatorStr)) {
-            /* If clipping path isn't applied, then clippingRule will never be equal
-               to PathPaintingRenderInfo.NONZERO_WINDING_RULE and the path will be
-               written to the content stream. */
-            int clippingRule = cleanUpStrategy.isClipped() ? cleanUpStrategy.getClippingRule() : PathPaintingRenderInfo.NONZERO_WINDING_RULE + 1;
-            writeFillAfterClip(canvas, cleanUpStrategy.getCurrentFillPath(), f, clippingRule, PathPaintingRenderInfo.NONZERO_WINDING_RULE);
+            writePath(cleanUpStrategy.getCurrentFillPath(), f, canvas);
         } else if (eoFillOperators.contains(operatorStr)) {
-            // Similarly to the previous.
-            int clippingRule = cleanUpStrategy.isClipped() ? cleanUpStrategy.getClippingRule() : PathPaintingRenderInfo.EVEN_ODD_RULE + 1;
-            writeFillAfterClip(canvas, cleanUpStrategy.getCurrentFillPath(), eoF, clippingRule, PathPaintingRenderInfo.EVEN_ODD_RULE);
-        } else if (cleanUpStrategy.isClipped()) {
-            canvas.getInternalBuffer().append(n);
+            writePath(cleanUpStrategy.getCurrentFillPath(), eoF, canvas);
         }
 
         if (strokeOperators.contains(operatorStr)) {
             writeStroke(canvas, cleanUpStrategy.getCurrentStrokePath());
         }
 
-        cleanUpStrategy.setClipped(false);
+        if (cleanUpStrategy.isClipped() && !cleanUpStrategy.getNewClipPath().isEmpty()) {
+            byte[] clippingOperator = (cleanUpStrategy.getClippingRule() == PathPaintingRenderInfo.NONZERO_WINDING_RULE) ? W : eoW;
+            writePath(cleanUpStrategy.getNewClipPath(), clippingOperator, canvas);
+            canvas.getInternalBuffer().append(n);
+            cleanUpStrategy.setClipped(false);
+        }
     }
 
     private void writePath(Path path, byte[] pathPaintingOperator, PdfContentByte canvas) throws IOException {
-        if (path.getSubpaths().size() == 0) {
+        if (path.isEmpty()) {
             return;
         }
 
@@ -476,15 +462,6 @@ class PdfCleanUpContentOperator implements ContentOperator {
 
         new PdfNumber(destination.getY()).toPdf(canvas.getPdfWriter(), canvas.getInternalBuffer());
         canvas.getInternalBuffer().append(l);
-    }
-
-    private void writeFillAfterClip(PdfContentByte canvas, Path path, byte[] fillOperator, int clippingRule, int fillRule) throws IOException {
-        if (clippingRule == fillRule) {
-            canvas.getInternalBuffer().append(fillOperator);
-        } else {
-            canvas.getInternalBuffer().append(n);
-            writePath(path, fillOperator, canvas);
-        }
     }
 
     private void writeStroke(PdfContentByte canvas, Path path) throws IOException {
