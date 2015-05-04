@@ -838,7 +838,7 @@ class ClipperBase {
     }
     //------------------------------------------------------------------------------
 
-    public boolean AddPaths(List<List<IntPoint>> ppg, PolyType polyType, boolean closed) throws ClipperException {
+    public boolean AddPaths(List<List<IntPoint>> ppg, PolyType polyType, boolean closed) {
         boolean result = false;
         for (int i = 0; i < ppg.size(); ++i)
             if (addPath(ppg.get(i), polyType, closed))

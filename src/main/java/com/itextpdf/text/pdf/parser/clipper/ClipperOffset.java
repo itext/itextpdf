@@ -341,7 +341,7 @@ public class ClipperOffset {
     }
     //------------------------------------------------------------------------------
 
-    public void Execute(PolyTree solution, double delta) throws ClipperException {
+    public void Execute(PolyTree solution, double delta) {
         solution.Clear();
         FixOrientations();
         DoOffset(delta);
