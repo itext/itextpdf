@@ -50,6 +50,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.StringTokenizer;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Base class for the several font types supported
@@ -294,7 +295,7 @@ public abstract class BaseFont {
     protected boolean fontSpecific = true;
 
     /** cache for the fonts already used. */
-    protected static HashMap<String, BaseFont> fontCache = new HashMap<String, BaseFont>();
+    protected static ConcurrentHashMap<String, BaseFont> fontCache = new ConcurrentHashMap<String, BaseFont>();
 
     /** list of the 14 built in fonts. */
     protected static final HashMap<String, PdfName> BuiltinFonts14 = new HashMap<String, PdfName>();
@@ -692,9 +693,7 @@ public abstract class BaseFont {
         BaseFont fontBuilt = null;
         String key = name + "\n" + encoding + "\n" + embedded;
         if (cached) {
-            synchronized (fontCache) {
-                fontFound = fontCache.get(key);
-            }
+            fontFound = fontCache.get(key);
             if (fontFound != null)
                 return fontFound;
         }
@@ -717,12 +716,10 @@ public abstract class BaseFont {
         else
             throw new DocumentException(MessageLocalization.getComposedMessage("font.1.with.2.is.not.recognized", name, encoding));
         if (cached) {
-            synchronized (fontCache) {
                 fontFound = fontCache.get(key);
                 if (fontFound != null)
                     return fontFound;
-                fontCache.put(key, fontBuilt);
-            }
+                fontCache.putIfAbsent(key, fontBuilt);
         }
         return fontBuilt;
     }
