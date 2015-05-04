@@ -201,7 +201,7 @@ public class Path {
      * @returns Indices of modified subpaths.
      */
     public List<Integer> replaceCloseWithLine() {
-        List<Integer> modifiedSubpathsIndeces = new ArrayList<Integer>();
+        List<Integer> modifiedSubpathsIndices = new ArrayList<Integer>();
         int i = 0;
 
             /* It could be replaced with "for" cycle, because IList in C# provides effective
@@ -212,13 +212,20 @@ public class Path {
             if (subpath.isClosed()) {
                 subpath.setClosed(false);
                 subpath.addSegment(new Line(subpath.getLastPoint(), subpath.getStartPoint()));
-                modifiedSubpathsIndeces.add(i);
+                modifiedSubpathsIndices.add(i);
             }
 
             ++i;
         }
 
-        return modifiedSubpathsIndeces;
+        return modifiedSubpathsIndices;
+    }
+
+    /**
+     * Path is empty if it contains no subpaths.
+     */
+    public boolean isEmpty() {
+        return subpaths.size() == 0;
     }
 
     private Subpath getLastSubpath() {
