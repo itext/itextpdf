@@ -202,6 +202,12 @@ public class PdfContentStreamProcessor {
 
         registerContentOperator("Do", new Do());
 
+        registerContentOperator("w", new SetLineWidth());
+        registerContentOperator("J", new SetLineCap());
+        registerContentOperator("j", new SetLineJoin());
+        registerContentOperator("M", new SetMiterLimit());
+        registerContentOperator("d", new SetLineDashPattern());
+
         // Path construction and painting operators
         if (renderListener instanceof ExtRenderListener) {
             int fillStroke = PathPaintingRenderInfo.FILL | PathPaintingRenderInfo.STROKE;
@@ -264,7 +270,7 @@ public class PdfContentStreamProcessor {
      * Returns the current graphics state.
      * @return	the graphics state
      */
-    private GraphicsState gs(){
+    public GraphicsState gs(){
         return gsStack.peek();
     }
 
@@ -367,7 +373,7 @@ public class PdfContentStreamProcessor {
             modifyPath(PathConstructionRenderInfo.CLOSE, null);
         }
 
-        PathPaintingRenderInfo renderInfo = new PathPaintingRenderInfo(operation, rule, gs().getCtm());
+        PathPaintingRenderInfo renderInfo = new PathPaintingRenderInfo(operation, rule, gs());
         ((ExtRenderListener) renderListener).renderPath(renderInfo);
     }
 
@@ -980,6 +986,47 @@ public class PdfContentStreamProcessor {
         public void invoke(PdfContentStreamProcessor processor, PdfLiteral operator, ArrayList<PdfObject> operands) throws IOException {
             PdfName xobjectName = (PdfName)operands.get(0);
             processor.displayXObject(xobjectName);
+        }
+    }
+
+    private static class SetLineWidth implements ContentOperator {
+
+        public void invoke(PdfContentStreamProcessor processor, PdfLiteral oper, ArrayList<PdfObject> operands) {
+            float lineWidth = ((PdfNumber) operands.get(0)).floatValue();
+            processor.gs().setLineWidth(lineWidth);
+        }
+    }
+
+    private class SetLineCap implements ContentOperator {
+
+        public void invoke(PdfContentStreamProcessor processor, PdfLiteral oper, ArrayList<PdfObject> operands) {
+            int lineCap = ((PdfNumber) operands.get(0)).intValue();
+            processor.gs().setLineCapStyle(lineCap);
+        }
+    }
+
+    private class SetLineJoin implements ContentOperator {
+
+        public void invoke(PdfContentStreamProcessor processor, PdfLiteral oper, ArrayList<PdfObject> operands) {
+            int lineJoin = ((PdfNumber) operands.get(0)).intValue();
+            processor.gs().setLineJoinStyle(lineJoin);
+        }
+    }
+
+    private class SetMiterLimit implements ContentOperator {
+
+        public void invoke(PdfContentStreamProcessor processor, PdfLiteral oper, ArrayList<PdfObject> operands) {
+            float miterLimit = ((PdfNumber) operands.get(0)).floatValue();
+            processor.gs().setMiterLimit(miterLimit);
+        }
+    }
+
+    private class SetLineDashPattern implements ContentOperator {
+
+        public void invoke(PdfContentStreamProcessor processor, PdfLiteral oper, ArrayList<PdfObject> operands) {
+            LineDashPattern pattern = new LineDashPattern(((PdfArray) operands.get(0)),
+                                                          ((PdfNumber) operands.get(1)).floatValue());
+            processor.gs().setLineDashPattern(pattern);
         }
     }
 

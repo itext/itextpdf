@@ -46,6 +46,7 @@ package com.itextpdf.text.pdf.parser;
 
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.pdf.CMapAwareDocumentFont;
+import com.itextpdf.text.pdf.PdfContentByte;
 import com.itextpdf.text.pdf.PdfName;
 
 /**
@@ -81,6 +82,12 @@ public class GraphicsState {
     BaseColor fillColor;
     /** The current stroke color. */
     BaseColor strokeColor;
+
+    private float lineWidth;
+    private int lineCapStyle;
+    private int lineJoinStyle;
+    private float miterLimit;
+    private LineDashPattern lineDashPattern;
     
     /**
      * Constructs a new Graphics State object with the default values.
@@ -100,6 +107,10 @@ public class GraphicsState {
         colorSpaceStroke = null;
         fillColor = null;
         strokeColor = null;
+        lineWidth = 1.0f;
+        lineCapStyle = PdfContentByte.LINE_CAP_BUTT;
+        lineJoinStyle = PdfContentByte.LINE_JOIN_MITER;
+        miterLimit = 10.0f;
     }
     
     /**
@@ -123,6 +134,14 @@ public class GraphicsState {
         colorSpaceStroke = source.colorSpaceStroke;
         fillColor = source.fillColor;
         strokeColor = source.strokeColor;
+        lineWidth = source.lineWidth;
+        lineCapStyle = source.lineCapStyle;
+        lineJoinStyle = source.lineJoinStyle;
+        miterLimit = source.miterLimit;
+
+        if (source.lineDashPattern != null) {
+            lineDashPattern = new LineDashPattern(source.lineDashPattern.getDashArray(), source.lineDashPattern.getDashPhase());
+        }
     }
 
 	/**
@@ -245,4 +264,43 @@ public class GraphicsState {
 		return strokeColor;
 	}
 
+    public float getLineWidth() {
+        return lineWidth;
+    }
+
+    public void setLineWidth(float lineWidth) {
+        this.lineWidth = lineWidth;
+    }
+
+    public int getLineCapStyle() {
+        return lineCapStyle;
+    }
+
+    public void setLineCapStyle(int lineCapStyle) {
+        this.lineCapStyle = lineCapStyle;
+    }
+
+    public int getLineJoinStyle() {
+        return lineJoinStyle;
+    }
+
+    public void setLineJoinStyle(int lineJoinStyle) {
+        this.lineJoinStyle = lineJoinStyle;
+    }
+
+    public float getMiterLimit() {
+        return miterLimit;
+    }
+
+    public void setMiterLimit(float miterLimit) {
+        this.miterLimit = miterLimit;
+    }
+
+    public LineDashPattern getLineDashPattern() {
+        return lineDashPattern;
+    }
+
+    public void setLineDashPattern(LineDashPattern lineDashPattern) {
+        this.lineDashPattern = new LineDashPattern(lineDashPattern.getDashArray(), lineDashPattern.getDashPhase());
+    }
 }

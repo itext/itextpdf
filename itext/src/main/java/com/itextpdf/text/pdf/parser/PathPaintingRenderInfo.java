@@ -91,27 +91,27 @@ public class PathPaintingRenderInfo {
 
     private int operation;
     private int rule;
-    private Matrix ctm;
+    private GraphicsState gs;
 
     /**
      * @param operation One of the possible combinations of {@link #STROKE} and {@link #FILL} values or {@link #NO_OP}
      * @param rule      Either {@link #NONZERO_WINDING_RULE} or {@link #EVEN_ODD_RULE}.
-     * @param ctm       Current transformation matrix.
+     * @param gs        The graphics state.
      */
-    public PathPaintingRenderInfo(int operation, int rule, Matrix ctm) {
+    public PathPaintingRenderInfo(int operation, int rule, GraphicsState gs) {
         this.operation = operation;
         this.rule = rule;
-        this.ctm = ctm;
+        this.gs = gs;
     }
 
     /**
      * If the operation is {@link #NO_OP} then the rule is ignored,
      * otherwise {@link #NONZERO_WINDING_RULE} is used by default.
      *
-     * See {@link #PathPaintingRenderInfo(int, int, Matrix)}
+     * See {@link #PathPaintingRenderInfo(int, int, GraphicsState)}
      */
-    public PathPaintingRenderInfo(int operation, Matrix ctm) {
-        this(operation, NONZERO_WINDING_RULE, ctm);
+    public PathPaintingRenderInfo(int operation, GraphicsState gs) {
+        this(operation, NONZERO_WINDING_RULE, gs);
     }
 
     /**
@@ -133,6 +133,26 @@ public class PathPaintingRenderInfo {
      * @return Current transformation matrix.
      */
     public Matrix getCtm() {
-        return ctm;
+        return gs.ctm;
+    }
+
+    public float getLineWidth() {
+        return gs.getLineWidth();
+    }
+
+    public int getLineCapStyle() {
+        return gs.getLineCapStyle();
+    }
+
+    public int getLineJoinStyle() {
+        return gs.getLineJoinStyle();
+    }
+
+    public float getMiterLimit() {
+        return gs.getMiterLimit();
+    }
+
+    public LineDashPattern getLineDashPattern() {
+        return gs.getLineDashPattern();
     }
 }
