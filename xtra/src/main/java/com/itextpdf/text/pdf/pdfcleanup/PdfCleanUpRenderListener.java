@@ -372,18 +372,26 @@ class PdfCleanUpRenderListener implements ExtRenderListener {
     /**
      * @param fillingRule If the path is contour, pass any value.
      */
-    private Path filterCurrentPath(Matrix ctm, boolean isContour, int fillingRule) {
+
+    private Path filterCurrentPath(Matrix ctm, boolean stroke, int fillingRule) {
         Path path = new Path(unfilteredCurrentPath.getSubpaths());
 
-        if (isContour) {
-            // TODO: This block is going to be replaced in the future
-            path.replaceCloseWithLine();
-        } else {
+        Iterator<PdfCleanUpRegionFilter> iter = filters.iterator();
+        PdfCleanUpRegionFilter filter;
+
+        if (!stroke) {
             path.closeAllSubpaths();
+        } else if (iter.hasNext()) {
+            filter = iter.next();
+            // The following statements converts path from stroke to fill, so we need to call FilterStrokePath only once.
+            PdfCleanUpContext context = getContext();
+            path = filter.filterStrokePath(path, ctm, context.getLineWidth(), context.getLineCapStyle(),
+                    context.getLineJoinStyle(), context.getMiterLimit(), context.getLineDashPattern());
         }
 
-        for (PdfCleanUpRegionFilter filter : filters) {
-            path = filter.filterPath(path, ctm, isContour, fillingRule);
+        while (iter.hasNext()) {
+            filter = iter.next();
+            path = filter.filterFillPath(path, ctm, fillingRule);
         }
 
         return path;

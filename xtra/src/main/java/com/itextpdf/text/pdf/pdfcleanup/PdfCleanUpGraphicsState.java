@@ -44,6 +44,9 @@
  */
 package com.itextpdf.text.pdf.pdfcleanup;
 
+import com.itextpdf.text.pdf.PdfArray;
+import com.itextpdf.text.pdf.PdfContentByte;
+
 /**
  * Represents subset of graphics state parameters.
  */
@@ -53,6 +56,11 @@ class PdfCleanUpGraphicsState {
     private float horizontalScaling = 100; // in percents
     private float characterSpacing;
     private float wordSpacing;
+    private float lineWidth = 1.0f;
+    private int lineCapStyle = PdfContentByte.LINE_CAP_BUTT;
+    private int lineJoinStyle = PdfContentByte.LINE_JOIN_MITER;
+    private float miterLimit = 10.0f;
+    private LineDashPattern lineDashPattern;
 
     public PdfCleanUpGraphicsState() {
     }
@@ -101,5 +109,72 @@ class PdfCleanUpGraphicsState {
 
     public void setWordSpacing(float wordSpacing) {
         this.wordSpacing = wordSpacing;
+    }
+
+    public float getLineWidth() {
+        return lineWidth;
+    }
+
+    public void setLineWidth(float lineWidth) {
+        this.lineWidth = lineWidth;
+    }
+
+    public int getLineCapStyle() {
+        return lineCapStyle;
+    }
+
+    public void setLineCapStyle(int lineCapStyle) {
+        this.lineCapStyle = lineCapStyle;
+    }
+
+    public int getLineJoinStyle() {
+        return lineJoinStyle;
+    }
+
+    public void setLineJoinStyle(int lineJoinStyle) {
+        this.lineJoinStyle = lineJoinStyle;
+    }
+
+    public float getMiterLimit() {
+        return miterLimit;
+    }
+
+    public void setMiterLimit(float miterLimit) {
+        this.miterLimit = miterLimit;
+    }
+
+    public LineDashPattern getLineDashPattern() {
+        return lineDashPattern;
+    }
+
+    public void setLineDashPattern(LineDashPattern lineDashPattern) {
+        this.lineDashPattern = lineDashPattern;
+    }
+
+    public static class LineDashPattern {
+
+        private PdfArray dashArray;
+        private float dashPhase;
+
+        public LineDashPattern(PdfArray dashArray, float dashPhase) {
+            this.dashArray = new PdfArray(dashArray);
+            this.dashPhase = dashPhase;
+        }
+
+        public PdfArray getDashArray() {
+            return dashArray;
+        }
+
+        public void setDashArray(PdfArray dashArray) {
+            this.dashArray = dashArray;
+        }
+
+        public float getDashPhase() {
+            return dashPhase;
+        }
+
+        public void setDashPhase(float dashPhase) {
+            this.dashPhase = dashPhase;
+        }
     }
 }

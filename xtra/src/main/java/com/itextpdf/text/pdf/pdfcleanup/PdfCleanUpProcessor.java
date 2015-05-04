@@ -69,6 +69,12 @@ public class PdfCleanUpProcessor {
      */
     public static double floatMultiplier = Math.pow(10, 14);
 
+    /**
+     * Used as the criterion of a good approximation of rounded line joins
+     * and line caps.
+     */
+    public static double arcTolerance = 0.0025;
+
     private static final String XOBJ_NAME_PREFIX = "Fm";
 
     private static final String STROKE_COLOR = "StrokeColor";

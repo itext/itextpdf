@@ -50,6 +50,7 @@ import com.itextpdf.text.DocWriter;
 import com.itextpdf.text.Image;
 import com.itextpdf.text.pdf.*;
 import com.itextpdf.text.pdf.parser.*;
+import com.itextpdf.text.pdf.pdfcleanup.PdfCleanUpGraphicsState.LineDashPattern;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -87,6 +88,8 @@ class PdfCleanUpContentOperator implements ContentOperator {
     }};
 
     private static final Set<String> clippingPathOperators = new HashSet<String>(Arrays.asList("W", "W*"));
+
+    private static final Set<String> lineStyleOperators = new HashSet<String>(Arrays.asList("w", "J", "j", "M", "d"));
 
     protected PdfCleanUpRenderListener cleanUpStrategy;
     protected ContentOperator originalContentOperator;
@@ -162,6 +165,21 @@ class PdfCleanUpContentOperator implements ContentOperator {
             cleanUpStrategy.getContext().setWordSpacing(((PdfNumber) operands.get(0)).floatValue());
         } else if ("Tz".equals(operatorStr)) {
             cleanUpStrategy.getContext().setHorizontalScaling(((PdfNumber) operands.get(0)).floatValue());
+        } else if (lineStyleOperators.contains(operatorStr)) {
+            if ("w" == operatorStr) {
+                cleanUpStrategy.getContext().setLineWidth(((PdfNumber) operands.get(0)).floatValue());
+            } else if ("J" == operatorStr) {
+                cleanUpStrategy.getContext().setLineCapStyle(((PdfNumber) operands.get(0)).intValue());
+            } else if ("j" == operatorStr) {
+                cleanUpStrategy.getContext().setLineJoinStyle(((PdfNumber) operands.get(0)).intValue());
+            } else if ("M" == operatorStr) {
+                cleanUpStrategy.getContext().setMiterLimit(((PdfNumber) operands.get(0)).floatValue());
+            } else if ("d" == operatorStr) {
+                cleanUpStrategy.getContext().setLineDashPattern(new LineDashPattern(((PdfArray) operands.get(0)),
+                        ((PdfNumber) operands.get(1)).floatValue()));
+            }
+
+            disableOutput = true;
         } else if (textShowingOperators.contains(operatorStr) && !allChunksAreVisible(cleanUpStrategy.getChunks())) {
             disableOutput = true;
 
@@ -401,7 +419,7 @@ class PdfCleanUpContentOperator implements ContentOperator {
         }
 
         if (strokeOperators.contains(operatorStr)) {
-            writePath(cleanUpStrategy.getCurrentStrokePath(), S, canvas);
+            writePath(cleanUpStrategy.getCurrentStrokePath(), f, canvas);
         }
 
         cleanUpStrategy.setClipped(false);

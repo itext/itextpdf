@@ -49,8 +49,10 @@ import com.itextpdf.awt.geom.NoninvertibleTransformException;
 import com.itextpdf.awt.geom.Point;
 import com.itextpdf.awt.geom.Point2D;
 import com.itextpdf.text.Rectangle;
+import com.itextpdf.text.pdf.PdfContentByte;
 import com.itextpdf.text.pdf.parser.*;
 import com.itextpdf.text.pdf.parser.clipper.*;
+import com.itextpdf.text.pdf.pdfcleanup.PdfCleanUpGraphicsState.LineDashPattern;
 
 import java.util.*;
 
@@ -104,10 +106,24 @@ class PdfCleanUpRegionFilter extends RenderFilter {
         return new PdfCleanUpCoveredArea(transformedIntersection, imageRect.equals(intersectionRect));
     }
 
+    protected Path filterStrokePath(Path path, Matrix ctm, float lineWidth, int lineCapStyle,
+                                    int lineJoinStyle, float miterLimit, LineDashPattern lineDashPattern) {
+        JoinType joinType = getJoinType(lineJoinStyle);
+        EndType endType = getEndType(lineCapStyle);
+
+        ClipperOffset offset = new ClipperOffset(miterLimit, PdfCleanUpProcessor.arcTolerance * PdfCleanUpProcessor.floatMultiplier);
+        addPath(offset, path, joinType, endType);
+
+        PolyTree resultTree = new PolyTree();
+        offset.Execute(resultTree, lineWidth * PdfCleanUpProcessor.floatMultiplier / 2);
+
+        return filterFillPath(convertToPath(resultTree), ctm, PathPaintingRenderInfo.NONZERO_WINDING_RULE);
+    }
+
     /**
      * @param fillingRule If the subpath is contour, pass any value.
      */
-    protected Path filterPath(Path path, Matrix ctm, Boolean isContour, int fillingRule) {
+    protected Path filterFillPath(Path path, Matrix ctm, int fillingRule) {
         Point2D[] transfRectVertices = transformPoints(ctm, false, getVertices(rectangle));
         PolyFillType fillType = PolyFillType.pftNonZero;
 
@@ -124,6 +140,45 @@ class PdfCleanUpRegionFilter extends RenderFilter {
 
         return convertToPath(resultTree);
     }
+
+    private static JoinType getJoinType(int lineJoinStyle) {
+        switch (lineJoinStyle) {
+            case PdfContentByte.LINE_JOIN_BEVEL:
+                return JoinType.jtSquare;
+
+            case PdfContentByte.LINE_JOIN_MITER:
+                return JoinType.jtMiter;
+        }
+
+        return JoinType.jtRound;
+    }
+
+    private static EndType getEndType(int lineCapStyle) {
+        switch (lineCapStyle) {
+            case PdfContentByte.LINE_CAP_BUTT:
+                return EndType.etOpenButt;
+
+            case PdfContentByte.LINE_CAP_PROJECTING_SQUARE:
+                return EndType.etOpenSquare;
+        }
+
+        return EndType.etOpenRound;
+    }
+
+    private static void addPath(ClipperOffset offset, Path path, JoinType joinType, EndType endType) {
+        for (Subpath subpath : path.getSubpaths()) {
+            if (!subpath.isSinglePointClosed() && !subpath.isSinglePointOpen()) {
+                // Offsetting is never used for path to be filled
+                if (subpath.isClosed()) {
+                    endType = EndType.etClosedLine;
+                }
+
+                List<Point2D> linearApproxPoints = subpath.getPiecewiseLinearApproximation();
+                offset.AddPath(convertToIntPoints(linearApproxPoints), joinType, endType);
+            }
+        }
+    }
+
 
     private static void addPath(Clipper clipper, Path path) {
         for (Subpath subpath : path.getSubpaths()) {

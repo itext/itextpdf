@@ -46,6 +46,7 @@ package com.itextpdf.text.pdf.pdfcleanup;
 
 import com.itextpdf.text.pdf.PdfContentByte;
 import com.itextpdf.text.pdf.PdfDictionary;
+import com.itextpdf.text.pdf.pdfcleanup.PdfCleanUpGraphicsState.LineDashPattern;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
@@ -115,6 +116,51 @@ class PdfCleanUpContext {
     public void setWordSpacing(float wordSpacing) {
         graphicsStateStack.peek().setWordSpacing(wordSpacing);
     }
+
+    public float getLineWidth() {
+        return graphicsStateStack.peek().getLineWidth();
+    }
+
+    public void setLineWidth(float lineWidth) {
+        graphicsStateStack.peek().setLineWidth(lineWidth);
+    }
+
+    public int getLineCapStyle() {
+        return graphicsStateStack.peek().getLineCapStyle();
+    }
+
+    public void setLineCapStyle(int lineCapStyle) {
+        graphicsStateStack.peek().setLineCapStyle(lineCapStyle);
+    }
+
+    public int getLineJoinStyle() {
+        return graphicsStateStack.peek().getLineJoinStyle();
+    }
+
+    public void setLineJoinStyle(int lineJoinStyle) {
+        graphicsStateStack.peek().setLineJoinStyle(lineJoinStyle);
+    }
+
+    public float getMiterLimit() {
+        return graphicsStateStack.peek().getMiterLimit();
+    }
+
+    public void setMiterLimit(float miterLimit) {
+        graphicsStateStack.peek().setMiterLimit(miterLimit);
+    }
+
+    /**
+     * @return {@link LineDashPattern} object, describing the dash pattern which should be applied.
+     *         If no pattern should be applied (i.e. solid line), then returns <CODE>null</CODE>.
+     */
+    public LineDashPattern getLineDashPattern() {
+        return graphicsStateStack.peek().getLineDashPattern();
+    }
+
+    public void setLineDashPattern(LineDashPattern lineDashPattern) {
+        graphicsStateStack.peek().setLineDashPattern(lineDashPattern);
+    }
+
 
     public void saveGraphicsState() {
         graphicsStateStack.push(new PdfCleanUpGraphicsState(graphicsStateStack.peek()));
