@@ -349,8 +349,9 @@ class PdfCleanUpRegionFilter extends RenderFilter {
     }
 
     private static Path applyDashPattern(Path path, LineDashPattern lineDashPattern) {
-        path.replaceCloseWithLine();
+        Set<Integer> modifiedSubpaths = new HashSet<Integer>(path.replaceCloseWithLine());
         Path dashedPath = new Path();
+        int currentSubpath = 0;
 
         for (Subpath subpath : path.getSubpaths()) {
             List<Point2D> subpathApprox = subpath.getPiecewiseLinearApproximation();
@@ -375,10 +376,23 @@ class PdfCleanUpRegionFilter extends RenderFilter {
                         remainingIsGap = currentElem.isGap();
                     }
                 }
+
+
+                // If true, then the line closing the subpath was explicitly added (see Path.ReplaceCloseWithLine).
+                // This causes a loss of a visual effect of line join style parameter, so in this clause
+                // we simply add overlapping dash (or gap, no matter), which continues the last dash and equals to
+                // the first dash (or gap) of the path.
+                if (modifiedSubpaths.contains(currentSubpath)) {
+                    lineDashPattern.reset();
+                    LineDashPattern.DashArrayElem currentElem = lineDashPattern.next();
+                    Point2D nextPoint = getNextPoint(subpathApprox.get(0), subpathApprox.get(1), currentElem.getVal());
+                    applyDash(dashedPath, subpathApprox.get(0), subpathApprox.get(1), nextPoint, currentElem.isGap());
+                }
             }
 
             // According to PDF spec. line dash pattern should be restarted for each new subpath.
             lineDashPattern.reset();
+            ++currentSubpath;
         }
 
         return dashedPath;
