@@ -82,7 +82,7 @@ public class Path {
         if (currentPoint == null) {
             throw new RuntimeException(START_PATH_ERR_MSG);
         }
-        // numbered in natural order
+        // Numbered in natural order
         Point2D secondPoint = new Point2D.Float(x1, y1);
         Point2D thirdPoint = new Point2D.Float(x2, y2);
         Point2D fourthPoint = new Point2D.Float(x3, y3);
@@ -153,14 +153,28 @@ public class Path {
     /**
      * Adds additional line to each closed subpath and makes the subpath unclosed.
      * The line connects the last and the first points of the subpaths.
+     *
+     * @returns Indices of modified subpaths.
      */
-    public void replaceCloseWithLine() {
+    public List<Integer> replaceCloseWithLine() {
+        List<Integer> modifiedSubpathsIndeces = new ArrayList<Integer>();
+        int i = 0;
+
+            /* It could be replaced with "for" cycle, because IList in C# provides effective
+             * access by index. In Java List interface has at least one implementation (LinkedList)
+             * which is "bad" for access elements by index.
+             */
         for (Subpath subpath : subpaths) {
             if (subpath.isClosed()) {
                 subpath.setClosed(false);
                 subpath.addSegment(new Line(subpath.getLastPoint(), subpath.getStartPoint()));
+                modifiedSubpathsIndeces.add(i);
             }
+
+            ++i;
         }
+
+        return modifiedSubpathsIndeces;
     }
 
     private Subpath getLastSubpath() {
