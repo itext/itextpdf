@@ -72,7 +72,7 @@ class PdfCleanUpRenderListener implements ExtRenderListener {
     private static final Color CLEANED_AREA_FILL_COLOR = Color.WHITE;
 
     private PdfStamper pdfStamper;
-    private List<PdfCleanUpRegionFilter> filters;
+    private PdfCleanUpRegionFilter filter;
     private List<PdfCleanUpContentChunk> chunks = new ArrayList<PdfCleanUpContentChunk>();
     private Deque<PdfCleanUpContext> contextStack = new ArrayDeque<PdfCleanUpContext>();
     private int strNumber = 1; // Represents ordinal number of string under processing. Needed for processing TJ operator.
@@ -96,9 +96,9 @@ class PdfCleanUpRenderListener implements ExtRenderListener {
     private boolean clipPath;
     private int clippingRule;
 
-    public PdfCleanUpRenderListener(PdfStamper pdfStamper, List<PdfCleanUpRegionFilter> filters) {
+    public PdfCleanUpRenderListener(PdfStamper pdfStamper, PdfCleanUpRegionFilter filter) {
         this.pdfStamper = pdfStamper;
-        this.filters = filters;
+        this.filter = filter;
         initClippingPath();
     }
 
@@ -114,11 +114,11 @@ class PdfCleanUpRenderListener implements ExtRenderListener {
                     baseline.getEndPoint(), false, strNumber));
         } else {
             for (TextRenderInfo ri : renderInfo.getCharacterRenderInfos()) {
-                boolean textIsInsideRegion = textIsInsideRegion(ri);
+                boolean isAllowed = filter.allowText(ri);
                 LineSegment baseline = ri.getUnscaledBaseline();
 
                 chunks.add(new PdfCleanUpContentChunk.Text(ri.getPdfString(), baseline.getStartPoint(),
-                        baseline.getEndPoint(), !textIsInsideRegion, strNumber));
+                        baseline.getEndPoint(), isAllowed, strNumber));
             }
         }
 
@@ -305,35 +305,12 @@ class PdfCleanUpRenderListener implements ExtRenderListener {
         newClippingPath.lineTo(30, 40);
     }
 
-
-    private boolean textIsInsideRegion(TextRenderInfo renderInfo) {
-        for (PdfCleanUpRegionFilter filter : filters) {
-            if (filter.allowText(renderInfo)) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
     /**
      * @return null if the image is not allowed (either it is fully covered or ctm == null).
      * List of covered image areas otherwise.
      */
     private List<Rectangle> getImageAreasToBeCleaned(ImageRenderInfo renderInfo) {
-        List<Rectangle> areasToBeCleaned = new ArrayList<Rectangle>();
-
-        for (PdfCleanUpRegionFilter filter : filters) {
-            PdfCleanUpCoveredArea coveredArea = filter.intersection(renderInfo);
-
-            if (coveredArea == null || coveredArea.matchesObjRect()) {
-                return null;
-            } else if (coveredArea.getRect() != null) {
-                areasToBeCleaned.add( coveredArea.getRect() );
-            }
-        }
-
-        return areasToBeCleaned;
+        return filter.getCoveredAreas(renderInfo);
     }
 
     private byte[] processImage(byte[] imageBytes, List<Rectangle> areasToBeCleaned) {
@@ -417,23 +394,13 @@ class PdfCleanUpRenderListener implements ExtRenderListener {
                                    int lineJoinStyle, float miterLimit, LineDashPattern lineDashPattern) {
         Path path = new Path(unfilteredCurrentPath.getSubpaths());
 
-        Iterator<PdfCleanUpRegionFilter> iter = filters.iterator();
-        PdfCleanUpRegionFilter filter;
-
-        if (!stroke) {
+        if (stroke) {
+            return filter.filterStrokePath(path, ctm, lineWidth, lineCapStyle, lineJoinStyle,
+                    miterLimit, lineDashPattern);
+        } else {
             path.closeAllSubpaths();
-        } else if (iter.hasNext()) {
-            filter = iter.next();
-            // The following statements converts path from stroke to fill, so we need to call FilterStrokePath only once.
-            path = filter.filterStrokePath(path, ctm, lineWidth, lineCapStyle, lineJoinStyle, miterLimit, lineDashPattern);
+            return filter.filterFillPath(path, ctm, fillingRule);
         }
-
-        while (iter.hasNext()) {
-            filter = iter.next();
-            path = filter.filterFillPath(path, ctm, fillingRule);
-        }
-
-        return path;
     }
 
     private void closeOutputStream(OutputStream os) {

@@ -58,10 +58,10 @@ import java.util.*;
 
 class PdfCleanUpRegionFilter extends RenderFilter {
 
-    private Rectangle rectangle;
+    private List<Rectangle> rectangles;
 
-    public PdfCleanUpRegionFilter(Rectangle rectangle) {
-        this.rectangle = rectangle;
+    public PdfCleanUpRegionFilter(List<Rectangle> rectangles) {
+        this.rectangles = rectangles;
     }
 
     /**
@@ -76,9 +76,14 @@ class PdfCleanUpRegionFilter extends RenderFilter {
                                      descent.getStartPoint().get(1),
                                      Math.max(descent.getStartPoint().get(0), descent.getEndPoint().get(0)),
                                      ascent.getEndPoint().get(1));
-        Rectangle r2 = rectangle;
 
-        return intersect(r1, r2);
+        for (Rectangle rectangle : rectangles) {
+            if (intersect(r1, rectangle)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     @Override
@@ -88,22 +93,32 @@ class PdfCleanUpRegionFilter extends RenderFilter {
 
     /**
      * Calculates intersection of the image and the render filter region in the coordinate system relative to the image.
+     *
+     * @return <code>null</code> if the image is not allowed, {@link java.util.List} of
+     *         {@link com.itextpdf.text.Rectangle} objects otherwise.
      */
-    protected PdfCleanUpCoveredArea intersection(ImageRenderInfo renderInfo) {
+    protected List<Rectangle> getCoveredAreas(ImageRenderInfo renderInfo) {
         Rectangle imageRect = calcImageRect(renderInfo);
+        List<Rectangle> coveredAreas = new ArrayList<Rectangle>();
 
         if (imageRect == null) {
             return null;
         }
 
-        Rectangle intersectionRect = intersection(imageRect, rectangle);
-        Rectangle transformedIntersection = null;
+        for (Rectangle rectangle : rectangles) {
+            Rectangle intersectionRect = intersection(imageRect, rectangle);
 
-        if (intersectionRect != null) {
-            transformedIntersection = transformIntersection(renderInfo.getImageCTM(), intersectionRect);
+            if (intersectionRect != null) {
+                // True if the image is completely covered
+                if (imageRect.equals(intersectionRect)) {
+                    return null;
+                }
+
+                coveredAreas.add(transformIntersection(renderInfo.getImageCTM(), intersectionRect));
+            }
         }
 
-        return new PdfCleanUpCoveredArea(transformedIntersection, imageRect.equals(intersectionRect));
+        return coveredAreas;
     }
 
     protected Path filterStrokePath(Path path, Matrix ctm, float lineWidth, int lineCapStyle,
@@ -134,16 +149,19 @@ class PdfCleanUpRegionFilter extends RenderFilter {
      * @param fillingRule If the subpath is contour, pass any value.
      */
     protected Path filterFillPath(Path path, Matrix ctm, int fillingRule) {
-        Point2D[] transfRectVertices = transformPoints(ctm, true, getVertices(rectangle));
+        Clipper clipper = new Clipper();
+        addPath(clipper, path);
+
+        for (Rectangle rectangle : rectangles) {
+            Point2D[] transfRectVertices = transformPoints(ctm, true, getVertices(rectangle));
+            addRect(clipper, transfRectVertices);
+        }
+
         PolyFillType fillType = PolyFillType.pftNonZero;
 
         if (fillingRule == PathPaintingRenderInfo.EVEN_ODD_RULE) {
             fillType = PolyFillType.pftEvenOdd;
         }
-
-        Clipper clipper = new Clipper();
-        addPath(clipper, path);
-        addRect(clipper, transfRectVertices);
 
         PolyTree resultTree = new PolyTree();
         clipper.execute(ClipType.ctDifference, resultTree, fillType, PolyFillType.pftNonZero);

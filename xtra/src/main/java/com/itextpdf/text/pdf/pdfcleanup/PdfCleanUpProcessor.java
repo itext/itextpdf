@@ -150,8 +150,8 @@ public class PdfCleanUpProcessor {
 
         canvas.saveState();
 
-        List<PdfCleanUpRegionFilter> filters = createFilters(cleanUpLocations);
-        PdfCleanUpRenderListener pdfCleanUpRenderListener = new PdfCleanUpRenderListener(pdfStamper, filters);
+        PdfCleanUpRegionFilter filter = createFilter(cleanUpLocations);
+        PdfCleanUpRenderListener pdfCleanUpRenderListener = new PdfCleanUpRenderListener(pdfStamper, filter);
         pdfCleanUpRenderListener.registerNewContext(pdfReader.getPageResources(page), canvas);
 
         PdfContentStreamProcessor contentProcessor = new PdfContentStreamProcessor(pdfCleanUpRenderListener);
@@ -168,15 +168,14 @@ public class PdfCleanUpProcessor {
         }
     }
 
-    private List<PdfCleanUpRegionFilter> createFilters(List<PdfCleanUpLocation> cleanUpLocations) {
-        List<PdfCleanUpRegionFilter> filters = new ArrayList<PdfCleanUpRegionFilter>();
+    private PdfCleanUpRegionFilter createFilter(List<PdfCleanUpLocation> cleanUpLocations) {
+        List<Rectangle> regions = new ArrayList<Rectangle>(cleanUpLocations.size());
 
-        for (PdfCleanUpLocation cleanUpLocation : cleanUpLocations) {
-            Rectangle region = cleanUpLocation.getRegion();
-            filters.add(new PdfCleanUpRegionFilter(region));
+        for (PdfCleanUpLocation location : cleanUpLocations) {
+            regions.add(location.getRegion());
         }
 
-        return filters;
+        return new PdfCleanUpRegionFilter(regions);
     }
 
     private void colorCleanedLocations(PdfContentByte canvas, List<PdfCleanUpLocation> cleanUpLocations) {
