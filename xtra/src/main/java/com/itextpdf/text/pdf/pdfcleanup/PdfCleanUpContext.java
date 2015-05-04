@@ -47,9 +47,6 @@ package com.itextpdf.text.pdf.pdfcleanup;
 import com.itextpdf.text.pdf.PdfContentByte;
 import com.itextpdf.text.pdf.PdfDictionary;
 
-import java.util.ArrayDeque;
-import java.util.Deque;
-
 /**
  * Stores parameters related to specific context which is either page or xobject
  * (in other words: which is the object having contents stream)
@@ -59,13 +56,9 @@ class PdfCleanUpContext {
     private PdfDictionary resources;
     private PdfContentByte canvas;
 
-    private Deque<PdfCleanUpGraphicsState> graphicsStateStack = new ArrayDeque<PdfCleanUpGraphicsState>();
-
     public PdfCleanUpContext(PdfDictionary resources, PdfContentByte canvas) {
         this.resources = resources;
         this.canvas = canvas;
-
-        graphicsStateStack.push(new PdfCleanUpGraphicsState());
     }
 
     public PdfDictionary getResources() {
@@ -82,90 +75,5 @@ class PdfCleanUpContext {
 
     public void setCanvas(PdfContentByte canvas) {
         this.canvas = canvas;
-    }
-
-    public float getFontSize() {
-        return graphicsStateStack.peek().getFontSize();
-    }
-
-    public void setFontSize(float fontSize) {
-        graphicsStateStack.peek().setFontSize(fontSize);
-    }
-
-    public float getHorizontalScaling() {
-        return graphicsStateStack.peek().getHorizontalScaling();
-    }
-
-    public void setHorizontalScaling(float horizontalScaling) {
-        graphicsStateStack.peek().setHorizontalScaling(horizontalScaling);
-    }
-
-    public float getCharacterSpacing() {
-        return graphicsStateStack.peek().getCharacterSpacing();
-    }
-
-    public void setCharacterSpacing(float characterSpacing) {
-        graphicsStateStack.peek().setCharacterSpacing(characterSpacing);
-    }
-
-    public float getWordSpacing() {
-        return graphicsStateStack.peek().getWordSpacing();
-    }
-
-    public void setWordSpacing(float wordSpacing) {
-        graphicsStateStack.peek().setWordSpacing(wordSpacing);
-    }
-
-    public float getLineWidth() {
-        return graphicsStateStack.peek().getLineWidth();
-    }
-
-    public void setLineWidth(float lineWidth) {
-        graphicsStateStack.peek().setLineWidth(lineWidth);
-    }
-
-    public int getLineCapStyle() {
-        return graphicsStateStack.peek().getLineCapStyle();
-    }
-
-    public void setLineCapStyle(int lineCapStyle) {
-        graphicsStateStack.peek().setLineCapStyle(lineCapStyle);
-    }
-
-    public int getLineJoinStyle() {
-        return graphicsStateStack.peek().getLineJoinStyle();
-    }
-
-    public void setLineJoinStyle(int lineJoinStyle) {
-        graphicsStateStack.peek().setLineJoinStyle(lineJoinStyle);
-    }
-
-    public float getMiterLimit() {
-        return graphicsStateStack.peek().getMiterLimit();
-    }
-
-    public void setMiterLimit(float miterLimit) {
-        graphicsStateStack.peek().setMiterLimit(miterLimit);
-    }
-
-    /**
-     * @return {@link LineDashPattern} object, describing the dash pattern which should be applied.
-     *         If no pattern should be applied (i.e. solid line), then returns <CODE>null</CODE>.
-     */
-    public LineDashPattern getLineDashPattern() {
-        return graphicsStateStack.peek().getLineDashPattern();
-    }
-
-    public void setLineDashPattern(LineDashPattern lineDashPattern) {
-        graphicsStateStack.peek().setLineDashPattern(lineDashPattern);
-    }
-
-
-    public void saveGraphicsState() {
-        graphicsStateStack.push(new PdfCleanUpGraphicsState(graphicsStateStack.peek()));
-    }
-
-    public void restoreGraphicsState() {
-        graphicsStateStack.pop();
     }
 }

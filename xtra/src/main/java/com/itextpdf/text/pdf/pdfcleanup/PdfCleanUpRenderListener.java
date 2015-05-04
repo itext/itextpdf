@@ -66,7 +66,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.*;
 import java.util.List;
-import java.util.Queue;
 
 class PdfCleanUpRenderListener implements ExtRenderListener {
 
@@ -194,19 +193,28 @@ class PdfCleanUpRenderListener implements ExtRenderListener {
         boolean stroke = (renderInfo.getOperation() & PathPaintingRenderInfo.STROKE) != 0;
         boolean fill = (renderInfo.getOperation() & PathPaintingRenderInfo.FILL) != 0;
 
+        float lineWidth = renderInfo.getLineWidth();
+        int lineCapStyle = renderInfo.getLineCapStyle();
+        int lineJoinStyle = renderInfo.getLineJoinStyle();
+        float miterLimit = renderInfo.getMiterLimit();
+        LineDashPattern lineDashPattern = renderInfo.getLineDashPattern();
+
         if (stroke) {
-            currentStrokePath = filterCurrentPath(renderInfo.getCtm(), true, -1);
+            currentStrokePath = filterCurrentPath(renderInfo.getCtm(), true, -1,
+                    lineWidth, lineCapStyle, lineJoinStyle, miterLimit, lineDashPattern);
         }
 
         if (fill) {
-            currentFillPath = filterCurrentPath(renderInfo.getCtm(), false, renderInfo.getRule());
+            currentFillPath = filterCurrentPath(renderInfo.getCtm(), false, renderInfo.getRule(),
+                    lineWidth, lineCapStyle, lineJoinStyle, miterLimit, lineDashPattern);
         }
 
         if (clipPath) {
             if (fill && renderInfo.getRule() == clippingRule) {
                 newClippingPath = currentFillPath;
             } else {
-                newClippingPath = filterCurrentPath(renderInfo.getCtm(), false, clippingRule);
+                newClippingPath = filterCurrentPath(renderInfo.getCtm(), false, clippingRule,
+                        lineWidth, lineCapStyle, lineJoinStyle, miterLimit, lineDashPattern);
             }
         }
 
@@ -372,8 +380,8 @@ class PdfCleanUpRenderListener implements ExtRenderListener {
     /**
      * @param fillingRule If the path is contour, pass any value.
      */
-
-    private Path filterCurrentPath(Matrix ctm, boolean stroke, int fillingRule) {
+    private Path filterCurrentPath(Matrix ctm, boolean stroke, int fillingRule, float lineWidth, int lineCapStyle,
+                                   int lineJoinStyle, float miterLimit, LineDashPattern lineDashPattern) {
         Path path = new Path(unfilteredCurrentPath.getSubpaths());
 
         Iterator<PdfCleanUpRegionFilter> iter = filters.iterator();
@@ -384,9 +392,7 @@ class PdfCleanUpRenderListener implements ExtRenderListener {
         } else if (iter.hasNext()) {
             filter = iter.next();
             // The following statements converts path from stroke to fill, so we need to call FilterStrokePath only once.
-            PdfCleanUpContext context = getContext();
-            path = filter.filterStrokePath(path, ctm, context.getLineWidth(), context.getLineCapStyle(),
-                    context.getLineJoinStyle(), context.getMiterLimit(), context.getLineDashPattern());
+            path = filter.filterStrokePath(path, ctm, lineWidth, lineCapStyle, lineJoinStyle, miterLimit, lineDashPattern);
         }
 
         while (iter.hasNext()) {

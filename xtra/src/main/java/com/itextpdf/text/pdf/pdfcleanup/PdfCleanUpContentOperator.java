@@ -72,6 +72,20 @@ class PdfCleanUpContentOperator implements ContentOperator {
     private static final byte[] n = DocWriter.getISOBytes("n\n");
     private static final byte[] W = DocWriter.getISOBytes("W\n");
     private static final byte[] eoW = DocWriter.getISOBytes("W*\n");
+    private static final byte[] q = DocWriter.getISOBytes("q\n");
+    private static final byte[] Q = DocWriter.getISOBytes("Q\n");
+    private static final byte[] CS = DocWriter.getISOBytes("CS\n");
+    private static final byte[] cs = DocWriter.getISOBytes("cs\n");
+    private static final byte[] SC = DocWriter.getISOBytes("SC\n");
+    private static final byte[] SCN = DocWriter.getISOBytes("SCN\n");
+    private static final byte[] sc = DocWriter.getISOBytes("sc\n");
+    private static final byte[] scn = DocWriter.getISOBytes("scn\n");
+    private static final byte[] G = DocWriter.getISOBytes("G\n");
+    private static final byte[] g = DocWriter.getISOBytes("g\n");
+    private static final byte[] RG = DocWriter.getISOBytes("RG\n");
+    private static final byte[] rg = DocWriter.getISOBytes("rg\n");
+    private static final byte[] K = DocWriter.getISOBytes("K\n");
+    private static final byte[] k = DocWriter.getISOBytes("k\n");
 
     private static final Set<String> textShowingOperators = new HashSet<String>(Arrays.asList("TJ", "Tj", "'", "\""));
     private static final Set<String> pathConstructionOperators = new HashSet<String>(Arrays.asList("m", "l", "c", "v", "y", "h", "re"));
@@ -152,32 +166,7 @@ class PdfCleanUpContentOperator implements ContentOperator {
                     disableOutput = true;
                 }
             }
-        } else if ("q".equals(operatorStr)) {
-            cleanUpStrategy.getContext().saveGraphicsState();
-        } else if ("Q".equals(operatorStr)) {
-            cleanUpStrategy.getContext().restoreGraphicsState();
-        } else if ("Tf".equals(operatorStr)) {
-            cleanUpStrategy.getContext().setFontSize(((PdfNumber) operands.get(1)).floatValue());
-        } else if ("Tc".equals(operatorStr)) {
-            cleanUpStrategy.getContext().setCharacterSpacing(((PdfNumber) operands.get(0)).floatValue());
-        } else if ("Tw".equals(operatorStr)) {
-            cleanUpStrategy.getContext().setWordSpacing(((PdfNumber) operands.get(0)).floatValue());
-        } else if ("Tz".equals(operatorStr)) {
-            cleanUpStrategy.getContext().setHorizontalScaling(((PdfNumber) operands.get(0)).floatValue());
         } else if (lineStyleOperators.contains(operatorStr)) {
-            if ("w" == operatorStr) {
-                cleanUpStrategy.getContext().setLineWidth(((PdfNumber) operands.get(0)).floatValue());
-            } else if ("J" == operatorStr) {
-                cleanUpStrategy.getContext().setLineCapStyle(((PdfNumber) operands.get(0)).intValue());
-            } else if ("j" == operatorStr) {
-                cleanUpStrategy.getContext().setLineJoinStyle(((PdfNumber) operands.get(0)).intValue());
-            } else if ("M" == operatorStr) {
-                cleanUpStrategy.getContext().setMiterLimit(((PdfNumber) operands.get(0)).floatValue());
-            } else if ("d" == operatorStr) {
-                cleanUpStrategy.getContext().setLineDashPattern(new LineDashPattern(((PdfArray) operands.get(0)),
-                        ((PdfNumber) operands.get(1)).floatValue()));
-            }
-
             disableOutput = true;
         } else if (textShowingOperators.contains(operatorStr) && !allChunksAreVisible(cleanUpStrategy.getChunks())) {
             disableOutput = true;
@@ -190,17 +179,14 @@ class PdfCleanUpContentOperator implements ContentOperator {
 
                 operands.get(1).toPdf(canvas.getPdfWriter(), canvas.getInternalBuffer());
                 canvas.getInternalBuffer().append(TcTStar);
-
-                cleanUpStrategy.getContext().setWordSpacing(((PdfNumber) operands.get(0)).floatValue());
-                cleanUpStrategy.getContext().setCharacterSpacing(((PdfNumber) operands.get(1)).floatValue());
             } else if ("TJ".equals(operatorStr)) {
                 structuredTJoperands = structureTJarray((PdfArray) operands.get(0));
             }
 
-            writeTextChunks(structuredTJoperands, chunks, canvas);
-        } else if ("\"".equals(operatorStr)) {
-            cleanUpStrategy.getContext().setWordSpacing(((PdfNumber) operands.get(0)).floatValue());
-            cleanUpStrategy.getContext().setCharacterSpacing(((PdfNumber) operands.get(1)).floatValue());
+            GraphicsState gs = pdfContentStreamProcessor.gs();
+
+            writeTextChunks(structuredTJoperands, chunks, canvas, gs.getCharacterSpacing(), gs.getWordSpacing(),
+                    gs.getFontSize(), gs.getHorizontalScaling());
         } else if (pathPaintingOperators.contains(operatorStr)) {
             writePath(operatorStr, canvas);
         }
@@ -294,16 +280,14 @@ class PdfCleanUpContentOperator implements ContentOperator {
     /**
      * Renders parts of text which are visible.
      */
-    private void writeTextChunks(Map<Integer, Float> structuredTJoperands, List<PdfCleanUpContentChunk> chunks, PdfContentByte canvas) throws IOException {
+    private void writeTextChunks(Map<Integer, Float> structuredTJoperands, List<PdfCleanUpContentChunk> chunks, PdfContentByte canvas,
+                                 float characterSpacing, float wordSpacing, float fontSize, float horizontalScaling) throws IOException {
         canvas.setCharacterSpacing(0);
         canvas.setWordSpacing(0);
         canvas.getInternalBuffer().append((byte) '[');
 
-        float characterSpacing = cleanUpStrategy.getContext().getCharacterSpacing();
-        float convertedCharacterSpacing = -characterSpacing * 1000f / cleanUpStrategy.getContext().getFontSize();
-
-        float wordSpacing = cleanUpStrategy.getContext().getWordSpacing();
-        float convertedWordSpacing = -wordSpacing * 1000f / cleanUpStrategy.getContext().getFontSize();
+        float convertedCharacterSpacing = -characterSpacing * 1000f / fontSize;
+        float convertedWordSpacing = -wordSpacing * 1000f / fontSize;
 
         float shift = structuredTJoperands != null ? structuredTJoperands.get(0) : 0;
         PdfCleanUpContentChunk.Text prevChunk = null;
@@ -326,7 +310,8 @@ class PdfCleanUpContentOperator implements ContentOperator {
 
                 shift = convertedCharacterSpacing + (isSpace(textChunk) ? convertedWordSpacing : 0);
             } else {
-                shift += getUnscaledTextChunkWidth(textChunk);
+                shift += getUnscaledTextChunkWidth(textChunk, characterSpacing, wordSpacing,
+                                                   fontSize, horizontalScaling);
             }
 
             prevChunk = textChunk;
@@ -353,22 +338,17 @@ class PdfCleanUpContentOperator implements ContentOperator {
      * We get into this method when the current chunk is not visible.
      * Here we are calculating a piece of the Tj coefficient for a previous visible chunk.
      * For details see PDF spec., Text Space Details, formula for "tx" coefficient
-     * and TextRenderInfo class (getUnscaledBaseline method)
+     * and TextRenderInfo class (getUnscaledBaseline)
      */
-    private float getUnscaledTextChunkWidth(PdfCleanUpContentChunk.Text chunk) {
-        PdfCleanUpContext context = cleanUpStrategy.getContext();
-        float fontSize = context.getFontSize();
-        float characterSpacing = context.getCharacterSpacing();
-        float wordSpacing = context.getWordSpacing();
-        float horizontalScaling = context.getHorizontalScaling();
-
+    private float getUnscaledTextChunkWidth(PdfCleanUpContentChunk.Text chunk, float characterSpacing,
+                                            float wordSpacing, float fontSize, float horizontalScaling) {
         // We should multiply by 100 because iText stores horizontal scaling as the value in [0, 1] interval;
-        // also we need to add character and word spaces because TextRenderInfo class truncates them from the end of a string
+        // also we need to add character and word spaces because TextRenderInfo class truncates them from the end of the string
         // (single character string in our case is also truncated)
         float scaledChunkWidth = (chunk.getEndX() - chunk.getStartX()) * 100f +
-                (characterSpacing + (isSpace(chunk) ? wordSpacing : 0)) * horizontalScaling;
+              (characterSpacing + (isSpace(chunk) ? wordSpacing : 0)) * horizontalScaling * 100f;
 
-        return -scaledChunkWidth * 1000f / (horizontalScaling * fontSize);
+        return -scaledChunkWidth * 1000f / (horizontalScaling * 100f * fontSize);
     }
 
     private boolean isSpace(PdfCleanUpContentChunk.Text chunk) {
