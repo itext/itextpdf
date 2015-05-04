@@ -69,11 +69,13 @@ public class CdataState implements State {
 	public void process(final char character) {
 		if (character == '>' && "]]".equals(this.parser.memory().comment().toString()) ) {
 			this.parser.memory().comment().setLength(0);
+			this.parser.text("<![CDATA[" + this.parser.bufferToString() + "]]>");
 			this.parser.flush();
 			this.parser.selectState().inTag();
 		} else if (character == ']') {
-			this.parser.memory().comment().append((char) character);
+			this.parser.memory().comment().append(character);
 		} else {
+            this.parser.append(character);
 			this.parser.memory().comment().setLength(0);
 		}
 	}

@@ -42,12 +42,12 @@
  */
 package com.itextpdf.tool.xml;
 
-import java.util.Map;
-
 import com.itextpdf.tool.xml.exceptions.LocaleMessages;
 import com.itextpdf.tool.xml.exceptions.RuntimeWorkerException;
 import com.itextpdf.tool.xml.parser.XMLParserListener;
 import com.itextpdf.tool.xml.pipeline.ctx.WorkerContextImpl;
+
+import java.util.Map;
 
 /**
  * The implementation of the {@link XMLParserListener}.<br />
@@ -154,7 +154,13 @@ public class XMLWorker implements XMLParserListener {
 	 * {@link Pipeline#content(WorkerContext, Tag, String, ProcessObject)}
 	 * method.
 	 */
-	public void text(final String text) {
+	public void text(String text) {
+		if (text.startsWith("<![CDATA[") && text.endsWith("]]>")) {
+            if (ignoreCdata())
+                return;
+            else
+                text = text.substring(9, text.length() - 3);
+        }
 		WorkerContext ctx = getLocalWC();
 		if (null != ctx.getCurrentTag()) {
 			if (text.length() > 0) {
@@ -214,5 +220,9 @@ public class XMLWorker implements XMLParserListener {
 	 */
 	protected WorkerContext getLocalWC() {
 		return context.get();
+	}
+
+	protected boolean ignoreCdata() {
+		return true;
 	}
 }

@@ -71,7 +71,7 @@ public class CssUtils {
 	private static final String _0_RIGHT_1 = "{0}right{1}";
 	private static final String _0_BOTTOM_1 = "{0}bottom{1}";
 	private static final String _0_TOP_1 = "{0}top{1}";
-	private static CssUtils myself;
+	private static CssUtils instance = new CssUtils();
 
 	/**
 	 * Default font size if none is set.
@@ -82,11 +82,8 @@ public class CssUtils {
 	/**
 	 * @return Singleton instance of CssUtils.
 	 */
-	public static synchronized CssUtils getInstance() {
-		if(null == myself) {
-			myself = new CssUtils();
-		}
-		return myself;
+	public static CssUtils getInstance() {
+		return instance;
 	}
 
 	/**
