@@ -152,15 +152,30 @@ public class Subpath {
      * @since 5.5.6
      */
     public List<Point2D> getPiecewiseLinearApproximation() {
-        // TODO: at this moment it duplicates points in the resultant approximation. Fix this.
         List<Point2D> result = new ArrayList<Point2D>();
 
-        for (Shape segment : segments) {
-            if (segment instanceof Line) {
-                result.addAll(segment.getBasePoints());
+        if (segments.size() == 0) {
+            return result;
+        }
+
+        if (segments.get(0) instanceof BezierCurve) {
+            result.addAll(((BezierCurve) segments.get(0)).getPiecewiseLinearApproximation());
+        } else {
+            result.addAll(segments.get(0).getBasePoints());
+        }
+
+        for (int i = 1; i < segments.size(); ++i) {
+            List<Point2D> segApprox;
+
+            if (segments.get(i) instanceof BezierCurve) {
+                segApprox = ((BezierCurve) segments.get(i)).getPiecewiseLinearApproximation();
+                segApprox = segApprox.subList(1, segApprox.size());
             } else {
-                result.addAll(((BezierCurve) segment).getPiecewiseLinearApproximation());
+                segApprox = segments.get(i).getBasePoints();
+                segApprox = segApprox.subList(1, segApprox.size());
             }
+
+            result.addAll(segApprox);
         }
 
         return result;
