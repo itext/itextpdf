@@ -1,8 +1,8 @@
 /*
- * $Id$
+ * $Id: 530d925c1b9704a3e4e2b560bc6cd91dcc743f3d $
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2014 iText Group NV
+ * Copyright (c) 1998-2015 iText Group NV
  * Authors: Kevin Day, Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
