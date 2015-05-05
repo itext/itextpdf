@@ -83,10 +83,25 @@ public class GraphicsState {
     /** The current stroke color. */
     BaseColor strokeColor;
 
+    /** The line width for stroking operations */
     private float lineWidth;
+
+    /**
+     * The line cap style. For possible values
+     * see {@link PdfContentByte}
+     */
     private int lineCapStyle;
+
+    /**
+     * The line join style. For possible values
+     * see {@link PdfContentByte}
+     */
     private int lineJoinStyle;
+
+    /** The mitir limit value */
     private float miterLimit;
+
+    /** The line dash pattern */
     private LineDashPattern lineDashPattern;
     
     /**
@@ -264,42 +279,96 @@ public class GraphicsState {
 		return strokeColor;
 	}
 
+    /**
+     * Getter for the line width.
+     * @return The line width
+     * @since 5.5.6
+     */
     public float getLineWidth() {
         return lineWidth;
     }
 
+    /**
+     * Setter for the line width.
+     * @param lineWidth New line width.
+     * @since 5.5.6
+     */
     public void setLineWidth(float lineWidth) {
         this.lineWidth = lineWidth;
     }
 
+    /**
+     * Getter for the line cap style.
+     * For possible values see {@link PdfContentByte}
+     * @return The line cap style.
+     * @since 5.5.6
+     */
     public int getLineCapStyle() {
         return lineCapStyle;
     }
 
+    /**
+     * Setter for the line cap style.
+     * For possible values see {@link PdfContentByte}
+     * @param lineCapStyle New line cap style.
+     * @since 5.5.6
+     */
     public void setLineCapStyle(int lineCapStyle) {
         this.lineCapStyle = lineCapStyle;
     }
 
+    /**
+     * Getter for the line join style.
+     * For possible values see {@link PdfContentByte}
+     * @return The line join style.
+     * @since 5.5.6
+     */
     public int getLineJoinStyle() {
         return lineJoinStyle;
     }
 
+    /**
+     * Setter for the line join style.
+     * For possible values see {@link PdfContentByte}
+     * @param lineJoinStyle New line join style.
+     * @since 5.5.6
+     */
     public void setLineJoinStyle(int lineJoinStyle) {
         this.lineJoinStyle = lineJoinStyle;
     }
 
+    /**
+     * Getter for the miter limit value.
+     * @return The miter limit.
+     * @since 5.5.6
+     */
     public float getMiterLimit() {
         return miterLimit;
     }
 
+    /**
+     * Setter for the miter limit value.
+     * @param miterLimit New miter limit.
+     * @since 5.5.6
+     */
     public void setMiterLimit(float miterLimit) {
         this.miterLimit = miterLimit;
     }
 
+    /**
+     * Getter for the line dash pattern.
+     * @return The line dash pattern.
+     * @since 5.5.6
+     */
     public LineDashPattern getLineDashPattern() {
         return lineDashPattern;
     }
 
+    /**
+     * Setter for the line dash pattern.
+     * @param lineDashPattern New line dash pattern.
+     * @since 5.5.6
+     */
     public void setLineDashPattern(LineDashPattern lineDashPattern) {
         this.lineDashPattern = new LineDashPattern(lineDashPattern.getDashArray(), lineDashPattern.getDashPhase());
     }
