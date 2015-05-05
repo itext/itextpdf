@@ -52,7 +52,14 @@ import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.pdf.PdfArray;
 import com.itextpdf.text.pdf.PdfContentByte;
 import com.itextpdf.text.pdf.parser.*;
+import com.itextpdf.text.pdf.parser.Path;
 import com.itextpdf.text.pdf.parser.clipper.*;
+import com.itextpdf.text.pdf.parser.clipper.Clipper.ClipType;
+import com.itextpdf.text.pdf.parser.clipper.Clipper.EndType;
+import com.itextpdf.text.pdf.parser.clipper.Clipper.JoinType;
+import com.itextpdf.text.pdf.parser.clipper.Clipper.PolyType;
+import com.itextpdf.text.pdf.parser.clipper.Clipper.PolyFillType;
+import com.itextpdf.text.pdf.parser.clipper.Point.LongPoint;
 
 import java.util.*;
 
@@ -140,7 +147,7 @@ class PdfCleanUpRegionFilter extends RenderFilter {
         addPath(offset, path, joinType, endType);
 
         PolyTree resultTree = new PolyTree();
-        offset.Execute(resultTree, lineWidth * PdfCleanUpProcessor.floatMultiplier / 2);
+        offset.execute(resultTree, lineWidth * PdfCleanUpProcessor.floatMultiplier / 2);
 
         return filterFillPath(convertToPath(resultTree), ctm, PathPaintingRenderInfo.NONZERO_WINDING_RULE);
     }
@@ -149,7 +156,7 @@ class PdfCleanUpRegionFilter extends RenderFilter {
      * @param fillingRule If the subpath is contour, pass any value.
      */
     protected Path filterFillPath(Path path, Matrix ctm, int fillingRule) {
-        Clipper clipper = new Clipper();
+        Clipper clipper = new DefaultClipper();
         addPath(clipper, path);
 
         for (Rectangle rectangle : rectangles) {
@@ -157,14 +164,14 @@ class PdfCleanUpRegionFilter extends RenderFilter {
             addRect(clipper, transfRectVertices);
         }
 
-        PolyFillType fillType = PolyFillType.pftNonZero;
+        PolyFillType fillType = PolyFillType.NON_ZERO;
 
         if (fillingRule == PathPaintingRenderInfo.EVEN_ODD_RULE) {
-            fillType = PolyFillType.pftEvenOdd;
+            fillType = PolyFillType.EVEN_ODD;
         }
 
         PolyTree resultTree = new PolyTree();
-        clipper.execute(ClipType.ctDifference, resultTree, fillType, PolyFillType.pftNonZero);
+        clipper.execute(ClipType.DIFFERENCE, resultTree, fillType, PolyFillType.NON_ZERO);
 
         return convertToPath(resultTree);
     }
@@ -172,25 +179,25 @@ class PdfCleanUpRegionFilter extends RenderFilter {
     private static JoinType getJoinType(int lineJoinStyle) {
         switch (lineJoinStyle) {
             case PdfContentByte.LINE_JOIN_BEVEL:
-                return JoinType.jtSquare;
+                return JoinType.SQUARE;
 
             case PdfContentByte.LINE_JOIN_MITER:
-                return JoinType.jtMiter;
+                return JoinType.MITER;
         }
 
-        return JoinType.jtRound;
+        return JoinType.ROUND;
     }
 
     private static EndType getEndType(int lineCapStyle) {
         switch (lineCapStyle) {
             case PdfContentByte.LINE_CAP_BUTT:
-                return EndType.etOpenButt;
+                return EndType.OPEN_BUTT;
 
             case PdfContentByte.LINE_CAP_PROJECTING_SQUARE:
-                return EndType.etOpenSquare;
+                return EndType.OPEN_SQUARE;
         }
 
-        return EndType.etOpenRound;
+        return EndType.OPEN_ROUND;
     }
 
     private static void addPath(ClipperOffset offset, Path path, JoinType joinType, EndType endType) {
@@ -200,13 +207,13 @@ class PdfCleanUpRegionFilter extends RenderFilter {
 
                 if (subpath.isClosed()) {
                     // Offsetting is never used for path being filled
-                    et = EndType.etClosedLine;
+                    et = EndType.CLOSED_LINE;
                 } else {
                     et = endType;
                 }
 
                 List<Point2D> linearApproxPoints = subpath.getPiecewiseLinearApproximation();
-                offset.AddPath(convertToIntPoints(linearApproxPoints), joinType, et);
+                offset.addPath(convertToIntPoints(linearApproxPoints), joinType, et);
             }
         }
     }
@@ -216,32 +223,32 @@ class PdfCleanUpRegionFilter extends RenderFilter {
         for (Subpath subpath : path.getSubpaths()) {
             if (!subpath.isSinglePointClosed() && !subpath.isSinglePointOpen()) {
                 List<Point2D> linearApproxPoints = subpath.getPiecewiseLinearApproximation();
-                clipper.addPath(convertToIntPoints(linearApproxPoints), PolyType.ptSubject, subpath.isClosed());
+                clipper.addPath(convertToIntPoints(linearApproxPoints), PolyType.SUBJECT, subpath.isClosed());
             }
         }
     }
 
     private static void addRect(Clipper clipper, Point2D[] rectVertices) {
-        clipper.addPath(convertToIntPoints(new ArrayList<Point2D>(Arrays.asList(rectVertices))), PolyType.ptClip, true);
+        clipper.addPath(convertToIntPoints(new ArrayList<Point2D>(Arrays.asList(rectVertices))), PolyType.CLIP, true);
     }
 
-    private static List<IntPoint> convertToIntPoints(List<Point2D> points) {
-        List<IntPoint> convertedPoints = new ArrayList<IntPoint>(points.size());
+    private static com.itextpdf.text.pdf.parser.clipper.Path convertToIntPoints(List<Point2D> points) {
+        List<LongPoint> convertedPoints = new ArrayList<LongPoint>(points.size());
 
         for (Point2D point : points) {
-            convertedPoints.add(new IntPoint(PdfCleanUpProcessor.floatMultiplier * point.getX(),
-                                             PdfCleanUpProcessor.floatMultiplier * point.getY()));
+            convertedPoints.add(new LongPoint(PdfCleanUpProcessor.floatMultiplier * point.getX(),
+                                              PdfCleanUpProcessor.floatMultiplier * point.getY()));
         }
 
-        return convertedPoints;
+        return new com.itextpdf.text.pdf.parser.clipper.Path(convertedPoints);
     }
 
-    private static List<Point2D> convertToFloatPoints(List<IntPoint> points) {
+    private static List<Point2D> convertToFloatPoints(List<LongPoint> points) {
         List<Point2D> convertedPoints = new ArrayList<Point2D>(points.size());
 
-        for (IntPoint point : points) {
-            convertedPoints.add(new Point2D.Float((float) (point.X / PdfCleanUpProcessor.floatMultiplier),
-                                                  (float) (point.Y / PdfCleanUpProcessor.floatMultiplier)));
+        for (LongPoint point : points) {
+            convertedPoints.add(new Point2D.Float((float) (point.getX() / PdfCleanUpProcessor.floatMultiplier),
+                                                  (float) (point.getY() / PdfCleanUpProcessor.floatMultiplier)));
         }
 
         return convertedPoints;
@@ -253,13 +260,13 @@ class PdfCleanUpRegionFilter extends RenderFilter {
 
         while (node != null) {
             addContour(path, node.getContour(), !node.isOpen());
-            node = node.GetNext();
+            node = node.getNext();
         }
 
         return path;
     }
 
-    private static void addContour(Path path, List<IntPoint> contour, Boolean close) {
+    private static void addContour(Path path, List<LongPoint> contour, Boolean close) {
         List<Point2D> floatContour = convertToFloatPoints(contour);
         Iterator<Point2D> iter = floatContour.iterator();
 
