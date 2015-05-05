@@ -86,10 +86,17 @@ public class BezierCurve implements Shape {
 
     private final List<Point2D> controlPoints;
 
+    /**
+     * Constructs new bezier curve.
+     * @param controlPoints Curve's control points.
+     */
     public BezierCurve(List<Point2D> controlPoints) {
         this.controlPoints = new ArrayList<Point2D>(controlPoints);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public List<Point2D> getBasePoints() {
         return controlPoints;
     }

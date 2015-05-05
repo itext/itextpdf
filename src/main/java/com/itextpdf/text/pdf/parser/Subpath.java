@@ -65,6 +65,10 @@ public class Subpath {
     public Subpath() {
     }
 
+    /**
+     * Copy constuctor.
+     * @param subpath
+     */
     public Subpath(Subpath subpath) {
         this.startPoint = subpath.startPoint;
         this.segments.addAll(subpath.getSegments());
@@ -85,18 +89,33 @@ public class Subpath {
         this.startPoint = new Point2D.Float(startPointX, startPointY);
     }
 
+    /**
+     * Sets the start point of the subpath.
+     * @param startPoint
+     */
     public void setStartPoint(Point2D startPoint) {
         setStartPoint((float) startPoint.getX(), (float) startPoint.getY());
     }
 
+    /**
+     * Sets the start point of the subpath.
+     * @param x
+     * @param y
+     */
     public void setStartPoint(float x, float y) {
         this.startPoint = new Point2D.Float(x, y);
     }
 
+    /**
+     * @return THe point this subpath starts at.
+     */
     public Point2D getStartPoint() {
         return startPoint;
     }
 
+    /**
+     * @return The last point of the subpath.
+     */
     public Point2D getLastPoint() {
         Point2D lastPoint = null;
 
@@ -113,6 +132,11 @@ public class Subpath {
         return lastPoint;
     }
 
+    /**
+     * Adds a segment to the subpath.
+     * Note: each new segment shall start at the end of the previous segment.
+     * @param segment new segment.
+     */
     public void addSegment(Shape segment) {
         if (closed) {
             return;
@@ -125,10 +149,18 @@ public class Subpath {
         segments.add(segment);
     }
 
+    /**
+     * @return {@link java.util.List} comprising all the segments
+     *         the subpath made on.
+     */
     public List<Shape> getSegments() {
         return segments;
     }
 
+    /**
+     * Checks whether subpath is empty or not.
+     * @return true if the subpath is empty, false otherwise.
+     */
     public boolean isEmpty() {
         return startPoint == null;
     }

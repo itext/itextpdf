@@ -989,6 +989,9 @@ public class PdfContentStreamProcessor {
         }
     }
 
+    /**
+     * A content operator implementation (w).
+     */
     private static class SetLineWidth implements ContentOperator {
 
         public void invoke(PdfContentStreamProcessor processor, PdfLiteral oper, ArrayList<PdfObject> operands) {
@@ -997,6 +1000,9 @@ public class PdfContentStreamProcessor {
         }
     }
 
+    /**
+     * A content operator implementation (J).
+     */
     private class SetLineCap implements ContentOperator {
 
         public void invoke(PdfContentStreamProcessor processor, PdfLiteral oper, ArrayList<PdfObject> operands) {
@@ -1005,6 +1011,9 @@ public class PdfContentStreamProcessor {
         }
     }
 
+    /**
+     * A content operator implementation (j).
+     */
     private class SetLineJoin implements ContentOperator {
 
         public void invoke(PdfContentStreamProcessor processor, PdfLiteral oper, ArrayList<PdfObject> operands) {
@@ -1013,6 +1022,9 @@ public class PdfContentStreamProcessor {
         }
     }
 
+    /**
+     * A content operator implementation (M).
+     */
     private class SetMiterLimit implements ContentOperator {
 
         public void invoke(PdfContentStreamProcessor processor, PdfLiteral oper, ArrayList<PdfObject> operands) {
@@ -1021,6 +1033,9 @@ public class PdfContentStreamProcessor {
         }
     }
 
+    /**
+     * A content operator implementation (d).
+     */
     private class SetLineDashPattern implements ContentOperator {
 
         public void invoke(PdfContentStreamProcessor processor, PdfLiteral oper, ArrayList<PdfObject> operands) {
