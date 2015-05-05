@@ -3,7 +3,6 @@
 We'd love for you to contribute to our source code and to make iText even better than it is
 today! Here are the guidelines we'd like you to follow:
 
- - [Code of Conduct](#coc)
  - [Question or Problem?](#question)
  - [Issues and Bugs](#issue)
  - [New Features](#feature)
@@ -12,9 +11,6 @@ today! Here are the guidelines we'd like you to follow:
  - [Commit Message Guidelines](#commit)
  - [Signing the CLA](#cla)
  - [Further Info](#info)
-
-## <a name="coc"></a> Code of Conduct
-Help us keep iText open and inclusive. Please read and follow our [Code of Conduct][coc].
 
 ## <a name="question"></a> Got a Question or Problem?
 
@@ -31,10 +27,9 @@ submitting a [Pull Request][pull] with a fix.
 ## <a name="feature"></a> Want to implement a Feature?
 If you would like to implement a new feature then consider what kind of change it is:
 
-* **Major Changes** that you wish to contribute to the project should be discussed first on our
-[dev mailing list][itext-dev] so that we can better coordinate our efforts, prevent
-duplication of work, and help you to craft the change so that it is successfully accepted into the
-project.
+* **Major Changes** that you wish to contribute to the project should be discussed first so that we can better
+coordinate our efforts, prevent duplication of work, and help you to craft the change so that it is successfully
+accepted into the project.
 * **Small Changes** can be crafted and submitted to the [GitHub Repository][github] as a [Pull Request][pull].
 
 ## <a name="submit"></a> Submission Guidelines
@@ -57,8 +52,6 @@ chances of your issue being dealt with quickly:
   causing the problem (line of code or commit)
 * **Tag the question** - add the tag 'itext' to your question so we can find it.
 
-Here is a great example of a well defined issue: https://stackoverflow.com/...
-
 **If you get help, help others. Good karma rulez!**
 
 
@@ -70,7 +63,7 @@ Before you submit your pull request consider the following guidelines:
 * Verify that your proposed change hasn't already been addressed in the develop branch.
 * Don't send a separate pull request for every single file you change.  
 * Please sign our [Contributor License Agreement (CLA)](#cla) before sending pull
-  requests for any change of more than 4 significant lines of code (we're not counting curly braces and other syntactical sugar).
+  requests for any change of more than 20 significant lines of code (we're not counting curly braces and other syntactical sugar).
   We cannot accept code without this agreement.
 * Clone iText to your local machine.
 
@@ -198,23 +191,17 @@ reference JIRA or GitHub issues that this commit **Closes**.
 ## <a name="cla"></a> Signing the CLA
 
 Please sign our Contributor License Agreement (CLA) before sending pull requests. For any larger code
-changes (more than 4 lines of significant code) to be accepted, the CLA must be signed. It's a quick process, we promise!
+changes (more than 20 lines of significant code) to be accepted, the CLA must be signed. It's a quick process, we promise!
 
 We'll need you to [(digitally) sign and then email, fax or mail the form][cla].
 
-## <a name="info"></a> Further Information
-You can find out more detailed information about contributing in the
-[iText documentation][contributing].
 
-
-
+[cla]: http://itextpdf.com/policy
 [coc]: https://github.com/itext/itextpdf/blob/master/CODE_OF_CONDUCT.md
-[cla]: http://...
-[contributing]: http://...
 [github]: https://github.com/itext/itextpdf
 [itext-dev]: https://lists.sourceforge.net/lists/listinfo/itext-developers
-[javadocs]: http://
 [java-style-guide]: http://www.oracle.com/technetwork/java/codeconvtoc-136057.html
+[javadocs]: http://itextpdf.com/api
 [pull]: https://github.com/itext/itextpdf/pulls
 [sscce]: http://sscce.org/
 [stackoverflow]: http://stackoverflow.com/questions/tagged/itext
