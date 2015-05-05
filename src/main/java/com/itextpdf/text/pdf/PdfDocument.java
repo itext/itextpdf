@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2014 iText Group NV
+ * Copyright (c) 1998-2015 iText Group NV
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -2657,6 +2657,9 @@ public class PdfDocument extends Document {
         //fit on the current page, start a new page.
         if (ptable.getKeepTogether() && !fitsPage(ptable, 0f) && currentHeight > 0)  {
             newPage();
+            if (isTagged(writer)) {
+                ct.setCanvas(text);
+            }
         }
         if (currentHeight == 0) {
             ct.setAdjustFirstLine(false);
