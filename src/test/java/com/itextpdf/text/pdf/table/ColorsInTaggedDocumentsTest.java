@@ -17,11 +17,9 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-public class TableColorsTest {
+public class ColorsInTaggedDocumentsTest {
     private String cmpFolder = "./src/test/resources/com/itextpdf/text/pdf/table/tableColorsTest/";
     private String outFolder = "./target/com/itextpdf/text/pdf/table/tableColorsTest/";
-
-    private String errorMessage;
 
     @Before
     public void setUp() throws Exception {
@@ -30,7 +28,7 @@ public class TableColorsTest {
     }
 
     @Test
-    public void coloredTablesTest1() throws IOException, DocumentException, InterruptedException, ParserConfigurationException, SAXException {
+    public void colorsInTaggedDocumentsTest1() throws IOException, DocumentException, InterruptedException, ParserConfigurationException, SAXException {
         String output = "coloredTables.pdf";
         String cmp = "cmp_coloredTables.pdf";
 
@@ -39,7 +37,7 @@ public class TableColorsTest {
     }
 
     @Test
-    public void coloredTablesTest2() throws IOException, DocumentException, InterruptedException, ParserConfigurationException, SAXException {
+    public void colorsInTaggedDocumentsTest2() throws IOException, DocumentException, InterruptedException, ParserConfigurationException, SAXException {
         String output = "coloredTables.pdf";
         String cmp = "cmp_coloredTables.pdf";
 
@@ -165,26 +163,15 @@ public class TableColorsTest {
         document.close();
     }
 
-    private void compareDocuments(String out, String cmp, boolean visuallyOnly) throws DocumentException, InterruptedException, IOException, ParserConfigurationException, SAXException {
+    private void compareDocuments(String out, String cmp, boolean visuallyOnly) throws DocumentException, InterruptedException, IOException {
         CompareTool compareTool = new CompareTool();
+        String errorMessage;
         if (visuallyOnly) {
-            addError(compareTool.compare(outFolder + out, cmpFolder + cmp, outFolder, "diff"));
+            errorMessage = compareTool.compare(outFolder + out, cmpFolder + cmp, outFolder, "diff");
         } else {
-            addError(compareTool.compareByContent(outFolder + out, cmpFolder + cmp, outFolder, "diff"));
-            addError(compareTool.compareTagStructures(outFolder + out, cmpFolder + cmp));
+            errorMessage = compareTool.compareByContent(outFolder + out, cmpFolder + cmp, outFolder, "diff");
         }
         if (errorMessage != null)
             Assert.fail(errorMessage);
-    }
-
-    private void addError(String error) {
-        if (error != null && error.length() > 0) {
-            if (errorMessage == null)
-                errorMessage = "";
-            else
-                errorMessage += "\n";
-
-            errorMessage += error;
-        }
     }
 }
