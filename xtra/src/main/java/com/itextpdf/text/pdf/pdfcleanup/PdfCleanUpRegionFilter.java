@@ -179,7 +179,7 @@ class PdfCleanUpRegionFilter extends RenderFilter {
     private static JoinType getJoinType(int lineJoinStyle) {
         switch (lineJoinStyle) {
             case PdfContentByte.LINE_JOIN_BEVEL:
-                return JoinType.SQUARE;
+                return JoinType.BEVEL;
 
             case PdfContentByte.LINE_JOIN_MITER:
                 return JoinType.MITER;

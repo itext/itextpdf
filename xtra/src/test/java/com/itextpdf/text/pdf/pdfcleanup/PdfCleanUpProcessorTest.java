@@ -69,7 +69,8 @@ public class PdfCleanUpProcessorTest {
                                              {"dashedBezier.pdf", "dashedBezier.pdf", "cmp_dashedBezier.pdf", null},
                                              {"closedBezier.pdf", "closedBezier.pdf", "cmp_closedBezier.pdf", null},
                                              {"clippingNWRule.pdf", "clippingNWRule.pdf", "cmp_clippingNWRule.pdf", null},
-                                             {"dashedClosedRotatedTriangles.pdf", "dashedClosedRotatedTriangles.pdf", "cmp_dashedClosedRotatedTriangles.pdf", null}
+                                             {"dashedClosedRotatedTriangles.pdf", "dashedClosedRotatedTriangles.pdf", "cmp_dashedClosedRotatedTriangles.pdf", null},
+                                             {"miterTest.pdf", "miterTest.pdf", "cmp_miterTest.pdf", null},
         });
     }
 
