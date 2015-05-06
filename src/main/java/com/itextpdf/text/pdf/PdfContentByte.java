@@ -108,9 +108,7 @@ public class PdfContentByte {
         /** The current word spacing */
         protected float wordSpace = 0;
 
-        protected BaseColor textColorFill = new GrayColor(0);
         protected BaseColor colorFill = new GrayColor(0);
-        protected BaseColor textColorStroke = new GrayColor(0);
         protected BaseColor colorStroke = new GrayColor(0);
         protected int textRenderMode = TEXT_RENDER_MODE_FILL;
         protected AffineTransform CTM = new AffineTransform();
@@ -138,9 +136,7 @@ public class PdfContentByte {
             scale = cp.scale;
             charSpace = cp.charSpace;
             wordSpace = cp.wordSpace;
-            textColorFill = cp.textColorFill;
             colorFill = cp.colorFill;
-            textColorStroke = cp.textColorStroke;
             colorStroke = cp.colorStroke;
             CTM = new AffineTransform(cp.CTM);
             textRenderMode = cp.textRenderMode;
@@ -1798,13 +1794,6 @@ public class PdfContentByte {
                 state.yTLM = 0;
                 state.tx = 0;
             }
-            if (isTagged()) {
-                try {
-                    restoreColor();
-                } catch (IOException ioe) {
-
-                }
-            }
         }
     }
 
@@ -1828,14 +1817,6 @@ public class PdfContentByte {
     	} else {
     	    inText = false;
             content.append("ET").append_i(separator);
-            if (isTagged()) {
-                try {
-                    restoreColor();
-                } catch (IOException ioe) {
-
-                }
-
-            }
         }
     }
 
@@ -4268,63 +4249,10 @@ public class PdfContentByte {
     }
 
     private void saveColor(BaseColor color, boolean fill) {
-        if (isTagged()) {
-            if (inText) {
-                if (fill) {
-                    state.textColorFill = color;
-                } else {
-                    state.textColorStroke = color;
-                }
-            } else {
-                if (fill) {
-                    state.colorFill = color;
-                } else {
-                    state.colorStroke = color;
-                }
-            }
+        if (fill) {
+            state.colorFill = color;
         } else {
-            if (fill) {
-                state.colorFill = color;
-            } else {
-                state.colorStroke = color;
-            }
-        }
-    }
-
-    private void restoreColor(BaseColor color, boolean fill) throws IOException {
-        if (isTagged()) {
-            if (color instanceof UncoloredPattern) {
-                UncoloredPattern c = (UncoloredPattern)color;
-                if (fill)
-                    setPatternFill(c.getPainter(), c.color, c.tint);
-                else
-                    setPatternStroke(c.getPainter(), c.color, c.tint);
-            } else {
-                if (fill)
-                    setColorFill(color);
-                else
-                    setColorStroke(color);
-            }
-        }
-    }
-
-    private void restoreColor() throws IOException {
-        if (isTagged()) {
-            if (inText) {
-                if (!state.textColorFill.equals(state.colorFill)) {
-                    restoreColor(state.textColorFill, true);
-                }
-                if (!state.textColorStroke.equals(state.colorStroke)) {
-                    restoreColor(state.textColorStroke, false);
-                }
-            } else {
-                if (!state.textColorFill.equals(state.colorFill)) {
-                    restoreColor(state.colorFill, true);
-                }
-                if (!state.textColorStroke.equals(state.colorStroke)) {
-                    restoreColor(state.colorStroke, false);
-                }
-            }
+            state.colorStroke = color;
         }
     }
 
@@ -4361,10 +4289,10 @@ public class PdfContentByte {
             stroke = true;
         }
         if (fill) {
-            PdfWriter.checkPdfIsoConformance(writer, PdfIsoKeys.PDFISOKEY_COLOR, isTagged() ? state.textColorFill : state.colorFill);
+            PdfWriter.checkPdfIsoConformance(writer, PdfIsoKeys.PDFISOKEY_COLOR, state.colorFill);
         }
         if (stroke) {
-            PdfWriter.checkPdfIsoConformance(writer, PdfIsoKeys.PDFISOKEY_COLOR, isTagged() ? state.textColorStroke : state.colorStroke);
+            PdfWriter.checkPdfIsoConformance(writer, PdfIsoKeys.PDFISOKEY_COLOR, state.colorStroke);
         }
         PdfWriter.checkPdfIsoConformance(writer, PdfIsoKeys.PDFISOKEY_GSTATE, state.extGState);
     }
