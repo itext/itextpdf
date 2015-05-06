@@ -9,7 +9,7 @@
 	<groupId>com.itextpdf.tool</groupId>
 	<artifactId>xmlworker</artifactId>
 	<name>iText XML Worker</name>
-	<version>5.5.6-SNAPSHOT</version>
+	<version>5.5.6</version>
 	<description>Parses XML to PDF, with CSS support, using iText</description>
 	<licenses>
 		<license>
@@ -194,7 +194,7 @@
 		<dependency>
 			<groupId>com.itextpdf</groupId>
 			<artifactId>itextpdf</artifactId>
-			<version>5.5.6-SNAPSHOT</version>
+			<version>5.5.6</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
