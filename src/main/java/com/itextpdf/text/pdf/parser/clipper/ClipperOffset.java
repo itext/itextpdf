@@ -341,7 +341,7 @@ public class ClipperOffset {
                     inA = 0;
                     normals.set( j, new DoublePoint( -normals.get( j ).getX(), -normals.get( j ).getY() ) );
                     if (node.getEndType() == EndType.OPEN_SQUARE) {
-                        doSquare( j, k[0] );
+                        doSquare( j, k[0], true );
                     }
                     else {
                         doRound( j, k[0] );
@@ -372,7 +372,7 @@ public class ClipperOffset {
                     k[0] = 1;
                     inA = 0;
                     if (node.getEndType() == EndType.OPEN_SQUARE) {
-                        doSquare( 0, 1 );
+                        doSquare( 0, 1, true );
                     }
                     else {
                         doRound( 0, 1 );
@@ -398,7 +398,7 @@ public class ClipperOffset {
                         + normals.get( j ).getY() * delta ) ) );
     }
 
-    private void doSquare( int j, int k ) {
+    private void doSquare( int j, int k, boolean addExtra ) {
         final double nkx = normals.get( k ).getX();
         final double nky = normals.get( k ).getY();
         final double njx = normals.get( j ).getX();
@@ -406,8 +406,8 @@ public class ClipperOffset {
         final double sjx = srcPoly.get( j ).getX();
         final double sjy = srcPoly.get( j ).getY();
         final double dx = Math.tan( Math.atan2( inA, nkx * njx + nky * njy ) / 4 );
-        destPoly.add( new LongPoint( (int) Math.round( sjx + delta * (nkx - nky * dx) ), (int) Math.round( sjy + delta * (nky + nkx * dx) ), 0 ) );
-        destPoly.add( new LongPoint( (int) Math.round( sjx + delta * (njx + njy * dx) ), (int) Math.round( sjy + delta * (njy - njx * dx) ), 0 ) );
+        destPoly.add( new LongPoint( (int) Math.round( sjx + delta * (nkx - (addExtra ? nky * dx : 0)) ), (int) Math.round( sjy + delta * (nky + (addExtra ? nkx * dx : 0)) ), 0 ) );
+        destPoly.add( new LongPoint( (int) Math.round( sjx + delta * (njx + (addExtra ? njy * dx : 0)) ), (int) Math.round( sjy + delta * (njy - (addExtra ? njx * dx : 0)) ), 0 ) );
     }
 
     //------------------------------------------------------------------------------
@@ -546,12 +546,12 @@ public class ClipperOffset {
                         doMiter( j, k, r );
                     }
                     else {
-                        doSquare( j, k );
+                        doSquare( j, k, false );
                     }
                     break;
                 }
-                case SQUARE:
-                    doSquare( j, k );
+                case BEVEL:
+                    doSquare( j, k, false );
                     break;
                 case ROUND:
                     doRound( j, k );

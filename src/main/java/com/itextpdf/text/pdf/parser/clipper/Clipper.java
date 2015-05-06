@@ -91,7 +91,7 @@ public interface Clipper {
     };
 
     public enum JoinType {
-        SQUARE, ROUND, MITER
+        BEVEL, ROUND, MITER
     };
 
     public enum PolyFillType {
