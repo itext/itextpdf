@@ -147,3 +147,4 @@ $RECYCLE.BIN/
 target/
 nbactions*.xml
 *.patch
+*.md.html
