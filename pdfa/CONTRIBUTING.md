@@ -9,7 +9,7 @@ today! Here are the guidelines we'd like you to follow:
  - [Submission Guidelines](#submit)
  - [Coding Rules](#rules)
  - [Commit Message Guidelines](#commit)
- - [Signing the CLA](#cla)
+ - [Signing the iCLA](#cla)
  - [Further Info](#info)
 
 ## <a name="question"></a> Got a Question or Problem?
@@ -62,7 +62,7 @@ Before you submit your pull request consider the following guidelines:
   that relates to your submission. You don't want to duplicate effort.
 * Verify that your proposed change hasn't already been addressed in the develop branch.
 * Don't send a separate pull request for every single file you change.  
-* Please sign our [Contributor License Agreement (CLA)](#cla) before sending pull
+* Please sign the [iText Contributor License Agreement (iCLA)](#cla) before sending pull
   requests for any change of more than 20 significant lines of code (we're not counting curly braces and other syntactical sugar).
   We cannot accept code without this agreement.
 * Clone iText to your local machine.
@@ -170,7 +170,7 @@ Each commit message consists of a **subject**, a **body** and a **footer**:
 <footer>
 ```
 
-Any line of the commit message cannot be longer 100 characters! This allows the message to be easier
+Any line of the commit message cannot be longer 70 characters! This allows the message to be easier
 to read on GitHub as well as in various git tools.
 
 ### Subject
@@ -179,6 +179,7 @@ The subject contains succinct description of the change:
 * use the imperative, present tense: "change" not "changed" nor "changes"
 * don't capitalize first letter
 * no dot (.) at the end
+* describe what the **change** does, not the actions the developer has done
 
 ### Body
 Just as in the **subject**, use the imperative, present tense: "change" not "changed" nor "changes".
@@ -188,10 +189,10 @@ The body should include the motivation for the change and contrast this with pre
 The footer should contain any information about **Breaking Changes** and is also the place to
 reference JIRA or GitHub issues that this commit **Closes**.
 
-## <a name="cla"></a> Signing the CLA
+## <a name="cla"></a> Signing the iCLA
 
-Please sign our Contributor License Agreement (CLA) before sending pull requests. For any larger code
-changes (more than 20 lines of significant code) to be accepted, the CLA must be signed. It's a quick process, we promise!
+Please sign the iText Contributor License Agreement (iCLA) before sending pull requests. For any larger code
+changes (more than 20 lines of significant code) to be accepted, the iCLA must be signed. It's a quick process, we promise!
 
 We'll need you to [(digitally) sign and then email, fax or mail the form][cla].
 
