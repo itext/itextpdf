@@ -107,7 +107,7 @@ public class Subpath {
     }
 
     /**
-     * @return THe point this subpath starts at.
+     * @return The point this subpath starts at.
      */
     public Point2D getStartPoint() {
         return startPoint;

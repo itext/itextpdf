@@ -95,7 +95,7 @@ class PdfCleanUpContext {
     }
 
     public void pushStrokeColor(List<PdfObject> strokeColorOperands) {
-        this.strokeColorOperands.push(strokeColorOperands);
+        this.strokeColorOperands.push(new ArrayList<PdfObject>(strokeColorOperands));
     }
 
     public List<PdfObject> peekStrokeColor() {
