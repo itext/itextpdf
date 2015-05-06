@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2014 iText Group NV
+ * Copyright (c) 1998-2015 iText Group NV
  * Authors: Bruno Lowagie, Kwinten Pisman, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -46,25 +46,28 @@ package com.itextpdf.text.pdf.security;
 
 import com.itextpdf.text.pdf.PdfDictionary;
 import com.itextpdf.text.pdf.PdfName;
+import com.itextpdf.text.pdf.PdfString;
 
 /**
  * A dictionary that stores the name of the application that signs the PDF.
  */
 public class PdfSignatureAppDictionary extends PdfDictionary {
 
-	/** Creates new PdfSignatureAppDictionary */
-	public PdfSignatureAppDictionary() {
-		super();
-	}
+    /**
+     * Creates new PdfSignatureAppDictionary
+     */
+    public PdfSignatureAppDictionary() {
+        super();
+    }
 
-	/**
-	 * Sets the signature created property in the Prop_Build dictionary's App
-	 * dictionary
-	 * 
-	 * @param name
-	 */
-	public void setSignatureCreator(String name) {
-		put(PdfName.NAME, new PdfName(name));
-	}
+    /**
+     * Sets the signature created property in the Prop_Build dictionary's App
+     * dictionary
+     *
+     * @param name
+     */
+    public void setSignatureCreator(String name) {
+        put(PdfName.NAME, new PdfString(name, TEXT_UNICODE));
+    }
 
 }

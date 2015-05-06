@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2014 iText Group NV
+ * Copyright (c) 1998-2015 iText Group NV
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -309,6 +309,50 @@ public class PdfReader implements PdfViewerPreferences {
                 true
         );
 
+    }
+
+    /**
+     * Reads and parses a PDF document.
+     *
+     * @param pdfIn the document as a byte array
+     * @param certificate
+     * @param externalDecryptionProcess
+     * @throws IOException on error
+     */
+    public PdfReader(final byte[] pdfIn, Certificate certificate, final ExternalDecryptionProcess externalDecryptionProcess) throws IOException {
+        this(
+                new RandomAccessSourceFactory()
+                        .setForceRead(false)
+                        .setUsePlainRandomAccess(Document.plainRandomAccess)
+                        .createSource(pdfIn),
+                false,
+                null,
+                certificate,
+                null,
+                null,
+                externalDecryptionProcess,
+                true
+        );
+
+    }
+
+    /**
+     * Reads and parses a PDF document.
+     *
+     * @param inputStream the PDF file
+     * @param certificate
+     * @param externalDecryptionProcess
+     * @throws IOException on error
+     */
+    public PdfReader(final InputStream inputStream, final Certificate certificate, final ExternalDecryptionProcess externalDecryptionProcess) throws IOException {
+        this(new RandomAccessSourceFactory().setForceRead(false).setUsePlainRandomAccess(Document.plainRandomAccess).createSource(inputStream),
+                false,
+                null,
+                certificate,
+                null,
+                null,
+                externalDecryptionProcess,
+                true);
     }
 
     /**
@@ -1192,11 +1236,13 @@ public class PdfReader implements PdfViewerPreferences {
 
     protected void readPages() throws IOException {
         catalog = trailer.getAsDict(PdfName.ROOT);
-        if (catalog == null)
-        	throw new InvalidPdfException(MessageLocalization.getComposedMessage("the.document.has.no.catalog.object"));
+        if (catalog == null) {
+            throw new InvalidPdfException(MessageLocalization.getComposedMessage("the.document.has.no.catalog.object"));
+        }
         rootPages = catalog.getAsDict(PdfName.PAGES);
-        if (rootPages == null)
-        	throw new InvalidPdfException(MessageLocalization.getComposedMessage("the.document.has.no.page.root"));
+        if (rootPages == null || !PdfName.PAGES.equals(rootPages.get(PdfName.TYPE))) {
+            throw new InvalidPdfException(MessageLocalization.getComposedMessage("the.document.has.no.page.root"));
+        }
         pageRefs = new PageRefs(this);
     }
 
@@ -3782,7 +3828,7 @@ public class PdfReader implements PdfViewerPreferences {
                 PdfDictionary dic = pageInh.get(pageInh.size() - 1);
                 PdfName key;
                 for (Object element : dic.getKeys()) {
-                    key = (PdfName)element;
+                    key = (PdfName) element;
                     if (page.get(key) == null)
                         page.put(key, dic.get(key));
                 }

@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2014 iText Group NV
+ * Copyright (c) 1998-2015 iText Group NV
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -66,6 +66,7 @@ import java.awt.Stroke;
 import java.awt.TexturePaint;
 import java.awt.Transparency;
 import java.awt.RenderingHints.Key;
+import java.awt.color.ColorSpace;
 import java.awt.font.FontRenderContext;
 import java.awt.font.GlyphVector;
 import java.awt.font.TextAttribute;
@@ -105,6 +106,7 @@ import com.itextpdf.awt.geom.PolylineShape;
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.pdf.BaseFont;
 import com.itextpdf.text.pdf.ByteBuffer;
+import com.itextpdf.text.pdf.CMYKColor;
 import com.itextpdf.text.pdf.PdfAction;
 import com.itextpdf.text.pdf.PdfContentByte;
 import com.itextpdf.text.pdf.PdfGState;
@@ -498,7 +500,7 @@ public class PdfGraphics2D extends Graphics2D {
                             }
                             cb.setGState(gs);
                         }
-                        cb.setColorStroke(new BaseColor(color.getRGB()));
+                        cb.setColorStroke(prepareColor(color));
                         restoreTextRenderingMode = true;
                     }
                 }
@@ -1666,6 +1668,15 @@ public class PdfGraphics2D extends Graphics2D {
         }
     }
 
+    public static BaseColor prepareColor(Color color) {
+        if (color.getColorSpace().getType() == ColorSpace.TYPE_CMYK) {
+           float[] comp = color.getColorComponents(null);
+           return new CMYKColor(comp[0], comp[1], comp[2], comp[3]);
+        } else {
+           return new BaseColor(color.getRGB());
+        }
+    }
+
     private void setPaint(boolean invert, double xoffset, double yoffset, boolean fill) {
         if (paint instanceof Color) {
             Color color = (Color)paint;
@@ -1681,7 +1692,7 @@ public class PdfGraphics2D extends Graphics2D {
                     }
                     cb.setGState(gs);
                 }
-                cb.setColorFill(new BaseColor(color.getRGB()));
+                cb.setColorFill(prepareColor(color));
             }
             else {
                 if (alpha != currentStrokeGState) {
@@ -1694,7 +1705,7 @@ public class PdfGraphics2D extends Graphics2D {
                     }
                     cb.setGState(gs);
                 }
-                cb.setColorStroke(new BaseColor(color.getRGB()));
+                cb.setColorStroke(prepareColor(color));
             }
         }
         else if (paint instanceof GradientPaint) {

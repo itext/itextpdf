@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2014 iText Group NV
+ * Copyright (c) 1998-2015 iText Group NV
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -108,9 +108,7 @@ public class PdfContentByte {
         /** The current word spacing */
         protected float wordSpace = 0;
 
-        protected BaseColor textColorFill = new GrayColor(0);
         protected BaseColor colorFill = new GrayColor(0);
-        protected BaseColor textColorStroke = new GrayColor(0);
         protected BaseColor colorStroke = new GrayColor(0);
         protected int textRenderMode = TEXT_RENDER_MODE_FILL;
         protected AffineTransform CTM = new AffineTransform();
@@ -138,9 +136,7 @@ public class PdfContentByte {
             scale = cp.scale;
             charSpace = cp.charSpace;
             wordSpace = cp.wordSpace;
-            textColorFill = cp.textColorFill;
             colorFill = cp.colorFill;
-            textColorStroke = cp.textColorStroke;
             colorStroke = cp.colorStroke;
             CTM = new AffineTransform(cp.CTM);
             textRenderMode = cp.textRenderMode;
@@ -376,6 +372,19 @@ public class PdfContentByte {
      */
 
     public void setFlatness(final float flatness) {
+        setFlatness((double)flatness);
+    }
+
+    /**
+     * Changes the <VAR>Flatness</VAR>.
+     * <P>
+     * <VAR>Flatness</VAR> sets the maximum permitted distance in device pixels between the
+     * mathematically correct path and an approximation constructed from straight line segments.<BR>
+     *
+     * @param       flatness        a value
+     */
+
+    public void setFlatness(final double flatness) {
         if (flatness >= 0 && flatness <= 100) {
             content.append(flatness).append(" i").append_i(separator);
         }
@@ -418,6 +427,21 @@ public class PdfContentByte {
      */
 
     public void setLineDash(final float phase) {
+        setLineDash((double) phase);
+    }
+
+    /**
+     * Changes the value of the <VAR>line dash pattern</VAR>.
+     * <P>
+     * The line dash pattern controls the pattern of dashes and gaps used to stroke paths.
+     * It is specified by an <I>array</I> and a <I>phase</I>. The array specifies the length
+     * of the alternating dashes and gaps. The phase specifies the distance into the dash
+     * pattern to start the dash.<BR>
+     *
+     * @param       phase       the value of the phase
+     */
+
+    public void setLineDash(final double phase) {
         content.append("[] ").append(phase).append(" d").append_i(separator);
     }
 
@@ -434,6 +458,22 @@ public class PdfContentByte {
      */
 
     public void setLineDash(final float unitsOn, final float phase) {
+        setLineDash((double) unitsOn, (double) phase);
+    }
+
+    /**
+     * Changes the value of the <VAR>line dash pattern</VAR>.
+     * <P>
+     * The line dash pattern controls the pattern of dashes and gaps used to stroke paths.
+     * It is specified by an <I>array</I> and a <I>phase</I>. The array specifies the length
+     * of the alternating dashes and gaps. The phase specifies the distance into the dash
+     * pattern to start the dash.<BR>
+     *
+     * @param       phase       the value of the phase
+     * @param       unitsOn     the number of units that must be 'on' (equals the number of units that must be 'off').
+     */
+
+    public void setLineDash(final double unitsOn, final double phase) {
         content.append("[").append(unitsOn).append("] ").append(phase).append(" d").append_i(separator);
     }
 
@@ -451,6 +491,23 @@ public class PdfContentByte {
      */
 
     public void setLineDash(final float unitsOn, final float unitsOff, final float phase) {
+        setLineDash((double) unitsOn, (double) unitsOff, (double) phase);
+    }
+
+    /**
+     * Changes the value of the <VAR>line dash pattern</VAR>.
+     * <P>
+     * The line dash pattern controls the pattern of dashes and gaps used to stroke paths.
+     * It is specified by an <I>array</I> and a <I>phase</I>. The array specifies the length
+     * of the alternating dashes and gaps. The phase specifies the distance into the dash
+     * pattern to start the dash.<BR>
+     *
+     * @param       phase       the value of the phase
+     * @param       unitsOn     the number of units that must be 'on'
+     * @param       unitsOff    the number of units that must be 'off'
+     */
+
+    public void setLineDash(final double unitsOn, final double unitsOff, final double phase) {
         content.append("[").append(unitsOn).append(' ').append(unitsOff).append("] ").append(phase).append(" d").append_i(separator);
     }
 
@@ -467,6 +524,27 @@ public class PdfContentByte {
      */
 
     public final void setLineDash(final float[] array, final float phase) {
+        content.append("[");
+        for (int i = 0; i < array.length; i++) {
+            content.append(array[i]);
+            if (i < array.length - 1) content.append(' ');
+        }
+        content.append("] ").append(phase).append(" d").append_i(separator);
+    }
+
+    /**
+     * Changes the value of the <VAR>line dash pattern</VAR>.
+     * <P>
+     * The line dash pattern controls the pattern of dashes and gaps used to stroke paths.
+     * It is specified by an <I>array</I> and a <I>phase</I>. The array specifies the length
+     * of the alternating dashes and gaps. The phase specifies the distance into the dash
+     * pattern to start the dash.<BR>
+     *
+     * @param       array       length of the alternating dashes and gaps
+     * @param       phase       the value of the phase
+     */
+
+    public final void setLineDash(final double[] array, final double phase) {
         content.append("[");
         for (int i = 0; i < array.length; i++) {
             content.append(array[i]);
@@ -501,6 +579,19 @@ public class PdfContentByte {
      */
 
     public void setLineWidth(final float w) {
+        setLineWidth((double) w);
+    }
+
+    /**
+     * Changes the <VAR>line width</VAR>.
+     * <P>
+     * The line width specifies the thickness of the line used to stroke a path and is measured
+     * in user space units.<BR>
+     *
+     * @param       w           a width
+     */
+
+    public void setLineWidth(final double w) {
         content.append(w).append(" w").append_i(separator);
     }
 
@@ -516,6 +607,21 @@ public class PdfContentByte {
      */
 
     public void setMiterLimit(final float miterLimit) {
+        setMiterLimit((double) miterLimit);
+    }
+
+    /**
+     * Changes the <VAR>Miter limit</VAR>.
+     * <P>
+     * When two line segments meet at a sharp angle and mitered joins have been specified as the
+     * line join style, it is possible for the miter to extend far beyond the thickness of the line
+     * stroking path. The miter limit imposes a maximum on the ratio of the miter length to the line
+     * witdh. When the limit is exceeded, the join is converted from a miter to a bevel.<BR>
+     *
+     * @param       miterLimit      a miter limit
+     */
+
+    public void setMiterLimit(final double miterLimit) {
         if (miterLimit > 1) {
             content.append(miterLimit).append(" M").append_i(separator);
         }
@@ -769,6 +875,17 @@ public class PdfContentByte {
      */
 
     public void moveTo(final float x, final float y) {
+        moveTo((double) x, (double) y);
+    }
+
+    /**
+     * Move the current point <I>(x, y)</I>, omitting any connecting line segment.
+     *
+     * @param       x               new x-coordinate
+     * @param       y               new y-coordinate
+     */
+
+    public void moveTo(final double x, final double y) {
     	if (inText) {
             if (isTagged()) {
                 endText();
@@ -788,6 +905,18 @@ public class PdfContentByte {
      */
 
     public void lineTo(final float x, final float y) {
+        lineTo((double) x, (double) y);
+    }
+
+    /**
+     * Appends a straight line segment from the current point <I>(x, y)</I>. The new current
+     * point is <I>(x, y)</I>.
+     *
+     * @param       x               new x-coordinate
+     * @param       y               new y-coordinate
+     */
+
+    public void lineTo(final double x, final double y) {
     	if (inText) {
             if (isTagged()) {
                 endText();
@@ -810,6 +939,21 @@ public class PdfContentByte {
      */
 
     public void curveTo(final float x1, final float y1, final float x2, final float y2, final float x3, final float y3) {
+        curveTo((double) x1, (double) y1, (double) x2, (double) y2, (double) x3, (double) y3);
+    }
+
+    /**
+     * Appends a B&#xea;zier curve to the path, starting from the current point.
+     *
+     * @param       x1      x-coordinate of the first control point
+     * @param       y1      y-coordinate of the first control point
+     * @param       x2      x-coordinate of the second control point
+     * @param       y2      y-coordinate of the second control point
+     * @param       x3      x-coordinate of the ending point (= new current point)
+     * @param       y3      y-coordinate of the ending point (= new current point)
+     */
+
+    public void curveTo(final double x1, final double y1, final double x2, final double y2, final double x3, final double y3) {
     	if (inText) {
             if (isTagged()) {
                 endText();
@@ -830,6 +974,18 @@ public class PdfContentByte {
      */
 
     public void curveTo(final float x2, final float y2, final float x3, final float y3) {
+        curveTo((double) x2, (double) y2, (double) x3, (double) y3);
+    }
+    /**
+     * Appends a B&#xea;zier curve to the path, starting from the current point.
+     *
+     * @param       x2      x-coordinate of the second control point
+     * @param       y2      y-coordinate of the second control point
+     * @param       x3      x-coordinate of the ending point (= new current point)
+     * @param       y3      y-coordinate of the ending point (= new current point)
+     */
+
+    public void curveTo(final double x2, final double y2, final double x3, final double y3) {
     	if (inText) {
             if (isTagged()) {
                 endText();
@@ -850,6 +1006,19 @@ public class PdfContentByte {
      */
 
     public void curveFromTo(final float x1, final float y1, final float x3, final float y3) {
+        curveFromTo((double) x1, (double) y1, (double) x3, (double) y3);
+    }
+
+    /**
+     * Appends a B&#xea;zier curve to the path, starting from the current point.
+     *
+     * @param       x1      x-coordinate of the first control point
+     * @param       y1      y-coordinate of the first control point
+     * @param       x3      x-coordinate of the ending point (= new current point)
+     * @param       y3      y-coordinate of the ending point (= new current point)
+     */
+
+    public void curveFromTo(final double x1, final double y1, final double x3, final double y3) {
     	if (inText) {
             if (isTagged()) {
                 endText();
@@ -867,6 +1036,16 @@ public class PdfContentByte {
      * @param r radius of circle
      */
     public void circle(final float x, final float y, final float r) {
+        circle((double) x, (double) y, (double) r);
+    }
+
+    /** Draws a circle. The endpoint will (x+r, y).
+     *
+     * @param x x center of circle
+     * @param y y center of circle
+     * @param r radius of circle
+     */
+    public void circle(final double x, final double y, final double r) {
         float b = 0.5523f;
         moveTo(x + r, y);
         curveTo(x + r, y + r * b, x + r * b, y + r, x, y + r);
@@ -874,8 +1053,6 @@ public class PdfContentByte {
         curveTo(x - r, y - r * b, x - r * b, y - r, x, y - r);
         curveTo(x + r * b, y - r, x + r, y - r * b, x + r, y);
     }
-
-
 
     /**
      * Adds a rectangle to the current path.
@@ -887,6 +1064,19 @@ public class PdfContentByte {
      */
 
     public void rectangle(final float x, final float y, final float w, final float h) {
+        rectangle((double) x, (double) y, (double) w, (double) h);
+    }
+
+    /**
+     * Adds a rectangle to the current path.
+     *
+     * @param       x       x-coordinate of the starting point
+     * @param       y       y-coordinate of the starting point
+     * @param       w       width
+     * @param       h       height
+     */
+
+    public void rectangle(final double x, final double y, final double w, final double h) {
     	if (inText) {
             if (isTagged()) {
                 endText();
@@ -1336,15 +1526,32 @@ public class PdfContentByte {
     }
 
     /**
+     * Adds an <CODE>Image</CODE> to the page. The positioning of the <CODE>Image</CODE>
+     * is done with the transformation matrix. To position an <CODE>image</CODE> at (x,y)
+     * use addImage(image, image_width, 0, 0, image_height, x, y).
+     * @param image the <CODE>Image</CODE> object
+     * @param a an element of the transformation matrix
+     * @param b an element of the transformation matrix
+     * @param c an element of the transformation matrix
+     * @param d an element of the transformation matrix
+     * @param e an element of the transformation matrix
+     * @param f an element of the transformation matrix
+     * @throws DocumentException on error
+     */
+    public void addImage(final Image image, final double a, final double b, final double c, final double d, final double e, final double f) throws DocumentException {
+        addImage(image, a, b, c, d, e, f, false);
+    }
+
+    /**
      * adds an image with the given matrix.
      * @param image image to add
      * @param transform transform to apply to the template prior to adding it.
      */
     public void addImage(final Image image, final AffineTransform transform) throws DocumentException {
-    	double matrix[] = new double[6];
-    	transform.getMatrix(matrix);
-    	addImage( image, (float)matrix[0], (float)matrix[1], (float)matrix[2],
-    			  (float)matrix[3], (float)matrix[4],(float) matrix[5], false );
+        double matrix[] = new double[6];
+        transform.getMatrix(matrix);
+        addImage(image, matrix[0], matrix[1], matrix[2],
+                matrix[3], matrix[4], matrix[5], false);
     }
 
     /**
@@ -1362,6 +1569,24 @@ public class PdfContentByte {
      * @throws DocumentException on error
      */
     public void addImage(final Image image, final float a, final float b, final float c, final float d, final float e, final float f, final boolean inlineImage) throws DocumentException {
+        addImage(image, (double) a, (double) b, (double) c, (double) d, (double) e, (double) f, inlineImage);
+    }
+
+    /**
+     * Adds an <CODE>Image</CODE> to the page. The positioning of the <CODE>Image</CODE>
+     * is done with the transformation matrix. To position an <CODE>image</CODE> at (x,y)
+     * use addImage(image, image_width, 0, 0, image_height, x, y). The image can be placed inline.
+     * @param image the <CODE>Image</CODE> object
+     * @param a an element of the transformation matrix
+     * @param b an element of the transformation matrix
+     * @param c an element of the transformation matrix
+     * @param d an element of the transformation matrix
+     * @param e an element of the transformation matrix
+     * @param f an element of the transformation matrix
+     * @param inlineImage <CODE>true</CODE> to place this image inline, <CODE>false</CODE> otherwise
+     * @throws DocumentException on error
+     */
+    public void addImage(final Image image, final double a, final double b, final double c, final double d, final double e, final double f, final boolean inlineImage) throws DocumentException {
         try {
             AffineTransform transform = new AffineTransform(a, b, c, d, e, f);
 
@@ -1493,15 +1718,15 @@ public class PdfContentByte {
             Annotation annot = image.getAnnotation();
             if (annot == null)
                 return;
-            float[] r = new float[unitRect.length];
+            double[] r = new double[unitRect.length];
             for (int k = 0; k < unitRect.length; k += 2) {
                 r[k] = a * unitRect[k] + c * unitRect[k + 1] + e;
                 r[k + 1] = b * unitRect[k] + d * unitRect[k + 1] + f;
             }
-            float llx = r[0];
-            float lly = r[1];
-            float urx = llx;
-            float ury = lly;
+            double llx = r[0];
+            double lly = r[1];
+            double urx = llx;
+            double ury = lly;
             for (int k = 2; k < r.length; k += 2) {
                 llx = Math.min(llx, r[k]);
                 lly = Math.min(lly, r[k + 1]);
@@ -1509,8 +1734,8 @@ public class PdfContentByte {
                 ury = Math.max(ury, r[k + 1]);
             }
             annot = new Annotation(annot);
-            annot.setDimensions(llx, lly, urx, ury);
-            PdfAnnotation an = PdfAnnotationsImp.convertAnnotation(writer, annot, new Rectangle(llx, lly, urx, ury));
+            annot.setDimensions((float)llx, (float)lly, (float)urx, (float)ury);
+            PdfAnnotation an = PdfAnnotationsImp.convertAnnotation(writer, annot, new Rectangle((float)llx, (float)lly, (float)urx, (float)ury));
             if (an == null)
                 return;
             addAnnotation(an);
@@ -1525,7 +1750,7 @@ public class PdfContentByte {
      * Calls <code>reset( true )</code>
      */
     public void reset() {
-        reset( true );
+        reset(true);
     }
 
     /**
@@ -1569,13 +1794,6 @@ public class PdfContentByte {
                 state.yTLM = 0;
                 state.tx = 0;
             }
-            if (isTagged()) {
-                try {
-                    restoreColor();
-                } catch (IOException ioe) {
-
-                }
-            }
         }
     }
 
@@ -1599,14 +1817,6 @@ public class PdfContentByte {
     	} else {
     	    inText = false;
             content.append("ET").append_i(separator);
-            if (isTagged()) {
-                try {
-                    restoreColor();
-                } catch (IOException ioe) {
-
-                }
-
-            }
         }
     }
 
@@ -1737,6 +1947,17 @@ public class PdfContentByte {
      * @param       rise                a parameter
      */
     public void setTextRise(final float rise) {
+        setTextRise((double) rise);
+    }
+
+    /**
+     * Sets the text rise parameter.
+     * <P>
+     * This allows to write text in subscript or superscript mode.</P>
+     *
+     * @param       rise                a parameter
+     */
+    public void setTextRise(final double rise) {
         if (!inText && isTagged()) {
             beginText(true);
         }
@@ -1779,7 +2000,7 @@ public class PdfContentByte {
         if (state.fontDetails == null)
             throw new NullPointerException(MessageLocalization.getComposedMessage("font.and.size.must.be.set.before.writing.any.text"));
         Object[] objs = state.fontDetails.convertToBytesGid(gids);
-        StringUtils.escapeString((byte[])objs[0], content);
+        StringUtils.escapeString((byte[]) objs[0], content);
         state.tx += ((Integer)objs[2]).intValue() * 0.001f * state.size;
         content.append("Tj").append_i(separator);
     }
@@ -2176,6 +2397,34 @@ public class PdfContentByte {
      * @param f an element of the transformation matrix
      **/
     public void concatCTM(final float a, final float b, final float c, final float d, final float e, final float f) {
+        concatCTM((double) a, (double) b, (double) c, (double) d, (double) e, (double) f);
+    }
+
+    /**
+     * Concatenate a matrix to the current transformation matrix.
+     *
+     * Common transformations:
+     *
+     * <ul>
+     *   <li>Translation: [1 0 0 1 tx ty]</li>
+     *   <li>Scaling: [sx 0 0 sy 0 0] (if sx or sy is negative, it will flip the coordinate system)</li>
+     *   <li>Rotation: [cos(q) sin(q) -sin(q) cos(q) 0 0] where q is angle of counter-clockwise rotation (rotated around positive z-axis - use Right Hand Rule)
+     *     <ul>
+     *         <li>Rotate 90 degrees CCW: [0 1 -1 0 0 0]</li>
+     * 		   <li>Rotate 180 degrees: [-1 0 0 -1 0 0]</li>
+     *		   <li>Rotate 270 degrees: [0 -1 1 0 0 0]</li>
+     *   </li>
+     *   <li>Skew: [1 tan(a) tan(b) 1 0 0] where a is x-axis skew angle and b is y-axis skew angle</li>
+	 *</ul>
+     *
+     * @param a an element of the transformation matrix
+     * @param b an element of the transformation matrix
+     * @param c an element of the transformation matrix
+     * @param d an element of the transformation matrix
+     * @param e an element of the transformation matrix
+     * @param f an element of the transformation matrix
+     **/
+    public void concatCTM(final double a, final double b, final double c, final double d, final double e, final double f) {
         if (inText && isTagged()) {
             endText();
         }
@@ -2191,8 +2440,8 @@ public class PdfContentByte {
     public void concatCTM(final AffineTransform transform) {
     	double matrix[] = new double[6];
     	transform.getMatrix(matrix);
-    	concatCTM((float) matrix[0], (float) matrix[1], (float) matrix[2],
-                (float) matrix[3], (float) matrix[4], (float) matrix[5]);
+    	concatCTM(matrix[0], matrix[1], matrix[2],
+                matrix[3], matrix[4], matrix[5]);
     }
 
     /**
@@ -2219,8 +2468,36 @@ public class PdfContentByte {
      * @param extent angle extent in degrees
      * @return a list of float[] with the bezier curves
      */
-    public static ArrayList<float[]> bezierArc(float x1, float y1, float x2, float y2, final float startAng, final float extent) {
-        float tmp;
+    public static ArrayList<double[]> bezierArc(float x1, float y1, float x2, float y2, final float startAng, final float extent) {
+        return bezierArc((double)x1, (double)y1, (double)x2, (double)y2, (double)startAng, (double)extent);
+    }
+
+    /**
+     * Generates an array of bezier curves to draw an arc.
+     * <P>
+     * (x1, y1) and (x2, y2) are the corners of the enclosing rectangle.
+     * Angles, measured in degrees, start with 0 to the right (the positive X
+     * axis) and increase counter-clockwise.  The arc extends from startAng
+     * to startAng+extent.  I.e. startAng=0 and extent=180 yields an openside-down
+     * semi-circle.
+     * <P>
+     * The resulting coordinates are of the form float[]{x1,y1,x2,y2,x3,y3, x4,y4}
+     * such that the curve goes from (x1, y1) to (x4, y4) with (x2, y2) and
+     * (x3, y3) as their respective Bezier control points.
+     * <P>
+     * Note: this code was taken from ReportLab (www.reportlab.org), an excellent
+     * PDF generator for Python (BSD license: http://www.reportlab.org/devfaq.html#1.3 ).
+     *
+     * @param x1 a corner of the enclosing rectangle
+     * @param y1 a corner of the enclosing rectangle
+     * @param x2 a corner of the enclosing rectangle
+     * @param y2 a corner of the enclosing rectangle
+     * @param startAng starting angle in degrees
+     * @param extent angle extent in degrees
+     * @return a list of float[] with the bezier curves
+     */
+    public static ArrayList<double[]> bezierArc(double x1, double y1, double x2, double y2, final double startAng, final double extent) {
+        double tmp;
         if (x1 > x2) {
             tmp = x1;
             x1 = x2;
@@ -2232,7 +2509,7 @@ public class PdfContentByte {
             y2 = tmp;
         }
 
-        float fragAngle;
+        double fragAngle;
         int Nfrag;
         if (Math.abs(extent) <= 90f) {
             fragAngle = extent;
@@ -2242,22 +2519,22 @@ public class PdfContentByte {
             Nfrag = (int)Math.ceil(Math.abs(extent)/90f);
             fragAngle = extent / Nfrag;
         }
-        float x_cen = (x1+x2)/2f;
-        float y_cen = (y1+y2)/2f;
-        float rx = (x2-x1)/2f;
-        float ry = (y2-y1)/2f;
-        float halfAng = (float)(fragAngle * Math.PI / 360.);
-        float kappa = (float)Math.abs(4. / 3. * (1. - Math.cos(halfAng)) / Math.sin(halfAng));
-        ArrayList<float[]> pointList = new ArrayList<float[]>();
+        double x_cen = (x1+x2)/2f;
+        double y_cen = (y1+y2)/2f;
+        double rx = (x2-x1)/2f;
+        double ry = (y2-y1)/2f;
+        double halfAng = (fragAngle * Math.PI / 360.);
+        double kappa = Math.abs(4. / 3. * (1. - Math.cos(halfAng)) / Math.sin(halfAng));
+        ArrayList<double[]> pointList = new ArrayList<double[]>();
         for (int i = 0; i < Nfrag; ++i) {
-            float theta0 = (float)((startAng + i*fragAngle) * Math.PI / 180.);
-            float theta1 = (float)((startAng + (i+1)*fragAngle) * Math.PI / 180.);
-            float cos0 = (float)Math.cos(theta0);
-            float cos1 = (float)Math.cos(theta1);
-            float sin0 = (float)Math.sin(theta0);
-            float sin1 = (float)Math.sin(theta1);
+            double theta0 = ((startAng + i*fragAngle) * Math.PI / 180.);
+            double theta1 = ((startAng + (i+1)*fragAngle) * Math.PI / 180.);
+            double cos0 = Math.cos(theta0);
+            double cos1 = Math.cos(theta1);
+            double sin0 = Math.sin(theta0);
+            double sin1 = Math.sin(theta1);
             if (fragAngle > 0f) {
-                pointList.add(new float[]{x_cen + rx * cos0,
+                pointList.add(new double[]{x_cen + rx * cos0,
                 y_cen - ry * sin0,
                 x_cen + rx * (cos0 - kappa * sin0),
                 y_cen - ry * (sin0 + kappa * cos0),
@@ -2267,7 +2544,7 @@ public class PdfContentByte {
                 y_cen - ry * sin1});
             }
             else {
-                pointList.add(new float[]{x_cen + rx * cos0,
+                pointList.add(new double[]{x_cen + rx * cos0,
                 y_cen - ry * sin0,
                 x_cen + rx * (cos0 + kappa * sin0),
                 y_cen - ry * (sin0 - kappa * cos0),
@@ -2293,10 +2570,26 @@ public class PdfContentByte {
      * @param extent angle extent in degrees
      */
     public void arc(final float x1, final float y1, final float x2, final float y2, final float startAng, final float extent) {
-        ArrayList<float[]> ar = bezierArc(x1, y1, x2, y2, startAng, extent);
+        arc((double)x1, (double)y1, (double)x2, (double)y2, (double)startAng, (double)extent);
+    }
+
+    /**
+     * Draws a partial ellipse inscribed within the rectangle x1,y1,x2,y2,
+     * starting at startAng degrees and covering extent degrees. Angles
+     * start with 0 to the right (+x) and increase counter-clockwise.
+     *
+     * @param x1 a corner of the enclosing rectangle
+     * @param y1 a corner of the enclosing rectangle
+     * @param x2 a corner of the enclosing rectangle
+     * @param y2 a corner of the enclosing rectangle
+     * @param startAng starting angle in degrees
+     * @param extent angle extent in degrees
+     */
+    public void arc(final double x1, final double y1, final double x2, final double y2, final double startAng, final double extent) {
+        ArrayList<double[]> ar = bezierArc(x1, y1, x2, y2, startAng, extent);
         if (ar.isEmpty())
             return;
-        float pt[] = ar.get(0);
+        double pt[] = ar.get(0);
         moveTo(pt[0], pt[1]);
         for (int k = 0; k < ar.size(); ++k) {
             pt = ar.get(k);
@@ -2313,6 +2606,18 @@ public class PdfContentByte {
      * @param y2 a corner of the enclosing rectangle
      */
     public void ellipse(final float x1, final float y1, final float x2, final float y2) {
+        ellipse((double) x1, (double) y1, (double) x2, (double) y2);
+    }
+
+    /**
+     * Draws an ellipse inscribed within the rectangle x1,y1,x2,y2.
+     *
+     * @param x1 a corner of the enclosing rectangle
+     * @param y1 a corner of the enclosing rectangle
+     * @param x2 a corner of the enclosing rectangle
+     * @param y2 a corner of the enclosing rectangle
+     */
+    public void ellipse(final double x1, final double y1, final double x2, final double y2) {
         arc(x1, y1, x2, y2, 0f, 360f);
     }
 
@@ -2475,10 +2780,42 @@ public class PdfContentByte {
      * @param d an element of the transformation matrix
      * @param e an element of the transformation matrix
      * @param f an element of the transformation matrix
+     */
+    public void addTemplate(final PdfTemplate template, final double a, final double b, final double c, final double d, final double e, final double f) {
+        addTemplate(template, a, b, c, d, e, f, false);
+    }
+
+    /**
+     * Adds a template to this content.
+     *
+     * @param template the template
+     * @param a an element of the transformation matrix
+     * @param b an element of the transformation matrix
+     * @param c an element of the transformation matrix
+     * @param d an element of the transformation matrix
+     * @param e an element of the transformation matrix
+     * @param f an element of the transformation matrix
      * @param tagContent <code>true</code> - template content will be tagged(all that will be added after), <code>false</code> - only a Do operator will be tagged.
      *                   taken into account only if <code>isTagged()</code> - <code>true</code>.
      */
     public void addTemplate(final PdfTemplate template, final float a, final float b, final float c, final float d, final float e, final float f, boolean tagContent) {
+        addTemplate(template, (double)a, (double)b, (double)c, (double)d, (double)e, (double)f, tagContent);
+    }
+
+    /**
+     * Adds a template to this content.
+     *
+     * @param template the template
+     * @param a an element of the transformation matrix
+     * @param b an element of the transformation matrix
+     * @param c an element of the transformation matrix
+     * @param d an element of the transformation matrix
+     * @param e an element of the transformation matrix
+     * @param f an element of the transformation matrix
+     * @param tagContent <code>true</code> - template content will be tagged(all that will be added after), <code>false</code> - only a Do operator will be tagged.
+     *                   taken into account only if <code>isTagged()</code> - <code>true</code>.
+     */
+    public void addTemplate(final PdfTemplate template, final double a, final double b, final double c, final double d, final double e, final double f, boolean tagContent) {
         checkWriter();
         checkNoPattern(template);
         PdfWriter.checkPdfIsoConformance(writer, PdfIsoKeys.PDFISOKEY_FORM_XOBJ, template);
@@ -2534,6 +2871,24 @@ public class PdfContentByte {
      * @return Name under which XObject was stored in resources. See <code>name</code> parameter
      */
     public PdfName addFormXObj(final PdfStream formXObj, final PdfName name, final float a, final float b, final float c, final float d, final float e, final float f) throws IOException {
+        return addFormXObj(formXObj, name, (double)a, (double)b, (double)c, (double)d, (double)e, (double)f);
+    }
+
+    /**
+     * Adds a form XObject to this content.
+     *
+     * @param formXObj the form XObject
+     * @param name the name of form XObject in content stream. The name is changed, if if it already exists in page resources
+     * @param a an element of the transformation matrix
+     * @param b an element of the transformation matrix
+     * @param c an element of the transformation matrix
+     * @param d an element of the transformation matrix
+     * @param e an element of the transformation matrix
+     * @param f an element of the transformation matrix
+     *
+     * @return Name under which XObject was stored in resources. See <code>name</code> parameter
+     */
+    public PdfName addFormXObj(final PdfStream formXObj, final PdfName name, final double a, final double b, final double c, final double d, final double e, final double f) throws IOException {
         checkWriter();
         PdfWriter.checkPdfIsoConformance(writer, PdfIsoKeys.PDFISOKEY_STREAM, formXObj);
         PageResources prs = getPageResources();
@@ -2581,11 +2936,15 @@ public class PdfContentByte {
     public void addTemplate(final PdfTemplate template, final AffineTransform transform, boolean tagContent) {
     	double matrix[] = new double[6];
     	transform.getMatrix(matrix);
-    	addTemplate(template, (float) matrix[0], (float) matrix[1], (float) matrix[2],
-                (float) matrix[3], (float) matrix[4], (float) matrix[5], tagContent);
+    	addTemplate(template, matrix[0], matrix[1], matrix[2],
+                 matrix[3], matrix[4], matrix[5], tagContent);
     }
 
     void addTemplateReference(final PdfIndirectReference template, PdfName name, final float a, final float b, final float c, final float d, final float e, final float f) {
+        addTemplateReference(template, name, (double) a, (double) b, (double) c, (double) d, (double) e, (double) f);
+    }
+
+    void addTemplateReference(final PdfIndirectReference template, PdfName name, final double a, final double b, final double c, final double d, final double e, final double f) {
         if (inText && isTagged()) {
             endText();
         }
@@ -2613,7 +2972,22 @@ public class PdfContentByte {
         addTemplate(template, 1, 0, 0, 1, x, y);
     }
 
+    /**
+     * Adds a template to this content.
+     *
+     * @param template the template
+     * @param x the x location of this template
+     * @param y the y location of this template
+     */
+    public void addTemplate(final PdfTemplate template, final double x, final double y) {
+        addTemplate(template, 1, 0, 0, 1, x, y);
+    }
+
     public void addTemplate(final PdfTemplate template, final float x, final float y, boolean tagContent) {
+        addTemplate(template, 1, 0, 0, 1, x, y, tagContent);
+    }
+
+    public void addTemplate(final PdfTemplate template, final double x, final double y, boolean tagContent) {
         addTemplate(template, 1, 0, 0, 1, x, y, tagContent);
     }
 
@@ -2978,7 +3352,7 @@ public class PdfContentByte {
      */
     public void setPatternStroke(final PdfPatternPainter p, final BaseColor color) {
         if (ExtendedColor.getType(color) == ExtendedColor.TYPE_SEPARATION)
-            setPatternStroke(p, color, ((SpotColor)color).getTint());
+            setPatternStroke(p, color, ((SpotColor) color).getTint());
         else
             setPatternStroke(p, color, 0);
     }
@@ -3205,6 +3579,7 @@ public class PdfContentByte {
     public void remoteGoto(final String filename, final int page, final float llx, final float lly, final float urx, final float ury) {
         pdf.remoteGoto(filename, page, llx, lly, urx, ury);
     }
+
     /**
      * Adds a round rectangle to the current path.
      *
@@ -3215,6 +3590,19 @@ public class PdfContentByte {
      * @param r radius of the arc corner
      */
     public void roundRectangle(float x, float y, float w, float h, float r) {
+        roundRectangle((double) x, (double) y, (double) w, (double) h, (double) r);
+    }
+
+    /**
+     * Adds a round rectangle to the current path.
+     *
+     * @param x x-coordinate of the starting point
+     * @param y y-coordinate of the starting point
+     * @param w width
+     * @param h height
+     * @param r radius of the arc corner
+     */
+    public void roundRectangle(double x, double y, double w, double h, double r) {
         if (w < 0) {
             x += w;
             w = -w;
@@ -3286,8 +3674,20 @@ public class PdfContentByte {
      * @param on
      */
     public void drawRadioField(float llx, float lly, float urx, float ury, final boolean on) {
-        if (llx > urx) { float x = llx; llx = urx; urx = x; }
-        if (lly > ury) { float y = lly; lly = ury; ury = y; }
+        drawRadioField((double) llx, (double) lly, (double) urx, (double) ury, on);
+    }
+
+    /**
+     * Draws a TextField.
+     * @param llx
+     * @param lly
+     * @param urx
+     * @param ury
+     * @param on
+     */
+    public void drawRadioField(double llx, double lly, double urx, double ury, final boolean on) {
+        if (llx > urx) { double x = llx; llx = urx; urx = x; }
+        if (lly > ury) { double y = lly; lly = ury; ury = y; }
         saveState();
         // silver circle
         setLineWidth(1);
@@ -3326,8 +3726,19 @@ public class PdfContentByte {
      * @param ury
      */
     public void drawTextField(float llx, float lly, float urx, float ury) {
-        if (llx > urx) { float x = llx; llx = urx; urx = x; }
-        if (lly > ury) { float y = lly; lly = ury; ury = y; }
+        drawTextField((double) llx, (double) lly, (double) urx, (double) ury);
+    }
+
+    /**
+     * Draws a TextField.
+     * @param llx
+     * @param lly
+     * @param urx
+     * @param ury
+     */
+    public void drawTextField(double llx, double lly, double urx, double ury) {
+        if (llx > urx) { double x = llx; llx = urx; urx = x; }
+        if (lly > ury) { double y = lly; lly = ury; ury = y; }
         // silver rectangle not filled
         saveState();
         setColorStroke(new BaseColor(0xC0, 0xC0, 0xC0));
@@ -3379,8 +3790,22 @@ public class PdfContentByte {
      * @param size
      */
     public void drawButton(float llx, float lly, float urx, float ury, final String text, final BaseFont bf, final float size) {
-        if (llx > urx) { float x = llx; llx = urx; urx = x; }
-        if (lly > ury) { float y = lly; lly = ury; ury = y; }
+        drawButton((double)llx, (double)lly, (double)urx, (double)ury, text, bf, size);
+    }
+
+    /**
+     * Draws a button.
+     * @param llx
+     * @param lly
+     * @param urx
+     * @param ury
+     * @param text
+     * @param bf
+     * @param size
+     */
+    public void drawButton(double llx, double lly, double urx, double ury, final String text, final BaseFont bf, final float size) {
+        if (llx > urx) { double x = llx; llx = urx; urx = x; }
+        if (lly > ury) { double y = lly; lly = ury; ury = y; }
         // black rectangle not filled
         saveState();
         setColorStroke(new BaseColor(0x00, 0x00, 0x00));
@@ -3392,7 +3817,7 @@ public class PdfContentByte {
         setLineWidth(1);
         setLineCap(0);
         setColorFill(new BaseColor(0xC0, 0xC0, 0xC0));
-        rectangle(llx + 0.5f, lly + 0.5f, urx - llx - 1f, ury -lly - 1f);
+        rectangle(llx + 0.5f, lly + 0.5f, urx - llx - 1f, ury - lly - 1f);
         fill();
         // white lines
         setColorStroke(new BaseColor(0xFF, 0xFF, 0xFF));
@@ -3414,7 +3839,7 @@ public class PdfContentByte {
         resetRGBColorFill();
         beginText();
         setFontAndSize(bf, size);
-        showTextAligned(PdfContentByte.ALIGN_CENTER, text, llx + (urx - llx) / 2, lly + (ury - lly - size) / 2, 0);
+        showTextAligned(PdfContentByte.ALIGN_CENTER, text, (float)(llx + (urx - llx) / 2), (float)(lly + (ury - lly - size) / 2), 0);
         endText();
         restoreState();
     }
@@ -3824,63 +4249,10 @@ public class PdfContentByte {
     }
 
     private void saveColor(BaseColor color, boolean fill) {
-        if (isTagged()) {
-            if (inText) {
-                if (fill) {
-                    state.textColorFill = color;
-                } else {
-                    state.textColorStroke = color;
-                }
-            } else {
-                if (fill) {
-                    state.colorFill = color;
-                } else {
-                    state.colorStroke = color;
-                }
-            }
+        if (fill) {
+            state.colorFill = color;
         } else {
-            if (fill) {
-                state.colorFill = color;
-            } else {
-                state.colorStroke = color;
-            }
-        }
-    }
-
-    private void restoreColor(BaseColor color, boolean fill) throws IOException {
-        if (isTagged()) {
-            if (color instanceof UncoloredPattern) {
-                UncoloredPattern c = (UncoloredPattern)color;
-                if (fill)
-                    setPatternFill(c.getPainter(), c.color, c.tint);
-                else
-                    setPatternStroke(c.getPainter(), c.color, c.tint);
-            } else {
-                if (fill)
-                    setColorFill(color);
-                else
-                    setColorStroke(color);
-            }
-        }
-    }
-
-    private void restoreColor() throws IOException {
-        if (isTagged()) {
-            if (inText) {
-                if (!state.textColorFill.equals(state.colorFill)) {
-                    restoreColor(state.textColorFill, true);
-                }
-                if (!state.textColorStroke.equals(state.colorStroke)) {
-                    restoreColor(state.textColorStroke, false);
-                }
-            } else {
-                if (!state.textColorFill.equals(state.colorFill)) {
-                    restoreColor(state.colorFill, true);
-                }
-                if (!state.textColorStroke.equals(state.colorStroke)) {
-                    restoreColor(state.colorStroke, false);
-                }
-            }
+            state.colorStroke = color;
         }
     }
 
@@ -3917,10 +4289,10 @@ public class PdfContentByte {
             stroke = true;
         }
         if (fill) {
-            PdfWriter.checkPdfIsoConformance(writer, PdfIsoKeys.PDFISOKEY_COLOR, isTagged() ? state.textColorFill : state.colorFill);
+            PdfWriter.checkPdfIsoConformance(writer, PdfIsoKeys.PDFISOKEY_COLOR, state.colorFill);
         }
         if (stroke) {
-            PdfWriter.checkPdfIsoConformance(writer, PdfIsoKeys.PDFISOKEY_COLOR, isTagged() ? state.textColorStroke : state.colorStroke);
+            PdfWriter.checkPdfIsoConformance(writer, PdfIsoKeys.PDFISOKEY_COLOR, state.colorStroke);
         }
         PdfWriter.checkPdfIsoConformance(writer, PdfIsoKeys.PDFISOKEY_GSTATE, state.extGState);
     }

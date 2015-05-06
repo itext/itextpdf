@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2014 iText Group NV
+ * Copyright (c) 1998-2015 iText Group NV
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -82,8 +82,13 @@ public class PRIndirectReference extends PdfIndirectReference {
     // methods
     
     public void toPdf(PdfWriter writer, OutputStream os) throws IOException {
-        int n = writer.getNewObjectNumber(reader, number, generation);
-        os.write(PdfEncodings.convertToBytes(new StringBuffer().append(n).append(" ").append(reader.isAppendable() ? generation : 0).append(" R").toString(), null));
+        if (writer != null) {
+            int n = writer.getNewObjectNumber(reader, number, generation);
+            os.write(PdfEncodings.convertToBytes(new StringBuffer().append(n).append(" ").append(reader.isAppendable() ? generation : 0).append(" R").toString(), null));
+        }
+        else {
+            super.toPdf(null, os);
+        }
     }
 
     public PdfReader getReader() {

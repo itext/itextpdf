@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2014 iText Group NV
+ * Copyright (c) 1998-2015 iText Group NV
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -440,8 +440,10 @@ public class Phrase extends ArrayList<Element> implements TextElementArray {
 
     /**
      * Sets the leading fixed and variable. The resultant leading will be
-     * fixedLeading+multipliedLeading*maxFontSize where maxFontSize is the
-     * size of the biggest font in the line.
+     * <ul>
+     * <li>If Phrase is added to the ColumnText: fixedLeading+multipliedLeading*maxFontSize, where maxFontSize is the size of the biggest font in the line;<li/>
+     * <li>If Phrase is added to the PdfDocument: fixedLeading+multipliedLeading*phraseFontSize, where phraseFontSize is the size of the font applied to the current phrase.<li/>
+     * <ul/>
      * @param fixedLeading the fixed leading
      * @param multipliedLeading the variable leading
      */
@@ -460,8 +462,10 @@ public class Phrase extends ArrayList<Element> implements TextElementArray {
 
     /**
      * Sets the variable leading. The resultant leading will be
-     * multipliedLeading*maxFontSize where maxFontSize is the
-     * size of the biggest font in the line.
+     * <ul>
+     * <li>If Phrase is added to the ColumnText: fixedLeading+multipliedLeading*maxFontSize, where maxFontSize is the size of the biggest font in the line;<li/>
+     * <li>If Phrase is added to the PdfDocument: fixedLeading+multipliedLeading*phraseFontSize, where phraseFontSize is the size of the font applied to the current phrase.<li/>
+     * <ul/>
      * @param multipliedLeading the variable leading
      */
     public void setMultipliedLeading(final float multipliedLeading) {

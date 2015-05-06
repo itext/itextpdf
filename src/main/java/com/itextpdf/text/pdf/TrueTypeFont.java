@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2014 iText Group NV
+ * Copyright (c) 1998-2015 iText Group NV
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -1112,7 +1112,6 @@ class TrueTypeFont extends BaseFont {
             dic.put(PdfName.SUBTYPE, PdfName.TRUETYPE);
             dic.put(PdfName.BASEFONT, new PdfName(subsetPrefix + fontName + style));
         }
-        dic.put(PdfName.BASEFONT, new PdfName(subsetPrefix + fontName + style));
         if (!fontSpecific) {
             for (int k = firstChar; k <= lastChar; ++k) {
                 if (!differences[k].equals(notdef)) {

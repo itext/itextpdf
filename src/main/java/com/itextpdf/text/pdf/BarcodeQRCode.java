@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2014 iText Group NV
+ * Copyright (c) 1998-2015 iText Group NV
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -44,13 +44,11 @@
  */
 package com.itextpdf.text.pdf;
 
+import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.qrcode.EncodeHintType;
 import com.itextpdf.text.pdf.qrcode.WriterException;
 import com.itextpdf.text.pdf.qrcode.ByteMatrix;
 import com.itextpdf.text.pdf.qrcode.QRCodeWriter;
-import com.itextpdf.text.BadElementException;
-import com.itextpdf.text.ExceptionConverter;
-import com.itextpdf.text.Image;
 import com.itextpdf.text.pdf.codec.CCITTG4Encoder;
 import java.util.Map;
 
@@ -138,5 +136,28 @@ public class BarcodeQRCode {
 
         java.awt.Image img = canvas.createImage(new java.awt.image.MemoryImageSource(width, height, pix, 0, width));
         return img;
+    }
+
+    public void placeBarcode(PdfContentByte cb, BaseColor foreground, float moduleSide) {
+        int width = bm.getWidth();
+        int height = bm.getHeight();
+        byte[][] mt = bm.getArray();
+
+        cb.setColorFill(foreground);
+
+        for (int y = 0; y < height; ++y) {
+            byte[] line = mt[y];
+            for (int x = 0; x < width; ++x) {
+                if (line[x] == 0) {
+                    cb.rectangle(x * moduleSide, (height - y - 1) * moduleSide, moduleSide, moduleSide);
+                }
+            }
+        }
+        cb.fill();
+    }
+
+    /** Gets the size of the barcode grid. */
+    public Rectangle getBarcodeSize() {
+        return new Rectangle(0, 0, bm.getWidth(), bm.getHeight());
     }
 }

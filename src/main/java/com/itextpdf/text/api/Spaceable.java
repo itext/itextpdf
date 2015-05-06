@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2014 iText Group NV
+ * Copyright (c) 1998-2015 iText Group NV
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -63,6 +63,8 @@ public interface Spaceable {
 	 */
 	void setSpacingAfter(float spacing);
 
+	void setPaddingTop(float paddingTop);
+
 	/**
 	 * Gets the spacing before.
 	 * @return	the spacing
@@ -74,5 +76,9 @@ public interface Spaceable {
 	 * @return	the spacing
 	 */
 	float getSpacingAfter();
+
+	float getPaddingTop();
+
+
 
 }
