@@ -1,11 +1,55 @@
+/*
+ * $Id$
+ *
+ * This file is part of the iText (R) project.
+ * Copyright (c) 1998-2015 iText Group NV
+ * Authors: Bruno Lowagie, Paulo Soares, et al.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License version 3
+ * as published by the Free Software Foundation with the addition of the
+ * following permission added to Section 15 as permitted in Section 7(a):
+ * FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY
+ * ITEXT GROUP. ITEXT GROUP DISCLAIMS THE WARRANTY OF NON INFRINGEMENT
+ * OF THIRD PARTY RIGHTS
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program; if not, see http://www.gnu.org/licenses or write to
+ * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA, 02110-1301 USA, or download the license from the following URL:
+ * http://itextpdf.com/terms-of-use/
+ *
+ * The interactive user interfaces in modified source and object code versions
+ * of this program must display Appropriate Legal Notices, as required under
+ * Section 5 of the GNU Affero General Public License.
+ *
+ * In accordance with Section 7(b) of the GNU Affero General Public License,
+ * a covered work must retain the producer line in every PDF that is created
+ * or manipulated using iText.
+ *
+ * You can be released from the requirements of the license by purchasing
+ * a commercial license. Buying such a license is mandatory as soon as you
+ * develop commercial activities involving the iText software without
+ * disclosing the source code of your own applications.
+ * These activities include: offering paid services to customers as an ASP,
+ * serving PDFs on the fly in a web application, shipping iText with a closed
+ * source product.
+ *
+ * For more information, please contact iText Software Corp. at this
+ * address: sales@itextpdf.com
+ */
 package com.itextpdf.text.pdf.pdfcleanup;
 
+import com.itextpdf.awt.geom.Point2D;
 import com.itextpdf.text.BadElementException;
 import com.itextpdf.text.DocWriter;
 import com.itextpdf.text.Image;
 import com.itextpdf.text.pdf.*;
-import com.itextpdf.text.pdf.parser.ContentOperator;
-import com.itextpdf.text.pdf.parser.PdfContentStreamProcessor;
+import com.itextpdf.text.pdf.parser.*;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -13,44 +57,63 @@ import java.util.*;
 
 class PdfCleanUpContentOperator implements ContentOperator {
 
-    static private final byte[] TStar = DocWriter.getISOBytes("T*\n");
-    static private final byte[] Tw = DocWriter.getISOBytes(" Tw ");
-    static private final byte[] TcTStar = DocWriter.getISOBytes(" Tc T*\n");
-    static private final byte[] TJ = DocWriter.getISOBytes("] TJ\n");
-    static private final byte[] Tc = DocWriter.getISOBytes(" Tc\n");
+    private static final byte[] TStar = DocWriter.getISOBytes("T*\n");
+    private static final byte[] Tw = DocWriter.getISOBytes(" Tw ");
+    private static final byte[] TcTStar = DocWriter.getISOBytes(" Tc T*\n");
+    private static final byte[] TJ = DocWriter.getISOBytes("] TJ\n");
+    private static final byte[] Tc = DocWriter.getISOBytes(" Tc\n");
+    private static final byte[] m = DocWriter.getISOBytes(" m\n");
+    private static final byte[] l = DocWriter.getISOBytes(" l\n");
+    private static final byte[] c = DocWriter.getISOBytes(" c\n");
+    private static final byte[] h = DocWriter.getISOBytes("h\n");
+    private static final byte[] S = DocWriter.getISOBytes("S\n");
+    private static final byte[] f = DocWriter.getISOBytes("f\n");
+    private static final byte[] eoF = DocWriter.getISOBytes("f*\n");
+    private static final byte[] n = DocWriter.getISOBytes("n\n");
+    private static final byte[] W = DocWriter.getISOBytes("W\n");
+    private static final byte[] eoW = DocWriter.getISOBytes("W*\n");
+    private static final byte[] q = DocWriter.getISOBytes("q\n");
+    private static final byte[] Q = DocWriter.getISOBytes("Q\n");
 
-    static private final Set<String> textShowingOperators = new HashSet<String>() {{
-        add("TJ");
-        add("Tj");
-        add("'");
-        add("\"");
+    private static final Set<String> textShowingOperators = new HashSet<String>(Arrays.asList("TJ", "Tj", "'", "\""));
+    private static final Set<String> pathConstructionOperators = new HashSet<String>(Arrays.asList("m", "l", "c", "v", "y", "h", "re"));
+
+    private static final Set<String> strokeOperators = new HashSet<String>(Arrays.asList("S", "s", "B", "B*", "b", "b*"));
+    private static final Set<String> nwFillOperators = new HashSet<String>(Arrays.asList("f", "F", "B", "b"));
+    private static final Set<String> eoFillOperators = new HashSet<String>(Arrays.asList("f*", "B*", "b*"));
+    private static final Set<String> pathPaintingOperators = new HashSet<String>() {{
+        addAll(strokeOperators);
+        addAll(nwFillOperators);
+        addAll(eoFillOperators);
+        add("n");
     }};
+
+    private static final Set<String> clippingPathOperators = new HashSet<String>(Arrays.asList("W", "W*"));
+
+    private static final Set<String> lineStyleOperators = new HashSet<String>(Arrays.asList("w", "J", "j", "M", "d"));
+
+    private static final Set<String> strokeColorOperators = new HashSet<String>(Arrays.asList("CS", "SC", "SCN", "G", "RG", "K"));
 
     protected PdfCleanUpRenderListener cleanUpStrategy;
     protected ContentOperator originalContentOperator;
 
+    public PdfCleanUpContentOperator(PdfCleanUpRenderListener cleanUpStrategy) {
+        this.cleanUpStrategy = cleanUpStrategy;
+    }
+
     public static void populateOperators(PdfContentStreamProcessor contentProcessor,
                                          PdfCleanUpRenderListener pdfCleanUpRenderListener) {
-        String[] operators = {
-                PdfContentStreamProcessor.DEFAULTOPERATOR, "q", "Q", "g", "G", "rg", "RG", "k", "K",
-                "cs", "CS", "sc", "SC", "scn", "SCN", "cm", "gs", "Tc", "Tw", "Tz", "TL", "Tf", "Tr",
-                "Ts", "BT", "ET", "BMC", "BDC", "EMC", "Td", "TD", "Tm", "T*", "Tj", "'", "\"", "TJ", "Do"
-        };
-
-        for (String operator : operators) {
+        for (String operator : contentProcessor.getRegisteredOperatorStrings()) {
             PdfCleanUpContentOperator contentOperator = new PdfCleanUpContentOperator(pdfCleanUpRenderListener);
             contentOperator.originalContentOperator = contentProcessor.registerContentOperator(operator, contentOperator);
         }
-    }
-
-    public PdfCleanUpContentOperator(PdfCleanUpRenderListener cleanUpStrategy) {
-        this.cleanUpStrategy = cleanUpStrategy;
     }
 
     public void invoke(PdfContentStreamProcessor pdfContentStreamProcessor, PdfLiteral operator, ArrayList<PdfObject> operands) throws Exception {
         String operatorStr = operator.toString();
         PdfContentByte canvas = cleanUpStrategy.getContext().getCanvas();
         PRStream xFormStream = null;
+        boolean disableOutput = pathConstructionOperators.contains(operatorStr) || pathPaintingOperators.contains(operatorStr) || clippingPathOperators.contains(operatorStr);
 
         // key - number of a string in the TJ operator, value - number following the string; the first number without string (if it's presented) is stored under 0.
         // BE AWARE: zero-length strings are ignored!!!
@@ -74,7 +137,6 @@ class PdfCleanUpContentOperator implements ContentOperator {
 
         originalContentOperator.invoke(pdfContentStreamProcessor, operator, operands);
         List<PdfCleanUpContentChunk> chunks = cleanUpStrategy.getChunks();
-        boolean disableOutput = false;
 
         if (xFormStream != null) {
             xFormStream.setData(cleanUpStrategy.getContext().getCanvas().toPdf(cleanUpStrategy.getContext().getCanvas().getPdfWriter()));
@@ -83,29 +145,19 @@ class PdfCleanUpContentOperator implements ContentOperator {
         }
 
         if ("Do".equals(operatorStr)) {
-            if (chunks.size() > 0 && chunks.get(0).isImage()) {
-                PdfCleanUpContentChunk chunk = chunks.get(0);
+            if (chunks.size() > 0 && chunks.get(0) instanceof PdfCleanUpContentChunk.Image) {
+                PdfCleanUpContentChunk.Image chunk = (PdfCleanUpContentChunk.Image) chunks.get(0);
 
                 if (chunk.isVisible()) {
                     PdfDictionary xObjResources = cleanUpStrategy.getContext().getResources().getAsDict(PdfName.XOBJECT);
                     PRStream imageStream = (PRStream) xObjResources.getAsStream((PdfName) operands.get(0));
-                    updateImage(imageStream, chunk.getNewImageData());
+                    updateImageStream(imageStream, chunk.getNewImageData());
                 } else {
                     disableOutput = true;
                 }
             }
-        } else if ("q".equals(operatorStr)) {
-            cleanUpStrategy.getContext().saveGraphicsState();
-        } else if ("Q".equals(operatorStr)) {
-            cleanUpStrategy.getContext().restoreGraphicsState();
-        } else if ("Tf".equals(operatorStr)) {
-            cleanUpStrategy.getContext().setFontSize(((PdfNumber) operands.get(1)).floatValue());
-        } else if ("Tc".equals(operatorStr)) {
-            cleanUpStrategy.getContext().setCharacterSpacing(((PdfNumber) operands.get(0)).floatValue());
-        } else if ("Tw".equals(operatorStr)) {
-            cleanUpStrategy.getContext().setWordSpacing(((PdfNumber) operands.get(0)).floatValue());
-        } else if ("Tz".equals(operatorStr)) {
-            cleanUpStrategy.getContext().setHorizontalScaling(((PdfNumber) operands.get(0)).floatValue());
+        } else if (lineStyleOperators.contains(operatorStr)) {
+            disableOutput = true;
         } else if (textShowingOperators.contains(operatorStr) && !allChunksAreVisible(cleanUpStrategy.getChunks())) {
             disableOutput = true;
 
@@ -117,27 +169,40 @@ class PdfCleanUpContentOperator implements ContentOperator {
 
                 operands.get(1).toPdf(canvas.getPdfWriter(), canvas.getInternalBuffer());
                 canvas.getInternalBuffer().append(TcTStar);
-
-                cleanUpStrategy.getContext().setCharacterSpacing(((PdfNumber) operands.get(1)).floatValue());
             } else if ("TJ".equals(operatorStr)) {
                 structuredTJoperands = structureTJarray((PdfArray) operands.get(0));
             }
 
-            renderChunks(structuredTJoperands, chunks, canvas);
-        } else if ("\"".equals(operatorStr)) {
-            cleanUpStrategy.getContext().setCharacterSpacing(((PdfNumber) operands.get(1)).floatValue());
+            GraphicsState gs = pdfContentStreamProcessor.gs();
+
+            writeTextChunks(structuredTJoperands, chunks, canvas, gs.getCharacterSpacing(), gs.getWordSpacing(),
+                    gs.getFontSize(), gs.getHorizontalScaling());
+        } else if (pathPaintingOperators.contains(operatorStr)) {
+            writePath(operatorStr, canvas);
+        } else if (strokeColorOperators.contains(operatorStr)) {
+            // Replace current color with the new one.
+            cleanUpStrategy.getContext().popStrokeColor();
+            cleanUpStrategy.getContext().pushStrokeColor(operands);
+        } else if ("q" == operatorStr) {
+            cleanUpStrategy.getContext().pushStrokeColor(cleanUpStrategy.getContext().peekStrokeColor());
+        } else if ("Q" == operatorStr) {
+            cleanUpStrategy.getContext().popStrokeColor();
         }
 
         if (!disableOutput) {
-            int index = 0;
-
-            for (PdfObject o : operands) {
-                toPdf(o, canvas.getPdfWriter(), canvas.getInternalBuffer());
-                canvas.getInternalBuffer().append(operands.size() > ++index ? (byte) ' ' : (byte) '\n');
-            }
+            writeOperands(canvas, operands);
         }
 
         cleanUpStrategy.clearChunks();
+    }
+
+    private void writeOperands(PdfContentByte canvas, List<PdfObject> operands) throws IOException {
+        int index = 0;
+
+        for (PdfObject o : operands) {
+            toPdf(o, canvas.getPdfWriter(), canvas.getInternalBuffer());
+            canvas.getInternalBuffer().append(operands.size() > ++index ? (byte) ' ' : (byte) '\n');
+        }
     }
 
     private boolean allChunksAreVisible(List<PdfCleanUpContentChunk> chunks) {
@@ -153,7 +218,7 @@ class PdfCleanUpContentOperator implements ContentOperator {
     /**
      * Overriding standard PdfObject.toPdf because we need sorted PdfDictionaries.
      */
-    static private void toPdf(PdfObject object, PdfWriter writer, OutputStream os) throws IOException {
+    private static void toPdf(PdfObject object, PdfWriter writer, OutputStream os) throws IOException {
         if (object instanceof PdfDictionary) {
             os.write('<');
             os.write('<');
@@ -181,6 +246,14 @@ class PdfCleanUpContentOperator implements ContentOperator {
         }
     }
 
+    /**
+     * Example.
+     *      TJ = [(h) 3 4 (q) 7 (w) (e)]
+     *      Result = {0:0, 1:7, 2:7, 3:0, 4:0}
+     *
+     * @return Map whose key is an ordinal number of the string in the TJ array and value
+     *         is the position adjustment.
+     */
     private Map<Integer, Float> structureTJarray(PdfArray array) {
         Map<Integer, Float> structuredTJoperands = new HashMap<Integer, Float>();
 
@@ -206,41 +279,44 @@ class PdfCleanUpContentOperator implements ContentOperator {
         return structuredTJoperands;
     }
 
-    private void renderChunks(Map<Integer, Float> structuredTJoperands, List<PdfCleanUpContentChunk> chunks, PdfContentByte canvas) throws IOException {
+    /**
+     * Renders parts of text which are visible.
+     */
+    private void writeTextChunks(Map<Integer, Float> structuredTJoperands, List<PdfCleanUpContentChunk> chunks, PdfContentByte canvas,
+                                 float characterSpacing, float wordSpacing, float fontSize, float horizontalScaling) throws IOException {
         canvas.setCharacterSpacing(0);
         canvas.setWordSpacing(0);
         canvas.getInternalBuffer().append((byte) '[');
 
-        float characterSpacing = cleanUpStrategy.getContext().getCharacterSpacing();
-        float convertedCharacterSpacing = -characterSpacing * 1000f / cleanUpStrategy.getContext().getFontSize();
-
-        float wordSpacing = cleanUpStrategy.getContext().getWordSpacing();
-        float convertedWordSpacing = -wordSpacing * 1000f / cleanUpStrategy.getContext().getFontSize();
+        float convertedCharacterSpacing = -characterSpacing * 1000f / fontSize;
+        float convertedWordSpacing = -wordSpacing * 1000f / fontSize;
 
         float shift = structuredTJoperands != null ? structuredTJoperands.get(0) : 0;
-        PdfCleanUpContentChunk prevChunk = null;
+        PdfCleanUpContentChunk.Text prevChunk = null;
 
         for (PdfCleanUpContentChunk chunk : chunks) {
-            if (prevChunk != null && prevChunk.getNumOfStrChunkBelongsTo() != chunk.getNumOfStrChunkBelongsTo() &&
+            PdfCleanUpContentChunk.Text textChunk = (PdfCleanUpContentChunk.Text) chunk;
+
+            if (prevChunk != null && prevChunk.getNumOfStrTextBelongsTo() != textChunk.getNumOfStrTextBelongsTo() &&
                     structuredTJoperands != null) {
-                shift += structuredTJoperands.get(prevChunk.getNumOfStrChunkBelongsTo());
+                shift += structuredTJoperands.get(prevChunk.getNumOfStrTextBelongsTo());
             }
 
-            if (chunk.isVisible()) {
+            if (textChunk.isVisible()) {
                 if (Float.compare(shift, 0.0f) != 0 && Float.compare(shift, -0.0f) != 0) {
                     canvas.getInternalBuffer().append(shift).append(' ');
                 }
 
-                chunk.getText().toPdf(canvas.getPdfWriter(), canvas.getInternalBuffer());
+                textChunk.getText().toPdf(canvas.getPdfWriter(), canvas.getInternalBuffer());
                 canvas.getInternalBuffer().append(' ');
 
-                shift = convertedCharacterSpacing + (isSpace(chunk) ? convertedWordSpacing : 0);
+                shift = convertedCharacterSpacing + (isSpace(textChunk) ? convertedWordSpacing : 0);
             } else {
-                float unscaledChunkWidth = getUnscaledChunkWidth(chunk);
-                shift += unscaledChunkWidth;
+                shift += getUnscaledTextChunkWidth(textChunk, characterSpacing, wordSpacing,
+                                                   fontSize, horizontalScaling);
             }
 
-            prevChunk = chunk;
+            prevChunk = textChunk;
         }
 
         if (Float.compare(shift, 0.0f) != 0 && Float.compare(shift, -0.0f) != 0) {
@@ -262,31 +338,26 @@ class PdfCleanUpContentOperator implements ContentOperator {
 
     /**
      * We get into this method when the current chunk is not visible.
-     * Here we are calculating Tj coefficient for previous chunk
+     * Here we are calculating a piece of the Tj coefficient for a previous visible chunk.
      * For details see PDF spec., Text Space Details, formula for "tx" coefficient
      * and TextRenderInfo class (getUnscaledBaseline)
      */
-    private float getUnscaledChunkWidth(PdfCleanUpContentChunk chunk) {
-        PdfCleanUpContext context = cleanUpStrategy.getContext();
-        float fontSize = context.getFontSize();
-        float characterSpacing = context.getCharacterSpacing();
-        float wordSpacing = context.getWordSpacing();
-        float horizontalScaling = context.getHorizontalScaling();
-
-        // we should multiply by 100 because iText stores horizontal scaling as the value in [0, 1] interval;
+    private float getUnscaledTextChunkWidth(PdfCleanUpContentChunk.Text chunk, float characterSpacing,
+                                            float wordSpacing, float fontSize, float horizontalScaling) {
+        // We should multiply by 100 because iText stores horizontal scaling as the value in [0, 1] interval;
         // also we need to add character and word spaces because TextRenderInfo class truncates them from the end of the string
         // (single character string in our case is also truncated)
         float scaledChunkWidth = (chunk.getEndX() - chunk.getStartX()) * 100f +
-                (characterSpacing + (isSpace(chunk) ? wordSpacing : 0)) * horizontalScaling;
+              (characterSpacing + (isSpace(chunk) ? wordSpacing : 0)) * horizontalScaling * 100f;
 
-        return -scaledChunkWidth * 1000f / (horizontalScaling * fontSize);
+        return -scaledChunkWidth * 1000f / (horizontalScaling * 100f * fontSize);
     }
 
-    private boolean isSpace(PdfCleanUpContentChunk chunk) {
+    private boolean isSpace(PdfCleanUpContentChunk.Text chunk) {
         return chunk.getText().toUnicodeString().equals(" ");
     }
 
-    private void updateImage(PRStream imageStream, byte[] newData) throws BadElementException, IOException, BadPdfFormatException {
+    private void updateImageStream(PRStream imageStream, byte[] newData) throws BadElementException, IOException, BadPdfFormatException {
         PdfImage image = new PdfImage(Image.getInstance(newData), "", null);
 
         if (imageStream.contains(PdfName.SMASK)) {
@@ -304,5 +375,106 @@ class PdfCleanUpContentOperator implements ContentOperator {
         imageStream.clear();
         imageStream.putAll(image);
         imageStream.setDataRaw(image.getBytes());
+    }
+
+    private void writePath(String operatorStr, PdfContentByte canvas) throws IOException {
+        if (nwFillOperators.contains(operatorStr)) {
+            writePath(cleanUpStrategy.getCurrentFillPath(), f, canvas);
+        } else if (eoFillOperators.contains(operatorStr)) {
+            writePath(cleanUpStrategy.getCurrentFillPath(), eoF, canvas);
+        }
+
+        if (strokeOperators.contains(operatorStr)) {
+            writeStroke(canvas, cleanUpStrategy.getCurrentStrokePath());
+        }
+
+        if (cleanUpStrategy.isClipped() && !cleanUpStrategy.getNewClipPath().isEmpty()) {
+            byte[] clippingOperator = (cleanUpStrategy.getClippingRule() == PathPaintingRenderInfo.NONZERO_WINDING_RULE) ? W : eoW;
+            writePath(cleanUpStrategy.getNewClipPath(), clippingOperator, canvas);
+            canvas.getInternalBuffer().append(n);
+            cleanUpStrategy.setClipped(false);
+        }
+    }
+
+    private void writePath(Path path, byte[] pathPaintingOperator, PdfContentByte canvas) throws IOException {
+        if (path.isEmpty()) {
+            return;
+        }
+
+        for (Subpath subpath : path.getSubpaths()) {
+            writeMoveTo(subpath.getStartPoint(), canvas);
+
+            for (Shape segment : subpath.getSegments()) {
+                if (segment instanceof BezierCurve) {
+                    writeBezierCurve((BezierCurve) segment, canvas);
+                } else {
+                    writeLine((Line) segment, canvas);
+                }
+            }
+
+            if (subpath.isClosed()) {
+                canvas.getInternalBuffer().append(h);
+            }
+        }
+
+        if (pathPaintingOperator != null) {
+            canvas.getInternalBuffer().append(pathPaintingOperator);
+        }
+    }
+
+    private void writeMoveTo(Point2D destinationPoint, PdfContentByte canvas) throws IOException {
+        new PdfNumber(destinationPoint.getX()).toPdf(canvas.getPdfWriter(), canvas.getInternalBuffer());
+        canvas.getInternalBuffer().append(' ');
+        new PdfNumber(destinationPoint.getY()).toPdf(canvas.getPdfWriter(), canvas.getInternalBuffer());
+        canvas.getInternalBuffer().append(m);
+    }
+
+    private void writeBezierCurve(BezierCurve curve, PdfContentByte canvas) throws IOException {
+        List<Point2D> basePoints = curve.getBasePoints();
+        Point2D p2 = basePoints.get(1);
+        Point2D p3 = basePoints.get(2);
+        Point2D p4 = basePoints.get(3);
+
+        new PdfNumber(p2.getX()).toPdf(canvas.getPdfWriter(), canvas.getInternalBuffer());
+        canvas.getInternalBuffer().append(' ');
+
+        new PdfNumber(p2.getY()).toPdf(canvas.getPdfWriter(), canvas.getInternalBuffer());
+        canvas.getInternalBuffer().append(' ');
+
+        new PdfNumber(p3.getX()).toPdf(canvas.getPdfWriter(), canvas.getInternalBuffer());
+        canvas.getInternalBuffer().append(' ');
+
+        new PdfNumber(p3.getY()).toPdf(canvas.getPdfWriter(), canvas.getInternalBuffer());
+        canvas.getInternalBuffer().append(' ');
+
+        new PdfNumber(p4.getX()).toPdf(canvas.getPdfWriter(), canvas.getInternalBuffer());
+        canvas.getInternalBuffer().append(' ');
+
+        new PdfNumber(p4.getY()).toPdf(canvas.getPdfWriter(), canvas.getInternalBuffer());
+        canvas.getInternalBuffer().append(c);
+    }
+
+    private void writeLine(Line line, PdfContentByte canvas) throws IOException {
+        Point2D destination = line.getBasePoints().get(1);
+
+        new PdfNumber(destination.getX()).toPdf(canvas.getPdfWriter(), canvas.getInternalBuffer());
+        canvas.getInternalBuffer().append(' ');
+
+        new PdfNumber(destination.getY()).toPdf(canvas.getPdfWriter(), canvas.getInternalBuffer());
+        canvas.getInternalBuffer().append(l);
+    }
+
+    private void writeStroke(PdfContentByte canvas, Path path) throws IOException {
+        canvas.getInternalBuffer().append(q);
+
+        List<PdfObject> strokeColorOperands = cleanUpStrategy.getContext().peekStrokeColor();
+        String strokeOperatorStr = strokeColorOperands.get(strokeColorOperands.size() - 1).toString();
+        // Below expression converts stroke color operator to its fill analogue.
+        strokeColorOperands.set(strokeColorOperands.size() - 1, new PdfLiteral(strokeOperatorStr.toLowerCase()));
+        writeOperands(canvas, strokeColorOperands);
+
+        writePath(path, f, canvas);
+
+        canvas.getInternalBuffer().append(Q);
     }
 }

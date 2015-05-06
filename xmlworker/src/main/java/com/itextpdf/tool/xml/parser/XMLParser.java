@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2014 iText Group NV
+ * Copyright (c) 1998-2015 iText Group NV
  * Authors: Balder Van Camp, Emiel Ackermann, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -42,6 +42,7 @@
  */
 package com.itextpdf.tool.xml.parser;
 
+import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -184,7 +185,7 @@ public class XMLParser {
      */
     public void parse(final InputStream in, final boolean detectEncoding) throws IOException {
         if (detectEncoding) {
-            parse(detectEncoding(in));
+            parse(detectEncoding(new BufferedInputStream(in)));
         } else {
             parse(in);
         }

@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2014 iText Group NV
+ * Copyright (c) 1998-2015 iText Group NV
  * Authors: Alexander Chingarev, Bruno Lowagie, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -266,7 +266,7 @@ public class PdfA1Checker extends PdfAChecker {
         } else if (obj1 instanceof PdfArray) {
             PdfArray array = (PdfArray) obj1;
             if (array.size() > maxArrayLength) {
-                throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("pdf.array.is.out.of.bounds"));
+                throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("pdf.array.exceeds.length.set.by.PDFA1.standard", Integer.toString(array.size())));
             }
         } else if (obj1 instanceof PdfDictionary) {
             PdfDictionary dictionary = (PdfDictionary) obj1;

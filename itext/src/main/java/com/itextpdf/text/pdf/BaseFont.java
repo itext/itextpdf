@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2014 iText Group NV
+ * Copyright (c) 1998-2015 iText Group NV
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -50,6 +50,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.StringTokenizer;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Base class for the several font types supported
@@ -233,6 +234,9 @@ public abstract class BaseFont {
     public static final int[] CHAR_RANGE_HEBREW = {0, 0x7f, 0x0590, 0x05ff, 0x20a0, 0x20cf, 0xfb1d, 0xfb4f};
     public static final int[] CHAR_RANGE_CYRILLIC = {0, 0x7f, 0x0400, 0x052f, 0x2000, 0x206f, 0x20a0, 0x20cf};
 
+    /** default array of six numbers specifying the font matrix, mapping glyph space to text space */
+    public static final double[] DEFAULT_FONT_MATRIX = {0.001, 0, 0, 0.001, 0, 0};
+
     /** if the font has to be embedded */
     public static final boolean EMBEDDED = true;
 
@@ -291,7 +295,7 @@ public abstract class BaseFont {
     protected boolean fontSpecific = true;
 
     /** cache for the fonts already used. */
-    protected static HashMap<String, BaseFont> fontCache = new HashMap<String, BaseFont>();
+    protected static ConcurrentHashMap<String, BaseFont> fontCache = new ConcurrentHashMap<String, BaseFont>();
 
     /** list of the 14 built in fonts. */
     protected static final HashMap<String, PdfName> BuiltinFonts14 = new HashMap<String, PdfName>();
@@ -689,9 +693,7 @@ public abstract class BaseFont {
         BaseFont fontBuilt = null;
         String key = name + "\n" + encoding + "\n" + embedded;
         if (cached) {
-            synchronized (fontCache) {
-                fontFound = fontCache.get(key);
-            }
+            fontFound = fontCache.get(key);
             if (fontFound != null)
                 return fontFound;
         }
@@ -714,12 +716,10 @@ public abstract class BaseFont {
         else
             throw new DocumentException(MessageLocalization.getComposedMessage("font.1.with.2.is.not.recognized", name, encoding));
         if (cached) {
-            synchronized (fontCache) {
                 fontFound = fontCache.get(key);
                 if (fontFound != null)
                     return fontFound;
-                fontCache.put(key, fontBuilt);
-            }
+                fontCache.putIfAbsent(key, fontBuilt);
         }
         return fontBuilt;
     }
@@ -1506,6 +1506,15 @@ public abstract class BaseFont {
             return charBBoxes[b[0] & 0xff];
     }
 
+    /**
+     *  get default array of six numbers specifying the font matrix, mapping glyph space to text space
+     * @return an array of six values
+     * <code>null</code>
+     */
+    public double[] getFontMatrix() {
+        return DEFAULT_FONT_MATRIX;
+    }
+
     protected abstract int[] getRawCharBBox(int c, String name);
 
     /**
@@ -1561,4 +1570,6 @@ public abstract class BaseFont {
         else
             this.compressionLevel = compressionLevel;
     }
+
+
 }

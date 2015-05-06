@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2014 iText Group NV
+ * Copyright (c) 1998-2015 iText Group NV
  * Authors: Balder Van Camp, Emiel Ackermann, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -99,15 +99,6 @@ public class HtmlPipelineContextTest {
 	@Test
 	public void verifyMemory() {
 		Assert.assertNotNull(ctx.getMemory());
-	}
-
-	/**
-	 * Verifies that NoImageProviderException is thrown
-	 * @throws NoImageProviderException
-	 */
-	@Test(expected=NoImageProviderException.class)
-	public void verifyNoImageProvider() throws NoImageProviderException {
-		ctx.getImageProvider();
 	}
 
 }

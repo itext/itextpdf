@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2014 iText Group NV
+ * Copyright (c) 1998-2015 iText Group NV
  * Authors: Balder Van Camp, Emiel Ackermann, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -67,6 +67,7 @@ public class XMLParserMemory {
 	private String currentNameSpace = "";
 	private char lastChar;
     private final boolean isHtml;
+	private String storedString;
 
 	/**
 	 *
@@ -224,4 +225,11 @@ public class XMLParserMemory {
 		return this.lastChar;
 	}
 
+	public String getStoredString() {
+		return storedString;
+	}
+
+	public void setStoredString(String storedString) {
+		this.storedString = storedString;
+	}
 }

@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2014 iText Group NV
+ * Copyright (c) 1998-2015 iText Group NV
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -195,6 +195,24 @@ public class DivCssApplier {
                     div.setDisplay(PdfDiv.DisplayType.TABLE_ROW);
                 } else if (value.equalsIgnoreCase(CSS.Value.TABLE_ROW_GROUP)) {
                     div.setDisplay(PdfDiv.DisplayType.TABLE_ROW_GROUP);
+                }
+            } else if (key.equalsIgnoreCase(CSS.Property.BORDER_TOP_STYLE)) {
+                if (value.equalsIgnoreCase(CSS.Value.DOTTED)) {
+                    div.setBorderTopStyle(PdfDiv.BorderTopStyle.DOTTED);
+                } else if (value.equalsIgnoreCase(CSS.Value.DASHED)) {
+                    div.setBorderTopStyle(PdfDiv.BorderTopStyle.DASHED);
+                } else if (value.equalsIgnoreCase(CSS.Value.SOLID)) {
+                    div.setBorderTopStyle(PdfDiv.BorderTopStyle.SOLID);
+                } else if (value.equalsIgnoreCase(CSS.Value.DOUBLE)) {
+                    div.setBorderTopStyle(PdfDiv.BorderTopStyle.DOUBLE);
+                } else if (value.equalsIgnoreCase(CSS.Value.GROOVE)) {
+                    div.setBorderTopStyle(PdfDiv.BorderTopStyle.GROOVE);
+                } else if (value.equalsIgnoreCase(CSS.Value.RIDGE)) {
+                    div.setBorderTopStyle(PdfDiv.BorderTopStyle.RIDGE);
+                } else if (value.equalsIgnoreCase(CSS.Value.INSET)) {
+                    div.setBorderTopStyle(PdfDiv.BorderTopStyle.INSET);
+                } else if (value.equalsIgnoreCase(CSS.Value.OUTSET)) {
+                    div.setBorderTopStyle(PdfDiv.BorderTopStyle.OUTSET);
                 }
             }
 

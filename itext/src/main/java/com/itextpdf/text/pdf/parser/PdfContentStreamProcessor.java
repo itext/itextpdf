@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2014 iText Group NV
+ * Copyright (c) 1998-2015 iText Group NV
  * Authors: Kevin Day, Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -201,6 +201,36 @@ public class PdfContentStreamProcessor {
         registerContentOperator("TJ", new ShowTextArray());
 
         registerContentOperator("Do", new Do());
+
+        registerContentOperator("w", new SetLineWidth());
+        registerContentOperator("J", new SetLineCap());
+        registerContentOperator("j", new SetLineJoin());
+        registerContentOperator("M", new SetMiterLimit());
+        registerContentOperator("d", new SetLineDashPattern());
+
+        // Path construction and painting operators
+        if (renderListener instanceof ExtRenderListener) {
+            int fillStroke = PathPaintingRenderInfo.FILL | PathPaintingRenderInfo.STROKE;
+            registerContentOperator("m", new MoveTo());
+            registerContentOperator("l", new LineTo());
+            registerContentOperator("c", new Curve());
+            registerContentOperator("v", new CurveFirstPointDuplicated());
+            registerContentOperator("y", new CurveFourhPointDuplicated());
+            registerContentOperator("h", new CloseSubpath());
+            registerContentOperator("re", new Rectangle());
+            registerContentOperator("S", new PaintPath(PathPaintingRenderInfo.STROKE, -1, false));
+            registerContentOperator("s", new PaintPath(PathPaintingRenderInfo.STROKE, -1, true));
+            registerContentOperator("f", new PaintPath(PathPaintingRenderInfo.FILL, PathPaintingRenderInfo.NONZERO_WINDING_RULE, false));
+            registerContentOperator("F", new PaintPath(PathPaintingRenderInfo.FILL, PathPaintingRenderInfo.NONZERO_WINDING_RULE, false));
+            registerContentOperator("f*", new PaintPath(PathPaintingRenderInfo.FILL, PathPaintingRenderInfo.EVEN_ODD_RULE, false));
+            registerContentOperator("B", new PaintPath(fillStroke, PathPaintingRenderInfo.NONZERO_WINDING_RULE, false));
+            registerContentOperator("B*", new PaintPath(fillStroke, PathPaintingRenderInfo.EVEN_ODD_RULE, false));
+            registerContentOperator("b", new PaintPath(fillStroke, PathPaintingRenderInfo.NONZERO_WINDING_RULE, true));
+            registerContentOperator("b*", new PaintPath(fillStroke, PathPaintingRenderInfo.EVEN_ODD_RULE, true));
+            registerContentOperator("n", new PaintPath(PathPaintingRenderInfo.NO_OP, -1, false));
+            registerContentOperator("W", new ClipPath(PathPaintingRenderInfo.NONZERO_WINDING_RULE));
+            registerContentOperator("W*", new ClipPath(PathPaintingRenderInfo.EVEN_ODD_RULE));
+        }
     }
 
     /**
@@ -218,6 +248,14 @@ public class PdfContentStreamProcessor {
     }
 
     /**
+     * @return {@link java.util.Collection} containing all the registered operators strings
+     * @since 5.5.6
+     */
+    public Collection<String> getRegisteredOperatorStrings() {
+        return new ArrayList<String>(operators.keySet());
+    }
+
+    /**
      * Resets the graphics state stack, matrices and resources.
      */
     public void reset(){
@@ -232,7 +270,7 @@ public class PdfContentStreamProcessor {
      * Returns the current graphics state.
      * @return	the graphics state
      */
-    private GraphicsState gs(){
+    public GraphicsState gs(){
         return gsStack.peek();
     }
 
@@ -316,6 +354,43 @@ public class PdfContentStreamProcessor {
             throw new IllegalStateException(MessageLocalization.getComposedMessage("XObject.1.is.not.a.stream", xobjectName));
         }
 
+    }
+
+    /**
+     * Displays the current path.
+     *
+     * @param operation One of the possible combinations of {@link com.itextpdf.text.pdf.parser.PathPaintingRenderInfo#STROKE}
+     *                  and {@link com.itextpdf.text.pdf.parser.PathPaintingRenderInfo#FILL} values or
+     *                  {@link com.itextpdf.text.pdf.parser.PathPaintingRenderInfo#NO_OP}
+     * @param rule      Either {@link com.itextpdf.text.pdf.parser.PathPaintingRenderInfo#NONZERO_WINDING_RULE} or
+     *                  {@link com.itextpdf.text.pdf.parser.PathPaintingRenderInfo#EVEN_ODD_RULE}
+     *                  In case it isn't applicable pass any <CODE>byte</CODE> value.
+     * @param close     Indicates whether the path should be closed or not.
+     * @since 5.5.6
+     */
+    private void paintPath(int operation, int rule, boolean close) {
+        if (close) {
+            modifyPath(PathConstructionRenderInfo.CLOSE, null);
+        }
+
+        PathPaintingRenderInfo renderInfo = new PathPaintingRenderInfo(operation, rule, gs());
+        ((ExtRenderListener) renderListener).renderPath(renderInfo);
+    }
+
+    /**
+     * Modifies the current path.
+     *
+     * @param operation   Indicates which path-construction operation should be performed.
+     * @param segmentData Contains x, y components of points of a new segment being added to the current path.
+     *                    E.g. x1 y1 x2 y2 x3 y3 etc. It's ignored for "close subpath" operarion (h).
+     */
+    private void modifyPath(int operation, List<Float> segmentData) {
+        PathConstructionRenderInfo renderInfo = new PathConstructionRenderInfo(operation, segmentData, gs().getCtm());
+        ((ExtRenderListener) renderListener).modifyPath(renderInfo);
+    }
+
+    private void clipPath(int rule) {
+        ((ExtRenderListener) renderListener).clipPath(rule);
     }
 
     /**
@@ -911,6 +986,232 @@ public class PdfContentStreamProcessor {
         public void invoke(PdfContentStreamProcessor processor, PdfLiteral operator, ArrayList<PdfObject> operands) throws IOException {
             PdfName xobjectName = (PdfName)operands.get(0);
             processor.displayXObject(xobjectName);
+        }
+    }
+
+    /**
+     * A content operator implementation (w).
+     */
+    private static class SetLineWidth implements ContentOperator {
+
+        public void invoke(PdfContentStreamProcessor processor, PdfLiteral oper, ArrayList<PdfObject> operands) {
+            float lineWidth = ((PdfNumber) operands.get(0)).floatValue();
+            processor.gs().setLineWidth(lineWidth);
+        }
+    }
+
+    /**
+     * A content operator implementation (J).
+     */
+    private class SetLineCap implements ContentOperator {
+
+        public void invoke(PdfContentStreamProcessor processor, PdfLiteral oper, ArrayList<PdfObject> operands) {
+            int lineCap = ((PdfNumber) operands.get(0)).intValue();
+            processor.gs().setLineCapStyle(lineCap);
+        }
+    }
+
+    /**
+     * A content operator implementation (j).
+     */
+    private class SetLineJoin implements ContentOperator {
+
+        public void invoke(PdfContentStreamProcessor processor, PdfLiteral oper, ArrayList<PdfObject> operands) {
+            int lineJoin = ((PdfNumber) operands.get(0)).intValue();
+            processor.gs().setLineJoinStyle(lineJoin);
+        }
+    }
+
+    /**
+     * A content operator implementation (M).
+     */
+    private class SetMiterLimit implements ContentOperator {
+
+        public void invoke(PdfContentStreamProcessor processor, PdfLiteral oper, ArrayList<PdfObject> operands) {
+            float miterLimit = ((PdfNumber) operands.get(0)).floatValue();
+            processor.gs().setMiterLimit(miterLimit);
+        }
+    }
+
+    /**
+     * A content operator implementation (d).
+     */
+    private class SetLineDashPattern implements ContentOperator {
+
+        public void invoke(PdfContentStreamProcessor processor, PdfLiteral oper, ArrayList<PdfObject> operands) {
+            LineDashPattern pattern = new LineDashPattern(((PdfArray) operands.get(0)),
+                                                          ((PdfNumber) operands.get(1)).floatValue());
+            processor.gs().setLineDashPattern(pattern);
+        }
+    }
+
+    /**
+     * A content operator implementation (m).
+     *
+     * @since 5.5.6
+     */
+    private static class MoveTo implements ContentOperator {
+
+        public void invoke(PdfContentStreamProcessor processor, PdfLiteral operator, ArrayList<PdfObject> operands) throws Exception {
+            float x = ((PdfNumber) operands.get(0)).floatValue();
+            float y = ((PdfNumber) operands.get(1)).floatValue();
+            processor.modifyPath(PathConstructionRenderInfo.MOVETO, Arrays.asList(x, y));
+        }
+    }
+
+    /**
+     * A content operator implementation (l).
+     *
+     * @since 5.5.6
+     */
+    private static class LineTo implements ContentOperator {
+
+        public void invoke(PdfContentStreamProcessor processor, PdfLiteral operator, ArrayList<PdfObject> operands) throws Exception {
+            float x = ((PdfNumber) operands.get(0)).floatValue();
+            float y = ((PdfNumber) operands.get(1)).floatValue();
+            processor.modifyPath(PathConstructionRenderInfo.LINETO, Arrays.asList(x, y));
+        }
+    }
+
+    /**
+     * A content operator implementation (c).
+     *
+     * @since 5.5.6
+     */
+    private static class Curve implements ContentOperator {
+
+        public void invoke(PdfContentStreamProcessor processor, PdfLiteral operator, ArrayList<PdfObject> operands) throws Exception {
+            float x1 = ((PdfNumber) operands.get(0)).floatValue();
+            float y1 = ((PdfNumber) operands.get(1)).floatValue();
+            float x2 = ((PdfNumber) operands.get(2)).floatValue();
+            float y2 = ((PdfNumber) operands.get(3)).floatValue();
+            float x3 = ((PdfNumber) operands.get(4)).floatValue();
+            float y3 = ((PdfNumber) operands.get(5)).floatValue();
+            processor.modifyPath(PathConstructionRenderInfo.CURVE_123, Arrays.asList(x1, y1, x2, y2, x3, y3));
+        }
+    }
+
+    /**
+     * A content operator implementation (v).
+     *
+     * @since 5.5.6
+     */
+    private static class CurveFirstPointDuplicated implements ContentOperator {
+
+        public void invoke(PdfContentStreamProcessor processor, PdfLiteral operator, ArrayList<PdfObject> operands) throws Exception {
+            float x2 = ((PdfNumber) operands.get(0)).floatValue();
+            float y2 = ((PdfNumber) operands.get(1)).floatValue();
+            float x3 = ((PdfNumber) operands.get(2)).floatValue();
+            float y3 = ((PdfNumber) operands.get(3)).floatValue();
+            processor.modifyPath(PathConstructionRenderInfo.CURVE_23, Arrays.asList(x2, y2, x3, y3));
+        }
+    }
+
+    /**
+     * A content operator implementation (y).
+     *
+     * @since 5.5.6
+     */
+    private static class CurveFourhPointDuplicated implements ContentOperator {
+
+        public void invoke(PdfContentStreamProcessor processor, PdfLiteral operator, ArrayList<PdfObject> operands) throws Exception {
+            float x1 = ((PdfNumber) operands.get(0)).floatValue();
+            float y1 = ((PdfNumber) operands.get(1)).floatValue();
+            float x3 = ((PdfNumber) operands.get(2)).floatValue();
+            float y3 = ((PdfNumber) operands.get(3)).floatValue();
+            processor.modifyPath(PathConstructionRenderInfo.CURVE_13, Arrays.asList(x1, y1, x3, y3));
+        }
+    }
+
+    /**
+     * A content operator implementation (h).
+     *
+     * @since 5.5.6
+     */
+    private static class CloseSubpath implements ContentOperator {
+
+        public void invoke(PdfContentStreamProcessor processor, PdfLiteral operator, ArrayList<PdfObject> operands) throws Exception {
+            processor.modifyPath(PathConstructionRenderInfo.CLOSE, null);
+        }
+    }
+
+    /**
+     * A content operator implementation (re).
+     *
+     * @since 5.5.6
+     */
+    private static class Rectangle implements ContentOperator {
+
+        public void invoke(PdfContentStreamProcessor processor, PdfLiteral operator, ArrayList<PdfObject> operands) throws Exception {
+            float x = ((PdfNumber) operands.get(0)).floatValue();
+            float y = ((PdfNumber) operands.get(1)).floatValue();
+            float w = ((PdfNumber) operands.get(2)).floatValue();
+            float h = ((PdfNumber) operands.get(3)).floatValue();
+            processor.modifyPath(PathConstructionRenderInfo.RECT, Arrays.asList(x, y, w, h));
+        }
+    }
+
+    /**
+     * A content operator implementation (S, s, f, F, f*, B, B*, b, b*).
+     *
+     * @since 5.5.6
+     */
+    private static class PaintPath implements ContentOperator {
+
+        private int operation;
+        private int rule;
+        private boolean close;
+
+        /**
+         * Constructs PainPath object.
+         *
+         * @param operation One of the possible combinations of {@link com.itextpdf.text.pdf.parser.PathPaintingRenderInfo#STROKE}
+         *                  and {@link com.itextpdf.text.pdf.parser.PathPaintingRenderInfo#FILL} values or
+         *                  {@link com.itextpdf.text.pdf.parser.PathPaintingRenderInfo#NO_OP}
+         * @param rule      Either {@link com.itextpdf.text.pdf.parser.PathPaintingRenderInfo#NONZERO_WINDING_RULE} or
+         *                  {@link com.itextpdf.text.pdf.parser.PathPaintingRenderInfo#EVEN_ODD_RULE}
+         *                  In case it isn't applicable pass any value.
+         * @param close     Indicates whether the path should be closed or not.
+         */
+        public PaintPath(int operation, int rule, boolean close) {
+            this.operation = operation;
+            this.rule = rule;
+            this.close = close;
+        }
+
+        public void invoke(PdfContentStreamProcessor processor, PdfLiteral operator, ArrayList<PdfObject> operands) throws Exception {
+            processor.paintPath(operation, rule, close);
+            // TODO: add logic for clipping path (before add it to the graphics state)
+        }
+    }
+
+    /**
+     * A content operator implementation (W, W*)
+     *
+     * @since 5.5.6
+     */
+    private static class ClipPath implements ContentOperator {
+
+        private int rule;
+
+        public ClipPath(int rule) {
+            this.rule = rule;
+        }
+
+        public void invoke(PdfContentStreamProcessor processor, PdfLiteral operator, ArrayList<PdfObject> operands) throws Exception {
+            processor.clipPath(rule);
+        }
+    }
+
+    /**
+     * A content operator implementation (n).
+     *
+     * @since 5.5.6
+     */
+    private static class EndPath implements ContentOperator {
+
+        public void invoke(PdfContentStreamProcessor processor, PdfLiteral operator, ArrayList<PdfObject> operands) throws Exception {
+            processor.paintPath(PathPaintingRenderInfo.NO_OP, -1, false);
         }
     }
 

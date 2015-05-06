@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2014 iText Group NV
+ * Copyright (c) 1998-2015 iText Group NV
  * Authors: Balder Van Camp, Emiel Ackermann, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -71,7 +71,7 @@ public class CssUtils {
 	private static final String _0_RIGHT_1 = "{0}right{1}";
 	private static final String _0_BOTTOM_1 = "{0}bottom{1}";
 	private static final String _0_TOP_1 = "{0}top{1}";
-	private static CssUtils myself;
+	private static CssUtils instance = new CssUtils();
 
 	/**
 	 * Default font size if none is set.
@@ -82,11 +82,8 @@ public class CssUtils {
 	/**
 	 * @return Singleton instance of CssUtils.
 	 */
-	public static synchronized CssUtils getInstance() {
-		if(null == myself) {
-			myself = new CssUtils();
-		}
-		return myself;
+	public static CssUtils getInstance() {
+		return instance;
 	}
 
 	/**
@@ -316,41 +313,32 @@ public class CssUtils {
 	 */
 	public Map<String, String> processFont(final String font) {
 		Map<String, String> rules = new HashMap<String, String>();
-		String[] styleAndRest = font.split("\\s", 2);
-		String style = styleAndRest[0];
-		String rest = styleAndRest[1];
-		for(int i = 0 ; i<3 ; i++) {
+		String[] styleAndRest = font.split("\\s");
+
+		for (int i = 0 ; i < styleAndRest.length ; i++){
+			String style = styleAndRest[i];
 			if (style.equalsIgnoreCase(HtmlTags.ITALIC) || style.equalsIgnoreCase(HtmlTags.OBLIQUE)) {
 				rules.put(HtmlTags.FONTSTYLE, style);
-				styleAndRest = rest.split("\\s", 2);
-				style = styleAndRest[0];
-				rest = styleAndRest[1];
-			}
-			if (style.equalsIgnoreCase("small-caps")) {
-				rules.put("font-variant", style); // normal, small-caps, inherit need to be implemented.
-				styleAndRest = rest.split("\\s", 2);
-				style = styleAndRest[0];
-				rest = styleAndRest[1];
-			}
-			if (style.equalsIgnoreCase(HtmlTags.BOLD)) { // enum for all possible font-weight values?
+			} else if (style.equalsIgnoreCase("small-caps")){
+				rules.put("font-variant", style);
+			} else if (style.equalsIgnoreCase(HtmlTags.BOLD)){
 				rules.put(HtmlTags.FONTWEIGHT, style);
-				styleAndRest = rest.split("\\s", 2);
-				style = styleAndRest[0];
-				rest = styleAndRest[1];
+			} else if (isMetricValue(style) || isNumericValue(style)){
+				if (style.contains("/")) {
+					String[] sizeAndLineHeight = style.split("/");
+					style = sizeAndLineHeight[0]; // assuming font-size always is the first parameter
+					rules.put(HtmlTags.LINEHEIGHT, sizeAndLineHeight[1]);
+				}
+				rules.put(HtmlTags.FONTSIZE, style);
+				if (i != styleAndRest.length-1){
+					String rest = styleAndRest[i+1];
+					rest = rest.replaceAll("\"", "");
+					rest = rest.replaceAll("'", "");
+					rules.put(HtmlTags.FONTFAMILY, rest);
+				}
 			}
 		}
 
-		if (isMetricValue(style) || isNumericValue(style)) {
-			if (style.contains("/")) {
-				String[] sizeAndLineHeight = style.split("/");
-				style = sizeAndLineHeight[0]; // assuming font-size always is the first parameter
-				rules.put(HtmlTags.LINEHEIGHT, sizeAndLineHeight[1]);
-			}
-			rules.put(HtmlTags.FONTSIZE, style);
-			rest = rest.replaceAll("\"", "");
-			rest = rest.replaceAll("'", "");
-			rules.put(HtmlTags.FONTFAMILY, rest);
-		}
 		return rules;
 	}
 
@@ -573,6 +561,8 @@ public class CssUtils {
 				str = urlString.substring(urlString.indexOf("'")+1, urlString.lastIndexOf("'"));
 			} else if ( urlString.startsWith("\"") && urlString.endsWith("\"") ) {
 				str = urlString.substring(urlString.indexOf('"')+1, urlString.lastIndexOf('"'));
+			} else {
+			    str = urlString;
 			}
 		} else {
 			// assume it's an url without url

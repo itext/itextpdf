@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2014 iText Group NV
+ * Copyright (c) 1998-2015 iText Group NV
  * Authors: Balder Van Camp, Emiel Ackermann, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -73,6 +73,8 @@ public class StateController {
 	private final XMLParser parser;
 	private State currentState;
 	private State previousState;
+	private State starComment;
+	private State closeStarComment;
 
 	/**
 	 * Constructs a StateController with the given parser.
@@ -100,6 +102,8 @@ public class StateController {
         processingInstruction = new ProcessingInstructionEncounteredState(parser);
 		previousState = null;
 		currentState = null;
+		starComment = new StarCommentState(parser);
+		closeStarComment = new CloseStarCommentState(parser);
 	}
 	/**
 	 *	Changes the state.
@@ -249,5 +253,21 @@ public class StateController {
 	public XMLParser unquotedAttr() {
 		return setState(unquoted);
 
+	}
+
+	/**
+	 * set Parser state to {@link StarCommentState}.
+	 * @return Parser
+	 */
+	public XMLParser starComment() {
+		return setState(this.starComment);
+	}
+
+	/**
+	 * set Parser state to {@link CloseStarCommentState}.
+	 * @return Parser
+	 */
+	public XMLParser closeStarComment() {
+		return setState(this.closeStarComment);
 	}
 }

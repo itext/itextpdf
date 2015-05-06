@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2014 iText Group NV
+ * Copyright (c) 1998-2015 iText Group NV
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -232,19 +232,17 @@ public class PdfDocument extends Document {
             try {
                 PdfDictionary names = new PdfDictionary();
                 if (!localDestinations.isEmpty()) {
-                    PdfArray ar = new PdfArray();
+                    HashMap<String, PdfObject> destmap = new HashMap<String, PdfObject>();
                     for (Map.Entry<String, Destination> entry : localDestinations.entrySet()) {
                         String name = entry.getKey();
                         Destination dest = entry.getValue();
                         if (dest.destination == null) //no destination
                             continue;
-                        PdfIndirectReference ref = dest.reference;
-                        ar.add(new PdfString(name, PdfObject.TEXT_UNICODE));
-                        ar.add(ref);
+                        destmap.put(name, dest.reference);
                     }
-                    if (ar.size() > 0) {
+                    if (destmap.size() > 0) {
                         PdfDictionary dests = new PdfDictionary();
-                        dests.put(PdfName.NAMES, ar);
+                        dests.put(PdfName.NAMES, PdfNameTree.writeTree(destmap, writer));
                         names.put(PdfName.DESTS, writer.addToBody(dests).getIndirectReference());
                     }
                 }
@@ -383,6 +381,8 @@ public class PdfDocument extends Document {
      */
     private Stack<Float> leadingStack = new Stack<Float>();
 
+    private PdfBody body;
+
     /**
      * Save current @leading
      */
@@ -476,7 +476,7 @@ public class PdfDocument extends Document {
                     // we try to add the chunk to the line, until we succeed
                     {
                         PdfChunk overflow;
-                        while ((overflow = line.add(chunk)) != null) {
+                        while ((overflow = line.add(chunk, leading)) != null) {
                             carriageReturn();
                             boolean newlineSplit = chunk.isNewlineSplit();
                             chunk = overflow;
@@ -799,6 +799,9 @@ public class PdfDocument extends Document {
                     pageEmpty = false;
                     //newLine();
                     break;
+                case Element.BODY:
+                    body = (PdfBody) element;
+                    graphics.rectangle(body);
                 default:
                     return false;
             }
@@ -1017,6 +1020,9 @@ public class PdfDocument extends Document {
                 writer.getDirectContentUnder().restoreMCBlocks(mcBlocks);
             }
 
+            if (body != null && body.getBackgroundColor() != null){
+                graphics.rectangle(body);
+            }
         }
         catch(DocumentException de) {
             // maybe this never happens, but it's better to check.
@@ -1538,7 +1544,7 @@ public class PdfDocument extends Document {
                             graphics.beginText(true);
                         }
                     }
-                    if (chunk.isAttribute(Chunk.UNDERLINE) && !chunk.isNewlineSplit()) {
+                    if (chunk.isAttribute(Chunk.UNDERLINE)) {
                         boolean inText = graphics.getInText();
                         if (inText && isTagged(writer)) {
                             graphics.endText();
@@ -2651,6 +2657,9 @@ public class PdfDocument extends Document {
         //fit on the current page, start a new page.
         if (ptable.getKeepTogether() && !fitsPage(ptable, 0f) && currentHeight > 0)  {
             newPage();
+            if (isTagged(writer)) {
+                ct.setCanvas(text);
+            }
         }
         if (currentHeight == 0) {
             ct.setAdjustFirstLine(false);

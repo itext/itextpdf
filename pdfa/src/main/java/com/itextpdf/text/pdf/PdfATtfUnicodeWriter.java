@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2014 iText Group NV
+ * Copyright (c) 1998-2015 iText Group NV
  * Authors: Alexander Chingarev, Bruno Lowagie, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -106,8 +106,10 @@ public class PdfATtfUnicodeWriter extends TtfUnicodeWriter {
         } else {
             byte[] b;
             if (font.subset || font.directoryOffset != 0) {
-                TrueTypeFontSubSet sb = new TrueTypeFontSubSet(font.fileName, new RandomAccessFileOrArray(font.rf), new HashSet<Integer>(longTag.keySet()), font.directoryOffset, false, false);
-                b = sb.process();
+                synchronized (font.rf) {
+                    TrueTypeFontSubSet sb = new TrueTypeFontSubSet(font.fileName, new RandomAccessFileOrArray(font.rf), new HashSet<Integer>(longTag.keySet()), font.directoryOffset, false, false);
+                    b = sb.process();
+                }
             }
             else {
                 b = font.getFullFont();

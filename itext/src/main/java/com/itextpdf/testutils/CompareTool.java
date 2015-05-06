@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2014 iText Group NV
+ * Copyright (c) 1998-2015 iText Group NV
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -82,6 +82,7 @@ public class CompareTool {
         protected RefKey baseCmpObject;
         protected RefKey baseOutObject;
         protected Stack<PathItem> path = new Stack<PathItem>();
+        protected Stack<Pair<RefKey>> indirects = new Stack<Pair<RefKey>>();
 
         public ObjectPath() {
         }
@@ -95,6 +96,26 @@ public class CompareTool {
             this.baseCmpObject = baseCmpObject;
             this.baseOutObject = baseOutObject;
             this.path = path;
+        }
+
+        private class Pair<T> {
+            private T first;
+            private T second;
+
+            public Pair(T first, T second) {
+                this.first = first;
+                this.second = second;
+            }
+
+            @Override
+            public int hashCode() {
+                return first.hashCode() * 31 + second.hashCode();
+            }
+
+            @Override
+            public boolean equals(Object obj) {
+                return (obj instanceof Pair && first.equals(((Pair) obj).first) && second.equals(((Pair) obj).second));
+            }
         }
 
         private abstract class PathItem {
@@ -186,6 +207,17 @@ public class CompareTool {
                 element.appendChild(document.createTextNode(String.valueOf(offset)));
                 return element;
             }
+        }
+
+        public ObjectPath resetDirectPath(RefKey baseCmpObject, RefKey baseOutObject) {
+            ObjectPath newPath = new ObjectPath(baseCmpObject, baseOutObject);
+            newPath.indirects = (Stack<Pair<RefKey>>) indirects.clone();
+            newPath.indirects.add(new Pair<RefKey>(baseCmpObject, baseOutObject));
+            return newPath;
+        }
+
+        public boolean isComparing(RefKey baseCmpObject, RefKey baseOutObject) {
+            return indirects.contains(new Pair<RefKey>(baseCmpObject, baseOutObject));
         }
 
         public void pushArrayItemToPath(int index) {
@@ -645,31 +677,31 @@ public class CompareTool {
             return false;
         }
 
-        // This can be commented in order to always see the "full" paths of different objects.
         if (cmpObj.isIndirect() && outObj.isIndirect()) {
-            currentPath = new ObjectPath(new RefKey((PdfIndirectReference) cmpObj), new RefKey((PdfIndirectReference) outObj));
+            if (currentPath.isComparing(new RefKey((PdfIndirectReference) cmpObj), new RefKey((PdfIndirectReference) outObj)))
+                return true;
+            currentPath = currentPath.resetDirectPath(new RefKey((PdfIndirectReference) cmpObj), new RefKey((PdfIndirectReference) outObj));
+        }
+
+        if (cmpDirectObj.isDictionary() && ((PdfDictionary)cmpDirectObj).isPage()) {
+            if (!outDirectObj.isDictionary() || !((PdfDictionary)outDirectObj).isPage()) {
+                if (compareResult != null && currentPath != null)
+                    compareResult.addError(currentPath, String.format("Expected a page. Found not a page."));
+                return false;
+            }
+            RefKey cmpRefKey = new RefKey((PRIndirectReference)cmpObj);
+            RefKey outRefKey = new RefKey((PRIndirectReference)outObj);
+            // References to the same page
+            if (cmpPagesRef.contains(cmpRefKey) && cmpPagesRef.indexOf(cmpRefKey) == outPagesRef.indexOf(outRefKey))
+                return true;
+            if (compareResult != null && currentPath != null)
+                compareResult.addError(currentPath, String.format("The dictionaries refer to different pages. Expected page number: %s. Found: %s",
+                        cmpPagesRef.indexOf(cmpRefKey), outPagesRef.indexOf(outRefKey)));
+            return false;
         }
 
         if (cmpDirectObj.isDictionary()) {
-            PdfDictionary cmpDict = (PdfDictionary)cmpDirectObj;
-            PdfDictionary outDict = (PdfDictionary)outDirectObj;
-            if (cmpDict.isPage()) {
-                if (!outDict.isPage()) {
-                    if (compareResult != null && currentPath != null)
-                        compareResult.addError(currentPath, String.format("Expected a page. Found not a page."));
-                    return false;
-                }
-                RefKey cmpRefKey = new RefKey((PRIndirectReference)cmpObj);
-                RefKey outRefKey = new RefKey((PRIndirectReference)outObj);
-                // References to the same page
-                if (cmpPagesRef.contains(cmpRefKey) && cmpPagesRef.indexOf(cmpRefKey) == outPagesRef.indexOf(outRefKey))
-                    return true;
-                if (compareResult != null && currentPath != null)
-                    compareResult.addError(currentPath, String.format("The dictionaries refer to different pages. Expected page number: %s. Found: %s",
-                            cmpPagesRef.indexOf(cmpRefKey), outPagesRef.indexOf(outRefKey)));
-                return false;
-            }
-            if (!compareDictionariesExtended(outDict, cmpDict, currentPath, compareResult))
+            if (!compareDictionariesExtended((PdfDictionary)outDirectObj, (PdfDictionary)cmpDirectObj, currentPath, compareResult))
                 return false;
         } else if (cmpDirectObj.isStream()) {
             if (!compareStreamsExtended((PRStream) outDirectObj, (PRStream) cmpDirectObj, currentPath, compareResult))
@@ -769,8 +801,8 @@ public class CompareTool {
                         if (compareResult != null && currentPath != null) {
                             currentPath.pushOffsetToPath(i);
                             compareResult.addError(currentPath, String.format("PRStream. The bytes differ at index %s. Expected: %s (%s). Found: %s (%s)",
-                                    i, new String(new byte[] {cmpStreamBytes[i]}), new String(cmpStreamBytes, l, r - l).replace("\n", "\\n"),
-                                    new String(new byte[] {outStreamBytes[i]}), new String(outStreamBytes, l, r - l).replace("\n", "\\n")));
+                                    i, new String(new byte[]{cmpStreamBytes[i]}), new String(cmpStreamBytes, l, r - l).replaceAll("\\r|\\n", ""),
+                                    new String(new byte[]{outStreamBytes[i]}), new String(outStreamBytes, l, r - l).replaceAll("\\r|\\n", "")));
                             currentPath.pop();
                         }
                     }

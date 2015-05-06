@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2014 iText Group NV
+ * Copyright (c) 1998-2015 iText Group NV
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -49,6 +49,7 @@ import com.itextpdf.text.Utilities;
 import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.pdf.fonts.otf.GlyphSubstitutionTableReader;
 import com.itextpdf.text.pdf.fonts.otf.Language;
+import com.itextpdf.text.pdf.languages.ArabicLigaturizer;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -100,7 +101,7 @@ class TrueTypeFontUnicode extends TrueTypeFont implements Comparator<int[]>{
                 throw new DocumentException(MessageLocalization.getComposedMessage("1.cannot.be.embedded.due.to.licensing.restrictions", fileName + style));
             // Sivan
             if (cmap31 == null && !fontSpecific || cmap10 == null && fontSpecific)
-                directTextToByte=true;
+                directTextToByte = true;
                 //throw new DocumentException(MessageLocalization.getComposedMessage("1.2.does.not.contain.an.usable.cmap", fileName, style));
             if (fontSpecific) {
                 fontSpecific = false;
@@ -416,8 +417,15 @@ class TrueTypeFontUnicode extends TrueTypeFont implements Comparator<int[]>{
             else
                 return null;
         }
-        else
-            return map.get(Integer.valueOf(c));
+        else {
+            int[] result = map.get(Integer.valueOf(c));
+            if (result == null) {
+                Character ch = ArabicLigaturizer.getReverseMapping((char) c);
+                if (ch != null)
+                    result = map.get(Integer.valueOf(ch));
+            }
+            return result;
+        }
     }
 
     /**

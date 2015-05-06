@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2014 iText Group NV
+ * Copyright (c) 1998-2015 iText Group NV
  * Authors: Kevin Day, Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -46,6 +46,7 @@ package com.itextpdf.text.pdf.parser;
 
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.pdf.CMapAwareDocumentFont;
+import com.itextpdf.text.pdf.PdfContentByte;
 import com.itextpdf.text.pdf.PdfName;
 
 /**
@@ -81,6 +82,27 @@ public class GraphicsState {
     BaseColor fillColor;
     /** The current stroke color. */
     BaseColor strokeColor;
+
+    /** The line width for stroking operations */
+    private float lineWidth;
+
+    /**
+     * The line cap style. For possible values
+     * see {@link PdfContentByte}
+     */
+    private int lineCapStyle;
+
+    /**
+     * The line join style. For possible values
+     * see {@link PdfContentByte}
+     */
+    private int lineJoinStyle;
+
+    /** The mitir limit value */
+    private float miterLimit;
+
+    /** The line dash pattern */
+    private LineDashPattern lineDashPattern;
     
     /**
      * Constructs a new Graphics State object with the default values.
@@ -100,6 +122,10 @@ public class GraphicsState {
         colorSpaceStroke = null;
         fillColor = null;
         strokeColor = null;
+        lineWidth = 1.0f;
+        lineCapStyle = PdfContentByte.LINE_CAP_BUTT;
+        lineJoinStyle = PdfContentByte.LINE_JOIN_MITER;
+        miterLimit = 10.0f;
     }
     
     /**
@@ -123,6 +149,14 @@ public class GraphicsState {
         colorSpaceStroke = source.colorSpaceStroke;
         fillColor = source.fillColor;
         strokeColor = source.strokeColor;
+        lineWidth = source.lineWidth;
+        lineCapStyle = source.lineCapStyle;
+        lineJoinStyle = source.lineJoinStyle;
+        miterLimit = source.miterLimit;
+
+        if (source.lineDashPattern != null) {
+            lineDashPattern = new LineDashPattern(source.lineDashPattern.getDashArray(), source.lineDashPattern.getDashPhase());
+        }
     }
 
 	/**
@@ -245,4 +279,97 @@ public class GraphicsState {
 		return strokeColor;
 	}
 
+    /**
+     * Getter for the line width.
+     * @return The line width
+     * @since 5.5.6
+     */
+    public float getLineWidth() {
+        return lineWidth;
+    }
+
+    /**
+     * Setter for the line width.
+     * @param lineWidth New line width.
+     * @since 5.5.6
+     */
+    public void setLineWidth(float lineWidth) {
+        this.lineWidth = lineWidth;
+    }
+
+    /**
+     * Getter for the line cap style.
+     * For possible values see {@link PdfContentByte}
+     * @return The line cap style.
+     * @since 5.5.6
+     */
+    public int getLineCapStyle() {
+        return lineCapStyle;
+    }
+
+    /**
+     * Setter for the line cap style.
+     * For possible values see {@link PdfContentByte}
+     * @param lineCapStyle New line cap style.
+     * @since 5.5.6
+     */
+    public void setLineCapStyle(int lineCapStyle) {
+        this.lineCapStyle = lineCapStyle;
+    }
+
+    /**
+     * Getter for the line join style.
+     * For possible values see {@link PdfContentByte}
+     * @return The line join style.
+     * @since 5.5.6
+     */
+    public int getLineJoinStyle() {
+        return lineJoinStyle;
+    }
+
+    /**
+     * Setter for the line join style.
+     * For possible values see {@link PdfContentByte}
+     * @param lineJoinStyle New line join style.
+     * @since 5.5.6
+     */
+    public void setLineJoinStyle(int lineJoinStyle) {
+        this.lineJoinStyle = lineJoinStyle;
+    }
+
+    /**
+     * Getter for the miter limit value.
+     * @return The miter limit.
+     * @since 5.5.6
+     */
+    public float getMiterLimit() {
+        return miterLimit;
+    }
+
+    /**
+     * Setter for the miter limit value.
+     * @param miterLimit New miter limit.
+     * @since 5.5.6
+     */
+    public void setMiterLimit(float miterLimit) {
+        this.miterLimit = miterLimit;
+    }
+
+    /**
+     * Getter for the line dash pattern.
+     * @return The line dash pattern.
+     * @since 5.5.6
+     */
+    public LineDashPattern getLineDashPattern() {
+        return lineDashPattern;
+    }
+
+    /**
+     * Setter for the line dash pattern.
+     * @param lineDashPattern New line dash pattern.
+     * @since 5.5.6
+     */
+    public void setLineDashPattern(LineDashPattern lineDashPattern) {
+        this.lineDashPattern = new LineDashPattern(lineDashPattern.getDashArray(), lineDashPattern.getDashPhase());
+    }
 }

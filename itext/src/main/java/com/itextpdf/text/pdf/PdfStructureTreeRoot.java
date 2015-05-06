@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2014 iText Group NV
+ * Copyright (c) 1998-2015 iText Group NV
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -154,7 +154,9 @@ public class PdfStructureTreeRoot extends PdfDictionary implements IPdfStructure
             ar = new PdfArray();
             parentTree.put(i, ar);
         }
-        ar.add(struc);
+        if (!ar.contains(struc)) {
+            ar.add(struc);
+        }
     }
 
     void setAnnotationMark(int structParentIndex, PdfIndirectReference struc) {

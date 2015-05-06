@@ -1,6 +1,7 @@
 package com.itextpdf.text.pdf;
 
 import com.itextpdf.text.*;
+import static com.itextpdf.text.pdf.PdfA1CheckerTest.pdfObjectCheck;
 import junit.framework.Assert;
 import org.junit.Test;
 
@@ -636,6 +637,11 @@ public class PdfA2CheckerTest {
             canvas.restoreState();
         }
         document.close();
+    }
+    
+    @Test
+    public void pdfObjectCheckTest() throws DocumentException, IOException {
+        PdfA1CheckerTest.pdfObjectCheck(outputDir + "pdfObjectCheckTest.pdf", PdfAConformanceLevel.PDF_A_2B, false);
     }
 
     @Test

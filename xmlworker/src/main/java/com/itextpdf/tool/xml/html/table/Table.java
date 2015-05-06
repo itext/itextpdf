@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2014 iText Group NV
+ * Copyright (c) 1998-2015 iText Group NV
  * Authors: Balder Van Camp, Emiel Ackermann, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -883,6 +883,8 @@ public class Table extends AbstractTagProcessor {
 				float marginBottom = utils.parseValueToPt(value, fst.getFontSize(t));
 				spacingAfter += marginBottom;
 				getHtmlPipelineContext(ctx).getMemory().put(HtmlPipelineContext.LAST_MARGIN_BOTTOM, marginBottom);
+			} else if (CSS.Property.PADDING_TOP.equalsIgnoreCase(key)){
+				table.setPaddingTop(utils.parseValueToPt(value, fst.getFontSize(t)));
 			}
 		}
 		table.setSpacingBefore(spacingBefore);

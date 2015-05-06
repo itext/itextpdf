@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2014 iText Group NV
+ * Copyright (c) 1998-2015 iText Group NV
  * Authors: Alexander Chingarev, Bruno Lowagie, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -48,12 +48,16 @@ import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.ExceptionConverter;
 import com.itextpdf.text.Jpeg2000;
 import com.itextpdf.text.error_messages.MessageLocalization;
+import com.itextpdf.text.log.Logger;
+import com.itextpdf.text.log.LoggerFactory;
+import com.itextpdf.text.log.SysoLogger;
 import com.itextpdf.text.pdf.*;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.logging.Level;
 
 public class PdfA2Checker extends PdfAChecker {
 
@@ -95,6 +99,8 @@ public class PdfA2Checker extends PdfAChecker {
     protected boolean transparencyDetectedOnThePage = false;
     protected String pdfaOutputIntentColorSpace = null;
     protected PdfObject pdfaDestOutputIntent = null;
+    static public final int maxStringLength = 32767;
+
 
     PdfA2Checker(PdfAConformanceLevel conformanceLevel) {
         super(conformanceLevel);
@@ -437,18 +443,13 @@ public class PdfA2Checker extends PdfAChecker {
     protected void checkPdfObject(PdfWriter writer, int key, Object obj1) {
         if (obj1 instanceof PdfNumber) {
             PdfNumber number = (PdfNumber) obj1;
-            if (Math.abs(number.doubleValue()) > PdfA1Checker.maxRealValue && number.toString().contains(".")) {
+            if (Math.abs(number.doubleValue()) > Float.MAX_VALUE && number.toString().contains(".")) {
                 throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("real.number.is.out.of.range"));
             }
         } else if (obj1 instanceof PdfString) {
             PdfString string = (PdfString) obj1;
-            if (string.getBytes().length > PdfA1Checker.maxStringLength) {
+            if (string.getBytes().length > maxStringLength) {
                 throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("pdf.string.is.too.long"));
-            }
-        } else if (obj1 instanceof PdfArray) {
-            PdfArray array = (PdfArray) obj1;
-            if (array.size() > PdfA1Checker.maxArrayLength) {
-                throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("pdf.array.is.out.of.bounds"));
             }
         }  else if (obj1 instanceof PdfDictionary) {
             PdfDictionary dictionary = (PdfDictionary) obj1;

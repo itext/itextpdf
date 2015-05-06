@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2014 iText Group NV
+ * Copyright (c) 1998-2015 iText Group NV
  * Authors: Balder Van Camp, Emiel Ackermann, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -111,7 +111,7 @@ public class Header extends AbstractTagProcessor {
 							title.add(w);
 					}
 
-					l.add(new WritableDirectElement() {
+					l.add(new WritableDirectElement(WritableDirectElement.DIRECT_ELEMENT_TYPE_HEADER) {
 
 						public void write(final PdfWriter writer, final Document doc) throws DocumentException {
 							PdfDestination destination = new PdfDestination(PdfDestination.XYZ, 20,

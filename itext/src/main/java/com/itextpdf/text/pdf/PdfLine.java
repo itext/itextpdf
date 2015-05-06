@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2014 iText Group NV
+ * Copyright (c) 1998-2015 iText Group NV
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -140,6 +140,28 @@ public class PdfLine {
     /**
      * Adds a <CODE>PdfChunk</CODE> to the <CODE>PdfLine</CODE>.
      *
+     * @param		chunk		        the <CODE>PdfChunk</CODE> to add
+     * @param		currentLeading		new value for the height of the line
+     * @return		<CODE>null</CODE> if the chunk could be added completely; if not
+     *				a <CODE>PdfChunk</CODE> containing the part of the chunk that could
+     *				not be added is returned
+     */
+
+    PdfChunk add(PdfChunk chunk, float currentLeading) {
+        //we set line height to correspond to the current leading
+        if (chunk != null && !chunk.toString().equals("")) {
+            //whitespace shouldn't change leading
+            if (!chunk.toString().equals(" ")) {
+                if (this.height < currentLeading || this.line.isEmpty())
+                    this.height = currentLeading;
+            }
+        }
+        return add(chunk);
+    }
+
+    /**
+     * Adds a <CODE>PdfChunk</CODE> to the <CODE>PdfLine</CODE>.
+     *
      * @param		chunk		the <CODE>PdfChunk</CODE> to add
      * @return		<CODE>null</CODE> if the chunk could be added completely; if not
      *				a <CODE>PdfChunk</CODE> containing the part of the chunk that could
@@ -175,7 +197,7 @@ public class PdfLine {
                         width = 0;
                     } else {
                         chunk.setTabStop(tabStop);
-                        if (tabStop.getAlignment() == TabStop.Alignment.LEFT) {
+                        if (!isRTL && tabStop.getAlignment() == TabStop.Alignment.LEFT) {
                             width = originalWidth - tabStop.getPosition();
                             tabStop = null;
                             tabPosition = Float.NaN;
@@ -618,7 +640,10 @@ public class PdfLine {
             width = originalWidth - tabStopPosition - textWidth;
             if (width < 0)
                 tabStopPosition += width;
-            tabStop.setPosition(tabStopPosition);
+            if (!isRTL)
+                tabStop.setPosition(tabStopPosition);
+            else
+                tabStop.setPosition(originalWidth - width - tabPosition);
             tabStop = null;
             tabPosition = Float.NaN;
         }

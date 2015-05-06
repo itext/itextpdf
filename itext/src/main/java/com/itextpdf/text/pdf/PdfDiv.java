@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2014 iText Group NV
+ * Copyright (c) 1998-2015 iText Group NV
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -64,6 +64,8 @@ public class PdfDiv implements Element, Spaceable, IAccessibleElement {
     public enum DisplayType {NONE, BLOCK, INLINE, INLINE_BLOCK, INLINE_TABLE, LIST_ITEM, RUN_IN, TABLE, TABLE_CAPTION, TABLE_CELL, TABLE_COLUMN_GROUP, TABLE_COLUMN, TABLE_FOOTER_GROUP,
     TABLE_HEADER_GROUP, TABLE_ROW, TABLE_ROW_GROUP};
 
+    public enum BorderTopStyle {DOTTED, DASHED, SOLID, DOUBLE, GROOVE, RIDGE, INSET, OUTSET};
+
     private ArrayList<Element> content;
 
     private Float left = null;
@@ -103,6 +105,8 @@ public class PdfDiv implements Element, Spaceable, IAccessibleElement {
     private DisplayType display;
 
     private FloatLayout floatLayout = null;
+
+    private BorderTopStyle borderTopStyle;
 
     private float yLine;
 
@@ -411,6 +415,14 @@ public class PdfDiv implements Element, Spaceable, IAccessibleElement {
         this.content = content;
     }
 
+    public BorderTopStyle getBorderTopStyle() {
+        return borderTopStyle;
+    }
+
+    public void setBorderTopStyle(BorderTopStyle borderTopStyle) {
+        this.borderTopStyle = borderTopStyle;
+    }
+
     public int layout(final PdfContentByte canvas, boolean useAscender, boolean simulate, final float llx, final float lly, final float urx, final float ury) throws DocumentException {
 
         float leftX = Math.min(llx, urx);
@@ -519,6 +531,10 @@ public class PdfDiv implements Element, Spaceable, IAccessibleElement {
             }
 
             floatLayout.setSimpleColumn(leftX, minY, rightX, yLine);
+            if (getBorderTopStyle() != null) {
+                floatLayout.compositeColumn.setIgnoreSpacingBefore(false);
+            }
+
             status = floatLayout.layout(canvas, simulate);
             yLine = floatLayout.getYLine();
             if (percentageWidth == null && contentWidth < floatLayout.getFilledWidth()) {

@@ -1,8 +1,8 @@
 /*
- * $Id: ArabicLigaturizer.java 5075 2012-02-27 16:36:18Z blowagie $
+ * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2014 iText Group NV
+ * Copyright (c) 1998-2015 iText Group NV
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -58,7 +58,12 @@ import java.util.HashMap;
  */
 public class ArabicLigaturizer implements LanguageProcessor {
     
-    private static HashMap<Character,char[]> maptable = new HashMap<Character, char[]>();
+    private static final HashMap<Character,char[]> maptable = new HashMap<Character, char[]>();
+    /**
+     * Some fonts do not implement ligaturized variations on Arabic characters
+     * e.g. Simplified Arabic has got code point 0xFEED but not 0xFEEE
+     */
+    private static final HashMap<Character, Character> reverseLigatureMapTable = new HashMap<Character, Character>();
     
     static boolean isVowel(char s) {
         return ((s >= 0x064B) && (s <= 0x0655)) || (s == 0x0670);
@@ -573,6 +578,10 @@ public class ArabicLigaturizer implements LanguageProcessor {
             }
         }
     }
+    
+    public static Character getReverseMapping(char c) {
+        return reverseLigatureMapTable.get(c);
+    }
 
     private static final char ALEF = 0x0627;
     private static final char ALEFHAMZA = 0x0623;
@@ -777,7 +786,19 @@ public class ArabicLigaturizer implements LanguageProcessor {
     
     static {
         for (char[] c : chartable) {
-            maptable.put(Character.valueOf(c[0]), c);
+            maptable.put(c[0], c);
+            switch (c.length) {
+                // only store the 2->1 and 4->3 mapping, if they are there
+                case 5:
+                    reverseLigatureMapTable.put(c[4], c[3]);
+                case 3:
+                    reverseLigatureMapTable.put(c[2], c[1]);
+                    break;
+            }   
+            if (c[0] == 0x0637 || c[0] == 0x0638) {
+                reverseLigatureMapTable.put(c[4], c[1]);
+                reverseLigatureMapTable.put(c[3], c[1]);
+            }
         }
     }
 }

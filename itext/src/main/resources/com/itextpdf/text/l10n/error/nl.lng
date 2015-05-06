@@ -345,6 +345,7 @@ page.reordering.requires.an.array.with.the.same.size.as.the.number.of.pages=Pagi
 page.reordering.requires.no.page.repetition.page.1.is.repeated=Pagina herschikking laat geen herhaling van pagina's toe. Pagina {1} werd herhaald.
 page.reordering.requires.pages.between.1.and.1.found.2=Pagina herschikking gaat voor pagina's tussen 1 en {1}. Jij vraagt naar pagina {2}.
 partial.form.flattening.is.not.supported.with.xfa.forms=Gedeeltelijke form flattening is niet ondersteund voor XFA formulieren.
+pdf.array.exceeds.length.set.by.PDFA1.standard=PDF array is groter dan toegelaten door de PDF/A-1 standaard: {1}. Maximumlengte is 8191
 pdf.array.is.out.of.bounds=PDF array buiten het grensbereik.
 pdf.dictionary.is.out.of.bounds=PDF dictionary buiten het grensbereik.
 pdf.header.not.found=PDF header niet gevonden.

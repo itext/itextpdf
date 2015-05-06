@@ -60,7 +60,18 @@ public class PdfCleanUpProcessorTest {
                                              {"simpleImmediate-tm.pdf", "simpleImmediate-tm.pdf", "cmp_simpleImmediate-tm.pdf", cleanUpLocations2},
                                              {"multiUseIndirect.pdf", "multiUseIndirect.pdf", "cmp_multiUseIndirect.pdf", cleanUpLocations3},
                                              {"multiUseImage.pdf", "multiUseImage.pdf", "cmp_multiUseImage.pdf", cleanUpLocations2},
-                                             {"smaskImage.pdf", "smaskImage.pdf", "cmp_smaskImage.pdf", cleanUpLocations2}});
+                                             {"smaskImage.pdf", "smaskImage.pdf", "cmp_smaskImage.pdf", cleanUpLocations2},
+                                             {"rotatedImg.pdf", "rotatedImg.pdf", "cmp_rotatedImg.pdf", cleanUpLocations2},
+                                             {"lineArtsCompletely.pdf", "lineArtsCompletely.pdf", "cmp_LineArtsCompletely.pdf", null},
+                                             {"lineArtsPartially.pdf", "lineArtsPartially.pdf", "cmp_lineArtsPartially.pdf", null},
+                                             {"dashedStyledClosedBezier.pdf", "dashedStyledClosedBezier.pdf", "cmp_dashedStyledClosedBezier.pdf", null},
+                                             {"styledLineArts.pdf", "styledLineArts.pdf", "cmp_styledLineArts.pdf", null},
+                                             {"dashedBezier.pdf", "dashedBezier.pdf", "cmp_dashedBezier.pdf", null},
+                                             {"closedBezier.pdf", "closedBezier.pdf", "cmp_closedBezier.pdf", null},
+                                             {"clippingNWRule.pdf", "clippingNWRule.pdf", "cmp_clippingNWRule.pdf", null},
+                                             {"dashedClosedRotatedTriangles.pdf", "dashedClosedRotatedTriangles.pdf", "cmp_dashedClosedRotatedTriangles.pdf", null},
+                                             {"miterTest.pdf", "miterTest.pdf", "cmp_miterTest.pdf", null},
+        });
     }
 
     @Test

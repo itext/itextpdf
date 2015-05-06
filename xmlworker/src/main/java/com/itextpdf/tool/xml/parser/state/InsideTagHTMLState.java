@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2014 iText Group NV
+ * Copyright (c) 1998-2015 iText Group NV
  * Authors: Balder Van Camp, Emiel Ackermann, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -101,30 +101,37 @@ public class InsideTagHTMLState implements State {
 		} else if (character == '&') {
 			this.parser.selectState().specialChar();
 		} else  {
-			String tag = this.parser.currentTag();
-			TagState state = this.parser.currentTagState();
-			if (noSanitize.contains(tag) && TagState.OPEN == state) {
-				this.parser.append(character);
+			if (character == '*' && this.parser.memory().lastChar() == '/') {
+				this.parser.selectState().starComment();
+				this.parser.memory().current().deleteCharAt(this.parser.memory().current().lastIndexOf("/"));
+				if (this.parser.bufferSize() > 0) {
+					this.parser.memory().setStoredString(this.parser.current());
+				}
+				this.parser.flush();
 			} else {
-				if (this.parser.memory().whitespaceTag().length() != 0) {
-					if (ignoreLastChars.contains(this.parser.memory().whitespaceTag().toLowerCase())) {
-						parser.memory().lastChar(' ');
+				String tag = this.parser.currentTag();
+				TagState state = this.parser.currentTagState();
+				if (noSanitize.contains(tag) && TagState.OPEN == state) {
+					this.parser.append(character);
+				} else {
+					if (this.parser.memory().whitespaceTag().length() != 0) {
+						if (ignoreLastChars.contains(this.parser.memory().whitespaceTag().toLowerCase())) {
+							parser.memory().lastChar(' ');
+						}
+						this.parser.memory().whitespaceTag("");
 					}
-					this.parser.memory().whitespaceTag("");
-				}
-				boolean whitespace = Character.isWhitespace(parser.memory().lastChar());
-				boolean noWhiteSpace = !Character.isWhitespace(character);
-				if (!whitespace || (whitespace && noWhiteSpace)) {
-					if (noWhiteSpace) {
-						this.parser.append(character);
-					} else {
-						this.parser.append(' ');
+					boolean whitespace = Character.isWhitespace(parser.memory().lastChar());
+					boolean noWhiteSpace = !Character.isWhitespace(character);
+					if (!whitespace || (whitespace && noWhiteSpace)) {
+						if (noWhiteSpace) {
+							this.parser.append(character);
+						} else {
+							this.parser.append(' ');
+						}
 					}
+					parser.memory().lastChar(character);
 				}
-				parser.memory().lastChar(character);
 			}
 		}
-
 	}
-
 }

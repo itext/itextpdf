@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2014 iText Group NV
+ * Copyright (c) 1998-2015 iText Group NV
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -44,13 +44,11 @@
  */
 package com.itextpdf.text.pdf;
 
+import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.qrcode.EncodeHintType;
 import com.itextpdf.text.pdf.qrcode.WriterException;
 import com.itextpdf.text.pdf.qrcode.ByteMatrix;
 import com.itextpdf.text.pdf.qrcode.QRCodeWriter;
-import com.itextpdf.text.BadElementException;
-import com.itextpdf.text.ExceptionConverter;
-import com.itextpdf.text.Image;
 import com.itextpdf.text.pdf.codec.CCITTG4Encoder;
 import java.util.Map;
 

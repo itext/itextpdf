@@ -1,8 +1,8 @@
 /*
- * $Id: Type1Font.java 5756 2013-04-12 12:39:00Z michaeldemey $
+ * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2014 iText Group NV
+ * Copyright (c) 1998-2015 iText Group NV
  * Authors: Bruno Lowagie, DB Systel, et al.
  *
  * This program is free software; you can redistribute it and/or modify
