@@ -141,15 +141,5 @@ public class BarcodeEANSUPP extends Barcode{
         return getBarcodeSize();
     }
 
-    // AWT related methods (remove this if you port to Android / GAE)
-    
-    /** Creates a <CODE>java.awt.Image</CODE>. This image only
-     * contains the bars without any text.
-     * @param foreground the color of the bars
-     * @param background the color of the background
-     * @return the image
-     */    
-    public java.awt.Image createAwtImage(java.awt.Color foreground, java.awt.Color background) {
-        throw new UnsupportedOperationException(MessageLocalization.getComposedMessage("the.two.barcodes.must.be.composed.externally"));
-    }    
+
 }
