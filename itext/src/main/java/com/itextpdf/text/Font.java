@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2014 iText Group NV
+ * Copyright (c) 1998-2015 iText Group NV
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -454,12 +454,12 @@ public class Font implements Comparable<Font> {
 	/**
 	 * Gets the leading that can be used with this font.
 	 *
-	 * @param linespacing
-	 *            a certain linespacing
+	 * @param multipliedLeading
+	 *            a certain multipliedLeading
 	 * @return the height of a line
 	 */
-	public float getCalculatedLeading(final float linespacing) {
-		return linespacing * getCalculatedSize();
+	public float getCalculatedLeading(final float multipliedLeading) {
+		return multipliedLeading * getCalculatedSize();
 	}
 
 	/**

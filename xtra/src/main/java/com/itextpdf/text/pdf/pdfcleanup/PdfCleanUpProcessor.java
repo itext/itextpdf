@@ -1,3 +1,47 @@
+/*
+ * $Id$
+ *
+ * This file is part of the iText (R) project.
+ * Copyright (c) 1998-2015 iText Group NV
+ * Authors: Bruno Lowagie, Paulo Soares, et al.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License version 3
+ * as published by the Free Software Foundation with the addition of the
+ * following permission added to Section 15 as permitted in Section 7(a):
+ * FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY
+ * ITEXT GROUP. ITEXT GROUP DISCLAIMS THE WARRANTY OF NON INFRINGEMENT
+ * OF THIRD PARTY RIGHTS
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program; if not, see http://www.gnu.org/licenses or write to
+ * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA, 02110-1301 USA, or download the license from the following URL:
+ * http://itextpdf.com/terms-of-use/
+ *
+ * The interactive user interfaces in modified source and object code versions
+ * of this program must display Appropriate Legal Notices, as required under
+ * Section 5 of the GNU Affero General Public License.
+ *
+ * In accordance with Section 7(b) of the GNU Affero General Public License,
+ * a covered work must retain the producer line in every PDF that is created
+ * or manipulated using iText.
+ *
+ * You can be released from the requirements of the license by purchasing
+ * a commercial license. Buying such a license is mandatory as soon as you
+ * develop commercial activities involving the iText software without
+ * disclosing the source code of your own applications.
+ * These activities include: offering paid services to customers as an ASP,
+ * serving PDFs on the fly in a web application, shipping iText with a closed
+ * source product.
+ *
+ * For more information, please contact iText Software Corp. at this
+ * address: sales@itextpdf.com
+ */
 package com.itextpdf.text.pdf.pdfcleanup;
 
 import com.itextpdf.text.*;
@@ -10,7 +54,28 @@ import java.io.IOException;
 import java.util.*;
 import java.util.List;
 
+/**
+ * Represents the main mechanism for cleaning a PDF document.
+ *
+ * @since 5.5.4
+ */
 public class PdfCleanUpProcessor {
+
+    /**
+     * When a document with line arts is being cleaned up, there are lot of
+     * calculations with floating point numbers. All of them are translated
+     * into fixed point numbers by multiplying by this coefficient. Vary it
+     * to adjust the preciseness of the calculations.
+     */
+    public static double floatMultiplier = Math.pow(10, 6);
+
+    public static boolean fillCleanedArea = true;
+
+    /**
+     * Used as the criterion of a good approximation of rounded line joins
+     * and line caps.
+     */
+    public static double arcTolerance = 0.0025;
 
     private static final String XOBJ_NAME_PREFIX = "Fm";
 
@@ -19,17 +84,25 @@ public class PdfCleanUpProcessor {
 
     private int currentXObjNum = 0;
 
-    private Map<Integer, List<PdfCleanUpLocation>> pdfCleanUpLocations; // key - page number
     private PdfStamper pdfStamper;
 
-    private Map<Integer, Set<String>> redactAnnotIndirRefs; // key - number of page containing redact annotations
-    private Map<Integer, List<Rectangle>> clippingRects; // stores list of rectangles for annotation identified by it's index in Annots array
+    // key - page number, value - list of locations related to the page
+    private Map<Integer, List<PdfCleanUpLocation>> pdfCleanUpLocations;
+
+    // key - number of page containing redact annotations, value - look at variable name
+    private Map<Integer, Set<String>> redactAnnotIndirRefs;
+
+    // stores list of rectangles for annotation identified by it's index in Annots array
+    private Map<Integer, List<Rectangle>> clippingRects;
 
     /**
-     * Create clean up processor.
+     * Creates a {@link com.itextpdf.text.pdf.pdfcleanup.PdfCleanUpProcessor} object based on the
+     * given {@link java.util.List} of {@link com.itextpdf.text.pdf.pdfcleanup.PdfCleanUpLocation}s
+     * representing regions to be erased from the document.
      *
      * @param pdfCleanUpLocations list of locations to be cleaned up {@see PdfCleanUpLocation}
-     * @param pdfStamper
+     * @param pdfStamper          A{@link com.itextpdf.text.pdf.PdfStamper} object representing the document which redaction
+     *                            applies to.
      */
     public PdfCleanUpProcessor(List<PdfCleanUpLocation> pdfCleanUpLocations, PdfStamper pdfStamper) {
         this.pdfCleanUpLocations = organizeLocationsByPage(pdfCleanUpLocations);
@@ -37,9 +110,11 @@ public class PdfCleanUpProcessor {
     }
 
     /**
-     * CleanUp locations are extracted from Redact annotations.
+     * Creates a {@link com.itextpdf.text.pdf.pdfcleanup.PdfCleanUpProcessor} object. Regions to be erased from
+     * the document are extracted from the redact annotations contained inside the given document.
      *
-     * @param pdfStamper
+     * @param pdfStamper A{@link com.itextpdf.text.pdf.PdfStamper} object representing the document which redaction
+     *                   applies to.
      */
     public PdfCleanUpProcessor(PdfStamper pdfStamper) {
         this.redactAnnotIndirRefs = new HashMap<Integer, Set<String>>();
@@ -48,6 +123,13 @@ public class PdfCleanUpProcessor {
         extractLocationsFromRedactAnnots();
     }
 
+    /**
+     * Cleans the document by erasing all the areas which are either provided or
+     * extracted from redaction annotations.
+     *
+     * @throws IOException
+     * @throws DocumentException
+     */
     public void cleanUp() throws IOException, DocumentException {
         for (Map.Entry<Integer, List<PdfCleanUpLocation>> entry : pdfCleanUpLocations.entrySet()) {
             cleanUpPage(entry.getKey(), entry.getValue());
@@ -69,8 +151,8 @@ public class PdfCleanUpProcessor {
 
         canvas.saveState();
 
-        List<PdfCleanUpRegionFilter> filters = createFilters(cleanUpLocations);
-        PdfCleanUpRenderListener pdfCleanUpRenderListener = new PdfCleanUpRenderListener(pdfStamper, filters);
+        PdfCleanUpRegionFilter filter = createFilter(cleanUpLocations);
+        PdfCleanUpRenderListener pdfCleanUpRenderListener = new PdfCleanUpRenderListener(pdfStamper, filter);
         pdfCleanUpRenderListener.registerNewContext(pdfReader.getPageResources(page), canvas);
 
         PdfContentStreamProcessor contentProcessor = new PdfContentStreamProcessor(pdfCleanUpRenderListener);
@@ -87,21 +169,22 @@ public class PdfCleanUpProcessor {
         }
     }
 
-    private List<PdfCleanUpRegionFilter> createFilters(List<PdfCleanUpLocation> cleanUpLocations) {
-        List<PdfCleanUpRegionFilter> filters = new ArrayList<PdfCleanUpRegionFilter>();
+    private PdfCleanUpRegionFilter createFilter(List<PdfCleanUpLocation> cleanUpLocations) {
+        List<Rectangle> regions = new ArrayList<Rectangle>(cleanUpLocations.size());
 
-        for (PdfCleanUpLocation cleanUpLocation : cleanUpLocations) {
-            Rectangle region = cleanUpLocation.getRegion();
-            filters.add(new PdfCleanUpRegionFilter(region));
+        for (PdfCleanUpLocation location : cleanUpLocations) {
+            regions.add(location.getRegion());
         }
 
-        return filters;
+        return new PdfCleanUpRegionFilter(regions);
     }
 
     private void colorCleanedLocations(PdfContentByte canvas, List<PdfCleanUpLocation> cleanUpLocations) {
-        for (PdfCleanUpLocation location : cleanUpLocations) {
-            if (location.getCleanUpColor() != null) {
-                addColoredRectangle(canvas, location);
+        if (fillCleanedArea) {
+            for (PdfCleanUpLocation location : cleanUpLocations) {
+                if (location.getCleanUpColor() != null) {
+                    addColoredRectangle(canvas, location);
+                }
             }
         }
     }
@@ -136,6 +219,9 @@ public class PdfCleanUpProcessor {
         return organizedLocations;
     }
 
+    /**
+     * Extracts locations from the redact annotations contained in the document.
+     */
     private void extractLocationsFromRedactAnnots() {
         this.pdfCleanUpLocations = new HashMap<Integer, List<PdfCleanUpLocation>>();
         PdfReader reader = pdfStamper.getReader();
@@ -146,6 +232,9 @@ public class PdfCleanUpProcessor {
         }
     }
 
+    /**
+     * Extracts locations from the redact annotations contained in the document and applied to the given page.
+     */
     private List<PdfCleanUpLocation> extractLocationsFromRedactAnnots(int page, PdfDictionary pageDict) {
         List<PdfCleanUpLocation> locations = new ArrayList<PdfCleanUpLocation>();
 
@@ -175,13 +264,18 @@ public class PdfCleanUpProcessor {
         redactAnnotIndirRefs.get(page).add(indRefStr);
     }
 
+    /**
+     * Extracts locations from the concrete annotation.
+     * Note: annotation can consist not only of one area specified by the RECT entry, but also of multiple areas specified
+     * by the QuadPoints entry in the annotation dictionary.
+     */
     private List<PdfCleanUpLocation> extractLocationsFromRedactAnnot(int page, int annotIndex, PdfDictionary annotDict) {
         List<PdfCleanUpLocation> locations = new ArrayList<PdfCleanUpLocation>();
         List<Rectangle> markedRectangles = new ArrayList<Rectangle>();
         PdfArray quadPoints = annotDict.getAsArray(PdfName.QUADPOINTS);
 
         if (quadPoints.size() != 0) {
-            markedRectangles.addAll( quadPointsToRectangles(quadPoints) );
+            markedRectangles.addAll( translateQuadPointsToRectangles(quadPoints) );
         } else {
             PdfArray annotRect = annotDict.getAsArray(PdfName.RECT);
             markedRectangles.add(new Rectangle(annotRect.getAsNumber(0).floatValue(),
@@ -211,7 +305,7 @@ public class PdfCleanUpProcessor {
         return locations;
     }
 
-    private List<Rectangle> quadPointsToRectangles(PdfArray quadPoints) {
+    private List<Rectangle> translateQuadPointsToRectangles(PdfArray quadPoints) {
         List<Rectangle> rectangles = new ArrayList<Rectangle>();
 
         for (int i = 0; i < quadPoints.size(); i += 8) {
@@ -224,6 +318,9 @@ public class PdfCleanUpProcessor {
         return rectangles;
     }
 
+    /**
+     * Deletes redact annotations from the page and substitutes them with either OverlayText or RO object if it's needed.
+     */
     private void deleteRedactAnnots(int pageNum) throws IOException, DocumentException {
         Set<String> indirRefs = redactAnnotIndirRefs.get(pageNum);
 
@@ -237,7 +334,7 @@ public class PdfCleanUpProcessor {
         PdfArray annotsArray = pageDict.getAsArray(PdfName.ANNOTS);
 
         // j is for access annotRect (i can be decreased, so we need to store additional index,
-        // indicating current position in array in case if we don't remove anything
+        // indicating current position in ANNOTS array in case if we don't remove anything
         for (int i = 0, j = 0; i < annotsArray.size(); ++i, ++j) {
             PdfIndirectReference annotIndRef = annotsArray.getAsIndirectObject(i);
             PdfDictionary annotDict = annotsArray.getAsDict(i);
@@ -246,7 +343,7 @@ public class PdfCleanUpProcessor {
                 PdfStream formXObj = annotDict.getAsStream(PdfName.RO);
                 PdfString overlayText = annotDict.getAsString(PdfName.OVERLAYTEXT);
 
-                if (formXObj != null) {
+                if (fillCleanedArea && formXObj != null) {
                     PdfArray rectArray = annotDict.getAsArray(PdfName.RECT);
                     Rectangle annotRect = new Rectangle(rectArray.getAsNumber(0).floatValue(),
                                                         rectArray.getAsNumber(1).floatValue(),
@@ -254,7 +351,7 @@ public class PdfCleanUpProcessor {
                                                         rectArray.getAsNumber(3).floatValue());
 
                     insertFormXObj(canvas, pageDict, formXObj, clippingRects.get(j), annotRect);
-                } else if (overlayText != null && overlayText.toUnicodeString().length() > 0) {
+                } else if (fillCleanedArea && overlayText != null && overlayText.toUnicodeString().length() > 0) {
                     drawOverlayText(canvas, clippingRects.get(j), overlayText,
                                     annotDict.getAsString(PdfName.DA),
                                     annotDict.getAsNumber(PdfName.Q),

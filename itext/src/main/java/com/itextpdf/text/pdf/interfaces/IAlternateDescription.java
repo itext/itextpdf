@@ -1,8 +1,8 @@
 /*
- * $Id: FontsResourceAnchor.java 4784 2011-03-15 08:33:00Z blowagie $
+ * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2014 iText Group NV
+ * Copyright (c) 1998-2015 iText Group NV
  * Authors: Bruno Lowagie, Alexander Chingarev, et al.
  *
  * This program is free software; you can redistribute it and/or modify

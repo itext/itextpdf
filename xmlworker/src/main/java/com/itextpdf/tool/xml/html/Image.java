@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2014 iText Group NV
+ * Copyright (c) 1998-2015 iText Group NV
  * Authors: Balder Van Camp, Emiel Ackermann, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -98,11 +98,7 @@ public class Image extends AbstractTagProcessor {
 				if (logger.isLogging(Level.TRACE)) {
 					logger.trace(String.format(LocaleMessages.getInstance().getMessage(LocaleMessages.HTML_IMG_USE), src));
 				}
-				try {
-					img = new ImageRetrieve(getHtmlPipelineContext(ctx).getImageProvider()).retrieveImage(src);
-				} catch (NoImageProviderException e) {
-					img = new ImageRetrieve().retrieveImage(src);
-				}
+				img = new ImageRetrieve(getHtmlPipelineContext(ctx).getImageProvider()).retrieveImage(src);
 			} catch (IOException e) {
 				if (logger.isLogging(Level.ERROR)) {
 					logger.error(String.format(LocaleMessages.getInstance().getMessage(LocaleMessages.HTML_IMG_RETRIEVE_FAIL), src), e);

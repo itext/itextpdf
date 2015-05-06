@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2014 iText Group NV
+ * Copyright (c) 1998-2015 iText Group NV
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -400,6 +400,7 @@ public class BidiLine {
             if (ck.isTab()) {
                 if (ck.isAttribute(Chunk.TABSETTINGS)) {
                     lastSplit = currentChar;
+                    float currentWidth = width;
                     if (tabStop != null) {
                         float tabStopPosition = tabStop.getPosition(tabPosition, originalWidth - width, tabStopAnchorPosition);
                         width = originalWidth - (tabStopPosition + (originalWidth - width - tabPosition));
@@ -416,7 +417,7 @@ public class BidiLine {
                         break;
                     }
                     ck.setTabStop(tabStop);
-                    if (tabStop.getAlignment() == TabStop.Alignment.LEFT) {
+                    if (!isRTL && tabStop.getAlignment() == TabStop.Alignment.LEFT) {
                         width = originalWidth - tabStop.getPosition();
                         tabStop = null;
                         tabPosition = Float.NaN;
@@ -480,7 +481,10 @@ public class BidiLine {
                 tabStopPosition += width;
                 width = 0;
             }
-            tabStop.setPosition(tabStopPosition);
+            if (!isRTL)
+                tabStop.setPosition(tabStopPosition);
+            else
+                tabStop.setPosition(originalWidth - width - tabPosition);
         }
 
         if (currentChar >= totalTextLength) {

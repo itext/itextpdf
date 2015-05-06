@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2014 iText Group NV
+ * Copyright (c) 1998-2015 iText Group NV
  * Authors: Balder Van Camp, Emiel Ackermann, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -117,6 +117,12 @@ public class HtmlPipeline extends AbstractPipeline<HtmlPipelineContext> {
 				} else {
 					for (Element elem : content) {
 						hcc.currentContent().add(elem);
+						if (elem.type() == Element.BODY ){
+							WritableElement writableElement = new WritableElement();
+							writableElement.add(elem);
+							po.add(writableElement);
+							hcc.currentContent().remove(elem);
+						}
 					}
 				}
 			}

@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2014 iText Group NV
+ * Copyright (c) 1998-2015 iText Group NV
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -346,6 +346,8 @@ public class ColumnText {
      */
     private boolean inheritGraphicState = false;
 
+    private boolean ignoreSpacingBefore = true;
+
     /**
      * Creates a <CODE>ColumnText</CODE>.
      *
@@ -440,6 +442,7 @@ public class ColumnText {
         filledWidth = org.filledWidth;
         adjustFirstLine = org.adjustFirstLine;
         inheritGraphicState = org.inheritGraphicState;
+        ignoreSpacingBefore = org.ignoreSpacingBefore;
     }
 
     private void addWaitingPhrase() {
@@ -953,6 +956,14 @@ public class ColumnText {
 
     public void setInheritGraphicState(boolean inheritGraphicState) {
         this.inheritGraphicState = inheritGraphicState;
+    }
+
+    public boolean isIgnoreSpacingBefore() {
+        return ignoreSpacingBefore;
+    }
+
+    public void setIgnoreSpacingBefore(boolean ignoreSpacingBefore) {
+        this.ignoreSpacingBefore = ignoreSpacingBefore;
     }
 
     /**
@@ -1568,14 +1579,12 @@ public class ColumnText {
                         k = -1;
                         continue;
                     }
-                    if (k == items.size() - 1) {
-                        if (!stack.isEmpty()) {
-                            Object objs[] = stack.pop();
-                            list = (com.itextpdf.text.List) objs[0];
-                            items = list.getItems();
-                            k = ((Integer) objs[1]).intValue();
-                            listIndentation = ((Float) objs[2]).floatValue();
-                        }
+                    while (k == items.size() - 1 && !stack.isEmpty()) {
+                        Object objs[] = stack.pop();
+                        list = (com.itextpdf.text.List) objs[0];
+                        items = list.getItems();
+                        k = ((Integer) objs[1]).intValue();
+                        listIndentation = ((Float) objs[2]).floatValue();
                     }
                 }
                 int status = 0;
@@ -1721,14 +1730,7 @@ public class ColumnText {
                 // do we need to skip the header?
                 boolean skipHeader = table.isSkipFirstHeader() && rowIdx <= realHeaderRows && (table.isComplete() || rowIdx != realHeaderRows);
 
-                if (!table.isComplete()) {
-                    if (table.getTotalHeight() - headerHeight > yTemp - minY) {
-                        table.setSkipFirstHeader(false);
-                        return NO_MORE_COLUMN;
-                    }
-                }
-
-                // if not, we wan't to be able to add more than just a header and a footer
+                // if not, we want to be able to add more than just a header and a footer
                 if (!skipHeader) {
                     yTemp -= headerHeight;
                     if (yTemp < minY || yTemp > maxY) {
@@ -1758,7 +1760,12 @@ public class ColumnText {
                 while (kTemp > rowIdx && kTemp < table.size() && table.getRow(kTemp).isMayNotBreak()) {
                     kTemp--;
                 }
-                if ((kTemp > rowIdx && kTemp < k) || (kTemp == 0 && table.getRow(0).isMayNotBreak() && table.isLoopCheck())) {
+
+                if ( kTemp < (table.size() - 1) && !table.getRow(kTemp).isMayNotBreak()) {
+                    kTemp++;
+                }
+
+                if ((kTemp > rowIdx && kTemp < k) || (kTemp == headerRows && table.getRow(headerRows).isMayNotBreak() && table.isLoopCheck())) {
                     yTemp = minY;
                     k = kTemp;
                     table.setLoopCheck(false);
@@ -1786,7 +1793,11 @@ public class ColumnText {
                             continue;
                         } // or drop the row
                         else {
-                            table.getRows().remove(k);
+                            // don't drop the row if the table is incomplete and if there's only one row (not counting the header rows)
+                            // if there's only one row and this check wasn't here the row would have been deleted and not added at all
+                            if ( !(!table.isComplete() && k == 1 ) ) {
+                                table.getRows().remove(k);
+                            }
                             return NO_MORE_COLUMN;
                         }
                     }
@@ -2015,6 +2026,7 @@ public class ColumnText {
 
                 FloatLayout fl = new FloatLayout(floatingElements, useAscender);
                 fl.setSimpleColumn(leftX, minY, rightX, yLine);
+                fl.compositeColumn.setIgnoreSpacingBefore(isIgnoreSpacingBefore());
                 int status = fl.layout(canvas, simulate);
 
                 //firstPass = false;

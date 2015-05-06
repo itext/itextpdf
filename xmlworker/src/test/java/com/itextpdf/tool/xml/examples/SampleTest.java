@@ -51,7 +51,7 @@ public class SampleTest extends ITextTest {
         else dir.mkdirs();
     }
 
-    @Test(timeout = 12000)
+    @Test(timeout = 120000)
     public void test() throws Exception {
         if (!this.getClass().getName().equals(SampleTest.class.getName())
                 && (getTestName().length() > 0)) {

@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2014 iText Group NV
+ * Copyright (c) 1998-2015 iText Group NV
  * Authors: Balder Van Camp, Emiel Ackermann, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -92,7 +92,7 @@ public class ParagraphCssApplier {
         }*/
 		final CssUtils utils = CssUtils.getInstance();
         float fontSize = FontSizeTranslator.getInstance().getFontSize(t);
-        if (fontSize < 0) fontSize = 0;
+        if (fontSize == Font.UNDEFINED) fontSize = 0;
         float lmb = 0;
         boolean hasLMB = false;
         Map<String, String> css = t.getCSS();
@@ -103,6 +103,7 @@ public class ParagraphCssApplier {
                 p.setSpacingBefore(p.getSpacingBefore() + utils.calculateMarginTop(value, fontSize, configuration));
             } else if (CSS.Property.PADDING_TOP.equalsIgnoreCase(key)) {
                 p.setSpacingBefore(p.getSpacingBefore() + utils.parseValueToPt(value, fontSize));
+                p.setPaddingTop(utils.parseValueToPt(value, fontSize));
             } else if (CSS.Property.MARGIN_BOTTOM.equalsIgnoreCase(key)) {
                 float after = utils.parseValueToPt(value, fontSize);
                 p.setSpacingAfter(p.getSpacingAfter() + after);

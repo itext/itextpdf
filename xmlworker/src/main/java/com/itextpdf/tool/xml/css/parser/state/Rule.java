@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2014 iText Group NV
+ * Copyright (c) 1998-2015 iText Group NV
  * Authors: Bruno Lowagie, Balder Van Camp, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -52,6 +52,8 @@ import com.itextpdf.tool.xml.css.parser.State;
 public class Rule implements State {
 
 	private final CssStateController controller;
+	private boolean isCss3AtRule;
+	private int openParenthesesCount = 0;
 
 	/**
 	 * @param cssStateController the controller
@@ -64,8 +66,17 @@ public class Rule implements State {
 	 * @see com.itextpdf.tool.xml.css.parser.State#process(char)
 	 */
 	public void process(final char c) {
-		if (';' == c) {
+		if ('}' == c && isCss3AtRule) {
+			--openParenthesesCount;
+			if (openParenthesesCount == 0) {
+				controller.stateUnknown();
+				isCss3AtRule = false;
+			}
+		} else if (';' == c && !isCss3AtRule) {
 			controller.stateUnknown();
+		} else if ('{' == c){
+			++openParenthesesCount;
+			isCss3AtRule = true;
 		}
 	}
 

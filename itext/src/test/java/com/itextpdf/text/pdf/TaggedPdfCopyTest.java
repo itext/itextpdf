@@ -1,5 +1,6 @@
 package com.itextpdf.text.pdf;
 
+import com.itextpdf.testutils.CompareTool;
 import com.itextpdf.text.*;
 import com.itextpdf.text.error_messages.MessageLocalization;
 
@@ -36,6 +37,9 @@ public class TaggedPdfCopyTest {
     public static final String SOURCE18 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/pdf/source18.pdf";
     public static final String SOURCE19 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/pdf/source19.pdf";
     public static final String SOURCE22 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/pdf/source22.pdf";
+    public static final String SOURCE24 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/pdf/source24.pdf";
+    public static final String SOURCE25 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/pdf/source25.pdf";
+    public static final String SOURCE25_1 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/pdf/source25_1.pdf";
     public static final String SOURCE32 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/pdf/source32.pdf";
     public static final String SOURCE42 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/pdf/source42.pdf";
     public static final String SOURCE51 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/pdf/source51.pdf";
@@ -56,7 +60,10 @@ public class TaggedPdfCopyTest {
     public static final String SOURCE_CF_15 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/pdf/sourceCf15.pdf";
     public static final String SOURCE_CF_16 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/pdf/sourceCf16.pdf";
 
+    public static final String CMP25 = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfCopyTest/pdf/cmp_out25.pdf";
+
     public static final String OUT = "./target/com/itextpdf/test/pdf/TaggedPdfCopyTest/out";
+    public static final String OUTPATH = "./target/com/itextpdf/test/pdf/TaggedPdfCopyTest/";
 
     public static final PdfDictionary CM31 = new PdfDictionary();
     public static final PdfDictionary sElem = new PdfDictionary();
@@ -89,7 +96,7 @@ public class TaggedPdfCopyTest {
         document.open();
     }
 
-    @Test
+    @Test(expected = BadPdfFormatException.class)
     public void classMapConflict() throws IOException, DocumentException {
         initializeDocument("-cmc");
         PdfReader reader1 = new PdfReader(SOURCE11);
@@ -98,18 +105,11 @@ public class TaggedPdfCopyTest {
         } catch (BadPdfFormatException e) {}
         reader1.close();
         PdfReader reader2 = new PdfReader(SOURCE12);
-        boolean exceptionThrown = false;
-        try {
-            copy.addPage(copy.getImportedPage(reader2, 76, true));
-        } catch (BadPdfFormatException bpfe) {
-            exceptionThrown = true;
-        }
+        copy.addPage(copy.getImportedPage(reader2, 76, true));
         reader2.close();
-        if (!exceptionThrown)
-            Assert.fail("BadPdfFormatException expected!");
     }
 
-    @Test
+    @Test(expected = BadPdfFormatException.class)
     public void roleMapConflict() throws IOException, DocumentException {
         initializeDocument("-rolemap");
 
@@ -120,15 +120,8 @@ public class TaggedPdfCopyTest {
         } catch (BadPdfFormatException e) {}
         reader1.close();
         PdfReader reader2 = new PdfReader(SOURCE22);
-        boolean exceptionThrown = false;
-        try {
-            copy.addPage(copy.getImportedPage(reader2, 76, true));
-        } catch (BadPdfFormatException bpfe) {
-            exceptionThrown = true;
-        }
+        copy.addPage(copy.getImportedPage(reader2, 76, true));
         reader2.close();
-        if (!exceptionThrown)
-            Assert.fail("BadPdfFormatException expected!");
     }
 
     @Test
@@ -152,7 +145,7 @@ public class TaggedPdfCopyTest {
         verifyIsDictionary(obj, NO_PARENT_TREE);
 
         PdfArray array = ((PdfDictionary)obj).getAsArray(PdfName.NUMS);
-        int[] nums = new int[] {44, 0, 65, 42, 0, 0, 0, 0, 0, 0, 0, 0, 0, 81};
+        int[] nums = new int[] {31, 0, 33, 40, 0, 0, 0, 0, 0, 0, 0, 0, 0, 81};
         for (int i = 0; i < n; ++i)
             verifyArraySize(PdfStructTreeController.getDirectObject(array.getPdfObject(i*2+1)), nums[i], "Nums of page "+(i+1), true);
 
@@ -244,7 +237,7 @@ public class TaggedPdfCopyTest {
         verifyIsDictionary(obj, NO_PARENT_TREE);
         PdfArray array = ((PdfDictionary)obj).getAsArray(PdfName.NUMS);
         verifyArraySize(array, 2, "Nums");
-        verifyArraySize(PdfStructTreeController.getDirectObject(array.getPdfObject(1)), 7, "Nums of page 1");
+        verifyArraySize(PdfStructTreeController.getDirectObject(array.getPdfObject(1)), 4, "Nums of page 1");
         reader.close();
         compareResults("2");
     }
@@ -266,7 +259,7 @@ public class TaggedPdfCopyTest {
         verifyIsDictionary(obj, NO_PARENT_TREE);
         PdfArray array = ((PdfDictionary)obj).getAsArray(PdfName.NUMS);
         verifyArraySize(array, n*2, "Nums");
-        int[] nums = new int[] {16, 87, 128, 74, 74, 74, 26};
+        int[] nums = new int[] {14, 19, 14, 12, 12, 12, 12};
         for (int i = 0; i < n; ++i)
             verifyArraySize(PdfStructTreeController.getDirectObject(array.getPdfObject(i*2+1)), nums[i], "Nums of page "+(i+1));
 
@@ -291,7 +284,7 @@ public class TaggedPdfCopyTest {
         verifyIsDictionary(obj, NO_PARENT_TREE);
         PdfArray array = ((PdfDictionary)obj).getAsArray(PdfName.NUMS);
         verifyArraySize(array, n*2, "Nums");
-        int[] nums = new int[] {26, 74, 74, 74, 128, 87, 16};
+        int[] nums = new int[] {12, 12, 12, 12, 14, 19, 14};
         for (int i = 0; i < n; ++i)
             verifyArraySize(PdfStructTreeController.getDirectObject(array.getPdfObject(i*2+1)), nums[i], "Nums of page "+(i+1));
 
@@ -317,7 +310,7 @@ public class TaggedPdfCopyTest {
         verifyIsDictionary(obj, NO_PARENT_TREE);
         PdfArray array = ((PdfDictionary)obj).getAsArray(PdfName.NUMS);
         verifyArraySize(array, n*2, "Nums");
-        int[] nums = new int[] {16, 128, 26};
+        int[] nums = new int[] {14, 14, 12};
         for (int i = 0; i < n; ++i)
             //nums[i] = ((PdfArray)PdfStructTreeController.getDirectObject(array.getPdfObject(i*2+1))).size();
             verifyArraySize(PdfStructTreeController.getDirectObject(array.getPdfObject(i*2+1)), nums[i], "Nums of page "+(i+1));
@@ -349,7 +342,7 @@ public class TaggedPdfCopyTest {
         verifyIsDictionary(obj, NO_PARENT_TREE);
         PdfArray array = ((PdfDictionary)obj).getAsArray(PdfName.NUMS);
         verifyArraySize(array, n*2, "Nums");
-        int[] nums = new int[] {5, 0, 33, 12, 0, 48, 35, 182, 0, 0, 17, 37};
+        int[] nums = new int[] {4, 0, 19, 10, 0, 26, 16, 92, 0, 0, 14, 19};
         for (int i = 0; i < n; ++i)
             verifyArraySize(PdfStructTreeController.getDirectObject(array.getPdfObject(i*2+1)), nums[i], "Nums of page "+(i+1), true);
 
@@ -392,7 +385,7 @@ public class TaggedPdfCopyTest {
         verifyIsDictionary(obj, NO_PARENT_TREE);
         PdfArray array = ((PdfDictionary)obj).getAsArray(PdfName.NUMS);
         verifyArraySize(array, n*2, "Nums");
-        int[] nums = new int[] {48, 48, 7, 7, 48, 7, 48, 7};
+        int[] nums = new int[] {9, 9, 4, 4, 9, 4, 9, 4};
         for (int i = 0; i < n; ++i)
             verifyArraySize(PdfStructTreeController.getDirectObject(array.getPdfObject(i*2+1)), nums[i], "Nums of page "+(i+1));
 
@@ -472,11 +465,10 @@ public class TaggedPdfCopyTest {
         verifyIsDictionary(obj, NO_PARENT_TREE);
         PdfArray array = ((PdfDictionary)obj).getAsArray(PdfName.NUMS);
         verifyArraySize(array, n*2, "Nums");
-        int[] nums = new int[] {7, 87, 128, 26, 135, 0, 0, 83, 7, 135, 0, 0, 0, 0, 0, 0, 83, 116, 26, 128, 74, 16, 12, 0, 0, 38, 54, 61, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 26};
+        int[] nums = new int[] { 7, 19, 14, 12, 135, 0, 0, 83, 7, 135, 0, 0, 0, 0, 0, 0, 83, 116, 26, 14, 12, 14, 12, 0, 0, 38, 52, 61, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 12};
         for (int i = 0; i < n; ++i)
 //            nums[i] = ((PdfArray)PdfStructTreeController.getDirectObject(array.getPdfObject(i*2+1))).size();
             verifyArraySize(PdfStructTreeController.getDirectObject(array.getPdfObject(i*2+1)), nums[i], "Nums of page "+(i+1), true);
-
         reader.close();
         compareResults("9");
     }
@@ -497,12 +489,12 @@ public class TaggedPdfCopyTest {
         verifyIsDictionary(obj, NO_PARENT_TREE);
         PdfArray array = ((PdfDictionary)obj).getAsArray(PdfName.NUMS);
         verifyArraySize(array, 2, "Nums");
-        verifyArraySize(PdfStructTreeController.getDirectObject(array.getPdfObject(1)), 7, "Nums of page 1");
+        verifyArraySize(PdfStructTreeController.getDirectObject(array.getPdfObject(1)), 4, "Nums of page 1");
         reader.close();
         compareResults("10");
     }
 
-    @Test
+    @Test(expected = BadPdfFormatException.class)
     public void copyTaggedPdf11() throws IOException, DocumentException, ParserConfigurationException, SAXException {
         //source51: invalid nums - references to PdfDictionary, all pages has the same "NumDictionary"
         // 58 0 obj
@@ -511,31 +503,11 @@ public class TaggedPdfCopyTest {
         //where 2 0 R is StructElement of Document
         initializeDocument("11");
         PdfReader reader = new PdfReader(SOURCE51);
-        boolean exceptionThrown = false;
-        try {
-            copy.addPage(copy.getImportedPage(reader, 2, true));
-        } catch (BadPdfFormatException e) {
-            exceptionThrown = true;
-        }
-        //document.close();
+        copy.addPage(copy.getImportedPage(reader, 2, true));
         reader.close();
-
-        if (!exceptionThrown)
-            Assert.fail("BadPdfFormatException expected!");
-
-//        reader = new PdfReader(output);
-//        PdfDictionary structTreeRoot = verifyIsDictionary(reader.getCatalog().getDirectObject(PdfName.STRUCTTREEROOT), NO_STRUCT_TREE_ROOT);
-//        verifyArraySize(structTreeRoot.get(PdfName.K), 1, "Invalid count of kids in StructTreeRoot");
-//        PdfObject obj = PdfStructTreeController.getDirectObject(structTreeRoot.get(PdfName.PARENTTREE));
-//        verifyIsDictionary(obj, NO_PARENT_TREE);
-//        PdfArray array = ((PdfDictionary)obj).getAsArray(PdfName.NUMS);
-//        verifyArraySize(array, 2, "Nums");
-//        verifyArraySize(PdfStructTreeController.getDirectObject(array.getPdfObject(1)), 7, "Nums of page 1");
-//        reader.close();
-//        compareResults("11");
     }
 
-    @Test
+    @Test(expected = BadPdfFormatException.class)
     public void copyTaggedPdf12() throws IOException, DocumentException, ParserConfigurationException, SAXException {
         //source52: Nums array is empty:
         // 58 0 obj
@@ -543,57 +515,17 @@ public class TaggedPdfCopyTest {
         // endobj
         initializeDocument("12");
         PdfReader reader = new PdfReader(SOURCE52);
-        boolean exceptionThrown = false;
-        try {
-            copy.addPage(copy.getImportedPage(reader, 2, true));
-        } catch (BadPdfFormatException e) {
-            exceptionThrown = true;
-        }
-        //document.close();
+        copy.addPage(copy.getImportedPage(reader, 2, true));
         reader.close();
-
-        if (!exceptionThrown)
-            Assert.fail("BadPdfFormatException expected!");
-
-//        reader = new PdfReader(output);
-//        PdfDictionary structTreeRoot = verifyIsDictionary(reader.getCatalog().getDirectObject(PdfName.STRUCTTREEROOT), NO_STRUCT_TREE_ROOT);
-//        verifyArraySize(structTreeRoot.get(PdfName.K), 1, "Invalid count of kids in StructTreeRoot");
-//        PdfObject obj = PdfStructTreeController.getDirectObject(structTreeRoot.get(PdfName.PARENTTREE));
-//        verifyIsDictionary(obj, NO_PARENT_TREE);
-//        PdfArray array = ((PdfDictionary)obj).getAsArray(PdfName.NUMS);
-//        verifyArraySize(array, 2, "Nums");
-//        verifyArraySize(PdfStructTreeController.getDirectObject(array.getPdfObject(1)), 7, "Nums of page 1");
-//        reader.close();
-//        compareResults("12");
     }
 
-    @Test
+    @Test(expected = BadPdfFormatException.class)
     public void copyTaggedPdf13() throws IOException, DocumentException, ParserConfigurationException, SAXException {
         //source53: StructTreeRoot doesn't have kids and Nums is empty
         initializeDocument("13");
         PdfReader reader = new PdfReader(SOURCE53);
-        boolean exceptionThrown = false;
-        try {
-            copy.addPage(copy.getImportedPage(reader, 2, true));
-        } catch (BadPdfFormatException e) {
-            exceptionThrown = true;
-        }
-        //document.close();
+        copy.addPage(copy.getImportedPage(reader, 2, true));
         reader.close();
-
-        if (!exceptionThrown)
-            Assert.fail("BadPdfFormatException expected!");
-
-//        reader = new PdfReader(output);
-//        PdfDictionary structTreeRoot = verifyIsDictionary(reader.getCatalog().getDirectObject(PdfName.STRUCTTREEROOT), NO_STRUCT_TREE_ROOT);
-//        verifyArraySize(structTreeRoot.get(PdfName.K), 1, "Invalid count of kids in StructTreeRoot");
-//        PdfObject obj = PdfStructTreeController.getDirectObject(structTreeRoot.get(PdfName.PARENTTREE));
-//        verifyIsDictionary(obj, NO_PARENT_TREE);
-//        PdfArray array = ((PdfDictionary)obj).getAsArray(PdfName.NUMS);
-//        verifyArraySize(array, 2, "Nums");
-//        verifyArraySize(PdfStructTreeController.getDirectObject(array.getPdfObject(1)), 7, "Nums of page 1");
-//        reader.close();
-//        compareResults("13");
     }
 
     @Test
@@ -612,7 +544,7 @@ public class TaggedPdfCopyTest {
         verifyIsDictionary(obj, NO_PARENT_TREE);
         PdfArray array = ((PdfDictionary)obj).getAsArray(PdfName.NUMS);
         verifyArraySize(array, 8, "Nums");
-        verifyArraySize(PdfStructTreeController.getDirectObject(array.getPdfObject(1)), 20, "Nums of page 1");
+        verifyArraySize(PdfStructTreeController.getDirectObject(array.getPdfObject(1)), 15, "Nums of page 1");
         reader.close();
     }
 
@@ -807,6 +739,41 @@ public class TaggedPdfCopyTest {
         PdfDictionary structTreeRoot = verifyIsDictionary(reader.getCatalog().getDirectObject(PdfName.STRUCTTREEROOT), NO_STRUCT_TREE_ROOT);
         PdfDictionary idTree = verifyIsDictionary(PdfStructTreeController.getDirectObject(structTreeRoot.get(PdfName.IDTREE)), NO_ID_TREE);
         Assert.assertTrue(EMPTY_ID_TREE, idTree.hashMap.size() > 0);
+    }
+
+    @Test(expected = BadPdfFormatException.class)
+    public void copyTaggedPdf24() throws IOException, DocumentException {
+        initializeDocument("24");
+        PdfReader reader1 = new PdfReader(SOURCE24);
+        copy.addPage(copy.getImportedPage(reader1, 17, true));
+        document.close();
+        reader1.close();
+    }
+
+    @Test(timeout = 60000)
+    public void copyTaggedPdf25() throws IOException, DocumentException, InterruptedException {
+        initializeDocument("25");
+        PdfReader reader = new PdfReader(SOURCE25);
+        PdfReader reader1 = new PdfReader(SOURCE25_1);
+
+        copy.addDocument(reader);
+        copy.freeReader(reader);
+
+        copy.addDocument(reader1);
+        copy.freeReader(reader1);
+
+        copy.getStructureTreeRoot();
+        copy.close();
+
+        document.close();
+        reader.close();
+        reader1.close();
+
+        CompareTool compareTool = new CompareTool();
+        String errorMessage = compareTool.compareByContent(output, CMP25, OUTPATH, "diff_");
+        if (errorMessage != null) {
+            Assert.fail(errorMessage);
+        }
     }
 
     @Test

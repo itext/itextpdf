@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2014 iText Group NV
+ * Copyright (c) 1998-2015 iText Group NV
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -572,4 +572,17 @@ public class PdfArray extends PdfObject implements Iterable<PdfObject> {
         }
         return rslt;
 	}
+
+    /**
+     *
+     * @return this PdfArray's values as a double[]
+     * @since 5.5.6
+     */
+    public double[] asDoubleArray() {
+        double[] rslt = new double[size()];
+        for (int k = 0; k < rslt.length; ++k) {
+            rslt[k] = getAsNumber(k).doubleValue();
+        }
+        return rslt;
+    }
 }

@@ -1,4 +1,5 @@
 /*
+ * Copyright The Apache Software Foundation.
  * This class is based on org.apache.IntHashMap.commons.lang
  * http://jakarta.apache.org/commons/lang/xref/org/apache/commons/lang/IntHashMap.html
  * It was adapted by Bruno Lowagie for use in iText,
@@ -26,7 +27,6 @@
  * Note: originally released under the GNU LGPL v2.1,
  * but rereleased by the original author under the ASF license (above).
  */
-
 package com.itextpdf.text.pdf;
 
 // import java.util.ArrayList;

@@ -1,8 +1,8 @@
 /*
- * $Id: Type1Font.java 5756 2013-04-12 12:39:00Z michaeldemey $
+ * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2014 iText Group NV
+ * Copyright (c) 1998-2015 iText Group NV
  * Authors: Bruno Lowagie, Eugene Markovskyi, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -45,6 +45,8 @@
 package com.itextpdf.text.pdf;
 
 import com.itextpdf.text.error_messages.MessageLocalization;
+import com.itextpdf.text.log.LoggerFactory;
+import com.itextpdf.text.log.Logger;
 
 import java.io.IOException;
 import java.util.Map;
@@ -167,6 +169,7 @@ public class PdfStructTreeController {
         int cur = pages.size() / 4;
         int begin = 0;
         int curNumber;
+
         while (true) {
             curNumber = pages.getAsNumber((begin + cur) * 2).intValue();
             if (curNumber == arrayNumber) {
@@ -198,10 +201,11 @@ public class PdfStructTreeController {
                 return returnType.FOUND;
             }
             if (curNumber < arrayNumber) {
-                begin += cur;
-                cur /= 2;
                 if (cur == 0)
-                    cur = 1;
+                    return returnType.NOTFOUND;
+                begin += cur;
+                if (cur != 1)
+                    cur /= 2;
                 if (cur + begin == pages.size())
                     return returnType.NOTFOUND;
                 continue;

@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2014 iText Group NV
+ * Copyright (c) 1998-2015 iText Group NV
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -62,6 +62,19 @@ import com.itextpdf.text.pdf.draw.VerticalPositionMark;
  */
 public abstract class WritableDirectElement implements Element, WriterOperation {
 
+	public static final int DIRECT_ELEMENT_TYPE_UNKNOWN = 0;
+	public static final int DIRECT_ELEMENT_TYPE_HEADER = 1;
+
+	protected int directElementType = DIRECT_ELEMENT_TYPE_UNKNOWN;
+
+	public WritableDirectElement() {
+
+	}
+
+	public WritableDirectElement(int directElementType) {
+		this.directElementType = directElementType;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 *
@@ -105,4 +118,7 @@ public abstract class WritableDirectElement implements Element, WriterOperation 
 		return new ArrayList<Chunk>(0);
 	}
 
+	public int getDirectElementType() {
+		return directElementType;
+	}
 }

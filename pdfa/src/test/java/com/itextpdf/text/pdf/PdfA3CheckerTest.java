@@ -179,6 +179,11 @@ public class PdfA3CheckerTest {
         stamper.close();
         reader.close();
     }
+    
+    public void pdfObjectCheckTest() throws DocumentException, IOException {
+        PdfA1CheckerTest.pdfObjectCheck(outputDir + "pdfObjectCheckTest.pdf", PdfAConformanceLevel.PDF_A_3B, false);
+    }
+
 
     @Test
     public void barcodesTest1() throws DocumentException, IOException {

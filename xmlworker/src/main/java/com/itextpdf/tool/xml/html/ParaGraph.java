@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2014 iText Group NV
+ * Copyright (c) 1998-2015 iText Group NV
  * Authors: Balder Van Camp, Emiel Ackermann, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -145,10 +145,10 @@ public class ParaGraph extends AbstractTagProcessor {
     protected void processParagraphItems(final WorkerContext ctx, final Tag tag, final List<Element> paragraphItems, List<Element> l) {
         Paragraph p = new Paragraph();
         p.setMultipliedLeading(1.2f);
-        Element lastElement = paragraphItems.get(paragraphItems.size() - 1);
-        if (lastElement instanceof Chunk && Chunk.NEWLINE.getContent().equals(((Chunk) lastElement).getContent())) {
-            paragraphItems.remove(paragraphItems.size() - 1);
-        }
+//        Element lastElement = paragraphItems.get(paragraphItems.size() - 1);
+//        if (lastElement instanceof Chunk && Chunk.NEWLINE.getContent().equals(((Chunk) lastElement).getContent())) {
+//            paragraphItems.remove(paragraphItems.size() - 1);
+//        }
         Map<String, String> css = tag.getCSS();
         if (null != css.get(CSS.Property.TAB_INTERVAL)) {
             addTabIntervalContent(ctx, tag, paragraphItems, p, css.get(CSS.Property.TAB_INTERVAL));
@@ -244,30 +244,33 @@ public class ParaGraph extends AbstractTagProcessor {
 	 * @param value the value of style "tab-stops".
 	 */
 	private void addTabStopsContent(final List<Element> currentContent, final Paragraph p, final String value) {
-		List<Chunk> tabs = new ArrayList<Chunk>();
-		String[] alignAndWidth = value.split(" ");
-		float tabWidth = 0;
-		for(int i = 0 , j = 1; j < alignAndWidth.length ; i+=2, j+=2) {
-			tabWidth += CssUtils.getInstance().parsePxInCmMmPcToPt(alignAndWidth[j]);
-			TabbedChunk tab = new TabbedChunk(new VerticalPositionMark(), tabWidth, true, alignAndWidth[i]);
-			tabs.add(tab);
-		}
-		int tabsPerRow = tabs.size();
-		int currentTab = 0;
-		for(Element e: currentContent) {
-			if (e instanceof TabbedChunk) {
-				if(currentTab == tabsPerRow) {
-					currentTab = 0;
-				}
-				if(((TabbedChunk) e).getTabCount() != 0 /* == 1*/) {
-					p.add(new Chunk(tabs.get(currentTab)));
-					p.add(new Chunk((TabbedChunk) e));
-					++currentTab;
+            List<Chunk> tabs = new ArrayList<Chunk>();
+            String[] alignAndWidth = value.split(" ");
+            float tabWidth = 0;
+            for(int i = 0 , j = 1; j < alignAndWidth.length ; i+=2, j+=2) {
+                tabWidth += CssUtils.getInstance().parsePxInCmMmPcToPt(alignAndWidth[j]);
+                TabbedChunk tab = new TabbedChunk(new VerticalPositionMark(), tabWidth, true, alignAndWidth[i]);
+                tabs.add(tab);
+            }
+            int tabsPerRow = tabs.size();
+            int currentTab = 0;
+            for(Element e: currentContent) {
+                if (e instanceof TabbedChunk) {
+                        if(currentTab == tabsPerRow) {
+                                currentTab = 0;
+                        }
+                        if(((TabbedChunk) e).getTabCount() != 0 /* == 1*/) {
+                                p.add(new Chunk(tabs.get(currentTab)));
+                                p.add(new Chunk((TabbedChunk) e));
+                                ++currentTab;
 //				} else { // wat doet een tabCount van groter dan 1? sla een tab over of count * tabWidth?
 //					int widthMultiplier = ((TabbedChunk) e).getTabCount();
-				}
-			}
-		}
+                        }
+                }
+                else {
+                    p.add(e);
+                }
+            }
 	}
 
 	/*

@@ -1,8 +1,8 @@
 /*
- * $Id:  $
+ * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2014 iText Group NV
+ * Copyright (c) 1998-2015 iText Group NV
  * Authors: Bruno Lowagie, Paulo Soares, Kevin Day, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -346,6 +346,43 @@ public class PdfCopyTest {
         copier.close();
         CompareTool compareTool = new CompareTool();
         String errorMessage = compareTool.compareByContent("./target/com/itextpdf/test/pdf/PdfCopyTest/copyFields3.pdf", "./src/test/resources/com/itextpdf/text/pdf/PdfCopyTest/cmp_copyFields3.pdf", "./target/com/itextpdf/test/pdf/PdfCopyTest/", "diff");
+        if (errorMessage != null) {
+            Assert.fail(errorMessage);
+        }
+    }
+
+    @Test(timeout = 60000)
+    public void largeFilePerformanceTest() throws IOException, DocumentException, InterruptedException {
+        String target = "./target/com/itextpdf/test/pdf/PdfCopyTest/";
+        String resources = "./src/test/resources/com/itextpdf/text/pdf/PdfCopyTest/";
+        String output = "copyLargeFile.pdf";
+        String cmp = "cmp_copyLargeFile.pdf";
+
+        new File(target).mkdirs();
+
+        long timeStart = System.nanoTime();
+
+        PdfReader firstSourceReader = new PdfReader( resources +"frontpage.pdf");
+        PdfReader secondSourceReader = new PdfReader(resources + "large_pdf.pdf");
+
+        Document document = new Document();
+
+        PdfCopy copy = new PdfCopy(document, new FileOutputStream(target + output));
+        copy.setMergeFields();
+
+        document.open();
+        copy.addDocument(firstSourceReader);
+        copy.addDocument(secondSourceReader);
+
+        copy.close();
+        document.close();
+
+        System.out.println(((System.nanoTime() - timeStart)/1000/1000));
+
+
+        CompareTool cmpTool = new CompareTool();
+        String errorMessage = cmpTool.compareByContent(target + output, resources + cmp, target, "diff");
+
         if (errorMessage != null) {
             Assert.fail(errorMessage);
         }

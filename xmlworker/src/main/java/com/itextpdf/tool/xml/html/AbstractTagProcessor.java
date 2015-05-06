@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2014 iText Group NV
+ * Copyright (c) 1998-2015 iText Group NV
  * Authors: Balder Van Camp, Emiel Ackermann, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -34,10 +34,8 @@
  */
 package com.itextpdf.tool.xml.html;
 
-import com.itextpdf.text.Chunk;
-import com.itextpdf.text.Element;
-import com.itextpdf.text.Font;
-import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.*;
+import com.itextpdf.text.api.Indentable;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.text.pdf.draw.LineSeparator;
 import com.itextpdf.tool.xml.NoCustomContextException;
@@ -279,6 +277,7 @@ public abstract class AbstractTagProcessor implements TagProcessor, CssAppliersA
 	public List<Element> currentContentToParagraph(final List<Element> currentContent,
 			final boolean addNewLines, final boolean applyCSS, final Tag tag, final WorkerContext ctx) {
 		try {
+            int direction = getRunDirection(tag);
 			List<Element> list = new ArrayList<Element>();
 			if (currentContent.size() > 0) {
 				if (addNewLines) {
@@ -300,6 +299,9 @@ public abstract class AbstractTagProcessor implements TagProcessor, CssAppliersA
                         if (applyCSS) {
                             p = (Paragraph) getCssAppliers().apply(p, tag, getHtmlPipelineContext(ctx));
                         }
+                        if (direction == PdfWriter.RUN_DIRECTION_RTL) {
+                            doRtlIndentCorrections(p);
+                        }
                         list.add(p);
                     }
 				} else {
@@ -309,6 +311,9 @@ public abstract class AbstractTagProcessor implements TagProcessor, CssAppliersA
 						p.add(e);
 					}
 					p = (NoNewLineParagraph) getCssAppliers().apply(p, tag, getHtmlPipelineContext(ctx));
+                    if (direction == PdfWriter.RUN_DIRECTION_RTL) {
+                        doRtlIndentCorrections(p);
+                    }
 					list.add(p);
 				}
 			}
@@ -351,5 +356,11 @@ public abstract class AbstractTagProcessor implements TagProcessor, CssAppliersA
 
     protected Paragraph createParagraph() {
         return new Paragraph(Float.NaN);
+    }
+
+    protected void doRtlIndentCorrections(Indentable p) {
+        float right = p.getIndentationRight();
+        p.setIndentationRight(p.getIndentationLeft());
+        p.setIndentationLeft(right);
     }
 }

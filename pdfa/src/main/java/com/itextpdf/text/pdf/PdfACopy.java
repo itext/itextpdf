@@ -1,8 +1,8 @@
 /*
- * $Id: PdfACopy.java 6134 2013-12-23 13:15:14Z pavel-alay $
+ * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2014 iText Group NV
+ * Copyright (c) 1998-2015 iText Group NV
  * Authors: Bruno Lowagie, Pavel Alay, et al.
  *
  * This program is free software; you can redistribute it and/or modify

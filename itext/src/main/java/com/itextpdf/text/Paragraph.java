@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2014 iText Group NV
+ * Copyright (c) 1998-2015 iText Group NV
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -103,6 +103,8 @@ public class Paragraph extends Phrase implements Indentable, Spaceable, IAccessi
 
     /** Does the paragraph has to be kept together on 1 page. */
     protected boolean keeptogether = false;
+
+    protected float paddingTop;
 
     protected PdfName role = PdfName.P;
     protected HashMap<PdfName, PdfObject> accessibleAttributes = null;
@@ -533,5 +535,13 @@ public class Paragraph extends Phrase implements Indentable, Spaceable, IAccessi
 
     public boolean isInline() {
         return false;
+    }
+
+    public float getPaddingTop() {
+        return paddingTop;
+    }
+
+    public void setPaddingTop(float paddingTop) {
+        this.paddingTop = paddingTop;
     }
 }

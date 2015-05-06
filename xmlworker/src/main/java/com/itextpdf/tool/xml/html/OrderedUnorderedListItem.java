@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2014 iText Group NV
+ * Copyright (c) 1998-2015 iText Group NV
  * Authors: Balder Van Camp, Emiel Ackermann, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -47,9 +47,7 @@ package com.itextpdf.tool.xml.html;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.itextpdf.text.Chunk;
-import com.itextpdf.text.Element;
-import com.itextpdf.text.ListItem;
+import com.itextpdf.text.*;
 import com.itextpdf.tool.xml.NoCustomContextException;
 import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.WorkerContext;
@@ -76,9 +74,20 @@ public class OrderedUnorderedListItem extends AbstractTagProcessor {
 	public List<Element> end(final WorkerContext ctx, final Tag tag, final List<Element> currentContent) {
 		List<Element> l = new ArrayList<Element>(1);
 		ListItem li = new ListItem();
+		float maxSize = -1;
 		for (Element e : currentContent) {
-				li.add(e);
+			li.add(e);
+			//finding max leading among list item elements
+			for (Chunk chunk : e.getChunks()) {
+				// here we use 4f/3 multiplied leading value to simulate leading which is used with default font size
+				float currFontSize = chunk.getFont().getCalculatedLeading(4f/3);
+				if (maxSize < currFontSize) {
+					maxSize = currFontSize;
+				}
+			}
 		}
+		if (li.getLeading() < maxSize)
+			li.setLeading(maxSize);
         if (li.trim()) {
 		    l.add(li); // css applying is handled in the OrderedUnorderedList Class.
         }

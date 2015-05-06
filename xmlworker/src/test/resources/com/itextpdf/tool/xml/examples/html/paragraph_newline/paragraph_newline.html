@@ -1,0 +1,29 @@
+<p>If a paragraph is empty, &lt;br/&gt; in the end should not be stripped:</p>
+<p>test</p>
+<p><br/></p>
+<p>test</p>
+
+
+<br/><br/><br/>
+
+<p>If a paragraph is not empty, &lt;br/&gt; in the end should be stripped:</p>
+<p>test</p>
+<p>non-empty<br/></p>
+<p>test</p>
+
+
+<br/><br/><br/>
+
+<p>If a paragraph is not empty, only the last &lt;br/&gt; in the end should be stripped:</p>
+<p>test</p>
+<p>non-empty<br/><br/></p>
+<p>test</p>
+
+
+<br/><br/><br/>
+
+<p>Nothing is stripped in the start of a paragraph:</p>
+<p>test</p>
+<p><br/>non-empty</p>
+<p><br/></p>
+<p>test</p>

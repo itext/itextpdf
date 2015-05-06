@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2014 iText Group NV
+ * Copyright (c) 1998-2015 iText Group NV
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -354,15 +354,15 @@ public class MetaDo {
                     float l = state.transformX(in.readShort());
                     float cx = (r + l) / 2;
                     float cy = (t + b) / 2;
-                    float arc1 = getArc(cx, cy, xstart, ystart);
-                    float arc2 = getArc(cx, cy, xend, yend);
+                    double arc1 = getArc(cx, cy, xstart, ystart);
+                    double arc2 = getArc(cx, cy, xend, yend);
                     arc2 -= arc1;
                     if (arc2 <= 0)
                         arc2 += 360;
-                    ArrayList<float[]> ar = PdfContentByte.bezierArc(l, b, r, t, arc1, arc2);
+                    ArrayList<double[]> ar = PdfContentByte.bezierArc(l, b, r, t, arc1, arc2);
                     if (ar.isEmpty())
                         break;
-                    float pt[] = ar.get(0);
+                    double pt[] = ar.get(0);
                     cb.moveTo(cx, cy);
                     cb.lineTo(pt[0], pt[1]);
                     for (int k = 0; k < ar.size(); ++k) {
@@ -385,17 +385,17 @@ public class MetaDo {
                     float r = state.transformX(in.readShort());
                     float t = state.transformY(in.readShort());
                     float l = state.transformX(in.readShort());
-                    float cx = (r + l) / 2;
-                    float cy = (t + b) / 2;
-                    float arc1 = getArc(cx, cy, xstart, ystart);
-                    float arc2 = getArc(cx, cy, xend, yend);
+                    double cx = (r + l) / 2;
+                    double cy = (t + b) / 2;
+                    double arc1 = getArc(cx, cy, xstart, ystart);
+                    double arc2 = getArc(cx, cy, xend, yend);
                     arc2 -= arc1;
                     if (arc2 <= 0)
                         arc2 += 360;
-                    ArrayList<float[]> ar = PdfContentByte.bezierArc(l, b, r, t, arc1, arc2);
+                    ArrayList<double[]> ar = PdfContentByte.bezierArc(l, b, r, t, arc1, arc2);
                     if (ar.isEmpty())
                         break;
-                    float pt[] = ar.get(0);
+                    double pt[] = ar.get(0);
                     cx = pt[0];
                     cy = pt[1];
                     cb.moveTo(cx, cy);
@@ -667,6 +667,10 @@ public class MetaDo {
     }
 
     static float getArc(float xCenter, float yCenter, float xDot, float yDot) {
+        return (float)getArc((double)xCenter, (double)yCenter, (double)xDot, (double)yDot);
+    }
+
+    static double getArc(double xCenter, double yCenter, double xDot, double yDot) {
         double s = Math.atan2(yDot - yCenter, xDot - xCenter);
         if (s < 0)
             s += Math.PI * 2;

@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2014 iText Group NV
+ * Copyright (c) 1998-2015 iText Group NV
  * Authors: Balder Van Camp, Emiel Ackermann, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -48,6 +48,7 @@ import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.ListItem;
 import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.pdf.PdfName;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.text.pdf.draw.LineSeparator;
 import com.itextpdf.tool.xml.NoCustomContextException;
@@ -56,6 +57,7 @@ import com.itextpdf.tool.xml.WorkerContext;
 import com.itextpdf.tool.xml.exceptions.LocaleMessages;
 import com.itextpdf.tool.xml.exceptions.RuntimeWorkerException;
 import com.itextpdf.tool.xml.html.AbstractTagProcessor;
+import com.itextpdf.tool.xml.html.HTML;
 import com.itextpdf.tool.xml.html.pdfelement.HtmlCell;
 import com.itextpdf.tool.xml.html.pdfelement.NoNewLineParagraph;
 import com.itextpdf.tool.xml.pipeline.html.HtmlPipelineContext;
@@ -97,6 +99,10 @@ public class TableData extends AbstractTagProcessor {
                 if (direction != PdfWriter.RUN_DIRECTION_DEFAULT) {
                     cell.setRunDirection(direction);
                 }
+
+        if (HTML.Tag.TH.equalsIgnoreCase(tag.getName())) {
+            cell.setRole(PdfName.TH);
+        }
         try {
             HtmlPipelineContext htmlPipelineContext = getHtmlPipelineContext(ctx);
             cell = (HtmlCell) getCssAppliers().apply(cell, tag, htmlPipelineContext);
@@ -174,7 +180,7 @@ public class TableData extends AbstractTagProcessor {
 		return true;
 	}
 
-    private void processChunkItems(List<Element> chunks, HtmlCell cell) {
+    protected void processChunkItems(List<Element> chunks, HtmlCell cell) {
         Paragraph p = new Paragraph();
         p.setMultipliedLeading(1.2f);
         p.addAll(chunks);
@@ -185,7 +191,7 @@ public class TableData extends AbstractTagProcessor {
         chunks.clear();
     }
 
-    private void processListItems(final WorkerContext ctx, final Tag tag, List<ListItem> listItems, HtmlCell cell) {
+    protected void processListItems(final WorkerContext ctx, final Tag tag, List<ListItem> listItems, HtmlCell cell) {
         try {
             com.itextpdf.text.List list = new com.itextpdf.text.List();
             list.setAutoindent(false);

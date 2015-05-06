@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2014 iText Group NV
+ * Copyright (c) 1998-2015 iText Group NV
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -499,8 +499,8 @@ class PdfStamperImp extends PdfWriter {
                 pageN.put(PdfName.CONTENTS, ar);
             }
             else if (content.isArray()) {
-                ar = (PdfArray)content;
-                markUsed(ar);
+                ar = new PdfArray((PdfArray)content);
+                pageN.put(PdfName.CONTENTS, ar);
             }
             else if (content.isStream()) {
                 ar = new PdfArray();

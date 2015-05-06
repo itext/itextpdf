@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2014 iText Group NV
+ * Copyright (c) 1998-2015 iText Group NV
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -165,6 +165,8 @@ public class PdfPTable implements LargeElement, Spaceable, IAccessibleElement {
      */
     protected float spacingAfter;
 
+    protected float paddingTop;
+
     /**
      * Holds value of property extendLastRow.
      */
@@ -282,7 +284,7 @@ public class PdfPTable implements LargeElement, Spaceable, IAccessibleElement {
 
     public void init() {
         LOGGER.info("Initialize row and cell heights");
-        
+
         for (PdfPRow row : getRows()) {
             if (row == null) continue;
             row.calculated = false;
@@ -441,7 +443,7 @@ public class PdfPTable implements LargeElement, Spaceable, IAccessibleElement {
     }
 
     /**
-     * Sets the percentage width of the table from the absolute column width.
+     * Sets the percentage width of the table from the absolute column width. Warning: Don't use this with setLockedWidth(true). These two settings don't mix.
      *
      * @param columnWidth the absolute width of each column
      * @param pageSize the page size
@@ -1739,6 +1741,14 @@ public class PdfPTable implements LargeElement, Spaceable, IAccessibleElement {
         return spacingAfter;
     }
 
+    public float getPaddingTop() {
+        return paddingTop;
+    }
+
+    public void setPaddingTop(float paddingTop) {
+        this.paddingTop = paddingTop;
+    }
+
     /**
      * Gets the value of the last row extension.
      *
@@ -2103,7 +2113,9 @@ public class PdfPTable implements LargeElement, Spaceable, IAccessibleElement {
      */
     public FittingRows getFittingRows(float availableHeight, int startIdx) {
         LOGGER.info(String.format("getFittingRows(%s, %s)", availableHeight, startIdx));
-        assert (getRow(startIdx).getCells()[0] != null); // top left cell of current page may not be null
+        if ( startIdx > 0 && startIdx < rows.size() ) {
+            assert (getRow(startIdx).getCells()[0] != null); // top left cell of current page may not be null
+        }
         int cols = getNumberOfColumns();
         ColumnMeasurementState states[] = new ColumnMeasurementState[cols];
         for (int i = 0; i < cols; ++i) {
