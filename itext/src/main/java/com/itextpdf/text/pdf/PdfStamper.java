@@ -44,17 +44,6 @@
  */
 package com.itextpdf.text.pdf;
 
-import com.itextpdf.text.DocWriter;
-import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.Image;
-import com.itextpdf.text.Rectangle;
-import com.itextpdf.text.error_messages.MessageLocalization;
-import com.itextpdf.text.pdf.collection.PdfCollection;
-import com.itextpdf.text.pdf.interfaces.PdfEncryptionSettings;
-import com.itextpdf.text.pdf.interfaces.PdfViewerPreferences;
-import com.itextpdf.text.pdf.security.LtvVerification;
-import com.itextpdf.text.xml.xmp.XmpWriter;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -63,6 +52,18 @@ import java.security.cert.Certificate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import com.itextpdf.text.DocWriter;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.ExceptionConverter;
+import com.itextpdf.text.Image;
+import com.itextpdf.text.Rectangle;
+import com.itextpdf.text.error_messages.MessageLocalization;
+import com.itextpdf.text.pdf.collection.PdfCollection;
+import com.itextpdf.text.pdf.interfaces.PdfEncryptionSettings;
+import com.itextpdf.text.pdf.interfaces.PdfViewerPreferences;
+import com.itextpdf.text.pdf.security.LtvVerification;
+import com.itextpdf.text.xml.xmp.XmpWriter;
 
 /** Applies extra content to the pages of a PDF document.
  * This extra content can be all the objects allowed in PdfContentByte
@@ -191,6 +192,22 @@ public class PdfStamper
         return sigXmlApp;
     }
 
+    /**
+     * Causes any pending stamps to be applied to the output PDF, and releases references to the stamps.
+     * If very large numbers of pages are being stamped, call this method periodically to write the changes to 
+     * the output PDF file and release the stamps from the heap. 
+     */
+    public void flush(){
+    	try{
+    		stamper.alterContents();
+    		stamper.pagesToContent.clear();
+    	} catch (IOException e){
+    		throw new ExceptionConverter(e);
+    	}
+    }
+    
+    
+    
     /**
      * Closes the document. No more content can be written after the
      * document is closed.
