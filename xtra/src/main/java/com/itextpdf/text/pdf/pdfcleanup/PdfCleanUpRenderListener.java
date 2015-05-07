@@ -74,7 +74,7 @@ class PdfCleanUpRenderListener implements ExtRenderListener {
     private PdfStamper pdfStamper;
     private PdfCleanUpRegionFilter filter;
     private List<PdfCleanUpContentChunk> chunks = new ArrayList<PdfCleanUpContentChunk>();
-    private Deque<PdfCleanUpContext> contextStack = new ArrayDeque<PdfCleanUpContext>();
+    private Stack<PdfCleanUpContext> contextStack = new Stack<PdfCleanUpContext>();
     private int strNumber = 1; // Represents ordinal number of string under processing. Needed for processing TJ operator.
 
     // Represents current path as if there were no segments to cut
