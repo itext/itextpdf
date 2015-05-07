@@ -192,6 +192,11 @@ public class PdfStamper
         return sigXmlApp;
     }
 
+    /**
+     * Causes any pending stamps to be applied to the output PDF, and releases references to the stamps.
+     * If very large numbers of pages are being stamped, call this method periodically to write the changes to 
+     * the output PDF file and release the stamps from the heap. 
+     */
     public void flush(){
     	try{
     		stamper.alterContents();
