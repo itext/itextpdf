@@ -69,7 +69,7 @@ public class TagEncounteredState implements State {
 	 */
 	public void process(final char character) {
 		String tag = this.parser.bufferToString();
-		if (Character.isWhitespace(character) || character == '>' || character == '/' || character == ':' || character == '?' || tag.equals("!--") || tag.equals("![CDATA[")) {
+		if (Character.isWhitespace(character) || character == '>' || character == '/' || character == ':' || character == '?' || tag.equals("!--") || tag.equals("![CDATA") && character == '[') {
 			// cope with <? xml and <! DOCTYPE
 			if (tag.length() > 0) {
 				if (tag.equals("!--")) {
@@ -86,10 +86,9 @@ public class TagEncounteredState implements State {
                     } else {
                         this.parser.memory().comment().append(character);
                     }
-				} else if (tag.equals("![CDATA[")) {
+				} else if (tag.equals("![CDATA") && character == '[') {
 					this.parser.flush();
 					parser.selectState().cdata();
-					this.parser.append(character);
 				} else if (tag.equals("!DOCTYPE")) {
 					this.parser.flush();
 					parser.selectState().doctype();
