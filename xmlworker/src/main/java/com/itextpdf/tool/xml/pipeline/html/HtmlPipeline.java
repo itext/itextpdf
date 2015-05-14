@@ -105,14 +105,12 @@ public class HtmlPipeline extends AbstractPipeline<HtmlPipelineContext> {
 			List<Element> content = tp.startElement(context, t);
 			if (content.size() > 0) {
 				if (tp.isStackOwner()) {
-					StackKeeper peek;
-					try {
-						peek = hcc.peek();
-						for (Element elem : content) {
-							peek.add(elem);
-						}
-					} catch (NoStackException e) {
-						throw new PipelineException(String.format(LocaleMessages.STACK_404, t.toString()), e);
+					StackKeeper peek = hcc.peek();
+					if (peek == null)
+						throw new PipelineException(String.format(LocaleMessages.STACK_404, t.toString()));
+
+					for (Element elem : content) {
+						peek.add(elem);
 					}
 				} else {
 					for (Element elem : content) {
@@ -160,13 +158,12 @@ public class HtmlPipeline extends AbstractPipeline<HtmlPipelineContext> {
 //			}
 			List<Element> elems = tp.content(context, t, text);
 			if (elems.size() > 0) {
-				StackKeeper peek;
-				try {
-					peek = hcc.peek();
+				StackKeeper peek = hcc.peek();
+				if (peek != null) {
 					for (Element e : elems) {
 						peek.add(e);
 					}
-				} catch (NoStackException e) {
+				} else {
 					WritableElement writableElement = new WritableElement();
 					for (Element elem : elems) {
 						writableElement.add(elem);
@@ -216,17 +213,17 @@ public class HtmlPipeline extends AbstractPipeline<HtmlPipelineContext> {
 				hcc.currentContent().clear();
 			}
 			if (elems.size() > 0) {
-				try {
-					StackKeeper stack = hcc.peek();
+				StackKeeper stack = hcc.peek();
+
+				if (stack != null) {
 					for (Element elem : elems) {
 						stack.add(elem);
 					}
-				} catch (NoStackException e) {
+				} else {
 					WritableElement writableElement = new WritableElement();
 					po.add(writableElement);
 					writableElement.addAll(elems);
 				}
-
 			}
 		} catch (NoTagProcessorException e) {
 			if (!hcc.acceptUnknown()) {

@@ -135,16 +135,12 @@ public class HtmlPipelineContext implements CustomContext, Cloneable, MarginMemo
 
 	/**
 	 * Retrieves, but does not remove, the head (first element) of this list.
-	 * @return a StackKeeper
-	 * @throws NoStackException if there are no elements on the stack
+	 * @return a StackKeeper or null if there are no elements on the stack
 	 */
-	protected StackKeeper peek() throws NoStackException {
-
-		try {
+	protected StackKeeper peek() {
+		if (!this.queue.isEmpty())
 			return this.queue.getFirst();
-		} catch (NoSuchElementException e) {
-			throw new NoStackException();
-		}
+		return null;
 	}
 
 	/**
