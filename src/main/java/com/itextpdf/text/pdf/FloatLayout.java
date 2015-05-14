@@ -301,6 +301,27 @@ public class FloatLayout {
                 }
             }
 
+            if (nextElement instanceof Paragraph) {
+                Paragraph p = (Paragraph) nextElement;
+                for (Element e : p) {
+                    if (e instanceof WritableDirectElement) {
+                        WritableDirectElement writableElement = (WritableDirectElement) e;
+                        if (writableElement.getDirectElementType() == WritableDirectElement.DIRECT_ELEMENT_TYPE_HEADER && !simulate) {
+                            PdfWriter writer = compositeColumn.getCanvas().getPdfWriter();
+                            PdfDocument doc = compositeColumn.getCanvas().getPdfDocument();
+
+                            // here is used a little hack:
+                            // writableElement.write() method implementation uses PdfWriter.getVerticalPosition() to create PdfDestination (see com.itextpdf.tool.xml.html.Header),
+                            // so here we are adjusting document's currentHeight in order to make getVerticalPosition() return value corresponding to real current position
+                            float savedHeight = doc.currentHeight;
+                            doc.currentHeight = doc.top() - yLine - doc.indentation.indentTop;
+                            writableElement.write(writer, doc);
+                            doc.currentHeight = savedHeight;
+                        }
+                    }
+                }
+            }
+
             if (ignoreSpacingBefore && nextElement.getChunks().size() == 0) {
                 if (nextElement instanceof Paragraph){
                     Paragraph p = (Paragraph) nextElement;
