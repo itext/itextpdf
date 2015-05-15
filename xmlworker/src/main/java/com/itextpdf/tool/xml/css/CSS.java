@@ -136,6 +136,7 @@ public final class CSS {
 		public static final String TAB_STOPS = "tab-stops";
 		public static final String XFA_TAB_STOPS = "xfa-tab-stops";
 		public static final String PAGE_BREAK_BEFORE = "page-break-before";
+		public static final String PAGE_BREAK_INSIDE = "page-break-inside";
 		public static final String PAGE_BREAK_AFTER = "page-break-after";
 		public static final String REPEAT_HEADER = "repeat-header";
 		public static final String REPEAT_FOOTER = "repeat-footer";
@@ -226,6 +227,7 @@ public final class CSS {
 		public static final String EM = "em";
 		public static final String EX = "ex";
 		public static final String ALWAYS = "always";
+		public static final String AVOID = "avoid";
 		public static final String ABSOLUTE = "absolute";
 		public static final String AUTO = "auto";
 		public static final String INLINE = "inline";

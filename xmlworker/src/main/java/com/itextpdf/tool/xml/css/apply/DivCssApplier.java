@@ -83,7 +83,7 @@ public class DivCssApplier {
         }
 
 
-        String widthValue = t.getCSS().get(HTML.Attribute.WIDTH);
+        String widthValue = css.get(HTML.Attribute.WIDTH);
         if (widthValue == null) {
             widthValue = t.getAttributes().get(HTML.Attribute.WIDTH);
         }
@@ -100,7 +100,7 @@ public class DivCssApplier {
             }
         }
 
-        String heightValue = t.getCSS().get(HTML.Attribute.HEIGHT);
+        String heightValue = css.get(HTML.Attribute.HEIGHT);
         if (heightValue == null) {
             heightValue = t.getAttributes().get(HTML.Attribute.HEIGHT);
         }
@@ -214,7 +214,12 @@ public class DivCssApplier {
                 } else if (value.equalsIgnoreCase(CSS.Value.OUTSET)) {
                     div.setBorderTopStyle(PdfDiv.BorderTopStyle.OUTSET);
                 }
+            } else if (key.equalsIgnoreCase(CSS.Property.PAGE_BREAK_INSIDE)) {
+                if (value.equalsIgnoreCase(CSS.Value.AVOID)) {
+                    div.setKeepTogether(true);
+                }
             }
+
 
             //TODO: border, background properties.
         }
