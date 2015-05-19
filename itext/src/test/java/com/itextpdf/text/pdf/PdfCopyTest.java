@@ -47,15 +47,14 @@ package com.itextpdf.text.pdf;
 
 import com.itextpdf.testutils.CompareTool;
 import com.itextpdf.testutils.TestResourceUtils;
-import com.itextpdf.text.Document;
-import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.PageSize;
+import com.itextpdf.text.*;
 import junit.framework.Assert;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.awt.*;
+import java.awt.Font;
 import java.awt.image.BufferedImage;
 import java.io.*;
 
@@ -346,6 +345,42 @@ public class PdfCopyTest {
         copier.close();
         CompareTool compareTool = new CompareTool();
         String errorMessage = compareTool.compareByContent("./target/com/itextpdf/test/pdf/PdfCopyTest/copyFields3.pdf", "./src/test/resources/com/itextpdf/text/pdf/PdfCopyTest/cmp_copyFields3.pdf", "./target/com/itextpdf/test/pdf/PdfCopyTest/", "diff");
+        if (errorMessage != null) {
+            Assert.fail(errorMessage);
+        }
+    }
+
+    @Test
+    public void copyFields4Test() throws IOException, DocumentException, InterruptedException {
+        String outputFolder = "./target/com/itextpdf/test/pdf/PdfCopyTest/";
+        String outputFile = "copyFields4.pdf";
+        String resources = "./src/test/resources/com/itextpdf/text/pdf/PdfCopyTest/";
+        String inputFile1 = "link.pdf";
+
+
+        Document doc = new Document();
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        PdfWriter.getInstance(doc, baos);
+        com.itextpdf.text.Font font = new com.itextpdf.text.Font(BaseFont.createFont(
+                resources + "fonts/georgia.ttf", BaseFont.IDENTITY_H, BaseFont.EMBEDDED), 9);
+        doc.open();
+        doc.add(new Phrase("text", font));
+        doc.close();
+
+        Document pdfDocument = new Document();
+        new File(outputFolder).mkdirs();
+        PdfCopy copier = new PdfCopy(pdfDocument, new FileOutputStream(outputFolder + outputFile));
+        copier.setMergeFields();
+        pdfDocument.open();
+
+        PdfReader reader1 = new PdfReader(resources + inputFile1);
+        PdfReader reader2 = new PdfReader(baos.toByteArray());
+
+        copier.addDocument(reader1);
+        copier.addDocument(reader2);
+        copier.close();
+        CompareTool compareTool = new CompareTool();
+        String errorMessage = compareTool.compareByContent(outputFolder + outputFile, resources + "cmp_" + outputFile, outputFolder, "diff");
         if (errorMessage != null) {
             Assert.fail(errorMessage);
         }

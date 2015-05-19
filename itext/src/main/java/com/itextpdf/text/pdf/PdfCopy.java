@@ -886,6 +886,7 @@ public class PdfCopy extends PdfWriter {
                                 pageFields.arrayList.remove(ref);
                             }
                         }
+                        indirects = indirectMap.get(page.reader);
                         for (PdfObject ref: pageFields.arrayList)
                             page.mergedFields.add(copyObject(ref));
                     }
