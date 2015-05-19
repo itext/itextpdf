@@ -193,9 +193,15 @@ public class PdfStamper
     }
 
     /**
-     * Causes any pending stamps to be applied to the output PDF, and releases references to the stamps.
-     * If very large numbers of pages are being stamped, call this method periodically to write the changes to 
+     * Causes any pending changes to the direct under/over content (e.g. stamps) and page replacements to be applied to the output PDF.  References to the adjusted content
+     * are released. If very large numbers of pages are being modified, call this method periodically to write the changes to 
      * the output PDF file and release the stamps from the heap. 
+     * 
+     * A few precautions about using this method:
+     * 
+     * 1) After using flush() method, over/under content objects should be updated via getOverContent() or getUnderContent() calls respectively in case you want to make any further stamps to the same page; 
+	 * 2) PdfReader, that is associated with PdfStamper which is flushed, must not be used for any other purposes. This is due to the fact that after flush some new references in PdfReader's inner structure appear, but you won't be able to get actual objects behind those references.
+	 * 
      */
     public void flush(){
     	try{
