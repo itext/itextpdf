@@ -212,6 +212,7 @@ illegal.length.in.ascii85decode=Ongeldige lengte in ASCII85Decode.
 illegal.length.value=Ongeldige waarde voor de lengte.
 illegal.load.1=Ongeldige load: {1}
 illegal.p.value=Ongeldige waarde voor P.
+illegal.pages.tree=Illegal pages tree
 illegal.paragraph.embedding.level.1=ongeldig embedding niveau paragraaf: {1}
 illegal.r.value=Ongeldige waarde voor R.
 illegal.type.value.at.1.2=ongeldige waarde voor type op {1}: {2}

@@ -3615,6 +3615,10 @@ public class PdfReader implements PdfViewerPreferences {
         /** stack to which pages dictionaries are pushed to keep track of the current page attributes */
         private ArrayList<PdfDictionary> pageInh;
         private boolean keepPages;
+        /**
+         * Keeps track of all pages nodes to avoid circular references.
+         */
+        private Set<PdfObject> pagesNodes = new HashSet<PdfObject>();
 
         private PageRefs(final PdfReader reader) throws IOException {
             this.reader = reader;
@@ -3818,6 +3822,9 @@ public class PdfReader implements PdfViewerPreferences {
         }
 
         private void iteratePages(final PRIndirectReference rpage) throws IOException {
+            if (!pagesNodes.add(getPdfObject(rpage)))
+                throw new InvalidPdfException(MessageLocalization.getComposedMessage("illegal.pages.tree"));
+
             PdfDictionary page = (PdfDictionary)getPdfObject(rpage);
             if (page == null)
                 return;
