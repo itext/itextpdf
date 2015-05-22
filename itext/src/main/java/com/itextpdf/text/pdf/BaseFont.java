@@ -1458,7 +1458,7 @@ public abstract class BaseFont {
                 }
                 visitedResources.remove(xobj);
             } else
-                throw new ExceptionConverter(new InvalidPdfException("illegal.resources.tree"));
+                throw new ExceptionConverter(new InvalidPdfException(MessageLocalization.getComposedMessage("illegal.resources.tree")));
         }
     }
 

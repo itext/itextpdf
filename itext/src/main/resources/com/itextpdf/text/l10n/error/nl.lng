@@ -215,6 +215,7 @@ illegal.p.value=Ongeldige waarde voor P.
 illegal.pages.tree=Illegal pages tree
 illegal.paragraph.embedding.level.1=ongeldig embedding niveau paragraaf: {1}
 illegal.r.value=Ongeldige waarde voor R.
+illegal.resources.tree=Illegal Resources Tree.
 illegal.type.value.at.1.2=ongeldige waarde voor type op {1}: {2}
 illegal.v.value=Ongeldige waarde voor V.
 illegal.value.for.predictor.in.tiff.file=Ongeldige waarde voor Predictor in TIFF file.
