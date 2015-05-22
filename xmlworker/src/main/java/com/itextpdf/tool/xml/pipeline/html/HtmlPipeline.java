@@ -99,9 +99,7 @@ public class HtmlPipeline extends AbstractPipeline<HtmlPipelineContext> {
             t.setLastMarginBottom(hcc.getMemory().get(HtmlPipelineContext.LAST_MARGIN_BOTTOM));
             hcc.getMemory().remove(HtmlPipelineContext.LAST_MARGIN_BOTTOM);
 			TagProcessor tp = hcc.resolveProcessor(t.getName(), t.getNameSpace());
-			if (tp.isStackOwner()) {
-				hcc.addFirst(new StackKeeper(t));
-			}
+			addStackKeeper(t, hcc, tp);
 			List<Element> content = tp.startElement(context, t);
 			if (content.size() > 0) {
 				if (tp.isStackOwner()) {
@@ -233,4 +231,9 @@ public class HtmlPipeline extends AbstractPipeline<HtmlPipelineContext> {
 		return getNext();
 	}
 
+	protected void addStackKeeper(Tag t, HtmlPipelineContext hcc, TagProcessor tp) {
+		if (tp.isStackOwner()) {
+			hcc.addFirst(new StackKeeper(t));
+		}
+	}
 }

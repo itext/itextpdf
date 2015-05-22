@@ -44,11 +44,11 @@
  */
 package com.itextpdf.tool.xml.html;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
 import com.itextpdf.tool.xml.exceptions.LocaleMessages;
 import com.itextpdf.tool.xml.exceptions.NoTagProcessorException;
+
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * A Default implementation of the TagProcessorFactory that uses a map to store
@@ -173,7 +173,7 @@ public class DefaultTagProcessorFactory implements TagProcessorFactory {
 	 * @throws NoTagProcessorException when the processor was not found for the given tag.
 	 */
 	public TagProcessor getProcessor(final String tag, final String nameSpace) {
-		FactoryObject fo = map.get(tag);
+		FactoryObject fo = map.get(tag.toLowerCase());
 		if (fo != null) {
 			return fo.getProcessor();
 		}

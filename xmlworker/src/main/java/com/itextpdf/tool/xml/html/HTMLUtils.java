@@ -69,9 +69,9 @@ public class HTMLUtils {
 		for (char c : chars) {
 			if (isWhitespace && !Character.isWhitespace(c)) {
                 if (builder.length() == 0) {
-                    chunkList.add(Chunk.createWhitespace(builder.toString(), preserveWhiteSpace));
+                    chunkList.add(Chunk.createWhitespace(whitespaceBuilder.toString(), preserveWhiteSpace));
                 } else {
-                    builder.append(" ");
+                    builder.append(preserveWhiteSpace ? whitespaceBuilder : " ");
                 }
                 whitespaceBuilder = new StringBuilder();
             }

@@ -188,25 +188,25 @@ public class StyleAttrCSSResolver implements CSSResolver {
 		// inherit css from parent tags, as defined in provided CssInheritanceRules or if property = inherit
 		Map<String, String> css = t.getCSS();
         if (t.getName() != null) {
-            if(t.getName().equals(HTML.Tag.I) || t.getName().equals(HTML.Tag.CITE)
-                    || t.getName().equals(HTML.Tag.EM) || t.getName().equals(HTML.Tag.VAR)
-                    || t.getName().equals(HTML.Tag.DFN) || t.getName().equals(HTML.Tag.ADDRESS)) {
+            if(t.getName().equalsIgnoreCase(HTML.Tag.I) || t.getName().equalsIgnoreCase(HTML.Tag.CITE)
+                    || t.getName().equalsIgnoreCase(HTML.Tag.EM) || t.getName().equalsIgnoreCase(HTML.Tag.VAR)
+                    || t.getName().equalsIgnoreCase(HTML.Tag.DFN) || t.getName().equalsIgnoreCase(HTML.Tag.ADDRESS)) {
                 tagCss.put(CSS.Property.FONT_STYLE, CSS.Value.ITALIC);
             }
-            else if (t.getName().equals(HTML.Tag.B) || t.getName().equals(HTML.Tag.STRONG)) {
+            else if (t.getName().equalsIgnoreCase(HTML.Tag.B) || t.getName().equalsIgnoreCase(HTML.Tag.STRONG)) {
                 tagCss.put(CSS.Property.FONT_WEIGHT, CSS.Value.BOLD);
             }
-            else if (t.getName().equals(HTML.Tag.U) || t.getName().equals(HTML.Tag.INS)) {
+            else if (t.getName().equalsIgnoreCase(HTML.Tag.U) || t.getName().equalsIgnoreCase(HTML.Tag.INS)) {
                 tagCss.put(CSS.Property.TEXT_DECORATION, CSS.Value.UNDERLINE);
             }
-            else if (t.getName().equals(HTML.Tag.S) || t.getName().equals(HTML.Tag.STRIKE)
-                    || t.getName().equals(HTML.Tag.DEL)) {
+            else if (t.getName().equalsIgnoreCase(HTML.Tag.S) || t.getName().equalsIgnoreCase(HTML.Tag.STRIKE)
+                    || t.getName().equalsIgnoreCase(HTML.Tag.DEL)) {
                 tagCss.put(CSS.Property.TEXT_DECORATION, CSS.Value.LINE_THROUGH);
             }
-            else if (t.getName().equals(HTML.Tag.BIG)){
+            else if (t.getName().equalsIgnoreCase(HTML.Tag.BIG)){
                 tagCss.put(CSS.Property.FONT_SIZE, CSS.Value.LARGER);
             }
-            else if (t.getName().equals(HTML.Tag.SMALL)){
+            else if (t.getName().equalsIgnoreCase(HTML.Tag.SMALL)){
                 tagCss.put(CSS.Property.FONT_SIZE, CSS.Value.SMALLER);
             }
         }
