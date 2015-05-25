@@ -117,11 +117,6 @@ public class PdfDiv implements Element, Spaceable, IAccessibleElement {
      */
     private boolean keepTogether;
 
-    /**
-     * Defines if the div is already placed on the new page in attempt to keep the div together
-     */
-    private boolean onNewPage;
-
     protected PdfName role = PdfName.DIV;
     protected HashMap<PdfName, PdfObject> accessibleAttributes = null;
     protected AccessibleElementId id = new AccessibleElementId();
@@ -204,16 +199,6 @@ public class PdfDiv implements Element, Spaceable, IAccessibleElement {
         this.keepTogether = keepTogether;
     }
 
-    public boolean isOnNewPage() {
-        return onNewPage;
-    }
-
-    public void setOnNewPage(boolean isOnNewPage) {
-        this.onNewPage = isOnNewPage;
-    }
-
-
-
     private BaseColor backgroundColor = null;
 
      /**
@@ -229,7 +214,6 @@ public class PdfDiv implements Element, Spaceable, IAccessibleElement {
     public PdfDiv() {
         content = new ArrayList<Element>();
         keepTogether = false;
-        onNewPage = false;
     }
 
     /**
