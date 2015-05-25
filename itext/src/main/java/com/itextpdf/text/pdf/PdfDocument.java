@@ -241,9 +241,7 @@ public class PdfDocument extends Document {
                         destmap.put(name, dest.reference);
                     }
                     if (destmap.size() > 0) {
-                        PdfDictionary dests = new PdfDictionary();
-                        dests.put(PdfName.NAMES, PdfNameTree.writeTree(destmap, writer));
-                        names.put(PdfName.DESTS, writer.addToBody(dests).getIndirectReference());
+                        names.put(PdfName.DESTS, writer.addToBody(PdfNameTree.writeTree(destmap, writer)).getIndirectReference());
                     }
                 }
                 if (!documentLevelJS.isEmpty()) {
