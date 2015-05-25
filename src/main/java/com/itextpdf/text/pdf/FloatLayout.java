@@ -147,10 +147,12 @@ public class FloatLayout {
 
                     status = floatingElement.layout(canvas, useAscender, true, floatLeftX, minY, floatRightX, yLine);
 
-                    if (floatingElement.getKeepTogether() && !floatingElement.isOnNewPage() && (status & ColumnText.NO_MORE_TEXT) == 0) {
-                        floatingElement.setOnNewPage(true);
-                        content.add(0, floatingElement);
-                        break;
+                    if (floatingElement.getKeepTogether() && (status & ColumnText.NO_MORE_TEXT) == 0) {
+                        //check for empty page
+                        if (compositeColumn.getCanvas().getPdfDocument().currentHeight > 0 || yLine != maxY) {
+                            content.add(0, floatingElement);
+                            break;
+                        }
                     }
 
                     if (!simulate) {
