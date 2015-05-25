@@ -169,6 +169,13 @@ public class Table extends AbstractTagProcessor {
             if (direction != PdfWriter.RUN_DIRECTION_DEFAULT) {
                 table.setRunDirection(direction);
             }
+			for (Entry<String, String> entry : tag.getCSS().entrySet()) {
+				if (entry.getKey().equalsIgnoreCase(CSS.Property.PAGE_BREAK_INSIDE)) {
+					if (entry.getValue().equalsIgnoreCase(CSS.Value.AVOID)) {
+						table.setKeepTogether(true);
+					}
+				}
+			}
             TableStyleValues styleValues = setStyleValues(tag);
             table.setTableEvent(new TableBorderEvent(styleValues));
             setVerticalMargin(table, tag, styleValues, ctx);
