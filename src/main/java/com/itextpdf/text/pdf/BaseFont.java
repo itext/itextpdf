@@ -44,12 +44,12 @@
  */
 package com.itextpdf.text.pdf;
 import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.ExceptionConverter;
 import com.itextpdf.text.error_messages.MessageLocalization;
+import com.itextpdf.text.exceptions.InvalidPdfException;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.StringTokenizer;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -1427,7 +1427,7 @@ public abstract class BaseFont {
         hits.put(fontRef.getNumber(), 1);
     }
 
-    private static void recourseFonts(PdfDictionary page, IntHashtable hits, ArrayList<Object[]> fonts, int level) {
+    private static void recourseFonts(PdfDictionary page, IntHashtable hits, ArrayList<Object[]> fonts, int level, HashSet<PdfDictionary> visitedResources) {
         ++level;
         if (level > 50) // in case we have an endless loop
             return;
@@ -1450,11 +1450,15 @@ public abstract class BaseFont {
         }
         PdfDictionary xobj = resources.getAsDict(PdfName.XOBJECT);
         if (xobj != null) {
-            for (PdfName key : xobj.getKeys()) {
-                PdfObject po = xobj.getDirectObject(key);
-                if (po instanceof PdfDictionary)
-                    recourseFonts((PdfDictionary)po, hits, fonts, level);
-            }
+            if (visitedResources.add(xobj)){
+                for (PdfName key : xobj.getKeys()) {
+                    PdfObject po = xobj.getDirectObject(key);
+                    if (po instanceof PdfDictionary)
+                        recourseFonts((PdfDictionary)po, hits, fonts, level, visitedResources);
+                }
+                visitedResources.remove(xobj);
+            } else
+                throw new ExceptionConverter(new InvalidPdfException(MessageLocalization.getComposedMessage("illegal.resources.tree")));
         }
     }
 
@@ -1470,7 +1474,7 @@ public abstract class BaseFont {
         ArrayList<Object[]> fonts = new ArrayList<Object[]>();
         int npages = reader.getNumberOfPages();
         for (int k = 1; k <= npages; ++k)
-            recourseFonts(reader.getPageN(k), hits, fonts, 1);
+            recourseFonts(reader.getPageN(k), hits, fonts, 1, new HashSet<PdfDictionary>());
         return fonts;
     }
 
@@ -1485,7 +1489,7 @@ public abstract class BaseFont {
     public static ArrayList<Object[]> getDocumentFonts(PdfReader reader, int page) {
         IntHashtable hits = new IntHashtable();
         ArrayList<Object[]> fonts = new ArrayList<Object[]>();
-        recourseFonts(reader.getPageN(page), hits, fonts, 1);
+        recourseFonts(reader.getPageN(page), hits, fonts, 1, new HashSet<PdfDictionary>());
         return fonts;
     }
 
