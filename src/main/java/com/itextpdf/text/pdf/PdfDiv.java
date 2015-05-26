@@ -112,6 +112,11 @@ public class PdfDiv implements Element, Spaceable, IAccessibleElement {
 
     protected int runDirection = PdfWriter.RUN_DIRECTION_DEFAULT;
 
+    /**
+     * Defines if the div should be kept on one page if possible
+     */
+    private boolean keepTogether;
+
     protected PdfName role = PdfName.DIV;
     protected HashMap<PdfName, PdfObject> accessibleAttributes = null;
     protected AccessibleElementId id = new AccessibleElementId();
@@ -186,6 +191,14 @@ public class PdfDiv implements Element, Spaceable, IAccessibleElement {
         this.runDirection = runDirection;
     }
 
+    public boolean getKeepTogether() {
+        return keepTogether;
+    }
+
+    public void setKeepTogether(boolean keepTogether) {
+        this.keepTogether = keepTogether;
+    }
+
     private BaseColor backgroundColor = null;
 
      /**
@@ -200,6 +213,7 @@ public class PdfDiv implements Element, Spaceable, IAccessibleElement {
 
     public PdfDiv() {
         content = new ArrayList<Element>();
+        keepTogether = false;
     }
 
     /**

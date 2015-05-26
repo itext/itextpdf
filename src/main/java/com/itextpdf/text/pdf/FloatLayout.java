@@ -147,6 +147,14 @@ public class FloatLayout {
 
                     status = floatingElement.layout(canvas, useAscender, true, floatLeftX, minY, floatRightX, yLine);
 
+                    if (floatingElement.getKeepTogether() && (status & ColumnText.NO_MORE_TEXT) == 0) {
+                        //check for empty page
+                        if (compositeColumn.getCanvas().getPdfDocument().currentHeight > 0 || yLine != maxY) {
+                            content.add(0, floatingElement);
+                            break;
+                        }
+                    }
+
                     if (!simulate) {
                         canvas.openMCBlock(floatingElement);
                         status = floatingElement.layout(canvas, useAscender, simulate, floatLeftX, minY, floatRightX, yLine);
@@ -297,6 +305,27 @@ public class FloatLayout {
                         break;
                     } else {
                         currentCompositeColumn.setText(null);
+                    }
+                }
+            }
+
+            if (nextElement instanceof Paragraph) {
+                Paragraph p = (Paragraph) nextElement;
+                for (Element e : p) {
+                    if (e instanceof WritableDirectElement) {
+                        WritableDirectElement writableElement = (WritableDirectElement) e;
+                        if (writableElement.getDirectElementType() == WritableDirectElement.DIRECT_ELEMENT_TYPE_HEADER && !simulate) {
+                            PdfWriter writer = compositeColumn.getCanvas().getPdfWriter();
+                            PdfDocument doc = compositeColumn.getCanvas().getPdfDocument();
+
+                            // here is used a little hack:
+                            // writableElement.write() method implementation uses PdfWriter.getVerticalPosition() to create PdfDestination (see com.itextpdf.tool.xml.html.Header),
+                            // so here we are adjusting document's currentHeight in order to make getVerticalPosition() return value corresponding to real current position
+                            float savedHeight = doc.currentHeight;
+                            doc.currentHeight = doc.top() - yLine - doc.indentation.indentTop;
+                            writableElement.write(writer, doc);
+                            doc.currentHeight = savedHeight;
+                        }
                     }
                 }
             }
