@@ -75,6 +75,7 @@
  */
 package com.itextpdf.text.pdf.parser.clipper;
 
+import java.math.BigInteger;
 import java.util.logging.Logger;
 
 import com.itextpdf.text.pdf.parser.clipper.Clipper.ClipType;
@@ -102,9 +103,13 @@ class Edge {
         }
     }
 
-    static boolean slopesEqual( Edge e1, Edge e2 ) {
-        return e1.getDelta().getY() * e2.getDelta().getX() == e1.getDelta().getX() * e2.getDelta().getY();
-
+    static boolean slopesEqual( Edge e1, Edge e2, boolean useFullRange ) {
+        if (useFullRange) {
+            return BigInteger.valueOf(e1.getDelta().getY()).multiply(BigInteger.valueOf(e2.getDelta().getX())).equals(
+                   BigInteger.valueOf(e1.getDelta().getX()).multiply(BigInteger.valueOf(e2.getDelta().getY())));
+        } else {
+            return (e1.getDelta().getY()) * (e2.getDelta().getX()) == (e1.getDelta().getX()) * (e2.getDelta().getY());
+        }
     }
 
     static void swapPolyIndexes( Edge edge1, Edge edge2 ) {
@@ -123,7 +128,7 @@ class Edge {
         if (currentY == edge.getTop().getY()) {
             return edge.getTop().getX();
         }
-        return (int) (edge.getBot().getX() + Math.round( edge.deltaX * (currentY - edge.getBot().getY()) ));
+        return (edge.getBot().getX() + Math.round( edge.deltaX * (currentY - edge.getBot().getY()) ));
     }
 
     private final LongPoint bot;
