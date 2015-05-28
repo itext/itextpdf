@@ -155,6 +155,38 @@ public class LargeTableTest {
         compareTablePdf(file);
     }
 
+    @Test
+    public void nestedHeaderFooter() throws IOException, DocumentException, InterruptedException {
+        final String file = "nested_header_footer.pdf";
+        Document document = new Document(PageSize.A4.rotate());
+        PdfWriter.getInstance(document, new FileOutputStream(outFolder + file));
+        document.open();
+        PdfPTable table = new PdfPTable(5);
+        table.setWidthPercentage(100);
+        PdfPCell cell = new PdfPCell(new Phrase("Table XYZ (Continued)"));
+        cell.setColspan(5);
+        table.addCell(cell);
+        cell = new PdfPCell(new Phrase("Continue on next page"));
+        cell.setColspan(5);
+        table.addCell(cell);
+        table.setHeaderRows(2);
+        table.setFooterRows(1);
+        table.setSkipFirstHeader(true);
+        table.setSkipLastFooter(true);
+        for (int i = 0; i < 350; i++) {
+            table.addCell(String.valueOf(i+1));
+        }
+        PdfPTable t = new PdfPTable(1);
+        PdfPCell c = new PdfPCell(table);
+        c.setBorderColor(BaseColor.RED);
+        c.setPadding(3);
+        t.addCell(c);
+        document.add(t);
+        document.close();
+
+        compareTablePdf(file);
+    }
+
 
     private void compareTablePdf(String file) throws DocumentException, InterruptedException, IOException {
         // compare

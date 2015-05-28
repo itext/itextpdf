@@ -1724,18 +1724,14 @@ public class ColumnText {
                 int headerRows = table.getHeaderRows();
                 int footerRows = table.getFooterRows();
                 int realHeaderRows = headerRows - footerRows;
-                float headerHeight = table.getHeaderHeight();
                 float footerHeight = table.getFooterHeight();
+                float headerHeight = table.getHeaderHeight() - footerHeight;
 
                 // do we need to skip the header?
                 boolean skipHeader = table.isSkipFirstHeader() && rowIdx <= realHeaderRows && (table.isComplete() || rowIdx != realHeaderRows);
 
-                // if not, we want to be able to add more than just a header and a footer
                 if (!skipHeader) {
                     yTemp -= headerHeight;
-                    if (yTemp < minY || yTemp > maxY) {
-                        return NO_MORE_COLUMN;
-                    }
                 }
 
                 // MEASURE NECESSARY SPACE
@@ -1744,13 +1740,25 @@ public class ColumnText {
                 if (rowIdx < headerRows) {
                     rowIdx = headerRows;
                 }
-                // if the table isn't complete, we need to be able to add a footer
-                if (!table.isComplete()) {
-                    yTemp -= footerHeight;
+                FittingRows fittingRows = null;
+                //if we skip the last header, firstly, we want to check if table is wholly fit to the page
+                if (table.isSkipLastFooter()) {
+                    // Contributed by Deutsche Bahn Systel GmbH (Thorsten Seitz), splitting row spans
+                    fittingRows = table.getFittingRows(yTemp - minY, rowIdx);
                 }
+                //if we skip the last footer, but the table doesn't fit to the page - we reserve space for footer
+                //and recalculate fitting rows
+                if (!table.isSkipLastFooter() || fittingRows.lastRow < table.size() - 1) {
+                    yTemp -= footerHeight;
+                    fittingRows = table.getFittingRows(yTemp - minY, rowIdx);
+                }
+
+                //we want to be able to add more than just a header and a footer
+                if (yTemp < minY || yTemp > maxY) {
+                    return NO_MORE_COLUMN;
+                }
+
                 // k will be the first row that doesn't fit
-                // Contributed by Deutsche Bahn Systel GmbH (Thorsten Seitz), splitting row spans
-                FittingRows fittingRows = table.getFittingRows(yTemp - minY, rowIdx);
                 k = fittingRows.lastRow + 1;
                 yTemp -= fittingRows.height;
                 // splitting row spans
