@@ -2520,7 +2520,8 @@ public class PdfReader implements PdfViewerPreferences {
                 PdfObject dpEntry = getPdfObject(dp.get(j));
                 if (dpEntry instanceof PdfDictionary){
                     decodeParams = (PdfDictionary)dpEntry;
-                } else if (dpEntry == null || dpEntry instanceof PdfNull) {
+                } else if (dpEntry == null || dpEntry instanceof PdfNull ||
+                        (dpEntry instanceof PdfLiteral && Arrays.equals("null".getBytes(), ((PdfLiteral)dpEntry).getBytes()))) {
                     decodeParams = null;
                 } else {
                     throw new UnsupportedPdfException(MessageLocalization.getComposedMessage("the.decode.parameter.type.1.is.not.supported", dpEntry.getClass().toString()));
