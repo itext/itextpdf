@@ -823,6 +823,19 @@ public class PdfStamper
             verification = new LtvVerification(this);
         return verification;
     }
+
+    public boolean addNamedDestination(final String name, final int page, final PdfDestination dest) throws IOException {
+        HashMap<Object, PdfObject> namedDestinations = stamper.getNamedDestinations();
+
+        if (getReader().getNamedDestination().containsKey(name)){
+            return false;
+        }
+
+        dest.addPage(getReader().getPageOrigRef(page));
+        namedDestinations.put(name, new PdfArray(dest));
+
+        return true;
+    }
     
     void mergeVerification() throws IOException {
         if (verification == null)
