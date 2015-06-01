@@ -398,7 +398,6 @@ class PdfCleanUpRenderListener implements ExtRenderListener {
             return filter.filterStrokePath(path, ctm, lineWidth, lineCapStyle, lineJoinStyle,
                     miterLimit, lineDashPattern);
         } else {
-            path.closeAllSubpaths();
             return filter.filterFillPath(path, ctm, fillingRule);
         }
     }
