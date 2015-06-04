@@ -55,7 +55,7 @@ package com.itextpdf.text.pdf.parser;
 public interface ExtRenderListener extends RenderListener {
 
     /**
-     * Called when the current path is being modifying. E.g. new segment is being added,
+     * Called when the current path is being modified. E.g. new segment is being added,
      * new subpath is being started etc.
      *
      * @param renderInfo Contains information about the path segment being added to the current path.

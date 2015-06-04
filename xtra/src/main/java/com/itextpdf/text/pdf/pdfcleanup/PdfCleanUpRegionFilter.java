@@ -125,8 +125,9 @@ class PdfCleanUpRegionFilter extends RenderFilter {
         return coveredAreas;
     }
 
-    protected Path filterStrokePath(Path path, Matrix ctm, float lineWidth, int lineCapStyle,
+    protected Path filterStrokePath(Path sourcePath, Matrix ctm, float lineWidth, int lineCapStyle,
                                     int lineJoinStyle, float miterLimit, LineDashPattern lineDashPattern) {
+        Path path = sourcePath;
         JoinType joinType = getJoinType(lineJoinStyle);
         EndType endType = getEndType(lineCapStyle);
 
@@ -148,7 +149,7 @@ class PdfCleanUpRegionFilter extends RenderFilter {
                 List<Subpath> circles = convertToCircles(degenerateSubpaths, lineWidth / 2);
                 offsetedPath.addSubpaths(circles);
             } else if (endType == EndType.OPEN_SQUARE && lineDashPattern != null) {
-                List<Subpath> squares = convertToSquares(degenerateSubpaths, lineWidth);
+                List<Subpath> squares = convertToSquares(degenerateSubpaths, lineWidth, sourcePath);
                 offsetedPath.addSubpaths(squares);
             }
         }
@@ -239,35 +240,72 @@ class PdfCleanUpRegionFilter extends RenderFilter {
      * we can't determine the direction which the rotation of each square depends on.
      *
      * @param squareWidth Width of each constructed square.
+     * @param sourcePath The path which dash pattern applied to. Needed to calc rotation angle of each square.
      * @return {@link java.util.List} consisting of squares constructed on given degenerated subpaths.
      */
-    private static List<Subpath> convertToSquares(List<Subpath> degenerateSubpaths, double squareWidth) {
-        if (degenerateSubpaths.size() < 2) {
+    private static List<Subpath> convertToSquares(List<Subpath> degenerateSubpaths, double squareWidth, Path sourcePath) {
+        List<Point2D> pathApprox = getPathApproximation(sourcePath);
+
+        if (pathApprox.size() < 2) {
             return Collections.EMPTY_LIST;
         }
+
+        Iterator<Point2D> approxIter = pathApprox.iterator();
+        Point2D approxPt1 = approxIter.next();
+        Point2D approxPt2 = approxIter.next();
+        StandardLine line = new StandardLine(approxPt1, approxPt2);
 
         List<Subpath> squares = new ArrayList<Subpath>(degenerateSubpaths.size());
         float widthHalf = (float) squareWidth / 2;
 
         for (int i = 0; i < degenerateSubpaths.size(); ++i) {
-            Point2D p1 = degenerateSubpaths.get(i - (i == 0 ? -1 : 1)).getStartPoint();
-            Point2D p2 = degenerateSubpaths.get(i).getStartPoint();
+            Point2D point = degenerateSubpaths.get(i).getStartPoint();
 
-            double slope = getSlope(p1, p2);
-            double angle = Math.atan(slope);
+            while (!line.contains(point)) {
+                approxPt1 = approxPt2;
+                approxPt2 = approxIter.next();
+                line = new StandardLine(approxPt1, approxPt2);
+            }
 
-            squares.add(constructSquare(p2, widthHalf, angle));
+            double slope = line.getSlope();
+            double angle;
+
+            if (slope != Float.POSITIVE_INFINITY) {
+                angle = Math.atan(slope);
+            } else {
+                angle = Math.PI / 2;
+            }
+
+            squares.add(constructSquare(point, widthHalf, angle));
         }
 
         return squares;
     }
 
-    private static double getSlope(Point2D linePt1, Point2D linePt2) {
-        if (Double.compare(linePt1.getX(), linePt2.getX()) == 0) {
-            return linePt1.getY() - linePt2.getY() < 0 ? Double.NEGATIVE_INFINITY : Double.POSITIVE_INFINITY;
+    private static List<Point2D> getPathApproximation(Path path) {
+        List<Point2D> approx = new ArrayList<Point2D>() {
+            @Override
+            public boolean addAll(Collection<? extends Point2D> c) {
+                Point2D prevPoint = (size() - 1 < 0 ? null : get(size() - 1));
+                boolean ret = false;
+
+                for (Point2D pt : c) {
+                    if (!pt.equals(prevPoint)) {
+                        add(pt);
+                        prevPoint = pt;
+                        ret = true;
+                    }
+                }
+
+                return true;
+            }
+        };
+
+        for (Subpath subpath : path.getSubpaths()) {
+            approx.addAll(subpath.getPiecewiseLinearApproximation());
         }
 
-        return (linePt1.getY() - linePt2.getY()) / (linePt1.getX() - linePt2.getX());
+        return approx;
     }
 
     private static Subpath constructSquare(Point2D squareCenter, double widthHalf, double rotationAngle) {
@@ -529,8 +567,7 @@ class PdfCleanUpRegionFilter extends RenderFilter {
                         remainingIsGap = currentElem.isGap();
                     }
                 }
-
-
+                
                 // If true, then the line closing the subpath was explicitly added (see Path.ReplaceCloseWithLine).
                 // This causes a loss of a visual effect of line join style parameter, so in this clause
                 // we simply add overlapping dash (or gap, no matter), which continues the last dash and equals to
@@ -615,5 +652,31 @@ class PdfCleanUpRegionFilter extends RenderFilter {
         t.transform(points, 0, transformed, 0, points.length);
 
         return transformed;
+    }
+
+    // Constants from the standard line representation: Ax+By+C
+    private static class StandardLine {
+
+        float A;
+        float B;
+        float C;
+
+        StandardLine(Point2D p1, Point2D p2) {
+            A = (float) (p2.getY() - p1.getY());
+            B = (float) (p1.getX() - p2.getX());
+            C = (float) (p1.getY() * (-B) - p1.getX() * A);
+        }
+
+        float getSlope() {
+            if (B == 0) {
+                return Float.POSITIVE_INFINITY;
+            }
+
+            return -A / B;
+        }
+
+        boolean contains(Point2D point) {
+            return Float.compare(Math.abs(A * (float) point.getX() + B * (float) point.getY() + C), 0.1f) < 0;
+        }
     }
 }
