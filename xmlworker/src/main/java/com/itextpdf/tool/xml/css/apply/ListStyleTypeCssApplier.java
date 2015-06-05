@@ -111,7 +111,6 @@ public class ListStyleTypeCssApplier {
 				lst.setListSymbol("");
 			} else if (CSS.Value.DECIMAL.equalsIgnoreCase(styleType)) {
 				lst = new List(List.ORDERED);
-				synchronizeSymbol(fontSize, lst, color);
 			} else if (CSS.Value.DISC.equalsIgnoreCase(styleType)) {
 				lst = new ZapfDingbatsList(108);
                 lst.setAutoindent(false);
