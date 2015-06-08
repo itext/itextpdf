@@ -262,7 +262,11 @@ class PdfStamperImp extends PdfWriter {
         addFieldResources();
         PdfDictionary catalog = reader.getCatalog();
         getPdfVersion().addToCatalog(catalog);
-        PdfDictionary acroForm = (PdfDictionary) PdfReader.getPdfObject(catalog.get(PdfName.ACROFORM), reader.getCatalog());
+        Object acroFormo = PdfReader.getPdfObject(catalog.get(PdfName.ACROFORM), reader.getCatalog());
+        PdfDictionary acroForm = null;
+        if (!(acroFormo instanceof PdfNull)) {
+            acroForm = (PdfDictionary) acroFormo;
+        }
         if (acroFields != null && acroFields.getXfa().isChanged()) {
             markUsed(acroForm);
             if (!flat) {
