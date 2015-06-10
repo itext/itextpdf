@@ -217,13 +217,13 @@ public class AcroFieldsTest {
         String outFile = outFolder+"icelandicLettersInAcroFieldTest.pdf";
         FileOutputStream file = new FileOutputStream(outFile);
 
-        PdfReader reader = new PdfReader(new FileInputStream(sourceFolder+ "AMdqBKitpitcYQ7Q.pdf"));
+        PdfReader reader = new PdfReader(new FileInputStream(sourceFolder+ "HelveticaFont.pdf"));
 
         PdfStamper stamper = new PdfStamper(reader, file);
 
         AcroFields fields = stamper.getAcroFields();
 
-        fields.setField("Skuldari-nafn", "Ármann Óskar Sigurðsson");
+        fields.setField("Mitarbeiter", "Ármann Óskar Sigurðsson");
 
         stamper.close();
 
