@@ -3933,7 +3933,7 @@ public class PdfContentByte {
         }
         writer.addAnnotation(annot);
         if (needToTag) {
-            PdfStructureElement strucElem = pdf.structElements.get(annot.getId());
+            PdfStructureElement strucElem = pdf.getStructElement(annot.getId());
             if (strucElem != null) {
                 int structParent = pdf.getStructParentIndex(annot);
                 annot.put(PdfName.STRUCTPARENT, new PdfNumber(structParent));
@@ -4107,8 +4107,9 @@ public class PdfContentByte {
                 if (!getMcElements().contains(element)) {
                     PdfStructureElement structureElement = openMCBlockInt(element);
                     getMcElements().add(element);
-                    if (structureElement != null)
-                        pdf.structElements.put(element.getId(), structureElement);
+                    if (structureElement != null) {
+                        pdf.saveStructElement(element.getId(), structureElement);
+                    }
                 }
             }
         }
@@ -4117,7 +4118,7 @@ public class PdfContentByte {
     private PdfDictionary getParentStructureElement() {
         PdfDictionary parent = null;
         if (getMcElements().size() > 0)
-            parent = pdf.structElements.get(getMcElements().get(getMcElements().size() - 1).getId());
+            parent = pdf.getStructElement(getMcElements().get(getMcElements().size() - 1).getId());
         if (parent == null) {
             parent = writer.getStructureTreeRoot();
         }
@@ -4133,9 +4134,9 @@ public class PdfContentByte {
             writer.checkElementRole(element, parent);
             if (element.getRole() != null) {
                 if (!PdfName.ARTIFACT.equals(element.getRole())) {
-                    structureElement = pdf.structElements.get(element.getId());
+                    structureElement = pdf.getStructElement(element.getId());
                     if (structureElement == null) {
-                        structureElement = new PdfStructureElement(getParentStructureElement(), element.getRole());
+                        structureElement = new PdfStructureElement(getParentStructureElement(), element.getRole(), element.getId());
                     }
                 }
                 if (PdfName.ARTIFACT.equals(element.getRole())) {
@@ -4180,7 +4181,7 @@ public class PdfContentByte {
 
     private void closeMCBlockInt(IAccessibleElement element) {
         if (isTagged() && element.getRole() != null) {
-            PdfStructureElement structureElement = pdf.structElements.get(element.getId());
+            PdfStructureElement structureElement = pdf.getStructElement(element.getId());
             if (structureElement != null) {
                 structureElement.writeAttributes(element);
             }
