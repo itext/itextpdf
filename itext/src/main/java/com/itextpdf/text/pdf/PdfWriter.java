@@ -44,18 +44,9 @@
  */
 package com.itextpdf.text.pdf;
 
-import com.itextpdf.text.BaseColor;
-import com.itextpdf.text.DocListener;
-import com.itextpdf.text.DocWriter;
-import com.itextpdf.text.Document;
-import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.ExceptionConverter;
-import com.itextpdf.text.Image;
-import com.itextpdf.text.ImgJBIG2;
-import com.itextpdf.text.ImgWMF;
-import com.itextpdf.text.Rectangle;
-import com.itextpdf.text.Version;
+import com.itextpdf.text.*;
 import com.itextpdf.text.error_messages.MessageLocalization;
+import com.itextpdf.text.io.TempFileCache;
 import com.itextpdf.text.log.Counter;
 import com.itextpdf.text.log.CounterFactory;
 import com.itextpdf.text.pdf.collection.PdfCollection;
@@ -945,6 +936,11 @@ public class PdfWriter extends DocWriter implements
         if (tagged) {
             try {
                 getStructureTreeRoot().buildTree();
+                for (AccessibleElementId elementId : pdf.getStructElements()) {
+                    PdfStructureElement element = pdf.getStructElement(elementId);
+                    addToBody(element, element.getReference());
+                }
+
             }
             catch (Exception e) {
                 throw new ExceptionConverter(e);
@@ -3542,6 +3538,10 @@ public class PdfWriter extends DocWriter implements
         } else {
             return standardStructElems_1_7;
         }
+    }
+
+    public void useExternalCacheForTagStructure(TempFileCache fileCache) {
+        pdf.useExternalCache(fileCache);
     }
 
 }
