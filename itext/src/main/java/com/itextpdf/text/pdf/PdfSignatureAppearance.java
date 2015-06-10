@@ -1216,6 +1216,28 @@ public class PdfSignatureAppearance {
     /** Indicates if the stamper has already been pre-closed. */
     private boolean preClosed = false;
 
+    /** Signature field lock dictionary */
+    private PdfSigLockDictionary fieldLock;
+
+    /**
+     * Getter for the field lock dictionary.
+     * @return Field lock dictionary.
+     */
+    public PdfSigLockDictionary getFieldLockDict() {
+        return fieldLock;
+    }
+
+    /**
+     * Setter for the field lock dictionary.
+     * <p><strong>Be aware:</strong> if a signature is created on an existing signature field,
+     * then its /Lock dictionary takes the precedence (if it exists).</p>
+     *
+     * @param fieldLock Field lock dictionary.
+     */
+    public void setFieldLockDict(PdfSigLockDictionary fieldLock) {
+        this.fieldLock = fieldLock;
+    }
+
     /**
      * Checks if the document is in the process of closing.
      * @return <CODE>true</CODE> if the document is in the process of closing,
@@ -1256,6 +1278,12 @@ public class PdfSignatureAppearance {
             PdfDictionary widget = af.getFieldItem(name).getWidget(0);
             writer.markUsed(widget);
             fieldLock = widget.getAsDict(PdfName.LOCK);
+
+            if (fieldLock == null && this.fieldLock != null) {
+                widget.put(PdfName.LOCK, writer.addToBody(this.fieldLock).getIndirectReference());
+                fieldLock = this.fieldLock;
+            }
+
             widget.put(PdfName.P, writer.getPageReference(getPage()));
             widget.put(PdfName.V, refSig);
             PdfObject obj = PdfReader.getPdfObjectRelease(widget.get(PdfName.F));
@@ -1273,6 +1301,11 @@ public class PdfSignatureAppearance {
             sigField.setFieldName(name);
             sigField.put(PdfName.V, refSig);
             sigField.setFlags(PdfAnnotation.FLAGS_PRINT | PdfAnnotation.FLAGS_LOCKED);
+
+            if (this.fieldLock != null) {
+                sigField.put(PdfName.LOCK, writer.addToBody(this.fieldLock).getIndirectReference());
+                fieldLock = this.fieldLock;
+            }
 
             int pagen = getPage();
             if (!isInvisible())
