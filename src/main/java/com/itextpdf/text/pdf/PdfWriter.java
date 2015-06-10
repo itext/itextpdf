@@ -937,7 +937,7 @@ public class PdfWriter extends DocWriter implements
             try {
                 getStructureTreeRoot().buildTree();
                 for (AccessibleElementId elementId : pdf.getStructElements()) {
-                    PdfStructureElement element = pdf.getStructElement(elementId);
+                    PdfStructureElement element = pdf.getStructElement(elementId, false);
                     addToBody(element, element.getReference());
                 }
 
