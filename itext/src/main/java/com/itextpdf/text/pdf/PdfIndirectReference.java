@@ -44,6 +44,9 @@
  */
 package com.itextpdf.text.pdf;
 
+import java.io.IOException;
+import java.io.OutputStream;
+
 /**
  * <CODE>PdfIndirectReference</CODE> contains a reference to a <CODE>PdfIndirectObject</CODE>.
  * <P>
@@ -123,5 +126,10 @@ public class PdfIndirectReference extends PdfObject {
     
     public String toString() {
     	return new StringBuffer().append(number).append(" ").append(generation).append(" R").toString();
+    }
+
+    @Override
+    public void toPdf(PdfWriter writer, OutputStream os) throws IOException {
+        os.write(PdfEncodings.convertToBytes(toString(), null));
     }
 }
