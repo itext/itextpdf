@@ -65,8 +65,10 @@ public class PdfStructureElement extends PdfDictionary implements IPdfStructureE
     /**
      * Holds value of property kids.
      */
-    private PdfStructureElement parent;
-    private PdfStructureTreeRoot top;
+    private transient PdfStructureElement parent;
+    private transient PdfStructureTreeRoot top;
+
+    private AccessibleElementId elementId;
 
     /**
      * Holds value of property reference.
@@ -100,7 +102,8 @@ public class PdfStructureElement extends PdfDictionary implements IPdfStructureE
         put(PdfName.TYPE, PdfName.STRUCTELEM);
     }
 
-    protected PdfStructureElement(PdfDictionary parent, PdfName structureType) {
+    protected PdfStructureElement(PdfDictionary parent, PdfName structureType, AccessibleElementId elementId) {
+        this.elementId = elementId;
         if (parent instanceof PdfStructureElement) {
             top = ((PdfStructureElement)parent).top;
             init(parent, structureType);
@@ -153,9 +156,9 @@ public class PdfStructureElement extends PdfDictionary implements IPdfStructureE
                 }
             }
         }
-        kids.add(this);
         put(PdfName.S, structureType);
         reference = top.getWriter().getPdfIndirectReference();
+        kids.add(this.reference);
     }
 
     /**
@@ -710,4 +713,15 @@ public class PdfStructureElement extends PdfDictionary implements IPdfStructureE
         return parent.getAttribute(name);
     }
 
+    protected void setStructureTreeRoot(PdfStructureTreeRoot root) {
+        this.top = root;
+    }
+
+    protected void setStructureElementParent(PdfStructureElement parent) {
+        this.parent = parent;
+    }
+
+    protected AccessibleElementId getElementId() {
+        return elementId;
+    }
 }
