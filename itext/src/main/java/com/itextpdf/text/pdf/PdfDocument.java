@@ -2796,6 +2796,10 @@ public class PdfDocument extends Document {
     }
 
     protected PdfStructureElement getStructElement(AccessibleElementId id) {
+        return getStructElement(id, true);
+    }
+
+    protected PdfStructureElement getStructElement(AccessibleElementId id, boolean toSaveFetchedElement) {
         PdfStructureElement element = structElements.get(id);
         if (isToUseExternalCache && element == null) {
             TempFileCache.ObjectPosition pos = externallyStoredStructElements.get(id);
@@ -2803,10 +2807,12 @@ public class PdfDocument extends Document {
                 try {
                     element = (PdfStructureElement) externalCache.get(pos);
                     element.setStructureTreeRoot(writer.getStructureTreeRoot());
-                    element.setStructureElementParent(getStructElement(elementsParents.get(element.getElementId())));
+                    element.setStructureElementParent(getStructElement(elementsParents.get(element.getElementId()), toSaveFetchedElement));
 
-                    externallyStoredStructElements.remove(id);
-                    structElements.put(id, element);
+                    if (toSaveFetchedElement) {
+                        externallyStoredStructElements.remove(id);
+                        structElements.put(id, element);
+                    }
                 } catch (IOException e) {
                     throw new ExceptionConverter(e);
                 } catch (ClassNotFoundException e) {
