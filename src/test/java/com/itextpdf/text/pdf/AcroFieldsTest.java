@@ -223,7 +223,7 @@ public class AcroFieldsTest {
 
         AcroFields fields = stamper.getAcroFields();
 
-        fields.setField("Mitarbeiter", "Ármann Óskar Sigurðsson");
+        fields.setField("Mitarbeiter", "ÁÁÁÁ ÓÓÓÓ Testð");
 
         stamper.close();
 
