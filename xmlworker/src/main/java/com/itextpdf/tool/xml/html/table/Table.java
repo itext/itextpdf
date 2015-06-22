@@ -165,6 +165,11 @@ public class Table extends AbstractTagProcessor {
             table.setHeaderRows(headerRows + footerRows);
             table.setFooterRows(footerRows);
             
+            if ( tag.getAttributes().containsKey(HTML.Attribute.ALIGN)) {
+                String value = tag.getAttributes().get(HTML.Attribute.ALIGN);
+                table.setHorizontalAlignment(CSS.getElementAlignment(value));
+            }
+            
             int direction = getRunDirection(tag);
             if (direction != PdfWriter.RUN_DIRECTION_DEFAULT) {
                 table.setRunDirection(direction);

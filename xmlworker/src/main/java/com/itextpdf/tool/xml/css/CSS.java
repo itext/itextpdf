@@ -44,6 +44,10 @@
  */
 package com.itextpdf.tool.xml.css;
 
+import com.itextpdf.text.Element;
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * CSS Property-Value container.
  *
@@ -250,4 +254,23 @@ public final class CSS {
 		public static final String TABLE_ROW = "table-row";
 		public static final String TABLE_ROW_GROUP = "table-row-group";
 	}
+        
+        private static final Map<String, Integer> cssAlignMap = new HashMap<String, Integer>();
+        private static final String DEFAULT = "default";
+
+        static {
+            cssAlignMap.put(Value.LEFT.toLowerCase(), Element.ALIGN_LEFT);
+            cssAlignMap.put(Value.CENTER.toLowerCase(), Element.ALIGN_CENTER);
+            cssAlignMap.put(Value.RIGHT.toLowerCase(), Element.ALIGN_RIGHT);
+            cssAlignMap.put(Value.JUSTIFY.toLowerCase(), Element.ALIGN_JUSTIFIED);
+            cssAlignMap.put(DEFAULT.toLowerCase(), Element.ALIGN_UNDEFINED);
+        }
+        
+        public static final int getElementAlignment(String cssAlignment) {
+            String lower = cssAlignment.toLowerCase();
+            if (cssAlignMap.containsKey(lower)) {
+                return cssAlignMap.get(lower);
+            }
+            return cssAlignMap.get(DEFAULT);
+        }
 }
