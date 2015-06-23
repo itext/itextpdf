@@ -1529,26 +1529,30 @@ public class PdfDocument extends Document {
                         tabPosition = tmp;
                     }
                     if (chunk.isAttribute(Chunk.BACKGROUND)) {
-                        boolean inText = graphics.getInText();
-                        if (inText && isTagged(writer)) {
-                            graphics.endText();
-                        }
-                        float subtract = lastBaseFactor;
-                        if (nextChunk != null && nextChunk.isAttribute(Chunk.BACKGROUND))
-                            subtract = 0;
-                        if (nextChunk == null)
-                            subtract += hangingCorrection;
                         Object bgr[] = (Object[])chunk.getAttribute(Chunk.BACKGROUND);
-                        graphics.setColorFill((BaseColor)bgr[0]);
-                        float extra[] = (float[])bgr[1];
-                        graphics.rectangle(xMarker - extra[0],
-                                yMarker + descender - extra[1] + chunk.getTextRise(),
-                                width - subtract + extra[0] + extra[2],
-                                ascender - descender + extra[1] + extra[3]);
-                        graphics.fill();
-                        graphics.setGrayFill(0);
-                        if (inText && isTagged(writer)) {
-                            graphics.beginText(true);
+                        if (bgr[0] != null) {
+                            boolean inText = graphics.getInText();
+                            if (inText && isTagged(writer)) {
+                                graphics.endText();
+                            }
+                            float subtract = lastBaseFactor;
+                            if (nextChunk != null && nextChunk.isAttribute(Chunk.BACKGROUND)) {
+                                subtract = 0;
+                            }
+                            if (nextChunk == null) {
+                                subtract += hangingCorrection;
+                            }
+                            graphics.setColorFill((BaseColor) bgr[0]);
+                            float extra[] = (float[]) bgr[1];
+                            graphics.rectangle(xMarker - extra[0],
+                                    yMarker + descender - extra[1] + chunk.getTextRise(),
+                                    width - subtract + extra[0] + extra[2],
+                                    ascender - descender + extra[1] + extra[3]);
+                            graphics.fill();
+                            graphics.setGrayFill(0);
+                            if (inText && isTagged(writer)) {
+                                graphics.beginText(true);
+                            }
                         }
                     }
                     if (chunk.isAttribute(Chunk.UNDERLINE)) {
