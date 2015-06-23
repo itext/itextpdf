@@ -71,7 +71,8 @@ public class PdfCleanUpProcessorTest {
                                              {"clippingNWRule.pdf", "clippingNWRule.pdf", "cmp_clippingNWRule.pdf", null},
                                              {"dashedClosedRotatedTriangles.pdf", "dashedClosedRotatedTriangles.pdf", "cmp_dashedClosedRotatedTriangles.pdf", null},
                                              {"miterTest.pdf", "miterTest.pdf", "cmp_miterTest.pdf", null},
-                                             {"degenerateCases.pdf", "degenerateCases.pdf", "cmp_degenerateCases.pdf", null}
+                                             {"degenerateCases.pdf", "degenerateCases.pdf", "cmp_degenerateCases.pdf", null},
+                                             {"absentICentry.pdf", "absentICentry.pdf", "cmp_absentICentry.pdf", null}
         });
     }
 

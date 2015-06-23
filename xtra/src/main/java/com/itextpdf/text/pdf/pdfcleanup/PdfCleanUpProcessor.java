@@ -286,10 +286,16 @@ public class PdfCleanUpProcessor {
 
         clippingRects.put(annotIndex, markedRectangles);
 
+        BaseColor cleanUpColor = null;
         PdfArray ic = annotDict.getAsArray(PdfName.IC);
-        BaseColor cleanUpColor = new BaseColor(ic.getAsNumber(0).floatValue(),
-                                               ic.getAsNumber(1).floatValue(),
-                                               ic.getAsNumber(2).floatValue());
+
+        if (ic != null) {
+            cleanUpColor = new BaseColor(
+                    ic.getAsNumber(0).floatValue(),
+                    ic.getAsNumber(1).floatValue(),
+                    ic.getAsNumber(2).floatValue()
+            );
+        }
 
 
         PdfStream ro = annotDict.getAsStream(PdfName.RO);
