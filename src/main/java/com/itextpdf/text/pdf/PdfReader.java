@@ -2446,6 +2446,7 @@ public class PdfReader implements PdfViewerPreferences {
     public void setPageContent(final int pageNum, final byte content[]) {
     	setPageContent(pageNum, content, PdfStream.DEFAULT_COMPRESSION);
     }
+
     /** Sets the contents of the page.
      * @param content the new page content
      * @param pageNum the page number. 1 is the first
@@ -2453,12 +2454,27 @@ public class PdfReader implements PdfViewerPreferences {
      * @since	2.1.3	(the method already existed without param compressionLevel)
      */
     public void setPageContent(final int pageNum, final byte content[], final int compressionLevel) {
+        setPageContent(pageNum, content, compressionLevel, false);
+    }
+
+    /** Sets the contents of the page.
+     * @param content the new page content
+     * @param pageNum the page number. 1 is the first
+     * @param compressionLevel the compressionLevel
+     * @param killOldXRefRecursively if true, old contents will be deeply removed from the pdf (i.e. if it was an array,
+     *                               all its entries will also be removed). Use careful when a content stream may be reused.
+     *                               If false, old contents will not be removed and will stay in the document if not manually deleted.
+     * @since	5.5.7	(the method already existed without param killOldXRefRecursively)
+     */
+    public void setPageContent(final int pageNum, final byte content[], final int compressionLevel, final boolean killOldXRefRecursively) {
         PdfDictionary page = getPageN(pageNum);
         if (page == null)
             return;
         PdfObject contents = page.get(PdfName.CONTENTS);
         freeXref = -1;
-        killXref(contents);
+        if (killOldXRefRecursively) {
+            killXref(contents);
+        }
         if (freeXref == -1) {
             xrefObj.add(null);
             freeXref = xrefObj.size() - 1;
@@ -2466,7 +2482,6 @@ public class PdfReader implements PdfViewerPreferences {
         page.put(PdfName.CONTENTS, new PRIndirectReference(this, freeXref));
         xrefObj.set(freeXref, new PRStream(this, content, compressionLevel));
     }
-
     
     /**
      * Decode a byte[] applying the filters specified in the provided dictionary using default filter handlers.
