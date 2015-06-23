@@ -132,7 +132,7 @@ class PdfCleanUpRegionFilter extends RenderFilter {
         EndType endType = getEndType(lineCapStyle);
 
         if (lineDashPattern != null) {
-            if (!lineDashPattern.isSolid() || (lineDashPattern.isZeroDashed())) {// && elementsSum(lineDashPattern)) {
+            if (!lineDashPattern.isSolid()) {
                 path = applyDashPattern(path, lineDashPattern);
             }
         }
