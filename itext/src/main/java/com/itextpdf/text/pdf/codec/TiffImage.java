@@ -130,7 +130,7 @@ public class TiffImage {
             Image img = null;
             long tiffT4Options = 0;
             long tiffT6Options = 0;
-            int fillOrder = 1;
+            long fillOrder = 1;
             int h = (int)dir.getFieldAsLong(TIFFConstants.TIFFTAG_IMAGELENGTH);
             int w = (int)dir.getFieldAsLong(TIFFConstants.TIFFTAG_IMAGEWIDTH);
             int dpiX = 0;
@@ -160,7 +160,7 @@ public class TiffImage {
             boolean reverse = false;
             TIFFField fillOrderField =  dir.getField(TIFFConstants.TIFFTAG_FILLORDER);
             if (fillOrderField != null)
-                fillOrder = fillOrderField.getAsInt(0);
+                fillOrder = fillOrderField.getAsLong(0);
             reverse = (fillOrder == TIFFConstants.FILLORDER_LSB2MSB);
             int params = 0;
             if (dir.isTagPresent(TIFFConstants.TIFFTAG_PHOTOMETRIC)) {
