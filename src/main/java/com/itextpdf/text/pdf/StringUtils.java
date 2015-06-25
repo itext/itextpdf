@@ -1,5 +1,5 @@
 /*
- * $Id$
+ * $Id: dd7a69b3d2f99d9be72c8f0da9553ba88d00a3f9 $
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2015 iText Group NV
@@ -45,6 +45,7 @@
 package com.itextpdf.text.pdf;
 
 import com.itextpdf.text.DocWriter;
+import java.io.UnsupportedEncodingException;
 
 public class StringUtils {
 
@@ -108,4 +109,12 @@ public class StringUtils {
         content.append_i(')');
     }
 
+    public static byte[] convertCharsToBytes(char[] chars, String encoding) throws UnsupportedEncodingException {
+        byte[] result = new byte[chars.length*2];
+        for (int i=0; i<chars.length;i++) {
+            result[2*i] = (byte) (chars[i] / 256);
+            result[2*i+1] = (byte) (chars[i] % 256);
+        }
+        return result;
+    }
 }

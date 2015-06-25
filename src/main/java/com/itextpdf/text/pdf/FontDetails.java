@@ -1,5 +1,5 @@
 /*
- * $Id$
+ * $Id: 09cc4a3c62cbd1efd06f7e36071f2f0f3e81cdc8 $
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2015 iText Group NV
@@ -46,6 +46,7 @@ package com.itextpdf.text.pdf;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -278,8 +279,8 @@ class FontDetails {
                     		glyph[i++] = (char)m0;
                     	}
                     }
-                    String s = new String(glyph, 0, i);
-                    b = s.getBytes(CJKFont.CJK_ENCODING);
+                    glyph = Arrays.copyOfRange(glyph, 0, i);
+                    b = StringUtils.convertCharsToBytes(glyph, CJKFont.CJK_ENCODING);
                 }
                 catch (UnsupportedEncodingException e) {
                     throw new ExceptionConverter(e);
