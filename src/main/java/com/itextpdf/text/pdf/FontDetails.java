@@ -1,5 +1,5 @@
 /*
- * $Id: 09cc4a3c62cbd1efd06f7e36071f2f0f3e81cdc8 $
+ * $Id$
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2015 iText Group NV
@@ -44,22 +44,15 @@
  */
 package com.itextpdf.text.pdf;
 
-import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
-
 import com.itextpdf.text.ExceptionConverter;
 import com.itextpdf.text.Utilities;
 import com.itextpdf.text.pdf.fonts.otf.Language;
 import com.itextpdf.text.pdf.languages.BanglaGlyphRepositioner;
 import com.itextpdf.text.pdf.languages.GlyphRepositioner;
 import com.itextpdf.text.pdf.languages.IndicCompositeCharacterComparator;
+
+import java.io.UnsupportedEncodingException;
+import java.util.*;
 
 /**
  * Each font in the document will have an instance of this class
