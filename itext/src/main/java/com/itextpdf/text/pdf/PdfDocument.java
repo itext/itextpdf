@@ -1535,6 +1535,7 @@ public class PdfDocument extends Document {
                             if (inText && isTagged(writer)) {
                                 graphics.endText();
                             }
+                            graphics.saveState();
                             float subtract = lastBaseFactor;
                             if (nextChunk != null && nextChunk.isAttribute(Chunk.BACKGROUND)) {
                                 subtract = 0;
@@ -1542,7 +1543,8 @@ public class PdfDocument extends Document {
                             if (nextChunk == null) {
                                 subtract += hangingCorrection;
                             }
-                            graphics.setColorFill((BaseColor) bgr[0]);
+                            BaseColor c = (BaseColor) bgr[0];
+                            graphics.setColorFill(c);
                             float extra[] = (float[]) bgr[1];
                             graphics.rectangle(xMarker - extra[0],
                                     yMarker + descender - extra[1] + chunk.getTextRise(),
@@ -1550,6 +1552,7 @@ public class PdfDocument extends Document {
                                     ascender - descender + extra[1] + extra[3]);
                             graphics.fill();
                             graphics.setGrayFill(0);
+                            graphics.restoreState();
                             if (inText && isTagged(writer)) {
                                 graphics.beginText(true);
                             }
