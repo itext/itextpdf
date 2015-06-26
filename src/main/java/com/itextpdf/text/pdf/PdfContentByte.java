@@ -3138,6 +3138,13 @@ public class PdfContentByte {
             default:
                 setRGBColorStroke(color.getRed(), color.getGreen(), color.getBlue());
         }
+
+        int alpha = color.getAlpha();
+        if (alpha < 255) {
+            PdfGState gState = new PdfGState();
+            gState.setStrokeOpacity( alpha / 255f);
+            setGState(gState);
+        }
     }
 
     /** Sets the fill color. <CODE>color</CODE> can be an
@@ -3183,6 +3190,13 @@ public class PdfContentByte {
             }
             default:
                 setRGBColorFill(color.getRed(), color.getGreen(), color.getBlue());
+        }
+
+        int alpha = color.getAlpha();
+        if (alpha < 255) {
+            PdfGState gState = new PdfGState();
+            gState.setFillOpacity( alpha / 255f);
+            setGState(gState);
         }
     }
 
