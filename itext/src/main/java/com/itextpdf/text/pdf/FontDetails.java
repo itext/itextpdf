@@ -273,7 +273,7 @@ class FontDetails {
                     	}
                     }
                     glyph = Arrays.copyOfRange(glyph, 0, i);
-                    b = StringUtils.convertCharsToBytes(glyph, CJKFont.CJK_ENCODING);
+                    b = StringUtils.convertCharsToBytes(glyph);
                 }
                 catch (UnsupportedEncodingException e) {
                     throw new ExceptionConverter(e);

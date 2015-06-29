@@ -50,7 +50,6 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
-import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 import java.util.Collection;
 
@@ -89,10 +88,10 @@ public class StringUtilsTest {
     }
 
     @Test
-    public void convertCharsToBytesTest() throws UnsupportedEncodingException {
+    public void convertCharsToBytesTest() {
         byte[] check = {check1, check2};
         char[] vals = {input};
-        byte[] result = StringUtils.convertCharsToBytes(vals, CJKFont.CJK_ENCODING);
+        byte[] result = StringUtils.convertCharsToBytes(vals);
 
         Assert.assertArrayEquals(check, result);
     }

@@ -45,7 +45,6 @@
 package com.itextpdf.text.pdf;
 
 import com.itextpdf.text.DocWriter;
-import java.io.UnsupportedEncodingException;
 
 public class StringUtils {
 
@@ -109,7 +108,15 @@ public class StringUtils {
         content.append_i(')');
     }
 
-    public static byte[] convertCharsToBytes(char[] chars, String encoding) throws UnsupportedEncodingException {
+    
+    /**
+     * Converts an array of unsigned 16bit numbers to an array of bytes.
+     * The input values are presented as chars for convenience.
+     * 
+     * @param chars the array of 16bit numbers that should be converted
+     * @return the resulting byte array, twice as large as the input
+     */
+    public static byte[] convertCharsToBytes(char[] chars) {
         byte[] result = new byte[chars.length*2];
         for (int i=0; i<chars.length;i++) {
             result[2*i] = (byte) (chars[i] / 256);
