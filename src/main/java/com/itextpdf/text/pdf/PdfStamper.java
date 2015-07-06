@@ -830,10 +830,9 @@ public class PdfStamper
         if (getReader().getNamedDestination().containsKey(name)){
             return false;
         }
-
-        dest.addPage(getReader().getPageOrigRef(page));
-        namedDestinations.put(name, new PdfArray(dest));
-
+        PdfDestination d = new PdfDestination(dest);
+        d.addPage(getReader().getPageOrigRef(page));
+        namedDestinations.put(name, new PdfArray(d));
         return true;
     }
     

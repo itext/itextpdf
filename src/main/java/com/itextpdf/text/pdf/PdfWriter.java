@@ -1628,8 +1628,9 @@ public class PdfWriter extends DocWriter implements
      * @since	iText 5.0
      */
     public void addNamedDestination(final String name, final int page, final PdfDestination dest) {
-    	dest.addPage(getPageReference(page));
-    	pdf.localDestination(name, dest);
+        PdfDestination d = new PdfDestination(dest);
+    	d.addPage(getPageReference(page));
+    	pdf.localDestination(name, d);
     }
 
      /**
