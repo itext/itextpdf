@@ -82,6 +82,13 @@ public class PdfContentStreamProcessorTest
   {
     processBytes("yaxiststar.pdf", 1);
   }
+  
+  @Test
+  public void testFallbackForBadColorSpace()
+    throws Exception
+  {
+    processBytes("fallbackForBadColorSpace.pdf", 1);
+  }
 
 
 
