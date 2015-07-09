@@ -749,18 +749,17 @@ public class PdfPKCS7 {
      * @return the bytes for the PKCS7SignedData object
      */
     public byte[] getEncodedPKCS7() {
-        return getEncodedPKCS7(null, null, null, null, null, CryptoStandard.CMS);
+        return getEncodedPKCS7(null, null, null, null, CryptoStandard.CMS);
     }
 
     /**
      * Gets the bytes for the PKCS7SignedData object. Optionally the authenticatedAttributes
      * in the signerInfo can also be set. If either of the parameters is <CODE>null</CODE>, none will be used.
      * @param secondDigest the digest in the authenticatedAttributes
-     * @param signingTime the signing time in the authenticatedAttributes
      * @return the bytes for the PKCS7SignedData object
      */
-    public byte[] getEncodedPKCS7(byte secondDigest[], Calendar signingTime) {
-        return getEncodedPKCS7(secondDigest, signingTime, null, null, null, CryptoStandard.CMS);
+    public byte[] getEncodedPKCS7(byte secondDigest[]) {
+        return getEncodedPKCS7(secondDigest, null, null, null, CryptoStandard.CMS);
     }
 
     /**
@@ -768,12 +767,11 @@ public class PdfPKCS7 {
      * in the signerInfo can also be set, OR a time-stamp-authority client
      * may be provided.
      * @param secondDigest the digest in the authenticatedAttributes
-     * @param signingTime the signing time in the authenticatedAttributes
      * @param tsaClient TSAClient - null or an optional time stamp authority client
      * @return byte[] the bytes for the PKCS7SignedData object
      * @since	2.1.6
      */
-    public byte[] getEncodedPKCS7(byte secondDigest[], Calendar signingTime, TSAClient tsaClient, byte[] ocsp, Collection<byte[]> crlBytes, CryptoStandard sigtype) {
+    public byte[] getEncodedPKCS7(byte secondDigest[], TSAClient tsaClient, byte[] ocsp, Collection<byte[]> crlBytes, CryptoStandard sigtype) {
         try {
             if (externalDigest != null) {
                 digest = externalDigest;
@@ -839,8 +837,8 @@ public class PdfPKCS7 {
             signerinfo.add(new DERSequence(v));
 
             // add the authenticated attribute if present
-            if (secondDigest != null && signingTime != null) {
-                signerinfo.add(new DERTaggedObject(false, 0, getAuthenticatedAttributeSet(secondDigest, signingTime, ocsp, crlBytes, sigtype)));
+            if (secondDigest != null) {
+                signerinfo.add(new DERTaggedObject(false, 0, getAuthenticatedAttributeSet(secondDigest, ocsp, crlBytes, sigtype)));
             }
             // Add the digestEncryptionAlgorithm
             v = new ASN1EncodableVector();
@@ -924,12 +922,12 @@ public class PdfPKCS7 {
      }
 
     // Authenticated attributes
-    
+
     /**
      * When using authenticatedAttributes the authentication process is different.
      * The document digest is generated and put inside the attribute. The signing is done over the DER encoded
      * authenticatedAttributes. This method provides that encoding and the parameters must be
-     * exactly the same as in {@link #getEncodedPKCS7(byte[],Calendar)}.
+     * exactly the same as in {@link #getEncodedPKCS7(byte[])}.
      * <p>
      * A simple example:
      * <p>
@@ -949,12 +947,11 @@ public class PdfPKCS7 {
      * byte sg[] = pk7.getEncodedPKCS7(hash, cal);
      * </pre>
      * @param secondDigest the content digest
-     * @param signingTime the signing time
      * @return the byte array representation of the authenticatedAttributes ready to be signed
      */
-    public byte[] getAuthenticatedAttributeBytes(byte secondDigest[], Calendar signingTime, byte[] ocsp, Collection<byte[]> crlBytes, CryptoStandard sigtype) {
+    public byte[] getAuthenticatedAttributeBytes(byte secondDigest[], byte[] ocsp, Collection<byte[]> crlBytes, CryptoStandard sigtype) {
         try {
-            return getAuthenticatedAttributeSet(secondDigest, signingTime, ocsp, crlBytes, sigtype).getEncoded(ASN1Encoding.DER);
+            return getAuthenticatedAttributeSet(secondDigest, ocsp, crlBytes, sigtype).getEncoded(ASN1Encoding.DER);
         }
         catch (Exception e) {
             throw new ExceptionConverter(e);
@@ -963,22 +960,17 @@ public class PdfPKCS7 {
 
     /**
      * This method provides that encoding and the parameters must be
-     * exactly the same as in {@link #getEncodedPKCS7(byte[],Calendar)}.
-     * 
+     * exactly the same as in {@link #getEncodedPKCS7(byte[])}.
+     *
      * @param secondDigest the content digest
-     * @param signingTime the signing time
      * @return the byte array representation of the authenticatedAttributes ready to be signed
      */
-    private DERSet getAuthenticatedAttributeSet(byte secondDigest[], Calendar signingTime, byte[] ocsp, Collection<byte[]> crlBytes, CryptoStandard sigtype) {
+    private DERSet getAuthenticatedAttributeSet(byte secondDigest[], byte[] ocsp, Collection<byte[]> crlBytes, CryptoStandard sigtype) {
         try {
             ASN1EncodableVector attribute = new ASN1EncodableVector();
             ASN1EncodableVector v = new ASN1EncodableVector();
             v.add(new ASN1ObjectIdentifier(SecurityIDs.ID_CONTENT_TYPE));
             v.add(new DERSet(new ASN1ObjectIdentifier(SecurityIDs.ID_PKCS7_DATA)));
-            attribute.add(new DERSequence(v));
-            v = new ASN1EncodableVector();
-            v.add(new ASN1ObjectIdentifier(SecurityIDs.ID_SIGNING_TIME));
-            v.add(new DERSet(new DERUTCTime(signingTime.getTime())));
             attribute.add(new DERSequence(v));
             v = new ASN1EncodableVector();
             v.add(new ASN1ObjectIdentifier(SecurityIDs.ID_MESSAGE_DIGEST));
