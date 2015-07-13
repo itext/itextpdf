@@ -1051,6 +1051,7 @@ public class ColumnText {
         PdfLine line;
         float x1;
         int status = 0;
+        boolean rtl = false;
         while (true) {
             firstIndent = lastWasNewline ? indent : followingIndent; //
             if (rectangularMode) {
@@ -1084,6 +1085,11 @@ public class ColumnText {
                 }
                 yLine -= currentLeading;
                 if (!simulate && !dirty) {
+                    if (line.isRTL && canvas.isTagged())
+                    {
+                        canvas.beginMarkedContentSequence(new PdfName("ReversedChars"));
+                        rtl = true;
+                    }
                     text.beginText();
                     dirty = true;
                 }
@@ -1113,11 +1119,16 @@ public class ColumnText {
                 if (x2 - x1 <= firstIndent + rightIndent) {
                     continue;
                 }
+                line = bidiLine.processLine(x1, x2 - x1 - firstIndent - rightIndent, alignment, localRunDirection, arabicOptions, minY, yLine, descender);
                 if (!simulate && !dirty) {
+                    if (line.isRTL && canvas.isTagged())
+                    {
+                        canvas.beginMarkedContentSequence(new PdfName("ReversedChars"));
+                        rtl = true;
+                    }
                     text.beginText();
                     dirty = true;
                 }
-                line = bidiLine.processLine(x1, x2 - x1 - firstIndent - rightIndent, alignment, localRunDirection, arabicOptions, minY, yLine, descender);
                 if (line == null) {
                     status = NO_MORE_TEXT;
                     yLine = yTemp;
@@ -1156,6 +1167,9 @@ public class ColumnText {
             text.endText();
             if (canvas != text) {
                 canvas.add(text);
+            }
+            if (rtl && canvas.isTagged()) {
+                canvas.endMarkedContentSequence();
             }
         }
         return status;
