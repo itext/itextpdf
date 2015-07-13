@@ -3,6 +3,7 @@ package com.itextpdf.text.pdf;
 import com.itextpdf.testutils.CompareTool;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Rectangle;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -57,6 +58,27 @@ public class NamedDestinationsTest {
 
         CompareTool compareTool = new CompareTool();
         String errorMessage = compareTool.compareByContent(outFile, srcFolder + "cmp_namedDestinations02.pdf", outFolder, "diff_");
+        if (errorMessage != null) {
+            Assert.fail(errorMessage);
+        }
+    }
+
+    @Test
+    public void addNavigationTest() throws IOException, DocumentException, InterruptedException {
+        String src = srcFolder + "primes.pdf";
+        String dest = outFolder + "primes_links.pdf";
+        PdfReader reader = new PdfReader(src);
+        PdfStamper stamper = new PdfStamper(reader, new FileOutputStream(dest));
+        PdfDestination d = new PdfDestination(PdfDestination.FIT);
+        Rectangle rect = new Rectangle(0, 806, 595, 842);
+        PdfAnnotation a10 = PdfAnnotation.createLink(stamper.getWriter(), rect, PdfAnnotation.HIGHLIGHT_INVERT, 2, d);
+        stamper.addAnnotation(a10, 1);
+        PdfAnnotation a1 = PdfAnnotation.createLink(stamper.getWriter(), rect, PdfAnnotation.HIGHLIGHT_PUSH, 1, d);
+        stamper.addAnnotation(a1, 2);
+        stamper.close();
+
+        CompareTool compareTool = new CompareTool();
+        String errorMessage = compareTool.compareByContent(dest, srcFolder + "cmp_primes_links.pdf", outFolder, "diff_");
         if (errorMessage != null) {
             Assert.fail(errorMessage);
         }
