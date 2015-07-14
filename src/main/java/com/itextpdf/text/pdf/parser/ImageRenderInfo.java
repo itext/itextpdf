@@ -46,6 +46,7 @@ package com.itextpdf.text.pdf.parser;
 
 import java.io.IOException;
 
+import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.pdf.PRStream;
 import com.itextpdf.text.pdf.PdfDictionary;
 import com.itextpdf.text.pdf.PdfIndirectReference;
@@ -56,8 +57,8 @@ import com.itextpdf.text.pdf.PdfReader;
  * @since 5.0.1
  */
 public class ImageRenderInfo {
-    /** The coordinate transformation matrix that was in effect when the image was rendered */
-    private final Matrix ctm;
+	/** The graphics state that was in effect when the image was rendered */
+	private final GraphicsState gs;
     /** A reference to the image XObject */
     private final PdfIndirectReference ref;
     /** A reference to an inline image */
@@ -67,15 +68,15 @@ public class ImageRenderInfo {
     /** the image object to be rendered, if it has been parsed already.  Null otherwise. */
     private PdfImageObject imageObject = null;
     
-    private ImageRenderInfo(Matrix ctm, PdfIndirectReference ref, PdfDictionary colorSpaceDictionary) {
-        this.ctm = ctm;
+    private ImageRenderInfo(GraphicsState gs, PdfIndirectReference ref, PdfDictionary colorSpaceDictionary) {
+        this.gs = gs;
         this.ref = ref;
         this.inlineImageInfo = null;
         this.colorSpaceDictionary = colorSpaceDictionary;
     }
 
-    private ImageRenderInfo(Matrix ctm, InlineImageInfo inlineImageInfo, PdfDictionary colorSpaceDictionary) {
-        this.ctm = ctm;
+    private ImageRenderInfo(GraphicsState gs, InlineImageInfo inlineImageInfo, PdfDictionary colorSpaceDictionary) {
+        this.gs = gs;
         this.ref = null;
         this.inlineImageInfo = inlineImageInfo;
         this.colorSpaceDictionary = colorSpaceDictionary;
@@ -88,8 +89,8 @@ public class ImageRenderInfo {
      * @return the ImageRenderInfo representing the rendered XObject
      * @since 5.0.1
      */
-    public static ImageRenderInfo createForXObject(Matrix ctm, PdfIndirectReference ref, PdfDictionary colorSpaceDictionary){
-        return new ImageRenderInfo(ctm, ref, colorSpaceDictionary);
+    public static ImageRenderInfo createForXObject(GraphicsState gs, PdfIndirectReference ref, PdfDictionary colorSpaceDictionary){
+        return new ImageRenderInfo(gs, ref, colorSpaceDictionary);
     }
     
     /**
@@ -100,8 +101,8 @@ public class ImageRenderInfo {
      * @return the ImageRenderInfo representing the rendered embedded image
      * @since 5.0.1
      */
-    protected static ImageRenderInfo createForEmbeddedImage(Matrix ctm, InlineImageInfo inlineImageInfo, PdfDictionary colorSpaceDictionary){
-        ImageRenderInfo renderInfo = new ImageRenderInfo(ctm, inlineImageInfo, colorSpaceDictionary);
+    protected static ImageRenderInfo createForEmbeddedImage(GraphicsState gs, InlineImageInfo inlineImageInfo, PdfDictionary colorSpaceDictionary){
+        ImageRenderInfo renderInfo = new ImageRenderInfo(gs, inlineImageInfo, colorSpaceDictionary);
         return renderInfo;
     }
     
@@ -131,7 +132,7 @@ public class ImageRenderInfo {
      * @return a vector in User space representing the start point of the xobject
      */
     public Vector getStartPoint(){ 
-        return new Vector(0, 0, 1).cross(ctm); 
+        return new Vector(0, 0, 1).cross(gs.ctm); 
     }
 
     /**
@@ -139,7 +140,7 @@ public class ImageRenderInfo {
      * @since 5.0.3
      */
     public Matrix getImageCTM(){
-        return ctm;
+        return gs.ctm;
     }
     
     /**
@@ -148,7 +149,7 @@ public class ImageRenderInfo {
      */
     public float getArea(){
         // the image space area is 1, so we multiply that by the determinant of the CTM to get the transformed area
-        return ctm.getDeterminant();
+        return gs.ctm.getDeterminant();
     }
     
     /**
@@ -157,5 +158,9 @@ public class ImageRenderInfo {
      */
     public PdfIndirectReference getRef() {
     	return ref;
+    }
+    
+    public BaseColor getCurrentFillColor(){
+    	return gs.fillColor;
     }
 }
