@@ -447,7 +447,7 @@ public class CompareTool {
 
         if (targetDir.exists()) {
             String gsParams = this.gsParams.replace("<outputfile>", outPath + cmpImage).replace("<inputfile>", cmpPdf);
-            Process p = Runtime.getRuntime().exec(gsExec + gsParams);
+            Process p = runProcess(gsExec , gsParams);
             BufferedReader bri = new BufferedReader(new InputStreamReader(p.getInputStream()));
             BufferedReader bre = new BufferedReader(new InputStreamReader(p.getErrorStream()));
             String line;
@@ -461,7 +461,7 @@ public class CompareTool {
             bre.close();
             if (p.waitFor() == 0) {
                 gsParams = this.gsParams.replace("<outputfile>", outPath + outImage).replace("<inputfile>", outPdf);
-                p = Runtime.getRuntime().exec(gsExec + gsParams);
+                p = runProcess(gsExec , gsParams);
                 bri = new BufferedReader(new InputStreamReader(p.getInputStream()));
                 bre = new BufferedReader(new InputStreamReader(p.getErrorStream()));
                 while ((line = bri.readLine()) != null) {
@@ -500,7 +500,7 @@ public class CompareTool {
                         if (!cmpResult) {
                             if (compareExec != null && new File(compareExec).exists()) {
                                 String compareParams = this.compareParams.replace("<image1>", imageFiles[i].getAbsolutePath()).replace("<image2>", cmpImageFiles[i].getAbsolutePath()).replace("<difference>", outPath + differenceImagePrefix + Integer.toString(i + 1) + ".png");
-                                p = Runtime.getRuntime().exec(compareExec + compareParams);
+                                p = runProcess(compareExec , compareParams);
                                 bre = new BufferedReader(new InputStreamReader(p.getErrorStream()));
                                 while ((line = bre.readLine()) != null) {
                                     System.out.println(line);
@@ -545,6 +545,18 @@ public class CompareTool {
         }
 
         return null;
+    }
+
+    private Process runProcess(String execPath, String params) throws IOException, InterruptedException {
+        StringTokenizer st = new StringTokenizer(params);
+        String[] cmdArray = new String[st.countTokens() + 1];
+        cmdArray[0] = execPath;
+        for (int i = 1; st.hasMoreTokens(); ++i)
+            cmdArray[i] = st.nextToken();
+
+        Process p = Runtime.getRuntime().exec(cmdArray);
+
+        return p;
     }
 
     public String compare(String outPdf, String cmpPdf, String outPath, String differenceImagePrefix, Map<Integer, List<Rectangle>> ignoredAreas) throws IOException, InterruptedException, DocumentException {
