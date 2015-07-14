@@ -794,16 +794,14 @@ public class PdfContentStreamProcessor {
      */
     private static BaseColor getColor(int nOperands, List<PdfObject> operands) {
     	float[] c = new float[nOperands];
-    	boolean needsRefactoring = false;
     	for (int i = 0; i < nOperands; i++) {
-    		c[i] = ((PdfNumber)operands.get(i)).floatValue();
-                if (c[i] > 1) {
-                    needsRefactoring = true;
-                }
-    	}
-        if (needsRefactoring) {
-            for (int i = 0; i < nOperands; i++) {
-                c[i] /= 255f;
+            c[i] = ((PdfNumber)operands.get(i)).floatValue();
+            // fallbacks for illegal values: handled as Acrobat and Foxit do
+            if (c[i] > 1f) {
+                c[i] = 1f;
+            }
+            else if (c[i] < 0f) {
+                c[i] = 0f;
             }
         }
     	switch (nOperands) {
