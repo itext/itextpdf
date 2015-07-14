@@ -444,7 +444,7 @@ public class PdfContentStreamProcessor {
      * @param colorSpaceDic the color space for the inline immage
      */
     protected void handleInlineImage(InlineImageInfo info, PdfDictionary colorSpaceDic){
-        ImageRenderInfo renderInfo = ImageRenderInfo.createForEmbeddedImage(gs().ctm, info, colorSpaceDic);
+        ImageRenderInfo renderInfo = ImageRenderInfo.createForEmbeddedImage(gs(), info, colorSpaceDic);
         renderListener.renderImage(renderInfo);
     }
 
@@ -1271,7 +1271,7 @@ public class PdfContentStreamProcessor {
 
         public void handleXObject(PdfContentStreamProcessor processor, PdfStream xobjectStream, PdfIndirectReference ref) {
             PdfDictionary colorSpaceDic = processor.resources.getAsDict(PdfName.COLORSPACE);
-            ImageRenderInfo renderInfo = ImageRenderInfo.createForXObject(processor.gs().ctm, ref, colorSpaceDic);
+            ImageRenderInfo renderInfo = ImageRenderInfo.createForXObject(processor.gs(), ref, colorSpaceDic);
             processor.renderListener.renderImage(renderInfo);
         }
     }
