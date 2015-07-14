@@ -160,6 +160,10 @@ public class ImageRenderInfo {
     	return ref;
     }
     
+    /**
+     * @return the current fill color from the graphics state at the time this render operation occured
+     * @since 5.5.7
+     */
     public BaseColor getCurrentFillColor(){
     	return gs.fillColor;
     }
