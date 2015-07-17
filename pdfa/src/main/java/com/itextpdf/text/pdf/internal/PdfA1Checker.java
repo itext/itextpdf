@@ -71,8 +71,7 @@ public class PdfA1Checker extends PdfAChecker {
             PdfName.MOVIE, PdfName.RESETFORM, PdfName.IMPORTDATA, PdfName.JAVASCRIPT));
 
     static public final HashSet<PdfName> contentAnnotations = new HashSet<PdfName>(Arrays.asList(PdfName.TEXT,
-            PdfName.LINK, PdfName.FREETEXT, PdfName.LINE, PdfName.SQUARE, PdfName.CIRCLE, PdfName.STAMP,
-            PdfName.INK, PdfName.POPUP, PdfName.WIDGET));
+            PdfName.FREETEXT, PdfName.LINE, PdfName.SQUARE, PdfName.CIRCLE, PdfName.STAMP, PdfName.INK, PdfName.POPUP));
 
     static private final HashSet<PdfName> keysForCheck = new HashSet<PdfName>(Arrays.asList(PdfName.FONTDESCRIPTOR,
             PdfName.FONTFILE, PdfName.FONTFILE2, PdfName.FONTFILE3, PdfName.FILTER, PdfName.GROUP, PdfName.S,
