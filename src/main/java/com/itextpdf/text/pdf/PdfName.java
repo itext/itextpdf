@@ -1713,6 +1713,7 @@ public class
     /** A name */
     public static final PdfName RESOURCES = new PdfName("Resources");
     public static final PdfName REQUIREMENTS = new PdfName("Requirements");
+    public static final PdfName REVERSEDCHARS = new PdfName("ReversedChars");
     /** A name */
     public static final PdfName RI = new PdfName("RI");
     /**
