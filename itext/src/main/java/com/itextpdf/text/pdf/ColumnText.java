@@ -1087,7 +1087,7 @@ public class ColumnText {
                 if (!simulate && !dirty) {
                     if (line.isRTL && canvas.isTagged())
                     {
-                        canvas.beginMarkedContentSequence(new PdfName("ReversedChars"));
+                        canvas.beginMarkedContentSequence(PdfName.REVERSEDCHARS);
                         rtl = true;
                     }
                     text.beginText();
@@ -1123,7 +1123,7 @@ public class ColumnText {
                 if (!simulate && !dirty) {
                     if (line.isRTL && canvas.isTagged())
                     {
-                        canvas.beginMarkedContentSequence(new PdfName("ReversedChars"));
+                        canvas.beginMarkedContentSequence(PdfName.REVERSEDCHARS);
                         rtl = true;
                     }
                     text.beginText();
