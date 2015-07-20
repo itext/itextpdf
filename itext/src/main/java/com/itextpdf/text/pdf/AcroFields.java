@@ -721,6 +721,8 @@ public class AcroFields {
         PdfName fieldType = merged.getAsName(PdfName.FT);
 
         if (PdfName.BTN.equals(fieldType)) {
+            PdfNumber fieldFlags = merged.getAsNumber(PdfName.FF);
+            boolean isRadio = fieldFlags != null && (fieldFlags.intValue() & PdfFormField.FF_RADIO) != 0;
             RadioCheckField field = new RadioCheckField(writer, null, null, null);
             decodeGenericDictionary(merged, field);
             //rect
@@ -729,8 +731,9 @@ public class AcroFields {
             if (field.getRotation() == 90 || field.getRotation() == 270)
                 box = box.rotate();
             field.setBox(box);
-            field.setCheckType(RadioCheckField.TYPE_CROSS);
-            return field.getAppearance(false, !(merged.getAsName(PdfName.AS).equals(PdfName.Off)));
+            if (!isRadio)
+                field.setCheckType(RadioCheckField.TYPE_CROSS);
+            return field.getAppearance(isRadio, !(merged.getAsName(PdfName.AS).equals(PdfName.Off)));
         }
 
         topFirst = 0;
