@@ -282,7 +282,8 @@ public class CompareTool {
     }
 
     protected class CompareResult {
-        protected HashMap<ObjectPath, String> differences = new HashMap<ObjectPath, String>();
+        // LinkedHashMap to retain order. HashMap has different order in Java6/7 and Java8
+        protected Map<ObjectPath, String> differences = new LinkedHashMap<ObjectPath, String>();
         protected int messageLimit = 1;
 
         public CompareResult(int messageLimit) {
@@ -751,7 +752,7 @@ public class CompareTool {
         }
         boolean dictsAreSame = true;
         // Iterate through the union of the keys of the cmp and out dictionaries!
-        Set<PdfName> mergedKeys = new HashSet<PdfName>(cmpDict.getKeys());
+        Set<PdfName> mergedKeys = new TreeSet<PdfName>(cmpDict.getKeys());
         mergedKeys.addAll(outDict.getKeys());
         for (PdfName key : mergedKeys) {
             if (key.compareTo(PdfName.PARENT) == 0 || key.compareTo(PdfName.P) == 0) continue;
