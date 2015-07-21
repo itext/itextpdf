@@ -722,7 +722,7 @@ public class AcroFields {
 
         if (PdfName.BTN.equals(fieldType)) {
             PdfNumber fieldFlags = merged.getAsNumber(PdfName.FF);
-            boolean isRadio = fieldFlags == null ? false : (fieldFlags.intValue() & PdfFormField.FF_RADIO) != 0;
+            boolean isRadio = fieldFlags != null && (fieldFlags.intValue() & PdfFormField.FF_RADIO) != 0;
             RadioCheckField field = new RadioCheckField(writer, null, null, null);
             decodeGenericDictionary(merged, field);
             //rect

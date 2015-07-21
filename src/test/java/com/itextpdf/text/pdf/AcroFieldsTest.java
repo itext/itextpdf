@@ -254,4 +254,24 @@ public class AcroFieldsTest {
         }
     }
 
+    @Test
+    public void flatteningRadioButtonFieldsTest() throws IOException, DocumentException, InterruptedException {
+
+        String outFile = outFolder+"flatteningRadioButtonFieldsTest.pdf";
+        FileOutputStream file = new FileOutputStream(outFile);
+
+        PdfReader reader = new PdfReader(new FileInputStream(sourceFolder+"radios_src.pdf"));
+
+        PdfStamper stamper = new PdfStamper(reader, file);
+        AcroFields acroFields = stamper.getAcroFields();
+        acroFields.setField("radiogroup", "1");
+        stamper.close();
+
+        CompareTool compareTool = new CompareTool();
+        String errorMessage = compareTool.compareByContent(outFile, sourceFolder + "cmp_flatteningRadioButtonFieldsTest.pdf", outFolder, "diff_");
+        if (errorMessage != null) {
+            Assert.fail(errorMessage);
+        }
+    }
+
 }
