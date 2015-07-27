@@ -148,7 +148,7 @@ public class AcroFields {
     }
 
     void fill() {
-        fields = new HashMap<String, Item>();
+        fields = new LinkedHashMap<String, Item>();
         PdfDictionary top = (PdfDictionary)PdfReader.getPdfObjectRelease(reader.getCatalog().get(PdfName.ACROFORM));
         if (top == null)
             return;

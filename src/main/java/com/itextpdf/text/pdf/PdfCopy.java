@@ -215,7 +215,7 @@ public class PdfCopy extends PdfWriter {
         resources = new PdfDictionary();
         fields = new ArrayList<AcroFields>();
         calculationOrder = new ArrayList<String>();
-        fieldTree = new HashMap<String, Object>();
+        fieldTree = new LinkedHashMap<String, Object>();
         unmergedMap = new HashMap<Integer, PdfIndirectObject>();
         unmergedIndirectRefsMap = new HashMap<RefKey, PdfIndirectObject>();
         mergedMap = new HashMap<Integer, PdfIndirectObject>();
@@ -1336,7 +1336,7 @@ public class PdfCopy extends PdfWriter {
             Object obj = map.get(s);
             if (tk.hasMoreTokens()) {
                 if (obj == null) {
-                    obj = new HashMap<String, Object>();
+                    obj = new LinkedHashMap<String, Object>();
                     map.put(s, obj);
                     map = (HashMap<String, Object>)obj;
                     continue;
