@@ -321,10 +321,12 @@ public class ColumnText {
 
     /**
      * The index of the last row that needed to be splitted.
+     * -2 value mean it is the first attempt to split the first row.
+     * -1 means that we try to avoid splitting current row.
      *
      * @since 5.0.1 changed a boolean into an int
      */
-    private int splittedRow = -1;
+    private int splittedRow = -2;
 
     protected Phrase waitPhrase;
 
@@ -1826,7 +1828,12 @@ public class ColumnText {
                 } // IF ROWS SHOULD NOT BE SPLIT
                 // Contributed by Deutsche Bahn Systel GmbH (Thorsten Seitz), splitting row spans
                 //else if (table.isSplitLate() && !table.hasRowspan(k) && rowIdx < k) {
-                else if (table.isSplitLate() && rowIdx < k) {
+                //if first row do not fit, splittedRow has value of -2, so in this case we try to avoid split.
+                // Separate constant for the first attempt of splitting first row save us from infinite loop.
+                // Also we check header rows, because in other case we may split right after header row,
+                // while header row can't split before regular rows.
+                else if (table.isSplitLate() &&
+                        (rowIdx < k || (splittedRow == -2 && (table.getHeaderRows() == 0 || table.isSkipFirstHeader())))) {
                     splittedRow = -1;
                 } // SPLIT ROWS (IF WANTED AND NECESSARY)
                 else if (k < table.size()) {
@@ -1926,73 +1933,76 @@ public class ColumnText {
                         footerRows = 0;
                     }
 
-                    // we need a correction if the last row needs to be extended
-                    float rowHeight = 0;
-                    int lastIdx = sub.size() - 1 - footerRows;
-                    PdfPRow last = sub.get(lastIdx);
-                    if (table.isExtendLastRow(newPageFollows)) {
-                        rowHeight = last.getMaxHeights();
-                        last.setMaxHeights(yTemp - minY + rowHeight);
-                        yTemp = minY;
-                    }
-
-                    // newPageFollows indicates that this table is being split
-                    if (newPageFollows) {
-                        PdfPTableEvent tableEvent = table.getTableEvent();
-                        if (tableEvent instanceof PdfPTableEventSplit) {
-                            ((PdfPTableEventSplit) tableEvent).splitTable(table);
+                    if (sub.size() > 0) {
+                        // we need a correction if the last row needs to be extended
+                        float rowHeight = 0;
+                        int lastIdx = sub.size() - 1 - footerRows;
+                        PdfPRow last = sub.get(lastIdx);
+                        if (table.isExtendLastRow(newPageFollows)) {
+                            rowHeight = last.getMaxHeights();
+                            last.setMaxHeights(yTemp - minY + rowHeight);
+                            yTemp = minY;
                         }
-                    }
 
-                    // now we render the rows of the new table
-                    if (canvases != null) {
-                        if (isTagged(canvases[PdfPTable.TEXTCANVAS])) {
-                            canvases[PdfPTable.TEXTCANVAS].openMCBlock(table);
+
+                        // newPageFollows indicates that this table is being split
+                        if (newPageFollows) {
+                            PdfPTableEvent tableEvent = table.getTableEvent();
+                            if (tableEvent instanceof PdfPTableEventSplit) {
+                                ((PdfPTableEventSplit) tableEvent).splitTable(table);
+                            }
                         }
-                        nt.writeSelectedRows(0, -1, 0, -1, x1, yLineWrite, canvases, false);
-                        if (isTagged(canvases[PdfPTable.TEXTCANVAS])) {
-                            canvases[PdfPTable.TEXTCANVAS].closeMCBlock(table);
+
+                        // now we render the rows of the new table
+                        if (canvases != null) {
+                            if (isTagged(canvases[PdfPTable.TEXTCANVAS])) {
+                                canvases[PdfPTable.TEXTCANVAS].openMCBlock(table);
+                            }
+                            nt.writeSelectedRows(0, -1, 0, -1, x1, yLineWrite, canvases, false);
+                            if (isTagged(canvases[PdfPTable.TEXTCANVAS])) {
+                                canvases[PdfPTable.TEXTCANVAS].closeMCBlock(table);
+                            }
+                        } else {
+                            if (isTagged(canvas)) {
+                                canvas.openMCBlock(table);
+                            }
+                            nt.writeSelectedRows(0, -1, 0, -1, x1, yLineWrite, canvas, false);
+                            if (isTagged(canvas)) {
+                                canvas.closeMCBlock(table);
+                            }
                         }
-                    } else {
-                        if (isTagged(canvas)) {
-                            canvas.openMCBlock(table);
+
+                        if (!table.isComplete()) {
+                            table.addNumberOfRowsWritten(k);
                         }
-                        nt.writeSelectedRows(0, -1, 0, -1, x1, yLineWrite, canvas, false);
-                        if (isTagged(canvas)) {
-                            canvas.closeMCBlock(table);
-                        }
-                    }
 
-                    if (!table.isComplete()) {
-                        table.addNumberOfRowsWritten(k);
-                    }
-
-                    // if the row was split, we copy the content of the last row
-                    // that was consumed into the first row shown on the next page
-                    if (splittedRow == k && k < table.size()) {
-                        PdfPRow splitted = table.getRows().get(k);
-                        splitted.copyRowContent(nt, lastIdx);
-                    } // Contributed by Deutsche Bahn Systel GmbH (Thorsten Seitz), splitting row spans
-                    else if (k > 0 && k < table.size()) {
-                        // continue rowspans on next page
-                        // (as the row was not split there is no content to copy)
-                        PdfPRow row = table.getRow(k);
-                        row.splitRowspans(table, k - 1, nt, lastIdx);
-                    }
-                    // splitting row spans
-
-                    // reset the row height of the last row
-                    if (table.isExtendLastRow(newPageFollows)) {
-                        last.setMaxHeights(rowHeight);
-                    }
-
-                    // Contributed by Deutsche Bahn Systel GmbH (Thorsten Seitz)
-                    // newPageFollows indicates that this table is being split
-                    if (newPageFollows) {
-                        PdfPTableEvent tableEvent = table.getTableEvent();
-                        if (tableEvent instanceof PdfPTableEventAfterSplit) {
+                        // if the row was split, we copy the content of the last row
+                        // that was consumed into the first row shown on the next page
+                        if (splittedRow == k && k < table.size()) {
+                            PdfPRow splitted = table.getRows().get(k);
+                            splitted.copyRowContent(nt, lastIdx);
+                        } // Contributed by Deutsche Bahn Systel GmbH (Thorsten Seitz), splitting row spans
+                        else if (k > 0 && k < table.size()) {
+                            // continue rowspans on next page
+                            // (as the row was not split there is no content to copy)
                             PdfPRow row = table.getRow(k);
-                            ((PdfPTableEventAfterSplit) tableEvent).afterSplitTable(table, row, k);
+                            row.splitRowspans(table, k - 1, nt, lastIdx);
+                        }
+                        // splitting row spans
+
+                        // reset the row height of the last row
+                        if (table.isExtendLastRow(newPageFollows)) {
+                            last.setMaxHeights(rowHeight);
+                        }
+
+                        // Contributed by Deutsche Bahn Systel GmbH (Thorsten Seitz)
+                        // newPageFollows indicates that this table is being split
+                        if (newPageFollows) {
+                            PdfPTableEvent tableEvent = table.getTableEvent();
+                            if (tableEvent instanceof PdfPTableEventAfterSplit) {
+                                PdfPRow row = table.getRow(k);
+                                ((PdfPTableEventAfterSplit) tableEvent).afterSplitTable(table, row, k);
+                            }
                         }
                     }
                 } // in simulation mode, we need to take extendLastRow into account
@@ -2023,7 +2033,7 @@ public class ColumnText {
                     splittedRow = -1;
                     rowIdx = 0;
                 } else {
-                    if (splittedRow != -1) {
+                    if (splittedRow > -1) {
                         ArrayList<PdfPRow> rows = table.getRows();
                         for (int i = rowIdx; i < k; ++i) {
                             rows.set(i, null);
