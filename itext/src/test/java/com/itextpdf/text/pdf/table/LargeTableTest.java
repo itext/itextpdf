@@ -59,8 +59,8 @@ public class LargeTableTest {
     }
 
     @Test
-    public void testIncompleteTableAdd() throws DocumentException, IOException, InterruptedException {
-        final String file = "incomplete_add.pdf";
+    public void testIncompleteTableAdd01() throws DocumentException, IOException, InterruptedException {
+        final String file = "incomplete_add01.pdf";
 
         Document document = new Document(PageSize.LETTER);
         PdfWriter.getInstance(document, new FileOutputStream(outFolder + file));
@@ -88,6 +88,98 @@ public class LargeTableTest {
     }
 
     @Test
+    public void testIncompleteTableAdd02() throws DocumentException, IOException, InterruptedException {
+        final String file = "incomplete_add02.pdf";
+
+        Document document = new Document(PageSize.LETTER);
+        PdfWriter.getInstance(document, new FileOutputStream(outFolder + file));
+
+        document.open();
+        PdfPTable table = new PdfPTable(5);
+        table.setHeaderRows(2);
+        table.setSplitRows(false);
+
+        table.setComplete(false);
+
+        for (int i = 0; i < 5; i++) {table.addCell("Header1 \n" + i);}
+        for (int i = 0; i < 5; i++) {table.addCell("Header2 \n" + i);}
+
+        for (int i = 0; i < 500; i++) {
+            if (i%5 == 0) {
+                document.add(table);
+            }
+            table.addCell("Test " + i);
+        }
+
+        table.setComplete(true);
+        document.add(table);
+        document.close();
+
+        compareTablePdf(file);
+    }
+
+    @Test
+    public void testIncompleteTableAdd03() throws DocumentException, IOException, InterruptedException {
+        final String file = "incomplete_add03.pdf";
+
+        Document document = new Document(PageSize.LETTER);
+        PdfWriter.getInstance(document, new FileOutputStream(outFolder + file));
+
+        document.open();
+        PdfPTable table = new PdfPTable(5);
+        table.setHeaderRows(2);
+        table.setFooterRows(1);
+        table.setSplitRows(false);
+        table.setComplete(false);
+
+        for (int i = 0; i < 5; i++) {table.addCell("Header \n" + i);}
+        for (int i = 0; i < 5; i++) {table.addCell("Footer \n" + i);}
+
+        for (int i = 0; i < 500; i++) {
+            if (i%5 == 0) {
+                document.add(table);
+            }
+            table.addCell("Test " + i);
+        }
+
+        table.setComplete(true);
+        document.add(table);
+        document.close();
+
+        compareTablePdf(file);
+    }
+
+    @Test
+    public void testIncompleteTableAdd04() throws DocumentException, IOException, InterruptedException {
+        final String file = "incomplete_add04.pdf";
+
+        Document document = new Document(PageSize.LETTER);
+        PdfWriter.getInstance(document, new FileOutputStream(outFolder + file));
+
+        document.open();
+        PdfPTable table = new PdfPTable(5);
+        table.setHeaderRows(1);
+        table.setFooterRows(1);
+        table.setSplitRows(false);
+        table.setComplete(false);
+
+        for (int i = 0; i < 5; i++) {table.addCell("Footer \n" + i);}
+
+        for (int i = 0; i < 500; i++) {
+            if (i%5 == 0) {
+                document.add(table);
+            }
+            table.addCell("Test " + i);
+        }
+
+        table.setComplete(true);
+        document.add(table);
+        document.close();
+
+        compareTablePdf(file);
+    }
+
+    @Test
     public void testIncompleteTable2() throws IOException, DocumentException, InterruptedException {
         final String file = "incomplete_table_2.pdf";
 
@@ -95,7 +187,7 @@ public class LargeTableTest {
         PdfWriter.getInstance(document, new FileOutputStream(outFolder + file));
         document.open();
         Font font = new Font();
-        float[] widths = new float[] {50f, 50f};
+        float[] widths = new float[]{50f, 50f};
         PdfPTable table = new PdfPTable(widths.length);
         table.setComplete(false);
         table.setWidths(widths);
