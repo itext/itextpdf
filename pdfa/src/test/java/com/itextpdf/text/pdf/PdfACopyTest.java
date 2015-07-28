@@ -19,7 +19,7 @@ import java.io.OutputStream;
 
 public class PdfACopyTest {
 
-    private static final String outputDir = "./target/test/copy/";
+    protected static final String outputDir = "./target/test/copy/";
 
     static {
         new File(outputDir).mkdirs();
@@ -317,5 +317,22 @@ public class PdfACopyTest {
 
         if (!exceptionThrown)
             junit.framework.Assert.fail("PdfAConformanceException should be thrown.");
+    }
+
+    @Test
+    public void testSmartCopyCreatePdfA_1() throws DocumentException, IOException {
+        String fileName = "./src/test/resources/com/itextpdf/text/pdf/copy/pdfa-1a.pdf";
+        String testName = "testSmartCopyPdfA_1.pdf";
+
+        FileOutputStream outputPdfStream = new FileOutputStream(outputDir+testName);
+        Document document = new Document();
+        PdfCopy copy = new PdfASmartCopy(document, outputPdfStream, PdfAConformanceLevel.PDF_A_1B);
+        copy.createXmpMetadata();
+        document.open();
+        document.addLanguage("en-US");
+        PdfReader reader = new PdfReader(fileName);
+        PdfImportedPage page = copy.getImportedPage(reader, 1);
+        copy.addPage(page);
+        copy.close();
     }
 }
