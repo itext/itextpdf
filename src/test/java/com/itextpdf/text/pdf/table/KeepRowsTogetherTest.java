@@ -52,7 +52,7 @@ public class KeepRowsTogetherTest {
     @Test
     public void testKeepRowsTogetherWithoutHeader() throws DocumentException, IOException, InterruptedException {
         final String file = "withoutheader.pdf";
-        createDocument(file, 1, 10, "Header for table 2 (should be on page 1)", false, false);
+        createDocument(file, 1, 10, "Header for table 2 (should be on page 1, not a header, just first row)", false, false);
         compareDocuments(file);
     }
 
