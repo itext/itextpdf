@@ -1,5 +1,5 @@
 /*
- * $Id$
+ * $Id: 893794f2f519f6569f5da50aaf014deb5e4e1e88 $
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2015 iText Group NV
@@ -1241,7 +1241,12 @@ public class PdfReader implements PdfViewerPreferences {
         }
         rootPages = catalog.getAsDict(PdfName.PAGES);
         if (rootPages == null || !PdfName.PAGES.equals(rootPages.get(PdfName.TYPE))) {
-            throw new InvalidPdfException(MessageLocalization.getComposedMessage("the.document.has.no.page.root"));
+            if (debugmode && LOGGER.isLogging(Level.ERROR)) {
+                LOGGER.error(MessageLocalization.getComposedMessage("the.document.has.no.page.root"));
+            }
+            else {
+                throw new InvalidPdfException(MessageLocalization.getComposedMessage("the.document.has.no.page.root"));
+            }
         }
         pageRefs = new PageRefs(this);
     }
