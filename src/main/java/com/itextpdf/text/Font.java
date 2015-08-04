@@ -763,8 +763,7 @@ public class Font implements Comparable<Font> {
 	 * Replaces the attributes that are equal to <VAR>null</VAR> with the
 	 * attributes of a given font.
 	 *
-	 * @param font
-	 *            the font of a bigger element class
+	 * @param font the font of a lower element class (ex. this - paragraph font, font - chunk font)
 	 * @return a <CODE>Font</CODE>
 	 */
 	public Font difference(final Font font) {

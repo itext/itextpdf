@@ -44,17 +44,15 @@
  */
 package com.itextpdf.text;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Hashtable;
-import java.util.Set;
-
 import com.itextpdf.text.Font.FontFamily;
 import com.itextpdf.text.log.Level;
 import com.itextpdf.text.log.Logger;
 import com.itextpdf.text.log.LoggerFactory;
 import com.itextpdf.text.pdf.BaseFont;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.*;
 
 /**
  * If you are using True Type fonts, you can declare the paths of the different ttf- and ttc-files
@@ -417,8 +415,16 @@ public class FontFactoryImp implements FontProvider {
                       break;
                   }
               }
-              if (!inserted)
+              if (!inserted) {
                   tmp.add(fullName);
+                  String newFullName = fullName.toLowerCase();
+                  if (newFullName.endsWith("regular")) {
+                      //remove "regular" at the end of the font name
+                      newFullName = newFullName.substring(0, newFullName.length() - 7).trim();
+                      //insert this font name at the first position for higher priority
+                      tmp.add(0, fullName.substring(0, newFullName.length()));
+                  }
+              }
           }
         }
     }
@@ -446,12 +452,22 @@ public class FontFactoryImp implements FontProvider {
                 Object allNames[] = BaseFont.getAllFontNames(path, BaseFont.WINANSI, null);
                 trueTypeFonts.put(((String)allNames[0]).toLowerCase(), path);
                 if (alias != null) {
-                    trueTypeFonts.put(alias.toLowerCase(), path);
+                    String lcAlias = alias.toLowerCase();
+                    trueTypeFonts.put(lcAlias, path);
+                    if (lcAlias.endsWith("regular")) {
+                        //do this job to give higher priority to regular fonts in comparison with light, narrow, etc
+                        saveCopyOfRegularFont(lcAlias, path);
+                    }
                 }
                 // register all the font names with all the locales
                 String[][] names = (String[][])allNames[2]; //full name
                 for (String[] name : names) {
-                    trueTypeFonts.put(name[3].toLowerCase(), path);
+                    String lcName = name[3].toLowerCase();
+                    trueTypeFonts.put(lcName, path);
+                    if (lcName.endsWith("regular")) {
+                        //do this job to give higher priority to regular fonts in comparison with light, narrow, etc
+                        saveCopyOfRegularFont(lcName, path);
+                    }
                 }
                 String fullName = null;
                 String familyName = null;
@@ -510,6 +526,19 @@ public class FontFactoryImp implements FontProvider {
         catch(IOException ioe) {
             throw new ExceptionConverter(ioe);
         }
+    }
+
+    // remove regular and correct last symbol
+    // do this job to give higher priority to regular fonts in comparison with light, narrow, etc
+    // Don't use this method for not regular fonts!
+    protected boolean saveCopyOfRegularFont(String regularFontName, String path) {
+        //remove "regular" at the end of the font name
+        String alias = regularFontName.substring(0, regularFontName.length() - 7).trim();
+        if (!trueTypeFonts.containsKey(alias)) {
+            trueTypeFonts.put(alias, path);
+            return true;
+        }
+        return false;
     }
 
     /** Register all the fonts in a directory.
