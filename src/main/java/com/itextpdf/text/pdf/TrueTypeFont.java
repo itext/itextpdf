@@ -44,16 +44,16 @@
  */
 package com.itextpdf.text.pdf;
 
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.error_messages.MessageLocalization;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-
-import com.itextpdf.text.Document;
-import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.error_messages.MessageLocalization;
 
 /** Reads a Truetype font
  *
@@ -210,7 +210,14 @@ class TrueTypeFont extends BaseFont {
      */
     protected String fontName;
 
-    /** The full name of the font
+    /**
+     * The font subfamily
+     * This subFamily name is usually extracted from the table 'name' with
+     * the 'Name ID' 2 or 'Name ID' 17.
+     */
+    protected String[][] subFamily;
+
+    /** The full name of the font 'Name ID' 1 or 'Name ID' 16
      */
     protected String fullName[][];
 
@@ -674,7 +681,19 @@ class TrueTypeFont extends BaseFont {
             checkCff();
             fontName = getBaseFont();
             fullName = getNames(4); //full name
-            familyName = getNames(1); //family name
+            //author Daniel Lichtenberger, CHEMDOX
+            String[][] otfFamilyName = getNames(16);
+            if (otfFamilyName.length > 0) {
+                familyName = otfFamilyName;
+            } else {
+                familyName = getNames(1);
+            }
+            String[][] otfSubFamily = getNames(17);
+            if (otfFamilyName.length > 0) {
+                subFamily = otfSubFamily;
+            } else {
+                subFamily = getNames(2);
+            }
             allNameEntries = getAllNames();
             if (!justNames) {
                 fillTables();
@@ -1502,6 +1521,21 @@ class TrueTypeFont extends BaseFont {
     @Override
     public String[][] getFullFontName() {
         return fullName;
+    }
+
+    /**
+     * Gets the full subfamily name of the font. If it is a True Type font
+     * each array element will have {Platform ID, Platform Encoding ID,
+     * Language ID, subfamily}. The interpretation of this values can be
+     * found in the Open Type specification, chapter 2, in the 'name' table.<br>
+     * @return the full subfamily name of the font
+     */
+    @Override
+    public String getSubfamily() {
+        if (subFamily != null && subFamily.length > 0) {
+            return subFamily[0][3];
+        }
+        return super.getSubfamily();
     }
 
     /** Gets all the entries of the Names-Table. If it is a True Type font
