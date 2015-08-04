@@ -1170,6 +1170,10 @@ public abstract class BaseFont {
      */
     public abstract void setPostscriptFontName(String name);
 
+    public String getSubfamily() {
+        return "";
+    }
+
     /** Gets the full name of the font. If it is a True Type font
      * each array element will have {Platform ID, Platform Encoding ID,
      * Language ID, font name}. The interpretation of this values can be
