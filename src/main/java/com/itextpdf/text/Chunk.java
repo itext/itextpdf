@@ -456,8 +456,17 @@ public class Chunk implements Element, IAccessibleElement {
 	 */
 
 	public boolean hasAttributes() {
-		return attributes != null;
+		return attributes != null && !attributes.isEmpty();
 	}
+
+    /**
+     * Checks  the accessible attributes of this <CODE>Chunk</CODE>.
+     *
+     * @return false if there aren't any.
+     */
+    public boolean hasAccessibleAttributes() {
+        return accessibleAttributes != null && !accessibleAttributes.isEmpty();
+    }
 
 	/**
 	 * Gets the attributes for this <CODE>Chunk</CODE>.
