@@ -49,6 +49,9 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.itextpdf.text.exceptions.UnsupportedPdfException;
+import com.itextpdf.text.log.Logger;
+import com.itextpdf.text.log.LoggerFactory;
 import com.itextpdf.text.pdf.FilterHandlers;
 import com.itextpdf.text.pdf.PRTokeniser;
 import com.itextpdf.text.pdf.PdfArray;
@@ -64,6 +67,7 @@ import com.itextpdf.text.pdf.PdfReader;
  * @since 5.0.4
  */
 public final class InlineImageUtils {
+    private final static Logger LOGGER = LoggerFactory.getLogger(InlineImageUtils.class.getName());
     private InlineImageUtils(){}
 
     /**
@@ -390,8 +394,13 @@ public final class InlineImageUtils {
     	try{
     		PdfReader.decodeBytes(samples, imageDictionary, FilterHandlers.getDefaultFilterHandlers());
     		return true;
-    	} catch (IOException e){
-    		return false;
     	}
+        catch (UnsupportedPdfException e){
+            LOGGER.warn(e.getMessage());
+            return true;
+        }
+        catch (IOException e){
+    		return false;
+        }
     }
 }

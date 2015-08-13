@@ -110,6 +110,14 @@ public class PdfContentStreamProcessorTest
 
   }
 
+    @Test
+    public void testInlineImageWithUnsupportedDecodeFilter() throws IOException {
+        PdfReader reader= TestResourceUtils.getResourceAsPdfReader(this, "inlineImages01.pdf");
+        PdfReaderContentParser parser = new PdfReaderContentParser(reader);
+        Integer page =  reader.getNumberOfPages();
+        LocationTextExtractionStrategy strategy = parser.processContent(page, new LocationTextExtractionStrategy());
+    }
+
 
   private byte[] readContentBytes(
       final PdfObject contentObject)
