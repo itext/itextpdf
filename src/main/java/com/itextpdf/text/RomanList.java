@@ -113,4 +113,10 @@ public class RomanList extends List {
 		return false;
 	}
 
+    @Override
+    public List cloneShallow() {
+        RomanList clone = new RomanList();
+        populateProperties(clone);
+        return clone;
+    }
 }
