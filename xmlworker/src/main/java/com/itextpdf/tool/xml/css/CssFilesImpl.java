@@ -36,12 +36,7 @@ package com.itextpdf.tool.xml.css;
 
 import com.itextpdf.tool.xml.Tag;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
 
 /**
@@ -90,7 +85,7 @@ public class CssFilesImpl implements CssFiles {
 	 * </ul>
 	 */
 	public Map<String, String> getCSS(final Tag t) {
-		Map<String, String> aggregatedProps = new HashMap<String, String>();
+		Map<String, String> aggregatedProps = new LinkedHashMap<String, String>();
 		populateCss(t, aggregatedProps);
 		return aggregatedProps;
 	}
@@ -109,7 +104,7 @@ public class CssFilesImpl implements CssFiles {
     }
 
     public void populateOneCss(final Map<String, String> aggregatedProps, final Map<String, String> cssDeclaration) {
-        Map<String, String> css = new HashMap<String, String>();
+        Map<String, String> css = new LinkedHashMap<String, String>();
         for (Entry<String, String> e : cssDeclaration.entrySet()) {
             String key = utils.stripDoubleSpacesTrimAndToLowerCase(e.getKey());
             String value = utils.stripDoubleSpacesAndTrim(e.getValue());

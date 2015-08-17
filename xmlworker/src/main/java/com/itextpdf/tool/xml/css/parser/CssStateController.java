@@ -52,6 +52,7 @@ import com.itextpdf.tool.xml.css.parser.state.Rule;
 import com.itextpdf.tool.xml.css.parser.state.Unknown;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -118,7 +119,7 @@ public class CssStateController {
 
 	private void processProps(final String props) {
 		String[] split = props.split(";");
-		Map<String, String> map = new HashMap<String, String>();
+		Map<String, String> map = new LinkedHashMap<String, String>();
 		for (String prop : split) {
 			String[] propSplit = prop.split(":");
 			if (propSplit.length == 2) {

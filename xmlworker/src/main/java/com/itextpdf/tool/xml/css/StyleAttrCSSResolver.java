@@ -54,10 +54,7 @@ import com.itextpdf.tool.xml.pipeline.css.CSSResolver;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
 
 /**
@@ -145,7 +142,7 @@ public class StyleAttrCSSResolver implements CSSResolver {
 	 */
 	public void resolveStyles(final Tag t) {
 		// get css for this tag from resolver
-		Map<String, String> tagCss = new HashMap<String, String>();
+		Map<String, String> tagCss = new LinkedHashMap<String, String>();
         Map<String, String> listCss = null;
 		if (null != cssFiles && cssFiles.hasFiles()) {
 			tagCss = cssFiles.getCSS(t);
@@ -169,7 +166,7 @@ public class StyleAttrCSSResolver implements CSSResolver {
 			}
 			String styleAtt = t.getAttributes().get(HTML.Attribute.STYLE);
 			if (null != styleAtt && styleAtt.length() > 0) {
-                Map<String, String> tagAttrCss = new HashMap<String, String>();
+                Map<String, String> tagAttrCss = new LinkedHashMap<String, String>();
 				String[] styles = styleAtt.split(";");
 				for (String s : styles) {
 					String[] part = s.split(":",2);
@@ -278,8 +275,7 @@ public class StyleAttrCSSResolver implements CSSResolver {
     private String mergeTextDecorationRules(String oldRule, String newRule) {
         if (CSS.Value.NONE.equals(newRule))
             return newRule;
-
-        HashSet<String> attrSet = new HashSet<String>();
+        TreeSet<String> attrSet = new TreeSet<String>();
         if (oldRule != null)
             Collections.addAll(attrSet, oldRule.split("\\s+"));
         if (newRule != null)

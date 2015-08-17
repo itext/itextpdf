@@ -45,6 +45,7 @@ package com.itextpdf.tool.xml.css;
 import com.itextpdf.text.pdf.events.IndexEvents;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -59,7 +60,7 @@ public class CssRule implements Comparable<CssRule> {
     public CssRule(List<CssSelectorItem> selector, Map<String, String> declarations) {
         this.selector = new CssSelector(selector);
         this.normalDeclarations = declarations;
-        this.importantDeclarations = new HashMap<String, String>();
+        this.importantDeclarations = new LinkedHashMap<String, String>();
 
         for(Map.Entry<String,String> declaration: normalDeclarations.entrySet()) {
             int exclIndex = declaration.getValue().indexOf('!');

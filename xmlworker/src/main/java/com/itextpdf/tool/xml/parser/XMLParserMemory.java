@@ -47,6 +47,7 @@ package com.itextpdf.tool.xml.parser;
 import com.itextpdf.tool.xml.parser.state.InsideTagHTMLState;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -73,7 +74,7 @@ public class XMLParserMemory {
 	 *
 	 */
 	public XMLParserMemory(boolean isHtml) {
-		this.attr = new HashMap<String, String>();
+		this.attr = new LinkedHashMap<String, String>();
         this.isHtml = isHtml;
 	}
 
@@ -141,7 +142,7 @@ public class XMLParserMemory {
 	 * @return the attributes of the current tag
 	 */
 	public Map<String, String> getAttributes() {
-		return new HashMap<String, String>(this.attr);
+		return new LinkedHashMap<String, String>(this.attr);
 	}
 
 	/**
