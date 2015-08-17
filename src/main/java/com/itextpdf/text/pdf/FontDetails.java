@@ -272,7 +272,7 @@ class FontDetails {
                     		glyph[i++] = (char)m0;
                     	}
                     }
-                    glyph = Arrays.copyOfRange(glyph, 0, i);
+                    glyph = Utilities.copyOfRange(glyph, 0, i);
                     b = StringUtils.convertCharsToBytes(glyph);
                 }
                 catch (UnsupportedEncodingException e) {
