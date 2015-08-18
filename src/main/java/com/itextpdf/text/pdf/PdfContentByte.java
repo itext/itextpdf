@@ -1587,6 +1587,26 @@ public class PdfContentByte {
      * @throws DocumentException on error
      */
     public void addImage(final Image image, final double a, final double b, final double c, final double d, final double e, final double f, final boolean inlineImage) throws DocumentException {
+        addImage(image, a, b, c, d, e, f, inlineImage, false);
+    }
+
+
+    /**
+     * Adds an <CODE>Image</CODE> to the page. The positioning of the <CODE>Image</CODE>
+     * is done with the transformation matrix. To position an <CODE>image</CODE> at (x,y)
+     * The image can be placed inline.
+     * @param image the <CODE>Image</CODE> object
+     * @param a an element of the transformation matrix
+     * @param b an element of the transformation matrix
+     * @param c an element of the transformation matrix
+     * @param d an element of the transformation matrix
+     * @param e an element of the transformation matrix
+     * @param f an element of the transformation matrix
+     * @param inlineImage <CODE>true</CODE> to place this image inline, <CODE>false</CODE> otherwise
+     * @param isMCBlockOpened <CODE>true</CODE> not to open MCBlock, <CODE>false</CODE> otherwise
+     * @throws DocumentException on error
+     */
+    protected void addImage(final Image image, final double a, final double b, final double c, final double d, final double e, final double f, final boolean inlineImage, final boolean isMCBlockOpened) throws DocumentException {
         try {
             AffineTransform transform = new AffineTransform(a, b, c, d, e, f);
 
@@ -1624,7 +1644,7 @@ public class PdfContentByte {
                 }
                 float w = template.getWidth();
                 float h = template.getHeight();
-                addTemplate(template, a / w, b / w, c / h, d / h, e, f);
+                addTemplate(template, a / w, b / w, c / h, d / h, e, f, isMCBlockOpened);
             }
             else {
                 content.append("q ");
