@@ -1463,12 +1463,13 @@ public class PdfDocument extends Document {
         float yMarker = text.getYTLM();
         boolean adjustMatrix = false;
         float tabPosition = 0;
-
+        boolean isMCBlockOpened = false;
         // looping over all the chunks in 1 line
         for (Iterator<PdfChunk> j = line.iterator(); j.hasNext(); ) {
             chunk = j.next();
             if (isTagged(writer) && chunk.accessibleElement != null) {
                 text.openMCBlock(chunk.accessibleElement);
+                isMCBlockOpened = true;
             }
             BaseColor color = chunk.color();
             float fontSize = chunk.font().size();
@@ -1699,7 +1700,7 @@ public class PdfDocument extends Document {
                         float matrix[] = image.matrix(chunk.getImageScalePercentage());
                         matrix[Image.CX] = xMarker + chunk.getImageOffsetX() - matrix[Image.CX];
                         matrix[Image.CY] = yMarker + chunk.getImageOffsetY() - matrix[Image.CY];
-                        graphics.addImage(image, matrix[0], matrix[1], matrix[2], matrix[3], matrix[4], matrix[5]);
+                        graphics.addImage(image, matrix[0], matrix[1], matrix[2], matrix[3], matrix[4], matrix[5], false, isMCBlockOpened);
                         text.moveText(xMarker + lastBaseFactor + chunk.getImageWidth() - text.getXTLM(), 0);
                     }
                 }
