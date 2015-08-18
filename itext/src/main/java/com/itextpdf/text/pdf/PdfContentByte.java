@@ -4003,6 +4003,18 @@ public class PdfContentByte {
      * @param struc the tagging structure
      */
     public void beginMarkedContentSequence(final PdfStructureElement struc) {
+        beginMarkedContentSequence(struc, null);
+    }
+
+    /**
+     * Begins a marked content sequence. This sequence will be tagged with the structure <CODE>struc</CODE>.
+     * The same structure can be used several times to connect text that belongs to the same logical segment
+     * but is in a different location, like the same paragraph crossing to another page, for example.
+     * <CODE>expansion</CODE>  is token's expansion.
+     * @param struc the tagging structure
+     * @param expansion the expansion
+     */
+    private void beginMarkedContentSequence(final PdfStructureElement struc, String expansion) {
         PdfObject obj = struc.get(PdfName.K);
         int[] structParentMarkPoint = pdf.getStructParentIndexAndNextMarkPoint(getCurrentPage());
         int structParent = structParentMarkPoint[0];
@@ -4033,7 +4045,11 @@ public class PdfContentByte {
         }
         setMcDepth(getMcDepth() + 1);
         int contentSize = content.size();
-        content.append(struc.get(PdfName.S).getBytes()).append(" <</MCID ").append(mark).append(">> BDC").append_i(separator);
+        content.append(struc.get(PdfName.S).getBytes()).append(" <</MCID ").append(mark);
+        if (null != expansion) {
+            content.append("/E (").append(expansion).append(")");
+        }
+        content.append(">> BDC").append_i(separator);
         markedContentSize += content.size() - contentSize;
     }
 
@@ -4194,7 +4210,12 @@ public class PdfContentByte {
                         boolean inTextLocal = inText;
                         if (inText)
                             endText();
-                        beginMarkedContentSequence(structureElement);
+                        if (null != element.getAccessibleAttributes() && null != element.getAccessibleAttribute(PdfName.E)) {
+                            beginMarkedContentSequence(structureElement, element.getAccessibleAttribute(PdfName.E).toString());
+                            element.setAccessibleAttribute(PdfName.E, null);
+                        } else {
+                            beginMarkedContentSequence(structureElement);
+                        }
                         if (inTextLocal)
                             beginText(true);
                     }
