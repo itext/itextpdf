@@ -65,16 +65,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.security.cert.Certificate;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-import java.util.TreeSet;
 
 /**
  * A <CODE>DocWriter</CODE> class for PDF.
@@ -2617,7 +2609,7 @@ public class PdfWriter extends DocWriter implements
 
 //  [F13] Optional Content Groups
     /** A hashSet containing all the PdfLayer objects. */
-    protected HashSet<PdfOCG> documentOCG = new HashSet<PdfOCG>();
+    protected LinkedHashSet<PdfOCG> documentOCG = new LinkedHashSet<PdfOCG>();
     /** An array list used to define the order of an OCG tree. */
     protected ArrayList<PdfOCG> documentOCGorder = new ArrayList<PdfOCG>();
     /** The OCProperties in a catalog dictionary. */
