@@ -104,10 +104,16 @@ class PdfStamperImp extends PdfWriter {
     protected HashMap<Object, PdfObject> namedDestinations = new HashMap<Object, PdfObject>();
 
     protected Counter COUNTER = CounterFactory.getCounter(PdfStamper.class);
+
     protected Counter getCounter() {
     	return COUNTER;
     }
-    
+
+    /* Flag which defines if PdfLayer objects from existing pdf have been already read.
+     * If no new layers were registered and user didn't fetched layers explicitly via getPdfLayers() method
+     * then original layers are never read - they are simply copied to the new document with whole original catalog. */
+    private boolean originalLayersAreRead = false;
+
     /** Creates new PdfStamperImp.
      * @param reader the read PDF
      * @param os the output destination
@@ -1826,7 +1832,7 @@ class PdfStamperImp extends PdfWriter {
      * @since	2.1.2
      */
     public Map<String, PdfLayer> getPdfLayers() {
-    	if (documentOCG.isEmpty()) {
+    	if (!originalLayersAreRead) {
     		readOCProperties();
     	}
     	HashMap<String, PdfLayer> map = new HashMap<String, PdfLayer>();
@@ -1852,6 +1858,15 @@ class PdfStamperImp extends PdfWriter {
 			map.put(key, layer);
     	}
     	return map;
+    }
+
+    @Override
+    void registerLayer(final PdfOCG layer) {
+        if (!originalLayersAreRead) {
+            originalLayersAreRead = true;
+            readOCProperties();
+        }
+        super.registerLayer(layer);
     }
 
     public void createXmpMetadata() {
