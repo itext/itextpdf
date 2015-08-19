@@ -2,12 +2,13 @@ package com.itextpdf.text.pdf;
 
 import com.itextpdf.testutils.CompareTool;
 import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Image;
+import com.itextpdf.text.io.StreamUtil;
+import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 
 public class PdfStamperTest {
 
@@ -32,7 +33,7 @@ public class PdfStamperTest {
         }
         stamper.close();
 
-        new CompareTool().compareByContent(outPdf, getClass().getResource("PdfStamperTest/cmp_out1.pdf").getPath(), DEST_FOLDER, "diff_");
+        Assert.assertNull(new CompareTool().compareByContent(outPdf, getClass().getResource("PdfStamperTest/cmp_out1.pdf").getPath(), DEST_FOLDER, "diff_"));
     }
 
     @Test
@@ -49,7 +50,31 @@ public class PdfStamperTest {
         reader.removeUnusedObjects();
         stamper.close();
 
-        new CompareTool().compareByContent(outPdf, getClass().getResource("PdfStamperTest/cmp_out2.pdf").getPath(), DEST_FOLDER, "diff_");
+        Assert.assertNull(new CompareTool().compareByContent(outPdf, getClass().getResource("PdfStamperTest/cmp_out2.pdf").getPath(), DEST_FOLDER, "diff_"));
+    }
+
+    @Test
+    public void layerStampingTest() throws IOException, DocumentException, InterruptedException {
+        String outPdf = DEST_FOLDER + "out3.pdf";
+        String testFile = getClass().getResource("PdfStamperTest/House_Plan_Final.pdf").getFile();
+        PdfReader reader = new PdfReader(testFile);
+        PdfStamper stamper = new PdfStamper(reader, new FileOutputStream(outPdf));
+
+        PdfLayer logoLayer = new PdfLayer("Logos", stamper.getWriter());
+        PdfContentByte cb = stamper.getUnderContent(1);
+        cb.beginLayer(logoLayer);
+
+        Image iImage = Image.getInstance(getClass().getResource("PdfStamperTest/Willi-1.jpg").getPath());
+        iImage.scalePercent(24f);
+        iImage.setAbsolutePosition(100, 100);
+        cb.addImage(iImage);
+
+        cb.endLayer();
+        stamper.close();
+
+        stamper.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outPdf, getClass().getResource("PdfStamperTest/cmp_House_Plan_Final.pdf").getPath(), DEST_FOLDER, "diff_"));
     }
 
 }

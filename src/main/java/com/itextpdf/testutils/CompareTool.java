@@ -249,7 +249,9 @@ public class CompareTool {
 
         @Override
         public int hashCode() {
-            int hashCode = baseCmpObject.hashCode() * 31 + baseOutObject.hashCode();
+            int hashCode1 = baseCmpObject != null ? baseCmpObject.hashCode() : 1;
+            int hashCode2 = baseOutObject != null ? baseOutObject.hashCode() : 1;
+            int hashCode = hashCode1 * 31 + hashCode2;
             for (PathItem pathItem : path) {
                 hashCode *= 31;
                 hashCode += pathItem.hashCode();
@@ -614,8 +616,8 @@ public class CompareTool {
 
         PdfObject outOcProperties = outReader.getCatalog().get(PdfName.OCPROPERTIES);
         PdfObject cmpOcProperties = cmpReader.getCatalog().get(PdfName.OCPROPERTIES);
-        RefKey outOcPropertiesRef = outOcProperties == null ? null : new RefKey((PdfIndirectReference)outOcProperties);
-        RefKey cmpOcPropertiesRef = cmpOcProperties == null ? null : new RefKey((PdfIndirectReference)cmpOcProperties);
+        RefKey outOcPropertiesRef = outOcProperties != null && outOcProperties instanceof PdfIndirectReference ? new RefKey((PdfIndirectReference)outOcProperties) : null;
+        RefKey cmpOcPropertiesRef = cmpOcProperties != null && cmpOcProperties instanceof PdfIndirectReference ? new RefKey((PdfIndirectReference)cmpOcProperties) : null;
         compareObjects(outOcProperties, cmpOcProperties, new ObjectPath(outOcPropertiesRef, cmpOcPropertiesRef), compareResult);
 
         outReader.close();
