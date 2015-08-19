@@ -72,8 +72,6 @@ public class PdfStamperTest {
         cb.endLayer();
         stamper.close();
 
-        stamper.close();
-
         Assert.assertNull(new CompareTool().compareByContent(outPdf, getClass().getResource("PdfStamperTest/cmp_House_Plan_Final.pdf").getPath(), DEST_FOLDER, "diff_"));
     }
 
