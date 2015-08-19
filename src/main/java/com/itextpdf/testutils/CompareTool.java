@@ -616,8 +616,8 @@ public class CompareTool {
 
         PdfObject outOcProperties = outReader.getCatalog().get(PdfName.OCPROPERTIES);
         PdfObject cmpOcProperties = cmpReader.getCatalog().get(PdfName.OCPROPERTIES);
-        RefKey outOcPropertiesRef = outOcProperties != null && outOcProperties instanceof PdfIndirectReference ? new RefKey((PdfIndirectReference)outOcProperties) : null;
-        RefKey cmpOcPropertiesRef = cmpOcProperties != null && cmpOcProperties instanceof PdfIndirectReference ? new RefKey((PdfIndirectReference)cmpOcProperties) : null;
+        RefKey outOcPropertiesRef = outOcProperties instanceof PdfIndirectReference ? new RefKey((PdfIndirectReference)outOcProperties) : null;
+        RefKey cmpOcPropertiesRef = cmpOcProperties instanceof PdfIndirectReference ? new RefKey((PdfIndirectReference)cmpOcProperties) : null;
         compareObjects(outOcProperties, cmpOcProperties, new ObjectPath(outOcPropertiesRef, cmpOcPropertiesRef), compareResult);
 
         outReader.close();
