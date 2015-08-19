@@ -1833,7 +1833,8 @@ class PdfStamperImp extends PdfWriter {
      */
     public Map<String, PdfLayer> getPdfLayers() {
     	if (!originalLayersAreRead) {
-    		readOCProperties();
+            originalLayersAreRead = true;
+            readOCProperties();
     	}
     	HashMap<String, PdfLayer> map = new HashMap<String, PdfLayer>();
     	PdfLayer layer;
