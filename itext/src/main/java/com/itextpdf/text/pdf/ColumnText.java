@@ -379,9 +379,11 @@ public class ColumnText {
      * @return itself
      */
     public ColumnText setACopy(final ColumnText org) {
-        setSimpleVars(org);
-        if (org.bidiLine != null) {
-            bidiLine = new BidiLine(org.bidiLine);
+        if (org != null) {
+            setSimpleVars(org);
+            if (org.bidiLine != null) {
+                bidiLine = new BidiLine(org.bidiLine);
+            }
         }
         return this;
     }
