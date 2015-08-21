@@ -76,13 +76,17 @@ class PdfCleanUpRegionFilter extends RenderFilter {
         LineSegment ascent = renderInfo.getAscentLine();
         LineSegment descent = renderInfo.getDescentLine();
 
-        Rectangle r1 = new Rectangle(Math.min(descent.getStartPoint().get(0), descent.getEndPoint().get(0)),
-                                     descent.getStartPoint().get(1),
-                                     Math.max(descent.getStartPoint().get(0), descent.getEndPoint().get(0)),
-                                     ascent.getEndPoint().get(1));
+        Point2D[] glyphRect = new Point2D[] {
+                new Point2D.Float(ascent.getStartPoint().get(0), ascent.getStartPoint().get(1)),
+                new Point2D.Float(ascent.getEndPoint().get(0), ascent.getEndPoint().get(1)),
+                new Point2D.Float(descent.getEndPoint().get(0), descent.getEndPoint().get(1)),
+                new Point2D.Float(descent.getStartPoint().get(0), descent.getStartPoint().get(1)),
+        };
 
         for (Rectangle rectangle : rectangles) {
-            if (intersect(r1, rectangle)) {
+            Point2D[] redactRect = getVertices(rectangle);
+
+            if (intersect(glyphRect, redactRect)) {
                 return false;
             }
         }
@@ -170,7 +174,7 @@ class PdfCleanUpRegionFilter extends RenderFilter {
 
         for (Rectangle rectangle : rectangles) {
             Point2D[] transfRectVertices = transformPoints(ctm, true, getVertices(rectangle));
-            addRect(clipper, transfRectVertices);
+            addRect(clipper, transfRectVertices, PolyType.CLIP);
         }
 
         PolyFillType fillType = PolyFillType.NON_ZERO;
@@ -416,8 +420,8 @@ class PdfCleanUpRegionFilter extends RenderFilter {
         }
     }
 
-    private static void addRect(Clipper clipper, Point2D[] rectVertices) {
-        clipper.addPath(convertToIntPoints(new ArrayList<Point2D>(Arrays.asList(rectVertices))), PolyType.CLIP, true);
+    private static void addRect(Clipper clipper, Point2D[] rectVertices, PolyType polyType) {
+        clipper.addPath(convertToIntPoints(new ArrayList<Point2D>(Arrays.asList(rectVertices))), polyType, true);
     }
 
     private static com.itextpdf.text.pdf.parser.clipper.Path convertToIntPoints(List<Point2D> points) {
@@ -482,9 +486,15 @@ class PdfCleanUpRegionFilter extends RenderFilter {
         return points;
     }
 
-    private boolean intersect(Rectangle r1, Rectangle r2) {
-        return (r1.getLeft() < r2.getRight() && r1.getRight() > r2.getLeft() &&
-                r1.getBottom() < r2.getTop() && r1.getTop() > r2.getBottom());
+    private boolean intersect(Point2D[] rect1, Point2D[] rect2) {
+        Clipper clipper = new DefaultClipper();
+        addRect(clipper, rect1, PolyType.SUBJECT);
+        addRect(clipper, rect2, PolyType.CLIP);
+
+        Paths paths = new Paths();
+        clipper.execute(ClipType.INTERSECTION, paths, PolyFillType.NON_ZERO, PolyFillType.NON_ZERO);
+
+        return !paths.isEmpty();
     }
 
     /**
