@@ -199,7 +199,7 @@ public class PdfSignatureAppearance {
 
     /** Holds value of the application that creates the signature */
     private String signatureCreator;
-    
+
     /**
      * Gets the signature creator.
      * @return the signature creator
@@ -215,7 +215,7 @@ public class PdfSignatureAppearance {
     public void setSignatureCreator(String signatureCreator){
     	this.signatureCreator = signatureCreator;
     }
-    
+
     /** The contact name of the signer. */
     private String contact;
 
@@ -285,15 +285,14 @@ public class PdfSignatureAppearance {
     private Certificate signCertificate;
 
     // Developer extenstion
-    
+
     /**
      * Adds the appropriate developer extension.
      */
 	public void addDeveloperExtension(final PdfDeveloperExtension de) {
 		writer.addDeveloperExtension(de);
 	}
-    
-    
+
     // Crypto dictionary
 
     /** The crypto dictionary */
@@ -640,10 +639,10 @@ public class PdfSignatureAppearance {
         }
         return t;
     }
-    
+
     /** Indicates if we need to reuse the existing appearance as layer 0. */
     private boolean reuseAppearance = false;
-    
+
     /**
      * Indicates that the existing appearances needs to be reused as layer 0.
      */

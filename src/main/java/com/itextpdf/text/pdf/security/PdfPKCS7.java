@@ -1024,8 +1024,16 @@ public class PdfPKCS7 {
                 v.add(new ASN1ObjectIdentifier(SecurityIDs.ID_AA_SIGNING_CERTIFICATE_V2));
 
                 ASN1EncodableVector aaV2 = new ASN1EncodableVector();
-                AlgorithmIdentifier algoId = new AlgorithmIdentifier(new ASN1ObjectIdentifier(digestAlgorithmOid), null);
-                aaV2.add(algoId);
+                String sha256Oid = DigestAlgorithms.getAllowedDigests(DigestAlgorithms.SHA256);
+
+                // If we look into X.690-0207, clause 11.5, we can see that using DER all the components of a sequence having
+                // default values shall not be included. According to RFC 5035, 5.4.1.1, definition of ESSCertIDv2, default
+                // AlgorithmIdentifier is sha256.
+                if (!sha256Oid.equals(digestAlgorithmOid)) {
+                    AlgorithmIdentifier algoId = new AlgorithmIdentifier(new ASN1ObjectIdentifier(digestAlgorithmOid));
+                    aaV2.add(algoId);
+                }
+
                 MessageDigest md = interfaceDigest.getMessageDigest(getHashAlgorithm());
                 byte[] dig = md.digest(signCert.getEncoded());
                 aaV2.add(new DEROctetString(dig));
