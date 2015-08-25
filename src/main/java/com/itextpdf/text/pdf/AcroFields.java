@@ -576,6 +576,7 @@ public class AcroFields {
         // the text size and color
         PdfString da = merged.getAsString(PdfName.DA);
         if (da != null) {
+            boolean fontfallback = false;
             Object dab[] = splitDAelements(da.toUnicodeString());
             if (dab[DA_SIZE] != null)
                 tx.setFontSize(((Float)dab[DA_SIZE]).floatValue());
@@ -619,27 +620,37 @@ public class AcroFields {
                                 ((TextField)tx).setExtensionFont(porf);
                         }
                         else {
-                            BaseFont bf = localFonts.get(dab[DA_FONT]);
-                            if (bf == null) {
-                                String fn[] = stdFieldFontNames.get(dab[DA_FONT]);
-                                if (fn != null) {
-                                    try {
-                                        String enc = "winansi";
-                                        if (fn.length > 1)
-                                            enc = fn[1];
-                                        bf = BaseFont.createFont(fn[0], enc, false);
-                                        tx.setFont(bf);
-                                    }
-                                    catch (Exception e) {
-                                        // empty
-                                    }
-                                }
-                            }
-                            else
-                                tx.setFont(bf);
+                            fontfallback = true;
+                        }
+
+                    }
+                    else {
+                        fontfallback = true;
+                    }
+                }
+                else {
+                    fontfallback = true;
+                }
+            }
+            if (fontfallback) {
+                BaseFont bf = localFonts.get(dab[DA_FONT]);
+                if (bf == null) {
+                    String fn[] = stdFieldFontNames.get(dab[DA_FONT]);
+                    if (fn != null) {
+                        try {
+                            String enc = "winansi";
+                            if (fn.length > 1)
+                                enc = fn[1];
+                            bf = BaseFont.createFont(fn[0], enc, false);
+                            tx.setFont(bf);
+                        }
+                        catch (Exception e) {
+                            // empty
                         }
                     }
                 }
+                else
+                    tx.setFont(bf);
             }
         }
         //rotation, border and background color

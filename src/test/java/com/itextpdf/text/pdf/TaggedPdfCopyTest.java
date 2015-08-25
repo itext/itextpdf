@@ -578,7 +578,7 @@ public class TaggedPdfCopyTest {
         Assert.assertEquals(4, nums.getAsNumber(8).intValue());
 
         Assert.assertEquals(nums.size(), 12);
-        Assert.assertEquals(acroForm.getAsArray(PdfName.FIELDS).size(), 3);
+        Assert.assertEquals(acroForm.getAsArray(PdfName.FIELDS).size(), 4);
 
         reader.close();
     }

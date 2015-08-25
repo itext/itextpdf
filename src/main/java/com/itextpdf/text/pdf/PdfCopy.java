@@ -136,7 +136,7 @@ public class PdfCopy extends PdfWriter {
     private static final PdfName iTextTag = new PdfName("_iTextTag_");
     private static final Integer zero = Integer.valueOf(0);
     private HashSet<Object> mergedRadioButtons = new HashSet<Object>();
-    private HashMap<Object, PdfString> mergedTextFields = new HashMap<Object, PdfString>();
+    private HashMap<Object, PdfObject> mergedTextFields = new HashMap<Object, PdfObject>();
 
     private HashSet<PdfReader> readersWithImportedStructureTreeRootKids = new HashSet<PdfReader>();
 
@@ -1350,6 +1350,12 @@ public class PdfCopy extends PdfWriter {
                 if (obj instanceof HashMap)
                     return;
                 PdfDictionary merged = item.getMerged(0);
+
+                if (obj != null) {
+                    s = renameField(obj, map, merged);
+                    obj = null;
+                }
+
                 if (obj == null) {
                     PdfDictionary field = new PdfDictionary();
                     if (PdfName.SIG.equals(merged.get(PdfName.FT)))
@@ -1394,6 +1400,24 @@ public class PdfCopy extends PdfWriter {
                 return;
             }
         }
+    }
+
+    private String renameField(Object obj, HashMap<String, Object> map, PdfDictionary merged) {
+        String fieldN = null;
+        if (obj != null) {
+            PdfString fieldName = merged.getAsString(PdfName.T);
+            if (fieldName != null) {
+                fieldN = fieldName.toUnicodeString();
+            }
+        }
+        while (map.containsKey(fieldN)) {
+            fieldN += "_1";
+        }
+        if (fieldN != null) {
+            merged.put(PdfName.T, new PdfString(fieldN));
+        }
+
+        return fieldN;
     }
 
     private void createWidgets(ArrayList<Object> list, AcroFields.Item item) {
@@ -1549,24 +1573,13 @@ public class PdfCopy extends PdfWriter {
                         widget.remove(iTextTag);
                         if (PdfCopy.isTextField(field)) {
                             PdfString v = field.getAsString(PdfName.V);
-                            PdfObject ap = widget.getDirectObject(PdfName.AP);
+                            PdfObject ap = widget.get(PdfName.AP);
                             if (v != null && ap != null) {
                                 if (!mergedTextFields.containsKey(list)) {
-                                    mergedTextFields.put(list, v);
+                                    mergedTextFields.put(list, ap);
                                 } else {
-                                    try {
-                                        TextField tx = new TextField(this, null, null);
-                                        fields.get(0).decodeGenericDictionary(widget, tx);
-                                        Rectangle box = PdfReader.getNormalizedRectangle(widget.getAsArray(PdfName.RECT));
-                                        if (tx.getRotation() == 90 || tx.getRotation() == 270)
-                                            box = box.rotate();
-                                        tx.setBox(box);
-                                        tx.setText(mergedTextFields.get(list).toUnicodeString());
-                                        PdfAppearance app = tx.getAppearance();
-                                        ((PdfDictionary)ap).put(PdfName.N, app.getIndirectReference());
-                                    } catch (DocumentException e) {
-                                        //do nothing
-                                    }
+                                    PdfObject ap1 = mergedTextFields.get(list);
+                                    widget.put(PdfName.AP, copyObject(ap1));
                                 }
                             }
                         } else if (PdfCopy.isCheckButton(field)) {
