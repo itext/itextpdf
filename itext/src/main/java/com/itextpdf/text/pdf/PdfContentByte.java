@@ -43,12 +43,20 @@
  * address: sales@itextpdf.com
  */
 package com.itextpdf.text.pdf;
+
 import com.itextpdf.awt.FontMapper;
 import com.itextpdf.awt.PdfGraphics2D;
 import com.itextpdf.awt.PdfPrinterGraphics2D;
 import com.itextpdf.awt.geom.AffineTransform;
 import com.itextpdf.awt.geom.Point2D;
-import com.itextpdf.text.*;
+import com.itextpdf.text.Annotation;
+import com.itextpdf.text.BaseColor;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Element;
+import com.itextpdf.text.ExceptionConverter;
+import com.itextpdf.text.Image;
+import com.itextpdf.text.ImgJBIG2;
+import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.exceptions.IllegalPdfSyntaxException;
 import com.itextpdf.text.pdf.interfaces.IAccessibleElement;
@@ -251,7 +259,7 @@ public class PdfContentByte {
             pdf = writer.getPdfDocument();
         }
     }
-    
+
     // methods to get the content of this object
 
     /**
@@ -272,8 +280,7 @@ public class PdfContentByte {
     public boolean isTagged() {
     	return writer != null && writer.isTagged();
     }
-    
-    
+
     /**
      * Gets the internal buffer.
      * @return the internal buffer
@@ -414,7 +421,7 @@ public class PdfContentByte {
     public void setRenderingIntent(PdfName ri) {
     	content.append(ri.getBytes()).append(" ri").append_i(separator);
     }
-    
+
     /**
      * Changes the value of the <VAR>line dash pattern</VAR>.
      * <P>
@@ -1760,8 +1767,10 @@ public class PdfContentByte {
                 return;
             addAnnotation(an);
         }
-        catch (Exception ee) {
-            throw new DocumentException(ee);
+        catch (IOException ioe) {
+            final String path = image != null && image.getUrl() != null ? image.getUrl().getPath()
+                    : MessageLocalization.getComposedMessage("unknown");
+            throw new DocumentException(MessageLocalization.getComposedMessage("add.image.exception", path), ioe);
         }
     }
 
@@ -2151,7 +2160,7 @@ public class PdfContentByte {
     	setTextMatrix((float) matrix[0], (float) matrix[1], (float) matrix[2],
                 (float) matrix[3], (float) matrix[4], (float) matrix[5]);
     }
-    
+
     /**
      * Changes the text matrix. The first four parameters are {1,0,0,1}.
      * <P>
@@ -2394,9 +2403,9 @@ public class PdfContentByte {
 
     /**
      * Concatenate a matrix to the current transformation matrix.
-     * 
+     *
      * Common transformations:
-     * 
+     *
      * <ul>
      *   <li>Translation: [1 0 0 1 tx ty]</li>
      *   <li>Scaling: [sx 0 0 sy 0 0] (if sx or sy is negative, it will flip the coordinate system)</li>
@@ -2408,7 +2417,7 @@ public class PdfContentByte {
      *   </li>
      *   <li>Skew: [1 tan(a) tan(b) 1 0 0] where a is x-axis skew angle and b is y-axis skew angle</li>
 	 *</ul>
-     * 
+     *
      * @param a an element of the transformation matrix
      * @param b an element of the transformation matrix
      * @param c an element of the transformation matrix
@@ -4354,7 +4363,7 @@ public class PdfContentByte {
     }
 
     // AWT related methods (remove this if you port to Android / GAE)
-    
+
     /** Gets a <CODE>Graphics2D</CODE> to write on. The graphics
      * are translated to PDF commands as shapes. No PDF fonts will appear.
      * @param width the width of the panel
@@ -4508,7 +4517,7 @@ public class PdfContentByte {
     public java.awt.Graphics2D createPrinterGraphics(final float width, final float height, final FontMapper fontMapper, final boolean convertImagesToJPEG, final float quality, final java.awt.print.PrinterJob printerJob) {
         return new PdfPrinterGraphics2D(this, width, height, fontMapper, false, convertImagesToJPEG, quality, printerJob);
     }
-    
+
     /**
      * adds an image with the given matrix.
      * @param image image to add
@@ -4521,7 +4530,7 @@ public class PdfContentByte {
     	transform.getMatrix(matrix);
     	addImage(image, new AffineTransform(matrix));
     }
-    
+
     /**
      * adds a template with the given matrix.
      * @param template template to add
@@ -4533,7 +4542,7 @@ public class PdfContentByte {
     	transform.getMatrix(matrix);
     	addTemplate(template, new AffineTransform(matrix));
     }
-    
+
     /**
      * Concatenate a matrix to the current transformation matrix.
      * @param transform added to the Current Transformation Matrix
@@ -4544,7 +4553,7 @@ public class PdfContentByte {
     	transform.getMatrix(matrix);
     	concatCTM(new AffineTransform(matrix));
     }
-    
+
     /**
      * Changes the text matrix.
      * <P>
