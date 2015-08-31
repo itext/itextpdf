@@ -74,7 +74,7 @@ public class DocumentException extends Exception {
     public DocumentException() {
         super();
     }
-    
+
     /**
      * Constructs a <code>DocumentException</code> with a message.
      *
@@ -82,5 +82,15 @@ public class DocumentException extends Exception {
      */
     public DocumentException(String message) {
         super(message);
+    }
+
+    /**
+     * Constructs a <code>DocumentException</code> with a message and a Exception.
+     *
+     * @param	message		a message describing the exception
+     * @param	ex			an exception that has to be turned into a DocumentException
+     */
+    public DocumentException(String message, Exception ex) {
+        super(message, ex);
     }
 }

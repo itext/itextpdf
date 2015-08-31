@@ -1741,7 +1741,8 @@ public class PdfContentByte {
             addAnnotation(an);
         }
         catch (Exception ee) {
-            throw new DocumentException(ee);
+            String path = image != null && image.getUrl() != null?image.getUrl().getPath():MessageLocalization.getComposedMessage("unknown");
+            throw new DocumentException(MessageLocalization.getComposedMessage("add.image.exception", path) , ee);
         }
     }
 
