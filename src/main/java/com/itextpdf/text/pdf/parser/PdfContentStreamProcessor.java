@@ -403,10 +403,6 @@ public class PdfContentStreamProcessor {
         textMatrix = new Matrix(adjustBy, 0).multiply(textMatrix);
     }
 
-
-
-
-
     /**
      * Processes PDF syntax.
      * <b>Note:</b> If you re-use a given {@link PdfContentStreamProcessor}, you must call {@link PdfContentStreamProcessor#reset()}
@@ -870,7 +866,7 @@ public class PdfContentStreamProcessor {
     }
 
     /**
-     * A content operator implementation (CS).
+     * A content operator implementation (cs).
      */
     private static class SetColorSpaceFill implements ContentOperator{
 		public void invoke(PdfContentStreamProcessor processor, PdfLiteral operator, ArrayList<PdfObject> operands) {
@@ -879,7 +875,7 @@ public class PdfContentStreamProcessor {
     }
 
     /**
-     * A content operator implementation (cs).
+     * A content operator implementation (CS).
      */
     private static class SetColorSpaceStroke implements ContentOperator{
 		public void invoke(PdfContentStreamProcessor processor, PdfLiteral operator, ArrayList<PdfObject> operands) {
