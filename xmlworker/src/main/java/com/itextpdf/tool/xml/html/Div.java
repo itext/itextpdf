@@ -60,6 +60,7 @@ import com.itextpdf.tool.xml.WorkerContext;
 import com.itextpdf.tool.xml.exceptions.LocaleMessages;
 import com.itextpdf.tool.xml.exceptions.RuntimeWorkerException;
 import com.itextpdf.tool.xml.html.pdfelement.NoNewLineParagraph;
+import com.itextpdf.tool.xml.pipeline.html.HtmlPipelineContext;
 
 /**
  * @author redlab_b
@@ -75,19 +76,19 @@ public class Div extends AbstractTagProcessor {
 		List<Chunk> sanitizedChunks = HTMLUtils.sanitize(content, false);
         NoNewLineParagraph noNewLineParagraph = new NoNewLineParagraph();
 		List<Element> l = new ArrayList<Element>(1);
-        for (Chunk sanitized : sanitizedChunks) {
-            Font f = getCssAppliers().getChunkCssAplier().applyFontStyles(tag);
-            sanitized.setFont(f);
-            noNewLineParagraph.add(sanitized);
-        }
-        if (noNewLineParagraph.size() > 0) {
-            try {
-                l.add(getCssAppliers().apply(noNewLineParagraph, tag, getHtmlPipelineContext(ctx)));
-            } catch (NoCustomContextException e) {
-                throw new RuntimeWorkerException(e);
+        try {
+            HtmlPipelineContext htmlPipelineContext = getHtmlPipelineContext(ctx);
+            for (Chunk sanitized : sanitizedChunks) {
+                noNewLineParagraph.add(getCssAppliers().apply(sanitized, tag, htmlPipelineContext));
             }
+            if (noNewLineParagraph.size() > 0) {
+                l.add(getCssAppliers().apply(noNewLineParagraph, tag, htmlPipelineContext));
+            }
+        } catch (NoCustomContextException e) {
+            throw new RuntimeWorkerException(e);
         }
-		return l;
+
+            return l;
 	}
 
 	/*
