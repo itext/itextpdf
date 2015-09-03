@@ -262,7 +262,7 @@ public class CssUtils {
 					style = style.concat(" "+rules.get(CSS.Property.BACKGROUND_POSITION));
 					rules.put(CSS.Property.BACKGROUND_POSITION, style);
 				}
-			} else if(style.contains("rgb(") || style.contains("#") || WebColors.NAMES.containsKey(style.toLowerCase())) {
+			} else if(style.contains("rgb(") || style.contains("rgba(")  || style.contains("#") || WebColors.NAMES.containsKey(style.toLowerCase())) {
 				rules.put(CSS.Property.BACKGROUND_COLOR, style);
 			}
 		}
