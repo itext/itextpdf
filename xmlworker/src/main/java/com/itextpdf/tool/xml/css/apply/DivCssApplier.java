@@ -44,20 +44,29 @@
  */
 package com.itextpdf.tool.xml.css.apply;
 
+import java.io.IOException;
 import java.util.Map;
 
-import com.itextpdf.text.Element;
 import com.itextpdf.text.Font;
+import com.itextpdf.text.Image;
 import com.itextpdf.text.html.HtmlUtilities;
+import com.itextpdf.text.log.Level;
+import com.itextpdf.text.log.Logger;
+import com.itextpdf.text.log.LoggerFactory;
 import com.itextpdf.text.pdf.PdfDiv;
 import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.css.*;
+import com.itextpdf.tool.xml.exceptions.LocaleMessages;
 import com.itextpdf.tool.xml.html.HTML;
+import com.itextpdf.tool.xml.net.ImageRetrieve;
+import com.itextpdf.tool.xml.net.exc.NoImageException;
+import com.itextpdf.tool.xml.pipeline.html.ImageProvider;
 
 public class DivCssApplier {
     private final CssUtils utils = CssUtils.getInstance();
+    private static final Logger LOG = LoggerFactory.getLogger(ListStyleTypeCssApplier.class);
 
-    public PdfDiv apply(final PdfDiv div, final Tag t, final MarginMemory memory, final PageSizeContainable psc) {
+    public PdfDiv apply(final PdfDiv div, final Tag t, final MarginMemory memory, final PageSizeContainable psc, ImageProvider imageProvider) {
         Map<String, String> css = t.getCSS();
         float fontSize = FontSizeTranslator.getInstance().translateFontSize(t);
         if (fontSize == Font.UNDEFINED) {
@@ -126,7 +135,33 @@ public class DivCssApplier {
                     div.setBottom(utils.parseValueToPt(value, fontSize));
                 }
             } else if (key.equalsIgnoreCase(CSS.Property.BACKGROUND_COLOR)) {
-				div.setBackgroundColor(HtmlUtilities.decodeColor(value));
+                div.setBackgroundColor(HtmlUtilities.decodeColor(value));
+            } else if (key.equalsIgnoreCase(CSS.Property.BACKGROUND_IMAGE)) {
+                String url = utils.extractUrl(value);
+                Image img = null;
+                try {
+                    if (imageProvider == null) {
+                        img = new ImageRetrieve().retrieveImage(url);
+                    } else {
+                        try {
+                            img = new ImageRetrieve(imageProvider).retrieveImage(url);
+                        } catch (NoImageException e) {
+                            if (LOG.isLogging(Level.TRACE)) {
+                                LOG.trace(String.format(LocaleMessages.getInstance().getMessage("css.applier.div.noimage")));
+                            }
+                            img = new ImageRetrieve().retrieveImage(url);
+                        }
+                    }
+                    div.setBackgroundImage(img);
+                } catch (IOException e) {
+                    if (LOG.isLogging(Level.ERROR)) {
+                        LOG.error(String.format(LocaleMessages.getInstance().getMessage("html.tag.img.failed"), url), e);
+                    }
+                } catch (NoImageException e) {
+                    if (LOG.isLogging(Level.ERROR)) {
+                        LOG.error(e.getLocalizedMessage(), e);
+                    }
+                }
             } else if (key.equalsIgnoreCase(CSS.Property.PADDING_LEFT)) {
                 div.setPaddingLeft(utils.parseValueToPt(value, fontSize));
             } else if (key.equalsIgnoreCase(CSS.Property.PADDING_RIGHT)) {

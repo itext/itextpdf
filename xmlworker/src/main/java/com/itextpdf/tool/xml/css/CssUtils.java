@@ -561,7 +561,7 @@ public class CssUtils {
 			    str = urlString;
 			}
 		} else {
-			// assume it's an url without url
+			// assume it's an url without wrapping in "url()"
 			str = url;
 		}
 		return str;

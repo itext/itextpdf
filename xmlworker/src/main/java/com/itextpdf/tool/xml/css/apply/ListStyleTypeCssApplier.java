@@ -93,10 +93,10 @@ public class ListStyleTypeCssApplier {
 	 *
 	 * @param list the list to style
 	 * @param t the tag
-	 * @param htmlPipelineContext the context
+	 * @param imageProvider the context
 	 * @return the changed {@link List}
 	 */
-	public List apply(final List list, final Tag t, final ImageProvider htmlPipelineContext) {
+	public List apply(final List list, final Tag t, final ImageProvider imageProvider) {
 		// not implemented: list-style-type:armenian, georgian, decimal-leading-zero.
 		float fontSize = FontSizeTranslator.getInstance().getFontSize(t);
 		List lst = list;
@@ -172,11 +172,11 @@ public class ListStyleTypeCssApplier {
 			String url = utils.extractUrl(css.get(CSS.Property.LIST_STYLE_IMAGE));
 			Image img = null;
 			try {
-				if (htmlPipelineContext == null) {
+				if (imageProvider == null) {
 					img = new ImageRetrieve().retrieveImage(url);
 				} else {
 					try {
-						img = new ImageRetrieve(htmlPipelineContext).retrieveImage(url);
+						img = new ImageRetrieve(imageProvider).retrieveImage(url);
 					} catch (NoImageException e) {
 						if (LOG.isLogging(Level.TRACE)) {
 							LOG.trace(String.format(LocaleMessages.getInstance().getMessage("css.applier.list.noimage")));
@@ -191,7 +191,7 @@ public class ListStyleTypeCssApplier {
 				}
 			} catch (IOException e) {
 				if (LOG.isLogging(Level.ERROR)) {
-					LOG.error(String.format(LocaleMessages.getInstance().getMessage("html.tag.list.failed"), url), e);
+					LOG.error(String.format(LocaleMessages.getInstance().getMessage("html.tag.img.failed"), url), e);
 				}
 				lst = new List(List.UNORDERED);
 			} catch (NoImageException e) {

@@ -143,7 +143,7 @@ public class CssFilesImpl implements CssFiles {
                 css.putAll(utils.processFont(value));
             } else if (CSS.Property.LIST_STYLE.equalsIgnoreCase(key)) {
                 css.putAll(utils.processListStyle(value));
-            } else if (CSS.Property.BACKGROUND.equalsIgnoreCase(key)) {
+            } else if (key.toLowerCase().contains(CSS.Property.BACKGROUND)) {
                 Map<String, String> backgroundStyles = utils.processBackground(value);
                 for (String backgroundKey : backgroundStyles.keySet()) {
                     if (!css.containsKey(backgroundKey)) {

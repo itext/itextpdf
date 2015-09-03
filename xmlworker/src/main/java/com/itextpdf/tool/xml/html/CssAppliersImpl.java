@@ -111,7 +111,7 @@ public class CssAppliersImpl implements CssAppliers {
 		} else if (e instanceof Image) {
 			e = image.apply((Image) e, t);
 		} else if (e instanceof PdfDiv) {
-            e = div.apply((PdfDiv)e, t, mm, psc);
+            e = div.apply((PdfDiv)e, t, mm, psc, ip);
         }
 		return e;
 
