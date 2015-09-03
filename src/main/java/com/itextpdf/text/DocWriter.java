@@ -44,13 +44,13 @@
  */
 package com.itextpdf.text;
 
+import com.itextpdf.text.pdf.OutputStreamCounter;
+
 import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Iterator;
 import java.util.Properties;
-
-import com.itextpdf.text.pdf.OutputStreamCounter;
 
 /**
  * An abstract <CODE>Writer</CODE> class for documents.
@@ -418,6 +418,8 @@ public abstract class DocWriter implements DocListener {
     }
 
     /**
+     * This implementation only returns false and doesn't do anything. Perhaps you were looking for the similarly named method of the Document class.
+     *
      * @see com.itextpdf.text.DocListener#setMarginMirroring(boolean)
      */
     public boolean setMarginMirroring(boolean MarginMirroring) {
@@ -425,6 +427,8 @@ public abstract class DocWriter implements DocListener {
     }
 
     /**
+     * This implementation only returns false and doesn't do anything. Perhaps you were looking for the similarly named method of the Document class.
+     *
      * @see com.itextpdf.text.DocListener#setMarginMirroring(boolean)
      * @since	2.1.6
      */
