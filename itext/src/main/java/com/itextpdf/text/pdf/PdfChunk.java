@@ -65,7 +65,6 @@ import java.util.Map;
 public class PdfChunk {
 
     private static final char singleSpace[] = {' '};
-    private static final PdfChunk thisChunk[] = new PdfChunk[1];
     private static final float ITALIC_ANGLE = 0.21256f;
 /** The allowed attributes in variable <CODE>attributes</CODE>. */
     private static final HashSet<String> keysAttributes = new HashSet<String>();
@@ -163,7 +162,6 @@ public class PdfChunk {
  */
 
     PdfChunk(String string, PdfChunk other) {
-        thisChunk[0] = this;
         value = string;
         this.font = other.font;
         this.attributes = other.attributes;
@@ -195,7 +193,6 @@ public class PdfChunk {
  */
 
     PdfChunk(Chunk chunk, PdfAction action) {
-        thisChunk[0] = this;
         value = chunk.getContent();
 
         Font f = chunk.getFont();
@@ -375,7 +372,7 @@ public class PdfChunk {
                 if (currentWidth > width)
                     break;
                 // if a split-character is encountered, the splitPosition is altered
-                if (splitCharacter.isSplitCharacter(0, currentPosition, length, valueArray, thisChunk))
+                if (splitCharacter.isSplitCharacter(0, currentPosition, length, valueArray, new PdfChunk[] {this}))
                     splitPosition = currentPosition + 1;
                 currentPosition++;
             }
