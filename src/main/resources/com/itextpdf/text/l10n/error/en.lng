@@ -493,6 +493,7 @@ title.cannot.be.null=Title cannot be null.
 token.obj.expected=Token 'obj' expected.
 too.many.indirect.objects=Too many indirect objects.
 trailer.not.found=trailer not found.
+trailer.prev.entry.points.to.its.own.cross.reference.section=Trailer /Prev entry points to its own cross-reference section.
 transparency.is.not.allowed.ca.eq.1=Transparency is not allowed: /ca = {1}
 transparency.length.must.be.equal.to.2.with.ccitt.images=Transparency length must be equal to 2 with CCITT images
 transparency.length.must.be.equal.to.componentes.2=Transparency length must be equal to (componentes * 2)
