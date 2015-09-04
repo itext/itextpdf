@@ -1599,7 +1599,10 @@ public class PdfReader implements PdfViewerPreferences {
             PdfNumber prev = (PdfNumber)trailer2.get(PdfName.PREV);
             if (prev == null)
                 break;
-            tokens.seek(prev.longValue());
+            if (prev.longValue() == startxref)
+                throw new InvalidPdfException(MessageLocalization.getComposedMessage("trailer.prev.entry.points.to.its.own.cross.reference.section"));
+            startxref = prev.longValue();
+            tokens.seek(startxref);
             trailer2 = readXrefSection();
         }
     }
