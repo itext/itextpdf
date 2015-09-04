@@ -49,6 +49,7 @@ import com.itextpdf.tool.xml.html.pdfelement.NoNewLineParagraph;
 import com.itextpdf.tool.xml.pipeline.html.HtmlPipelineContext;
 import com.itextpdf.tool.xml.pipeline.html.ImageProvider;
 import com.itextpdf.tool.xml.pipeline.html.NoImageProviderException;
+import com.itextpdf.tool.xml.pipeline.html.UrlLinkResolver;
 
 /**
  * Applies CSS to an Element using the appliers from the <code>com.itextpdf.tool.xml.css.apply</code>.
@@ -94,7 +95,7 @@ public class CssAppliersImpl implements CssAppliers {
 	/* (non-Javadoc)
 	 * @see com.itextpdf.tool.xml.html.CssAppliers#apply(com.itextpdf.text.Element, com.itextpdf.tool.xml.Tag, com.itextpdf.tool.xml.css.apply.MarginMemory, com.itextpdf.tool.xml.css.apply.PageSizeContainable, com.itextpdf.tool.xml.pipeline.html.ImageProvider)
 	 */
-	public Element apply(Element e, final Tag t, final MarginMemory mm, final PageSizeContainable psc, final ImageProvider ip) {
+	public Element apply(Element e, final Tag t, final MarginMemory mm, final PageSizeContainable psc, final HtmlPipelineContext ctx) {
 		// warning, mapping is done by instance of, make sure to add things in the right order when adding more.
 		if (e instanceof Chunk) { // covers TabbedChunk & Chunk
 			e = chunk.apply((Chunk) e, t);
@@ -105,13 +106,13 @@ public class CssAppliersImpl implements CssAppliers {
 		} else if (e instanceof HtmlCell) {
 			e = htmlcell.apply((HtmlCell) e, t, mm, psc);
 		} else if (e instanceof List) {
-			e = list.apply((List) e, t, ip);
+			e = list.apply((List) e, t, ctx);
 		} else if (e instanceof LineSeparator) {
 			e = lineseparator.apply((LineSeparator) e, t, psc);
 		} else if (e instanceof Image) {
 			e = image.apply((Image) e, t);
 		} else if (e instanceof PdfDiv) {
-            e = div.apply((PdfDiv)e, t, mm, psc, ip);
+            e = div.apply((PdfDiv)e, t, mm, psc, ctx);
         }
 		return e;
 
@@ -121,7 +122,7 @@ public class CssAppliersImpl implements CssAppliers {
 	 * @see com.itextpdf.tool.xml.html.CssAppliers#apply(com.itextpdf.text.Element, com.itextpdf.tool.xml.Tag, com.itextpdf.tool.xml.pipeline.html.HtmlPipelineContext)
 	 */
 	public Element apply(final Element e, final Tag t, final HtmlPipelineContext ctx) {
-		return this.apply(e, t, ctx, ctx, ctx.getImageProvider());
+		return this.apply(e, t, ctx, ctx, ctx);
 	}
 
 	public ChunkCssApplier getChunkCssAplier() {

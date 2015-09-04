@@ -92,6 +92,7 @@ public class HtmlPipelineContext implements CustomContext, Cloneable, MarginMemo
 	private TagProcessorFactory tagFactory;
 	private final List<Element> ctn = new ArrayList<Element>();
 	private ImageProvider imageProvider;
+	private String resourcesRootPath;
 	private Rectangle pageSize = PageSize.A4;
 	private Charset charset;
 	private List<String> roottags = Arrays.asList(new String[] { "body", "div" });
@@ -389,5 +390,13 @@ public class HtmlPipelineContext implements CustomContext, Cloneable, MarginMemo
 	public HtmlPipelineContext setCssApplier(final CssAppliers cssAppliers) {
 		this.cssAppliers = cssAppliers;
 		return this;
+	}
+
+	public String getResourcesRootPath() {
+		return resourcesRootPath;
+	}
+
+	public void setResourcesRootPath(String resourcesRootPath) {
+		this.resourcesRootPath = resourcesRootPath;
 	}
 }

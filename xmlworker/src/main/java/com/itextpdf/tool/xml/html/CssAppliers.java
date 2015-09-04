@@ -49,6 +49,7 @@ import com.itextpdf.tool.xml.html.pdfelement.HtmlCell;
 import com.itextpdf.tool.xml.html.pdfelement.NoNewLineParagraph;
 import com.itextpdf.tool.xml.pipeline.html.HtmlPipelineContext;
 import com.itextpdf.tool.xml.pipeline.html.ImageProvider;
+import com.itextpdf.tool.xml.pipeline.html.UrlLinkResolver;
 
 /**
  * @author redlab
@@ -74,15 +75,15 @@ public interface CssAppliers {
 	 * @param t the tag
 	 * @param mm the MarginMemory
 	 * @param psc the {@link PageSize} container
-	 * @param ip an ImageProvider
+	 * @param ctx an HtmlPipelineContext
 	 * @return the element with CSS applied onto, note: the element can be a new element.
 	 */
-	Element apply(Element e, final Tag t, final MarginMemory mm, final PageSizeContainable psc, final ImageProvider ip);
+	Element apply(Element e, final Tag t, final MarginMemory mm, final PageSizeContainable psc, final HtmlPipelineContext ctx);
 
 	/**
 	 * Convenience method.
 	 *
-	 * @see #apply(Element, Tag, MarginMemory, PageSizeContainable, ImageProvider)
+	 * @see #apply(Element, Tag, MarginMemory, PageSizeContainable, HtmlPipelineContext)
 	 * @param e the Element
 	 * @param t the tag
 	 * @param ctx the Context object

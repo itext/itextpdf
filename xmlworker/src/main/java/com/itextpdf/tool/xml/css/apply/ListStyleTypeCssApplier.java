@@ -68,7 +68,9 @@ import com.itextpdf.tool.xml.exceptions.LocaleMessages;
 import com.itextpdf.tool.xml.html.HTML;
 import com.itextpdf.tool.xml.net.ImageRetrieve;
 import com.itextpdf.tool.xml.net.exc.NoImageException;
+import com.itextpdf.tool.xml.pipeline.html.HtmlPipelineContext;
 import com.itextpdf.tool.xml.pipeline.html.ImageProvider;
+import com.itextpdf.tool.xml.pipeline.html.UrlLinkResolver;
 
 /**
  * @author itextpdf.com
@@ -93,10 +95,10 @@ public class ListStyleTypeCssApplier {
 	 *
 	 * @param list the list to style
 	 * @param t the tag
-	 * @param imageProvider the context
+	 * @param context the context
 	 * @return the changed {@link List}
 	 */
-	public List apply(final List list, final Tag t, final ImageProvider imageProvider) {
+	public List apply(final List list, final Tag t, final HtmlPipelineContext context) {
 		// not implemented: list-style-type:armenian, georgian, decimal-leading-zero.
 		float fontSize = FontSizeTranslator.getInstance().getFontSize(t);
 		List lst = list;
@@ -170,33 +172,16 @@ public class ListStyleTypeCssApplier {
 				&& !css.get(CSS.Property.LIST_STYLE_IMAGE).equalsIgnoreCase(CSS.Value.NONE)) {
 			lst = new List();
 			String url = utils.extractUrl(css.get(CSS.Property.LIST_STYLE_IMAGE));
-			Image img = null;
 			try {
-				if (imageProvider == null) {
-					img = new ImageRetrieve().retrieveImage(url);
-				} else {
-					try {
-						img = new ImageRetrieve(imageProvider).retrieveImage(url);
-					} catch (NoImageException e) {
-						if (LOG.isLogging(Level.TRACE)) {
-							LOG.trace(String.format(LocaleMessages.getInstance().getMessage("css.applier.list.noimage")));
-						}
-						img = new ImageRetrieve().retrieveImage(url);
-					}
-				}
+				Image img = new ImageRetrieve(context.getResourcesRootPath(), context.getImageProvider()).retrieveImage(url);
 				lst.setListSymbol(new Chunk(img, 0, 0, false));
 				lst.setSymbolIndent(img.getWidth());
 				if (LOG.isLogging(Level.TRACE)) {
 					LOG.trace(String.format(LocaleMessages.getInstance().getMessage("html.tag.list"), url));
 				}
-			} catch (IOException e) {
-				if (LOG.isLogging(Level.ERROR)) {
-					LOG.error(String.format(LocaleMessages.getInstance().getMessage("html.tag.img.failed"), url), e);
-				}
-				lst = new List(List.UNORDERED);
 			} catch (NoImageException e) {
 				if (LOG.isLogging(Level.ERROR)) {
-					LOG.error(e.getLocalizedMessage(), e);
+					LOG.error(String.format(LocaleMessages.getInstance().getMessage("html.tag.img.failed"), url), e);
 				}
 				lst = new List(List.UNORDERED);
 			}
@@ -244,7 +229,7 @@ public class ListStyleTypeCssApplier {
 	 * 
 	 * @param e the list
 	 * @param t the tag
-	 * @see ListStyleTypeCssApplier#apply(List, Tag, ImageProvider)
+	 * @see ListStyleTypeCssApplier#apply(List, Tag, HtmlPipelineContext)
 	 * @return styled element
 	 */
 	public Element apply(final List e, final Tag t) {

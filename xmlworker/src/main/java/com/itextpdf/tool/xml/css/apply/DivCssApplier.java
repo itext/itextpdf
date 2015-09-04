@@ -60,13 +60,16 @@ import com.itextpdf.tool.xml.exceptions.LocaleMessages;
 import com.itextpdf.tool.xml.html.HTML;
 import com.itextpdf.tool.xml.net.ImageRetrieve;
 import com.itextpdf.tool.xml.net.exc.NoImageException;
+import com.itextpdf.tool.xml.pipeline.html.HtmlPipeline;
+import com.itextpdf.tool.xml.pipeline.html.HtmlPipelineContext;
 import com.itextpdf.tool.xml.pipeline.html.ImageProvider;
+import com.itextpdf.tool.xml.pipeline.html.UrlLinkResolver;
 
 public class DivCssApplier {
     private final CssUtils utils = CssUtils.getInstance();
     private static final Logger LOG = LoggerFactory.getLogger(ListStyleTypeCssApplier.class);
 
-    public PdfDiv apply(final PdfDiv div, final Tag t, final MarginMemory memory, final PageSizeContainable psc, ImageProvider imageProvider) {
+    public PdfDiv apply(final PdfDiv div, final Tag t, final MarginMemory memory, final PageSizeContainable psc, HtmlPipelineContext context) {
         Map<String, String> css = t.getCSS();
         float fontSize = FontSizeTranslator.getInstance().translateFontSize(t);
         if (fontSize == Font.UNDEFINED) {
@@ -138,28 +141,12 @@ public class DivCssApplier {
                 div.setBackgroundColor(HtmlUtilities.decodeColor(value));
             } else if (key.equalsIgnoreCase(CSS.Property.BACKGROUND_IMAGE)) {
                 String url = utils.extractUrl(value);
-                Image img = null;
                 try {
-                    if (imageProvider == null) {
-                        img = new ImageRetrieve().retrieveImage(url);
-                    } else {
-                        try {
-                            img = new ImageRetrieve(imageProvider).retrieveImage(url);
-                        } catch (NoImageException e) {
-                            if (LOG.isLogging(Level.TRACE)) {
-                                LOG.trace(String.format(LocaleMessages.getInstance().getMessage("css.applier.div.noimage")));
-                            }
-                            img = new ImageRetrieve().retrieveImage(url);
-                        }
-                    }
+                    Image img = new ImageRetrieve(context.getResourcesRootPath(), context.getImageProvider()).retrieveImage(url);
                     div.setBackgroundImage(img);
-                } catch (IOException e) {
-                    if (LOG.isLogging(Level.ERROR)) {
-                        LOG.error(String.format(LocaleMessages.getInstance().getMessage("html.tag.img.failed"), url), e);
-                    }
                 } catch (NoImageException e) {
                     if (LOG.isLogging(Level.ERROR)) {
-                        LOG.error(e.getLocalizedMessage(), e);
+                        LOG.error(String.format(LocaleMessages.getInstance().getMessage("html.tag.img.failed"), url), e);
                     }
                 }
             } else if (key.equalsIgnoreCase(CSS.Property.PADDING_LEFT)) {
