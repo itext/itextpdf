@@ -1362,6 +1362,21 @@ public class AcroFields {
     public boolean setField(String name, String value) throws IOException, DocumentException {
         return setField(name, value, null);
     }
+
+    /**
+     * Sets the field value.
+     *
+     * @param name the fully qualified field name or the partial name in the case of XFA forms
+     * @param value the field value
+     * @param saveAppearance save the current appearance of the field or not
+     * @throws IOException on error
+     * @throws DocumentException on error
+     * @return <CODE>true</CODE> if the field was found and changed,
+     * <CODE>false</CODE> otherwise
+     */
+    public boolean setField(String name, String value, boolean saveAppearance) throws IOException, DocumentException {
+        return setField(name, value, null, saveAppearance);
+    }
     
     /**
      * Sets the rich value for the given field.  See <a href="http://www.adobe.com/content/dam/Adobe/en/devnet/pdf/pdfs/PDF32000_2008.pdf">PDF Reference</a> chapter 
@@ -1428,6 +1443,26 @@ public class AcroFields {
      * @throws DocumentException on error
      */
     public boolean setField(String name, String value, String display) throws IOException, DocumentException {
+        return setField(name, value, display, false);
+    }
+
+    /**
+     * Sets the field value and the display string. The display string
+     * is used to build the appearance in the cases where the value
+     * is modified by Acrobat with JavaScript and the algorithm is
+     * known.
+     *
+     * @param name the fully qualified field name or the partial name in the case of XFA forms
+     * @param value the field value
+     * @param display the string that is used for the appearance. If <CODE>null</CODE>
+     * the <CODE>value</CODE> parameter will be used
+     * @param saveAppearance save the current appearance of the field or not
+     * @return <CODE>true</CODE> if the field was found and changed,
+     * <CODE>false</CODE> otherwise
+     * @throws IOException on error
+     * @throws DocumentException on error
+     */
+    public boolean setField(String name, String value, String display, boolean saveAppearance) throws IOException, DocumentException {
         if (writer == null)
             throw new DocumentException(MessageLocalization.getComposedMessage("this.acrofields.instance.is.read.only"));
         if (xfa.isXfaPresent()) {
@@ -1548,7 +1583,7 @@ public class AcroFields {
                     merged.put(PdfName.AS, PdfName.Off);
                     widget.put(PdfName.AS, PdfName.Off);
                 }
-                if (generateAppearances) {
+                if (generateAppearances && !saveAppearance) {
                     PdfAppearance app = getAppearance(merged, display, name);
                     if (normal != null)
                         normal.put(merged.getAsName(PdfName.AS), app.getIndirectReference());
