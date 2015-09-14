@@ -1339,64 +1339,34 @@ public class PdfCopy extends PdfWriter {
                     obj = new LinkedHashMap<String, Object>();
                     map.put(s, obj);
                     map = (HashMap<String, Object>)obj;
-                    continue;
-                }
-                else if (obj instanceof HashMap)
-                    map = (HashMap<String, Object>)obj;
-                else
+                } else if (obj instanceof HashMap) {
+                    map = (HashMap<String, Object>) obj;
+                } else {
                     return;
-            }
-            else {
+                }
+            } else {
                 if (obj instanceof HashMap)
                     return;
                 PdfDictionary merged = item.getMerged(0);
 
+                // if a field with this name already exists, we try to rename it
+                // so a new field will be created.
                 if (obj != null) {
                     s = renameField(obj, map, merged);
-                    obj = null;
                 }
-
-                if (obj == null) {
-                    PdfDictionary field = new PdfDictionary();
-                    if (PdfName.SIG.equals(merged.get(PdfName.FT)))
-                        hasSignature = true;
-                    for (Object element : merged.getKeys()) {
-                        PdfName key = (PdfName)element;
-                        if (fieldKeys.contains(key))
-                            field.put(key, merged.get(key));
-                    }
-                    ArrayList<Object> list = new ArrayList<Object>();
-                    list.add(field);
-                    createWidgets(list, item);
-                    map.put(s, list);
+                // generate a new field
+                PdfDictionary field = new PdfDictionary();
+                if (PdfName.SIG.equals(merged.get(PdfName.FT)))
+                    hasSignature = true;
+                for (Object element : merged.getKeys()) {
+                    PdfName key = (PdfName)element;
+                    if (fieldKeys.contains(key))
+                        field.put(key, merged.get(key));
                 }
-                else {
-                    ArrayList<Object> list = (ArrayList<Object>)obj;
-                    PdfDictionary field = (PdfDictionary)list.get(0);
-                    PdfName type1 = (PdfName)field.get(PdfName.FT);
-                    PdfName type2 = (PdfName)merged.get(PdfName.FT);
-                    if (type1 == null || !type1.equals(type2))
-                        return;
-                    int flag1 = 0;
-                    PdfObject f1 = field.get(PdfName.FF);
-                    if (f1 != null && f1.isNumber())
-                        flag1 = ((PdfNumber)f1).intValue();
-                    int flag2 = 0;
-                    PdfObject f2 = merged.get(PdfName.FF);
-                    if (f2 != null && f2.isNumber())
-                        flag2 = ((PdfNumber)f2).intValue();
-                    if (type1.equals(PdfName.BTN)) {
-                        if (((flag1 ^ flag2) & PdfFormField.FF_PUSHBUTTON) != 0)
-                            return;
-                        if ((flag1 & PdfFormField.FF_PUSHBUTTON) == 0 && ((flag1 ^ flag2) & PdfFormField.FF_RADIO) != 0)
-                            return;
-                    }
-                    else if (type1.equals(PdfName.CH)) {
-                        if (((flag1 ^ flag2) & PdfFormField.FF_COMBO) != 0)
-                            return;
-                    }
-                    createWidgets(list, item);
-                }
+                ArrayList<Object> list = new ArrayList<Object>();
+                list.add(field);
+                createWidgets(list, item);
+                map.put(s, list);
                 return;
             }
         }
@@ -1410,10 +1380,14 @@ public class PdfCopy extends PdfWriter {
                 fieldN = fieldName.toUnicodeString();
             }
         }
-        while (map.containsKey(fieldN)) {
-            fieldN += "_1";
-        }
         if (fieldN != null) {
+            for (int i = 1; i < Integer.MAX_VALUE; i++) {
+                String tmpFieldName = String.format("%s_%d", fieldN, i);
+                if (!map.containsKey(tmpFieldName)) {
+                    fieldN = tmpFieldName;
+                    break;
+                }
+            }
             merged.put(PdfName.T, new PdfString(fieldN));
         }
 
@@ -1433,7 +1407,7 @@ public class PdfCopy extends PdfWriter {
                 if (widgetKeys.contains(key))
                     widget.put(key, merged.get(key));
             }
-            widget.put(iTextTag, new PdfNumber(item.getTabOrder(k).intValue() + 1));
+            widget.put(iTextTag, new PdfNumber(item.getTabOrder(k) + 1));
             list.add(widget);
         }
     }
