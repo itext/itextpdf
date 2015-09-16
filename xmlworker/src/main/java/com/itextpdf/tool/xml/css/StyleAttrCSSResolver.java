@@ -54,10 +54,7 @@ import com.itextpdf.tool.xml.pipeline.css.CSSResolver;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
 
 /**
@@ -145,7 +142,7 @@ public class StyleAttrCSSResolver implements CSSResolver {
 	 */
 	public void resolveStyles(final Tag t) {
 		// get css for this tag from resolver
-		Map<String, String> tagCss = new HashMap<String, String>();
+		Map<String, String> tagCss = new LinkedHashMap<String, String>();
         Map<String, String> listCss = null;
 		if (null != cssFiles && cssFiles.hasFiles()) {
 			tagCss = cssFiles.getCSS(t);
@@ -169,7 +166,7 @@ public class StyleAttrCSSResolver implements CSSResolver {
 			}
 			String styleAtt = t.getAttributes().get(HTML.Attribute.STYLE);
 			if (null != styleAtt && styleAtt.length() > 0) {
-                Map<String, String> tagAttrCss = new HashMap<String, String>();
+                Map<String, String> tagAttrCss = new LinkedHashMap<String, String>();
 				String[] styles = styleAtt.split(";");
 				for (String s : styles) {
 					String[] part = s.split(":",2);
@@ -188,25 +185,25 @@ public class StyleAttrCSSResolver implements CSSResolver {
 		// inherit css from parent tags, as defined in provided CssInheritanceRules or if property = inherit
 		Map<String, String> css = t.getCSS();
         if (t.getName() != null) {
-            if(t.getName().equals(HTML.Tag.I) || t.getName().equals(HTML.Tag.CITE)
-                    || t.getName().equals(HTML.Tag.EM) || t.getName().equals(HTML.Tag.VAR)
-                    || t.getName().equals(HTML.Tag.DFN) || t.getName().equals(HTML.Tag.ADDRESS)) {
+            if(t.getName().equalsIgnoreCase(HTML.Tag.I) || t.getName().equalsIgnoreCase(HTML.Tag.CITE)
+                    || t.getName().equalsIgnoreCase(HTML.Tag.EM) || t.getName().equalsIgnoreCase(HTML.Tag.VAR)
+                    || t.getName().equalsIgnoreCase(HTML.Tag.DFN) || t.getName().equalsIgnoreCase(HTML.Tag.ADDRESS)) {
                 tagCss.put(CSS.Property.FONT_STYLE, CSS.Value.ITALIC);
             }
-            else if (t.getName().equals(HTML.Tag.B) || t.getName().equals(HTML.Tag.STRONG)) {
+            else if (t.getName().equalsIgnoreCase(HTML.Tag.B) || t.getName().equalsIgnoreCase(HTML.Tag.STRONG)) {
                 tagCss.put(CSS.Property.FONT_WEIGHT, CSS.Value.BOLD);
             }
-            else if (t.getName().equals(HTML.Tag.U) || t.getName().equals(HTML.Tag.INS)) {
+            else if (t.getName().equalsIgnoreCase(HTML.Tag.U) || t.getName().equalsIgnoreCase(HTML.Tag.INS)) {
                 tagCss.put(CSS.Property.TEXT_DECORATION, CSS.Value.UNDERLINE);
             }
-            else if (t.getName().equals(HTML.Tag.S) || t.getName().equals(HTML.Tag.STRIKE)
-                    || t.getName().equals(HTML.Tag.DEL)) {
+            else if (t.getName().equalsIgnoreCase(HTML.Tag.S) || t.getName().equalsIgnoreCase(HTML.Tag.STRIKE)
+                    || t.getName().equalsIgnoreCase(HTML.Tag.DEL)) {
                 tagCss.put(CSS.Property.TEXT_DECORATION, CSS.Value.LINE_THROUGH);
             }
-            else if (t.getName().equals(HTML.Tag.BIG)){
+            else if (t.getName().equalsIgnoreCase(HTML.Tag.BIG)){
                 tagCss.put(CSS.Property.FONT_SIZE, CSS.Value.LARGER);
             }
-            else if (t.getName().equals(HTML.Tag.SMALL)){
+            else if (t.getName().equalsIgnoreCase(HTML.Tag.SMALL)){
                 tagCss.put(CSS.Property.FONT_SIZE, CSS.Value.SMALLER);
             }
         }
@@ -278,8 +275,7 @@ public class StyleAttrCSSResolver implements CSSResolver {
     private String mergeTextDecorationRules(String oldRule, String newRule) {
         if (CSS.Value.NONE.equals(newRule))
             return newRule;
-
-        HashSet<String> attrSet = new HashSet<String>();
+        TreeSet<String> attrSet = new TreeSet<String>();
         if (oldRule != null)
             Collections.addAll(attrSet, oldRule.split("\\s+"));
         if (newRule != null)
@@ -325,7 +321,7 @@ public class StyleAttrCSSResolver implements CSSResolver {
 			css.putAll(utils.processFont(value));
 		} else if (CSS.Property.LIST_STYLE.equalsIgnoreCase(key)) {
 			css.putAll(utils.processListStyle(value));
-		} else if (CSS.Property.BACKGROUND.equalsIgnoreCase(key)) {
+		} else if (key.toLowerCase().contains(CSS.Property.BACKGROUND)) {
             Map<String, String> backgroundStyles = utils.processBackground(value);
             for (String backgroundKey : backgroundStyles.keySet()) {
                 if (!css.containsKey(backgroundKey)) {

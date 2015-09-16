@@ -112,6 +112,11 @@ public class PdfDiv implements Element, Spaceable, IAccessibleElement {
 
     protected int runDirection = PdfWriter.RUN_DIRECTION_DEFAULT;
 
+    /**
+     * Defines if the div should be kept on one page if possible
+     */
+    private boolean keepTogether;
+
     protected PdfName role = PdfName.DIV;
     protected HashMap<PdfName, PdfObject> accessibleAttributes = null;
     protected AccessibleElementId id = new AccessibleElementId();
@@ -174,6 +179,22 @@ public class PdfDiv implements Element, Spaceable, IAccessibleElement {
         this.backgroundColor = backgroundColor;
     }
 
+    /**
+     * Image will be scaled to fit in the div occupied area.
+     */
+    public void setBackgroundImage(Image image) {
+        this.backgroundImage = image;
+    }
+
+    /**
+     * Image will be scaled to fit in the div occupied area.
+     */
+    public void setBackgroundImage(Image image, float width, float height) {
+        this.backgroundImage = image;
+        this.backgroundImageWidth = width;
+        this.backgroundImageHeight = height;
+    }
+
     public float getYLine() {
         return yLine;
     }
@@ -186,9 +207,21 @@ public class PdfDiv implements Element, Spaceable, IAccessibleElement {
         this.runDirection = runDirection;
     }
 
+    public boolean getKeepTogether() {
+        return keepTogether;
+    }
+
+    public void setKeepTogether(boolean keepTogether) {
+        this.keepTogether = keepTogether;
+    }
+
     private BaseColor backgroundColor = null;
 
-     /**
+    private Image backgroundImage;
+    private Float backgroundImageWidth;
+    private Float backgroundImageHeight;
+
+    /**
      * The spacing before the table.
      */
     protected float spacingBefore;
@@ -200,6 +233,7 @@ public class PdfDiv implements Element, Spaceable, IAccessibleElement {
 
     public PdfDiv() {
         content = new ArrayList<Element>();
+        keepTogether = false;
     }
 
     /**
@@ -487,7 +521,7 @@ public class PdfDiv implements Element, Spaceable, IAccessibleElement {
         }
 
         if (!simulate) {
-            if (backgroundColor != null && getActualWidth() > 0  && getActualHeight() > 0) {
+            if ((backgroundColor != null || backgroundImage != null) && getActualWidth() > 0  && getActualHeight() > 0) {
                 float backgroundWidth = getActualWidth();
                 float backgroundHeight = getActualHeight();
                 if (width != null) {
@@ -499,11 +533,24 @@ public class PdfDiv implements Element, Spaceable, IAccessibleElement {
                 }
                 if (backgroundWidth > 0 && backgroundHeight > 0) {
                     Rectangle background = new Rectangle(leftX, maxY - backgroundHeight, backgroundWidth+leftX, maxY);
-                    background.setBackgroundColor(backgroundColor);
-                    PdfArtifact artifact = new PdfArtifact();
-                    canvas.openMCBlock(artifact);
-                    canvas.rectangle(background);
-                    canvas.closeMCBlock(artifact);
+                    if (backgroundColor != null) {
+                        background.setBackgroundColor(backgroundColor);
+                        PdfArtifact artifact = new PdfArtifact();
+                        canvas.openMCBlock(artifact);
+                        canvas.rectangle(background);
+                        canvas.closeMCBlock(artifact);
+                    }
+                    if (backgroundImage != null) {
+                        if (backgroundImageWidth == null) {
+                            backgroundImage.scaleToFit(background);
+                        } else {
+                            backgroundImage.scaleAbsolute(backgroundImageWidth, backgroundImageHeight);
+                        }
+                        backgroundImage.setAbsolutePosition(background.getLeft(), background.getBottom());
+                        canvas.openMCBlock(backgroundImage);
+                        canvas.addImage(backgroundImage);
+                        canvas.closeMCBlock(backgroundImage);
+                    }
                 }
             }
         }

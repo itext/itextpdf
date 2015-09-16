@@ -120,7 +120,7 @@ public class DocumentFont extends BaseFont {
     DocumentFont(PRIndirectReference refFont, PdfDictionary drEncoding) {
         this.refFont = refFont;
         font = (PdfDictionary)PdfReader.getPdfObject(refFont);
-        if (font.getAsName(PdfName.ENCODING) == null
+        if (font.get(PdfName.ENCODING) == null
                 && drEncoding != null) {
             for (PdfName key : drEncoding.getKeys()) {
                 font.put(PdfName.ENCODING, drEncoding.get(key));

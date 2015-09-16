@@ -108,4 +108,20 @@ public class StringUtils {
         content.append_i(')');
     }
 
+    
+    /**
+     * Converts an array of unsigned 16bit numbers to an array of bytes.
+     * The input values are presented as chars for convenience.
+     * 
+     * @param chars the array of 16bit numbers that should be converted
+     * @return the resulting byte array, twice as large as the input
+     */
+    public static byte[] convertCharsToBytes(char[] chars) {
+        byte[] result = new byte[chars.length*2];
+        for (int i=0; i<chars.length;i++) {
+            result[2*i] = (byte) (chars[i] / 256);
+            result[2*i+1] = (byte) (chars[i] % 256);
+        }
+        return result;
+    }
 }

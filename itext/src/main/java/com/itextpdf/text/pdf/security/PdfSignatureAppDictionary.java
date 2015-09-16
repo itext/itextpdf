@@ -69,5 +69,4 @@ public class PdfSignatureAppDictionary extends PdfDictionary {
     public void setSignatureCreator(String name) {
         put(PdfName.NAME, new PdfString(name, TEXT_UNICODE));
     }
-
 }

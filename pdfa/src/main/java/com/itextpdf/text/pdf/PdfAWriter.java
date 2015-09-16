@@ -49,6 +49,7 @@ import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.error_messages.MessageLocalization;
+import com.itextpdf.text.io.TempFileCache;
 import com.itextpdf.text.log.Counter;
 import com.itextpdf.text.log.CounterFactory;
 import com.itextpdf.text.pdf.interfaces.PdfAConformance;
@@ -360,5 +361,11 @@ public class PdfAWriter extends PdfWriter {
         if (!PdfName.POPUP.equals(subtype))
             a.put(PdfName.F, new PdfNumber(PdfAnnotation.FLAGS_PRINT));
         return a;
+    }
+
+    public void useExternalCacheForPdfA(TempFileCache fileCache) {
+        if (pdfIsoConformance instanceof PdfAConformanceImp) {
+            ((PdfAConformanceImp) pdfIsoConformance).getPdfAChecker().useExternalCache(fileCache);
+        }
     }
 }

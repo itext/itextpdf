@@ -120,15 +120,7 @@ public class ParagraphCssApplier {
             } else if (CSS.Property.PADDING_RIGHT.equalsIgnoreCase(key)) {
                 p.setIndentationRight(p.getIndentationRight() + utils.parseValueToPt(value, fontSize));
             } else if (CSS.Property.TEXT_ALIGN.equalsIgnoreCase(key)) {
-                if (CSS.Value.RIGHT.equalsIgnoreCase(value)) {
-                    p.setAlignment(Element.ALIGN_RIGHT);
-                } else if (CSS.Value.CENTER.equalsIgnoreCase(value)) {
-                    p.setAlignment(Element.ALIGN_CENTER);
-                } else if (CSS.Value.LEFT.equalsIgnoreCase(value)) {
-                    p.setAlignment(Element.ALIGN_LEFT);
-                } else if (CSS.Value.JUSTIFY.equalsIgnoreCase(value)) {
-                    p.setAlignment(Element.ALIGN_JUSTIFIED);
-                }
+                p.setAlignment(CSS.getElementAlignment(value));
             } else if (CSS.Property.TEXT_INDENT.equalsIgnoreCase(key)) {
                 p.setFirstLineIndent(utils.parseValueToPt(value, fontSize));
             } else if (CSS.Property.LINE_HEIGHT.equalsIgnoreCase(key)) {
@@ -146,15 +138,7 @@ public class ParagraphCssApplier {
             String value = t.getAttributes().get(HTML.Attribute.ALIGN);
 
             if ( value != null ) {
-                if ( value.equalsIgnoreCase(CSS.Value.RIGHT)) {
-                    p.setAlignment(Element.ALIGN_RIGHT);
-                } else if ( value.equalsIgnoreCase(CSS.Value.LEFT)) {
-                    p.setAlignment(Element.ALIGN_LEFT);
-                } else if ( value.equalsIgnoreCase(CSS.Value.CENTER)) {
-                    p.setAlignment(Element.ALIGN_CENTER);
-                } else if ( value.equalsIgnoreCase(CSS.Value.JUSTIFY)) {
-                    p.setAlignment(Element.ALIGN_JUSTIFIED);
-                }
+                p.setAlignment(CSS.getElementAlignment(value));
             }
         }
         // setDefaultMargin to largestFont if no margin-bottom is set and p-tag is child of the root tag.

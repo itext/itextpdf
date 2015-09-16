@@ -47,40 +47,55 @@ package com.itextpdf.text;
 /**
  * Signals that an error has occurred in a <CODE>Document</CODE>.
  *
- * @see		BadElementException
- * @see		Document
- * @see		DocWriter
- * @see		DocListener
+ * @see BadElementException
+ * @see Document
+ * @see DocWriter
+ * @see DocListener
  */
-
 public class DocumentException extends Exception {
-	
-	/** A serial version UID */
-    private static final long serialVersionUID = -2191131489390840739L;
 
-    /**
-     * Creates a Document exception.
-     * @param ex an exception that has to be turned into a DocumentException
-     */
-    public DocumentException(Exception ex) {
-        super(ex);
-    }
-    
-    // constructors
-    
-    /**
-     * Constructs a <CODE>DocumentException</CODE> without a message.
-     */
-    public DocumentException() {
-        super();
-    }
-    
-    /**
-     * Constructs a <code>DocumentException</code> with a message.
-     *
-     * @param		message			a message describing the exception
-     */
-    public DocumentException(String message) {
-        super(message);
-    }
+	/** A serial version UID */
+	private static final long serialVersionUID = -2191131489390840739L;
+
+	/**
+	 * Creates a Document exception.
+	 *
+	 * @param ex
+	 *            an exception that has to be turned into a DocumentException
+	 */
+	public DocumentException(Exception ex) {
+		super(ex);
+	}
+
+	// constructors
+
+	/**
+	 * Constructs a <CODE>DocumentException</CODE> without a message.
+	 */
+	public DocumentException() {
+		super();
+	}
+
+	/**
+	 * Constructs a <code>DocumentException</code> with a message.
+	 *
+	 * @param message
+	 *            a message describing the exception
+	 */
+	public DocumentException(String message) {
+		super(message);
+	}
+
+	/**
+	 * Constructs a <code>DocumentException</code> with a message and a
+	 * Exception.
+	 *
+	 * @param message
+	 *            a message describing the exception
+	 * @param ex
+	 *            an exception that has to be turned into a DocumentException
+	 */
+	public DocumentException(String message, Exception ex) {
+		super(message, ex);
+	}
 }

@@ -106,15 +106,7 @@ public class NoNewLineParagraphCssApplier {
 			} else if (CSS.Property.PADDING_RIGHT.equalsIgnoreCase(key)) {
 				p.setIndentationRight(p.getIndentationRight() + utils.parseValueToPt(value, fontSize));
 			} else if(CSS.Property.TEXT_ALIGN.equalsIgnoreCase(key)) {
-				if(CSS.Value.RIGHT.equalsIgnoreCase(value)){
-					p.setAlignment(Element.ALIGN_RIGHT);
-				} else if(CSS.Value.CENTER.equalsIgnoreCase(value)){
-					p.setAlignment(Element.ALIGN_CENTER);
-				} else if(CSS.Value.LEFT.equalsIgnoreCase(value)){
-					p.setAlignment(Element.ALIGN_LEFT);
-				} else if (CSS.Value.JUSTIFY.equalsIgnoreCase(value)) {
-					p.setAlignment(Element.ALIGN_JUSTIFIED);
-				}
+				p.setAlignment(CSS.getElementAlignment(value));
 			} else if (CSS.Property.TEXT_INDENT.equalsIgnoreCase(key)) {
 				p.setFirstLineIndent(utils.parseValueToPt(value, fontSize));
 			}

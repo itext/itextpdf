@@ -56,7 +56,7 @@ public class TIFFFaxDecoder {
     private int bitPointer, bytePointer;
     private byte[] data;
     private int w, h;
-    private int fillOrder;
+    private long fillOrder;
     
     // Data structures needed to store changing elements for the previous
     // and the current scanline
@@ -588,7 +588,7 @@ public class TIFFFaxDecoder {
      * @param w
      * @param h
      */
-    public TIFFFaxDecoder(int fillOrder, int w, int h) {
+    public TIFFFaxDecoder(long fillOrder, int w, int h) {
         this.fillOrder = fillOrder;
         this.w = w;
         this.h = h;

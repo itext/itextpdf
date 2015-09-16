@@ -315,6 +315,21 @@ public class List implements TextElementArray, Indentable, IAccessibleElement {
         return false;
     }
 
+    public List cloneShallow() {
+        List clone = new List();
+        populateProperties(clone);
+        return clone;
+    }
+
+    protected void populateProperties(List clone) {
+        clone.indentationLeft = indentationLeft;
+        clone.indentationRight = indentationRight;
+        clone.autoindent = autoindent;
+        clone.alignindent = alignindent;
+        clone.symbolIndent = symbolIndent;
+        clone.symbol = symbol;
+    }
+
     // extra methods
 
 	/** Makes sure all the items in the list have the same indentation. */

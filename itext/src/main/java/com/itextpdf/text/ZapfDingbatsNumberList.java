@@ -140,4 +140,11 @@ public class ZapfDingbatsNumberList extends List {
 		}
 		return false;
 	}
+
+	@Override
+	public List cloneShallow() {
+		ZapfDingbatsNumberList clone = new ZapfDingbatsNumberList(type);
+		populateProperties(clone);
+		return clone;
+	}
 }

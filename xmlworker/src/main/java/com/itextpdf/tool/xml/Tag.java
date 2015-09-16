@@ -70,14 +70,14 @@ public class Tag implements Iterable<Tag> {
 	 * @param attr the attributes in the tag
 	 */
 	public Tag(final String tag, final Map<String, String> attr) {
-		this(tag, attr, new HashMap<String, String>(0), "");
+		this(tag, attr, new LinkedHashMap<String, String>(0), "");
 	}
 
 	/**
 	 * @param tag the tag name
 	 */
 	public Tag(final String tag) {
-		this(tag, new HashMap<String, String>(0), new HashMap<String, String>(0), "");
+		this(tag, new LinkedHashMap<String, String>(0), new LinkedHashMap<String, String>(0), "");
 	}
 
 	/**
@@ -105,7 +105,7 @@ public class Tag implements Iterable<Tag> {
 	 * @param ns the namespace
 	 */
 	public Tag(final String tag, final Map<String, String> attr, final String ns) {
-		this(tag, attr,new HashMap<String, String>(0),ns );
+		this(tag, attr,new LinkedHashMap<String, String>(0),ns );
 	}
 
 	/**
@@ -114,7 +114,7 @@ public class Tag implements Iterable<Tag> {
 	 * @param ns the namespace of the tag (do not set null, set an empty String)
 	 */
 	public Tag(final String tag, final String ns) {
-		 this(tag, new HashMap<String, String>(0), new HashMap<String, String>(0), ns);
+		 this(tag, new LinkedHashMap<String, String>(0), new LinkedHashMap<String, String>(0), ns);
 	}
 
 	/**

@@ -44,6 +44,10 @@
  */
 package com.itextpdf.tool.xml.css;
 
+import com.itextpdf.text.Element;
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * CSS Property-Value container.
  *
@@ -136,6 +140,7 @@ public final class CSS {
 		public static final String TAB_STOPS = "tab-stops";
 		public static final String XFA_TAB_STOPS = "xfa-tab-stops";
 		public static final String PAGE_BREAK_BEFORE = "page-break-before";
+		public static final String PAGE_BREAK_INSIDE = "page-break-inside";
 		public static final String PAGE_BREAK_AFTER = "page-break-after";
 		public static final String REPEAT_HEADER = "repeat-header";
 		public static final String REPEAT_FOOTER = "repeat-footer";
@@ -226,6 +231,7 @@ public final class CSS {
 		public static final String EM = "em";
 		public static final String EX = "ex";
 		public static final String ALWAYS = "always";
+		public static final String AVOID = "avoid";
 		public static final String ABSOLUTE = "absolute";
 		public static final String AUTO = "auto";
 		public static final String INLINE = "inline";
@@ -248,4 +254,23 @@ public final class CSS {
 		public static final String TABLE_ROW = "table-row";
 		public static final String TABLE_ROW_GROUP = "table-row-group";
 	}
+        
+        private static final Map<String, Integer> cssAlignMap = new HashMap<String, Integer>();
+        private static final String DEFAULT = "default";
+
+        static {
+            cssAlignMap.put(Value.LEFT.toLowerCase(), Element.ALIGN_LEFT);
+            cssAlignMap.put(Value.CENTER.toLowerCase(), Element.ALIGN_CENTER);
+            cssAlignMap.put(Value.RIGHT.toLowerCase(), Element.ALIGN_RIGHT);
+            cssAlignMap.put(Value.JUSTIFY.toLowerCase(), Element.ALIGN_JUSTIFIED);
+            cssAlignMap.put(DEFAULT.toLowerCase(), Element.ALIGN_UNDEFINED);
+        }
+        
+        public static final int getElementAlignment(String cssAlignment) {
+            String lower = cssAlignment.toLowerCase();
+            if (cssAlignMap.containsKey(lower)) {
+                return cssAlignMap.get(lower);
+            }
+            return cssAlignMap.get(DEFAULT);
+        }
 }

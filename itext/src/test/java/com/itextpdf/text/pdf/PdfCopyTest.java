@@ -47,15 +47,15 @@ package com.itextpdf.text.pdf;
 
 import com.itextpdf.testutils.CompareTool;
 import com.itextpdf.testutils.TestResourceUtils;
-import com.itextpdf.text.Document;
-import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.PageSize;
+import com.itextpdf.text.*;
+import com.itextpdf.text.Rectangle;
 import junit.framework.Assert;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.awt.*;
+import java.awt.Font;
 import java.awt.image.BufferedImage;
 import java.io.*;
 
@@ -351,6 +351,42 @@ public class PdfCopyTest {
         }
     }
 
+    @Test
+    public void copyFields4Test() throws IOException, DocumentException, InterruptedException {
+        String outputFolder = "./target/com/itextpdf/test/pdf/PdfCopyTest/";
+        String outputFile = "copyFields4.pdf";
+        String resources = "./src/test/resources/com/itextpdf/text/pdf/PdfCopyTest/";
+        String inputFile1 = "link.pdf";
+
+
+        Document doc = new Document();
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        PdfWriter.getInstance(doc, baos);
+        com.itextpdf.text.Font font = new com.itextpdf.text.Font(BaseFont.createFont(
+                resources + "fonts/georgia.ttf", BaseFont.IDENTITY_H, BaseFont.EMBEDDED), 9);
+        doc.open();
+        doc.add(new Phrase("text", font));
+        doc.close();
+
+        Document pdfDocument = new Document();
+        new File(outputFolder).mkdirs();
+        PdfCopy copier = new PdfCopy(pdfDocument, new FileOutputStream(outputFolder + outputFile));
+        copier.setMergeFields();
+        pdfDocument.open();
+
+        PdfReader reader1 = new PdfReader(resources + inputFile1);
+        PdfReader reader2 = new PdfReader(baos.toByteArray());
+
+        copier.addDocument(reader1);
+        copier.addDocument(reader2);
+        copier.close();
+        CompareTool compareTool = new CompareTool();
+        String errorMessage = compareTool.compareByContent(outputFolder + outputFile, resources + "cmp_" + outputFile, outputFolder, "diff");
+        if (errorMessage != null) {
+            Assert.fail(errorMessage);
+        }
+    }
+
     @Test(timeout = 60000)
     public void largeFilePerformanceTest() throws IOException, DocumentException, InterruptedException {
         String target = "./target/com/itextpdf/test/pdf/PdfCopyTest/";
@@ -383,6 +419,56 @@ public class PdfCopyTest {
         CompareTool cmpTool = new CompareTool();
         String errorMessage = cmpTool.compareByContent(target + output, resources + cmp, target, "diff");
 
+        if (errorMessage != null) {
+            Assert.fail(errorMessage);
+        }
+    }
+
+    @Test
+    public void mergeNamedDestinationsTest() throws IOException, DocumentException, InterruptedException {
+        String outputFolder = "./target/com/itextpdf/test/pdf/PdfCopyTest/";
+        String outputFile = "namedDestinations.pdf";
+        String resources = "./src/test/resources/com/itextpdf/text/pdf/PdfCopyTest/";
+
+        // Create simple document
+        ByteArrayOutputStream main = new ByteArrayOutputStream();
+        Document doc = new Document(new Rectangle(612f,792f),54f,54f,36f,36f);
+        PdfWriter pdfwrite = PdfWriter.getInstance(doc,main);
+        doc.open();
+        doc.add(new Paragraph("Testing Page"));
+        doc.close();
+
+        // Create TOC document
+        ByteArrayOutputStream two = new ByteArrayOutputStream();
+        Document doc2 = new Document(new Rectangle(612f,792f),54f,54f,36f,36f);
+        PdfWriter pdfwrite2 = PdfWriter.getInstance(doc2, two);
+        doc2.open();
+        Chunk chn = new Chunk("<<-- Link To Testing Page -->>");
+        chn.setRemoteGoto("DUMMY.PDF","page-num-1");
+        doc2.add(new Paragraph(chn));
+        doc2.close();
+
+        // Merge documents
+        ByteArrayOutputStream three = new ByteArrayOutputStream();
+        PdfReader reader1 = new PdfReader(main.toByteArray());
+        PdfReader reader2 = new PdfReader(two.toByteArray());
+        Document doc3 = new Document();
+        PdfCopy DocCopy = new PdfCopy(doc3,three);
+        doc3.open();
+        DocCopy.addPage(DocCopy.getImportedPage(reader2,1));
+        DocCopy.addPage(DocCopy.getImportedPage(reader1,1));
+        DocCopy.addNamedDestination("page-num-1",2,new PdfDestination(PdfDestination.FIT));
+        doc3.close();
+
+        // Fix references and write to file
+        PdfReader finalReader = new PdfReader(three.toByteArray());
+        finalReader.makeRemoteNamedDestinationsLocal();
+        PdfStamper stamper = new PdfStamper(finalReader,new FileOutputStream(outputFolder + outputFile));
+        stamper.close();
+
+
+        CompareTool compareTool = new CompareTool();
+        String errorMessage = compareTool.compareByContent(outputFolder + outputFile, resources + "cmp_" + outputFile, outputFolder, "diff");
         if (errorMessage != null) {
             Assert.fail(errorMessage);
         }

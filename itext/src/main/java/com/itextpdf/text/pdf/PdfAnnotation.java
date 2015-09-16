@@ -317,8 +317,9 @@ public class PdfAnnotation extends PdfDictionary implements IAccessibleElement {
     public static PdfAnnotation createLink(PdfWriter writer, Rectangle rect, PdfName highlight, int page, PdfDestination dest) {
         PdfAnnotation annot = createLink(writer, rect, highlight);
         PdfIndirectReference ref = writer.getPageReference(page);
-        dest.addPage(ref);
-        annot.put(PdfName.DEST, dest);
+        PdfDestination d = new PdfDestination(dest);
+        d.addPage(ref);
+        annot.put(PdfName.DEST, d);
         return annot;
     }
 

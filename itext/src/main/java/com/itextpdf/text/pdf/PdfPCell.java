@@ -101,6 +101,12 @@ public class PdfPCell extends Rectangle implements IAccessibleElement {
     private float minimumHeight;
 
     /**
+     * This field is used to cache the height which is calculated on getMaxHeight() method call;
+     * this helps to avoid unnecessary recalculations on table drawing.
+     */
+    private float cachedMaxHeight;
+
+    /**
      * Holds value of property noWrap.
      */
     private boolean noWrap = false;
@@ -605,7 +611,7 @@ public class PdfPCell extends Rectangle implements IAccessibleElement {
     /**
      * Set a calculated height for the cell.
      *
-     * @param fixedHeight New value of property calculatedHeight.
+     * @param calculatedHeight New value of property calculatedHeight.
      */
     public void setCalculatedHeight(float calculatedHeight) {
         this.calculatedHeight = calculatedHeight;
@@ -657,6 +663,19 @@ public class PdfPCell extends Rectangle implements IAccessibleElement {
      */
     public boolean hasFixedHeight() {
         return getFixedHeight() > 0;
+    }
+
+    /**
+     * Gets the height which was calculated on last call of getMaxHeight().
+     * If cell's bBox and content wasn't changed this value is actual maxHeight of the cell.
+     * @return max height which was calculated on last call of getMaxHeight(); if getMaxHeight() wasn't called the return value is 0
+     */
+    public float getCachedMaxHeight() {
+        return cachedMaxHeight;
+    }
+
+    public boolean hasCachedMaxHeight() {
+        return cachedMaxHeight > 0;
     }
 
     /**
@@ -1065,6 +1084,7 @@ public class PdfPCell extends Rectangle implements IAccessibleElement {
         } else if (hasMinimumHeight() && height < getMinimumHeight()) {
             height = getMinimumHeight();
         }
+        cachedMaxHeight = height;
         return height;
     }
 

@@ -75,7 +75,7 @@ public class PdfSignatureBuildProperties extends PdfDictionary {
 	 * 
 	 * @return {@link PdfSignatureAppDictionary}
 	 */
-	PdfSignatureAppDictionary getPdfSignatureAppProperty() {
+	private PdfSignatureAppDictionary getPdfSignatureAppProperty() {
 		PdfSignatureAppDictionary appPropDic = (PdfSignatureAppDictionary) getAsDict(PdfName.APP);
 		if (appPropDic == null) {
 			appPropDic = new PdfSignatureAppDictionary();
@@ -83,5 +83,4 @@ public class PdfSignatureBuildProperties extends PdfDictionary {
 		}
 		return appPropDic;
 	}
-
 }

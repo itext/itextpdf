@@ -312,14 +312,6 @@ public class Path extends ArrayList<LongPoint> {
             return pts;
         }
 
-        public OutRec parseFirstLeft() {
-            OutRec ret = this;
-            while (ret != null && ret.pts == null) {
-                ret = ret.firstLeft;
-            }
-            return ret;
-        }
-
         public void setPoints( Path.OutPt pts ) {
             this.pts = pts;
         }

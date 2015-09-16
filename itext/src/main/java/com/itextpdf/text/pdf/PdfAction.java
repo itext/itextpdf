@@ -452,10 +452,11 @@ public class PdfAction extends PdfDictionary {
      */
     public static PdfAction gotoLocalPage(int page, PdfDestination dest, PdfWriter writer) {
         PdfIndirectReference ref = writer.getPageReference(page);
-        dest.addPage(ref);
+        PdfDestination d = new PdfDestination(dest);
+        d.addPage(ref);
         PdfAction action = new PdfAction();
         action.put(PdfName.S, PdfName.GOTO);
-        action.put(PdfName.D, dest);
+        action.put(PdfName.D, d);
         return action;
     }
 
