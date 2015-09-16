@@ -43,9 +43,17 @@
  * address: sales@itextpdf.com
  */
 package com.itextpdf.text.pdf;
+
 import com.itextpdf.awt.geom.AffineTransform;
 import com.itextpdf.awt.geom.Point2D;
-import com.itextpdf.text.*;
+import com.itextpdf.text.Annotation;
+import com.itextpdf.text.BaseColor;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Element;
+import com.itextpdf.text.ExceptionConverter;
+import com.itextpdf.text.Image;
+import com.itextpdf.text.ImgJBIG2;
+import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.exceptions.IllegalPdfSyntaxException;
 import com.itextpdf.text.pdf.interfaces.IAccessibleElement;
@@ -248,7 +256,7 @@ public class PdfContentByte {
             pdf = writer.getPdfDocument();
         }
     }
-    
+
     // methods to get the content of this object
 
     /**
@@ -269,8 +277,7 @@ public class PdfContentByte {
     public boolean isTagged() {
     	return writer != null && writer.isTagged();
     }
-    
-    
+
     /**
      * Gets the internal buffer.
      * @return the internal buffer
@@ -411,7 +418,7 @@ public class PdfContentByte {
     public void setRenderingIntent(PdfName ri) {
     	content.append(ri.getBytes()).append(" ri").append_i(separator);
     }
-    
+
     /**
      * Changes the value of the <VAR>line dash pattern</VAR>.
      * <P>
@@ -1584,6 +1591,26 @@ public class PdfContentByte {
      * @throws DocumentException on error
      */
     public void addImage(final Image image, final double a, final double b, final double c, final double d, final double e, final double f, final boolean inlineImage) throws DocumentException {
+        addImage(image, a, b, c, d, e, f, inlineImage, false);
+    }
+
+
+    /**
+     * Adds an <CODE>Image</CODE> to the page. The positioning of the <CODE>Image</CODE>
+     * is done with the transformation matrix. To position an <CODE>image</CODE> at (x,y)
+     * The image can be placed inline.
+     * @param image the <CODE>Image</CODE> object
+     * @param a an element of the transformation matrix
+     * @param b an element of the transformation matrix
+     * @param c an element of the transformation matrix
+     * @param d an element of the transformation matrix
+     * @param e an element of the transformation matrix
+     * @param f an element of the transformation matrix
+     * @param inlineImage <CODE>true</CODE> to place this image inline, <CODE>false</CODE> otherwise
+     * @param isMCBlockOpened <CODE>true</CODE> not to open MCBlock, <CODE>false</CODE> otherwise
+     * @throws DocumentException on error
+     */
+    protected void addImage(final Image image, final double a, final double b, final double c, final double d, final double e, final double f, final boolean inlineImage, final boolean isMCBlockOpened) throws DocumentException {
         try {
             AffineTransform transform = new AffineTransform(a, b, c, d, e, f);
 
@@ -1621,7 +1648,7 @@ public class PdfContentByte {
                 }
                 float w = template.getWidth();
                 float h = template.getHeight();
-                addTemplate(template, a / w, b / w, c / h, d / h, e, f);
+                addTemplate(template, a / w, b / w, c / h, d / h, e, f, isMCBlockOpened);
             }
             else {
                 content.append("q ");
@@ -1737,8 +1764,10 @@ public class PdfContentByte {
                 return;
             addAnnotation(an);
         }
-        catch (Exception ee) {
-            throw new DocumentException(ee);
+        catch (IOException ioe) {
+            final String path = image != null && image.getUrl() != null ? image.getUrl().getPath()
+                    : MessageLocalization.getComposedMessage("unknown");
+            throw new DocumentException(MessageLocalization.getComposedMessage("add.image.exception", path), ioe);
         }
     }
 
@@ -2128,7 +2157,7 @@ public class PdfContentByte {
     	setTextMatrix((float) matrix[0], (float) matrix[1], (float) matrix[2],
                 (float) matrix[3], (float) matrix[4], (float) matrix[5]);
     }
-    
+
     /**
      * Changes the text matrix. The first four parameters are {1,0,0,1}.
      * <P>
@@ -2371,9 +2400,9 @@ public class PdfContentByte {
 
     /**
      * Concatenate a matrix to the current transformation matrix.
-     * 
+     *
      * Common transformations:
-     * 
+     *
      * <ul>
      *   <li>Translation: [1 0 0 1 tx ty]</li>
      *   <li>Scaling: [sx 0 0 sy 0 0] (if sx or sy is negative, it will flip the coordinate system)</li>
@@ -2385,7 +2414,7 @@ public class PdfContentByte {
      *   </li>
      *   <li>Skew: [1 tan(a) tan(b) 1 0 0] where a is x-axis skew angle and b is y-axis skew angle</li>
 	 *</ul>
-     * 
+     *
      * @param a an element of the transformation matrix
      * @param b an element of the transformation matrix
      * @param c an element of the transformation matrix
@@ -3135,6 +3164,13 @@ public class PdfContentByte {
             default:
                 setRGBColorStroke(color.getRed(), color.getGreen(), color.getBlue());
         }
+
+        int alpha = color.getAlpha();
+        if (alpha < 255) {
+            PdfGState gState = new PdfGState();
+            gState.setStrokeOpacity( alpha / 255f);
+            setGState(gState);
+        }
     }
 
     /** Sets the fill color. <CODE>color</CODE> can be an
@@ -3180,6 +3216,13 @@ public class PdfContentByte {
             }
             default:
                 setRGBColorFill(color.getRed(), color.getGreen(), color.getBlue());
+        }
+
+        int alpha = color.getAlpha();
+        if (alpha < 255) {
+            PdfGState gState = new PdfGState();
+            gState.setFillOpacity( alpha / 255f);
+            setGState(gState);
         }
     }
 
@@ -3930,7 +3973,7 @@ public class PdfContentByte {
         }
         writer.addAnnotation(annot);
         if (needToTag) {
-            PdfStructureElement strucElem = pdf.structElements.get(annot.getId());
+            PdfStructureElement strucElem = pdf.getStructElement(annot.getId());
             if (strucElem != null) {
                 int structParent = pdf.getStructParentIndex(annot);
                 annot.put(PdfName.STRUCTPARENT, new PdfNumber(structParent));
@@ -3966,6 +4009,18 @@ public class PdfContentByte {
      * @param struc the tagging structure
      */
     public void beginMarkedContentSequence(final PdfStructureElement struc) {
+        beginMarkedContentSequence(struc, null);
+    }
+
+    /**
+     * Begins a marked content sequence. This sequence will be tagged with the structure <CODE>struc</CODE>.
+     * The same structure can be used several times to connect text that belongs to the same logical segment
+     * but is in a different location, like the same paragraph crossing to another page, for example.
+     * <CODE>expansion</CODE>  is token's expansion.
+     * @param struc the tagging structure
+     * @param expansion the expansion
+     */
+    private void beginMarkedContentSequence(final PdfStructureElement struc, String expansion) {
         PdfObject obj = struc.get(PdfName.K);
         int[] structParentMarkPoint = pdf.getStructParentIndexAndNextMarkPoint(getCurrentPage());
         int structParent = structParentMarkPoint[0];
@@ -3996,7 +4051,11 @@ public class PdfContentByte {
         }
         setMcDepth(getMcDepth() + 1);
         int contentSize = content.size();
-        content.append(struc.get(PdfName.S).getBytes()).append(" <</MCID ").append(mark).append(">> BDC").append_i(separator);
+        content.append(struc.get(PdfName.S).getBytes()).append(" <</MCID ").append(mark);
+        if (null != expansion) {
+            content.append("/E (").append(expansion).append(")");
+        }
+        content.append(">> BDC").append_i(separator);
         markedContentSize += content.size() - contentSize;
     }
 
@@ -4104,8 +4163,9 @@ public class PdfContentByte {
                 if (!getMcElements().contains(element)) {
                     PdfStructureElement structureElement = openMCBlockInt(element);
                     getMcElements().add(element);
-                    if (structureElement != null)
-                        pdf.structElements.put(element.getId(), structureElement);
+                    if (structureElement != null) {
+                        pdf.saveStructElement(element.getId(), structureElement);
+                    }
                 }
             }
         }
@@ -4114,7 +4174,7 @@ public class PdfContentByte {
     private PdfDictionary getParentStructureElement() {
         PdfDictionary parent = null;
         if (getMcElements().size() > 0)
-            parent = pdf.structElements.get(getMcElements().get(getMcElements().size() - 1).getId());
+            parent = pdf.getStructElement(getMcElements().get(getMcElements().size() - 1).getId());
         if (parent == null) {
             parent = writer.getStructureTreeRoot();
         }
@@ -4130,9 +4190,9 @@ public class PdfContentByte {
             writer.checkElementRole(element, parent);
             if (element.getRole() != null) {
                 if (!PdfName.ARTIFACT.equals(element.getRole())) {
-                    structureElement = pdf.structElements.get(element.getId());
+                    structureElement = pdf.getStructElement(element.getId());
                     if (structureElement == null) {
-                        structureElement = new PdfStructureElement(getParentStructureElement(), element.getRole());
+                        structureElement = new PdfStructureElement(getParentStructureElement(), element.getRole(), element.getId());
                     }
                 }
                 if (PdfName.ARTIFACT.equals(element.getRole())) {
@@ -4156,7 +4216,12 @@ public class PdfContentByte {
                         boolean inTextLocal = inText;
                         if (inText)
                             endText();
-                        beginMarkedContentSequence(structureElement);
+                        if (null != element.getAccessibleAttributes() && null != element.getAccessibleAttribute(PdfName.E)) {
+                            beginMarkedContentSequence(structureElement, element.getAccessibleAttribute(PdfName.E).toString());
+                            element.setAccessibleAttribute(PdfName.E, null);
+                        } else {
+                            beginMarkedContentSequence(structureElement);
+                        }
                         if (inTextLocal)
                             beginText(true);
                     }
@@ -4177,7 +4242,7 @@ public class PdfContentByte {
 
     private void closeMCBlockInt(IAccessibleElement element) {
         if (isTagged() && element.getRole() != null) {
-            PdfStructureElement structureElement = pdf.structElements.get(element.getId());
+            PdfStructureElement structureElement = pdf.getStructElement(element.getId());
             if (structureElement != null) {
                 structureElement.writeAttributes(element);
             }

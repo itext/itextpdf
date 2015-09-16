@@ -61,9 +61,8 @@ import com.itextpdf.tool.xml.exceptions.RuntimeWorkerException;
 import com.itextpdf.tool.xml.net.ImageRetrieve;
 import com.itextpdf.tool.xml.net.exc.NoImageException;
 import com.itextpdf.tool.xml.pipeline.html.HtmlPipelineContext;
-import com.itextpdf.tool.xml.pipeline.html.NoImageProviderException;
+import com.itextpdf.tool.xml.pipeline.html.UrlLinkResolver;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -98,14 +97,11 @@ public class Image extends AbstractTagProcessor {
 				if (logger.isLogging(Level.TRACE)) {
 					logger.trace(String.format(LocaleMessages.getInstance().getMessage(LocaleMessages.HTML_IMG_USE), src));
 				}
-				img = new ImageRetrieve(getHtmlPipelineContext(ctx).getImageProvider()).retrieveImage(src);
-			} catch (IOException e) {
-				if (logger.isLogging(Level.ERROR)) {
-					logger.error(String.format(LocaleMessages.getInstance().getMessage(LocaleMessages.HTML_IMG_RETRIEVE_FAIL), src), e);
-				}
+				HtmlPipelineContext context = getHtmlPipelineContext(ctx);
+				img = new ImageRetrieve(context.getResourcesRootPath(), context.getImageProvider()).retrieveImage(src);
 			} catch (NoImageException e) {
 				if (logger.isLogging(Level.ERROR)) {
-					logger.error("", e);
+					logger.error(String.format(LocaleMessages.getInstance().getMessage(LocaleMessages.HTML_IMG_RETRIEVE_FAIL), src), e);
 				}
 			} catch (NoCustomContextException e) {
 				throw new RuntimeWorkerException(LocaleMessages.getInstance().getMessage(LocaleMessages.NO_CUSTOM_CONTEXT), e);

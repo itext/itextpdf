@@ -118,10 +118,11 @@ public class PdfA1CheckerTest {
         } catch (PdfAConformanceException e) {
             if (e.getObject() == num)
                 exceptionThrown = true;
+        } finally {
+            ByteBuffer.HIGH_PRECISION = false;
         }
         if (!exceptionThrown)
             Assert.fail("PdfAConformanceException should be thrown.");
-
     }
 
     @Test

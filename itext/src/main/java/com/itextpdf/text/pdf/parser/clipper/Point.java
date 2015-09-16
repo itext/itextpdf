@@ -75,6 +75,7 @@
  */
 package com.itextpdf.text.pdf.parser.clipper;
 
+import java.math.BigInteger;
 import java.util.Comparator;
 
 public abstract class Point<T extends Number & Comparable<T>> {
@@ -204,12 +205,22 @@ public abstract class Point<T extends Number & Comparable<T>> {
         }
     }
 
-    protected static boolean slopesEqual( LongPoint pt1, LongPoint pt2, LongPoint pt3 ) {
-        return (pt1.y - pt2.y) * (pt2.x - pt3.x) - (pt1.x - pt2.x) * (pt2.y - pt3.y) == 0;
+    protected static boolean slopesEqual( LongPoint pt1, LongPoint pt2, LongPoint pt3, boolean useFullRange ) {
+        if (useFullRange) {
+            return BigInteger.valueOf(pt1.getY() - pt2.getY()).multiply(BigInteger.valueOf(pt2.getX() - pt3.getX())).equals(
+                   BigInteger.valueOf(pt1.getX() - pt2.getX()).multiply(BigInteger.valueOf(pt2.getY() - pt3.getY())));
+        } else {
+            return (pt1.getY() - pt2.getY()) * (pt2.getX() - pt3.getX()) - (pt1.getX() - pt2.getX()) * (pt2.getY() - pt3.getY()) == 0;
+        }
     }
 
-    protected static boolean slopesEqual( LongPoint pt1, LongPoint pt2, LongPoint pt3, LongPoint pt4 ) {
-        return (pt1.y - pt2.y) * (pt3.x - pt4.x) - (pt1.x - pt2.x) * (pt3.y - pt4.y) == 0;
+    protected static boolean slopesEqual( LongPoint pt1, LongPoint pt2, LongPoint pt3, LongPoint pt4, boolean useFullRange ) {
+        if (useFullRange) {
+            return BigInteger.valueOf(pt1.getY() - pt2.getY()).multiply(BigInteger.valueOf(pt3.getX() - pt4.getX())).equals(
+                   BigInteger.valueOf(pt1.getX() - pt2.getX()).multiply(BigInteger.valueOf(pt3.getY() - pt4.getY())));
+        } else {
+            return (pt1.getY() - pt2.getY()) * (pt3.getX() - pt4.getX()) - (pt1.getX() - pt2.getX()) * (pt3.getY() - pt4.getY()) == 0;
+        }
     }
 
     static boolean slopesNearCollinear( LongPoint pt1, LongPoint pt2, LongPoint pt3, double distSqrd ) {

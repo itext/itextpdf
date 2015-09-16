@@ -49,16 +49,11 @@ import com.itextpdf.awt.geom.NoninvertibleTransformException;
 import com.itextpdf.awt.geom.Point;
 import com.itextpdf.awt.geom.Point2D;
 import com.itextpdf.text.Rectangle;
-import com.itextpdf.text.pdf.PdfArray;
 import com.itextpdf.text.pdf.PdfContentByte;
 import com.itextpdf.text.pdf.parser.*;
 import com.itextpdf.text.pdf.parser.Path;
 import com.itextpdf.text.pdf.parser.clipper.*;
-import com.itextpdf.text.pdf.parser.clipper.Clipper.ClipType;
-import com.itextpdf.text.pdf.parser.clipper.Clipper.EndType;
-import com.itextpdf.text.pdf.parser.clipper.Clipper.JoinType;
-import com.itextpdf.text.pdf.parser.clipper.Clipper.PolyType;
-import com.itextpdf.text.pdf.parser.clipper.Clipper.PolyFillType;
+import com.itextpdf.text.pdf.parser.clipper.Clipper.*;
 import com.itextpdf.text.pdf.parser.clipper.Point.LongPoint;
 
 import java.util.*;
@@ -66,6 +61,8 @@ import java.util.*;
 class PdfCleanUpRegionFilter extends RenderFilter {
 
     private List<Rectangle> rectangles;
+
+    private static final double circleApproximationConst = 0.55191502449;
 
     public PdfCleanUpRegionFilter(List<Rectangle> rectangles) {
         this.rectangles = rectangles;
@@ -79,13 +76,17 @@ class PdfCleanUpRegionFilter extends RenderFilter {
         LineSegment ascent = renderInfo.getAscentLine();
         LineSegment descent = renderInfo.getDescentLine();
 
-        Rectangle r1 = new Rectangle(Math.min(descent.getStartPoint().get(0), descent.getEndPoint().get(0)),
-                                     descent.getStartPoint().get(1),
-                                     Math.max(descent.getStartPoint().get(0), descent.getEndPoint().get(0)),
-                                     ascent.getEndPoint().get(1));
+        Point2D[] glyphRect = new Point2D[] {
+                new Point2D.Float(ascent.getStartPoint().get(0), ascent.getStartPoint().get(1)),
+                new Point2D.Float(ascent.getEndPoint().get(0), ascent.getEndPoint().get(1)),
+                new Point2D.Float(descent.getEndPoint().get(0), descent.getEndPoint().get(1)),
+                new Point2D.Float(descent.getStartPoint().get(0), descent.getStartPoint().get(1)),
+        };
 
         for (Rectangle rectangle : rectangles) {
-            if (intersect(r1, rectangle)) {
+            Point2D[] redactRect = getVertices(rectangle);
+
+            if (intersect(glyphRect, redactRect)) {
                 return false;
             }
         }
@@ -102,7 +103,7 @@ class PdfCleanUpRegionFilter extends RenderFilter {
      * Calculates intersection of the image and the render filter region in the coordinate system relative to the image.
      *
      * @return <code>null</code> if the image is not allowed, {@link java.util.List} of
-     *         {@link com.itextpdf.text.Rectangle} objects otherwise.
+     * {@link com.itextpdf.text.Rectangle} objects otherwise.
      */
     protected List<Rectangle> getCoveredAreas(ImageRenderInfo renderInfo) {
         Rectangle imageRect = calcImageRect(renderInfo);
@@ -128,40 +129,52 @@ class PdfCleanUpRegionFilter extends RenderFilter {
         return coveredAreas;
     }
 
-    protected Path filterStrokePath(Path path, Matrix ctm, float lineWidth, int lineCapStyle,
+    protected Path filterStrokePath(Path sourcePath, Matrix ctm, float lineWidth, int lineCapStyle,
                                     int lineJoinStyle, float miterLimit, LineDashPattern lineDashPattern) {
+        Path path = sourcePath;
         JoinType joinType = getJoinType(lineJoinStyle);
         EndType endType = getEndType(lineCapStyle);
 
         if (lineDashPattern != null) {
-            if (isZeroDash(lineDashPattern)) {
-                return new Path();
-            }
-
-            if (!isSolid(lineDashPattern)) {
+            if (!lineDashPattern.isSolid()) {
                 path = applyDashPattern(path, lineDashPattern);
             }
         }
 
         ClipperOffset offset = new ClipperOffset(miterLimit, PdfCleanUpProcessor.arcTolerance * PdfCleanUpProcessor.floatMultiplier);
-        addPath(offset, path, joinType, endType);
+        List<Subpath> degenerateSubpaths = addPath(offset, path, joinType, endType);
 
         PolyTree resultTree = new PolyTree();
         offset.execute(resultTree, lineWidth * PdfCleanUpProcessor.floatMultiplier / 2);
+        Path offsetedPath = convertToPath(resultTree);
 
-        return filterFillPath(convertToPath(resultTree), ctm, PathPaintingRenderInfo.NONZERO_WINDING_RULE);
+        if (degenerateSubpaths.size() > 0) {
+            if (endType == EndType.OPEN_ROUND) {
+                List<Subpath> circles = convertToCircles(degenerateSubpaths, lineWidth / 2);
+                offsetedPath.addSubpaths(circles);
+            } else if (endType == EndType.OPEN_SQUARE && lineDashPattern != null) {
+                List<Subpath> squares = convertToSquares(degenerateSubpaths, lineWidth, sourcePath);
+                offsetedPath.addSubpaths(squares);
+            }
+        }
+
+        return filterFillPath(offsetedPath, ctm, PathPaintingRenderInfo.NONZERO_WINDING_RULE);
     }
 
     /**
+     * Note: this method will close all unclosed subpaths of the passed path.
+     *
      * @param fillingRule If the subpath is contour, pass any value.
      */
     protected Path filterFillPath(Path path, Matrix ctm, int fillingRule) {
+        path.closeAllSubpaths();
+
         Clipper clipper = new DefaultClipper();
         addPath(clipper, path);
 
         for (Rectangle rectangle : rectangles) {
             Point2D[] transfRectVertices = transformPoints(ctm, true, getVertices(rectangle));
-            addRect(clipper, transfRectVertices);
+            addRect(clipper, transfRectVertices, PolyType.CLIP);
         }
 
         PolyFillType fillType = PolyFillType.NON_ZERO;
@@ -200,8 +213,151 @@ class PdfCleanUpRegionFilter extends RenderFilter {
         return EndType.OPEN_ROUND;
     }
 
-    private static void addPath(ClipperOffset offset, Path path, JoinType joinType, EndType endType) {
+    /**
+     * Converts specified degenerate subpaths to circles.
+     * Note: actually the resultant subpaths are not real circles but approximated.
+     *
+     * @param radius Radius of each constructed circle.
+     * @return {@link java.util.List} consisting of circles constructed on given degenerated subpaths.
+     */
+    private static List<Subpath> convertToCircles(List<Subpath> degenerateSubpaths, double radius) {
+        List<Subpath> circles = new ArrayList<Subpath>(degenerateSubpaths.size());
+
+        for (Subpath subpath : degenerateSubpaths) {
+            BezierCurve[] circleSectors = approximateCircle(subpath.getStartPoint(), radius);
+
+            Subpath circle = new Subpath();
+            circle.addSegment(circleSectors[0]);
+            circle.addSegment(circleSectors[1]);
+            circle.addSegment(circleSectors[2]);
+            circle.addSegment(circleSectors[3]);
+
+            circles.add(circle);
+        }
+
+        return circles;
+    }
+
+    /**
+     * Converts specified degenerate subpaths to squares.
+     * Note: the list of degenerate subpaths should contain at least 2 elements. Otherwise
+     * we can't determine the direction which the rotation of each square depends on.
+     *
+     * @param squareWidth Width of each constructed square.
+     * @param sourcePath The path which dash pattern applied to. Needed to calc rotation angle of each square.
+     * @return {@link java.util.List} consisting of squares constructed on given degenerated subpaths.
+     */
+    private static List<Subpath> convertToSquares(List<Subpath> degenerateSubpaths, double squareWidth, Path sourcePath) {
+        List<Point2D> pathApprox = getPathApproximation(sourcePath);
+
+        if (pathApprox.size() < 2) {
+            return Collections.EMPTY_LIST;
+        }
+
+        Iterator<Point2D> approxIter = pathApprox.iterator();
+        Point2D approxPt1 = approxIter.next();
+        Point2D approxPt2 = approxIter.next();
+        StandardLine line = new StandardLine(approxPt1, approxPt2);
+
+        List<Subpath> squares = new ArrayList<Subpath>(degenerateSubpaths.size());
+        float widthHalf = (float) squareWidth / 2;
+
+        for (int i = 0; i < degenerateSubpaths.size(); ++i) {
+            Point2D point = degenerateSubpaths.get(i).getStartPoint();
+
+            while (!line.contains(point)) {
+                approxPt1 = approxPt2;
+                approxPt2 = approxIter.next();
+                line = new StandardLine(approxPt1, approxPt2);
+            }
+
+            double slope = line.getSlope();
+            double angle;
+
+            if (slope != Float.POSITIVE_INFINITY) {
+                angle = Math.atan(slope);
+            } else {
+                angle = Math.PI / 2;
+            }
+
+            squares.add(constructSquare(point, widthHalf, angle));
+        }
+
+        return squares;
+    }
+
+    private static List<Point2D> getPathApproximation(Path path) {
+        List<Point2D> approx = new ArrayList<Point2D>() {
+            @Override
+            public boolean addAll(Collection<? extends Point2D> c) {
+                Point2D prevPoint = (size() - 1 < 0 ? null : get(size() - 1));
+                boolean ret = false;
+
+                for (Point2D pt : c) {
+                    if (!pt.equals(prevPoint)) {
+                        add(pt);
+                        prevPoint = pt;
+                        ret = true;
+                    }
+                }
+
+                return true;
+            }
+        };
+
         for (Subpath subpath : path.getSubpaths()) {
+            approx.addAll(subpath.getPiecewiseLinearApproximation());
+        }
+
+        return approx;
+    }
+
+    private static Subpath constructSquare(Point2D squareCenter, double widthHalf, double rotationAngle) {
+        // Orthogonal square is the square with sides parallel to one of the axes.
+        Point2D[] ortogonalSquareVertices = {
+                new Point2D.Double(-widthHalf, -widthHalf),
+                new Point2D.Double(-widthHalf, widthHalf),
+                new Point2D.Double(widthHalf, widthHalf),
+                new Point2D.Double(widthHalf, -widthHalf)
+        };
+
+        Point2D[] rotatedSquareVertices = getRotatedSquareVertices(ortogonalSquareVertices, rotationAngle, squareCenter);
+
+        Subpath square = new Subpath();
+        square.addSegment(new Line(rotatedSquareVertices[0], rotatedSquareVertices[1]));
+        square.addSegment(new Line(rotatedSquareVertices[1], rotatedSquareVertices[2]));
+        square.addSegment(new Line(rotatedSquareVertices[2], rotatedSquareVertices[3]));
+        square.addSegment(new Line(rotatedSquareVertices[3], rotatedSquareVertices[0]));
+
+        return square;
+    }
+
+    private static Point2D[] getRotatedSquareVertices(Point2D[] orthogonalSquareVertices, double angle, Point2D squareCenter) {
+        Point2D[] rotatedSquareVertices = new Point2D[orthogonalSquareVertices.length];
+
+        AffineTransform.getRotateInstance(angle).
+                transform(orthogonalSquareVertices, 0, rotatedSquareVertices, 0, rotatedSquareVertices.length);
+        AffineTransform.getTranslateInstance(squareCenter.getX(), squareCenter.getY()).
+                transform(rotatedSquareVertices, 0, rotatedSquareVertices, 0, orthogonalSquareVertices.length);
+
+        return rotatedSquareVertices;
+    }
+
+    /**
+     * Adds all subpaths of the path to the {@link ClipperOffset} object with one
+     * note: it doesn't add degenerate subpaths.
+     *
+     * @return {@link java.util.List} consisting of all degenerate subpaths of the path.
+     */
+    private static List<Subpath> addPath(ClipperOffset offset, Path path, JoinType joinType, EndType endType) {
+        List<Subpath> degenerateSubpaths = new ArrayList<Subpath>();
+
+        for (Subpath subpath : path.getSubpaths()) {
+            if (subpath.isDegenerate()) {
+                degenerateSubpaths.add(subpath);
+                continue;
+            }
+
             if (!subpath.isSinglePointClosed() && !subpath.isSinglePointOpen()) {
                 EndType et;
 
@@ -216,6 +372,42 @@ class PdfCleanUpRegionFilter extends RenderFilter {
                 offset.addPath(convertToIntPoints(linearApproxPoints), joinType, et);
             }
         }
+
+        return degenerateSubpaths;
+    }
+
+    private static BezierCurve[] approximateCircle(Point2D center, double radius) {
+        // The circle is split into 4 sectors. Arc of each sector
+        // is approximated  with bezier curve separately.
+        BezierCurve[] approximation = new BezierCurve[4];
+        double x = center.getX();
+        double y = center.getY();
+
+        approximation[0] = new BezierCurve(Arrays.asList(
+                (Point2D) new Point2D.Double(x, y + radius),
+                new Point2D.Double(x + radius * circleApproximationConst, y + radius),
+                new Point2D.Double(x + radius, y + radius * circleApproximationConst),
+                new Point2D.Double(x + radius, y)));
+
+        approximation[1] = new BezierCurve(Arrays.asList(
+                (Point2D) new Point2D.Double(x + radius, y),
+                new Point2D.Double(x + radius, y - radius * circleApproximationConst),
+                new Point2D.Double(x + radius * circleApproximationConst, y - radius),
+                new Point2D.Double(x, y - radius)));
+
+        approximation[2] = new BezierCurve(Arrays.asList(
+                (Point2D) new Point2D.Double(x, y - radius),
+                new Point2D.Double(x - radius * circleApproximationConst, y - radius),
+                new Point2D.Double(x - radius, y - radius * circleApproximationConst),
+                new Point2D.Double(x - radius, y)));
+
+        approximation[3] = new BezierCurve(Arrays.asList(
+                (Point2D) new Point2D.Double(x - radius, y),
+                new Point2D.Double(x - radius, y + radius * circleApproximationConst),
+                new Point2D.Double(x - radius * circleApproximationConst, y + radius),
+                new Point2D.Double(x, y + radius)));
+
+        return approximation;
     }
 
 
@@ -228,8 +420,8 @@ class PdfCleanUpRegionFilter extends RenderFilter {
         }
     }
 
-    private static void addRect(Clipper clipper, Point2D[] rectVertices) {
-        clipper.addPath(convertToIntPoints(new ArrayList<Point2D>(Arrays.asList(rectVertices))), PolyType.CLIP, true);
+    private static void addRect(Clipper clipper, Point2D[] rectVertices, PolyType polyType) {
+        clipper.addPath(convertToIntPoints(new ArrayList<Point2D>(Arrays.asList(rectVertices))), polyType, true);
     }
 
     private static com.itextpdf.text.pdf.parser.clipper.Path convertToIntPoints(List<Point2D> points) {
@@ -294,9 +486,15 @@ class PdfCleanUpRegionFilter extends RenderFilter {
         return points;
     }
 
-    private boolean intersect(Rectangle r1, Rectangle r2) {
-        return (r1.getLeft() < r2.getRight() && r1.getRight() > r2.getLeft() &&
-                r1.getBottom() < r2.getTop() && r1.getTop() > r2.getBottom());
+    private boolean intersect(Point2D[] rect1, Point2D[] rect2) {
+        Clipper clipper = new DefaultClipper();
+        addRect(clipper, rect1, PolyType.SUBJECT);
+        addRect(clipper, rect2, PolyType.CLIP);
+
+        Paths paths = new Paths();
+        clipper.execute(ClipType.INTERSECTION, paths, PolyFillType.NON_ZERO, PolyFillType.NON_ZERO);
+
+        return !paths.isEmpty();
     }
 
     /**
@@ -351,28 +549,6 @@ class PdfCleanUpRegionFilter extends RenderFilter {
         return new Rectangle((float) left, (float) bottom, (float) right, (float) top);
     }
 
-    private static boolean isZeroDash(LineDashPattern lineDashPattern) {
-        PdfArray dashArray = lineDashPattern.getDashArray();
-        float total = 0;
-
-        // We should only iterate over the numbers specifying lengths of dashes
-        for (int i = 0; i < dashArray.size(); i += 2) {
-            float currentDash = dashArray.getAsNumber(i).floatValue();
-            // Should be nonnegative according to spec.
-            if (currentDash < 0) {
-                currentDash = 0;
-            }
-
-            total += currentDash;
-        }
-
-        return Float.compare(total, 0) == 0;
-    }
-
-    private static boolean isSolid(LineDashPattern lineDashPattern) {
-        return lineDashPattern.getDashArray().isEmpty();
-    }
-
     private static Path applyDashPattern(Path path, LineDashPattern lineDashPattern) {
         Set<Integer> modifiedSubpaths = new HashSet<Integer>(path.replaceCloseWithLine());
         Path dashedPath = new Path();
@@ -396,13 +572,12 @@ class PdfCleanUpRegionFilter extends RenderFilter {
 
                     while (Float.compare(remainingDist, 0) == 0 && !dashedPath.getCurrentPoint().equals(subpathApprox.get(i))) {
                         LineDashPattern.DashArrayElem currentElem = lineDashPattern.next();
-                        nextPoint = getNextPoint(nextPoint != null? nextPoint : subpathApprox.get(i - 1), subpathApprox.get(i), currentElem.getVal());
+                        nextPoint = getNextPoint(nextPoint != null ? nextPoint : subpathApprox.get(i - 1), subpathApprox.get(i), currentElem.getVal());
                         remainingDist = applyDash(dashedPath, subpathApprox.get(i - 1), subpathApprox.get(i), nextPoint, currentElem.isGap());
                         remainingIsGap = currentElem.isGap();
                     }
                 }
-
-
+                
                 // If true, then the line closing the subpath was explicitly added (see Path.ReplaceCloseWithLine).
                 // This causes a loss of a visual effect of line join style parameter, so in this clause
                 // we simply add overlapping dash (or gap, no matter), which continues the last dash and equals to
@@ -470,23 +645,6 @@ class PdfCleanUpRegionFilter extends RenderFilter {
                point.getY() <= Math.max(segStart.getY(), segEnd.getY());
     }
 
-    private static boolean containsAll(com.itextpdf.awt.geom.Rectangle rect, Point2D... points) {
-        for (Point2D point : points) {
-            if (!rect.contains(point)) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    private Point2D[] transformPoints(Matrix transormationMatrix, boolean inverse, Collection<? extends Point2D> points) {
-        Point2D[] pointsArr = new Point2D[points.size()];
-        points.toArray(pointsArr);
-
-        return transformPoints(transormationMatrix, inverse, pointsArr);
-    }
-
     private Point2D[] transformPoints(Matrix transormationMatrix, boolean inverse, Point2D... points) {
         AffineTransform t = new AffineTransform(transormationMatrix.get(Matrix.I11), transormationMatrix.get(Matrix.I12),
                 transormationMatrix.get(Matrix.I21), transormationMatrix.get(Matrix.I22),
@@ -504,5 +662,31 @@ class PdfCleanUpRegionFilter extends RenderFilter {
         t.transform(points, 0, transformed, 0, points.length);
 
         return transformed;
+    }
+
+    // Constants from the standard line representation: Ax+By+C
+    private static class StandardLine {
+
+        float A;
+        float B;
+        float C;
+
+        StandardLine(Point2D p1, Point2D p2) {
+            A = (float) (p2.getY() - p1.getY());
+            B = (float) (p1.getX() - p2.getX());
+            C = (float) (p1.getY() * (-B) - p1.getX() * A);
+        }
+
+        float getSlope() {
+            if (B == 0) {
+                return Float.POSITIVE_INFINITY;
+            }
+
+            return -A / B;
+        }
+
+        boolean contains(Point2D point) {
+            return Float.compare(Math.abs(A * (float) point.getX() + B * (float) point.getY() + C), 0.1f) < 0;
+        }
     }
 }

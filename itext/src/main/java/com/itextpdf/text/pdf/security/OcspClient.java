@@ -50,13 +50,14 @@ import java.security.cert.X509Certificate;
  * Interface for the OCSP Client
  */
 public interface OcspClient {
+
 	/**
 	 * Gets an encoded byte array with OCSP validation. The method should not throw an exception.
      * @param checkCert to certificate to check
      * @param rootCert the parent certificate
-     * @param the url to get the verification. It it's null it will be taken
+     * @param url the url to get the verification. It it's null it will be taken
      * from the check cert or from other implementation specific source
 	 * @return	a byte array with the validation or null if the validation could not be obtained
 	 */
-    public byte[] getEncoded(X509Certificate checkCert, X509Certificate rootCert, String url);
+    byte[] getEncoded(X509Certificate checkCert, X509Certificate rootCert, String url);
 }

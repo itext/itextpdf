@@ -117,16 +117,11 @@ public class Subpath {
      * @return The last point of the subpath.
      */
     public Point2D getLastPoint() {
-        Point2D lastPoint = null;
+        Point2D lastPoint = startPoint;
 
-        if (segments.size() > 0) {
-            if (closed) {
-                Shape shape = segments.get(0);
-                lastPoint = shape.getBasePoints().get(0);
-            } else {
-                Shape shape = segments.get(segments.size() - 1);
-                lastPoint = shape.getBasePoints().get(shape.getBasePoints().size() - 1);
-            }
+        if (segments.size() > 0 && !closed) {
+            Shape shape = segments.get(segments.size() - 1);
+            lastPoint = shape.getBasePoints().get(shape.getBasePoints().size() - 1);
         }
 
         return lastPoint;

@@ -44,6 +44,7 @@
  */
 package com.itextpdf.text.pdf;
 
+import com.itextpdf.testutils.CompareTool;
 import com.itextpdf.testutils.TestResourceUtils;
 import com.itextpdf.text.*;
 import org.junit.After;
@@ -52,10 +53,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.w3c.dom.css.RGBColor;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.util.HashMap;
 
 public class AcroFieldsTest {
@@ -209,6 +207,71 @@ public class AcroFieldsTest {
         b = FdfReader.getStreamBytes((PRStream) n);
         Assert.assertEquals(24410, b.length);
         fdfReader.close();
+    }
+
+    private final String sourceFolder = "./src/test/resources/com/itextpdf/text/pdf/AcroFieldsTest/";
+
+    @Test
+    public void icelandicLettersInAcroFieldTest() throws IOException, DocumentException, InterruptedException {
+
+        String outFile = outFolder+"icelandicLettersInAcroFieldTest.pdf";
+        FileOutputStream file = new FileOutputStream(outFile);
+
+        PdfReader reader = new PdfReader(new FileInputStream(sourceFolder+ "HelveticaFont.pdf"));
+
+        PdfStamper stamper = new PdfStamper(reader, file);
+
+        AcroFields fields = stamper.getAcroFields();
+
+        fields.setField("Mitarbeiter", "ÁÁÁÁ ÓÓÓÓ Testð");
+
+        stamper.close();
+
+        CompareTool compareTool = new CompareTool();
+        String errorMessage = compareTool.compareByContent(outFile, sourceFolder + "cmp_icelandicLettersInAcroFieldTest.pdf", outFolder, "diff_");
+        if (errorMessage != null) {
+            Assert.fail(errorMessage);
+        }
+    }
+
+    @Test
+    public void specialCharactersInAcroFieldTest() throws IOException, DocumentException, InterruptedException {
+
+        String outFile = outFolder+"specialCharactersInAcroFieldTest.pdf";
+        FileOutputStream file = new FileOutputStream(outFile);
+
+        PdfReader reader = new PdfReader(new FileInputStream(sourceFolder+"HelveticaFont.pdf"));
+
+        PdfStamper stamper = new PdfStamper(reader, file);
+        AcroFields acroFields = stamper.getAcroFields();
+        acroFields.setField("Mitarbeiter", "öäüß€@");
+        stamper.close();
+
+        CompareTool compareTool = new CompareTool();
+        String errorMessage = compareTool.compareByContent(outFile, sourceFolder + "cmp_specialCharactersInAcroFieldTest.pdf", outFolder, "diff_");
+        if (errorMessage != null) {
+            Assert.fail(errorMessage);
+        }
+    }
+
+    @Test
+    public void flatteningRadioButtonFieldsTest() throws IOException, DocumentException, InterruptedException {
+
+        String outFile = outFolder+"flatteningRadioButtonFieldsTest.pdf";
+        FileOutputStream file = new FileOutputStream(outFile);
+
+        PdfReader reader = new PdfReader(new FileInputStream(sourceFolder+"radios_src.pdf"));
+
+        PdfStamper stamper = new PdfStamper(reader, file);
+        AcroFields acroFields = stamper.getAcroFields();
+        acroFields.setField("radiogroup", "1");
+        stamper.close();
+
+        CompareTool compareTool = new CompareTool();
+        String errorMessage = compareTool.compareByContent(outFile, sourceFolder + "cmp_flatteningRadioButtonFieldsTest.pdf", outFolder, "diff_");
+        if (errorMessage != null) {
+            Assert.fail(errorMessage);
+        }
     }
 
 }

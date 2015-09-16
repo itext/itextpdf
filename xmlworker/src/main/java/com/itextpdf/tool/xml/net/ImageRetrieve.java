@@ -44,80 +44,80 @@
  */
 package com.itextpdf.tool.xml.net;
 
-import java.io.File;
-import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URL;
 
-import com.itextpdf.text.BadElementException;
+import com.itextpdf.text.Image;
 import com.itextpdf.tool.xml.net.exc.NoImageException;
 import com.itextpdf.tool.xml.pipeline.html.ImageProvider;
+import com.itextpdf.tool.xml.pipeline.html.UrlLinkResolver;
 
 /**
  * @author redlab_b
  *
  */
 public class ImageRetrieve {
-	private final ImageProvider provider;
-	/**
-	 * @param imageProvider the provider to use.
-	 *
-	 */
+	private final ImageProvider imageProvider;
+	private String resourcesRootPath;
+
+	public ImageRetrieve(String resourcesRootPath, final ImageProvider imageProvider) {
+		this.imageProvider = imageProvider;
+		this.resourcesRootPath = resourcesRootPath;
+	}
+
+	public ImageRetrieve(String resourcesRootPath) {
+		this.resourcesRootPath = resourcesRootPath;
+		this.imageProvider = null;
+	}
+
 	public ImageRetrieve(final ImageProvider imageProvider) {
-		this.provider = imageProvider;
+		this.imageProvider = imageProvider;
+		this.resourcesRootPath = null;
 	}
-	/**
-	 *
-	 */
+
 	public ImageRetrieve() {
-		this.provider = null;
+		this.imageProvider = null;
+		this.resourcesRootPath = null;
 	}
-	/**
-	 * @param src an URI that can be used to retrieve an image
-	 * @return an iText Image object
-	 * @throws NoImageException if there is no image
-	 * @throws IOException if an IOException occurred
-	 */
-	public com.itextpdf.text.Image retrieveImage(final String src) throws NoImageException, IOException {
-		com.itextpdf.text.Image img = null;
-		if (null != provider) {
-			img = provider.retrieve(src);
+
+	public com.itextpdf.text.Image retrieveImage(final String src) throws NoImageException {
+		com.itextpdf.text.Image img;
+		img = tryRetrieveImageWithImageProvider(src);
+
+		if (img == null) {
+			try {
+				URL url = getImageUrl(src);
+				img = Image.getInstance(url);
+			} catch (Exception e) {
+				throw new NoImageException(src, e);
+			}
+		}
+		if (imageProvider != null && img != null) {
+			imageProvider.store(src, img);
 		}
 
-		if (null == img) {
-			String path = null;
-			if (src.startsWith("http")) {
-				// full url available
-				path = src;
-			} else if (null != provider){
-				String root = this.provider.getImageRootPath();
-				if (null != root) {
-					if (root.endsWith("/") && src.startsWith("/")) {
-						root = root.substring(0, root.length() - 1);
-					}
-					path = root + src;
-				}
-			} else {
-				path = src;
-			}
-			if (null != path) {
-				try {
-					if (path.startsWith("http")) {
-						img = com.itextpdf.text.Image.getInstance(path);
-					} else {
-						img = com.itextpdf.text.Image.getInstance(new File(path).toURI().toURL());
-					}
-					if (null != provider && null != img) {
-						provider.store( src, img);
-					}
-				} catch (BadElementException e) {
-					throw new NoImageException(src, e);
-				} catch (MalformedURLException e) {
-					throw new NoImageException(src, e);
-				}
-			} else {
-				throw new NoImageException(src);
-			}
-		}
 		return img;
+	}
+
+	private Image tryRetrieveImageWithImageProvider(String src) {
+		if (imageProvider != null) {
+			return imageProvider.retrieve(src);
+		}
+		return null;
+	}
+
+	private URL getImageUrl(String src) throws MalformedURLException {
+		UrlLinkResolver linkResolver = new UrlLinkResolver();
+		URL url = null;
+		if (imageProvider != null) {
+			linkResolver.setLocalRootPath(imageProvider.getImageRootPath());
+			url = linkResolver.resolveUrl(src);
+		}
+		if (url == null) {
+			linkResolver.setLocalRootPath(resourcesRootPath);
+			url = linkResolver.resolveUrl(src);
+		}
+
+		return url;
 	}
 }

@@ -96,6 +96,26 @@ public class LineDashPattern {
         initFirst(dashPhase);
     }
 
+    /**
+     * Checks whether the dashed pattern is solid or not. It's solid when the
+     * size of a dash array is even and sum of all the units off in the array
+     * is 0.<br/>
+     * For example: [3 0 4 0 5 0 6 0] (sum is 0), [3 0 4 0 5 1] (sum is 1).
+     */
+    public boolean isSolid() {
+        if (dashArray.size() % 2 != 0) {
+            return false;
+        }
+
+        float unitsOffSum = 0;
+
+        for (int i = 1; i < dashArray.size(); i += 2) {
+            unitsOffSum += dashArray.getAsNumber(i).floatValue();
+        }
+
+        return Float.compare(unitsOffSum, 0) == 0;
+    }
+
     private void initFirst(float phase) {
         if (dashArray.size() > 0) {
             while (phase > 0) {

@@ -114,13 +114,15 @@ public abstract class ClipperBase implements Clipper {
         e.polyTyp = polyType;
     }
 
-    private static void rangeTest( LongPoint Pt ) {
-
-        if (Pt.getX() > LOW_RANGE || Pt.getY() > LOW_RANGE || -Pt.getX() > LOW_RANGE || -Pt.getY() > LOW_RANGE) {
-            if (Pt.getX() > HI_RANGE || Pt.getY() > HI_RANGE || -Pt.getX() > HI_RANGE || -Pt.getY() > HI_RANGE) {
-                throw new IllegalStateException( "Coordinate outside allowed range" );
-            }
+    private static boolean rangeTest( LongPoint Pt, boolean useFullRange ) {
+        if (useFullRange) {
+            if (Pt.getX() > HI_RANGE || Pt.getY() > HI_RANGE || -Pt.getX() > HI_RANGE || -Pt.getY() > HI_RANGE)
+                throw new IllegalStateException("Coordinate outside allowed range");
+        } else if (Pt.getX() > LOW_RANGE || Pt.getY() > LOW_RANGE || -Pt.getX() > LOW_RANGE || -Pt.getY() > LOW_RANGE) {
+            return rangeTest(Pt, true);
         }
+
+        return useFullRange;
     }
 
     private static Edge removeEdge( Edge e ) {
@@ -141,6 +143,8 @@ public abstract class ClipperBase implements Clipper {
     protected LocalMinima currentLM;
 
     private final List<List<Edge>> edges;
+
+    protected boolean useFullRange;
 
     protected boolean hasOpenPaths;
 
@@ -186,12 +190,12 @@ public abstract class ClipperBase implements Clipper {
 
         //1. Basic (first) edge initialization ...
         edges.get( 1 ).setCurrent( new LongPoint( pg.get( 1 ) ) );
-        rangeTest( pg.get( 0 ) );
-        rangeTest( pg.get( highI ) );
+        useFullRange = rangeTest( pg.get( 0 ), useFullRange );
+        useFullRange = rangeTest( pg.get( highI ), useFullRange );
         initEdge( edges.get( 0 ), edges.get( 1 ), edges.get( highI ), pg.get( 0 ) );
         initEdge( edges.get( highI ), edges.get( 0 ), edges.get( highI - 1 ), pg.get( highI ) );
         for (int i = highI - 1; i >= 1; --i) {
-            rangeTest( pg.get( i ) );
+            useFullRange = rangeTest( pg.get( i ), useFullRange );
             initEdge( edges.get( i ), edges.get( i + 1 ), edges.get( i - 1 ), pg.get( i ) );
         }
         Edge eStart = edges.get( 0 );
@@ -214,7 +218,7 @@ public abstract class ClipperBase implements Clipper {
             if (e.prev == e.next) {
                 break; //only two vertices
             }
-            else if (Closed && Point.slopesEqual( e.prev.getCurrent(), e.getCurrent(), e.next.getCurrent() )
+            else if (Closed && Point.slopesEqual( e.prev.getCurrent(), e.getCurrent(), e.next.getCurrent(), useFullRange )
                             && (!isPreserveCollinear() || !Point.isPt2BetweenPt1AndPt3( e.prev.getCurrent(), e.getCurrent(), e.next.getCurrent() ))) {
                 //Collinear edges are allowed for open paths but in closed paths
                 //the default is to merge adjacent collinear edges into a single edge.
@@ -368,6 +372,7 @@ public abstract class ClipperBase implements Clipper {
     public void clear() {
         disposeLocalMinimaList();
         edges.clear();
+        useFullRange = false;
         hasOpenPaths = false;
     }
 
@@ -534,6 +539,12 @@ public abstract class ClipperBase implements Clipper {
             result = result.prev; //move to the edge just beyond current bound
         }
         return result;
+    }
+
+    protected static Path.OutRec parseFirstLeft(Path.OutRec FirstLeft) {
+        while (FirstLeft != null && FirstLeft.getPoints() == null)
+            FirstLeft = FirstLeft.firstLeft;
+        return FirstLeft;
     }
 
     protected void reset() {

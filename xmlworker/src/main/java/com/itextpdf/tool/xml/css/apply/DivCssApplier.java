@@ -44,20 +44,32 @@
  */
 package com.itextpdf.tool.xml.css.apply;
 
+import java.io.IOException;
 import java.util.Map;
 
-import com.itextpdf.text.Element;
 import com.itextpdf.text.Font;
+import com.itextpdf.text.Image;
 import com.itextpdf.text.html.HtmlUtilities;
+import com.itextpdf.text.log.Level;
+import com.itextpdf.text.log.Logger;
+import com.itextpdf.text.log.LoggerFactory;
 import com.itextpdf.text.pdf.PdfDiv;
 import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.css.*;
+import com.itextpdf.tool.xml.exceptions.LocaleMessages;
 import com.itextpdf.tool.xml.html.HTML;
+import com.itextpdf.tool.xml.net.ImageRetrieve;
+import com.itextpdf.tool.xml.net.exc.NoImageException;
+import com.itextpdf.tool.xml.pipeline.html.HtmlPipeline;
+import com.itextpdf.tool.xml.pipeline.html.HtmlPipelineContext;
+import com.itextpdf.tool.xml.pipeline.html.ImageProvider;
+import com.itextpdf.tool.xml.pipeline.html.UrlLinkResolver;
 
 public class DivCssApplier {
     private final CssUtils utils = CssUtils.getInstance();
+    private static final Logger LOG = LoggerFactory.getLogger(ListStyleTypeCssApplier.class);
 
-    public PdfDiv apply(final PdfDiv div, final Tag t, final MarginMemory memory, final PageSizeContainable psc) {
+    public PdfDiv apply(final PdfDiv div, final Tag t, final MarginMemory memory, final PageSizeContainable psc, HtmlPipelineContext context) {
         Map<String, String> css = t.getCSS();
         float fontSize = FontSizeTranslator.getInstance().translateFontSize(t);
         if (fontSize == Font.UNDEFINED) {
@@ -71,19 +83,10 @@ public class DivCssApplier {
         }
 
         if (align != null) {
-            if (align.equalsIgnoreCase(CSS.Value.CENTER)) {
-                div.setTextAlignment(Element.ALIGN_CENTER);
-            } else if (align.equalsIgnoreCase(CSS.Value.LEFT)) {
-                div.setTextAlignment(Element.ALIGN_LEFT);
-            } else if (align.equalsIgnoreCase(CSS.Value.RIGHT)) {
-                div.setTextAlignment(Element.ALIGN_RIGHT);
-            } else if (align.equalsIgnoreCase(CSS.Value.JUSTIFY)) {
-                div.setTextAlignment(Element.ALIGN_JUSTIFIED);
-            }
+            div.setTextAlignment(CSS.getElementAlignment(align));
         }
 
-
-        String widthValue = t.getCSS().get(HTML.Attribute.WIDTH);
+        String widthValue = css.get(HTML.Attribute.WIDTH);
         if (widthValue == null) {
             widthValue = t.getAttributes().get(HTML.Attribute.WIDTH);
         }
@@ -100,7 +103,7 @@ public class DivCssApplier {
             }
         }
 
-        String heightValue = t.getCSS().get(HTML.Attribute.HEIGHT);
+        String heightValue = css.get(HTML.Attribute.HEIGHT);
         if (heightValue == null) {
             heightValue = t.getAttributes().get(HTML.Attribute.HEIGHT);
         }
@@ -135,7 +138,17 @@ public class DivCssApplier {
                     div.setBottom(utils.parseValueToPt(value, fontSize));
                 }
             } else if (key.equalsIgnoreCase(CSS.Property.BACKGROUND_COLOR)) {
-				div.setBackgroundColor(HtmlUtilities.decodeColor(value));
+                div.setBackgroundColor(HtmlUtilities.decodeColor(value));
+            } else if (key.equalsIgnoreCase(CSS.Property.BACKGROUND_IMAGE)) {
+                String url = utils.extractUrl(value);
+                try {
+                    Image img = new ImageRetrieve(context.getResourcesRootPath(), context.getImageProvider()).retrieveImage(url);
+                    div.setBackgroundImage(img);
+                } catch (NoImageException e) {
+                    if (LOG.isLogging(Level.ERROR)) {
+                        LOG.error(String.format(LocaleMessages.getInstance().getMessage("html.tag.img.failed"), url), e);
+                    }
+                }
             } else if (key.equalsIgnoreCase(CSS.Property.PADDING_LEFT)) {
                 div.setPaddingLeft(utils.parseValueToPt(value, fontSize));
             } else if (key.equalsIgnoreCase(CSS.Property.PADDING_RIGHT)) {
@@ -214,7 +227,12 @@ public class DivCssApplier {
                 } else if (value.equalsIgnoreCase(CSS.Value.OUTSET)) {
                     div.setBorderTopStyle(PdfDiv.BorderTopStyle.OUTSET);
                 }
+            } else if (key.equalsIgnoreCase(CSS.Property.PAGE_BREAK_INSIDE)) {
+                if (value.equalsIgnoreCase(CSS.Value.AVOID)) {
+                    div.setKeepTogether(true);
+                }
             }
+
 
             //TODO: border, background properties.
         }

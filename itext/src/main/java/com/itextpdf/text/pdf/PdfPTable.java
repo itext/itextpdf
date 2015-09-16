@@ -2084,7 +2084,7 @@ public class PdfPTable implements LargeElement, Spaceable, IAccessibleElement {
         public void beginCell(PdfPCell cell, float completedRowsHeight, float rowHeight) {
             rowspan = cell.getRowspan();
             colspan = cell.getColspan();
-            height = completedRowsHeight + Math.max(cell.getMaxHeight(), rowHeight);
+            height = completedRowsHeight + Math.max(cell.hasCachedMaxHeight() ? cell.getCachedMaxHeight() : cell.getMaxHeight(), rowHeight);
         }
 
         public void consumeRowspan(float completedRowsHeight, float rowHeight) {
@@ -2138,7 +2138,7 @@ public class PdfPTable implements LargeElement, Spaceable, IAccessibleElement {
                     state.consumeRowspan(completedRowsHeight, rowHeight);
                 } else {
                     state.beginCell(cell, completedRowsHeight, rowHeight);
-                    LOGGER.info(String.format("Height after beginCell: %s (cell: %s)", state.height, cell.getMaxHeight()));
+                    LOGGER.info(String.format("Height after beginCell: %s (cell: %s)", state.height, cell.getCachedMaxHeight()));
                 }
                 if (state.cellEnds() && state.height > maxCompletedRowsHeight) {
                     maxCompletedRowsHeight = state.height;

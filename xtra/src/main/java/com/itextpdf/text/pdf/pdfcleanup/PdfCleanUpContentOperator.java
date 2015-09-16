@@ -74,6 +74,7 @@ class PdfCleanUpContentOperator implements ContentOperator {
     private static final byte[] eoW = DocWriter.getISOBytes("W*\n");
     private static final byte[] q = DocWriter.getISOBytes("q\n");
     private static final byte[] Q = DocWriter.getISOBytes("Q\n");
+    private static final byte[] cs = DocWriter.getISOBytes("cs\n");
 
     private static final Set<String> textShowingOperators = new HashSet<String>(Arrays.asList("TJ", "Tj", "'", "\""));
     private static final Set<String> pathConstructionOperators = new HashSet<String>(Arrays.asList("m", "l", "c", "v", "y", "h", "re"));
@@ -114,6 +115,7 @@ class PdfCleanUpContentOperator implements ContentOperator {
         PdfContentByte canvas = cleanUpStrategy.getContext().getCanvas();
         PRStream xFormStream = null;
         boolean disableOutput = pathConstructionOperators.contains(operatorStr) || pathPaintingOperators.contains(operatorStr) || clippingPathOperators.contains(operatorStr);
+        GraphicsState gs = pdfContentStreamProcessor.gs();
 
         // key - number of a string in the TJ operator, value - number following the string; the first number without string (if it's presented) is stored under 0.
         // BE AWARE: zero-length strings are ignored!!!
@@ -173,19 +175,17 @@ class PdfCleanUpContentOperator implements ContentOperator {
                 structuredTJoperands = structureTJarray((PdfArray) operands.get(0));
             }
 
-            GraphicsState gs = pdfContentStreamProcessor.gs();
-
             writeTextChunks(structuredTJoperands, chunks, canvas, gs.getCharacterSpacing(), gs.getWordSpacing(),
                     gs.getFontSize(), gs.getHorizontalScaling());
         } else if (pathPaintingOperators.contains(operatorStr)) {
-            writePath(operatorStr, canvas);
+            writePath(operatorStr, canvas, gs.getColorSpaceStroke());
         } else if (strokeColorOperators.contains(operatorStr)) {
             // Replace current color with the new one.
             cleanUpStrategy.getContext().popStrokeColor();
             cleanUpStrategy.getContext().pushStrokeColor(operands);
-        } else if ("q" == operatorStr) {
+        } else if ("q".equals(operatorStr)) {
             cleanUpStrategy.getContext().pushStrokeColor(cleanUpStrategy.getContext().peekStrokeColor());
-        } else if ("Q" == operatorStr) {
+        } else if ("Q".equals(operatorStr)) {
             cleanUpStrategy.getContext().popStrokeColor();
         }
 
@@ -377,7 +377,7 @@ class PdfCleanUpContentOperator implements ContentOperator {
         imageStream.setDataRaw(image.getBytes());
     }
 
-    private void writePath(String operatorStr, PdfContentByte canvas) throws IOException {
+    private void writePath(String operatorStr, PdfContentByte canvas, PdfName strokeColorSpace) throws IOException {
         if (nwFillOperators.contains(operatorStr)) {
             writePath(cleanUpStrategy.getCurrentFillPath(), f, canvas);
         } else if (eoFillOperators.contains(operatorStr)) {
@@ -385,7 +385,7 @@ class PdfCleanUpContentOperator implements ContentOperator {
         }
 
         if (strokeOperators.contains(operatorStr)) {
-            writeStroke(canvas, cleanUpStrategy.getCurrentStrokePath());
+            writeStroke(canvas, cleanUpStrategy.getCurrentStrokePath(), strokeColorSpace);
         }
 
         if (cleanUpStrategy.isClipped() && !cleanUpStrategy.getNewClipPath().isEmpty()) {
@@ -464,8 +464,13 @@ class PdfCleanUpContentOperator implements ContentOperator {
         canvas.getInternalBuffer().append(l);
     }
 
-    private void writeStroke(PdfContentByte canvas, Path path) throws IOException {
+    private void writeStroke(PdfContentByte canvas, Path path, PdfName strokeColorSpace) throws IOException {
         canvas.getInternalBuffer().append(q);
+
+        if (strokeColorSpace != null) {
+            strokeColorSpace.toPdf(canvas.getPdfWriter(), canvas.getInternalBuffer());
+            canvas.getInternalBuffer().append(' ').append(cs);
+        }
 
         List<PdfObject> strokeColorOperands = cleanUpStrategy.getContext().peekStrokeColor();
         String strokeOperatorStr = strokeColorOperands.get(strokeColorOperands.size() - 1).toString();

@@ -400,7 +400,6 @@ public class BidiLine {
             if (ck.isTab()) {
                 if (ck.isAttribute(Chunk.TABSETTINGS)) {
                     lastSplit = currentChar;
-                    float currentWidth = width;
                     if (tabStop != null) {
                         float tabStopPosition = tabStop.getPosition(tabPosition, originalWidth - width, tabStopAnchorPosition);
                         width = originalWidth - (tabStopPosition + (originalWidth - width - tabPosition));
@@ -476,7 +475,7 @@ public class BidiLine {
 
         if (tabStop != null) {
             float tabStopPosition = tabStop.getPosition(tabPosition, originalWidth - width, tabStopAnchorPosition);
-            width = originalWidth - (tabStopPosition + (originalWidth - width - tabPosition));
+            width -= tabStopPosition - tabPosition;
             if (width < 0) {
                 tabStopPosition += width;
                 width = 0;
@@ -516,7 +515,7 @@ public class BidiLine {
             isWordSplit = true;
         if (lastSplit == -1 || lastSplit >= newCurrentChar) {
             // no split point or split point ahead of end
-            return new PdfLine(0, originalWidth, width + getWidth(newCurrentChar + 1, currentChar - 1), alignment, false, createArrayOfPdfChunks(oldCurrentChar, newCurrentChar), isRTL);
+            return new PdfLine(0, originalWidth, width + getWidth(newCurrentChar + 1, currentChar - 1, originalWidth), alignment, false, createArrayOfPdfChunks(oldCurrentChar, newCurrentChar), isRTL);
         }
         // standard split
         currentChar = lastSplit + 1;
@@ -525,7 +524,7 @@ public class BidiLine {
             // only WS again
             newCurrentChar = currentChar - 1;
         }
-        return new PdfLine(0, originalWidth, originalWidth - getWidth(oldCurrentChar, newCurrentChar), alignment, false, createArrayOfPdfChunks(oldCurrentChar, newCurrentChar), isRTL);
+        return new PdfLine(0, originalWidth, originalWidth - getWidth(oldCurrentChar, newCurrentChar, originalWidth), alignment, false, createArrayOfPdfChunks(oldCurrentChar, newCurrentChar), isRTL);
     }
 
     /**
@@ -542,6 +541,16 @@ public class BidiLine {
      * @return the sum of all widths
      */
     public float getWidth(int startIdx, int lastIdx) {
+        return getWidth(startIdx, lastIdx, 0);
+    }
+
+    /** Gets the width of a range of characters.
+     * @param startIdx the first index to calculate
+     * @param lastIdx the last inclusive index to calculate
+     * @param originalWidth the full width of the line. It is used in case of RTL and tab stops
+     * @return the sum of all widths
+     */
+    public float getWidth(int startIdx, int lastIdx, float originalWidth) {
         char c = 0;
         PdfChunk ck = null;
         float width = 0;
@@ -564,7 +573,11 @@ public class BidiLine {
                     tabPosition = width;
                     tabStopAnchorPosition = Float.NaN;
                 } else {
-                    width = tabStop.getPosition();
+                    if (runDirection == PdfWriter.RUN_DIRECTION_RTL) {
+                        width = originalWidth - tabStop.getPosition();
+                    } else {
+                        width = tabStop.getPosition();
+                    }
                     tabStop = null;
                     tabPosition = Float.NaN;
                     tabStopAnchorPosition = Float.NaN;

@@ -58,6 +58,7 @@ import com.itextpdf.text.log.Level;
 import com.itextpdf.text.log.Logger;
 import com.itextpdf.text.log.LoggerFactory;
 import com.itextpdf.text.pdf.PdfDestination;
+import com.itextpdf.text.pdf.PdfName;
 import com.itextpdf.text.pdf.PdfOutline;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.tool.xml.NoCustomContextException;
@@ -92,6 +93,9 @@ public class Header extends AbstractTagProcessor {
 		ParentTreeUtil pt = new ParentTreeUtil();
 		if (currentContent.size() > 0) {
 			List<Element> currentContentToParagraph = currentContentToParagraph(currentContent, true, true, tag, ctx);
+			for(Element p : currentContentToParagraph) {
+				((Paragraph) p).setRole(getHeaderRole(getLevel(tag)));
+			}
 			final HtmlPipelineContext context;
 			try {
 				context = getHtmlPipelineContext(ctx);
@@ -153,7 +157,25 @@ public class Header extends AbstractTagProcessor {
 		return l;
 	}
 
-    /**
+	private PdfName getHeaderRole(int level) {
+		switch (level) {
+			case 1:
+				return PdfName.H1;
+			case 2:
+				return PdfName.H2;
+			case 3:
+				return PdfName.H3;
+			case 4:
+				return PdfName.H4;
+			case 5:
+				return PdfName.H5;
+			case 6:
+				return PdfName.H6;
+		}
+		return PdfName.H;
+	}
+
+	/**
 	 * @param tag
 	 * @return
 	 */

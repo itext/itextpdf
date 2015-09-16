@@ -76,8 +76,7 @@ public class PdfA2Checker extends PdfAChecker {
             PdfName.PRINTERMARK, PdfName.TRAPNET));
 
     static public final HashSet<PdfName> contentAnnotations = new HashSet<PdfName>(Arrays.asList(PdfName.TEXT,
-            PdfName.LINK, PdfName.FREETEXT, PdfName.LINE, PdfName.SQUARE, PdfName.CIRCLE, PdfName.STAMP,
-            PdfName.INK, PdfName.POPUP, PdfName.WIDGET));
+            PdfName.FREETEXT, PdfName.LINE, PdfName.SQUARE, PdfName.CIRCLE, PdfName.STAMP, PdfName.INK, PdfName.POPUP));
 
     static private final HashSet<PdfName> keysForCheck = new HashSet<PdfName>(Arrays.asList(PdfName.AP, PdfName.N,
             PdfName.R, PdfName.D, PdfName.FONTFILE, PdfName.FONTFILE2, PdfName.FONTFILE3, PdfName.NAME, PdfName.XFA,

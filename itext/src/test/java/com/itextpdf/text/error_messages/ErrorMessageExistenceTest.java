@@ -4,7 +4,10 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -75,8 +78,6 @@ public class ErrorMessageExistenceTest {
                 System.out.println(assertMessage);
                 nonLozalizedMessageErrors.add(assertMessage);
             }
-
-            //Assert.assertFalse(assertMessage, MessageLocalization.getMessage(key, false).startsWith("No message found for"));
         }
     }
 }

@@ -249,7 +249,9 @@ public class CompareTool {
 
         @Override
         public int hashCode() {
-            int hashCode = baseCmpObject.hashCode() * 31 + baseOutObject.hashCode();
+            int hashCode1 = baseCmpObject != null ? baseCmpObject.hashCode() : 1;
+            int hashCode2 = baseOutObject != null ? baseOutObject.hashCode() : 1;
+            int hashCode = hashCode1 * 31 + hashCode2;
             for (PathItem pathItem : path) {
                 hashCode *= 31;
                 hashCode += pathItem.hashCode();
@@ -282,7 +284,8 @@ public class CompareTool {
     }
 
     protected class CompareResult {
-        protected HashMap<ObjectPath, String> differences = new HashMap<ObjectPath, String>();
+        // LinkedHashMap to retain order. HashMap has different order in Java6/7 and Java8
+        protected Map<ObjectPath, String> differences = new LinkedHashMap<ObjectPath, String>();
         protected int messageLimit = 1;
 
         public CompareResult(int messageLimit) {
@@ -447,7 +450,7 @@ public class CompareTool {
 
         if (targetDir.exists()) {
             String gsParams = this.gsParams.replace("<outputfile>", outPath + cmpImage).replace("<inputfile>", cmpPdf);
-            Process p = Runtime.getRuntime().exec(gsExec + gsParams);
+            Process p = runProcess(gsExec , gsParams);
             BufferedReader bri = new BufferedReader(new InputStreamReader(p.getInputStream()));
             BufferedReader bre = new BufferedReader(new InputStreamReader(p.getErrorStream()));
             String line;
@@ -461,7 +464,7 @@ public class CompareTool {
             bre.close();
             if (p.waitFor() == 0) {
                 gsParams = this.gsParams.replace("<outputfile>", outPath + outImage).replace("<inputfile>", outPdf);
-                p = Runtime.getRuntime().exec(gsExec + gsParams);
+                p = runProcess(gsExec , gsParams);
                 bri = new BufferedReader(new InputStreamReader(p.getInputStream()));
                 bre = new BufferedReader(new InputStreamReader(p.getErrorStream()));
                 while ((line = bri.readLine()) != null) {
@@ -500,7 +503,7 @@ public class CompareTool {
                         if (!cmpResult) {
                             if (compareExec != null && new File(compareExec).exists()) {
                                 String compareParams = this.compareParams.replace("<image1>", imageFiles[i].getAbsolutePath()).replace("<image2>", cmpImageFiles[i].getAbsolutePath()).replace("<difference>", outPath + differenceImagePrefix + Integer.toString(i + 1) + ".png");
-                                p = Runtime.getRuntime().exec(compareExec + compareParams);
+                                p = runProcess(compareExec , compareParams);
                                 bre = new BufferedReader(new InputStreamReader(p.getErrorStream()));
                                 while ((line = bre.readLine()) != null) {
                                     System.out.println(line);
@@ -545,6 +548,18 @@ public class CompareTool {
         }
 
         return null;
+    }
+
+    private Process runProcess(String execPath, String params) throws IOException, InterruptedException {
+        StringTokenizer st = new StringTokenizer(params);
+        String[] cmdArray = new String[st.countTokens() + 1];
+        cmdArray[0] = execPath;
+        for (int i = 1; st.hasMoreTokens(); ++i)
+            cmdArray[i] = st.nextToken();
+
+        Process p = Runtime.getRuntime().exec(cmdArray);
+
+        return p;
     }
 
     public String compare(String outPdf, String cmpPdf, String outPath, String differenceImagePrefix, Map<Integer, List<Rectangle>> ignoredAreas) throws IOException, InterruptedException, DocumentException {
@@ -601,8 +616,8 @@ public class CompareTool {
 
         PdfObject outOcProperties = outReader.getCatalog().get(PdfName.OCPROPERTIES);
         PdfObject cmpOcProperties = cmpReader.getCatalog().get(PdfName.OCPROPERTIES);
-        RefKey outOcPropertiesRef = outOcProperties == null ? null : new RefKey((PdfIndirectReference)outOcProperties);
-        RefKey cmpOcPropertiesRef = cmpOcProperties == null ? null : new RefKey((PdfIndirectReference)cmpOcProperties);
+        RefKey outOcPropertiesRef = outOcProperties instanceof PdfIndirectReference ? new RefKey((PdfIndirectReference)outOcProperties) : null;
+        RefKey cmpOcPropertiesRef = cmpOcProperties instanceof PdfIndirectReference ? new RefKey((PdfIndirectReference)cmpOcProperties) : null;
         compareObjects(outOcProperties, cmpOcProperties, new ObjectPath(outOcPropertiesRef, cmpOcPropertiesRef), compareResult);
 
         outReader.close();
@@ -739,7 +754,7 @@ public class CompareTool {
         }
         boolean dictsAreSame = true;
         // Iterate through the union of the keys of the cmp and out dictionaries!
-        Set<PdfName> mergedKeys = new HashSet<PdfName>(cmpDict.getKeys());
+        Set<PdfName> mergedKeys = new TreeSet<PdfName>(cmpDict.getKeys());
         mergedKeys.addAll(outDict.getKeys());
         for (PdfName key : mergedKeys) {
             if (key.compareTo(PdfName.PARENT) == 0 || key.compareTo(PdfName.P) == 0) continue;

@@ -85,6 +85,10 @@ public class PdfDestination extends PdfArray {
     
     // constructors
     
+    public PdfDestination(PdfDestination d) {
+        super(d);
+    }
+    
 /**
  * Constructs a new <CODE>PdfDestination</CODE>.
  * <P>

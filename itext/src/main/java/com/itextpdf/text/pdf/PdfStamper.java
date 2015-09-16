@@ -44,17 +44,6 @@
  */
 package com.itextpdf.text.pdf;
 
-import com.itextpdf.text.DocWriter;
-import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.Image;
-import com.itextpdf.text.Rectangle;
-import com.itextpdf.text.error_messages.MessageLocalization;
-import com.itextpdf.text.pdf.collection.PdfCollection;
-import com.itextpdf.text.pdf.interfaces.PdfEncryptionSettings;
-import com.itextpdf.text.pdf.interfaces.PdfViewerPreferences;
-import com.itextpdf.text.pdf.security.LtvVerification;
-import com.itextpdf.text.xml.xmp.XmpWriter;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -63,6 +52,18 @@ import java.security.cert.Certificate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import com.itextpdf.text.DocWriter;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.ExceptionConverter;
+import com.itextpdf.text.Image;
+import com.itextpdf.text.Rectangle;
+import com.itextpdf.text.error_messages.MessageLocalization;
+import com.itextpdf.text.pdf.collection.PdfCollection;
+import com.itextpdf.text.pdf.interfaces.PdfEncryptionSettings;
+import com.itextpdf.text.pdf.interfaces.PdfViewerPreferences;
+import com.itextpdf.text.pdf.security.LtvVerification;
+import com.itextpdf.text.xml.xmp.XmpWriter;
 
 /** Applies extra content to the pages of a PDF document.
  * This extra content can be all the objects allowed in PdfContentByte
@@ -191,6 +192,28 @@ public class PdfStamper
         return sigXmlApp;
     }
 
+    /**
+     * Causes any pending changes to the direct under/over content (e.g. stamps) and page replacements to be applied to the output PDF.  References to the adjusted content
+     * are released. If very large numbers of pages are being modified, call this method periodically to write the changes to 
+     * the output PDF file and release the stamps from the heap. 
+     * 
+     * A few precautions about using this method:
+     * 
+     * 1) After using flush() method, over/under content objects should be updated via getOverContent() or getUnderContent() calls respectively in case you want to make any further stamps to the same page; 
+	 * 2) PdfReader, that is associated with PdfStamper which is flushed, must not be used for any other purposes. This is due to the fact that after flush some new references in PdfReader's inner structure appear, but you won't be able to get actual objects behind those references.
+	 * 
+     */
+    public void flush(){
+    	try{
+    		stamper.alterContents();
+    		stamper.pagesToContent.clear();
+    	} catch (IOException e){
+    		throw new ExceptionConverter(e);
+    	}
+    }
+    
+    
+    
     /**
      * Closes the document. No more content can be written after the
      * document is closed.
@@ -589,7 +612,8 @@ public class PdfStamper
 
     /**
      * Sets the document's compression to the new 1.5 mode with object streams and xref
-     * streams. It can be set at any time but once set it can't be unset.
+     * streams. Be attentive!!! If you want set full compression , you should set immediately after creating PdfStamper,
+     * before editing the document.It can be set once and it can't be unset.
      */
     public void setFullCompression() throws DocumentException {
         if (stamper.isAppend())
@@ -799,6 +823,18 @@ public class PdfStamper
         if (verification == null)
             verification = new LtvVerification(this);
         return verification;
+    }
+
+    public boolean addNamedDestination(final String name, final int page, final PdfDestination dest) throws IOException {
+        HashMap<Object, PdfObject> namedDestinations = stamper.getNamedDestinations();
+
+        if (getReader().getNamedDestination().containsKey(name)){
+            return false;
+        }
+        PdfDestination d = new PdfDestination(dest);
+        d.addPage(getReader().getPageOrigRef(page));
+        namedDestinations.put(name, new PdfArray(d));
+        return true;
     }
     
     void mergeVerification() throws IOException {

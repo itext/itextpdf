@@ -124,4 +124,10 @@ public class GreekList extends List {
 		return false;
 	}
 
+	@Override
+	public List cloneShallow() {
+		GreekList clone = new GreekList();
+		populateProperties(clone);
+		return clone;
+	}
 }

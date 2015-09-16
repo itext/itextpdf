@@ -79,9 +79,9 @@ public class GraphicsState {
     /** The current color space for stroke. */
     PdfName colorSpaceStroke;
     /** The current fill color. */
-    BaseColor fillColor;
+    BaseColor fillColor = BaseColor.BLACK;
     /** The current stroke color. */
-    BaseColor strokeColor;
+    BaseColor strokeColor = BaseColor.BLACK;
 
     /** The line width for stroking operations */
     private float lineWidth;

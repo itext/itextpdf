@@ -51,11 +51,7 @@ import com.itextpdf.tool.xml.css.apply.MarginMemory;
 import com.itextpdf.tool.xml.exceptions.NoDataException;
 
 import java.text.MessageFormat;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author redlab_b
@@ -115,7 +111,7 @@ public class CssUtils {
                                               final String pre, final String post, String preKey) {
 		String[] props = box.split(" ");
 		int length = props.length;
-		Map<String, String> map = new HashMap<String, String>(4);
+		Map<String, String> map = new LinkedHashMap<String, String>(4);
 		if (length == 1) {
 			String value = props[0];
             if (preKey == null) {
@@ -266,7 +262,7 @@ public class CssUtils {
 					style = style.concat(" "+rules.get(CSS.Property.BACKGROUND_POSITION));
 					rules.put(CSS.Property.BACKGROUND_POSITION, style);
 				}
-			} else if(style.contains("rgb(") || style.contains("#") || WebColors.NAMES.containsKey(style.toLowerCase())) {
+			} else if(style.contains("rgb(") || style.contains("rgba(")  || style.contains("#") || WebColors.NAMES.containsKey(style.toLowerCase())) {
 				rules.put(CSS.Property.BACKGROUND_COLOR, style);
 			}
 		}
@@ -565,7 +561,7 @@ public class CssUtils {
 			    str = urlString;
 			}
 		} else {
-			// assume it's an url without url
+			// assume it's an url without wrapping in "url()"
 			str = url;
 		}
 		return str;

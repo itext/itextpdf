@@ -44,18 +44,25 @@
  */
 package com.itextpdf.text.pdf.internal;
 
+import com.itextpdf.text.ExceptionConverter;
+import com.itextpdf.text.io.TempFileCache;
 import com.itextpdf.text.pdf.*;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 
 abstract public class PdfAChecker {
 
     protected PdfAConformanceLevel conformanceLevel;
-    protected HashMap<RefKey, PdfObject> cachedObjects = new HashMap<RefKey, PdfObject>();
+    private HashMap<RefKey, PdfObject> cachedObjects = new HashMap<RefKey, PdfObject>();
     private HashSet<PdfName> keysForCheck = initKeysForCheck();
     private static byte[] emptyByteArray = new byte[]{};
 
+    TempFileCache fileCache;
+    private boolean isToUseExternalCache = false;
+    private HashMap<RefKey, TempFileCache.ObjectPosition> externallyCachedObjects = new HashMap<RefKey, TempFileCache.ObjectPosition>();
 
     PdfAChecker(PdfAConformanceLevel conformanceLevel) {
         this.conformanceLevel = conformanceLevel;
@@ -65,12 +72,22 @@ abstract public class PdfAChecker {
 
     public void cacheObject(PdfIndirectReference iref, PdfObject obj) {
         if (obj.type() == 0) {
-            cachedObjects.put(new RefKey(iref), obj);
+            putObjectToCache(new RefKey(iref), obj);
         } else if (obj instanceof PdfDictionary) {
-            cachedObjects.put(new RefKey(iref), cleverPdfDictionaryClone((PdfDictionary)obj));
+            putObjectToCache(new RefKey(iref), cleverPdfDictionaryClone((PdfDictionary) obj));
         } else if (obj.isArray()){
-            cachedObjects.put(new RefKey(iref), cleverPdfArrayClone((PdfArray)obj));
+            putObjectToCache(new RefKey(iref), cleverPdfArrayClone((PdfArray) obj));
         }
+    }
+
+    public void useExternalCache(TempFileCache fileCache) {
+        isToUseExternalCache = true;
+        this.fileCache = fileCache;
+
+        for (Map.Entry<RefKey, PdfObject> entry : cachedObjects.entrySet()) {
+            putObjectToCache(entry.getKey(), entry.getValue());
+        }
+        cachedObjects.clear();
     }
 
     abstract public void close(PdfWriter writer);
@@ -114,7 +131,7 @@ abstract public class PdfAChecker {
             if (obj.isIndirect())
                 curr = PdfReader.getPdfObject(obj);
             else
-                curr = cachedObjects.get(new RefKey((PdfIndirectReference)obj));
+                curr = getObjectFromCache(new RefKey((PdfIndirectReference) obj));
             if (curr == null) break;
             obj = curr;
             //10 - is max allowed reference chain
@@ -250,5 +267,38 @@ abstract public class PdfAChecker {
 
     protected static boolean checkFlag(int flags, int flag) {
         return (flags & flag) != 0;
+    }
+
+    private void putObjectToCache(RefKey ref, PdfObject obj) {
+        if (isToUseExternalCache) {
+            TempFileCache.ObjectPosition pos = null;
+            try {
+                pos = fileCache.put(obj);
+            } catch (IOException e) {
+                throw new ExceptionConverter(e);
+            }
+            externallyCachedObjects.put(ref, pos);
+        } else {
+            cachedObjects.put(ref, obj);
+        }
+    }
+
+    private PdfObject getObjectFromCache(RefKey ref) {
+        if (isToUseExternalCache) {
+            PdfObject obj = null;
+            TempFileCache.ObjectPosition pos = externallyCachedObjects.get(ref);
+
+            try {
+                obj = fileCache.get(pos);
+            } catch (IOException e) {
+                throw new ExceptionConverter(e);
+            } catch (ClassNotFoundException e) {
+                throw new ExceptionConverter(e);
+            }
+
+            return obj;
+        } else {
+            return cachedObjects.get(ref);
+        }
     }
 }

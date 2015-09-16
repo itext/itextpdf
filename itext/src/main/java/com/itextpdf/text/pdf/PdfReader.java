@@ -55,40 +55,23 @@ import com.itextpdf.text.exceptions.UnsupportedPdfException;
 import com.itextpdf.text.io.RandomAccessSource;
 import com.itextpdf.text.io.RandomAccessSourceFactory;
 import com.itextpdf.text.io.WindowRandomAccessSource;
-import com.itextpdf.text.log.Counter;
-import com.itextpdf.text.log.CounterFactory;
-import com.itextpdf.text.log.Level;
-import com.itextpdf.text.log.Logger;
-import com.itextpdf.text.log.LoggerFactory;
+import com.itextpdf.text.log.*;
 import com.itextpdf.text.pdf.PRTokeniser.TokenType;
 import com.itextpdf.text.pdf.interfaces.PdfViewerPreferences;
 import com.itextpdf.text.pdf.internal.PdfViewerPreferencesImp;
 import com.itextpdf.text.pdf.security.ExternalDecryptionProcess;
+import org.spongycastle.cert.X509CertificateHolder;
+import org.spongycastle.cms.CMSEnvelopedData;
+import org.spongycastle.cms.RecipientInformation;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.DataInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.URL;
 import java.security.Key;
 import java.security.MessageDigest;
 import java.security.PrivateKey;
 import java.security.cert.Certificate;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.Stack;
+import java.util.*;
 import java.util.zip.InflaterInputStream;
-
-import org.spongycastle.cert.X509CertificateHolder;
-import org.spongycastle.cms.CMSEnvelopedData;
-import org.spongycastle.cms.RecipientInformation;
 
 /**
  * Reads a PDF document.
@@ -1258,7 +1241,12 @@ public class PdfReader implements PdfViewerPreferences {
         }
         rootPages = catalog.getAsDict(PdfName.PAGES);
         if (rootPages == null || !PdfName.PAGES.equals(rootPages.get(PdfName.TYPE))) {
-            throw new InvalidPdfException(MessageLocalization.getComposedMessage("the.document.has.no.page.root"));
+            if (debugmode && LOGGER.isLogging(Level.ERROR)) {
+                LOGGER.error(MessageLocalization.getComposedMessage("the.document.has.no.page.root"));
+            }
+            else {
+                throw new InvalidPdfException(MessageLocalization.getComposedMessage("the.document.has.no.page.root"));
+            }
         }
         pageRefs = new PageRefs(this);
     }
@@ -1611,7 +1599,10 @@ public class PdfReader implements PdfViewerPreferences {
             PdfNumber prev = (PdfNumber)trailer2.get(PdfName.PREV);
             if (prev == null)
                 break;
-            tokens.seek(prev.longValue());
+            if (prev.longValue() == startxref)
+                throw new InvalidPdfException(MessageLocalization.getComposedMessage("trailer.prev.entry.points.to.its.own.cross.reference.section"));
+            startxref = prev.longValue();
+            tokens.seek(startxref);
             trailer2 = readXrefSection();
         }
     }
@@ -2463,6 +2454,7 @@ public class PdfReader implements PdfViewerPreferences {
     public void setPageContent(final int pageNum, final byte content[]) {
     	setPageContent(pageNum, content, PdfStream.DEFAULT_COMPRESSION);
     }
+
     /** Sets the contents of the page.
      * @param content the new page content
      * @param pageNum the page number. 1 is the first
@@ -2470,12 +2462,27 @@ public class PdfReader implements PdfViewerPreferences {
      * @since	2.1.3	(the method already existed without param compressionLevel)
      */
     public void setPageContent(final int pageNum, final byte content[], final int compressionLevel) {
+        setPageContent(pageNum, content, compressionLevel, false);
+    }
+
+    /** Sets the contents of the page.
+     * @param content the new page content
+     * @param pageNum the page number. 1 is the first
+     * @param compressionLevel the compressionLevel
+     * @param killOldXRefRecursively if true, old contents will be deeply removed from the pdf (i.e. if it was an array,
+     *                               all its entries will also be removed). Use careful when a content stream may be reused.
+     *                               If false, old contents will not be removed and will stay in the document if not manually deleted.
+     * @since	5.5.7	(the method already existed without param killOldXRefRecursively)
+     */
+    public void setPageContent(final int pageNum, final byte content[], final int compressionLevel, final boolean killOldXRefRecursively) {
         PdfDictionary page = getPageN(pageNum);
         if (page == null)
             return;
         PdfObject contents = page.get(PdfName.CONTENTS);
         freeXref = -1;
-        killXref(contents);
+        if (killOldXRefRecursively) {
+            killXref(contents);
+        }
         if (freeXref == -1) {
             xrefObj.add(null);
             freeXref = xrefObj.size() - 1;
@@ -2483,7 +2490,6 @@ public class PdfReader implements PdfViewerPreferences {
         page.put(PdfName.CONTENTS, new PRIndirectReference(this, freeXref));
         xrefObj.set(freeXref, new PRStream(this, content, compressionLevel));
     }
-
     
     /**
      * Decode a byte[] applying the filters specified in the provided dictionary using default filter handlers.
@@ -2537,7 +2543,8 @@ public class PdfReader implements PdfViewerPreferences {
                 PdfObject dpEntry = getPdfObject(dp.get(j));
                 if (dpEntry instanceof PdfDictionary){
                     decodeParams = (PdfDictionary)dpEntry;
-                } else if (dpEntry == null || dpEntry instanceof PdfNull) {
+                } else if (dpEntry == null || dpEntry instanceof PdfNull ||
+                        (dpEntry instanceof PdfLiteral && Arrays.equals("null".getBytes(), ((PdfLiteral)dpEntry).getBytes()))) {
                     decodeParams = null;
                 } else {
                     throw new UnsupportedPdfException(MessageLocalization.getComposedMessage("the.decode.parameter.type.1.is.not.supported", dpEntry.getClass().toString()));
@@ -3632,6 +3639,10 @@ public class PdfReader implements PdfViewerPreferences {
         /** stack to which pages dictionaries are pushed to keep track of the current page attributes */
         private ArrayList<PdfDictionary> pageInh;
         private boolean keepPages;
+        /**
+         * Keeps track of all pages nodes to avoid circular references.
+         */
+        private Set<PdfObject> pagesNodes = new HashSet<PdfObject>();
 
         private PageRefs(final PdfReader reader) throws IOException {
             this.reader = reader;
@@ -3835,6 +3846,9 @@ public class PdfReader implements PdfViewerPreferences {
         }
 
         private void iteratePages(final PRIndirectReference rpage) throws IOException {
+            if (!pagesNodes.add(getPdfObject(rpage)))
+                throw new InvalidPdfException(MessageLocalization.getComposedMessage("illegal.pages.tree"));
+
             PdfDictionary page = (PdfDictionary)getPdfObject(rpage);
             if (page == null)
                 return;

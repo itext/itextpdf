@@ -108,7 +108,7 @@ public class Paragraph extends Phrase implements Indentable, Spaceable, IAccessi
 
     protected PdfName role = PdfName.P;
     protected HashMap<PdfName, PdfObject> accessibleAttributes = null;
-    private AccessibleElementId id = null;
+    protected AccessibleElementId id = null;
 
     // constructors
 
@@ -220,23 +220,27 @@ public class Paragraph extends Phrase implements Indentable, Spaceable, IAccessi
      */
     public Paragraph cloneShallow(boolean spacingBefore) {
     	Paragraph copy = new Paragraph();
+        populateProperties(copy, spacingBefore);
+    	return copy;
+    }
+
+    protected void populateProperties(Paragraph copy, boolean spacingBefore) {
         copy.setFont(getFont());
-    	copy.setAlignment(getAlignment());
-    	copy.setLeading(getLeading(), multipliedLeading);
-    	copy.setIndentationLeft(getIndentationLeft());
-    	copy.setIndentationRight(getIndentationRight());
-    	copy.setFirstLineIndent(getFirstLineIndent());
-    	copy.setSpacingAfter(getSpacingAfter());
-    	if (spacingBefore)
-    		copy.setSpacingBefore(getSpacingBefore());
-    	copy.setExtraParagraphSpace(getExtraParagraphSpace());
+        copy.setAlignment(getAlignment());
+        copy.setLeading(getLeading(), multipliedLeading);
+        copy.setIndentationLeft(getIndentationLeft());
+        copy.setIndentationRight(getIndentationRight());
+        copy.setFirstLineIndent(getFirstLineIndent());
+        copy.setSpacingAfter(getSpacingAfter());
+        if (spacingBefore)
+            copy.setSpacingBefore(getSpacingBefore());
+        copy.setExtraParagraphSpace(getExtraParagraphSpace());
         copy.setRole(role);
         copy.id = getId();
         if (accessibleAttributes != null)
             copy.accessibleAttributes = new HashMap<PdfName, PdfObject>(accessibleAttributes);
         copy.setTabSettings(getTabSettings());
         copy.setKeepTogether(getKeepTogether());
-    	return copy;
     }
     
     /**

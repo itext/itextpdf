@@ -44,18 +44,9 @@
  */
 package com.itextpdf.text.pdf;
 
-import com.itextpdf.text.BaseColor;
-import com.itextpdf.text.DocListener;
-import com.itextpdf.text.DocWriter;
-import com.itextpdf.text.Document;
-import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.ExceptionConverter;
-import com.itextpdf.text.Image;
-import com.itextpdf.text.ImgJBIG2;
-import com.itextpdf.text.ImgWMF;
-import com.itextpdf.text.Rectangle;
-import com.itextpdf.text.Version;
+import com.itextpdf.text.*;
 import com.itextpdf.text.error_messages.MessageLocalization;
+import com.itextpdf.text.io.TempFileCache;
 import com.itextpdf.text.log.Counter;
 import com.itextpdf.text.log.CounterFactory;
 import com.itextpdf.text.pdf.collection.PdfCollection;
@@ -74,16 +65,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.security.cert.Certificate;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-import java.util.TreeSet;
 
 /**
  * A <CODE>DocWriter</CODE> class for PDF.
@@ -945,6 +928,11 @@ public class PdfWriter extends DocWriter implements
         if (tagged) {
             try {
                 getStructureTreeRoot().buildTree();
+                for (AccessibleElementId elementId : pdf.getStructElements()) {
+                    PdfStructureElement element = pdf.getStructElement(elementId, false);
+                    addToBody(element, element.getReference());
+                }
+
             }
             catch (Exception e) {
                 throw new ExceptionConverter(e);
@@ -1632,8 +1620,9 @@ public class PdfWriter extends DocWriter implements
      * @since	iText 5.0
      */
     public void addNamedDestination(final String name, final int page, final PdfDestination dest) {
-    	dest.addPage(getPageReference(page));
-    	pdf.localDestination(name, dest);
+        PdfDestination d = new PdfDestination(dest);
+    	d.addPage(getPageReference(page));
+    	pdf.localDestination(name, d);
     }
 
      /**
@@ -2620,7 +2609,7 @@ public class PdfWriter extends DocWriter implements
 
 //  [F13] Optional Content Groups
     /** A hashSet containing all the PdfLayer objects. */
-    protected HashSet<PdfOCG> documentOCG = new HashSet<PdfOCG>();
+    protected LinkedHashSet<PdfOCG> documentOCG = new LinkedHashSet<PdfOCG>();
     /** An array list used to define the order of an OCG tree. */
     protected ArrayList<PdfOCG> documentOCGorder = new ArrayList<PdfOCG>();
     /** The OCProperties in a catalog dictionary. */
@@ -3542,6 +3531,10 @@ public class PdfWriter extends DocWriter implements
         } else {
             return standardStructElems_1_7;
         }
+    }
+
+    public void useExternalCacheForTagStructure(TempFileCache fileCache) {
+        pdf.useExternalCache(fileCache);
     }
 
 }

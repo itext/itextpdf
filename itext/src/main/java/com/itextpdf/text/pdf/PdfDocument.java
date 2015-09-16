@@ -48,6 +48,7 @@ import com.itextpdf.text.*;
 import com.itextpdf.text.List;
 import com.itextpdf.text.api.WriterOperation;
 import com.itextpdf.text.error_messages.MessageLocalization;
+import com.itextpdf.text.io.TempFileCache;
 import com.itextpdf.text.pdf.collection.PdfCollection;
 import com.itextpdf.text.pdf.draw.DrawInterface;
 import com.itextpdf.text.pdf.interfaces.IAccessibleElement;
@@ -241,9 +242,7 @@ public class PdfDocument extends Document {
                         destmap.put(name, dest.reference);
                     }
                     if (destmap.size() > 0) {
-                        PdfDictionary dests = new PdfDictionary();
-                        dests.put(PdfName.NAMES, PdfNameTree.writeTree(destmap, writer));
-                        names.put(PdfName.DESTS, writer.addToBody(dests).getIndirectReference());
+                        names.put(PdfName.DESTS, writer.addToBody(PdfNameTree.writeTree(destmap, writer)).getIndirectReference());
                     }
                 }
                 if (!documentLevelJS.isEmpty()) {
@@ -297,7 +296,14 @@ public class PdfDocument extends Document {
     /** The <CODE>PdfWriter</CODE>. */
     protected PdfWriter writer;
 
-    protected HashMap<AccessibleElementId, PdfStructureElement> structElements = new HashMap<AccessibleElementId, PdfStructureElement>();
+    private HashMap<AccessibleElementId, PdfStructureElement> structElements = new HashMap<AccessibleElementId, PdfStructureElement>();
+
+    //fields for external caching support
+    private TempFileCache externalCache;
+    private HashMap<AccessibleElementId, TempFileCache.ObjectPosition> externallyStoredStructElements = new HashMap<AccessibleElementId, TempFileCache.ObjectPosition>();
+    private HashMap<AccessibleElementId, AccessibleElementId> elementsParents = new HashMap<AccessibleElementId, AccessibleElementId>();
+    private boolean isToUseExternalCache = false;
+
 
     protected boolean openMCDocument = false;
 
@@ -1017,6 +1023,7 @@ public class PdfDocument extends Document {
             initPage();
 
             if (isTagged(writer)) {
+                flushStructureElementsOnNewPage();
                 writer.getDirectContentUnder().restoreMCBlocks(mcBlocks);
             }
 
@@ -1456,12 +1463,13 @@ public class PdfDocument extends Document {
         float yMarker = text.getYTLM();
         boolean adjustMatrix = false;
         float tabPosition = 0;
-
+        boolean isMCBlockOpened = false;
         // looping over all the chunks in 1 line
         for (Iterator<PdfChunk> j = line.iterator(); j.hasNext(); ) {
             chunk = j.next();
             if (isTagged(writer) && chunk.accessibleElement != null) {
                 text.openMCBlock(chunk.accessibleElement);
+                isMCBlockOpened = true;
             }
             BaseColor color = chunk.color();
             float fontSize = chunk.font().size();
@@ -1522,26 +1530,33 @@ public class PdfDocument extends Document {
                         tabPosition = tmp;
                     }
                     if (chunk.isAttribute(Chunk.BACKGROUND)) {
-                        boolean inText = graphics.getInText();
-                        if (inText && isTagged(writer)) {
-                            graphics.endText();
-                        }
-                        float subtract = lastBaseFactor;
-                        if (nextChunk != null && nextChunk.isAttribute(Chunk.BACKGROUND))
-                            subtract = 0;
-                        if (nextChunk == null)
-                            subtract += hangingCorrection;
                         Object bgr[] = (Object[])chunk.getAttribute(Chunk.BACKGROUND);
-                        graphics.setColorFill((BaseColor)bgr[0]);
-                        float extra[] = (float[])bgr[1];
-                        graphics.rectangle(xMarker - extra[0],
-                                yMarker + descender - extra[1] + chunk.getTextRise(),
-                                width - subtract + extra[0] + extra[2],
-                                ascender - descender + extra[1] + extra[3]);
-                        graphics.fill();
-                        graphics.setGrayFill(0);
-                        if (inText && isTagged(writer)) {
-                            graphics.beginText(true);
+                        if (bgr[0] != null) {
+                            boolean inText = graphics.getInText();
+                            if (inText && isTagged(writer)) {
+                                graphics.endText();
+                            }
+                            graphics.saveState();
+                            float subtract = lastBaseFactor;
+                            if (nextChunk != null && nextChunk.isAttribute(Chunk.BACKGROUND)) {
+                                subtract = 0;
+                            }
+                            if (nextChunk == null) {
+                                subtract += hangingCorrection;
+                            }
+                            BaseColor c = (BaseColor) bgr[0];
+                            graphics.setColorFill(c);
+                            float extra[] = (float[]) bgr[1];
+                            graphics.rectangle(xMarker - extra[0],
+                                    yMarker + descender - extra[1] + chunk.getTextRise(),
+                                    width - subtract + extra[0] + extra[2],
+                                    ascender - descender + extra[1] + extra[3]);
+                            graphics.fill();
+                            graphics.setGrayFill(0);
+                            graphics.restoreState();
+                            if (inText && isTagged(writer)) {
+                                graphics.beginText(true);
+                            }
                         }
                     }
                     if (chunk.isAttribute(Chunk.UNDERLINE)) {
@@ -1597,7 +1612,7 @@ public class PdfDocument extends Document {
                         }
                         text.addAnnotation(annot, true);
                         if (isTagged(writer) && chunk.accessibleElement != null) {
-                            PdfStructureElement strucElem = structElements.get(chunk.accessibleElement.getId());
+                            PdfStructureElement strucElem = getStructElement(chunk.accessibleElement.getId());
                             if (strucElem != null) {
                                 int structParent = getStructParentIndex(annot);
                                 annot.put(PdfName.STRUCTPARENT, new PdfNumber(structParent));
@@ -1685,7 +1700,7 @@ public class PdfDocument extends Document {
                         float matrix[] = image.matrix(chunk.getImageScalePercentage());
                         matrix[Image.CX] = xMarker + chunk.getImageOffsetX() - matrix[Image.CX];
                         matrix[Image.CY] = yMarker + chunk.getImageOffsetY() - matrix[Image.CY];
-                        graphics.addImage(image, matrix[0], matrix[1], matrix[2], matrix[3], matrix[4], matrix[5]);
+                        graphics.addImage(image, matrix[0], matrix[1], matrix[2], matrix[3], matrix[4], matrix[5], false, isMCBlockOpened);
                         text.moveText(xMarker + lastBaseFactor + chunk.getImageWidth() - text.getXTLM(), 0);
                     }
                 }
@@ -2778,4 +2793,80 @@ public class PdfDocument extends Document {
         public PdfIndirectReference reference;
         public PdfDestination destination;
     }
+
+    protected void useExternalCache(TempFileCache externalCache) {
+        isToUseExternalCache = true;
+        this.externalCache = externalCache;
+    }
+
+    protected void saveStructElement(AccessibleElementId id, PdfStructureElement element) {
+        structElements.put(id, element);
+    }
+
+    protected PdfStructureElement getStructElement(AccessibleElementId id) {
+        return getStructElement(id, true);
+    }
+
+    protected PdfStructureElement getStructElement(AccessibleElementId id, boolean toSaveFetchedElement) {
+        PdfStructureElement element = structElements.get(id);
+        if (isToUseExternalCache && element == null) {
+            TempFileCache.ObjectPosition pos = externallyStoredStructElements.get(id);
+            if (pos != null) {
+                try {
+                    element = (PdfStructureElement) externalCache.get(pos);
+                    element.setStructureTreeRoot(writer.getStructureTreeRoot());
+                    element.setStructureElementParent(getStructElement(elementsParents.get(element.getElementId()), toSaveFetchedElement));
+
+                    if (toSaveFetchedElement) {
+                        externallyStoredStructElements.remove(id);
+                        structElements.put(id, element);
+                    }
+                } catch (IOException e) {
+                    throw new ExceptionConverter(e);
+                } catch (ClassNotFoundException e) {
+                    throw new ExceptionConverter(e);
+                }
+            }
+        }
+        return element;
+    }
+
+    protected void flushStructureElementsOnNewPage() {
+        if (!isToUseExternalCache)
+            return;
+
+        Iterator<Map.Entry<AccessibleElementId, PdfStructureElement>> iterator = structElements.entrySet().iterator();
+        Map.Entry<AccessibleElementId, PdfStructureElement> entry;
+        while (iterator.hasNext()) {
+            entry = iterator.next();
+            if (entry.getValue().getStructureType().equals(PdfName.DOCUMENT))
+                continue;
+
+            try {
+                PdfStructureElement el = entry.getValue();
+                PdfDictionary parentDict = el.getParent();
+                PdfStructureElement parent = null;
+                if (parentDict instanceof PdfStructureElement) {
+                    parent = (PdfStructureElement) parentDict;
+                }
+                if (parent != null) {
+                    elementsParents.put(entry.getKey(), parent.getElementId());
+                }
+
+                TempFileCache.ObjectPosition pos = externalCache.put(el);
+                externallyStoredStructElements.put(entry.getKey(), pos);
+                iterator.remove();
+            } catch (IOException e) {
+                throw new ExceptionConverter(e);
+            }
+        }
+    }
+
+    public Set<AccessibleElementId> getStructElements() {
+        Set<AccessibleElementId> elements = new HashSet<AccessibleElementId>();
+        elements.addAll(externallyStoredStructElements.keySet());
+        elements.addAll(structElements.keySet());
+        return elements;
+    }
+
 }

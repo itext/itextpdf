@@ -47,7 +47,9 @@ package com.itextpdf.text.pdf;
 
 import com.itextpdf.testutils.TestResourceUtils;
 import com.itextpdf.text.Document;
+import com.itextpdf.text.ExceptionConverter;
 import com.itextpdf.text.PageSize;
+import com.itextpdf.text.exceptions.InvalidPdfException;
 import org.junit.*;
 
 import java.io.ByteArrayOutputStream;
@@ -127,4 +129,19 @@ public class PdfReaderTest {
         rdr.close();
     }
 
+    @Test(expected = ExceptionConverter.class)
+    public void circularReferencesInResources() throws IOException {
+        File testFile = TestResourceUtils.getResourceAsTempFile(this, "circularReferencesInResources.pdf");
+        String filename = testFile.getAbsolutePath();
+        PdfReader rdr = new PdfReader(filename);
+        rdr.close();
+        BaseFont.getDocumentFonts(rdr);
+    }
+
+    @Test(expected = InvalidPdfException.class)
+    public void circularReferencesInPageTree() throws IOException {
+        File testFile = TestResourceUtils.getResourceAsTempFile(this, "circularReferencesInPageTree.pdf");
+        String filename = testFile.getAbsolutePath();
+        PdfReader rdr = new PdfReader(filename);
+    }
 }

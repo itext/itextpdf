@@ -1,5 +1,6 @@
 package com.itextpdf.text.pdf;
 
+import com.itextpdf.testutils.CompareTool;
 import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.parser.*;
 import com.itextpdf.text.xml.XMLUtil;
@@ -132,7 +133,7 @@ public class TaggedPdfTest {
     public void createTaggedPdf1() throws DocumentException, IOException, ParserConfigurationException, SAXException {
         initializeDocument("./target/com/itextpdf/test/pdf/TaggedPdfTest/out1.pdf");
         Paragraph paragraph = new Paragraph(text);
-        paragraph.setFont(new Font(Font.FontFamily.HELVETICA,8,Font.NORMAL,BaseColor.RED));
+        paragraph.setFont(new Font(Font.FontFamily.HELVETICA, 8, Font.NORMAL, BaseColor.RED));
         ColumnText columnText = new ColumnText(writer.getDirectContent());
         columnText.setSimpleColumn(36, 36, 250, 800);
         columnText.addElement(h1);
@@ -155,7 +156,7 @@ public class TaggedPdfTest {
         columnText.addElement(paragraph);
         columnText.go();
         document.newPage();
-        columnText.setSimpleColumn(36,36,400,800);
+        columnText.setSimpleColumn(36, 36, 400, 800);
         columnText.go();
         document.close();
         compareResults("2");
@@ -336,7 +337,7 @@ public class TaggedPdfTest {
         columnText.addElement(list);
         columnText.go();
         document.newPage();
-        columnText.setSimpleColumn(36,36,400,800);
+        columnText.setSimpleColumn(36, 36, 400, 800);
         columnText.go();
         document.close();
 
@@ -608,7 +609,7 @@ public class TaggedPdfTest {
 
         Paragraph p = new Paragraph();
         Chunk chunk = new Chunk("Hello tagged world!");
-        chunk.setBackground(new BaseColor(255,0,255));
+        chunk.setBackground(new BaseColor(255, 0, 255));
         chunk.setFont(FontFactory.getFont("TimesNewRoman", 20, BaseColor.ORANGE));
         chunk.setUnderline(BaseColor.PINK, 1.2f, 1, 1, 1, 0);
         p.add(chunk);
@@ -624,7 +625,7 @@ public class TaggedPdfTest {
 
         Paragraph p = new Paragraph();
         Chunk chunk = new Chunk("Hello tagged world!");
-        chunk.setBackground(new BaseColor(255,0,255));
+        chunk.setBackground(new BaseColor(255, 0, 255));
         chunk.setFont(FontFactory.getFont("TimesNewRoman", 20, BaseColor.ORANGE));
         chunk.setUnderline(BaseColor.PINK, 1.2f, 1, 1, 1, 0);
         p.add(chunk);
@@ -696,7 +697,7 @@ public class TaggedPdfTest {
         PdfDiv div = new PdfDiv();
 
         Paragraph paragraph = new Paragraph(text);
-        paragraph.setFont(new Font(Font.FontFamily.HELVETICA,8,Font.NORMAL,BaseColor.RED));
+        paragraph.setFont(new Font(Font.FontFamily.HELVETICA, 8, Font.NORMAL, BaseColor.RED));
 
         div.setBackgroundColor(BaseColor.MAGENTA);
         div.setTextAlignment(Element.ALIGN_CENTER);
@@ -936,7 +937,9 @@ public class TaggedPdfTest {
         document.add(p);
 
 
-        Chunk ck = new Chunk("Span testing testing", FontFactory.getFont("./src/test/resources/com/itextpdf/text/pdf/FreeMonoBold.ttf", BaseFont.WINANSI, BaseFont.EMBEDDED, 12));
+        BaseFont bFont = BaseFont.createFont("./src/test/resources/com/itextpdf/text/pdf/FreeMonoBold.ttf", BaseFont.WINANSI, BaseFont.EMBEDDED);
+        Font font = new Font(bFont, 12);
+        Chunk ck = new Chunk("Span testing testing", font);
         ck.setAccessibleAttribute(PdfName.ACTUALTEXT, new PdfString("Span ALT Text"));
         ck.setAccessibleAttribute(PdfName.ALT, new PdfString("Span ALT Text"));
         p = new Paragraph(ck);
@@ -953,6 +956,59 @@ public class TaggedPdfTest {
 
         fos.close();
         compareResults("24");
+    }
+
+    /**
+     * Resulting pdf should pass all tests in PAC2.
+     * 13 0 obj should contain three repeating 4 0 R references and three 8 0 R.
+     */
+    @Test
+    public void createTaggedPdf25() throws DocumentException, IOException, ParserConfigurationException, SAXException, InterruptedException {
+        Document document = new Document();
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+        PdfWriter writer = PdfWriter.getInstance(document, baos);
+
+        writer.setViewerPreferences(PdfWriter.DisplayDocTitle);
+
+//set more document properties
+
+        writer.setPdfVersion(PdfWriter.VERSION_1_7);
+        writer.setTagged();
+        PdfDictionary info = writer.getInfo();
+        info.put(PdfName.TITLE, new PdfString("Testing"));
+        writer.createXmpMetadata();
+// step 3
+        document.open();
+        document.addLanguage("en_US");
+        document.setAccessibleAttribute(PdfName.LANG, new PdfString("en_US"));
+// step 4
+        String longParagraphString = "Long teeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeext Paragraph testing testing";
+        BaseFont bFont = BaseFont.createFont("./src/test/resources/com/itextpdf/text/pdf/FreeMonoBold.ttf", BaseFont.WINANSI, BaseFont.EMBEDDED);
+        Font font = new Font(bFont, 12);
+        Paragraph p = new Paragraph(longParagraphString, font);
+        document.add(p);
+
+        String longChunkString = "Long teeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeext Span testing testing";
+        Chunk ck = new Chunk(longChunkString, font);
+        p = new Paragraph(ck);
+        document.add(p);
+// step 5
+        document.close();
+        String outPath = "./target/com/itextpdf/test/pdf/TaggedPdfTest/";
+        String outFile = outPath + "out25.pdf";
+        FileOutputStream fos = new FileOutputStream(new File(outFile));
+        fos.write(baos.toByteArray());
+        fos.flush();
+        fos.close();
+        compareResults("25");
+
+        CompareTool compareTool = new CompareTool();
+        String cmpFile = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfTest/out25.pdf";
+        String errorMessage = compareTool.compareByContent(outFile, cmpFile, outPath, "diff_");
+        if (errorMessage != null) {
+            Assert.fail(errorMessage);
+        }
     }
 
     private boolean compareXmls(String xml1, String xml2) throws ParserConfigurationException, SAXException, IOException {

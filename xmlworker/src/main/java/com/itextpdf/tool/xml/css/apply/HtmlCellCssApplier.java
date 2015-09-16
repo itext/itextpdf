@@ -190,13 +190,7 @@ public class HtmlCellCssApplier {
 						cell.setPaddingRight(cell.getPaddingRight()+utils.parsePxInCmMmPcToPt(value));
 					}
 				} else if(key.contains(CSS.Property.TEXT_ALIGN)) {
-					if(value.equalsIgnoreCase(CSS.Value.LEFT)) {
-						cell.setHorizontalAlignment(Element.ALIGN_LEFT);
-					} else if(value.equalsIgnoreCase(CSS.Value.CENTER)) {
-						cell.setHorizontalAlignment(Element.ALIGN_CENTER);
-					} else if(value.equalsIgnoreCase(CSS.Value.RIGHT)) {
-						cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-					}
+					cell.setHorizontalAlignment(CSS.getElementAlignment(value));
 				}
 	    	}
 	    	cell.setPaddingLeft(cell.getPaddingLeft() + values.getHorBorderSpacing() + values.getBorderWidthLeft());
