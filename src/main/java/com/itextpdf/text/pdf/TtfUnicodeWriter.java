@@ -72,7 +72,13 @@ public class TtfUnicodeWriter {
             byte b[] = font.readCffFont();
             if (font.subset || font.subsetRanges != null) {
                 CFFFontSubset cff = new CFFFontSubset(new RandomAccessFileOrArray(b),longTag);
-                b = cff.Process(cff.getNames()[0]);
+                try {
+                    b = cff.Process(cff.getNames()[0]);
+                //temporary fix for cff subset failure
+                }catch(Exception e){
+                    font.setSubset(false);
+                    writeFont(font,ref,params,rotbits);
+                }
             }
             pobj = new BaseFont.StreamFont(b, "CIDFontType0C", font.compressionLevel);
             obj = writer.addToBody(pobj);

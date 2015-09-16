@@ -403,10 +403,6 @@ public class PdfContentStreamProcessor {
         textMatrix = new Matrix(adjustBy, 0).multiply(textMatrix);
     }
 
-
-
-
-
     /**
      * Processes PDF syntax.
      * <b>Note:</b> If you re-use a given {@link PdfContentStreamProcessor}, you must call {@link PdfContentStreamProcessor#reset()}
@@ -444,7 +440,7 @@ public class PdfContentStreamProcessor {
      * @param colorSpaceDic the color space for the inline immage
      */
     protected void handleInlineImage(InlineImageInfo info, PdfDictionary colorSpaceDic){
-        ImageRenderInfo renderInfo = ImageRenderInfo.createForEmbeddedImage(gs().ctm, info, colorSpaceDic);
+        ImageRenderInfo renderInfo = ImageRenderInfo.createForEmbeddedImage(gs(), info, colorSpaceDic);
         renderListener.renderImage(renderInfo);
     }
 
@@ -795,8 +791,15 @@ public class PdfContentStreamProcessor {
     private static BaseColor getColor(int nOperands, List<PdfObject> operands) {
     	float[] c = new float[nOperands];
     	for (int i = 0; i < nOperands; i++) {
-    		c[i] = ((PdfNumber)operands.get(i)).floatValue();
-    	}
+            c[i] = ((PdfNumber)operands.get(i)).floatValue();
+            // fallbacks for illegal values: handled as Acrobat and Foxit do
+            if (c[i] > 1f) {
+                c[i] = 1f;
+            }
+            else if (c[i] < 0f) {
+                c[i] = 0f;
+            }
+        }
     	switch (nOperands) {
     	case 1:
     		return new GrayColor(c[0]);
@@ -863,7 +866,7 @@ public class PdfContentStreamProcessor {
     }
 
     /**
-     * A content operator implementation (CS).
+     * A content operator implementation (cs).
      */
     private static class SetColorSpaceFill implements ContentOperator{
 		public void invoke(PdfContentStreamProcessor processor, PdfLiteral operator, ArrayList<PdfObject> operands) {
@@ -872,7 +875,7 @@ public class PdfContentStreamProcessor {
     }
 
     /**
-     * A content operator implementation (cs).
+     * A content operator implementation (CS).
      */
     private static class SetColorSpaceStroke implements ContentOperator{
 		public void invoke(PdfContentStreamProcessor processor, PdfLiteral operator, ArrayList<PdfObject> operands) {
@@ -1264,7 +1267,7 @@ public class PdfContentStreamProcessor {
 
         public void handleXObject(PdfContentStreamProcessor processor, PdfStream xobjectStream, PdfIndirectReference ref) {
             PdfDictionary colorSpaceDic = processor.resources.getAsDict(PdfName.COLORSPACE);
-            ImageRenderInfo renderInfo = ImageRenderInfo.createForXObject(processor.gs().ctm, ref, colorSpaceDic);
+            ImageRenderInfo renderInfo = ImageRenderInfo.createForXObject(processor.gs(), ref, colorSpaceDic);
             processor.renderListener.renderImage(renderInfo);
         }
     }

@@ -45,11 +45,6 @@
 package com.itextpdf.text;
 
 import com.itextpdf.text.pdf.PdfName;
-import com.itextpdf.text.pdf.PdfObject;
-import com.itextpdf.text.pdf.PdfStructureElement;
-import com.itextpdf.text.pdf.interfaces.IAccessibleElement;
-
-import java.util.HashMap;
 
 /**
  * A <CODE>ListItem</CODE> is a <CODE>Paragraph</CODE>
@@ -226,6 +221,13 @@ public class ListItem extends Paragraph {
     }
 
     // methods
+
+    @Override
+    public Paragraph cloneShallow(boolean spacingBefore) {
+        ListItem copy = new ListItem();
+        populateProperties(copy, spacingBefore);
+        return copy;
+    }
 
     /**
      * Sets the listsymbol.

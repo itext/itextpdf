@@ -154,36 +154,13 @@ public class PdfStructureTreeRoot extends PdfDictionary implements IPdfStructure
             ar = new PdfArray();
             parentTree.put(i, ar);
         }
-        if (!ar.contains(struc)) {
-            ar.add(struc);
-        }
+        ar.add(struc);
     }
 
     void setAnnotationMark(int structParentIndex, PdfIndirectReference struc) {
         parentTree.put(Integer.valueOf(structParentIndex), struc);
     }
     
-    private void nodeProcess(PdfDictionary struc, PdfIndirectReference reference) throws IOException {
-        PdfObject obj = struc.get(PdfName.K);
-        if (obj != null && obj.isArray()) {
-            PdfArray ar = (PdfArray)obj;
-            for (int k = 0; k < ar.size(); ++k) {
-                PdfDictionary dictionary = ar.getAsDict(k);
-                if (dictionary == null)
-                    continue;
-                if (!PdfName.STRUCTELEM.equals(dictionary.get(PdfName.TYPE)))
-                    continue;
-                if (ar.getPdfObject(k) instanceof PdfStructureElement) {
-                    PdfStructureElement e = (PdfStructureElement) dictionary;
-                    ar.set(k, e.getReference());
-                    nodeProcess(e, e.getReference());
-                }
-            }
-        }
-        if (reference != null)
-            writer.addToBody(struc, reference);
-    }
-
     void buildTree() throws IOException {
         createNumTree();
         PdfDictionary dicTree = PdfNumberTree.writeTree(numTree, writer);
@@ -210,7 +187,7 @@ public class PdfStructureTreeRoot extends PdfDictionary implements IPdfStructure
             PdfDictionary dic = PdfNameTree.writeTree(idTreeMap, writer);
             this.put(PdfName.IDTREE, dic);
         }
-        nodeProcess(this, reference);
+        writer.addToBody(this, reference);
     }
 
     /**

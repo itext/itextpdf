@@ -47,6 +47,7 @@ import com.itextpdf.text.pdf.internal.PdfIsoKeys;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.Serializable;
 
 /**
  * <CODE>PdfObject</CODE> is the abstract superclass of all PDF objects.
@@ -67,7 +68,7 @@ import java.io.OutputStream;
  * @see		PdfStream
  * @see		PdfIndirectReference
  */
-public abstract class PdfObject {
+public abstract class PdfObject implements Serializable {
 
     // CONSTANTS
 

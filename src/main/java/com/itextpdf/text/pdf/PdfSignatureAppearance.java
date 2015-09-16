@@ -199,7 +199,7 @@ public class PdfSignatureAppearance {
 
     /** Holds value of the application that creates the signature */
     private String signatureCreator;
-    
+
     /**
      * Gets the signature creator.
      * @return the signature creator
@@ -215,7 +215,7 @@ public class PdfSignatureAppearance {
     public void setSignatureCreator(String signatureCreator){
     	this.signatureCreator = signatureCreator;
     }
-    
+
     /** The contact name of the signer. */
     private String contact;
 
@@ -285,15 +285,14 @@ public class PdfSignatureAppearance {
     private Certificate signCertificate;
 
     // Developer extenstion
-    
+
     /**
      * Adds the appropriate developer extension.
      */
 	public void addDeveloperExtension(final PdfDeveloperExtension de) {
 		writer.addDeveloperExtension(de);
 	}
-    
-    
+
     // Crypto dictionary
 
     /** The crypto dictionary */
@@ -640,10 +639,10 @@ public class PdfSignatureAppearance {
         }
         return t;
     }
-    
+
     /** Indicates if we need to reuse the existing appearance as layer 0. */
     private boolean reuseAppearance = false;
-    
+
     /**
      * Indicates that the existing appearances needs to be reused as layer 0.
      */
@@ -1216,6 +1215,28 @@ public class PdfSignatureAppearance {
     /** Indicates if the stamper has already been pre-closed. */
     private boolean preClosed = false;
 
+    /** Signature field lock dictionary */
+    private PdfSigLockDictionary fieldLock;
+
+    /**
+     * Getter for the field lock dictionary.
+     * @return Field lock dictionary.
+     */
+    public PdfSigLockDictionary getFieldLockDict() {
+        return fieldLock;
+    }
+
+    /**
+     * Setter for the field lock dictionary.
+     * <p><strong>Be aware:</strong> if a signature is created on an existing signature field,
+     * then its /Lock dictionary takes the precedence (if it exists).</p>
+     *
+     * @param fieldLock Field lock dictionary.
+     */
+    public void setFieldLockDict(PdfSigLockDictionary fieldLock) {
+        this.fieldLock = fieldLock;
+    }
+
     /**
      * Checks if the document is in the process of closing.
      * @return <CODE>true</CODE> if the document is in the process of closing,
@@ -1253,26 +1274,37 @@ public class PdfSignatureAppearance {
         writer.setSigFlags(3);
         PdfDictionary fieldLock = null;
         if (fieldExists) {
-            PdfDictionary widget = af.getFieldItem(name).getWidget(0);
-            writer.markUsed(widget);
-            fieldLock = widget.getAsDict(PdfName.LOCK);
-            widget.put(PdfName.P, writer.getPageReference(getPage()));
-            widget.put(PdfName.V, refSig);
-            PdfObject obj = PdfReader.getPdfObjectRelease(widget.get(PdfName.F));
+            PdfDictionary merged = af.getFieldItem(name).getMerged(0);
+            writer.markUsed(merged);
+            fieldLock = merged.getAsDict(PdfName.LOCK);
+
+            if (fieldLock == null && this.fieldLock != null) {
+                merged.put(PdfName.LOCK, writer.addToBody(this.fieldLock).getIndirectReference());
+                fieldLock = this.fieldLock;
+            }
+
+            merged.put(PdfName.P, writer.getPageReference(getPage()));
+            merged.put(PdfName.V, refSig);
+            PdfObject obj = PdfReader.getPdfObjectRelease(merged.get(PdfName.F));
             int flags = 0;
             if (obj != null && obj.isNumber())
                 flags = ((PdfNumber)obj).intValue();
             flags |= PdfAnnotation.FLAGS_LOCKED;
-            widget.put(PdfName.F, new PdfNumber(flags));
+            merged.put(PdfName.F, new PdfNumber(flags));
             PdfDictionary ap = new PdfDictionary();
             ap.put(PdfName.N, getAppearance().getIndirectReference());
-            widget.put(PdfName.AP, ap);
+            merged.put(PdfName.AP, ap);
         }
         else {
             PdfFormField sigField = PdfFormField.createSignature(writer);
             sigField.setFieldName(name);
             sigField.put(PdfName.V, refSig);
             sigField.setFlags(PdfAnnotation.FLAGS_PRINT | PdfAnnotation.FLAGS_LOCKED);
+
+            if (this.fieldLock != null) {
+                sigField.put(PdfName.LOCK, writer.addToBody(this.fieldLock).getIndirectReference());
+                fieldLock = this.fieldLock;
+            }
 
             int pagen = getPage();
             if (!isInvisible())

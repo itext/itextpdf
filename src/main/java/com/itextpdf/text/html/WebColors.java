@@ -281,6 +281,22 @@ public class WebColors extends HashMap<String, int[]> {
 			return new BaseColor(color[0], color[1], color[2], color[3]);
 		}
 
+		if (colorName.startsWith("rgba(")) {
+			final String delim = "rgba(), \t\r\n\f";
+			StringTokenizer tok = new StringTokenizer(colorName, delim);
+			for (int k = 0; k < 3; ++k) {
+				if (tok.hasMoreElements()) {
+					color[k] = getRGBChannelValue(tok.nextToken());
+					color[k] = Math.max(0, color[k]);
+					color[k] = Math.min(255, color[k]);
+				}
+			}
+			if (tok.hasMoreElements()) {
+				color[3] = (int)(255 * Float.parseFloat(tok.nextToken()) + 0.5);
+			}
+			return new BaseColor(color[0], color[1], color[2], color[3]);
+		}
+
 		if (!NAMES.containsKey(colorName)) {
 			throw new IllegalArgumentException(
 					MessageLocalization.getComposedMessage("color.not.found",

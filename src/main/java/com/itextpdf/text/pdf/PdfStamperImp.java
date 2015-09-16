@@ -101,12 +101,19 @@ class PdfStamperImp extends PdfWriter {
     protected IntHashtable marked;
     protected int initialXrefSize;
     protected PdfAction openAction;
+    protected HashMap<Object, PdfObject> namedDestinations = new HashMap<Object, PdfObject>();
 
     protected Counter COUNTER = CounterFactory.getCounter(PdfStamper.class);
+
     protected Counter getCounter() {
     	return COUNTER;
     }
-    
+
+    /* Flag which defines if PdfLayer objects from existing pdf have been already read.
+     * If no new layers were registered and user didn't fetched layers explicitly via getPdfLayers() method
+     * then original layers are never read - they are simply copied to the new document with whole original catalog. */
+    private boolean originalLayersAreRead = false;
+
     /** Creates new PdfStamperImp.
      * @param reader the read PDF
      * @param os the output destination
@@ -383,6 +390,9 @@ class PdfStamperImp extends PdfWriter {
         		markUsed(catalog);
         	}
         }
+
+        if (!namedDestinations.isEmpty())
+            updateNamedDestinations();
         close(info, skipInfo);
     }
 
@@ -1822,8 +1832,9 @@ class PdfStamperImp extends PdfWriter {
      * @since	2.1.2
      */
     public Map<String, PdfLayer> getPdfLayers() {
-    	if (documentOCG.isEmpty()) {
-    		readOCProperties();
+    	if (!originalLayersAreRead) {
+            originalLayersAreRead = true;
+            readOCProperties();
     	}
     	HashMap<String, PdfLayer> map = new HashMap<String, PdfLayer>();
     	PdfLayer layer;
@@ -1850,6 +1861,15 @@ class PdfStamperImp extends PdfWriter {
     	return map;
     }
 
+    @Override
+    void registerLayer(final PdfOCG layer) {
+        if (!originalLayersAreRead) {
+            originalLayersAreRead = true;
+            readOCProperties();
+        }
+        super.registerLayer(layer);
+    }
+
     public void createXmpMetadata() {
         try {
             xmpWriter = createXmpWriter(null, reader.getInfo());
@@ -1857,6 +1877,50 @@ class PdfStamperImp extends PdfWriter {
         } catch (IOException ioe) {
             ioe.printStackTrace();
         }
+    }
+
+    protected HashMap<Object, PdfObject> getNamedDestinations(){
+        return namedDestinations;
+    }
+
+    protected void updateNamedDestinations() throws IOException {
+
+        PdfDictionary dic = reader.getCatalog().getAsDict(PdfName.NAMES);
+        if (dic != null)
+            dic = dic.getAsDict(PdfName.DESTS);
+        if (dic == null){
+            dic = reader.getCatalog().getAsDict(PdfName.DESTS);
+        }
+        if (dic == null){
+            dic = new PdfDictionary();
+            PdfDictionary dests = new PdfDictionary();
+            dic.put(PdfName.NAMES, new PdfArray());
+            dests.put(PdfName.DESTS, dic);
+            reader.getCatalog().put(PdfName.NAMES, dests);
+        }
+
+        PdfArray names = getLastChildInNameTree(dic);
+
+        for (Object name : namedDestinations.keySet()){
+            names.add(new PdfString(name.toString()));
+            names.add(addToBody(namedDestinations.get(name), getPdfIndirectReference()).getIndirectReference());
+        }
+    }
+
+    private PdfArray getLastChildInNameTree(PdfDictionary dic){
+
+        PdfArray names;
+
+        PdfArray childNode = dic.getAsArray(PdfName.KIDS);
+        if (childNode != null){
+            PdfDictionary lastKid = childNode.getAsDict(childNode.size()-1);
+            names = getLastChildInNameTree(lastKid);
+        }
+        else {
+            names = dic.getAsArray(PdfName.NAMES);
+        }
+
+        return names;
     }
 
     static class PageStamp {

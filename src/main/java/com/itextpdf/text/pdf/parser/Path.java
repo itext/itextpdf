@@ -69,10 +69,7 @@ public class Path {
     }
 
     public Path(List<? extends Subpath> subpaths) {
-        if (subpaths.size() > 0) {
-            this.subpaths.addAll(subpaths);
-            currentPoint = this.subpaths.get(subpaths.size() - 1).getLastPoint();
-        }
+        addSubpaths(subpaths);
     }
 
     /**
@@ -80,6 +77,28 @@ public class Path {
      */
     public List<Subpath> getSubpaths() {
         return subpaths;
+    }
+
+    /**
+     * Adds the subpath to this path.
+     *
+     * @param subpath The subpath to be added to this path.
+     */
+    public void addSubpath(Subpath subpath) {
+        subpaths.add(subpath);
+        currentPoint = subpath.getLastPoint();
+    }
+
+    /**
+     * Adds the subpaths to this path.
+     *
+     * @param subpaths {@link java.util.List} of subpaths to be added to this path.
+     */
+    public void addSubpaths(List<? extends Subpath> subpaths) {
+        if (subpaths.size() > 0) {
+            this.subpaths.addAll(subpaths);
+            currentPoint = this.subpaths.get(subpaths.size() - 1).getLastPoint();
+        }
     }
 
     /**

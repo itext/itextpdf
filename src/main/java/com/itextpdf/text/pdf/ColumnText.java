@@ -321,10 +321,12 @@ public class ColumnText {
 
     /**
      * The index of the last row that needed to be splitted.
+     * -2 value mean it is the first attempt to split the first row.
+     * -1 means that we try to avoid splitting current row.
      *
      * @since 5.0.1 changed a boolean into an int
      */
-    private int splittedRow = -1;
+    private int splittedRow = -2;
 
     protected Phrase waitPhrase;
 
@@ -377,9 +379,11 @@ public class ColumnText {
      * @return itself
      */
     public ColumnText setACopy(final ColumnText org) {
-        setSimpleVars(org);
-        if (org.bidiLine != null) {
-            bidiLine = new BidiLine(org.bidiLine);
+        if (org != null) {
+            setSimpleVars(org);
+            if (org.bidiLine != null) {
+                bidiLine = new BidiLine(org.bidiLine);
+            }
         }
         return this;
     }
@@ -1051,6 +1055,7 @@ public class ColumnText {
         PdfLine line;
         float x1;
         int status = 0;
+        boolean rtl = false;
         while (true) {
             firstIndent = lastWasNewline ? indent : followingIndent; //
             if (rectangularMode) {
@@ -1084,6 +1089,11 @@ public class ColumnText {
                 }
                 yLine -= currentLeading;
                 if (!simulate && !dirty) {
+                    if (line.isRTL && canvas.isTagged())
+                    {
+                        canvas.beginMarkedContentSequence(PdfName.REVERSEDCHARS);
+                        rtl = true;
+                    }
                     text.beginText();
                     dirty = true;
                 }
@@ -1113,11 +1123,16 @@ public class ColumnText {
                 if (x2 - x1 <= firstIndent + rightIndent) {
                     continue;
                 }
+                line = bidiLine.processLine(x1, x2 - x1 - firstIndent - rightIndent, alignment, localRunDirection, arabicOptions, minY, yLine, descender);
                 if (!simulate && !dirty) {
+                    if (line.isRTL && canvas.isTagged())
+                    {
+                        canvas.beginMarkedContentSequence(PdfName.REVERSEDCHARS);
+                        rtl = true;
+                    }
                     text.beginText();
                     dirty = true;
                 }
-                line = bidiLine.processLine(x1, x2 - x1 - firstIndent - rightIndent, alignment, localRunDirection, arabicOptions, minY, yLine, descender);
                 if (line == null) {
                     status = NO_MORE_TEXT;
                     yLine = yTemp;
@@ -1156,6 +1171,9 @@ public class ColumnText {
             text.endText();
             if (canvas != text) {
                 canvas.add(text);
+            }
+            if (rtl && canvas.isTagged()) {
+                canvas.endMarkedContentSequence();
             }
         }
         return status;
@@ -1724,18 +1742,14 @@ public class ColumnText {
                 int headerRows = table.getHeaderRows();
                 int footerRows = table.getFooterRows();
                 int realHeaderRows = headerRows - footerRows;
-                float headerHeight = table.getHeaderHeight();
                 float footerHeight = table.getFooterHeight();
+                float headerHeight = table.getHeaderHeight() - footerHeight;
 
                 // do we need to skip the header?
                 boolean skipHeader = table.isSkipFirstHeader() && rowIdx <= realHeaderRows && (table.isComplete() || rowIdx != realHeaderRows);
 
-                // if not, we want to be able to add more than just a header and a footer
                 if (!skipHeader) {
                     yTemp -= headerHeight;
-                    if (yTemp < minY || yTemp > maxY) {
-                        return NO_MORE_COLUMN;
-                    }
                 }
 
                 // MEASURE NECESSARY SPACE
@@ -1744,13 +1758,25 @@ public class ColumnText {
                 if (rowIdx < headerRows) {
                     rowIdx = headerRows;
                 }
-                // if the table isn't complete, we need to be able to add a footer
-                if (!table.isComplete()) {
-                    yTemp -= footerHeight;
+                FittingRows fittingRows = null;
+                //if we skip the last header, firstly, we want to check if table is wholly fit to the page
+                if (table.isSkipLastFooter()) {
+                    // Contributed by Deutsche Bahn Systel GmbH (Thorsten Seitz), splitting row spans
+                    fittingRows = table.getFittingRows(yTemp - minY, rowIdx);
                 }
+                //if we skip the last footer, but the table doesn't fit to the page - we reserve space for footer
+                //and recalculate fitting rows
+                if (!table.isSkipLastFooter() || fittingRows.lastRow < table.size() - 1) {
+                    yTemp -= footerHeight;
+                    fittingRows = table.getFittingRows(yTemp - minY, rowIdx);
+                }
+
+                //we want to be able to add more than just a header and a footer
+                if (yTemp < minY || yTemp > maxY) {
+                    return NO_MORE_COLUMN;
+                }
+
                 // k will be the first row that doesn't fit
-                // Contributed by Deutsche Bahn Systel GmbH (Thorsten Seitz), splitting row spans
-                FittingRows fittingRows = table.getFittingRows(yTemp - minY, rowIdx);
                 k = fittingRows.lastRow + 1;
                 yTemp -= fittingRows.height;
                 // splitting row spans
@@ -1804,7 +1830,12 @@ public class ColumnText {
                 } // IF ROWS SHOULD NOT BE SPLIT
                 // Contributed by Deutsche Bahn Systel GmbH (Thorsten Seitz), splitting row spans
                 //else if (table.isSplitLate() && !table.hasRowspan(k) && rowIdx < k) {
-                else if (table.isSplitLate() && rowIdx < k) {
+                //if first row do not fit, splittedRow has value of -2, so in this case we try to avoid split.
+                // Separate constant for the first attempt of splitting first row save us from infinite loop.
+                // Also we check header rows, because in other case we may split right after header row,
+                // while header row can't split before regular rows.
+                else if (table.isSplitLate() &&
+                        (rowIdx < k || (splittedRow == -2 && (table.getHeaderRows() == 0 || table.isSkipFirstHeader())))) {
                     splittedRow = -1;
                 } // SPLIT ROWS (IF WANTED AND NECESSARY)
                 else if (k < table.size()) {
@@ -1904,73 +1935,76 @@ public class ColumnText {
                         footerRows = 0;
                     }
 
-                    // we need a correction if the last row needs to be extended
-                    float rowHeight = 0;
-                    int lastIdx = sub.size() - 1 - footerRows;
-                    PdfPRow last = sub.get(lastIdx);
-                    if (table.isExtendLastRow(newPageFollows)) {
-                        rowHeight = last.getMaxHeights();
-                        last.setMaxHeights(yTemp - minY + rowHeight);
-                        yTemp = minY;
-                    }
-
-                    // newPageFollows indicates that this table is being split
-                    if (newPageFollows) {
-                        PdfPTableEvent tableEvent = table.getTableEvent();
-                        if (tableEvent instanceof PdfPTableEventSplit) {
-                            ((PdfPTableEventSplit) tableEvent).splitTable(table);
+                    if (sub.size() > 0) {
+                        // we need a correction if the last row needs to be extended
+                        float rowHeight = 0;
+                        int lastIdx = sub.size() - 1 - footerRows;
+                        PdfPRow last = sub.get(lastIdx);
+                        if (table.isExtendLastRow(newPageFollows)) {
+                            rowHeight = last.getMaxHeights();
+                            last.setMaxHeights(yTemp - minY + rowHeight);
+                            yTemp = minY;
                         }
-                    }
 
-                    // now we render the rows of the new table
-                    if (canvases != null) {
-                        if (isTagged(canvases[PdfPTable.TEXTCANVAS])) {
-                            canvases[PdfPTable.TEXTCANVAS].openMCBlock(table);
+
+                        // newPageFollows indicates that this table is being split
+                        if (newPageFollows) {
+                            PdfPTableEvent tableEvent = table.getTableEvent();
+                            if (tableEvent instanceof PdfPTableEventSplit) {
+                                ((PdfPTableEventSplit) tableEvent).splitTable(table);
+                            }
                         }
-                        nt.writeSelectedRows(0, -1, 0, -1, x1, yLineWrite, canvases, false);
-                        if (isTagged(canvases[PdfPTable.TEXTCANVAS])) {
-                            canvases[PdfPTable.TEXTCANVAS].closeMCBlock(table);
+
+                        // now we render the rows of the new table
+                        if (canvases != null) {
+                            if (isTagged(canvases[PdfPTable.TEXTCANVAS])) {
+                                canvases[PdfPTable.TEXTCANVAS].openMCBlock(table);
+                            }
+                            nt.writeSelectedRows(0, -1, 0, -1, x1, yLineWrite, canvases, false);
+                            if (isTagged(canvases[PdfPTable.TEXTCANVAS])) {
+                                canvases[PdfPTable.TEXTCANVAS].closeMCBlock(table);
+                            }
+                        } else {
+                            if (isTagged(canvas)) {
+                                canvas.openMCBlock(table);
+                            }
+                            nt.writeSelectedRows(0, -1, 0, -1, x1, yLineWrite, canvas, false);
+                            if (isTagged(canvas)) {
+                                canvas.closeMCBlock(table);
+                            }
                         }
-                    } else {
-                        if (isTagged(canvas)) {
-                            canvas.openMCBlock(table);
+
+                        if (!table.isComplete()) {
+                            table.addNumberOfRowsWritten(k);
                         }
-                        nt.writeSelectedRows(0, -1, 0, -1, x1, yLineWrite, canvas, false);
-                        if (isTagged(canvas)) {
-                            canvas.closeMCBlock(table);
-                        }
-                    }
 
-                    if (!table.isComplete()) {
-                        table.addNumberOfRowsWritten(k);
-                    }
-
-                    // if the row was split, we copy the content of the last row
-                    // that was consumed into the first row shown on the next page
-                    if (splittedRow == k && k < table.size()) {
-                        PdfPRow splitted = table.getRows().get(k);
-                        splitted.copyRowContent(nt, lastIdx);
-                    } // Contributed by Deutsche Bahn Systel GmbH (Thorsten Seitz), splitting row spans
-                    else if (k > 0 && k < table.size()) {
-                        // continue rowspans on next page
-                        // (as the row was not split there is no content to copy)
-                        PdfPRow row = table.getRow(k);
-                        row.splitRowspans(table, k - 1, nt, lastIdx);
-                    }
-                    // splitting row spans
-
-                    // reset the row height of the last row
-                    if (table.isExtendLastRow(newPageFollows)) {
-                        last.setMaxHeights(rowHeight);
-                    }
-
-                    // Contributed by Deutsche Bahn Systel GmbH (Thorsten Seitz)
-                    // newPageFollows indicates that this table is being split
-                    if (newPageFollows) {
-                        PdfPTableEvent tableEvent = table.getTableEvent();
-                        if (tableEvent instanceof PdfPTableEventAfterSplit) {
+                        // if the row was split, we copy the content of the last row
+                        // that was consumed into the first row shown on the next page
+                        if (splittedRow == k && k < table.size()) {
+                            PdfPRow splitted = table.getRows().get(k);
+                            splitted.copyRowContent(nt, lastIdx);
+                        } // Contributed by Deutsche Bahn Systel GmbH (Thorsten Seitz), splitting row spans
+                        else if (k > 0 && k < table.size()) {
+                            // continue rowspans on next page
+                            // (as the row was not split there is no content to copy)
                             PdfPRow row = table.getRow(k);
-                            ((PdfPTableEventAfterSplit) tableEvent).afterSplitTable(table, row, k);
+                            row.splitRowspans(table, k - 1, nt, lastIdx);
+                        }
+                        // splitting row spans
+
+                        // reset the row height of the last row
+                        if (table.isExtendLastRow(newPageFollows)) {
+                            last.setMaxHeights(rowHeight);
+                        }
+
+                        // Contributed by Deutsche Bahn Systel GmbH (Thorsten Seitz)
+                        // newPageFollows indicates that this table is being split
+                        if (newPageFollows) {
+                            PdfPTableEvent tableEvent = table.getTableEvent();
+                            if (tableEvent instanceof PdfPTableEventAfterSplit) {
+                                PdfPRow row = table.getRow(k);
+                                ((PdfPTableEventAfterSplit) tableEvent).afterSplitTable(table, row, k);
+                            }
                         }
                     }
                 } // in simulation mode, we need to take extendLastRow into account
@@ -2001,7 +2035,7 @@ public class ColumnText {
                     splittedRow = -1;
                     rowIdx = 0;
                 } else {
-                    if (splittedRow != -1) {
+                    if (splittedRow > -1) {
                         ArrayList<PdfPRow> rows = table.getRows();
                         for (int i = rowIdx; i < k; ++i) {
                             rows.set(i, null);

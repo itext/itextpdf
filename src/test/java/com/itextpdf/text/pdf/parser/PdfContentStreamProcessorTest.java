@@ -82,6 +82,13 @@ public class PdfContentStreamProcessorTest
   {
     processBytes("yaxiststar.pdf", 1);
   }
+  
+  @Test
+  public void testFallbackForBadColorSpace()
+    throws Exception
+  {
+    processBytes("fallbackForBadColorSpace.pdf", 1);
+  }
 
 
 
@@ -102,6 +109,14 @@ public class PdfContentStreamProcessorTest
     processor.processContent(contentBytes, resourceDictionary);
 
   }
+
+    @Test
+    public void testInlineImageWithUnsupportedDecodeFilter() throws IOException {
+        PdfReader reader= TestResourceUtils.getResourceAsPdfReader(this, "inlineImages01.pdf");
+        PdfReaderContentParser parser = new PdfReaderContentParser(reader);
+        Integer page =  reader.getNumberOfPages();
+        LocationTextExtractionStrategy strategy = parser.processContent(page, new LocationTextExtractionStrategy());
+    }
 
 
   private byte[] readContentBytes(

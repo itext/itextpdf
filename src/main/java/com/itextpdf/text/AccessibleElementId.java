@@ -44,7 +44,9 @@
  */
 package com.itextpdf.text;
 
-public class AccessibleElementId implements Comparable<AccessibleElementId> {
+import java.io.Serializable;
+
+public class AccessibleElementId implements Comparable<AccessibleElementId>, Serializable {
 
     private static int id_counter = 0;
     private int id = 0;

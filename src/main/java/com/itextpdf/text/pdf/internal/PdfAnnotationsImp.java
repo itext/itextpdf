@@ -130,8 +130,11 @@ public class PdfAnnotationsImp {
         annotations.add(field);
         ArrayList<PdfFormField> kids = field.getKids();
         if (kids != null) {
-            for (int k = 0; k < kids.size(); ++k)
-                addFormFieldRaw(kids.get(k));
+            for (int k = 0; k < kids.size(); ++k) {
+                PdfFormField kid = kids.get(k);
+                if (!kid.isUsed())
+                    addFormFieldRaw(kid);
+            }
         }
     }
 
@@ -176,30 +179,28 @@ public class PdfAnnotationsImp {
                     else {
                     	rect = new PdfRectangle(tmp.getAsNumber(0).floatValue(), tmp.getAsNumber(1).floatValue());
                     }
-                    if (rect != null) {
-                    	switch (rotation) {
-                        	case 90:
-                        		dic.put(PdfName.RECT, new PdfRectangle(
-                        				pageSize.getTop() - rect.bottom(),
-										rect.left(),
-										pageSize.getTop() - rect.top(),
-										rect.right()));
-                        		break;
-                        	case 180:
-                        		dic.put(PdfName.RECT, new PdfRectangle(
-                        				pageSize.getRight() - rect.left(),
-										pageSize.getTop() - rect.bottom(),
-										pageSize.getRight() - rect.right(),
-										pageSize.getTop() - rect.top()));
-                        		break;
-                        	case 270:
-                        		dic.put(PdfName.RECT, new PdfRectangle(
-                        				rect.bottom(),
-										pageSize.getRight() - rect.left(),
-										rect.top(),
-										pageSize.getRight() - rect.right()));
-                        		break;
-                    	}
+                    switch (rotation) {
+                        case 90:
+                            dic.put(PdfName.RECT, new PdfRectangle(
+                        	pageSize.getTop() - rect.bottom(),
+				rect.left(),
+				pageSize.getTop() - rect.top(),
+				rect.right()));
+                            break;
+                        case 180:
+                            dic.put(PdfName.RECT, new PdfRectangle(
+                                pageSize.getRight() - rect.left(),
+				pageSize.getTop() - rect.bottom(),
+				pageSize.getRight() - rect.right(),
+				pageSize.getTop() - rect.top()));
+                            break;
+                        case 270:
+                            dic.put(PdfName.RECT, new PdfRectangle(
+                        	rect.bottom(),
+				pageSize.getRight() - rect.left(),
+				rect.top(),
+				pageSize.getRight() - rect.right()));
+                            break;
                     }
                 }
             }
