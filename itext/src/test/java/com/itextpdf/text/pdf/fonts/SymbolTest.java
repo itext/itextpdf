@@ -1,18 +1,24 @@
 package com.itextpdf.text.pdf.fonts;
 
 import com.itextpdf.testutils.CompareTool;
-import com.itextpdf.testutils.TestResourceUtils;
-import com.itextpdf.text.*;
-import com.itextpdf.text.pdf.*;
+import com.itextpdf.text.Chunk;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.Font;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.pdf.BaseFont;
+import com.itextpdf.text.pdf.PdfReader;
+import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.text.pdf.parser.PdfTextExtractor;
 import com.itextpdf.text.pdf.parser.SimpleTextExtractionStrategy;
-import junit.framework.Assert;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
 
 import java.io.File;
 import java.io.FileOutputStream;
+
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
 
 public class SymbolTest {
     @Before
@@ -24,6 +30,7 @@ public class SymbolTest {
     public void tearDown() throws Exception {
     }
     @Test
+    @Ignore
     public void textWithSymbolEncoding() throws Exception {
         BaseFont f = BaseFont.createFont(BaseFont.SYMBOL, BaseFont.SYMBOL, false);
         FileOutputStream fs = new FileOutputStream("./target/com/itextpdf/text/pdf/fonts/SymbolFontTest/textWithSymbolEncoding.pdf");

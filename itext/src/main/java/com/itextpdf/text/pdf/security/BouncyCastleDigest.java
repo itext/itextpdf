@@ -47,7 +47,7 @@ package com.itextpdf.text.pdf.security;
 import java.security.GeneralSecurityException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import org.bouncycastle.jcajce.provider.digest.*;
+import org.spongycastle.jcajce.provider.digest.*;
 
 /**
  * Implementation for digests accessed directly from the BouncyCastle library bypassing

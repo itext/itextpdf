@@ -44,17 +44,16 @@
  */
 package com.itextpdf.text.pdf;
 
+import com.itextpdf.testutils.TestResourceUtils;
 
 import java.io.File;
 
-import junit.framework.Assert;
-
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
-
-import com.itextpdf.testutils.TestResourceUtils;
 
 /**
  * @author kevin
@@ -76,6 +75,7 @@ public class DocumentFontTest {
     }
 
     @Test
+    @Ignore
     public void testConstructionForType0WithoutToUnicodeMap() throws Exception{
         int pageNum = 2;
         PdfName fontIdName = new PdfName("TT9");
