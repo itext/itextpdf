@@ -62,11 +62,11 @@ public class TtfUnicodeWriter {
     public void writeFont(TrueTypeFontUnicode font, PdfIndirectReference ref, Object params[], byte[] rotbits) throws DocumentException, IOException {
         HashMap<Integer, int[]> longTag = (HashMap<Integer, int[]>)params[0];
         font.addRangeUni(longTag, true, font.subset);
-        int metrics[][] = longTag.values().toArray(new int[0][]);
+        int[][] metrics = longTag.values().toArray(new int[0][]);
         Arrays.sort(metrics, font);
-        PdfIndirectReference ind_font = null;
-        PdfObject pobj = null;
-        PdfIndirectObject obj = null;
+        PdfIndirectReference ind_font;
+        PdfObject pobj;
+        PdfIndirectObject obj;
         // sivan: cff
         if (font.cff) {
             byte b[] = font.readCffFont();
@@ -75,9 +75,11 @@ public class TtfUnicodeWriter {
                 try {
                     b = cff.Process(cff.getNames()[0]);
                 //temporary fix for cff subset failure
-                }catch(Exception e){
+                } catch(Exception e) {
                     font.setSubset(false);
-                    writeFont(font,ref,params,rotbits);
+                    font.addRangeUni(longTag, true, font.subset);
+                    metrics = longTag.values().toArray(new int[0][]);
+                    Arrays.sort(metrics, font);
                 }
             }
             pobj = new BaseFont.StreamFont(b, "CIDFontType0C", font.compressionLevel);

@@ -74,9 +74,9 @@ public class PdfATtfUnicodeWriter extends TtfUnicodeWriter {
         font.addRangeUni(longTag, true, font.subset);
         int metrics[][] = longTag.values().toArray(new int[0][]);
         Arrays.sort(metrics, font);
-        PdfIndirectReference ind_font = null;
-        PdfObject pobj = null;
-        PdfIndirectObject obj = null;
+        PdfIndirectReference ind_font;
+        PdfObject pobj;
+        PdfIndirectObject obj;
         PdfIndirectReference cidset = null;
         if (pdfAConformanceLevel == PdfAConformanceLevel.PDF_A_1A || pdfAConformanceLevel == PdfAConformanceLevel.PDF_A_1B) {
             PdfStream stream;
@@ -98,7 +98,15 @@ public class PdfATtfUnicodeWriter extends TtfUnicodeWriter {
             byte b[] = font.readCffFont();
             if (font.subset || font.subsetRanges != null) {
                 CFFFontSubset cff = new CFFFontSubset(new RandomAccessFileOrArray(b),longTag);
-                b = cff.Process(cff.getNames()[0]);
+                try {
+                    b = cff.Process(cff.getNames()[0]);
+                    //temporary fix for cff subset failure
+                } catch(Exception e) {
+                    font.setSubset(false);
+                    font.addRangeUni(longTag, true, font.subset);
+                    metrics = longTag.values().toArray(new int[0][]);
+                    Arrays.sort(metrics, font);
+                }
             }
             pobj = new BaseFont.StreamFont(b, "CIDFontType0C", font.compressionLevel);
             obj = writer.addToBody(pobj);
