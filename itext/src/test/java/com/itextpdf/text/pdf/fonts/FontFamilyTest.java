@@ -13,7 +13,7 @@ import java.io.IOException;
 public class FontFamilyTest {
 
 
-    private static String srcFolder ="./src/test/resources/com/itextpdf/text/pdf/FontFamilyTest/";
+    private static String srcFolder ="./src/test/resources/com/itextpdf/text/pdf/fonts/NotoFont/";
 
     @Test
     public void testNotoFontFamily() throws IOException, DocumentException {

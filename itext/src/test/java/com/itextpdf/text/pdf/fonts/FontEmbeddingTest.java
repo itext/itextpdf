@@ -10,7 +10,7 @@ import java.io.IOException;
 
 public class FontEmbeddingTest {
 
-    private static String srcFolder ="./src/test/resources/com/itextpdf/text/pdf/fonts/FontEmbeddingTest/";
+    private static String srcFolder ="./src/test/resources/com/itextpdf/text/pdf/fonts/NotoFont/";
 
     @Test
     public void testNotoFont() throws DocumentException, IOException {
