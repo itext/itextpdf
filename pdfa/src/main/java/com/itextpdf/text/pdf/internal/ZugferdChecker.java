@@ -73,6 +73,9 @@ public class ZugferdChecker extends PdfA3Checker {
     public void close(PdfWriter writer) {
         super.close(writer);
         boolean ok = false;
+        if(writer.getXmpWriter() == null) {
+            writer.createXmpMetadata();
+        }
         XMPMeta xmpMeta = writer.getXmpWriter().getXmpMeta();
         try {
             String docFileName = xmpMeta.getPropertyString(PdfAXmpWriter.zugferdSchemaNS, PdfAXmpWriter.zugferdDocumentFileName);
