@@ -2596,7 +2596,6 @@ public class PdfDocument extends Document {
      */
 
     protected void add(final Image image) throws PdfException, DocumentException {
-
         if (image.hasAbsoluteY()) {
             graphics.addImage(image);
             pageEmpty = false;
@@ -2702,6 +2701,7 @@ public class PdfDocument extends Document {
             if (loop == 3) {
                 throw new DocumentException(MessageLocalization.getComposedMessage("infinite.table.loop"));
             }
+            currentHeight = indentTop() - ct.getYLine();
             newPage();
             if (isTagged(writer)) {
                 ct.setCanvas(text);
