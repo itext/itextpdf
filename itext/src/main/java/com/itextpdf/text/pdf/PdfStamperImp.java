@@ -44,6 +44,15 @@
  */
 package com.itextpdf.text.pdf;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
+
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.ExceptionConverter;
 import com.itextpdf.text.Image;
@@ -65,15 +74,6 @@ import com.itextpdf.xmp.XMPException;
 import com.itextpdf.xmp.XMPMeta;
 import com.itextpdf.xmp.XMPMetaFactory;
 import com.itextpdf.xmp.options.SerializeOptions;
-
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
 
 class PdfStamperImp extends PdfWriter {
     HashMap<PdfReader, IntHashtable> readers2intrefs = new HashMap<PdfReader, IntHashtable>();
@@ -1186,6 +1186,7 @@ class PdfStamperImp extends PdfWriter {
                     PdfDictionary appDic = obj1 instanceof PdfIndirectReference ?
                             (PdfDictionary) PdfReader.getPdfObject(obj1) : (PdfDictionary) obj1;
                     PdfObject obj = appDic.get(PdfName.N);
+                    PdfDictionary objDict = appDic.getAsStream(PdfName.N);
                     PdfAppearance app = null;
                     PdfObject objReal = PdfReader.getPdfObject(obj);
 
@@ -1211,9 +1212,14 @@ class PdfStamperImp extends PdfWriter {
                     }
                     if (app != null) {
                         Rectangle box = PdfReader.getNormalizedRectangle(annDic.getAsArray(PdfName.RECT));
+                        Rectangle bbox = PdfReader.getNormalizedRectangle((objDict.getAsArray(PdfName.BBOX)));
                         PdfContentByte cb = getOverContent(page);
                         cb.setLiteral("Q ");
-                        cb.addTemplate(app, box.getLeft(), box.getBottom());
+                        app.getHeight();
+
+                        //Changed so that when the annotation has a difference scale than the xObject in the appearance dictionary, the image is consistent between
+                        //the input and the flattened document.  When the annotation is rotated or skewed, it will still be flattened incorrectly. 
+                        cb.addTemplate(app, (box.getWidth()/bbox.getWidth()), 0, 0,(box.getHeight()/bbox.getHeight()),box.getLeft(), box.getBottom());
                         cb.setLiteral("q ");
 
                         annots.remove(idx);
