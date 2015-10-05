@@ -1215,8 +1215,6 @@ class PdfStamperImp extends PdfWriter {
                         Rectangle bbox = PdfReader.getNormalizedRectangle((objDict.getAsArray(PdfName.BBOX)));
                         PdfContentByte cb = getOverContent(page);
                         cb.setLiteral("Q ");
-                        app.getHeight();
-
                         //Changed so that when the annotation has a difference scale than the xObject in the appearance dictionary, the image is consistent between
                         //the input and the flattened document.  When the annotation is rotated or skewed, it will still be flattened incorrectly. 
                         cb.addTemplate(app, (box.getWidth()/bbox.getWidth()), 0, 0,(box.getHeight()/bbox.getHeight()),box.getLeft(), box.getBottom());
