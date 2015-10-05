@@ -836,10 +836,10 @@ public class PdfDocument extends Document {
             currentOutline = rootOutline;
         }
         try {
-            initPage();
             if (isTagged(writer)) {
                 openMCDocument = true;
             }
+            initPage();
         }
         catch(DocumentException de) {
             throw new ExceptionConverter(de);
@@ -863,7 +863,6 @@ public class PdfDocument extends Document {
             if (isTagged(writer)) {
                 flushFloatingElements();
                 flushLines();
-                writer.getDirectContent().closeMCBlock(this);
                 writer.flushAcroFields();
                 writer.flushTaggedObjects();
                 if (isPageEmpty()) {
@@ -878,6 +877,9 @@ public class PdfDocument extends Document {
                 newPage();
             }
             endPage();
+            if (isTagged(writer)) {
+                writer.getDirectContent().closeMCBlock(this);
+            }
             if (annotationsImp.hasUnusedAnnotations())
                 throw new RuntimeException(MessageLocalization.getComposedMessage("not.all.annotations.could.be.added.to.the.document.the.document.doesn.t.have.enough.pages"));
             PdfPageEvent pageEvent = writer.getPageEvent();
