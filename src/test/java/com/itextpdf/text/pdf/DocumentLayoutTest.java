@@ -48,14 +48,15 @@ import com.itextpdf.testutils.CompareTool;
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Image;
+import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.Phrase;
-import junit.framework.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 public class DocumentLayoutTest {
     private static String CMP_FOLDER ="./src/test/resources/com/itextpdf/text/pdf/DocumentLayoutTest/";
@@ -88,6 +89,36 @@ public class DocumentLayoutTest {
         p3.add(new Chunk("third, leading of 20"));
         p3.setLeading(20);
         document.add(p3);
+
+        document.close();
+
+        // compare
+        CompareTool compareTool = new CompareTool();
+        String errorMessage = compareTool.compareByContent(OUTPUT_FOLDER + file, CMP_FOLDER + file, OUTPUT_FOLDER, "diff");
+        if (errorMessage != null) {
+            Assert.fail(errorMessage);
+        }
+    }
+
+    @Test
+    public void waitingImageTest() throws IOException, DocumentException, InterruptedException {
+        String file = "waitingImage.pdf";
+
+        Document document = new Document();
+        PdfWriter.getInstance(document, new FileOutputStream(OUTPUT_FOLDER + file));
+        document.open();
+
+        String longTextString = "asdsaddsdadasddasasdsaddsdadasddasasdsaddsdadasddasasdsaddsdadasddasasdsaddsdadasddasasdsaddsdadasddasasdsaddsdadasddasasdsaddsdadasddas" +
+                "asdsaddsdadasddasasdsaddsdadasddasasdsaddsdadasddasasdsaddsdadasddasasdsaddsdadasddasasdsaddsdadasddasasdsaddsdadasddasasdsaddsdadasddasasdsaddsdadasddas" +
+                "asdsaddsdadasddasasdsaddsdadasddasasdsaddsdadasddasasdsaddsdadasddasasdsaddsdadasddasasdsaddsdadasddasasdsaddsdadasddasasdsaddsdadasddasasdsaddsdadasddas" +
+                "asdsaddsdadasddasasdsaddsdadasddasasdsaddsdadasddasasdsaddsdadasddasasdsaddsdadasddasasdsaddsdadasddasasdsaddsdadasddasasdsaddsdadasddasasdsaddsdadasddas" +
+                "asdsaddsdadasddasasdsaddsdadasddasasdsaddsdadasddasasdsaddsdadasddasasdsaddsdadasddasasdsaddsdadasddasasdsaddsdadasddasasdsaddsdadasddasasdsaddsdadasddas" +
+                "asdsaddsdadasddasasdsaddsdadasddasasdsaddsdadasddasasdsaddsdadasddasasdsaddsdadasddasasdsaddsdadasddasasdsaddsdadasddasasdsaddsdadasddasasdsaddsdadasddas" +
+                "asdsaddsdadasddasasdsaddsdadasddasasdsaddsdadasddasasdsaddsdadasddasasdsaddsdadasddasasdsaddsdadasddasasdsaddsdadasddasasdsaddsdadasddasasdsaddsdadasddas";
+        String extraLongTextString = longTextString + longTextString;
+        document.add(new Paragraph(extraLongTextString));
+        String imageFile = "Desert.jpg";
+        document.add(Image.getInstance(CMP_FOLDER + imageFile));
 
         document.close();
 

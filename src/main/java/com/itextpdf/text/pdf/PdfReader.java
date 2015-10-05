@@ -424,9 +424,20 @@ public class PdfReader implements PdfViewerPreferences {
      * @throws IOException on error
      */
     public PdfReader(final RandomAccessFileOrArray raf, final byte ownerPassword[]) throws IOException {
+        this(raf, ownerPassword, true);
+    }
+
+    /**
+     * Reads and parses a pdf document.
+     * @param raf the document location
+     * @param ownerPassword the password or <CODE>null</CODE> for no password
+     * @param partial indicates if the reader needs to read the document only partially. See {@link PdfReader#PdfReader(RandomAccessFileOrArray, byte[])}
+     * @throws IOException on error
+     */
+    public PdfReader(final RandomAccessFileOrArray raf, final byte ownerPassword[], boolean partial) throws IOException {
         this(
         		raf.getByteSource(),
-    			true,
+    			partial,
     			ownerPassword,
     			null,
     			null,

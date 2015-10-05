@@ -50,13 +50,16 @@ import com.itextpdf.text.Document;
 import com.itextpdf.text.ExceptionConverter;
 import com.itextpdf.text.PageSize;
 import com.itextpdf.text.exceptions.InvalidPdfException;
+import com.itextpdf.text.io.RandomAccessSourceFactory;
 import org.junit.*;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Stack;
 
+import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -111,7 +114,7 @@ public class PdfReaderTest {
         PdfDictionary pageResFromNum = rdr.getPageResources(1);
         PdfDictionary pageResFromDict = rdr.getPageResources(rdr.getPageN(1));
         // same size & keys
-        assertTrue( pageResFromNum.getKeys().equals(pageResFromDict.getKeys()) );
+        assertTrue(pageResFromNum.getKeys().equals(pageResFromDict.getKeys()));
         
         rdr.close();
     }
@@ -127,6 +130,30 @@ public class PdfReaderTest {
             assertEquals(PdfName.PAGE.toString(), p.getAsName(PdfName.TYPE).toString());
         }
         rdr.close();
+    }
+
+    @Test
+    public void partialReadFromByteArrayTest() throws IOException {
+        byte[] pdfFile = TestResourceUtils.getResourceAsByteArray(this, "iphone_user_guide.pdf");
+        PdfReader reader = new PdfReader(new RandomAccessFileOrArray(new RandomAccessSourceFactory().createSource(pdfFile)), null, true);
+
+        int pagesNum = 0;
+        PdfDictionary pagesObj = reader.getCatalog().getAsDict(PdfName.PAGES);
+        Stack<PdfDictionary> pages = new Stack<PdfDictionary>();
+        pages.push(pagesObj);
+        while(pages.size() > 0) {
+            PdfDictionary page = pages.pop();
+            PdfArray kids = page.getAsArray(PdfName.KIDS);
+            if (kids != null) {
+                for (int i = 0; i < kids.size(); ++i) {
+                    pages.push(kids.getAsDict(i));
+                }
+            } else {
+                ++pagesNum;
+            }
+        }
+
+        assertTrue(String.format("There is 130 pages in document, but iText counted %d", pagesNum), pagesNum == 130);
     }
 
     @Test(expected = ExceptionConverter.class)
