@@ -74,7 +74,7 @@ import java.util.Map;
 public class PdfAStamperImp extends PdfStamperImp {
 
     protected Counter COUNTER = CounterFactory.getCounter(PdfAStamper.class);
-
+    XMPMeta xmpMeta = null;
     /**
      * Creates new PdfStamperImp.
      *
@@ -175,7 +175,7 @@ public class PdfAStamperImp extends PdfStamperImp {
 
     private void readPdfAInfo() {
         byte[] metadata = null;
-        XMPMeta xmpMeta = null;
+
         XMPProperty pdfaidConformance = null;
         XMPProperty pdfaidPart = null;
         try {
@@ -252,4 +252,7 @@ public class PdfAStamperImp extends PdfStamperImp {
         return a;
     }
 
+    public XMPMeta getXmpMeta() {
+        return xmpMeta;
+    }
 }
