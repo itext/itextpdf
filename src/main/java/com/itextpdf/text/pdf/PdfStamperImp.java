@@ -1656,6 +1656,10 @@ class PdfStamperImp extends PdfWriter {
         return append;
     }
 
+    public PdfReader getPdfReader(){
+        return this.reader;
+    }
+
     /** Additional-actions defining the actions to be taken in
      * response to various trigger events affecting the document
      * as a whole. The actions types allowed are: <CODE>DOCUMENT_CLOSE</CODE>,
