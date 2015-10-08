@@ -258,11 +258,12 @@ public class AcroFields {
             return;
         for (int k = 1; k <= reader.getNumberOfPages(); ++k) {
             PdfDictionary page = reader.getPageNRelease(k);
-            PdfArray annots = (PdfArray) PdfReader.getPdfObjectRelease(page.get(PdfName.ANNOTS), page);
+            PdfArray annots = (PdfArray)PdfReader.getPdfObjectRelease(page.get(PdfName.ANNOTS), page); // Notable
             if (annots == null)
                 continue;
             for (int j = 0; j < annots.size(); ++j) {
                 PdfDictionary annot = annots.getAsDict(j);
+                PdfIndirectReference annotRef = annots.getAsIndirectObject(j);
                 if (annot == null) {
                     PdfReader.releaseLastXrefPartial(annots.getAsIndirectObject(j));
                     continue;
@@ -280,8 +281,34 @@ public class AcroFields {
                 while (annot != null) {
                     dic.mergeDifferent(annot);
                     PdfString t = annot.getAsString(PdfName.T);
-                    if (t != null)
+                    if (t != null) {
                         name = t.toUnicodeString() + "." + name;
+                    } else {
+                        // Notable
+                        // from PDF.js annotations.js
+                        // The field name is absent, that means more than one field
+                        // with the same name may exist. Replacing the empty name
+                        // with the '`' plus index in the parent's 'Kids' array.
+                        // This is not in the PDF spec but necessary to id the
+                        // the input controls.
+
+                        PdfDictionary parent = annot.getAsDict(PdfName.PARENT);
+                        PdfArray kids = parent.getAsArray(PdfName.KIDS);
+                        if (kids != null) {
+                            int i = 0;
+                            for (; i < kids.size(); ++i) {
+                                PdfIndirectReference kidRef = kids.getAsIndirectObject(i);
+                                if (annotRef != null && kidRef != null) {
+                                    if (kidRef.toString().equals(annotRef.toString())) {
+                                        break;
+                                    }
+                                }
+                            }
+                            name = "`" + i + "." + name;
+                        }
+
+                        // Notable end
+                    }
                     if (lastV == null && annot.get(PdfName.V) != null)
                         lastV = PdfReader.getPdfObjectRelease(annot.get(PdfName.V));
                     if (value == null && t != null) {
@@ -289,6 +316,7 @@ public class AcroFields {
                         if (annot.get(PdfName.V) == null && lastV != null)
                             value.put(PdfName.V, lastV); // TODO: seems to be bug (we are going up the hierarchy and setting parent's V entry to child's V value)
                     }
+                    annotRef = annot.getAsIndirectObject(PdfName.PARENT); // Notable
                     annot = annot.getAsDict(PdfName.PARENT);
                 }
                 if (name.length() > 0)
