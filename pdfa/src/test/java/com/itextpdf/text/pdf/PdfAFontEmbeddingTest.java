@@ -1,17 +1,27 @@
 package com.itextpdf.text.pdf;
 
+import com.itextpdf.testutils.CompareTool;
 import com.itextpdf.text.*;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
-import java.io.ByteArrayOutputStream;
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.*;
 
 public class PdfAFontEmbeddingTest {
+
+    protected static final String outputDir = "./target/test/fontembedding/";
+
+    @BeforeClass
+    public static void setup(){
+        new File(outputDir).mkdirs();
+    }
+
+
     @Test
-    public void testNotoFont() throws DocumentException, IOException {
+    public void testNotoFont() throws DocumentException, IOException, InterruptedException {
         Document document = new Document();
-        PdfAWriter writer = PdfAWriter.getInstance(document, new ByteArrayOutputStream(), PdfAConformanceLevel.PDF_A_1B);
+        String filename = outputDir + "testNotoFont.pdf";
+        PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream(filename), PdfAConformanceLevel.PDF_A_1B);
         writer.createXmpMetadata();
         document.open();
 
@@ -28,5 +38,9 @@ public class PdfAFontEmbeddingTest {
         writer.setOutputIntents("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", icc);
 
         document.close();
+
+        String cmpFile = "./src/test/resources/com/itextpdf/text/pdf/fontembedding/cmp_testNotoFont.pdf";
+
+        new CompareTool().compareByContent(filename, cmpFile, outputDir, "diff");
     }
 }
