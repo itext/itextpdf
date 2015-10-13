@@ -45,6 +45,7 @@
 package com.itextpdf.text.pdf;
 
 import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.log.LoggerFactory;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -76,6 +77,8 @@ public class TtfUnicodeWriter {
                     b = cff.Process(cff.getNames()[0]);
                 //temporary fix for cff subset failure
                 } catch(Exception e) {
+                    LoggerFactory.getLogger(TtfUnicodeWriter.class).error("Issue in CFF font subsetting." +
+                            "Subsetting was disabled", e);
                     font.setSubset(false);
                     font.addRangeUni(longTag, true, font.subset);
                     metrics = longTag.values().toArray(new int[0][]);
