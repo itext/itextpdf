@@ -44,18 +44,7 @@
  */
 package com.itextpdf.text.pdf;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
+import com.itextpdf.awt.geom.Point;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.ExceptionConverter;
 import com.itextpdf.text.Image;
@@ -66,7 +55,6 @@ import com.itextpdf.text.exceptions.BadPasswordException;
 import com.itextpdf.text.log.Counter;
 import com.itextpdf.text.log.CounterFactory;
 import com.itextpdf.text.pdf.AcroFields.Item;
-import com.itextpdf.awt.geom.Point;
 import com.itextpdf.text.pdf.collection.PdfCollection;
 import com.itextpdf.text.pdf.interfaces.PdfViewerPreferences;
 import com.itextpdf.text.pdf.internal.PdfIsoKeys;
@@ -78,6 +66,18 @@ import com.itextpdf.xmp.XMPException;
 import com.itextpdf.xmp.XMPMeta;
 import com.itextpdf.xmp.XMPMetaFactory;
 import com.itextpdf.xmp.options.SerializeOptions;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 class PdfStamperImp extends PdfWriter {
     HashMap<PdfReader, IntHashtable> readers2intrefs = new HashMap<PdfReader, IntHashtable>();
@@ -152,6 +152,11 @@ class PdfStamperImp extends PdfWriter {
             if (reader.isRebuilt())
                 throw new DocumentException(MessageLocalization.getComposedMessage("append.mode.requires.a.document.without.errors.even.if.recovery.was.possible"));
             pdf_version.setAppendmode(true);
+            if ( pdfVersion == 0 ) {
+                pdf_version.setPdfVersion(reader.getPdfVersion());
+            } else {
+                pdf_version.setPdfVersion(pdfVersion);
+            }
             byte buf[] = new byte[8192];
             int n;
             while ((n = file.read(buf)) > 0)
