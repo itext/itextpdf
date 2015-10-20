@@ -1276,7 +1276,7 @@ public class PdfReader implements PdfViewerPreferences {
             throw new InvalidPdfException(MessageLocalization.getComposedMessage("the.document.has.no.catalog.object"));
         }
         rootPages = catalog.getAsDict(PdfName.PAGES);
-        if (rootPages == null || (!PdfName.PAGES.equals(rootPages.get(PdfName.TYPE)) && !PdfName.PAGES.equals(rootPages.get(new PdfName("Types"))))) {
+        if (rootPages == null) { // Notable
             if (debugmode) {
                 if ( LOGGER.isLogging(Level.ERROR) ) {
                     LOGGER.error(MessageLocalization.getComposedMessage("the.document.has.no.page.root"));
