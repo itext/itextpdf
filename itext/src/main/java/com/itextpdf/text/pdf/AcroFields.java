@@ -177,7 +177,7 @@ public class AcroFields {
                 }
                 PdfDictionary widget = annot;
                 PdfDictionary dic = new PdfDictionary();
-                dic.putAll(annot);
+                dic.putAll(annot); // TODO: excess due to the first statement in the while cycle below
                 String name = "";
                 PdfDictionary value = null;
                 PdfObject lastV = null;
@@ -191,7 +191,7 @@ public class AcroFields {
                     if (value == null &&  t != null) {
                         value = annot;
                         if (annot.get(PdfName.V) == null && lastV  != null)
-                            value.put(PdfName.V, lastV);
+                            value.put(PdfName.V, lastV); // TODO: seems to be bug (we are going up the hierarchy and setting parent's V entry to child's V value)
                     }
                     annot = annot.getAsDict(PdfName.PARENT);
                 }
