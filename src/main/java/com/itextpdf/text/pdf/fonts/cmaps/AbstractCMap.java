@@ -103,10 +103,10 @@ public abstract class AbstractCMap {
         byte[] sout = null;
         if (code instanceof PdfString)
             sout = decodeStringToByte((PdfString)code);
-        int start = a1[a1.length - 1] & 0xff;
-        int end = a2[a2.length - 1] & 0xff;
+        int start = byteArrayToInt(a1);
+        int end = byteArrayToInt(a2);
         for (int k = start; k <= end; ++k) {
-            a1[a1.length - 1] = (byte)k;
+            intToByteArray(k, a1);
             PdfString s = new PdfString(a1);
             s.setHexWriting(true);
             if (code instanceof PdfArray) {
@@ -123,6 +123,22 @@ public abstract class AbstractCMap {
                 addChar(s, s1);
             }
         }
+    }
+    
+    private static void intToByteArray(int v, byte[] b) {
+        for (int k = b.length - 1; k >= 0; --k) {
+            b[k] = (byte)v;
+            v = v >>> 8;
+        }
+    }
+    
+    private static int byteArrayToInt(byte[] b) {
+        int v = 0;
+        for (int k = 0; k < b.length; ++k) {
+            v = v << 8;
+            v |= b[k] & 0xff;
+        }
+        return v;
     }
     
     public static byte[] decodeStringToByte(PdfString s) {

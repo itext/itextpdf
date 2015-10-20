@@ -688,12 +688,16 @@ public class CFFFontSubset extends CFFFont {
         		}
         	}
         	// A call to "stem"
-        	else if (key == "hstem" || key == "vstem" || key == "hstemhm" || key == "vstemhm")
-        		// Increment the NumOfHints by the number couples of of arguments
-        		NumOfHints += NumOfArgs/2;
+        	else if (key == "hstem" || key == "vstem" || key == "hstemhm" || key == "vstemhm") {
+				// Increment the NumOfHints by the number couples of of arguments
+				NumOfHints += NumOfArgs / 2;
+			}
         	// A call to "mask"
         	else if (key == "hintmask" || key == "cntrmask")
         	{
+				// if stack is not empty the reason is vstem implicit definition
+				// See Adobe Technical Note #5177, page 25, hintmask usage example.
+				NumOfHints += NumOfArgs/2;
         		// Compute the size of the mask
         		int SizeOfMask = NumOfHints/8;
         		if (NumOfHints%8 != 0 || SizeOfMask == 0)
