@@ -224,8 +224,11 @@ public class PdfSmartCopy extends PdfCopy {
             Object[] keys = dic.getKeys().toArray();
             Arrays.sort(keys);
             for (int k = 0; k < keys.length; ++k) {
-                serObject((PdfObject)keys[k], level, bb, serialized);
-                serObject(dic.get((PdfName)keys[k]), level, bb, serialized);
+                if(keys[k].equals(PdfName.P) &&(dic.get((PdfName)keys[k]).isIndirect() || dic.get((PdfName)keys[k]).isDictionary())) // ignore recursive call
+                    continue;
+                    serObject((PdfObject) keys[k], level, bb, serialized);
+                    serObject(dic.get((PdfName) keys[k]), level, bb, serialized);
+
             }
         }
 
