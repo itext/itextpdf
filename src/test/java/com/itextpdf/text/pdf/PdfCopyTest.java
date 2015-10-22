@@ -55,10 +55,9 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.awt.*;
-import java.awt.Font;
 import java.awt.image.BufferedImage;
 import java.io.*;
-import java.nio.file.Files;
+
 
 /**
  * @author kevin
@@ -482,17 +481,22 @@ public class PdfCopyTest {
         String outputFolder = "./target/com/itextpdf/test/pdf/PdfCopyTest/";
         String resources = "./src/test/resources/com/itextpdf/text/pdf/PdfCopyTest/";
         byte[] part1 = ExtractPages(resources + inputDocPath, 1, 2);
-        File outputPath1 = new File(outputFolder, "part1.pdf");
-        Files.write(outputPath1.toPath(), part1);
+        OutputStream os1 = new FileOutputStream(outputFolder + "part1_c.pdf");
+        os1.write(part1);
+        File outputPath1 = new File(outputFolder, "part1_c.pdf");
+
 
         byte[] part2 = ExtractPages(resources + inputDocPath, 3, 7);
+        OutputStream os2 = new FileOutputStream(outputFolder + "part2_c.pdf");
+        os2.write(part2);
         File outputPath2 = new File(outputFolder, "part2_c.pdf");
-        Files.write(outputPath2.toPath(), part2);
-
         byte[] merged = Merge(new File[] { outputPath1, outputPath2 });
 
+        OutputStream os3 = new FileOutputStream(outputFolder + "outputRecursiveSmartMerge.pdf");
+        os3.write(merged);
+
         File mergedPath = new File(outputFolder, "outputRecursiveSmartMerge.pdf");
-        Files.write(mergedPath.toPath(), merged);
+
 
         CompareTool compareTool = new CompareTool();
         String errorMessage = compareTool.compareByContent(outputFolder + "outputRecursiveSmartMerge.pdf", resources + "cmp_" + inputDocPath, outputFolder, "diff");
