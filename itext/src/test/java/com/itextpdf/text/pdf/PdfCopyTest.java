@@ -55,9 +55,9 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.awt.*;
-import java.awt.Font;
 import java.awt.image.BufferedImage;
 import java.io.*;
+
 
 /**
  * @author kevin
@@ -413,7 +413,7 @@ public class PdfCopyTest {
         copy.close();
         document.close();
 
-        System.out.println(((System.nanoTime() - timeStart)/1000/1000));
+        System.out.println(((System.nanoTime() - timeStart) / 1000 / 1000));
 
 
         CompareTool cmpTool = new CompareTool();
@@ -472,6 +472,106 @@ public class PdfCopyTest {
         if (errorMessage != null) {
             Assert.fail(errorMessage);
         }
+    }
+
+    @Test
+    public void recursiveSmartMergeTest() throws Exception {
+
+        String inputDocPath = "recursiveSmartMerge.pdf";
+        String outputFolder = "./target/com/itextpdf/test/pdf/PdfCopyTest/";
+        String resources = "./src/test/resources/com/itextpdf/text/pdf/PdfCopyTest/";
+        byte[] part1 = ExtractPages(resources + inputDocPath, 1, 2);
+        OutputStream os1 = new FileOutputStream(outputFolder + "part1_c.pdf");
+        os1.write(part1);
+        File outputPath1 = new File(outputFolder, "part1_c.pdf");
+
+
+        byte[] part2 = ExtractPages(resources + inputDocPath, 3, 7);
+        OutputStream os2 = new FileOutputStream(outputFolder + "part2_c.pdf");
+        os2.write(part2);
+        File outputPath2 = new File(outputFolder, "part2_c.pdf");
+        byte[] merged = Merge(new File[] { outputPath1, outputPath2 });
+
+        OutputStream os3 = new FileOutputStream(outputFolder + "outputRecursiveSmartMerge.pdf");
+        os3.write(merged);
+
+        File mergedPath = new File(outputFolder, "outputRecursiveSmartMerge.pdf");
+
+
+        CompareTool compareTool = new CompareTool();
+        String errorMessage = compareTool.compareByContent(outputFolder + "outputRecursiveSmartMerge.pdf", resources + "cmp_" + inputDocPath, outputFolder, "diff");
+        if (errorMessage != null) {
+            Assert.fail(errorMessage);
+        }
+    }
+
+
+
+
+
+    public static byte[] Merge(File[] documentPaths) throws IOException, DocumentException
+    {
+        byte[] mergedDocument;
+
+        ByteArrayOutputStream memoryStream = new ByteArrayOutputStream();
+
+        Document document = new Document();
+        PdfSmartCopy pdfSmartCopy = new PdfSmartCopy(document, memoryStream);
+        document.open();
+
+        for (File docPath : documentPaths)
+        {
+            PdfReader reader = new PdfReader(docPath.toString());
+            try
+            {
+                reader.consolidateNamedDestinations();
+                int numberOfPages = reader.getNumberOfPages();
+                for (int page = 0; page < numberOfPages;)
+                {
+                    PdfImportedPage pdfImportedPage = pdfSmartCopy.getImportedPage(reader, ++page);
+                    pdfSmartCopy.addPage(pdfImportedPage);
+                }
+            }
+            finally
+            {
+                reader.close();
+            }
+        }
+
+        document.close();
+        mergedDocument = memoryStream.toByteArray();
+
+
+        return mergedDocument;
+    }
+
+    public static byte[] ExtractPages(String pdfDocument, int startPage, int endPage) throws IOException, DocumentException {
+        InputStream pdfDocumentStream = new FileInputStream(pdfDocument);
+
+        PdfReader reader = new PdfReader(pdfDocumentStream);
+        int numberOfPages = reader.getNumberOfPages();
+        int endPageResolved = endPage > 0 ? endPage : numberOfPages;
+        if (startPage > numberOfPages || endPageResolved > numberOfPages)
+            System.err.printf("Error: page indices (%s, %s) out of bounds. Document has {2} pages.", startPage, endPageResolved, numberOfPages);
+
+        byte[] outputDocument;
+        ByteArrayOutputStream msOut = new ByteArrayOutputStream();
+
+        Document doc = new Document();
+        PdfCopy pdfCopyProvider = new PdfCopy(doc, msOut);
+        doc.open();
+        for (int i = startPage; i <= endPageResolved; i++)
+        {
+            PdfImportedPage page = pdfCopyProvider.getImportedPage(reader, i);
+            pdfCopyProvider.addPage(page);
+        }
+        doc.close();
+        reader.close();
+        outputDocument = msOut.toByteArray();
+
+
+        return outputDocument;
+
     }
 
     private static byte[] createImagePdf() throws Exception {
