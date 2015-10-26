@@ -163,71 +163,71 @@ public class PdfPageLabels {
     /**
      * Retrieves the page labels from a PDF as an array of String objects.
      * @param reader a PdfReader object that has the page labels you want to retrieve
-     * @return	a String array or <code>null</code> if no page labels are present
+     * @return a String array or <code>null</code> if no page labels are present
      */
     public static String[] getPageLabels(PdfReader reader) {
+        int n = reader.getNumberOfPages();
 
-		int n = reader.getNumberOfPages();
+        PdfDictionary dict = reader.getCatalog();
+        PdfDictionary labels = (PdfDictionary)PdfReader.getPdfObjectRelease(dict.get(PdfName.PAGELABELS));
 
-    	PdfDictionary dict = reader.getCatalog();
-		PdfDictionary labels = (PdfDictionary)PdfReader.getPdfObjectRelease(dict.get(PdfName.PAGELABELS));
         if (labels == null)
             return null;
 
-		String[] labelstrings = new String[n];
+        String[] labelstrings = new String[n];
 
-		HashMap<Integer, PdfObject> numberTree = PdfNumberTree.readTree(labels);
+        HashMap<Integer, PdfObject> numberTree = PdfNumberTree.readTree(labels);
 
-		int pagecount = 1;
-		Integer current;
-		String prefix = "";
-		char type = 'D';
-		for (int i = 0; i < n; i++) {
-			current = Integer.valueOf(i);
-			if (numberTree.containsKey(current)) {
-				PdfDictionary d = (PdfDictionary)PdfReader.getPdfObjectRelease(numberTree.get(current));
-				if (d.contains(PdfName.ST)) {
-					pagecount = ((PdfNumber)d.get(PdfName.ST)).intValue();
-				}
-				else {
-					pagecount = 1;
-				}
-				if (d.contains(PdfName.P)) {
-					prefix = ((PdfString)d.get(PdfName.P)).toUnicodeString();
-				}
-				else {
-					prefix = "";
-				}
-				if (d.contains(PdfName.S)) {
-					type = ((PdfName)d.get(PdfName.S)).toString().charAt(1);
-				}
-				else {
-					type = 'e';
-				}
-			}
-			switch(type) {
-			default:
-				labelstrings[i] = prefix + pagecount;
-				break;
-			case 'R':
-				labelstrings[i] = prefix + RomanNumberFactory.getUpperCaseString(pagecount);
-				break;
-			case 'r':
-				labelstrings[i] = prefix + RomanNumberFactory.getLowerCaseString(pagecount);
-				break;
-			case 'A':
-				labelstrings[i] = prefix + RomanAlphabetFactory.getUpperCaseString(pagecount);
-				break;
-			case 'a':
-				labelstrings[i] = prefix + RomanAlphabetFactory.getLowerCaseString(pagecount);
-				break;
-			case 'e':
-				labelstrings[i] = prefix;
-				break;
-			}
-			pagecount++;
-		}
-		return labelstrings;
+        int pagecount = 1;
+        Integer current;
+        String prefix = "";
+        char type = 'D';
+        for (int i = 0; i < n; i++) {
+            current = Integer.valueOf(i);
+            if (numberTree.containsKey(current)) {
+                PdfDictionary d = (PdfDictionary)PdfReader.getPdfObjectRelease(numberTree.get(current));
+                if (d.contains(PdfName.ST)) {
+                    pagecount = ((PdfNumber)d.get(PdfName.ST)).intValue();
+                }
+                else {
+                    pagecount = 1;
+                }
+                if (d.contains(PdfName.P)) {
+                    prefix = ((PdfString)d.get(PdfName.P)).toUnicodeString();
+                }
+                else {
+                    prefix = "";
+                }
+                if (d.contains(PdfName.S)) {
+                    type = ((PdfName)d.get(PdfName.S)).toString().charAt(1);
+                }
+                else {
+                    type = 'e';
+                }
+            }
+            switch(type) {
+                default:
+                    labelstrings[i] = prefix + pagecount;
+                    break;
+                case 'R':
+                    labelstrings[i] = prefix + RomanNumberFactory.getUpperCaseString(pagecount);
+                    break;
+                case 'r':
+                    labelstrings[i] = prefix + RomanNumberFactory.getLowerCaseString(pagecount);
+                    break;
+                case 'A':
+                    labelstrings[i] = prefix + RomanAlphabetFactory.getUpperCaseString(pagecount);
+                    break;
+                case 'a':
+                    labelstrings[i] = prefix + RomanAlphabetFactory.getLowerCaseString(pagecount);
+                    break;
+                case 'e':
+                    labelstrings[i] = prefix;
+                    break;
+            }
+            pagecount++;
+        }
+        return labelstrings;
     }
 
     /**
