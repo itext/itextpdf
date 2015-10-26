@@ -195,6 +195,9 @@ public class PdfPageLabels {
 				if (d.contains(PdfName.P)) {
 					prefix = ((PdfString)d.get(PdfName.P)).toUnicodeString();
 				}
+				else {
+					prefix = "";
+				}
 				if (d.contains(PdfName.S)) {
 					type = ((PdfName)d.get(PdfName.S)).toString().charAt(1);
 				}
