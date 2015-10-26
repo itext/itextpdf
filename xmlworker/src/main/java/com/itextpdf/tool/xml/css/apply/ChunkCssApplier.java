@@ -178,7 +178,7 @@ public class ChunkCssApplier {
             String key = entry.getKey();
             String value = entry.getValue();
             if (CSS.Property.FONT_WEIGHT.equalsIgnoreCase(key)) {
-                if (CSS.Value.BOLD.contains(value)) {
+                if (isBoldValue(value)) {
                     if (style == Font.ITALIC) {
                         style = Font.BOLDITALIC;
                     } else {
@@ -239,7 +239,7 @@ public class ChunkCssApplier {
         return fontProvider.getFont(fontName, encoding, BaseFont.EMBEDDED, size, style, color);
     }
 
-	/**
+    /**
      * Method used for retrieving the widest word of a chunk of text. All styles of the chunk will be taken into account when calculating the width of the words.
      *
      * @param c chunk of which the widest word is required.
@@ -279,5 +279,12 @@ public class ChunkCssApplier {
 
     public void setFontProvider(FontProvider fontProvider) {
         this.fontProvider = fontProvider;
+    }
+
+    protected boolean isBoldValue(String value) {
+        value = value.trim();
+
+        return CSS.Value.BOLD.contains(value) ||
+                (value.length() == 3 && value.endsWith("00") && value.charAt(0) >= '6' && value.charAt(0) <= '9');
     }
 }
