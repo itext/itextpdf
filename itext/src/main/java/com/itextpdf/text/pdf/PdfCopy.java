@@ -90,7 +90,7 @@ public class PdfCopy extends PdfWriter {
 
     protected static Counter COUNTER = CounterFactory.getCounter(PdfCopy.class);
     protected Counter getCounter() {
-    	return COUNTER;
+        return COUNTER;
     }
     protected HashMap<RefKey, IndirectReferences> indirects;
     protected HashMap<PdfReader, HashMap<RefKey, IndirectReferences>> indirectMap;
@@ -136,7 +136,7 @@ public class PdfCopy extends PdfWriter {
     private static final PdfName iTextTag = new PdfName("_iTextTag_");
     private static final Integer zero = Integer.valueOf(0);
     private HashSet<Object> mergedRadioButtons = new HashSet<Object>();
-    private HashMap<Object, PdfObject> mergedTextFields = new HashMap<Object, PdfObject>();
+    private HashMap<Object, PdfString> mergedTextFields = new HashMap<Object, PdfString>();
 
     private HashSet<PdfReader> readersWithImportedStructureTreeRootKids = new HashSet<PdfReader>();
 
@@ -187,14 +187,14 @@ public class PdfCopy extends PdfWriter {
     /**
      * Setting page events isn't possible with Pdf(Smart)Copy.
      * Use the PageStamp class if you want to add content to copied pages.
-	 * @see com.itextpdf.text.pdf.PdfWriter#setPageEvent(com.itextpdf.text.pdf.PdfPageEvent)
-	 */
-	@Override
-	public void setPageEvent(PdfPageEvent event) {
-		throw new UnsupportedOperationException();
-	}
+     * @see com.itextpdf.text.pdf.PdfWriter#setPageEvent(com.itextpdf.text.pdf.PdfPageEvent)
+     */
+    @Override
+    public void setPageEvent(PdfPageEvent event) {
+        throw new UnsupportedOperationException();
+    }
 
-	/** Getter for property rotateContents.
+    /** Getter for property rotateContents.
      * @return Value of property rotateContents.
      *
      */
@@ -485,7 +485,7 @@ public class PdfCopy extends PdfWriter {
             PdfName key = (PdfName)element;
             PdfObject value = in.get(key);
             if (structTreeController != null && structTreeController.reader != null && (key.equals(PdfName.STRUCTPARENTS) || key.equals(PdfName.STRUCTPARENT))) {
-                    continue;
+                continue;
             }
             if (PdfName.PAGE.equals(type)) {
                 if (!key.equals(PdfName.B) && !key.equals(PdfName.PARENT)) {
@@ -515,7 +515,7 @@ public class PdfCopy extends PdfWriter {
      * objects contained in it.
      */
     protected PdfDictionary copyDictionary(PdfDictionary in)
-    throws IOException, BadPdfFormatException {
+            throws IOException, BadPdfFormatException {
         return copyDictionary(in, false, false);
     }
 
@@ -566,7 +566,7 @@ public class PdfCopy extends PdfWriter {
      * Translate a PR-object to a Pdf-object
      */
     protected PdfObject copyObject(PdfObject in, boolean keepStruct, boolean directRootKids) throws IOException,BadPdfFormatException {
-         if (in == null)
+        if (in == null)
             return PdfNull.PDFNULL;
         switch (in.type) {
             case PdfObject.DICTIONARY:
@@ -588,7 +588,7 @@ public class PdfCopy extends PdfWriter {
                 return in;
             case PdfObject.STREAM:
                 return copyStream((PRStream)in);
-                //                return in;
+            //                return in;
             default:
                 if (in.type < 0) {
                     String lit = ((PdfLiteral)in).toString();
@@ -685,11 +685,11 @@ public class PdfCopy extends PdfWriter {
             throw new IllegalArgumentException(MessageLocalization.getComposedMessage("1.method.cannot.be.used.in.mergeFields.mode.please.use.addDocument", "addPage"));
         }
         PdfRectangle mediabox = new PdfRectangle(rect, rotation);
-    	PageResources resources = new PageResources();
-    	PdfPage page = new PdfPage(mediabox, new HashMap<String, PdfRectangle>(), resources.getResources(), 0);
-    	page.put(PdfName.TABS, getTabs());
-    	root.addPage(page);
-    	++currentPageNumber;
+        PageResources resources = new PageResources();
+        PdfPage page = new PdfPage(mediabox, new HashMap<String, PdfRectangle>(), resources.getResources(), 0);
+        page.put(PdfName.TABS, getTabs());
+        root.addPage(page);
+        ++currentPageNumber;
         pdf.setPageCount(currentPageNumber);
     }
 
@@ -1339,59 +1339,61 @@ public class PdfCopy extends PdfWriter {
                     obj = new LinkedHashMap<String, Object>();
                     map.put(s, obj);
                     map = (HashMap<String, Object>)obj;
-                } else if (obj instanceof HashMap) {
-                    map = (HashMap<String, Object>) obj;
-                } else {
-                    return;
+                    continue;
                 }
-            } else {
+                else if (obj instanceof HashMap)
+                    map = (HashMap<String, Object>)obj;
+                else
+                    return;
+            }
+            else {
                 if (obj instanceof HashMap)
                     return;
                 PdfDictionary merged = item.getMerged(0);
-
-                // if a field with this name already exists, we try to rename it
-                // so a new field will be created.
-                if (obj != null) {
-                    s = renameField(obj, map, merged);
+                if (obj == null) {
+                    PdfDictionary field = new PdfDictionary();
+                    if (PdfName.SIG.equals(merged.get(PdfName.FT)))
+                        hasSignature = true;
+                    for (Object element : merged.getKeys()) {
+                        PdfName key = (PdfName)element;
+                        if (fieldKeys.contains(key))
+                            field.put(key, merged.get(key));
+                    }
+                    ArrayList<Object> list = new ArrayList<Object>();
+                    list.add(field);
+                    createWidgets(list, item);
+                    map.put(s, list);
                 }
-                // generate a new field
-                PdfDictionary field = new PdfDictionary();
-                if (PdfName.SIG.equals(merged.get(PdfName.FT)))
-                    hasSignature = true;
-                for (Object element : merged.getKeys()) {
-                    PdfName key = (PdfName)element;
-                    if (fieldKeys.contains(key))
-                        field.put(key, merged.get(key));
+                else {
+                    ArrayList<Object> list = (ArrayList<Object>)obj;
+                    PdfDictionary field = (PdfDictionary)list.get(0);
+                    PdfName type1 = (PdfName)field.get(PdfName.FT);
+                    PdfName type2 = (PdfName)merged.get(PdfName.FT);
+                    if (type1 == null || !type1.equals(type2))
+                        return;
+                    int flag1 = 0;
+                    PdfObject f1 = field.get(PdfName.FF);
+                    if (f1 != null && f1.isNumber())
+                        flag1 = ((PdfNumber)f1).intValue();
+                    int flag2 = 0;
+                    PdfObject f2 = merged.get(PdfName.FF);
+                    if (f2 != null && f2.isNumber())
+                        flag2 = ((PdfNumber)f2).intValue();
+                    if (type1.equals(PdfName.BTN)) {
+                        if (((flag1 ^ flag2) & PdfFormField.FF_PUSHBUTTON) != 0)
+                            return;
+                        if ((flag1 & PdfFormField.FF_PUSHBUTTON) == 0 && ((flag1 ^ flag2) & PdfFormField.FF_RADIO) != 0)
+                            return;
+                    }
+                    else if (type1.equals(PdfName.CH)) {
+                        if (((flag1 ^ flag2) & PdfFormField.FF_COMBO) != 0)
+                            return;
+                    }
+                    createWidgets(list, item);
                 }
-                ArrayList<Object> list = new ArrayList<Object>();
-                list.add(field);
-                createWidgets(list, item);
-                map.put(s, list);
                 return;
             }
         }
-    }
-
-    private String renameField(Object obj, HashMap<String, Object> map, PdfDictionary merged) {
-        String fieldN = null;
-        if (obj != null) {
-            PdfString fieldName = merged.getAsString(PdfName.T);
-            if (fieldName != null) {
-                fieldN = fieldName.toUnicodeString();
-            }
-        }
-        if (fieldN != null) {
-            for (int i = 1; i < Integer.MAX_VALUE; i++) {
-                String tmpFieldName = String.format("%s_%d", fieldN, i);
-                if (!map.containsKey(tmpFieldName)) {
-                    fieldN = tmpFieldName;
-                    break;
-                }
-            }
-            merged.put(PdfName.T, new PdfString(fieldN));
-        }
-
-        return fieldN;
     }
 
     private void createWidgets(ArrayList<Object> list, AcroFields.Item item) {
@@ -1407,7 +1409,7 @@ public class PdfCopy extends PdfWriter {
                 if (widgetKeys.contains(key))
                     widget.put(key, merged.get(key));
             }
-            widget.put(iTextTag, new PdfNumber(item.getTabOrder(k) + 1));
+            widget.put(iTextTag, new PdfNumber(item.getTabOrder(k).intValue() + 1));
             list.add(widget);
         }
     }
@@ -1547,13 +1549,24 @@ public class PdfCopy extends PdfWriter {
                         widget.remove(iTextTag);
                         if (PdfCopy.isTextField(field)) {
                             PdfString v = field.getAsString(PdfName.V);
-                            PdfObject ap = widget.get(PdfName.AP);
+                            PdfObject ap = widget.getDirectObject(PdfName.AP);
                             if (v != null && ap != null) {
                                 if (!mergedTextFields.containsKey(list)) {
-                                    mergedTextFields.put(list, ap);
+                                    mergedTextFields.put(list, v);
                                 } else {
-                                    PdfObject ap1 = mergedTextFields.get(list);
-                                    widget.put(PdfName.AP, copyObject(ap1));
+                                    try {
+                                        TextField tx = new TextField(this, null, null);
+                                        fields.get(0).decodeGenericDictionary(widget, tx);
+                                        Rectangle box = PdfReader.getNormalizedRectangle(widget.getAsArray(PdfName.RECT));
+                                        if (tx.getRotation() == 90 || tx.getRotation() == 270)
+                                            box = box.rotate();
+                                        tx.setBox(box);
+                                        tx.setText(mergedTextFields.get(list).toUnicodeString());
+                                        PdfAppearance app = tx.getAppearance();
+                                        ((PdfDictionary)ap).put(PdfName.N, app.getIndirectReference());
+                                    } catch (DocumentException e) {
+                                        //do nothing
+                                    }
                                 }
                             }
                         } else if (PdfCopy.isCheckButton(field)) {
@@ -1721,9 +1734,9 @@ public class PdfCopy extends PdfWriter {
     public void freeReader(PdfReader reader) throws IOException {
         if (mergeFields)
             throw new UnsupportedOperationException(MessageLocalization.getComposedMessage("it.is.not.possible.to.free.reader.in.merge.fields.mode"));
-    	PdfArray array = reader.trailer.getAsArray(PdfName.ID);
-    	if (array != null)
-    		originalFileID = array.getAsString(0).getBytes();
+        PdfArray array = reader.trailer.getAsArray(PdfName.ID);
+        if (array != null)
+            originalFileID = array.getAsString(0).getBytes();
         indirectMap.remove(reader);
 //  TODO: Removed - the user should be responsible for closing all PdfReaders.  But, this could cause a lot of memory leaks in code out there that hasn't been properly closing things - maybe add a finalizer to PdfReader that calls PdfReader#close() ??
 //        if (currentPdfReaderInstance != null) {
@@ -1735,7 +1748,7 @@ public class PdfCopy extends PdfWriter {
 //                catch (IOException ioe) {
 //                    // empty on purpose
 //                }
-                currentPdfReaderInstance = null;
+        currentPdfReaderInstance = null;
 //            }
 //        }
         super.freeReader(reader);
@@ -2013,24 +2026,24 @@ public class PdfCopy extends PdfWriter {
                                 switch (rotation) {
                                     case 90:
                                         annot.put(PdfName.RECT, new PdfRectangle(
-                                        pageSize.getTop() - rect.bottom(),
-                                        rect.left(),
-                                        pageSize.getTop() - rect.top(),
-                                        rect.right()));
+                                                pageSize.getTop() - rect.bottom(),
+                                                rect.left(),
+                                                pageSize.getTop() - rect.top(),
+                                                rect.right()));
                                         break;
                                     case 180:
                                         annot.put(PdfName.RECT, new PdfRectangle(
-                                        pageSize.getRight() - rect.left(),
-                                        pageSize.getTop() - rect.bottom(),
-                                        pageSize.getRight() - rect.right(),
-                                        pageSize.getTop() - rect.top()));
+                                                pageSize.getRight() - rect.left(),
+                                                pageSize.getTop() - rect.bottom(),
+                                                pageSize.getRight() - rect.right(),
+                                                pageSize.getTop() - rect.top()));
                                         break;
                                     case 270:
                                         annot.put(PdfName.RECT, new PdfRectangle(
-                                        rect.bottom(),
-                                        pageSize.getRight() - rect.left(),
-                                        rect.top(),
-                                        pageSize.getRight() - rect.right()));
+                                                rect.bottom(),
+                                                pageSize.getRight() - rect.left(),
+                                                rect.top(),
+                                                pageSize.getRight() - rect.right()));
                                         break;
                                 }
                             }

@@ -1,19 +1,18 @@
 package com.itextpdf.text.pdf;
 
 import com.itextpdf.testutils.CompareTool;
-import com.itextpdf.text.*;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.error_messages.MessageLocalization;
+import com.itextpdf.text.pdf.parser.TaggedPdfReaderTool;
 
-import com.itextpdf.text.pdf.parser.*;
-import org.junit.*;
-import org.junit.Assert;
-import org.junit.Test;
-import org.xml.sax.SAXException;
-
+import java.io.*;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import java.io.*;
+
+import org.junit.*;
+import org.xml.sax.SAXException;
 
 public class TaggedPdfCopyTest {
     Document document;
@@ -578,7 +577,7 @@ public class TaggedPdfCopyTest {
         Assert.assertEquals(4, nums.getAsNumber(8).intValue());
 
         Assert.assertEquals(nums.size(), 12);
-        Assert.assertEquals(acroForm.getAsArray(PdfName.FIELDS).size(), 4);
+        Assert.assertEquals(acroForm.getAsArray(PdfName.FIELDS).size(), 3);
 
         reader.close();
     }
