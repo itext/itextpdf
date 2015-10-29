@@ -201,7 +201,7 @@ public class XMLWorker implements XMLParserListener {
 	 * @see com.itextpdf.tool.xml.parser.XMLParserListener#close()
 	 */
 	public void close() {
-		context.remove();
+		closeLocalWC();
 	}
 
 	/**
@@ -214,12 +214,16 @@ public class XMLWorker implements XMLParserListener {
 
 	/**
 	 * Returns the local WorkerContext, beware: could be a newly initialized
-	 * one, if {@link XMLWorker#close()} has been called before.
+	 * one, if {@link XMLWorker#close()} or {@link XMLWorker#closeLocalWC()} has been called before.
 	 *
 	 * @return the local WorkerContext
 	 */
-	protected WorkerContext getLocalWC() {
+	protected static WorkerContext getLocalWC() {
 		return context.get();
+	}
+
+	protected static void closeLocalWC() {
+		context.remove();
 	}
 
 	protected boolean ignoreCdata() {
