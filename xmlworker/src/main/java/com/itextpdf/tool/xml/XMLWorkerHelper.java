@@ -181,7 +181,11 @@ public class XMLWorkerHelper {
 	 * @throws IOException if the {@link InputStream} could not be read.
 	 */
 	public void parseXHtml(final PdfWriter writer, final Document doc, final InputStream in) throws IOException {
-		parseXHtml(writer,doc,in, XMLWorkerHelper.class.getResourceAsStream("/default.css"), null, new XMLWorkerFontProvider());
+		parseXHtml(writer, doc, in, XMLWorkerHelper.class.getResourceAsStream("/default.css"), null, new XMLWorkerFontProvider());
+	}
+
+	public void parseXHtml(PdfWriter writer, Document doc, InputStream in, Charset charset, final FontProvider fontProvider) throws IOException {
+		this.parseXHtml(writer, doc, in, XMLWorkerHelper.class.getResourceAsStream("/default.css"), charset, fontProvider);
 	}
 
 	/**
