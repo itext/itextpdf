@@ -2,7 +2,7 @@
 <report>
 <errors count="4">
 <error>
-<message>PRStream. The bytes differ at index 1715. Expected: 3 ( 502 196.13 16 reS). Found: 5 ( 502 196.15 16 reS)</message>
+<message>PRStream. The bytes differ at index 1715. Expected: 3 ( 502 196.13 16 re\nS\n). Found: 5 ( 502 196.15 16 re\nS\n)</message>
 <path>
 <base cmp="3 0 obj" out="3 0 obj"/>
 <offset>1715</offset>
