@@ -42,14 +42,21 @@
  */
 package com.itextpdf.text.log;
 
+import com.itextpdf.text.Version;
+import com.itextpdf.text.pdf.codec.Base64;
+
 /**
  * Implementation of the Counter interface that doesn't do anything.
  */
-public class NoOpCounter implements Counter {
+public class DefaultCounter implements Counter {
+
+    private int count = 0;
+    private int level = 0;
+    private final int[] repeat = {10000, 5000, 5000, 5000, 5000, 1000};
 
     /**
-     * @param klass The Class asking for the Counter
-     * @return the Counter instance
+     * @param klass
+     * @return this Counter implementation
      * @see com.itextpdf.text.log.Counter#getCounter(java.lang.Class)
      */
     public Counter getCounter(Class<?> klass) {
@@ -60,12 +67,43 @@ public class NoOpCounter implements Counter {
      * @see com.itextpdf.text.log.Counter#read(long)
      */
     public void read(long l) {
+        plusOne();
     }
 
     /**
      * @see com.itextpdf.text.log.Counter#written(long)
      */
     public void written(long l) {
+        plusOne();
     }
 
+    private void plusOne() {
+        if (count++ > repeat[level]) {
+            if (Version.isAGPLVersion()) {
+                if (level < repeat.length - 1) {
+                    level++;
+                }
+                System.out.println(new String(message));
+            }
+            count = 0;
+        }
+    }
+
+    private static byte[] message = Base64.decode(
+        "DQoNCllvdSBhcmUgdXNpbmcgaVRleHQgdW5kZXIgdGhlIEFHUEwuDQoNCklmIHR"
+      + "oaXMgaXMgeW91ciBpbnRlbnRpb24sIHlvdSBoYXZlIHB1Ymxpc2hlZCB5b3VyIG"
+      + "93biBzb3VyY2UgY29kZSBhcyBBR1BMIHNvZnR3YXJlIHRvby4NClBsZWFzZSBsZ"
+      + "XQgdXMga25vdyB3aGVyZSB0byBmaW5kIHlvdXIgc291cmNlIGNvZGUgYnkgc2Vu"
+      + "ZGluZyBhIG1haWwgdG8gYWdwbEBpdGV4dHBkZi5jb20NCldlJ2QgYmUgaG9ub3J"
+      + "lZCB0byBhZGQgaXQgdG8gb3VyIGxpc3Qgb2YgQUdQTCBwcm9qZWN0cyBidWlsdC"
+      + "BvbiB0b3Agb2YgaVRleHQgb3IgaVRleHRTaGFycA0KYW5kIHdlJ2xsIGV4cGxha"
+      + "W4gaG93IHRvIHJlbW92ZSB0aGlzIG1lc3NhZ2UgZnJvbSB5b3VyIGVycm9yIGxv"
+      + "Z3MuDQoNCklmIHRoaXMgd2Fzbid0IHlvdXIgaW50ZW50aW9uLCB5b3UgYXJlIHB"
+      + "yb2JhYmx5IHVzaW5nIGlUZXh0IGluIGEgbm9uLWZyZWUgZW52aXJvbm1lbnQuDQ"
+      + "pJbiB0aGlzIGNhc2UsIHBsZWFzZSBjb250YWN0IHVzIGJ5IGZpbGxpbmcgb3V0I"
+      + "HRoaXMgZm9ybTogaHR0cDovL2l0ZXh0cGRmLmNvbS9zYWxlcw0KSWYgeW91IGFy"
+      + "ZSBhIGN1c3RvbWVyLCB3ZSdsbCBleHBsYWluIGhvdyB0byBpbnN0YWxsIHlvdXI"
+      + "gbGljZW5zZSBrZXkgdG8gYXZvaWQgdGhpcyBtZXNzYWdlLg0KSWYgeW91J3JlIG"
+      + "5vdCBhIGN1c3RvbWVyLCB3ZSdsbCBleHBsYWluIHRoZSBiZW5lZml0cyBvZiBiZ"
+      + "WNvbWluZyBhIGN1c3RvbWVyLg0KDQo=");
 }

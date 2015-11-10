@@ -60,7 +60,7 @@ public class CounterFactory {
 	}
 	
 	/** The current counter implementation. */
-	private Counter counter = new NoOpCounter();
+	private Counter counter = new DefaultCounter();
 
 	/** The empty constructor. */
 	private CounterFactory() {}
