@@ -177,7 +177,7 @@ public class AcroFields {
                 }
                 PdfDictionary widget = annot;
                 PdfDictionary dic = new PdfDictionary();
-                dic.putAll(annot); // TODO: excess due to the first statement in the while cycle below
+                dic.putAll(annot);
                 String name = "";
                 PdfDictionary value = null;
                 PdfObject lastV = null;
