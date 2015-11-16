@@ -55,6 +55,8 @@ import java.io.IOException;
  */
 public class PRTokeniser {
 
+    private final StringBuilder outBuf = new StringBuilder();
+
     /**
      * Enum representing the possible token types
      * @since 5.0.1
@@ -339,7 +341,7 @@ public class PRTokeniser {
         // Note:  We have to initialize stringValue here, after we've looked for the end of the stream,
         // to ensure that we don't lose the value of a token that might end exactly at the end
         // of the stream
-        final StringBuilder outBuf = new StringBuilder();
+        outBuf.setLength(0);
         stringValue = EMPTY;
 
         switch (ch) {

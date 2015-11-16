@@ -452,7 +452,7 @@ public class PdfCopy extends PdfWriter {
      */
     protected PdfDictionary copyDictionary(PdfDictionary in, boolean keepStruct, boolean directRootKids)
             throws IOException, BadPdfFormatException {
-        PdfDictionary out = new PdfDictionary();
+        PdfDictionary out = new PdfDictionary(in.size());
         PdfObject type = PdfReader.getPdfObjectRelease(in.get(PdfName.TYPE));
 
         if (keepStruct)
@@ -542,7 +542,7 @@ public class PdfCopy extends PdfWriter {
      * in it
      */
     protected PdfArray copyArray(PdfArray in, boolean keepStruct, boolean directRootKids) throws IOException, BadPdfFormatException {
-        PdfArray out = new PdfArray();
+        PdfArray out = new PdfArray(in.size());
 
         for (Iterator<PdfObject> i = in.listIterator(); i.hasNext();) {
             PdfObject value = i.next();
