@@ -946,13 +946,13 @@ public class PdfDocument extends Document {
         indentation.imageIndentRight = 0;
 
         try {
-            // we initialize the new page
-            initPage();
-
             if (isTagged(writer)) {
                 flushStructureElementsOnNewPage();
                 writer.getDirectContentUnder().restoreMCBlocks(savedMcBlocks);
             }
+
+            // we initialize the new page
+            initPage();
 
             if (body != null && body.getBackgroundColor() != null) {
                 graphics.rectangle(body);
