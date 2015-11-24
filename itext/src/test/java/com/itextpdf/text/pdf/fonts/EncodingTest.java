@@ -148,4 +148,70 @@ public class EncodingTest {
 
         new CompareTool().compareByContent(outFolder + filename, sourceFolder + "cmp_" + filename, outFolder, "diff");
     }
+
+    @Test
+    public void symbolDefaultFontTest() throws IOException, DocumentException, InterruptedException {
+        String filename = "symbolDefaultFontTest.pdf";
+        BaseFont bf = BaseFont.createFont(BaseFont.SYMBOL, BaseFont.WINANSI, true);
+        Document doc = new Document();
+
+        PdfWriter.getInstance(doc, new FileOutputStream(outFolder + filename));
+        doc.open();
+        doc.newPage();
+        Paragraph p = new Paragraph();
+        p.setFont(new Font(bf));
+        String str = new String();
+        for (int i = 32; i <=254; i++) {
+            str+= (char)i;
+        }
+        p.add(str);
+        doc.add(p);
+        doc.close();
+
+        new CompareTool().compareByContent(outFolder + filename, sourceFolder + "cmp_" + filename, outFolder, "diff");
+    }
+
+    @Test
+    public void symbolFontWinansiTest() throws IOException, DocumentException, InterruptedException {
+        String filename = "symbolFontWinansiTest.pdf";
+        BaseFont bf = BaseFont.createFont(sourceFolder + "Symbols1.ttf", BaseFont.WINANSI, true);
+        Document doc = new Document();
+
+        PdfWriter.getInstance(doc, new FileOutputStream(outFolder + filename));
+        doc.open();
+        doc.newPage();
+        Paragraph p = new Paragraph();
+        p.setFont(new Font(bf));
+        String str = new String();
+        for (int i = 32; i <=254; i++) {
+            str+= (char)i;
+        }
+        p.add(str);
+        doc.add(p);
+        doc.close();
+
+        new CompareTool().compareByContent(outFolder + filename, sourceFolder + "cmp_" + filename, outFolder, "diff");
+    }
+
+    @Test
+    public void symbolFontIdentityHTest() throws IOException, DocumentException, InterruptedException {
+        String filename = "symbolFontIdentityHTest.pdf";
+        BaseFont bf = BaseFont.createFont(sourceFolder + "Symbols1.ttf", BaseFont.IDENTITY_H, true);
+        Document doc = new Document();
+
+        PdfWriter.getInstance(doc, new FileOutputStream(outFolder + filename));
+        doc.open();
+        doc.newPage();
+        Paragraph p = new Paragraph();
+        p.setFont(new Font(bf));
+        String str = new String();
+        for (int i = 32; i <=254; i++) {
+            str+= (char)i;
+        }
+        p.add(str);
+        doc.add(p);
+        doc.close();
+
+        new CompareTool().compareByContent(outFolder + filename, sourceFolder + "cmp_" + filename, outFolder, "diff");
+    }
 }
