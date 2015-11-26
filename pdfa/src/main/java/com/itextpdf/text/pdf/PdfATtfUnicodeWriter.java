@@ -79,20 +79,25 @@ public class PdfATtfUnicodeWriter extends TtfUnicodeWriter {
         PdfIndirectReference ind_font;
         PdfObject pobj;
         PdfIndirectObject obj;
-        PdfStream stream;
-        if (metrics.length == 0) {
-            stream = new PdfStream(new byte[]{(byte)0x80});
-        } else {
-            int top = metrics[metrics.length - 1][0];
-            byte[] bt = new byte[top / 8 + 1];
-            for (int k = 0; k < metrics.length; ++k) {
-                int v = metrics[k][0];
-                bt[v / 8] |= rotbits[v % 8];
+        PdfIndirectReference cidset = null;
+        if (pdfAConformanceLevel == PdfAConformanceLevel.PDF_A_1A || pdfAConformanceLevel == PdfAConformanceLevel.PDF_A_1B) {
+            PdfStream stream;
+            if (metrics.length == 0) {
+                stream = new PdfStream(new byte[]{(byte) 0x80});
+            } else {
+                int top = metrics[metrics.length - 1][0];
+                byte[] bt = new byte[top / 8 + 1];
+                // CID0 have to be added
+                bt[0] |= rotbits[0];
+                for (int k = 0; k < metrics.length; ++k) {
+                    int v = metrics[k][0];
+                    bt[v / 8] |= rotbits[v % 8];
+                }
+                stream = new PdfStream(bt);
+                stream.flateCompress(font.compressionLevel);
             }
-            stream = new PdfStream(bt);
-            stream.flateCompress(font.compressionLevel);
+            cidset = writer.addToBody(stream).getIndirectReference();
         }
-        PdfIndirectReference cidset = writer.addToBody(stream).getIndirectReference();
         if (font.cff) {
             byte b[] = font.readCffFont();
             if (font.subset || font.subsetRanges != null) {
