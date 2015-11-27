@@ -204,7 +204,7 @@ public class PdfDocument extends Document {
 
     static class PdfCatalog extends PdfDictionary {
 
-    	/** The writer writing the PDF for which we are creating this catalog object. */
+        /** The writer writing the PDF for which we are creating this catalog object. */
         PdfWriter writer;
 
         /**
@@ -438,7 +438,7 @@ public class PdfDocument extends Document {
             if (element.type() != Element.DIV) {
                 flushFloatingElements();
             }
-        	// TODO refactor this uber long switch to State/Strategy or something ...
+            // TODO refactor this uber long switch to State/Strategy or something ...
             switch(element.type()) {
                 // Information (headers)
                 case Element.HEADER:
@@ -487,7 +487,7 @@ public class PdfDocument extends Document {
                             boolean newlineSplit = chunk.isNewlineSplit();
                             chunk = overflow;
                             if (!newlineSplit)
-                            	chunk.trimFirstSpace();
+                                chunk.trimFirstSpace();
                         }
                     }
 
@@ -794,10 +794,10 @@ public class PdfDocument extends Document {
                     break;
                 }
                 case Element.WRITABLE_DIRECT:
-                	if (null != writer) {
-                		((WriterOperation)element).write(writer, this);
-                	}
-                	break;
+                    if (null != writer) {
+                        ((WriterOperation)element).write(writer, this);
+                    }
+                    break;
                 case Element.DIV:
                     ensureNewLine();
                     flushLines();
@@ -836,10 +836,10 @@ public class PdfDocument extends Document {
             currentOutline = rootOutline;
         }
         try {
-            initPage();
             if (isTagged(writer)) {
                 openMCDocument = true;
             }
+            initPage();
         }
         catch(DocumentException de) {
             throw new ExceptionConverter(de);
@@ -863,7 +863,6 @@ public class PdfDocument extends Document {
             if (isTagged(writer)) {
                 flushFloatingElements();
                 flushLines();
-                writer.getDirectContent().closeMCBlock(this);
                 writer.flushAcroFields();
                 writer.flushTaggedObjects();
                 if (isPageEmpty()) {
@@ -874,9 +873,13 @@ public class PdfDocument extends Document {
                 }
             } else
                 writer.flushAcroFields();
-            boolean wasImage = imageWait != null;
-            newPage();
-            if (imageWait != null || wasImage) newPage();
+            if (imageWait != null) {
+                newPage();
+            }
+            endPage();
+            if (isTagged(writer)) {
+                writer.getDirectContent().closeMCBlock(this);
+            }
             if (annotationsImp.hasUnusedAnnotations())
                 throw new RuntimeException(MessageLocalization.getComposedMessage("not.all.annotations.could.be.added.to.the.document.the.document.doesn.t.have.enough.pages"));
             PdfPageEvent pageEvent = writer.getPageEvent();
@@ -920,17 +923,10 @@ public class PdfDocument extends Document {
     /**
      * Makes a new page and sends it to the <CODE>PdfWriter</CODE>.
      *
-     * @return a <CODE>boolean</CODE>
+     * @return true if new page is added
      */
     @Override
     public boolean newPage() {
-        try {
-            flushFloatingElements();
-        } catch (DocumentException de) {
-            // maybe this never happens, but it's better to check.
-            throw new ExceptionConverter(de);
-        }
-        lastElementType = -1;
         if (isPageEmpty()) {
             setNewPageSizeAndMargins();
             return false;
@@ -938,9 +934,9 @@ public class PdfDocument extends Document {
         if (!open || close) {
             throw new RuntimeException(MessageLocalization.getComposedMessage("the.document.is.not.open"));
         }
-        PdfPageEvent pageEvent = writer.getPageEvent();
-        if (pageEvent != null)
-            pageEvent.onEndPage(writer, this);
+
+        //we end current page
+        ArrayList<IAccessibleElement> savedMcBlocks = endPage();
 
         //Added to inform any listeners that we are moving to a new page (added by David Freels)
         super.newPage();
@@ -948,6 +944,45 @@ public class PdfDocument extends Document {
         // the following 2 lines were added by Pelikan Stephan
         indentation.imageIndentLeft = 0;
         indentation.imageIndentRight = 0;
+
+        try {
+            if (isTagged(writer)) {
+                flushStructureElementsOnNewPage();
+                writer.getDirectContentUnder().restoreMCBlocks(savedMcBlocks);
+            }
+
+            // we initialize the new page
+            initPage();
+
+            if (body != null && body.getBackgroundColor() != null) {
+                graphics.rectangle(body);
+            }
+        }
+        catch(DocumentException de) {
+            // maybe this never happens, but it's better to check.
+            throw new ExceptionConverter(de);
+        }
+        return true;
+    }
+
+    protected ArrayList<IAccessibleElement> endPage() {
+        if (isPageEmpty()) {
+            return null;
+        }
+
+        ArrayList<IAccessibleElement> savedMcBlocks = null;
+
+        try {
+            flushFloatingElements();
+        } catch (DocumentException de) {
+            // maybe this never happens, but it's better to check.
+            throw new ExceptionConverter(de);
+        }
+        lastElementType = -1;
+
+        PdfPageEvent pageEvent = writer.getPageEvent();
+        if (pageEvent != null)
+            pageEvent.onEndPage(writer, this);
 
         try {
             // we flush the arraylist with recently written lines
@@ -1014,22 +1049,13 @@ public class PdfDocument extends Document {
             else
                 text = null;
 
-            ArrayList<IAccessibleElement> mcBlocks = null;
             if (isTagged(writer)) {
-                mcBlocks = writer.getDirectContent().saveMCBlocks();
+                savedMcBlocks = writer.getDirectContent().saveMCBlocks();
             }
             writer.add(page, new PdfContents(writer.getDirectContentUnder(), graphics, !isTagged(writer) ? text : null, writer.getDirectContent(), pageSize));
-            // we initialize the new page
-            initPage();
 
-            if (isTagged(writer)) {
-                flushStructureElementsOnNewPage();
-                writer.getDirectContentUnder().restoreMCBlocks(mcBlocks);
-            }
-
-            if (body != null && body.getBackgroundColor() != null){
-                graphics.rectangle(body);
-            }
+            annotationsImp.resetAnnotations();
+            writer.resetContent();
         }
         catch(DocumentException de) {
             // maybe this never happens, but it's better to check.
@@ -1038,9 +1064,9 @@ public class PdfDocument extends Document {
         catch (IOException ioe) {
             throw new ExceptionConverter(ioe);
         }
-        return true;
-    }
 
+        return savedMcBlocks;
+    }
 //	[L4] DocListener interface
 
     /**
@@ -1162,10 +1188,8 @@ public class PdfDocument extends Document {
         pageN++;
 
         // initialization of some page objects
-        annotationsImp.resetAnnotations();
         pageResources = new PageResources();
 
-        writer.resetContent();
         if (isTagged(writer)) {
             graphics = writer.getDirectContentUnder().getDuplicate();
             writer.getDirectContent().duplicatedFrom = graphics;
@@ -2596,7 +2620,6 @@ public class PdfDocument extends Document {
      */
 
     protected void add(final Image image) throws PdfException, DocumentException {
-
         if (image.hasAbsoluteY()) {
             graphics.addImage(image);
             pageEmpty = false;
@@ -2702,6 +2725,7 @@ public class PdfDocument extends Document {
             if (loop == 3) {
                 throw new DocumentException(MessageLocalization.getComposedMessage("infinite.table.loop"));
             }
+            currentHeight = indentTop() - ct.getYLine();
             newPage();
             if (isTagged(writer)) {
                 ct.setCanvas(text);

@@ -44,13 +44,14 @@
  */
 package com.itextpdf.text.pdf;
 
+import com.itextpdf.text.BadElementException;
+import com.itextpdf.text.BaseColor;
+import com.itextpdf.text.Image;
+import com.itextpdf.text.pdf.codec.CCITTG4Encoder;
+
 import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 import java.util.Hashtable;
-
-import com.itextpdf.text.BadElementException;
-import com.itextpdf.text.Image;
-import com.itextpdf.text.pdf.codec.CCITTG4Encoder;
 
 /**
  * A DataMatrix 2D barcode generator.
@@ -1268,6 +1269,25 @@ public class BarcodeDatamatrix {
             }
         }
 
+    }
+
+    public void placeBarcode(PdfContentByte cb, BaseColor foreground, float moduleHeight, float moduleWidth) {
+        int w = width + 2 * ws;
+        int h = height + 2 * ws;
+        int stride = (w + 7) / 8;
+        int ptr = 0;
+        cb.setColorFill(foreground);
+        for (int k = 0; k < h; ++k) {
+            int p = k * stride;
+            for (int j = 0; j < w; ++j) {
+                int b = image[p + j / 8] & 0xff;
+                b <<= j % 8;
+                if ((b & 0x80) != 0) {
+                    cb.rectangle(j * moduleWidth, (h - k - 1) * moduleHeight, moduleWidth, moduleHeight);
+                }
+            }
+        }
+        cb.fill();
     }
 
 

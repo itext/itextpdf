@@ -701,7 +701,7 @@ public class PdfStamper
         }
         else {
             if (tempFile.isDirectory())
-                tempFile = File.createTempFile("pdf", null, tempFile);
+                tempFile = File.createTempFile("pdf", ".pdf", tempFile);
             FileOutputStream fout = new FileOutputStream(tempFile);
             stp = new PdfStamper(reader, fout, pdfVersion, append);
             stp.sigApp = new PdfSignatureAppearance(stp.stamper);

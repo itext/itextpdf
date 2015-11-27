@@ -45,6 +45,8 @@
 package com.itextpdf.text.pdf;
 
 import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.log.Logger;
+import com.itextpdf.text.log.LoggerFactory;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -74,17 +76,19 @@ public class PdfATtfUnicodeWriter extends TtfUnicodeWriter {
         font.addRangeUni(longTag, true, font.subset);
         int metrics[][] = longTag.values().toArray(new int[0][]);
         Arrays.sort(metrics, font);
-        PdfIndirectReference ind_font = null;
-        PdfObject pobj = null;
-        PdfIndirectObject obj = null;
+        PdfIndirectReference ind_font;
+        PdfObject pobj;
+        PdfIndirectObject obj;
         PdfIndirectReference cidset = null;
         if (pdfAConformanceLevel == PdfAConformanceLevel.PDF_A_1A || pdfAConformanceLevel == PdfAConformanceLevel.PDF_A_1B) {
             PdfStream stream;
             if (metrics.length == 0) {
-                stream = new PdfStream(new byte[]{(byte)0x80});
+                stream = new PdfStream(new byte[]{(byte) 0x80});
             } else {
                 int top = metrics[metrics.length - 1][0];
                 byte[] bt = new byte[top / 8 + 1];
+                // CID0 have to be added
+                bt[0] |= rotbits[0];
                 for (int k = 0; k < metrics.length; ++k) {
                     int v = metrics[k][0];
                     bt[v / 8] |= rotbits[v % 8];
@@ -98,7 +102,17 @@ public class PdfATtfUnicodeWriter extends TtfUnicodeWriter {
             byte b[] = font.readCffFont();
             if (font.subset || font.subsetRanges != null) {
                 CFFFontSubset cff = new CFFFontSubset(new RandomAccessFileOrArray(b),longTag);
-                b = cff.Process(cff.getNames()[0]);
+                try {
+                    b = cff.Process(cff.getNames()[0]);
+                    //temporary fix for cff subset failure
+                } catch(Exception e) {
+                    LoggerFactory.getLogger(PdfATtfUnicodeWriter.class).error("Issue in CFF font subsetting." +
+                            "Subsetting was disabled", e);
+                    font.setSubset(false);
+                    font.addRangeUni(longTag, true, font.subset);
+                    metrics = longTag.values().toArray(new int[0][]);
+                    Arrays.sort(metrics, font);
+                }
             }
             pobj = new BaseFont.StreamFont(b, "CIDFontType0C", font.compressionLevel);
             obj = writer.addToBody(pobj);

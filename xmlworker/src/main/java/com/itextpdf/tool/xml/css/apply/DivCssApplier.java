@@ -60,10 +60,7 @@ import com.itextpdf.tool.xml.exceptions.LocaleMessages;
 import com.itextpdf.tool.xml.html.HTML;
 import com.itextpdf.tool.xml.net.ImageRetrieve;
 import com.itextpdf.tool.xml.net.exc.NoImageException;
-import com.itextpdf.tool.xml.pipeline.html.HtmlPipeline;
 import com.itextpdf.tool.xml.pipeline.html.HtmlPipelineContext;
-import com.itextpdf.tool.xml.pipeline.html.ImageProvider;
-import com.itextpdf.tool.xml.pipeline.html.UrlLinkResolver;
 
 public class DivCssApplier {
     private final CssUtils utils = CssUtils.getInstance();

@@ -1274,26 +1274,26 @@ public class PdfSignatureAppearance {
         writer.setSigFlags(3);
         PdfDictionary fieldLock = null;
         if (fieldExists) {
-            PdfDictionary merged = af.getFieldItem(name).getMerged(0);
-            writer.markUsed(merged);
-            fieldLock = merged.getAsDict(PdfName.LOCK);
+            PdfDictionary widget = af.getFieldItem(name).getWidget(0);
+            writer.markUsed(widget);
+            fieldLock = widget.getAsDict(PdfName.LOCK);
 
             if (fieldLock == null && this.fieldLock != null) {
-                merged.put(PdfName.LOCK, writer.addToBody(this.fieldLock).getIndirectReference());
+                widget.put(PdfName.LOCK, writer.addToBody(this.fieldLock).getIndirectReference());
                 fieldLock = this.fieldLock;
             }
 
-            merged.put(PdfName.P, writer.getPageReference(getPage()));
-            merged.put(PdfName.V, refSig);
-            PdfObject obj = PdfReader.getPdfObjectRelease(merged.get(PdfName.F));
+            widget.put(PdfName.P, writer.getPageReference(getPage()));
+            widget.put(PdfName.V, refSig);
+            PdfObject obj = PdfReader.getPdfObjectRelease(widget.get(PdfName.F));
             int flags = 0;
             if (obj != null && obj.isNumber())
                 flags = ((PdfNumber)obj).intValue();
             flags |= PdfAnnotation.FLAGS_LOCKED;
-            merged.put(PdfName.F, new PdfNumber(flags));
+            widget.put(PdfName.F, new PdfNumber(flags));
             PdfDictionary ap = new PdfDictionary();
             ap.put(PdfName.N, getAppearance().getIndirectReference());
-            merged.put(PdfName.AP, ap);
+            widget.put(PdfName.AP, ap);
         }
         else {
             PdfFormField sigField = PdfFormField.createSignature(writer);

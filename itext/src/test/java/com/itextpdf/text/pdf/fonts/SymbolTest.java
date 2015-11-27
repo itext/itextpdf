@@ -14,15 +14,17 @@ import com.itextpdf.text.pdf.parser.SimpleTextExtractionStrategy;
 import java.io.File;
 import java.io.FileOutputStream;
 
+import junit.framework.Assert;
+
 import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 
 public class SymbolTest {
-    @Before
-    public void setUp() throws Exception {
+
+    @BeforeClass
+    public static void setUp() throws Exception {
         new File("./target/com/itextpdf/text/pdf/fonts/SymbolFontTest").mkdirs();
     }
 

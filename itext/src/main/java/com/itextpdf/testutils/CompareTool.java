@@ -48,6 +48,7 @@ import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Meta;
 import com.itextpdf.text.Rectangle;
+import com.itextpdf.text.io.RandomAccessSourceFactory;
 import com.itextpdf.text.pdf.*;
 import com.itextpdf.text.pdf.parser.*;
 import com.itextpdf.text.xml.XMLUtil;
@@ -55,11 +56,9 @@ import com.itextpdf.text.xml.xmp.PdfProperties;
 import com.itextpdf.text.xml.xmp.XmpBasicProperties;
 import com.itextpdf.xmp.*;
 import com.itextpdf.xmp.options.SerializeOptions;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.xml.sax.SAXException;
 
+import java.io.*;
+import java.util.*;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -69,8 +68,11 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import java.io.*;
-import java.util.*;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.xml.sax.SAXException;
 
 /**
  * Helper class for tests: uses ghostscript to compare PDFs at a pixel level.
@@ -376,6 +378,10 @@ public class CompareTool {
 
     private int compareByContentErrorsLimit = 1;
     private boolean generateCompareByContentXmlReport = false;
+    private String xmlReportName = "report";
+    private double floatComparisonError = 0;
+    // if false, the error will be relative
+    private boolean absoluteError = true;
 
     public CompareTool() {
         gsExec = System.getProperty("gsExec");
@@ -389,7 +395,7 @@ public class CompareTool {
     private String compare(String outPath, String differenceImagePrefix, Map<Integer, List<Rectangle>> ignoredAreas,
                              List<Integer> equalPages) throws IOException, InterruptedException, DocumentException {
         if (gsExec == null)
-        	return undefinedGsPath;
+            return undefinedGsPath;
         if (!(new File(gsExec).exists())) {
             return new File(gsExec).getAbsolutePath() + " does not exist";
         }
@@ -585,7 +591,37 @@ public class CompareTool {
         this.generateCompareByContentXmlReport = generateCompareByContentXmlReport;
     }
 
-    private String compareByContent(String outPath, String differenceImagePrefix, Map<Integer, List<Rectangle>> ignoredAreas) throws DocumentException, InterruptedException, IOException {
+    /**
+     * Sets the absolute error parameter which will be used in floating point numbers comparison.
+     * @param error the epsilon new value.
+     * @return Returns this.
+     */
+    public CompareTool setFloatAbsoluteError(float error) {
+        this.floatComparisonError = error;
+        this.absoluteError = true;
+        return this;
+    }
+
+    /**
+     * Sets the relative error parameter which will be used in floating point numbers comparison.
+     * @param error the epsilon new value.
+     * @return Returns this.
+     */
+    public CompareTool setFloatRelativeError(float error) {
+        this.floatComparisonError = error;
+        this.absoluteError = false;
+        return this;
+    }
+
+    public String getXmlReportName() {
+        return xmlReportName;
+    }
+
+    public void setXmlReportName(String xmlReportName) {
+        this.xmlReportName = xmlReportName;
+    }
+
+    protected String compareByContent(String outPath, String differenceImagePrefix, Map<Integer, List<Rectangle>> ignoredAreas) throws DocumentException, InterruptedException, IOException {
         System.out.print("[itext] INFO  Comparing by content..........");
         PdfReader outReader = new PdfReader(outPdf);
         outPages = new ArrayList<PdfDictionary>();
@@ -625,7 +661,7 @@ public class CompareTool {
 
         if (generateCompareByContentXmlReport) {
             try {
-                compareResult.writeReportToXml(new FileOutputStream(outPath + "/report.xml"));
+                compareResult.writeReportToXml(new FileOutputStream(outPath + "/" + xmlReportName + ".xml"));
             } catch (Exception exc) {}
         }
 
@@ -701,7 +737,7 @@ public class CompareTool {
         if (cmpDirectObj.isDictionary() && ((PdfDictionary)cmpDirectObj).isPage()) {
             if (!outDirectObj.isDictionary() || !((PdfDictionary)outDirectObj).isPage()) {
                 if (compareResult != null && currentPath != null)
-                    compareResult.addError(currentPath, String.format("Expected a page. Found not a page."));
+                    compareResult.addError(currentPath, "Expected a page. Found not a page.");
                 return false;
             }
             RefKey cmpRefKey = new RefKey((PRIndirectReference)cmpObj);
@@ -736,6 +772,9 @@ public class CompareTool {
         } else if (cmpDirectObj.isBoolean()) {
             if (!compareBooleansExtended((PdfBoolean) outDirectObj, (PdfBoolean) cmpDirectObj, currentPath, compareResult))
                 return false;
+        } else if (cmpDirectObj instanceof PdfLiteral) {
+            if (!compareLiteralsExtended((PdfLiteral) outDirectObj, (PdfLiteral) cmpDirectObj, currentPath, compareResult))
+                return false;
         } else if (outDirectObj.isNull() && cmpDirectObj.isNull()) {
         } else {
             throw new UnsupportedOperationException();
@@ -756,6 +795,7 @@ public class CompareTool {
         // Iterate through the union of the keys of the cmp and out dictionaries!
         Set<PdfName> mergedKeys = new TreeSet<PdfName>(cmpDict.getKeys());
         mergedKeys.addAll(outDict.getKeys());
+
         for (PdfName key : mergedKeys) {
             if (key.compareTo(PdfName.PARENT) == 0 || key.compareTo(PdfName.P) == 0) continue;
             if (outDict.isStream() && cmpDict.isStream() && (key.equals(PdfName.FILTER) || key.equals(PdfName.LENGTH))) continue;
@@ -778,6 +818,16 @@ public class CompareTool {
                     continue;
                 }
             }
+
+            if (floatComparisonError != 0 && cmpDict.isPage() && outDict.isPage() && key.equals(PdfName.CONTENTS)) {
+                if (!compareContentStreamsByParsingExtended(outDict.getDirectObject(key), cmpDict.getDirectObject(key),
+                        (PdfDictionary) outDict.getDirectObject(PdfName.RESOURCES), (PdfDictionary) cmpDict.getDirectObject(PdfName.RESOURCES),
+                        currentPath, compareResult)) {
+                    dictsAreSame = false;
+                }
+                continue;
+            }
+
             if (currentPath != null)
                 currentPath.pushDictItemToPath(key.toString());
             dictsAreSame = compareObjects(outDict.get(key), cmpDict.get(key), currentPath, compareResult) && dictsAreSame;
@@ -787,6 +837,82 @@ public class CompareTool {
                 return false;
         }
         return dictsAreSame;
+    }
+
+    public boolean compareContentStreamsByParsing(PdfObject outObj, PdfObject cmpObj) throws IOException {
+        return compareContentStreamsByParsingExtended(outObj, cmpObj, null, null, null, null);
+    }
+
+    public boolean compareContentStreamsByParsing(PdfObject outObj, PdfObject cmpObj, PdfDictionary outResources, PdfDictionary cmpResources) throws IOException {
+        return compareContentStreamsByParsingExtended(outObj, cmpObj, outResources, cmpResources, null, null);
+    }
+
+    private boolean compareContentStreamsByParsingExtended(PdfObject outObj, PdfObject cmpObj, PdfDictionary outResources, PdfDictionary cmpResources, ObjectPath currentPath, CompareResult compareResult) throws IOException {
+        if (outObj.type() != outObj.type()) {
+            compareResult.addError(currentPath, String.format(
+                    "PdfObject. Types are different. Expected: %s. Found: %s", cmpObj.type(), outObj.type()));
+            return false;
+        }
+
+        if (outObj.isArray()) {
+            PdfArray outArr = (PdfArray) outObj;
+            PdfArray cmpArr = (PdfArray) cmpObj;
+            if (cmpArr.size() != outArr.size()) {
+                compareResult.addError(currentPath, String.format(
+                        "PdfArray. Sizes are different. Expected: %s. Found: %s", cmpArr.size(), outArr.size()));
+                return false;
+            }
+            for (int i = 0; i < cmpArr.size(); i++) {
+                if (!compareContentStreamsByParsingExtended(outArr.getPdfObject(i), cmpArr.getPdfObject(i), outResources, cmpResources, currentPath, compareResult)) {
+                    return false;
+                }
+            }
+        }
+
+        PRTokeniser cmpTokeniser = new PRTokeniser(new RandomAccessFileOrArray(
+                new RandomAccessSourceFactory().createSource(ContentByteUtils.getContentBytesFromContentObject(cmpObj))));
+        PRTokeniser outTokeniser = new PRTokeniser(new RandomAccessFileOrArray(
+                new RandomAccessSourceFactory().createSource(ContentByteUtils.getContentBytesFromContentObject(outObj))));
+
+        PdfContentParser cmpPs = new PdfContentParser(cmpTokeniser);
+        PdfContentParser outPs = new PdfContentParser(outTokeniser);
+
+        ArrayList<PdfObject> cmpOperands = new ArrayList<PdfObject>();
+        ArrayList<PdfObject> outOperands = new ArrayList<PdfObject>();
+
+        while (cmpPs.parse(cmpOperands).size() > 0) {
+            outPs.parse(outOperands);
+            if (cmpOperands.size() != outOperands.size()) {
+                compareResult.addError(currentPath, String.format(
+                        "PdfObject. Different commands lengths. Expected: %s. Found: %s", cmpOperands.size(), outOperands.size()));
+                return false;
+            }
+            if (cmpOperands.size() == 1 && compareLiterals((PdfLiteral) cmpOperands.get(0), new PdfLiteral("BI")) && compareLiterals((PdfLiteral) outOperands.get(0), new PdfLiteral("BI"))) {
+                PRStream cmpStr = (PRStream) cmpObj;
+                PRStream outStr = (PRStream) outObj;
+                if (null != outStr.getDirectObject(PdfName.RESOURCES) && null != cmpStr.getDirectObject(PdfName.RESOURCES)) {
+                    outResources = (PdfDictionary) outStr.getDirectObject(PdfName.RESOURCES);
+                    cmpResources = (PdfDictionary) cmpStr.getDirectObject(PdfName.RESOURCES);
+                }
+                if (!compareInlineImagesExtended(outPs, cmpPs, outResources, cmpResources, currentPath, compareResult)) {
+                    return false;
+                }
+                continue;
+            }
+            for (int i = 0; i < cmpOperands.size(); i++) {
+                if (!compareObjects(outOperands.get(i), cmpOperands.get(i), currentPath, compareResult)) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    private boolean compareInlineImagesExtended(PdfContentParser outPs, PdfContentParser cmpPs, PdfDictionary outDict, PdfDictionary cmpDict, ObjectPath currentPath, CompareResult compareResult) throws IOException {
+        InlineImageInfo cmpInfo = InlineImageUtils.parseInlineImage(cmpPs, cmpDict);
+        InlineImageInfo outInfo = InlineImageUtils.parseInlineImage(outPs, outDict);
+        return compareObjects(outInfo.getImageDictionary(), cmpInfo.getImageDictionary(), currentPath, compareResult) &&
+                Arrays.equals(outInfo.getSamples(), cmpInfo.getSamples());
     }
 
     public boolean compareStreams(PRStream outStream, PRStream cmpStream) throws IOException {
@@ -801,29 +927,38 @@ public class CompareTool {
             outStreamBytes = PdfReader.decodeBytes(outStreamBytes, outStream);
             cmpStreamBytes = PdfReader.decodeBytes(cmpStreamBytes, cmpStream);
         }
-        if (Arrays.equals(outStreamBytes, cmpStreamBytes)) {
-            return compareDictionariesExtended(outStream, cmpStream, currentPath, compareResult);
+        if (floatComparisonError != 0 &&
+                PdfName.XOBJECT.equals(cmpStream.getDirectObject(PdfName.TYPE)) &&
+                PdfName.XOBJECT.equals(outStream.getDirectObject(PdfName.TYPE)) &&
+                PdfName.FORM.equals(cmpStream.getDirectObject(PdfName.SUBTYPE)) &&
+                PdfName.FORM.equals(outStream.getDirectObject(PdfName.SUBTYPE))) {
+            return compareContentStreamsByParsingExtended(outStream, cmpStream, outStream.getAsDict(PdfName.RESOURCES), cmpStream.getAsDict(PdfName.RESOURCES), currentPath, compareResult) &&
+                    compareDictionariesExtended(outStream, cmpStream, currentPath, compareResult);
         } else {
-            if (cmpStreamBytes.length != outStreamBytes.length) {
-                if (compareResult != null && currentPath != null) {
-                    compareResult.addError(currentPath, String.format("PRStream. Lengths are different. Expected: %s. Found: %s", cmpStreamBytes.length, outStreamBytes.length));
-                }
+            if (Arrays.equals(outStreamBytes, cmpStreamBytes)) {
+                return compareDictionariesExtended(outStream, cmpStream, currentPath, compareResult);
             } else {
-                for (int i = 0; i < cmpStreamBytes.length; i++) {
-                    if (cmpStreamBytes[i] != outStreamBytes[i]) {
-                        int l = Math.max(0, i - 10);
-                        int r = Math.min(cmpStreamBytes.length, i + 10);
-                        if (compareResult != null && currentPath != null) {
-                            currentPath.pushOffsetToPath(i);
-                            compareResult.addError(currentPath, String.format("PRStream. The bytes differ at index %s. Expected: %s (%s). Found: %s (%s)",
-                                    i, new String(new byte[]{cmpStreamBytes[i]}), new String(cmpStreamBytes, l, r - l).replaceAll("\\r|\\n", ""),
-                                    new String(new byte[]{outStreamBytes[i]}), new String(outStreamBytes, l, r - l).replaceAll("\\r|\\n", "")));
-                            currentPath.pop();
+                if (cmpStreamBytes.length != outStreamBytes.length) {
+                    if (compareResult != null && currentPath != null) {
+                        compareResult.addError(currentPath, String.format("PRStream. Lengths are different. Expected: %s. Found: %s", cmpStreamBytes.length, outStreamBytes.length));
+                    }
+                } else {
+                    for (int i = 0; i < cmpStreamBytes.length; i++) {
+                        if (cmpStreamBytes[i] != outStreamBytes[i]) {
+                            int l = Math.max(0, i - 10);
+                            int r = Math.min(cmpStreamBytes.length, i + 10);
+                            if (compareResult != null && currentPath != null) {
+                                currentPath.pushOffsetToPath(i);
+                                compareResult.addError(currentPath, String.format("PRStream. The bytes differ at index %s. Expected: %s (%s). Found: %s (%s)",
+                                        i, new String(new byte[]{cmpStreamBytes[i]}), new String(cmpStreamBytes, l, r - l).replaceAll("\\n", "\\\\n"),
+                                        new String(new byte[]{outStreamBytes[i]}), new String(outStreamBytes, l, r - l).replaceAll("\\n", "\\\\n")));
+                                currentPath.pop();
+                            }
                         }
                     }
                 }
+                return false;
             }
-            return false;
         }
     }
 
@@ -870,11 +1005,15 @@ public class CompareTool {
     }
 
     public boolean compareNumbers(PdfNumber outNumber, PdfNumber cmpNumber) {
-        return cmpNumber.doubleValue() == outNumber.doubleValue();
+        double difference = Math.abs(outNumber.doubleValue() - cmpNumber.doubleValue());
+        if (!absoluteError && cmpNumber.doubleValue() != 0) {
+            difference /= cmpNumber.doubleValue();
+        }
+        return difference <= floatComparisonError;
     }
 
     private boolean compareNumbersExtended(PdfNumber outNumber, PdfNumber cmpNumber, ObjectPath currentPath, CompareResult compareResult) {
-        if (cmpNumber.doubleValue() == outNumber.doubleValue()) {
+        if (compareNumbers(outNumber, cmpNumber)) {
             return true;
         } else {
             if (compareResult != null && currentPath != null)
@@ -912,6 +1051,21 @@ public class CompareTool {
                     }
                 }
             }
+            return false;
+        }
+    }
+
+    public boolean compareLiterals(PdfLiteral outLiteral, PdfLiteral cmpLiteral) {
+        return Arrays.equals(cmpLiteral.getBytes(), outLiteral.getBytes());
+    }
+
+    private boolean compareLiteralsExtended(PdfLiteral outLiteral, PdfLiteral cmpLiteral, ObjectPath currentPath, CompareResult compareResult) {
+        if (compareLiterals(outLiteral, cmpLiteral)) {
+            return true;
+        } else {
+            if (compareResult != null && currentPath != null)
+                compareResult.addError(currentPath, String.format(
+                        "PdfLiteral. Expected: %s. Found: %s", cmpLiteral, outLiteral));
             return false;
         }
     }
@@ -1278,5 +1432,9 @@ public class CompareTool {
 
         public void renderImage(ImageRenderInfo renderInfo) {
         }
+
+
     }
+
+
 }

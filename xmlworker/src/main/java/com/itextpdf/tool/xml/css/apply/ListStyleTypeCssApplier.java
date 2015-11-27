@@ -162,6 +162,15 @@ public class ListStyleTypeCssApplier {
 			}
 		} else if (t.getName().equalsIgnoreCase(HTML.Tag.OL)) {
 			lst = new List(List.ORDERED);
+			String type = t.getAttributes().get("type");
+			if (type != null) {
+				if (type.equals("A")) {
+					lst.setLettered(true);
+				} else if (type.equals("a")) {
+					lst.setLettered(true);
+					lst.setLowercase(true);
+				}
+			}
 			synchronizeSymbol(fontSize, lst, color);
 			lst.setAutoindent(true);
 		} else if (t.getName().equalsIgnoreCase(HTML.Tag.UL)) {

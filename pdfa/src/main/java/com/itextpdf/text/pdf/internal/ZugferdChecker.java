@@ -44,13 +44,23 @@
  */
 package com.itextpdf.text.pdf.internal;
 
-import com.itextpdf.text.DocumentException;
+
 import com.itextpdf.text.ExceptionConverter;
 import com.itextpdf.text.error_messages.MessageLocalization;
-import com.itextpdf.text.pdf.*;
+import com.itextpdf.text.pdf.AFRelationshipValue;
+import com.itextpdf.text.pdf.PdfAConformanceException;
+import com.itextpdf.text.pdf.PdfAConformanceLevel;
+import com.itextpdf.text.pdf.PdfAStamperImp;
+import com.itextpdf.text.pdf.PdfArray;
+import com.itextpdf.text.pdf.PdfDictionary;
+import com.itextpdf.text.pdf.PdfFileSpecification;
+import com.itextpdf.text.pdf.PdfName;
+import com.itextpdf.text.pdf.PdfReader;
+import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.text.xml.xmp.PdfAXmpWriter;
 import com.itextpdf.xmp.XMPException;
 import com.itextpdf.xmp.XMPMeta;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -66,18 +76,41 @@ public class ZugferdChecker extends PdfA3Checker {
     @Override
     protected void checkFileSpec(PdfWriter writer, int key, Object obj1) {
         super.checkFileSpec(writer, key, obj1);
-        attachments.add((PdfFileSpecification)obj1);
+        attachments.add((PdfFileSpecification) obj1);
     }
 
     @Override
     public void close(PdfWriter writer) {
         super.close(writer);
+
         boolean ok = false;
-        XMPMeta xmpMeta = writer.getXmpWriter().getXmpMeta();
+        XMPMeta xmpMeta = null;
+        if (writer.getXmpWriter() == null) {
+            if (writer instanceof PdfAStamperImp) {
+                xmpMeta = ((PdfAStamperImp) writer).getXmpMeta();
+                PdfReader pdfReader = ((PdfAStamperImp) writer).getPdfReader();
+                PdfArray pdfArray = pdfReader.getCatalog().getAsArray(PdfName.AF);
+                if (pdfArray != null) {
+                    for (int i = 0; i < pdfArray.size(); i++) {
+                        PdfFileSpecification pdfFileSpecification = new PdfFileSpecification();
+                        pdfFileSpecification.putAll((PdfDictionary) pdfArray.getDirectObject(i));
+                        attachments.add(pdfFileSpecification);
+                    }
+                }
+            }
+        } else {
+            xmpMeta = writer.getXmpWriter().getXmpMeta();
+        }
+
+        if (xmpMeta == null) {
+            writer.createXmpMetadata();
+        }
+
         try {
             String docFileName = xmpMeta.getPropertyString(PdfAXmpWriter.zugferdSchemaNS, PdfAXmpWriter.zugferdDocumentFileName);
             for (PdfFileSpecification attachment : attachments) {
-                if (docFileName.equals(attachment.getAsString(PdfName.UF).toString())) {
+                if ((attachment.getAsString(PdfName.UF) != null && docFileName.equals(attachment.getAsString(PdfName.UF).toString()))
+                        || (attachment.getAsString(PdfName.F) != null && docFileName.equals(attachment.getAsString(PdfName.F).toString()))) {
                     PdfName relationship = attachment.getAsName(PdfName.AFRELATIONSHIP);
                     if (!AFRelationshipValue.Alternative.equals(relationship)) {
                         attachments.clear();
@@ -96,7 +129,6 @@ public class ZugferdChecker extends PdfA3Checker {
             throw new PdfAConformanceException(xmpMeta, MessageLocalization.getComposedMessage("zugferd.xmp.schema.shall.contain.attachment.name"));
         }
     }
-
 
 
 }

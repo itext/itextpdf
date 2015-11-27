@@ -453,12 +453,8 @@ public class PdfPTable implements LargeElement, Spaceable, IAccessibleElement {
         if (columnWidth.length != getNumberOfColumns()) {
             throw new IllegalArgumentException(MessageLocalization.getComposedMessage("wrong.number.of.columns"));
         }
-        float totalWidth = 0;
-        for (int k = 0; k < columnWidth.length; ++k) {
-            totalWidth += columnWidth[k];
-        }
+        setTotalWidth(columnWidth);
         widthPercentage = totalWidth / (pageSize.getRight() - pageSize.getLeft()) * 100f;
-        setWidths(columnWidth);
     }
 
     /**

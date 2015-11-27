@@ -55,13 +55,13 @@ import com.itextpdf.text.BaseColor;
 public class TableStyleValues {
 	 	private float horBorderSpacing;
 	 	private float verBorderSpacing;
-		private float borderLeftWidth;
+		private Float borderLeftWidth = null;
 		private BaseColor borderLeftColor;
-		private float borderRightWidth;
+		private Float borderRightWidth = null;
 		private BaseColor borderRightColor;
-		private float borderTopWidth;
+		private Float borderTopWidth = null;
 		private BaseColor borderTopColor;
-		private float borderBottomWidth;
+		private Float borderBottomWidth = null;
 		private BaseColor borderBottomColor;
 		private boolean isLastInRow = false;
 		private BaseColor background;
@@ -113,6 +113,15 @@ public class TableStyleValues {
 		 * @return the borderLeftWidth
 		 */
 		public float getBorderWidthLeft() {
+
+			return getBorderWidthLeft(true);
+		}
+		/**
+		 * @return the borderLeftWidth
+		 */
+		public Float getBorderWidthLeft(boolean defaultIfNotSet) {
+			if(borderLeftWidth == null && defaultIfNotSet)
+				return 0f;
 			return borderLeftWidth;
 		}
 		/**
@@ -137,6 +146,15 @@ public class TableStyleValues {
 		 * @return the borderRightWidth
 		 */
 		public float getBorderWidthRight() {
+			return getBorderWidthRight(true);
+		}
+		/**
+		 * @return the borderRightWidth
+		 */
+		public Float getBorderWidthRight(boolean defaultIfNotSet) {
+			if (borderRightWidth == null && defaultIfNotSet) {
+				return 0f;
+			}
 			return borderRightWidth;
 		}
 		/**
@@ -161,6 +179,16 @@ public class TableStyleValues {
 		 * @return the borderTopWidth
 		 */
 		public float getBorderWidthTop() {
+			return getBorderWidthTop(true);
+		}
+		/**
+		 * @return the borderTopWidth
+		 */
+		public Float getBorderWidthTop(boolean defaultIfNotSet) {
+			if (borderTopWidth == null && defaultIfNotSet) {
+				return 0f;
+			}
+
 			return borderTopWidth;
 		}
 		/**
@@ -185,6 +213,16 @@ public class TableStyleValues {
 		 * @return the borderBottomWidth
 		 */
 		public float getBorderWidthBottom() {
+			return getBorderWidthBottom(true);
+		}
+		/**
+		 * @return the borderBottomWidth
+		 */
+		public Float getBorderWidthBottom(boolean defaultIfNotSet) {
+			if (borderBottomWidth == null && defaultIfNotSet) {
+				return 0f;
+			}
+
 			return borderBottomWidth;
 		}
 		/**

@@ -76,7 +76,7 @@ public class PdfAnnotationsImp {
      * This is the array containing the references to annotations
      * that were added to the document.
      */
-    protected ArrayList<PdfAnnotation> annotations;
+    protected ArrayList<PdfAnnotation> annotations = new ArrayList<PdfAnnotation>();
 
     /**
      * This is an array containing references to some delayed annotations

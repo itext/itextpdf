@@ -111,6 +111,11 @@ public class PdfDictionary extends PdfObject {
         hashMap = new HashMap<PdfName, PdfObject>();
     }
 
+    public PdfDictionary(int capacity) {
+        super(DICTIONARY);
+        hashMap = new HashMap<PdfName, PdfObject>(capacity);
+    }
+
     /**
      * Constructs a <CODE>PdfDictionary</CODE>-object of a certain type.
      *

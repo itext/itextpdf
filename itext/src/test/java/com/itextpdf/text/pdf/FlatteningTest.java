@@ -76,8 +76,8 @@ public class FlatteningTest {
         final String CMP_FOLDER = RESOURCES_FOLDER + "cmp/";
         File inputFolder = new File(INPUT_FOLDER);
 
-        if ( !inputFolder.exists() )
-            Assert.fail("Input folder can't be found (" + INPUT_FOLDER + ")" );
+        if (!inputFolder.exists())
+            Assert.fail("Input folder can't be found (" + INPUT_FOLDER + ")");
 
         new File(OUTPUT_FOLDER).mkdirs();
 
@@ -87,7 +87,7 @@ public class FlatteningTest {
             }
         });
 
-        for ( String file : files ) {
+        for (String file : files) {
             // flatten fields
             PdfReader reader = new PdfReader(INPUT_FOLDER + file);
             PdfStamper stamper = new PdfStamper(reader, new FileOutputStream(OUTPUT_FOLDER + file));
@@ -105,12 +105,12 @@ public class FlatteningTest {
 
     @Test
     public void testFlatteningGenerateAppearances1() throws IOException, DocumentException, InterruptedException {
-        
+
         new File(OUTPUT_FOLDER).mkdirs();
 
         final String OUT = "noappearances-needapp-false_override-false.pdf";
         testFlatteningGenerateAppearance(RESOURCES_FOLDER + "noappearances-needapp-false.pdf", OUTPUT_FOLDER + OUT, false);
-        
+
         CompareTool compareTool = new CompareTool();
         String errorMessage = compareTool.compare(OUTPUT_FOLDER + OUT, RESOURCES_FOLDER + "cmp_" + OUT, OUTPUT_FOLDER, "diff");
         if (errorMessage != null) {
@@ -120,12 +120,12 @@ public class FlatteningTest {
 
     @Test
     public void testFlatteningGenerateAppearances2() throws IOException, DocumentException, InterruptedException {
-        
+
         new File(OUTPUT_FOLDER).mkdirs();
 
         final String OUT = "noappearances-needapp-false_override-true.pdf";
         testFlatteningGenerateAppearance(RESOURCES_FOLDER + "noappearances-needapp-false.pdf", OUTPUT_FOLDER + OUT, true);
-        
+
         CompareTool compareTool = new CompareTool();
         String errorMessage = compareTool.compare(OUTPUT_FOLDER + OUT, RESOURCES_FOLDER + "cmp_" + OUT, OUTPUT_FOLDER, "diff");
         if (errorMessage != null) {
@@ -135,7 +135,7 @@ public class FlatteningTest {
 
     @Test
     public void testFlatteningGenerateAppearances3() throws IOException, DocumentException, InterruptedException {
-        
+
         new File(OUTPUT_FOLDER).mkdirs();
 
         final String OUT = "noappearances-needapp-false_override-none.pdf";
@@ -150,12 +150,12 @@ public class FlatteningTest {
 
     @Test
     public void testFlatteningGenerateAppearances4() throws IOException, DocumentException, InterruptedException {
-        
+
         new File(OUTPUT_FOLDER).mkdirs();
 
         final String OUT = "noappearances-needapp-true_override-false.pdf";
         testFlatteningGenerateAppearance(RESOURCES_FOLDER + "noappearances-needapp-true.pdf", OUTPUT_FOLDER + OUT, false);
-     
+
         CompareTool compareTool = new CompareTool();
         String errorMessage = compareTool.compare(OUTPUT_FOLDER + OUT, RESOURCES_FOLDER + "cmp_" + OUT, OUTPUT_FOLDER, "diff");
         if (errorMessage != null) {
@@ -165,7 +165,7 @@ public class FlatteningTest {
 
     @Test
     public void testFlatteningGenerateAppearances5() throws IOException, DocumentException, InterruptedException {
-        
+
         new File(OUTPUT_FOLDER).mkdirs();
 
         final String OUT = "noappearances-needapp-true_override-true.pdf";
@@ -180,12 +180,12 @@ public class FlatteningTest {
 
     @Test
     public void testFlatteningGenerateAppearances6() throws IOException, DocumentException, InterruptedException {
-        
+
         new File(OUTPUT_FOLDER).mkdirs();
 
         final String OUT = "noappearances-needapp-true_override-none.pdf";
         testFlatteningGenerateAppearance(RESOURCES_FOLDER + "noappearances-needapp-true.pdf", OUTPUT_FOLDER + OUT, null);
-        
+
         CompareTool compareTool = new CompareTool();
         String errorMessage = compareTool.compare(OUTPUT_FOLDER + OUT, RESOURCES_FOLDER + "cmp_" + OUT, OUTPUT_FOLDER, "diff");
         if (errorMessage != null) {
@@ -255,7 +255,7 @@ public class FlatteningTest {
 
     @Test
     public void testRegeneratingFieldsTrue() throws IOException, DocumentException, InterruptedException {
-        
+
         new File(OUTPUT_FOLDER).mkdirs();
 
         String file = "regenerateField_true.pdf";
@@ -299,6 +299,22 @@ public class FlatteningTest {
         // compare
         CompareTool compareTool = new CompareTool();
         String errorMessage = compareTool.compareByContent(OUTPUT_FOLDER + file, RESOURCES_FOLDER + file, OUTPUT_FOLDER, "diff");
+        if (errorMessage != null) {
+            Assert.fail(errorMessage);
+        }
+    }
+
+    @Test
+    public void testAnnotationFlatteningWithSkewAndRotation() throws IOException, DocumentException, InterruptedException {
+        String file = "annotationWithTransformMatrix.pdf";
+        PdfReader reader = new PdfReader(RESOURCES_FOLDER + file);
+        PdfStamper stamper = new PdfStamper(reader, new FileOutputStream(OUTPUT_FOLDER + file));
+        stamper.getWriter().setCompressionLevel(0);
+        stamper.setAnnotationFlattening(true);
+        stamper.close();
+        // compare
+        CompareTool compareTool = new CompareTool();
+        String errorMessage = compareTool.compareByContent(OUTPUT_FOLDER + file, RESOURCES_FOLDER + "cmp_" + file, OUTPUT_FOLDER, "diff");
         if (errorMessage != null) {
             Assert.fail(errorMessage);
         }

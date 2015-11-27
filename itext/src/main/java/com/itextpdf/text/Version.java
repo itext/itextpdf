@@ -55,7 +55,10 @@ import java.lang.reflect.Method;
 public final class Version {
 
 	// membervariables
-
+    
+        /** String that will indicate if the AGPL version is used. */
+        public static String AGPL = " (AGPL-version)";
+    
 	/** The iText version instance. */
 	private static Version version = null;
 	/**
@@ -68,7 +71,7 @@ public final class Version {
 	 * This String contains the version number of this iText release.
 	 * For debugging purposes, we request you NOT to change this constant.
 	 */
-	private String release = "5.5.7";
+	private String release = "5.5.8";
 	/**
 	 * This String contains the iText version as shown in the producer line.
 	 * iText is a product developed by iText Group NV.
@@ -128,7 +131,7 @@ public final class Version {
                         throw new Exception();
                     }
                 } catch (Exception e) {
-                    version.iTextVersion += " (AGPL-version)";
+                    version.iTextVersion += AGPL;
                 }
             }
 		}
@@ -172,5 +175,13 @@ public final class Version {
      */
     public String getKey() {
     	return key;
+    }
+    
+    /**
+     * Checks if the AGPL version is used.
+     * @return returns true if the AGPL version is used.
+     */
+    public static boolean isAGPLVersion() {
+        return getInstance().getVersion().indexOf(AGPL) > 0;
     }
 }

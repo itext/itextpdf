@@ -215,7 +215,7 @@ public class HtmlCellCssApplier {
 		}
 		if(key.contains("style")) {
 //			If any, which are the border styles in iText? simulate in the borderevent?
-			if(values.getBorderWidthTop() == 0){
+			if(values.getBorderWidthTop(false) == null){
 				values.setBorderWidthTop(2.25f);
 			}
 		}
@@ -231,7 +231,7 @@ public class HtmlCellCssApplier {
 		}
 		if(key.contains("style")) {
 //			If any, which are the border styles in iText? simulate in the borderevent?
-			if(values.getBorderWidthBottom() == 0){
+			if(values.getBorderWidthBottom(false) == null){
 				values.setBorderWidthBottom(2.25f);
 			}
 		}
@@ -247,7 +247,7 @@ public class HtmlCellCssApplier {
 		}
 		if(key.contains("style")) {
 //			If any, which are the border styles in iText? simulate in the borderevent?
-			if(values.getBorderWidthLeft() == 0){
+			if(values.getBorderWidthLeft(false) == null){
 				values.setBorderWidthLeft(2.25f);
 			}
 		}
@@ -263,7 +263,7 @@ public class HtmlCellCssApplier {
 		}
 		if(key.contains("style")) {
 //			If any, which are the border styles in iText? simulate in the borderevent?
-			if(values.getBorderWidthRight() == 0){
+			if(values.getBorderWidthRight(false) == null){
 				values.setBorderWidthRight(2.25f);
 			}
 		}
