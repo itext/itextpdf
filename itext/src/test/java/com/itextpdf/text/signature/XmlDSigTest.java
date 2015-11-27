@@ -7,7 +7,7 @@ import com.itextpdf.text.pdf.security.MakeXmlSignature;
 import com.itextpdf.text.pdf.security.PrivateKeySignature;
 import com.itextpdf.text.pdf.security.SecurityConstants;
 import org.apache.jcp.xml.dsig.internal.dom.DOMKeyInfoFactory;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.spongycastle.jce.provider.BouncyCastleProvider;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
