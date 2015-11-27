@@ -10,7 +10,7 @@
     <artifactId>itextpdf</artifactId>
     <packaging>jar</packaging>
     <name>iText, a Free Java-PDF library</name>
-    <version>5.5.8-SNAPSHOT</version>
+    <version>5.5.8</version>
     <description>iText, a free Java-PDF library</description>
     <!-- General Info -->
     <url>http://itextpdf.com</url>
