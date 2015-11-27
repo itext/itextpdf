@@ -47,8 +47,8 @@ package com.itextpdf.testutils;
 import com.itextpdf.text.log.Logger;
 import com.itextpdf.text.log.LoggerFactory;
 
-import javax.management.OperationsException;
 import java.io.File;
+import java.io.IOException;
 
 public abstract class ITextTest {
 
@@ -58,7 +58,7 @@ public abstract class ITextTest {
         LOGGER.info("Starting test.");
         String outPdf = getOutPdf();
         if (outPdf == null || outPdf.length() == 0)
-            throw new OperationsException("outPdf cannot be empty!");
+            throw new IOException("outPdf cannot be empty!");
         makePdf(outPdf);
         assertPdf(outPdf);
         comparePdf(outPdf, getCmpPdf());

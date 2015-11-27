@@ -255,12 +255,12 @@ public class AcroFieldsTest {
     }
 
     @Test
-    public void flatteningRadioButtonFieldsTest() throws IOException, DocumentException, InterruptedException {
+    public void flatteningRadioButtonFields1() throws IOException, DocumentException, InterruptedException {
 
-        String outFile = outFolder+"flatteningRadioButtonFieldsTest.pdf";
+        String outFile = outFolder+"flatteningRadioButtonFields1.pdf";
         FileOutputStream file = new FileOutputStream(outFile);
 
-        PdfReader reader = new PdfReader(new FileInputStream(sourceFolder+"radios_src.pdf"));
+        PdfReader reader = new PdfReader(new FileInputStream(sourceFolder+"radios_src1.pdf"));
 
         PdfStamper stamper = new PdfStamper(reader, file);
         AcroFields acroFields = stamper.getAcroFields();
@@ -268,7 +268,27 @@ public class AcroFieldsTest {
         stamper.close();
 
         CompareTool compareTool = new CompareTool();
-        String errorMessage = compareTool.compareByContent(outFile, sourceFolder + "cmp_flatteningRadioButtonFieldsTest.pdf", outFolder, "diff_");
+        String errorMessage = compareTool.compareByContent(outFile, sourceFolder + "cmp_flatteningRadioButtonFields1.pdf", outFolder, "diff_");
+        if (errorMessage != null) {
+            Assert.fail(errorMessage);
+        }
+    }
+
+    @Test
+    public void flatteningRadioButtonFields2() throws IOException, DocumentException, InterruptedException {
+
+        String outFile = outFolder+"flatteningRadioButtonFields2.pdf";
+        FileOutputStream file = new FileOutputStream(outFile);
+
+        PdfReader reader = new PdfReader(new FileInputStream(sourceFolder+"radios_src2.pdf"));
+
+        PdfStamper stamper = new PdfStamper(reader, file);
+        AcroFields acroFields = stamper.getAcroFields();
+        acroFields.setField("radiogroup", "1");
+        stamper.close();
+
+        CompareTool compareTool = new CompareTool();
+        String errorMessage = compareTool.compareByContent(outFile, sourceFolder + "cmp_flatteningRadioButtonFields2.pdf", outFolder, "diff_");
         if (errorMessage != null) {
             Assert.fail(errorMessage);
         }

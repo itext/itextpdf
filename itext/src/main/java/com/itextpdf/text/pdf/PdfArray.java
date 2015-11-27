@@ -82,6 +82,11 @@ public class PdfArray extends PdfObject implements Iterable<PdfObject> {
         arrayList = new ArrayList<PdfObject>();
     }
 
+    public PdfArray(int capacity) {
+        super(ARRAY);
+        arrayList = new ArrayList<PdfObject>(capacity);
+    }
+
     /**
      * Constructs an <CODE>PdfArray</CODE>-object, containing 1
      * <CODE>PdfObject</CODE>.

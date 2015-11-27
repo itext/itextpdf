@@ -424,9 +424,20 @@ public class PdfReader implements PdfViewerPreferences {
      * @throws IOException on error
      */
     public PdfReader(final RandomAccessFileOrArray raf, final byte ownerPassword[]) throws IOException {
+        this(raf, ownerPassword, true);
+    }
+
+    /**
+     * Reads and parses a pdf document.
+     * @param raf the document location
+     * @param ownerPassword the password or <CODE>null</CODE> for no password
+     * @param partial indicates if the reader needs to read the document only partially. See {@link PdfReader#PdfReader(RandomAccessFileOrArray, byte[])}
+     * @throws IOException on error
+     */
+    public PdfReader(final RandomAccessFileOrArray raf, final byte ownerPassword[], boolean partial) throws IOException {
         this(
         		raf.getByteSource(),
-    			true,
+    			partial,
     			ownerPassword,
     			null,
     			null,
@@ -3287,7 +3298,7 @@ public class PdfReader implements PdfViewerPreferences {
 
     protected static PdfDictionary duplicatePdfDictionary(final PdfDictionary original, PdfDictionary copy, final PdfReader newReader) {
         if (copy == null)
-            copy = new PdfDictionary();
+            copy = new PdfDictionary(original.size());
         for (Object element : original.getKeys()) {
             PdfName key = (PdfName)element;
             copy.put(key, duplicatePdfObject(original.get(key), newReader));
@@ -3309,8 +3320,9 @@ public class PdfReader implements PdfViewerPreferences {
                 return stream;
             }
             case PdfObject.ARRAY: {
-                PdfArray arr = new PdfArray();
-                for (Iterator<PdfObject> it = ((PdfArray)original).listIterator(); it.hasNext();) {
+                PdfArray originalArray = (PdfArray) original;
+                PdfArray arr = new PdfArray(originalArray.size());
+                for (Iterator<PdfObject> it = originalArray.listIterator(); it.hasNext();) {
                     arr.add(duplicatePdfObject(it.next(), newReader));
                 }
                 return arr;

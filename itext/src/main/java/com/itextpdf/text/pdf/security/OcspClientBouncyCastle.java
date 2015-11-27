@@ -70,6 +70,7 @@ import org.bouncycastle.cert.ocsp.OCSPReq;
 import org.bouncycastle.cert.ocsp.OCSPReqBuilder;
 import org.bouncycastle.cert.ocsp.OCSPResp;
 import org.bouncycastle.cert.ocsp.SingleResp;
+import org.bouncycastle.ocsp.OCSPRespStatus;
 import org.bouncycastle.operator.OperatorException;
 import org.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder;
 
@@ -79,26 +80,106 @@ import com.itextpdf.text.log.Level;
 import com.itextpdf.text.log.Logger;
 import com.itextpdf.text.log.LoggerFactory;
 import com.itextpdf.text.pdf.PdfEncryption;
-import com.itextpdf.text.pdf.RandomAccessFileOrArray;
 
 /**
  * OcspClient implementation using BouncyCastle.
+ *
  * @author Paulo Soarees
  */
 public class OcspClientBouncyCastle implements OcspClient {
-	
-	/** The Logger instance */
+
+    /**
+     * The Logger instance
+     */
     private static final Logger LOGGER = LoggerFactory.getLogger(OcspClientBouncyCastle.class);
+
+    private final OCSPVerifier verifier;
+
+    /**
+     * Create default implemention of {@code OcspClient}.
+     * Note, if you use this constructor, OCSP response will not be verified.
+     */
+    @Deprecated
+    public OcspClientBouncyCastle() {
+        verifier = null;
+    }
+
+    /**
+     * Create {@code OcspClient}
+     * @param verifier will be used for response verification. {@see OCSPVerifier}.
+     */
+    public OcspClientBouncyCastle(OCSPVerifier verifier) {
+        this.verifier = verifier;
+    }
+
+    /**
+     * Gets OCSP response. If {@see OCSPVerifier} was setted, the response will be checked.
+     */
+    public BasicOCSPResp getBasicOCSPResp(X509Certificate checkCert, X509Certificate rootCert, String url) {
+        try {
+            OCSPResp ocspResponse = getOcspResponse(checkCert, rootCert, url);
+            if (ocspResponse == null) {
+                return null;
+            }
+            if (ocspResponse.getStatus() != OCSPRespStatus.SUCCESSFUL) {
+                return null;
+            }
+            BasicOCSPResp basicResponse = (BasicOCSPResp) ocspResponse.getResponseObject();
+            if (verifier != null) {
+                verifier.isValidResponse(basicResponse, rootCert);
+            }
+            return basicResponse;
+        } catch (Exception ex) {
+            if (LOGGER.isLogging(Level.ERROR))
+                LOGGER.error(ex.getMessage());
+        }
+        return null;
+    }
+
+    /**
+     * Gets an encoded byte array with OCSP validation. The method should not throw an exception.
+     *
+     * @param checkCert to certificate to check
+     * @param rootCert  the parent certificate
+     * @param url       to get the verification. It it's null it will be taken
+     *                  from the check cert or from other implementation specific source
+     * @return a byte array with the validation or null if the validation could not be obtained
+     */
+    public byte[] getEncoded(X509Certificate checkCert, X509Certificate rootCert, String url) {
+        try {
+            BasicOCSPResp basicResponse = getBasicOCSPResp(checkCert, rootCert, url);
+            if (basicResponse != null) {
+                SingleResp[] responses = basicResponse.getResponses();
+                if (responses.length == 1) {
+                    SingleResp resp = responses[0];
+                    Object status = resp.getCertStatus();
+                    if (status == CertificateStatus.GOOD) {
+                        return basicResponse.getEncoded();
+                    } else if (status instanceof org.bouncycastle.ocsp.RevokedStatus) {
+                        throw new IOException(MessageLocalization.getComposedMessage("ocsp.status.is.revoked"));
+                    } else {
+                        throw new IOException(MessageLocalization.getComposedMessage("ocsp.status.is.unknown"));
+                    }
+                }
+            }
+        } catch (Exception ex) {
+            if (LOGGER.isLogging(Level.ERROR))
+                LOGGER.error(ex.getMessage());
+        }
+        return null;
+    }
+
 
     /**
      * Generates an OCSP request using BouncyCastle.
-     * @param issuerCert	certificate of the issues
-     * @param serialNumber	serial number
-     * @return	an OCSP request
+     *
+     * @param issuerCert   certificate of the issues
+     * @param serialNumber serial number
+     * @return an OCSP request
      * @throws OCSPException
      * @throws IOException
      */
-    private static OCSPReq generateOCSPRequest(X509Certificate issuerCert, BigInteger serialNumber) throws OCSPException, IOException, 
+    private static OCSPReq generateOCSPRequest(X509Certificate issuerCert, BigInteger serialNumber) throws OCSPException, IOException,
             OperatorException, CertificateEncodingException {
         //Add provider BC
         Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
@@ -110,12 +191,10 @@ public class OcspClientBouncyCastle implements OcspClient {
 
         // basic request generation with nonce
         OCSPReqBuilder gen = new OCSPReqBuilder();
-
         gen.addRequest(id);
 
         Extension ext = new Extension(OCSPObjectIdentifiers.id_pkix_ocsp_nonce, false, new DEROctetString(new DEROctetString(PdfEncryption.createDocumentId()).getEncoded()));
         gen.setRequestExtensions(new Extensions(new Extension[]{ext}));
-
         return gen.build();
     }
 
@@ -131,7 +210,7 @@ public class OcspClientBouncyCastle implements OcspClient {
         OCSPReq request = generateOCSPRequest(rootCert, checkCert.getSerialNumber());
         byte[] array = request.getEncoded();
         URL urlt = new URL(url);
-        HttpURLConnection con = (HttpURLConnection)urlt.openConnection();
+        HttpURLConnection con = (HttpURLConnection) urlt.openConnection();
         con.setRequestProperty("Content-Type", "application/ocsp-request");
         con.setRequestProperty("Accept", "application/ocsp-response");
         con.setDoOutput(true);
@@ -146,56 +225,5 @@ public class OcspClientBouncyCastle implements OcspClient {
         //Get Response
         InputStream in = (InputStream) con.getContent();
         return new OCSPResp(StreamUtil.inputStreamToArray(in));
-    }
-    
-    public BasicOCSPResp getBasicOCSPResp(X509Certificate checkCert, X509Certificate rootCert, String url) {
-        try {
-            OCSPResp ocspResponse = getOcspResponse(checkCert, rootCert, url);
-            if (ocspResponse == null)
-            	return null;
-            if (ocspResponse.getStatus() != 0)
-                return null;
-            return (BasicOCSPResp) ocspResponse.getResponseObject();
-        }
-        catch (Exception ex) {
-            if (LOGGER.isLogging(Level.ERROR))
-                LOGGER.error(ex.getMessage());
-        }
-        return null;
-    }
-    
-	/**
-	 * Gets an encoded byte array with OCSP validation. The method should not throw an exception.
-     * @param checkCert to certificate to check
-     * @param rootCert the parent certificate
-     * @param the url to get the verification. It it's null it will be taken
-     * from the check cert or from other implementation specific source
-	 * @return	a byte array with the validation or null if the validation could not be obtained
-	 */
-    public byte[] getEncoded(X509Certificate checkCert, X509Certificate rootCert, String url) {
-        try {
-            BasicOCSPResp basicResponse = getBasicOCSPResp(checkCert, rootCert, url);
-            if (basicResponse != null) {
-                SingleResp[] responses = basicResponse.getResponses();
-                if (responses.length == 1) {
-                    SingleResp resp = responses[0];
-                    Object status = resp.getCertStatus();
-                    if (status == CertificateStatus.GOOD) {
-                        return basicResponse.getEncoded();
-                    }
-                    else if (status instanceof org.bouncycastle.ocsp.RevokedStatus) {
-                        throw new IOException(MessageLocalization.getComposedMessage("ocsp.status.is.revoked"));
-                    }
-                    else {
-                        throw new IOException(MessageLocalization.getComposedMessage("ocsp.status.is.unknown"));
-                    }
-                }
-            }
-        }
-        catch (Exception ex) {
-            if (LOGGER.isLogging(Level.ERROR))
-                LOGGER.error(ex.getMessage());
-        }
-        return null;
     }
 }

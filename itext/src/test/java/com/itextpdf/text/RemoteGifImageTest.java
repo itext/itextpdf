@@ -1,17 +1,18 @@
 package com.itextpdf.text;
 
 import com.itextpdf.text.pdf.PdfWriter;
-import org.junit.Before;
-import org.junit.Test;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import org.junit.Before;
+import org.junit.Test;
+
 public class RemoteGifImageTest {
 
     private final String[] GIF_LOCATION = {
-            "http://itextpdf.com/img/logo.gif",
+            //"http://itextpdf.com/img/logo.gif",
             "http://itextsupport.com/files/testresources/img/remote_gif_test.gif",
             "./src/test/resources/com/itextpdf/text/Chunk/logo.gif" // non-remote gif
     };

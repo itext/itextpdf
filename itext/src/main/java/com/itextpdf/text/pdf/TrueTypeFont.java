@@ -55,91 +55,96 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 
-/** Reads a Truetype font
+/**
+ * Reads a Truetype font
  *
  * @author Paulo Soares
  */
 class TrueTypeFont extends BaseFont {
 
-    /** The code pages possible for a True Type font.
+    /**
+     * The code pages possible for a True Type font.
      */
     static final String codePages[] = {
-        "1252 Latin 1",
-        "1250 Latin 2: Eastern Europe",
-        "1251 Cyrillic",
-        "1253 Greek",
-        "1254 Turkish",
-        "1255 Hebrew",
-        "1256 Arabic",
-        "1257 Windows Baltic",
-        "1258 Vietnamese",
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        "874 Thai",
-        "932 JIS/Japan",
-        "936 Chinese: Simplified chars--PRC and Singapore",
-        "949 Korean Wansung",
-        "950 Chinese: Traditional chars--Taiwan and Hong Kong",
-        "1361 Korean Johab",
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        "Macintosh Character Set (US Roman)",
-        "OEM Character Set",
-        "Symbol Character Set",
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        "869 IBM Greek",
-        "866 MS-DOS Russian",
-        "865 MS-DOS Nordic",
-        "864 Arabic",
-        "863 MS-DOS Canadian French",
-        "862 Hebrew",
-        "861 MS-DOS Icelandic",
-        "860 MS-DOS Portuguese",
-        "857 IBM Turkish",
-        "855 IBM Cyrillic; primarily Russian",
-        "852 Latin 2",
-        "775 MS-DOS Baltic",
-        "737 Greek; former 437 G",
-        "708 Arabic; ASMO 708",
-        "850 WE/Latin 1",
-        "437 US"};
+            "1252 Latin 1",
+            "1250 Latin 2: Eastern Europe",
+            "1251 Cyrillic",
+            "1253 Greek",
+            "1254 Turkish",
+            "1255 Hebrew",
+            "1256 Arabic",
+            "1257 Windows Baltic",
+            "1258 Vietnamese",
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            "874 Thai",
+            "932 JIS/Japan",
+            "936 Chinese: Simplified chars--PRC and Singapore",
+            "949 Korean Wansung",
+            "950 Chinese: Traditional chars--Taiwan and Hong Kong",
+            "1361 Korean Johab",
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            "Macintosh Character Set (US Roman)",
+            "OEM Character Set",
+            "Symbol Character Set",
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            "869 IBM Greek",
+            "866 MS-DOS Russian",
+            "865 MS-DOS Nordic",
+            "864 Arabic",
+            "863 MS-DOS Canadian French",
+            "862 Hebrew",
+            "861 MS-DOS Icelandic",
+            "860 MS-DOS Portuguese",
+            "857 IBM Turkish",
+            "855 IBM Cyrillic; primarily Russian",
+            "852 Latin 2",
+            "775 MS-DOS Baltic",
+            "737 Greek; former 437 G",
+            "708 Arabic; ASMO 708",
+            "850 WE/Latin 1",
+            "437 US"};
 
     protected boolean justNames = false;
-    /** Contains the location of the several tables. The key is the name of
+    /**
+     * Contains the location of the several tables. The key is the name of
      * the table and the value is an <CODE>int[2]</CODE> where position 0
      * is the offset from the start of the file and position 1 is the length
      * of the table.
      */
     protected HashMap<String, int[]> tables;
-    /** The file in use.
+    /**
+     * The file in use.
      */
     protected RandomAccessFileOrArray rf;
-    /** The file name.
+    /**
+     * The file name.
      */
     protected String fileName;
 
@@ -149,40 +154,50 @@ class TrueTypeFont extends BaseFont {
 
     protected int cffLength;
 
-    /** The offset from the start of the file to the table directory.
+    /**
+     * The offset from the start of the file to the table directory.
      * It is 0 for TTF and may vary for TTC depending on the chosen font.
      */
     protected int directoryOffset;
-    /** The index for the TTC font. It is an empty <CODE>String</CODE> for a
+    /**
+     * The index for the TTC font. It is an empty <CODE>String</CODE> for a
      * TTF file.
      */
     protected String ttcIndex;
-    /** The style modifier */
+    /**
+     * The style modifier
+     */
     protected String style = "";
-    /** The content of table 'head'.
+    /**
+     * The content of table 'head'.
      */
     protected FontHeader head = new FontHeader();
-    /** The content of table 'hhea'.
+    /**
+     * The content of table 'hhea'.
      */
     protected HorizontalHeader hhea = new HorizontalHeader();
-    /** The content of table 'OS/2'.
+    /**
+     * The content of table 'OS/2'.
      */
     protected WindowsMetrics os_2 = new WindowsMetrics();
-    /** The width of the glyphs. This is essentially the content of table
+    /**
+     * The width of the glyphs. This is essentially the content of table
      * 'hmtx' normalized to 1000 units.
      */
     protected int glyphWidthsByIndex[];
 
     protected int bboxes[][];
-    /** The map containing the code information for the table 'cmap', encoding 1.0.
+    /**
+     * The map containing the code information for the table 'cmap', encoding 1.0.
      * The key is the code and the value is an <CODE>int[2]</CODE> where position 0
      * is the glyph number and position 1 is the glyph width normalized to 1000
      * units.
      */
     protected HashMap<Integer, int[]> cmap10;
-    /** The map containing the code information for the table 'cmap', encoding 3.1
+    /**
+     * The map containing the code information for the table 'cmap', encoding 3.1
      * in Unicode.
-     * <P>
+     * <p/>
      * The key is the code and the value is an <CODE>int</CODE>[2] where position 0
      * is the glyph number and position 1 is the glyph width normalized to 1000
      * units.
@@ -190,19 +205,20 @@ class TrueTypeFont extends BaseFont {
     protected HashMap<Integer, int[]> cmap31;
 
     protected HashMap<Integer, int[]> cmapExt;
-    
+
     protected int[] glyphIdToChar;
-    
+
     protected int maxGlyphId;
-    
-    /** The map containing the kerning information. It represents the content of
+
+    /**
+     * The map containing the kerning information. It represents the content of
      * table 'kern'. The key is an <CODE>Integer</CODE> where the top 16 bits
      * are the glyph number for the first character and the lower 16 bits are the
      * glyph number for the second character. The value is the amount of kerning in
      * normalized 1000 units as an <CODE>Integer</CODE>. This value is usually negative.
      */
     protected IntHashtable kerning = new IntHashtable();
-    
+
     /**
      * The font name.
      * This name is usually extracted from the table 'name' with
@@ -217,26 +233,31 @@ class TrueTypeFont extends BaseFont {
      */
     protected String[][] subFamily;
 
-    /** The full name of the font 'Name ID' 1 or 'Name ID' 16
+    /**
+     * The full name of the font 'Name ID' 1 or 'Name ID' 16
      */
     protected String fullName[][];
 
-    /** All the names of the Names-Table
+    /**
+     * All the names of the Names-Table
      */
     protected String allNameEntries[][];
 
-    /** The family name of the font
+    /**
+     * The family name of the font
      */
     protected String familyName[][];
-    /** The italic angle. It is usually extracted from the 'post' table or in it's
+    /**
+     * The italic angle. It is usually extracted from the 'post' table or in it's
      * absence with the code:
-     * <P>
+     * <p/>
      * <PRE>
      * -Math.atan2(hhea.caretSlopeRun, hhea.caretSlopeRise) * 180 / Math.PI
      * </PRE>
      */
     protected double italicAngle;
-    /** <CODE>true</CODE> if all the glyphs have the same width.
+    /**
+     * <CODE>true</CODE> if all the glyphs have the same width.
      */
     protected boolean isFixedPitch = false;
 
@@ -244,128 +265,224 @@ class TrueTypeFont extends BaseFont {
 
     protected int underlineThickness;
 
-    /** The components of table 'head'.
+    /**
+     * The components of table 'head'.
      */
     protected static class FontHeader {
-        /** A variable. */
+        /**
+         * A variable.
+         */
         int flags;
-        /** A variable. */
+        /**
+         * A variable.
+         */
         int unitsPerEm;
-        /** A variable. */
+        /**
+         * A variable.
+         */
         short xMin;
-        /** A variable. */
+        /**
+         * A variable.
+         */
         short yMin;
-        /** A variable. */
+        /**
+         * A variable.
+         */
         short xMax;
-        /** A variable. */
+        /**
+         * A variable.
+         */
         short yMax;
-        /** A variable. */
+        /**
+         * A variable.
+         */
         int macStyle;
     }
 
-    /** The components of table 'hhea'.
+    /**
+     * The components of table 'hhea'.
      */
     protected static class HorizontalHeader {
-        /** A variable. */
+        /**
+         * A variable.
+         */
         short Ascender;
-        /** A variable. */
+        /**
+         * A variable.
+         */
         short Descender;
-        /** A variable. */
+        /**
+         * A variable.
+         */
         short LineGap;
-        /** A variable. */
+        /**
+         * A variable.
+         */
         int advanceWidthMax;
-        /** A variable. */
+        /**
+         * A variable.
+         */
         short minLeftSideBearing;
-        /** A variable. */
+        /**
+         * A variable.
+         */
         short minRightSideBearing;
-        /** A variable. */
+        /**
+         * A variable.
+         */
         short xMaxExtent;
-        /** A variable. */
+        /**
+         * A variable.
+         */
         short caretSlopeRise;
-        /** A variable. */
+        /**
+         * A variable.
+         */
         short caretSlopeRun;
-        /** A variable. */
+        /**
+         * A variable.
+         */
         int numberOfHMetrics;
     }
 
-    /** The components of table 'OS/2'.
+    /**
+     * The components of table 'OS/2'.
      */
     protected static class WindowsMetrics {
-        /** A variable. */
+        /**
+         * A variable.
+         */
         short xAvgCharWidth;
-        /** A variable. */
+        /**
+         * A variable.
+         */
         int usWeightClass;
-        /** A variable. */
+        /**
+         * A variable.
+         */
         int usWidthClass;
-        /** A variable. */
+        /**
+         * A variable.
+         */
         short fsType;
-        /** A variable. */
+        /**
+         * A variable.
+         */
         short ySubscriptXSize;
-        /** A variable. */
+        /**
+         * A variable.
+         */
         short ySubscriptYSize;
-        /** A variable. */
+        /**
+         * A variable.
+         */
         short ySubscriptXOffset;
-        /** A variable. */
+        /**
+         * A variable.
+         */
         short ySubscriptYOffset;
-        /** A variable. */
+        /**
+         * A variable.
+         */
         short ySuperscriptXSize;
-        /** A variable. */
+        /**
+         * A variable.
+         */
         short ySuperscriptYSize;
-        /** A variable. */
+        /**
+         * A variable.
+         */
         short ySuperscriptXOffset;
-        /** A variable. */
+        /**
+         * A variable.
+         */
         short ySuperscriptYOffset;
-        /** A variable. */
+        /**
+         * A variable.
+         */
         short yStrikeoutSize;
-        /** A variable. */
+        /**
+         * A variable.
+         */
         short yStrikeoutPosition;
-        /** A variable. */
+        /**
+         * A variable.
+         */
         short sFamilyClass;
-        /** A variable. */
+        /**
+         * A variable.
+         */
         byte panose[] = new byte[10];
-        /** A variable. */
+        /**
+         * A variable.
+         */
         byte achVendID[] = new byte[4];
-        /** A variable. */
+        /**
+         * A variable.
+         */
         int fsSelection;
-        /** A variable. */
+        /**
+         * A variable.
+         */
         int usFirstCharIndex;
-        /** A variable. */
+        /**
+         * A variable.
+         */
         int usLastCharIndex;
-        /** A variable. */
+        /**
+         * A variable.
+         */
         short sTypoAscender;
-        /** A variable. */
+        /**
+         * A variable.
+         */
         short sTypoDescender;
-        /** A variable. */
+        /**
+         * A variable.
+         */
         short sTypoLineGap;
-        /** A variable. */
+        /**
+         * A variable.
+         */
         int usWinAscent;
-        /** A variable. */
+        /**
+         * A variable.
+         */
         int usWinDescent;
-        /** A variable. */
+        /**
+         * A variable.
+         */
         int ulCodePageRange1;
-        /** A variable. */
+        /**
+         * A variable.
+         */
         int ulCodePageRange2;
-        /** A variable. */
+        /**
+         * A variable.
+         */
         int sCapHeight;
     }
 
-    /** This constructor is present to allow extending the class.
+    /**
+     * This constructor is present to allow extending the class.
      */
     protected TrueTypeFont() {
     }
 
-    /** Creates a new TrueType font.
+    /**
+     * Creates a new TrueType font.
+     *
      * @param ttFile the location of the font on file. The file must end in '.ttf' or
-     * '.ttc' but can have modifiers after the name
-     * @param enc the encoding to be applied to this font
-     * @param emb true if the font is to be embedded in the PDF
+     *               '.ttc' but can have modifiers after the name
+     * @param enc    the encoding to be applied to this font
+     * @param emb    true if the font is to be embedded in the PDF
      * @param ttfAfm the font as a <CODE>byte</CODE> array
      * @throws DocumentException the font is invalid
-     * @throws IOException the font file could not be read
-     * @since	2.1.5
+     * @throws IOException       the font file could not be read
+     * @since 2.1.5
      */
     TrueTypeFont(String ttFile, String enc, boolean emb, byte ttfAfm[], boolean justNames, boolean forceRead) throws DocumentException, IOException {
-    	this.justNames = justNames;
+        this.justNames = justNames;
         String nameBase = getBaseName(ttFile);
         String ttcName = getTTCName(nameBase);
         if (nameBase.length() < ttFile.length()) {
@@ -382,17 +499,18 @@ class TrueTypeFont extends BaseFont {
             process(ttfAfm, forceRead);
             if (!justNames && embedded && os_2.fsType == 2)
                 throw new DocumentException(MessageLocalization.getComposedMessage("1.cannot.be.embedded.due.to.licensing.restrictions", fileName + style));
-        }
-        else
+        } else
             throw new DocumentException(MessageLocalization.getComposedMessage("1.is.not.a.ttf.otf.or.ttc.font.file", fileName + style));
         if (!encoding.startsWith("#"))
             PdfEncodings.convertToBytes(" ", enc); // check if the encoding exists
         createEncoding();
     }
 
-    /** Gets the name from a composed TTC file name.
+    /**
+     * Gets the name from a composed TTC file name.
      * If I have for input "myfont.ttc,2" the return will
      * be "myfont.ttc".
+     *
      * @param name the full name
      * @return the simple file name
      */
@@ -407,8 +525,9 @@ class TrueTypeFont extends BaseFont {
 
     /**
      * Reads the tables 'head', 'hhea', 'OS/2', 'post' and 'maxp' filling several variables.
+     *
      * @throws DocumentException the font is invalid
-     * @throws IOException the font file could not be read
+     * @throws IOException       the font file could not be read
      */
     void fillTables() throws DocumentException, IOException {
         int table_location[];
@@ -442,56 +561,85 @@ class TrueTypeFont extends BaseFont {
         hhea.numberOfHMetrics = rf.readUnsignedShort();
 
         table_location = tables.get("OS/2");
-        if (table_location == null)
-            throw new DocumentException(MessageLocalization.getComposedMessage("table.1.does.not.exist.in.2", "OS/2", fileName + style));
-        rf.seek(table_location[0]);
-        int version = rf.readUnsignedShort();
-        os_2.xAvgCharWidth = rf.readShort();
-        os_2.usWeightClass = rf.readUnsignedShort();
-        os_2.usWidthClass = rf.readUnsignedShort();
-        os_2.fsType = rf.readShort();
-        os_2.ySubscriptXSize = rf.readShort();
-        os_2.ySubscriptYSize = rf.readShort();
-        os_2.ySubscriptXOffset = rf.readShort();
-        os_2.ySubscriptYOffset = rf.readShort();
-        os_2.ySuperscriptXSize = rf.readShort();
-        os_2.ySuperscriptYSize = rf.readShort();
-        os_2.ySuperscriptXOffset = rf.readShort();
-        os_2.ySuperscriptYOffset = rf.readShort();
-        os_2.yStrikeoutSize = rf.readShort();
-        os_2.yStrikeoutPosition = rf.readShort();
-        os_2.sFamilyClass = rf.readShort();
-        rf.readFully(os_2.panose);
-        rf.skipBytes(16);
-        rf.readFully(os_2.achVendID);
-        os_2.fsSelection = rf.readUnsignedShort();
-        os_2.usFirstCharIndex = rf.readUnsignedShort();
-        os_2.usLastCharIndex = rf.readUnsignedShort();
-        os_2.sTypoAscender = rf.readShort();
-        os_2.sTypoDescender = rf.readShort();
-        if (os_2.sTypoDescender > 0)
-            os_2.sTypoDescender = (short)-os_2.sTypoDescender;
-        os_2.sTypoLineGap = rf.readShort();
-        os_2.usWinAscent = rf.readUnsignedShort();
-        os_2.usWinDescent = rf.readUnsignedShort();
-        os_2.ulCodePageRange1 = 0;
-        os_2.ulCodePageRange2 = 0;
-        if (version > 0) {
-            os_2.ulCodePageRange1 = rf.readInt();
-            os_2.ulCodePageRange2 = rf.readInt();
+        if (table_location != null) {
+            rf.seek(table_location[0]);
+            int version = rf.readUnsignedShort();
+            os_2.xAvgCharWidth = rf.readShort();
+            os_2.usWeightClass = rf.readUnsignedShort();
+            os_2.usWidthClass = rf.readUnsignedShort();
+            os_2.fsType = rf.readShort();
+            os_2.ySubscriptXSize = rf.readShort();
+            os_2.ySubscriptYSize = rf.readShort();
+            os_2.ySubscriptXOffset = rf.readShort();
+            os_2.ySubscriptYOffset = rf.readShort();
+            os_2.ySuperscriptXSize = rf.readShort();
+            os_2.ySuperscriptYSize = rf.readShort();
+            os_2.ySuperscriptXOffset = rf.readShort();
+            os_2.ySuperscriptYOffset = rf.readShort();
+            os_2.yStrikeoutSize = rf.readShort();
+            os_2.yStrikeoutPosition = rf.readShort();
+            os_2.sFamilyClass = rf.readShort();
+            rf.readFully(os_2.panose);
+            rf.skipBytes(16);
+            rf.readFully(os_2.achVendID);
+            os_2.fsSelection = rf.readUnsignedShort();
+            os_2.usFirstCharIndex = rf.readUnsignedShort();
+            os_2.usLastCharIndex = rf.readUnsignedShort();
+            os_2.sTypoAscender = rf.readShort();
+            os_2.sTypoDescender = rf.readShort();
+            if (os_2.sTypoDescender > 0)
+                os_2.sTypoDescender = (short) -os_2.sTypoDescender;
+            os_2.sTypoLineGap = rf.readShort();
+            os_2.usWinAscent = rf.readUnsignedShort();
+            os_2.usWinDescent = rf.readUnsignedShort();
+            os_2.ulCodePageRange1 = 0;
+            os_2.ulCodePageRange2 = 0;
+            if (version > 0) {
+                os_2.ulCodePageRange1 = rf.readInt();
+                os_2.ulCodePageRange2 = rf.readInt();
+            }
+            if (version > 1) {
+                rf.skipBytes(2);
+                os_2.sCapHeight = rf.readShort();
+            } else
+                os_2.sCapHeight = (int) (0.7 * head.unitsPerEm);
+        } else if (tables.get("hhea") != null && tables.get("head") != null) {
+
+            if(head.macStyle == 0){
+                os_2.usWeightClass = 700;
+                os_2.usWidthClass = 5;
+            }else if(head.macStyle == 5){
+                os_2.usWeightClass = 400;
+                os_2.usWidthClass = 3;
+            }else if(head.macStyle == 6) {
+                os_2.usWeightClass = 400;
+                os_2.usWidthClass = 7;
+            }else{
+                os_2.usWeightClass = 400;
+                os_2.usWidthClass = 5;
+            }
+            os_2.fsType = 0;
+
+            os_2.ySubscriptYSize = 0;
+            os_2.ySubscriptYOffset = 0;
+            os_2.ySuperscriptYSize = 0;
+            os_2.ySuperscriptYOffset = 0;
+            os_2.yStrikeoutSize = 0;
+            os_2.yStrikeoutPosition = 0;
+            os_2.sTypoAscender = (short) (hhea.Ascender - 0.21* hhea.Ascender);
+            os_2.sTypoDescender = (short) - (Math.abs(hhea.Descender) - Math.abs(hhea.Descender)*0.07);
+            os_2.sTypoLineGap = (short) (hhea.LineGap * 2);
+            os_2.usWinAscent = hhea.Ascender;
+            os_2.usWinDescent = hhea.Descender;
+            os_2.ulCodePageRange1 = 0;
+            os_2.ulCodePageRange2 = 0;
+            os_2.sCapHeight = (int) (0.7 * head.unitsPerEm);
         }
-        if (version > 1) {
-            rf.skipBytes(2);
-            os_2.sCapHeight = rf.readShort();
-        }
-        else
-            os_2.sCapHeight = (int)(0.7 * head.unitsPerEm);
 
         table_location = tables.get("post");
         if (table_location == null) {
             italicAngle = -Math.atan2(hhea.caretSlopeRun, hhea.caretSlopeRise) * 180 / Math.PI;
-        }
-        else {
+        } else {
             rf.seek(table_location[0] + 4);
             short mantissa = rf.readShort();
             int fraction = rf.readUnsignedShort();
@@ -504,8 +652,7 @@ class TrueTypeFont extends BaseFont {
         table_location = tables.get("maxp");
         if (table_location == null) {
             maxGlyphId = 65536;
-        }
-        else {
+        } else {
             rf.seek(table_location[0] + 4);
             maxGlyphId = rf.readUnsignedShort();
         }
@@ -513,9 +660,10 @@ class TrueTypeFont extends BaseFont {
 
     /**
      * Gets the Postscript font name.
-     * @throws DocumentException the font is invalid
-     * @throws IOException the font file could not be read
+     *
      * @return the Postscript font name
+     * @throws DocumentException the font is invalid
+     * @throws IOException       the font file could not be read
      */
     String getBaseFont() throws DocumentException, IOException {
         int table_location[];
@@ -544,10 +692,12 @@ class TrueTypeFont extends BaseFont {
         return file.getName().replace(' ', '-');
     }
 
-    /** Extracts the names of the font in all the languages available.
+    /**
+     * Extracts the names of the font in all the languages available.
+     *
      * @param id the name id to retrieve
      * @throws DocumentException on error
-     * @throws IOException on error
+     * @throws IOException       on error
      */
     String[][] getNames(int id) throws DocumentException, IOException {
         int table_location[];
@@ -566,17 +716,16 @@ class TrueTypeFont extends BaseFont {
             int length = rf.readUnsignedShort();
             int offset = rf.readUnsignedShort();
             if (nameID == id) {
-                int pos = (int)rf.getFilePointer();
+                int pos = (int) rf.getFilePointer();
                 rf.seek(table_location[0] + startOfStorage + offset);
                 String name;
-                if (platformID == 0 || platformID == 3 || platformID == 2 && platformEncodingID == 1){
+                if (platformID == 0 || platformID == 3 || platformID == 2 && platformEncodingID == 1) {
                     name = readUnicodeString(length);
-                }
-                else {
+                } else {
                     name = readStandardString(length);
                 }
                 names.add(new String[]{String.valueOf(platformID),
-                    String.valueOf(platformEncodingID), String.valueOf(languageID), name});
+                        String.valueOf(platformEncodingID), String.valueOf(languageID), name});
                 rf.seek(pos);
             }
         }
@@ -586,9 +735,11 @@ class TrueTypeFont extends BaseFont {
         return thisName;
     }
 
-    /** Extracts all the names of the names-Table
+    /**
+     * Extracts all the names of the names-Table
+     *
      * @throws DocumentException on error
-     * @throws IOException on error
+     * @throws IOException       on error
      */
     String[][] getAllNames() throws DocumentException, IOException {
         int table_location[];
@@ -606,13 +757,12 @@ class TrueTypeFont extends BaseFont {
             int nameID = rf.readUnsignedShort();
             int length = rf.readUnsignedShort();
             int offset = rf.readUnsignedShort();
-            int pos = (int)rf.getFilePointer();
+            int pos = (int) rf.getFilePointer();
             rf.seek(table_location[0] + startOfStorage + offset);
             String name;
-            if (platformID == 0 || platformID == 3 || platformID == 2 && platformEncodingID == 1){
+            if (platformID == 0 || platformID == 3 || platformID == 2 && platformEncodingID == 1) {
                 name = readUnicodeString(length);
-            }
-            else {
+            } else {
                 name = readStandardString(length);
             }
             names.add(new String[]{String.valueOf(nameID), String.valueOf(platformID),
@@ -635,11 +785,13 @@ class TrueTypeFont extends BaseFont {
         }
     }
 
-    /** Reads the font data.
+    /**
+     * Reads the font data.
+     *
      * @param ttfAfm the font as a <CODE>byte</CODE> array, possibly <CODE>null</CODE>
      * @throws DocumentException the font is invalid
-     * @throws IOException the font file could not be read
-     * @since	2.1.5
+     * @throws IOException       the font file could not be read
+     * @since 2.1.5
      */
     void process(byte ttfAfm[], boolean preload) throws DocumentException, IOException {
         tables = new HashMap<String, int[]>();
@@ -648,7 +800,7 @@ class TrueTypeFont extends BaseFont {
             rf = new RandomAccessFileOrArray(fileName, preload, Document.plainRandomAccess);
         else
             rf = new RandomAccessFileOrArray(ttfAfm);
-        
+
         try {
             if (ttcIndex.length() > 0) {
                 int dirIdx = Integer.parseInt(ttcIndex);
@@ -702,18 +854,19 @@ class TrueTypeFont extends BaseFont {
                 readKerning();
                 readBbox();
             }
-        }
-        finally {
-        	//TODO: For embedded fonts, the underlying data source for the font will be left open until this TrueTypeFont object is collected by the Garbage Collector.  That may not be optimal.
-            if (!embedded){
-            	rf.close();
+        } finally {
+            //TODO: For embedded fonts, the underlying data source for the font will be left open until this TrueTypeFont object is collected by the Garbage Collector.  That may not be optimal.
+            if (!embedded) {
+                rf.close();
                 rf = null;
             }
         }
     }
 
-    /** Reads a <CODE>String</CODE> from the font file as bytes using the Cp1252
-     *  encoding.
+    /**
+     * Reads a <CODE>String</CODE> from the font file as bytes using the Cp1252
+     * encoding.
+     *
      * @param length the length of bytes to read
      * @return the <CODE>String</CODE> read
      * @throws IOException the font file could not be read
@@ -722,10 +875,12 @@ class TrueTypeFont extends BaseFont {
         return rf.readString(length, WINANSI);
     }
 
-    /** Reads a Unicode <CODE>String</CODE> from the font file. Each character is
-     *  represented by two bytes.
+    /**
+     * Reads a Unicode <CODE>String</CODE> from the font file. Each character is
+     * represented by two bytes.
+     *
      * @param length the length of bytes to read. The <CODE>String</CODE> will have <CODE>length</CODE>/2
-     * characters
+     *               characters
      * @return the <CODE>String</CODE> read
      * @throws IOException the font file could not be read
      */
@@ -738,10 +893,12 @@ class TrueTypeFont extends BaseFont {
         return buf.toString();
     }
 
-    /** Reads the glyphs widths. The widths are extracted from the table 'hmtx'.
-     *  The glyphs are normalized to 1000 units.
+    /**
+     * Reads the glyphs widths. The widths are extracted from the table 'hmtx'.
+     * The glyphs are normalized to 1000 units.
+     *
      * @throws DocumentException the font is invalid
-     * @throws IOException the font file could not be read
+     * @throws IOException       the font file could not be read
      */
     protected void readGlyphWidths() throws DocumentException, IOException {
         int table_location[];
@@ -753,11 +910,13 @@ class TrueTypeFont extends BaseFont {
         for (int k = 0; k < hhea.numberOfHMetrics; ++k) {
             glyphWidthsByIndex[k] = rf.readUnsignedShort() * 1000 / head.unitsPerEm;
             @SuppressWarnings("unused")
-			int leftSideBearing = rf.readShort() * 1000 / head.unitsPerEm;
+            int leftSideBearing = rf.readShort() * 1000 / head.unitsPerEm;
         }
     }
 
-    /** Gets a glyph width.
+    /**
+     * Gets a glyph width.
+     *
      * @param glyph the glyph to get the width of
      * @return the width of the glyph in normalized 1000 units
      */
@@ -784,8 +943,7 @@ class TrueTypeFont extends BaseFont {
             locaTable = new int[entries];
             for (int k = 0; k < entries; ++k)
                 locaTable[k] = rf.readUnsignedShort() * 2;
-        }
-        else {
+        } else {
             int entries = tableLocation[1] / 4;
             locaTable = new int[entries];
             for (int k = 0; k < entries; ++k)
@@ -801,18 +959,20 @@ class TrueTypeFont extends BaseFont {
             if (start != locaTable[glyph + 1]) {
                 rf.seek(tableGlyphOffset + start + 2);
                 bboxes[glyph] = new int[]{
-                    rf.readShort() * 1000 / head.unitsPerEm,
-                    rf.readShort() * 1000 / head.unitsPerEm,
-                    rf.readShort() * 1000 / head.unitsPerEm,
-                    rf.readShort() * 1000 / head.unitsPerEm};
+                        rf.readShort() * 1000 / head.unitsPerEm,
+                        rf.readShort() * 1000 / head.unitsPerEm,
+                        rf.readShort() * 1000 / head.unitsPerEm,
+                        rf.readShort() * 1000 / head.unitsPerEm};
             }
         }
     }
 
-    /** Reads the several maps from the table 'cmap'. The maps of interest are 1.0 for symbolic
-     *  fonts and 3.1 for all others. A symbolic font is defined as having the map 3.0.
+    /**
+     * Reads the several maps from the table 'cmap'. The maps of interest are 1.0 for symbolic
+     * fonts and 3.1 for all others. A symbolic font is defined as having the map 3.0.
+     *
      * @throws DocumentException the font is invalid
-     * @throws IOException the font file could not be read
+     * @throws IOException       the font file could not be read
      */
     void readCMaps() throws DocumentException, IOException {
         int table_location[];
@@ -834,11 +994,9 @@ class TrueTypeFont extends BaseFont {
             if (platId == 3 && platSpecId == 0) {
                 fontSpecific = true;
                 map30 = offset;
-            }
-            else if (platId == 3 && platSpecId == 1) {
+            } else if (platId == 3 && platSpecId == 1) {
                 map31 = offset;
-            }
-            else if (platId == 3 && platSpecId == 10) {
+            } else if (platId == 3 && platSpecId == 10) {
                 mapExt = offset;
             }
             if (platId == 1 && platSpecId == 0) {
@@ -915,8 +1073,10 @@ class TrueTypeFont extends BaseFont {
         return h;
     }
 
-    /** The information in the maps of the table 'cmap' is coded in several formats.
-     *  Format 0 is the Apple standard character to glyph index mapping table.
+    /**
+     * The information in the maps of the table 'cmap' is coded in several formats.
+     * Format 0 is the Apple standard character to glyph index mapping table.
+     *
      * @return a <CODE>HashMap</CODE> representing this map
      * @throws IOException the font file could not be read
      */
@@ -932,8 +1092,10 @@ class TrueTypeFont extends BaseFont {
         return h;
     }
 
-    /** The information in the maps of the table 'cmap' is coded in several formats.
-     *  Format 4 is the Microsoft standard character to glyph index mapping table.
+    /**
+     * The information in the maps of the table 'cmap' is coded in several formats.
+     * Format 4 is the Microsoft standard character to glyph index mapping table.
+     *
      * @return a <CODE>HashMap</CODE> representing this map
      * @throws IOException the font file could not be read
      */
@@ -969,8 +1131,7 @@ class TrueTypeFont extends BaseFont {
             for (int j = startCount[k]; j <= endCount[k] && j != 0xFFFF; ++j) {
                 if (idRO[k] == 0) {
                     glyph = j + idDelta[k] & 0xFFFF;
-                }
-                else {
+                } else {
                     int idx = k + idRO[k] / 2 - segCount + j - startCount[k];
                     if (idx >= glyphId.length)
                         continue;
@@ -985,9 +1146,11 @@ class TrueTypeFont extends BaseFont {
         return h;
     }
 
-    /** The information in the maps of the table 'cmap' is coded in several formats.
-     *  Format 6 is a trimmed table mapping. It is similar to format 0 but can have
-     *  less than 256 entries.
+    /**
+     * The information in the maps of the table 'cmap' is coded in several formats.
+     * Format 6 is a trimmed table mapping. It is similar to format 0 but can have
+     * less than 256 entries.
+     *
      * @return a <CODE>HashMap</CODE> representing this map
      * @throws IOException the font file could not be read
      */
@@ -1005,7 +1168,9 @@ class TrueTypeFont extends BaseFont {
         return h;
     }
 
-    /** Reads the kerning information from the 'kern' table.
+    /**
+     * Reads the kerning information from the 'kern' table.
+     *
      * @throws IOException the font file could not be read
      */
     void readKerning() throws IOException {
@@ -1035,7 +1200,9 @@ class TrueTypeFont extends BaseFont {
         }
     }
 
-    /** Gets the kerning between two Unicode chars.
+    /**
+     * Gets the kerning between two Unicode chars.
+     *
      * @param char1 the first char
      * @param char2 the second char
      * @return the kerning to be applied
@@ -1053,9 +1220,11 @@ class TrueTypeFont extends BaseFont {
         return kerning.get((c1 << 16) + c2);
     }
 
-    /** Gets the width from the font according to the unicode char <CODE>c</CODE>.
+    /**
+     * Gets the width from the font according to the unicode char <CODE>c</CODE>.
      * If the <CODE>name</CODE> is null it's a symbolic font.
-     * @param c the unicode char
+     *
+     * @param c    the unicode char
      * @param name the glyph name
      * @return the width of the char
      */
@@ -1067,10 +1236,12 @@ class TrueTypeFont extends BaseFont {
         return metric[1];
     }
 
-    /** Generates the font descriptor for this font.
-     * @return the PdfDictionary containing the font descriptor or <CODE>null</CODE>
+    /**
+     * Generates the font descriptor for this font.
+     *
      * @param subsetPrefix the subset prefix
-     * @param fontStream the indirect reference to a PdfStream containing the font or <CODE>null</CODE>
+     * @param fontStream   the indirect reference to a PdfStream containing the font or <CODE>null</CODE>
+     * @return the PdfDictionary containing the font descriptor or <CODE>null</CODE>
      */
     protected PdfDictionary getFontDescriptor(PdfIndirectReference fontStream, String subsetPrefix, PdfIndirectReference cidset) {
         PdfDictionary dic = new PdfDictionary(PdfName.FONTDESCRIPTOR);
@@ -1078,19 +1249,18 @@ class TrueTypeFont extends BaseFont {
         dic.put(PdfName.CAPHEIGHT, new PdfNumber(os_2.sCapHeight * 1000 / head.unitsPerEm));
         dic.put(PdfName.DESCENT, new PdfNumber(os_2.sTypoDescender * 1000 / head.unitsPerEm));
         dic.put(PdfName.FONTBBOX, new PdfRectangle(
-        head.xMin * 1000 / head.unitsPerEm,
-        head.yMin * 1000 / head.unitsPerEm,
-        head.xMax * 1000 / head.unitsPerEm,
-        head.yMax * 1000 / head.unitsPerEm));
+                head.xMin * 1000 / head.unitsPerEm,
+                head.yMin * 1000 / head.unitsPerEm,
+                head.xMax * 1000 / head.unitsPerEm,
+                head.yMax * 1000 / head.unitsPerEm));
         if (cidset != null)
             dic.put(PdfName.CIDSET, cidset);
         if (cff) {
             if (encoding.startsWith("Identity-"))
-                dic.put(PdfName.FONTNAME, new PdfName(subsetPrefix + fontName+"-"+encoding));
+                dic.put(PdfName.FONTNAME, new PdfName(subsetPrefix + fontName + "-" + encoding));
             else
                 dic.put(PdfName.FONTNAME, new PdfName(subsetPrefix + fontName + style));
-        }
-        else
+        } else
             dic.put(PdfName.FONTNAME, new PdfName(subsetPrefix + fontName + style));
         dic.put(PdfName.ITALICANGLE, new PdfNumber(italicAngle));
         dic.put(PdfName.STEMV, new PdfNumber(80));
@@ -1113,21 +1283,22 @@ class TrueTypeFont extends BaseFont {
         return dic;
     }
 
-    /** Generates the font dictionary for this font.
-     * @return the PdfDictionary containing the font dictionary
-     * @param subsetPrefix the subset prefix
-     * @param firstChar the first valid character
-     * @param lastChar the last valid character
-     * @param shortTag a 256 bytes long <CODE>byte</CODE> array where each unused byte is represented by 0
+    /**
+     * Generates the font dictionary for this font.
+     *
+     * @param subsetPrefix   the subset prefix
+     * @param firstChar      the first valid character
+     * @param lastChar       the last valid character
+     * @param shortTag       a 256 bytes long <CODE>byte</CODE> array where each unused byte is represented by 0
      * @param fontDescriptor the indirect reference to a PdfDictionary containing the font descriptor or <CODE>null</CODE>
+     * @return the PdfDictionary containing the font dictionary
      */
     protected PdfDictionary getFontBaseType(PdfIndirectReference fontDescriptor, String subsetPrefix, int firstChar, int lastChar, byte shortTag[]) {
         PdfDictionary dic = new PdfDictionary(PdfName.FONT);
         if (cff) {
             dic.put(PdfName.SUBTYPE, PdfName.TYPE1);
             dic.put(PdfName.BASEFONT, new PdfName(fontName + style));
-        }
-        else {
+        } else {
             dic.put(PdfName.SUBTYPE, PdfName.TRUETYPE);
             dic.put(PdfName.BASEFONT, new PdfName(subsetPrefix + fontName + style));
         }
@@ -1138,7 +1309,7 @@ class TrueTypeFont extends BaseFont {
                     break;
                 }
             }
-        if (encoding.equals("Cp1252") || encoding.equals("MacRoman"))
+            if (encoding.equals("Cp1252") || encoding.equals("MacRoman"))
                 dic.put(PdfName.ENCODING, encoding.equals("Cp1252") ? PdfName.WIN_ANSI_ENCODING : PdfName.MAC_ROMAN_ENCODING);
             else {
                 PdfDictionary enc = new PdfDictionary(PdfName.ENCODING);
@@ -1151,8 +1322,7 @@ class TrueTypeFont extends BaseFont {
                             gap = false;
                         }
                         dif.add(new PdfName(differences[k]));
-                    }
-                    else
+                    } else
                         gap = true;
                 }
                 enc.put(PdfName.DIFFERENCES, dif);
@@ -1179,12 +1349,16 @@ class TrueTypeFont extends BaseFont {
         try {
             rf2 = new RandomAccessFileOrArray(rf);
             rf2.reOpen();
-            byte b[] = new byte[(int)rf2.length()];
+            byte b[] = new byte[(int) rf2.length()];
             rf2.readFully(b);
             return b;
-        }
-        finally {
-            try {if (rf2 != null) {rf2.close();}} catch (Exception e) {}
+        } finally {
+            try {
+                if (rf2 != null) {
+                    rf2.close();
+                }
+            } catch (Exception e) {
+            }
         }
     }
 
@@ -1234,7 +1408,7 @@ class TrueTypeFont extends BaseFont {
                 usemap = cmap31;
             else
                 usemap = cmap10;
-            for (Map.Entry<Integer, int[]> e: usemap.entrySet()) {
+            for (Map.Entry<Integer, int[]> e : usemap.entrySet()) {
                 int[] v = e.getValue();
                 Integer gi = Integer.valueOf(v[0]);
                 if (longTag.containsKey(gi))
@@ -1265,7 +1439,7 @@ class TrueTypeFont extends BaseFont {
                 usemap = cmap31;
             else
                 usemap = cmap10;
-            for (Map.Entry<Integer, int[]> e: usemap.entrySet()) {
+            for (Map.Entry<Integer, int[]> e : usemap.entrySet()) {
                 int[] v = e.getValue();
                 Integer gi = Integer.valueOf(v[0]);
                 if (longTag.contains(gi))
@@ -1284,19 +1458,21 @@ class TrueTypeFont extends BaseFont {
         }
     }
 
-    /** Outputs to the writer the font dictionaries and streams.
+    /**
+     * Outputs to the writer the font dictionaries and streams.
+     *
      * @param writer the writer for this document
-     * @param ref the font indirect reference
+     * @param ref    the font indirect reference
      * @param params several parameters that depend on the font type
-     * @throws IOException on error
+     * @throws IOException       on error
      * @throws DocumentException error in generating the object
      */
     @Override
     void writeFont(PdfWriter writer, PdfIndirectReference ref, Object params[]) throws DocumentException, IOException {
-        int firstChar = ((Integer)params[0]).intValue();
-        int lastChar = ((Integer)params[1]).intValue();
-        byte shortTag[] = (byte[])params[2];
-        boolean subsetp = ((Boolean)params[3]).booleanValue() && subset;
+        int firstChar = ((Integer) params[0]).intValue();
+        int lastChar = ((Integer) params[1]).intValue();
+        byte shortTag[] = (byte[]) params[2];
+        boolean subsetp = ((Boolean) params[3]).booleanValue() && subset;
 
         if (!subsetp) {
             firstChar = 0;
@@ -1313,8 +1489,7 @@ class TrueTypeFont extends BaseFont {
                 pobj = new StreamFont(readCffFont(), "Type1C", compressionLevel);
                 obj = writer.addToBody(pobj);
                 ind_font = obj.getIndirectReference();
-            }
-            else {
+            } else {
                 if (subsetp)
                     subsetPrefix = createSubsetPrefix();
                 HashSet<Integer> glyphs = new HashSet<Integer>();
@@ -1325,8 +1500,7 @@ class TrueTypeFont extends BaseFont {
                             int[] cd = GlyphList.nameToUnicode(differences[k]);
                             if (cd != null)
                                 metrics = getMetricsTT(cd[0]);
-                        }
-                        else {
+                        } else {
                             if (fontSpecific)
                                 metrics = getMetricsTT(k);
                             else
@@ -1340,8 +1514,7 @@ class TrueTypeFont extends BaseFont {
                 byte[] b = null;
                 if (subsetp || directoryOffset != 0 || subsetRanges != null) {
                     b = getSubSet(new HashSet(glyphs), subsetp);
-                }
-                else {
+                } else {
                     b = getFullFont();
                 }
                 int lengths[] = new int[]{b.length};
@@ -1351,7 +1524,7 @@ class TrueTypeFont extends BaseFont {
             }
         }
         pobj = getFontDescriptor(ind_font, subsetPrefix, null);
-        if (pobj != null){
+        if (pobj != null) {
             obj = writer.addToBody(pobj);
             ind_font = obj.getIndirectReference();
         }
@@ -1363,8 +1536,9 @@ class TrueTypeFont extends BaseFont {
      * If this font file is using the Compact Font File Format, then this method
      * will return the raw bytes needed for the font stream. If this method is
      * ever made public: make sure to add a test if (cff == true).
-     * @return	a byte array
-     * @since	2.1.3
+     *
+     * @return a byte array
+     * @since 2.1.3
      */
     protected byte[] readCffFont() throws IOException {
         RandomAccessFileOrArray rf2 = new RandomAccessFileOrArray(rf);
@@ -1373,39 +1547,39 @@ class TrueTypeFont extends BaseFont {
             rf2.reOpen();
             rf2.seek(cffOffset);
             rf2.readFully(b);
-        }
-        finally {
+        } finally {
             try {
                 rf2.close();
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 // empty on purpose
             }
         }
-    	return b;
+        return b;
     }
 
     /**
      * Returns a PdfStream object with the full font program.
-     * @return	a PdfStream with the font program
-     * @since	2.1.3
+     *
+     * @return a PdfStream with the font program
+     * @since 2.1.3
      */
     @Override
     public PdfStream getFullFontStream() throws IOException, DocumentException {
         if (cff) {
             return new StreamFont(readCffFont(), "Type1C", compressionLevel);
-        }
-        else {
-        	byte[] b = getFullFont();
-        	int lengths[] = new int[]{b.length};
-        	return new StreamFont(b, lengths, compressionLevel);
+        } else {
+            byte[] b = getFullFont();
+            int lengths[] = new int[]{b.length};
+            return new StreamFont(b, lengths, compressionLevel);
         }
     }
 
-    /** Gets the font parameter identified by <CODE>key</CODE>. Valid values
+    /**
+     * Gets the font parameter identified by <CODE>key</CODE>. Valid values
      * for <CODE>key</CODE> are <CODE>ASCENT</CODE>, <CODE>CAPHEIGHT</CODE>, <CODE>DESCENT</CODE>
      * and <CODE>ITALICANGLE</CODE>.
-     * @param key the parameter to be extracted
+     *
+     * @param key      the parameter to be extracted
      * @param fontSize the font size in points
      * @return the parameter in points
      */
@@ -1419,7 +1593,7 @@ class TrueTypeFont extends BaseFont {
             case DESCENT:
                 return os_2.sTypoDescender * fontSize / head.unitsPerEm;
             case ITALICANGLE:
-                return (float)italicAngle;
+                return (float) italicAngle;
             case BBOXLLX:
                 return fontSize * head.xMin / head.unitsPerEm;
             case BBOXLLY:
@@ -1460,7 +1634,9 @@ class TrueTypeFont extends BaseFont {
         return 0;
     }
 
-    /** Gets the glyph index and metrics for a character.
+    /**
+     * Gets the glyph index and metrics for a character.
+     *
      * @param c the character
      * @return an <CODE>int</CODE> array with {glyph index, width}
      */
@@ -1478,7 +1654,9 @@ class TrueTypeFont extends BaseFont {
         return null;
     }
 
-    /** Gets the postscript font name.
+    /**
+     * Gets the postscript font name.
+     *
      * @return the postscript font name
      */
     @Override
@@ -1486,12 +1664,14 @@ class TrueTypeFont extends BaseFont {
         return fontName;
     }
 
-    /** Gets the code pages supported by the font.
+    /**
+     * Gets the code pages supported by the font.
+     *
      * @return the code pages supported by the font
      */
     @Override
     public String[] getCodePagesSupported() {
-        long cp = ((long)os_2.ulCodePageRange2 << 32) + (os_2.ulCodePageRange1 & 0xffffffffL);
+        long cp = ((long) os_2.ulCodePageRange2 << 32) + (os_2.ulCodePageRange1 & 0xffffffffL);
         int count = 0;
         long bit = 1;
         for (int k = 0; k < 64; ++k) {
@@ -1510,12 +1690,14 @@ class TrueTypeFont extends BaseFont {
         return ret;
     }
 
-    /** Gets the full name of the font. If it is a True Type font
+    /**
+     * Gets the full name of the font. If it is a True Type font
      * each array element will have {Platform ID, Platform Encoding ID,
      * Language ID, font name}. The interpretation of this values can be
      * found in the Open Type specification, chapter 2, in the 'name' table.<br>
      * For the other fonts the array has a single element with {"", "", "",
      * font name}.
+     *
      * @return the full name of the font
      */
     @Override
@@ -1528,6 +1710,7 @@ class TrueTypeFont extends BaseFont {
      * each array element will have {Platform ID, Platform Encoding ID,
      * Language ID, subfamily}. The interpretation of this values can be
      * found in the Open Type specification, chapter 2, in the 'name' table.<br>
+     *
      * @return the full subfamily name of the font
      */
     @Override
@@ -1538,12 +1721,14 @@ class TrueTypeFont extends BaseFont {
         return super.getSubfamily();
     }
 
-    /** Gets all the entries of the Names-Table. If it is a True Type font
+    /**
+     * Gets all the entries of the Names-Table. If it is a True Type font
      * each array element will have {Name ID, Platform ID, Platform Encoding ID,
      * Language ID, font name}. The interpretation of this values can be
      * found in the Open Type specification, chapter 2, in the 'name' table.<br>
      * For the other fonts the array has a single element with {"", "", "",
      * font name}.
+     *
      * @return the full name of the font
      */
     @Override
@@ -1551,12 +1736,14 @@ class TrueTypeFont extends BaseFont {
         return allNameEntries;
     }
 
-    /** Gets the family name of the font. If it is a True Type font
+    /**
+     * Gets the family name of the font. If it is a True Type font
      * each array element will have {Platform ID, Platform Encoding ID,
      * Language ID, font name}. The interpretation of this values can be
      * found in the Open Type specification, chapter 2, in the 'name' table.<br>
      * For the other fonts the array has a single element with {"", "", "",
      * font name}.
+     *
      * @return the family name of the font
      */
     @Override
@@ -1564,7 +1751,9 @@ class TrueTypeFont extends BaseFont {
         return familyName;
     }
 
-    /** Checks if the font has any kerning pairs.
+    /**
+     * Checks if the font has any kerning pairs.
+     *
      * @return <CODE>true</CODE> if the font has any kerning pairs
      */
     @Override
@@ -1575,6 +1764,7 @@ class TrueTypeFont extends BaseFont {
     /**
      * Sets the font name that will appear in the pdf font dictionary.
      * Use with care as it can easily make a font unreadable if not embedded.
+     *
      * @param name the new font name
      */
     @Override
@@ -1584,9 +1774,10 @@ class TrueTypeFont extends BaseFont {
 
     /**
      * Sets the kerning between two Unicode chars.
+     *
      * @param char1 the first char
      * @param char2 the second char
-     * @param kern the kerning to apply in normalized 1000 units
+     * @param kern  the kerning to apply in normalized 1000 units
      * @return <code>true</code> if the kerning was applied, <code>false</code> otherwise
      */
     @Override
@@ -1617,7 +1808,6 @@ class TrueTypeFont extends BaseFont {
             return null;
         return bboxes[metric[0]];
     }
-    
-    
-    
+
+
 }

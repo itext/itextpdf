@@ -47,23 +47,25 @@ package com.itextpdf.text.log;
  */
 public class NoOpCounter implements Counter {
 
-	/**
-	 * @see com.itextpdf.text.log.Counter#getCounter(java.lang.Class)
-	 */
-	public Counter getCounter(Class<?> klass) {
-		return this;
-	}
+    /**
+     * @param klass The Class asking for the Counter
+     * @return the Counter instance
+     * @see com.itextpdf.text.log.Counter#getCounter(java.lang.Class)
+     */
+    public Counter getCounter(Class<?> klass) {
+        return this;
+    }
 
-	/**
-	 * @see com.itextpdf.text.log.Counter#read(long)
-	 */
-	public void read(long l) {
-	}
+    /**
+     * @see com.itextpdf.text.log.Counter#read(long)
+     */
+    public void read(long l) {
+    }
 
-	/**
-	 * @see com.itextpdf.text.log.Counter#written(long)
-	 */
-	public void written(long l) {
-	}
+    /**
+     * @see com.itextpdf.text.log.Counter#written(long)
+     */
+    public void written(long l) {
+    }
 
 }

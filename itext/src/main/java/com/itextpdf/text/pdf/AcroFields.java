@@ -191,7 +191,7 @@ public class AcroFields {
                     if (value == null &&  t != null) {
                         value = annot;
                         if (annot.get(PdfName.V) == null && lastV  != null)
-                            value.put(PdfName.V, lastV);
+                            value.put(PdfName.V, lastV); // TODO: seems to be bug (we are going up the hierarchy and setting parent's V entry to child's V value)
                     }
                     annot = annot.getAsDict(PdfName.PARENT);
                 }
