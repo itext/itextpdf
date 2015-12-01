@@ -91,7 +91,10 @@ public class TtfUnicodeWriter {
         } else {
             byte[] b;
             if (font.subset || font.directoryOffset != 0) {
-                b = font.getSubSet(new HashSet<Integer>(longTag.keySet()), true);
+                synchronized (font.rf) {
+                    TrueTypeFontSubSet sb = new TrueTypeFontSubSet(font.fileName, new RandomAccessFileOrArray(font.rf), new HashSet<Integer>(longTag.keySet()), font.directoryOffset, true, false);
+                    b = sb.process();
+                }
             }
             else {
                 b = font.getFullFont();
