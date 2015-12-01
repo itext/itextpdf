@@ -79,25 +79,6 @@ public class PdfATtfUnicodeWriter extends TtfUnicodeWriter {
         PdfIndirectReference ind_font;
         PdfObject pobj;
         PdfIndirectObject obj;
-        PdfIndirectReference cidset = null;
-        if (pdfAConformanceLevel == PdfAConformanceLevel.PDF_A_1A || pdfAConformanceLevel == PdfAConformanceLevel.PDF_A_1B) {
-            PdfStream stream;
-            if (metrics.length == 0) {
-                stream = new PdfStream(new byte[]{(byte) 0x80});
-            } else {
-                int top = metrics[metrics.length - 1][0];
-                byte[] bt = new byte[top / 8 + 1];
-                // CID0 have to be added
-                bt[0] |= rotbits[0];
-                for (int k = 0; k < metrics.length; ++k) {
-                    int v = metrics[k][0];
-                    bt[v / 8] |= rotbits[v % 8];
-                }
-                stream = new PdfStream(bt);
-                stream.flateCompress(font.compressionLevel);
-            }
-            cidset = writer.addToBody(stream).getIndirectReference();
-        }
         if (font.cff) {
             byte b[] = font.readCffFont();
             if (font.subset || font.subsetRanges != null) {
@@ -124,8 +105,7 @@ public class PdfATtfUnicodeWriter extends TtfUnicodeWriter {
                     TrueTypeFontSubSet sb = new TrueTypeFontSubSet(font.fileName, new RandomAccessFileOrArray(font.rf), new HashSet<Integer>(longTag.keySet()), font.directoryOffset, false, false);
                     b = sb.process();
                 }
-            }
-            else {
+            } else {
                 b = font.getFullFont();
             }
             int lengths[] = new int[]{b.length};
@@ -133,6 +113,19 @@ public class PdfATtfUnicodeWriter extends TtfUnicodeWriter {
             obj = writer.addToBody(pobj);
             ind_font = obj.getIndirectReference();
         }
+        // CIDSet shall be based on font.maxGlyphId property of the font, it is maxp.numGlyphs for ttf,
+        // because technically we convert all unused glyphs to space, e.g. just remove outlines.
+        byte[] cidSetBytes = new byte[font.maxGlyphId / 8 + 1];
+        for (int i = 0; i < font.maxGlyphId / 8; i++) {
+            cidSetBytes[i] |= 0xff;
+        }
+        for (int i = 0; i < font.maxGlyphId % 8; i++) {
+            cidSetBytes[cidSetBytes.length - 1] |= rotbits[i];
+        }
+        PdfStream stream = new PdfStream(cidSetBytes);
+        stream.flateCompress(font.compressionLevel);
+        PdfIndirectReference cidset = writer.addToBody(stream).getIndirectReference();
+
         String subsetPrefix = "";
         if (font.subset)
             subsetPrefix = BaseFont.createSubsetPrefix();

@@ -1,5 +1,6 @@
 package com.itextpdf.text.pdf;
 
+import com.itextpdf.testutils.CompareTool;
 import com.itextpdf.text.*;
 import static com.itextpdf.text.pdf.PdfA1CheckerTest.pdfObjectCheck;
 import junit.framework.Assert;
@@ -1404,6 +1405,60 @@ public class PdfA2CheckerTest {
                 AFRelationshipValue.Data);
 
         document.close();
+    }
+
+    @Test
+    public void cidFontCheckTest1() throws DocumentException, IOException, InterruptedException {
+        String outPdf = outputDir + "cidFontCheckTest1.pdf";
+        String resourceDir = "./src/test/resources/com/itextpdf/text/pdf/";
+        Document document = new Document();
+        PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream(outPdf), PdfAConformanceLevel.PDF_A_2B);
+        writer.createXmpMetadata();
+        document.open();
+
+        Font font = FontFactory.getFont(resourceDir + "FreeMonoBold.ttf", BaseFont.IDENTITY_H, BaseFont.EMBEDDED, 12);
+        document.add(new Paragraph("Hello World", font));
+        ICC_Profile icc = ICC_Profile.getInstance(new FileInputStream(resourceDir + "sRGB Color Space Profile.icm"));
+        writer.setOutputIntents("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", icc);
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outPdf, resourceDir + "cidset/cmp_cidFontCheckTest1.pdf", outputDir, "diff_"));
+    }
+
+    @Test
+    public void cidFontCheckTest2() throws DocumentException, IOException, InterruptedException {
+        String outPdf = outputDir + "cidFontCheckTest2.pdf";
+        String resourceDir = "./src/test/resources/com/itextpdf/text/pdf/";
+        Document document = new Document();
+        PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream(outPdf), PdfAConformanceLevel.PDF_A_2B);
+        writer.createXmpMetadata();
+        document.open();
+
+        Font font = FontFactory.getFont(resourceDir + "Puritan2.otf", BaseFont.IDENTITY_H, BaseFont.EMBEDDED, 12);
+        document.add(new Paragraph("Hello World", font));
+        ICC_Profile icc = ICC_Profile.getInstance(new FileInputStream(resourceDir + "sRGB Color Space Profile.icm"));
+        writer.setOutputIntents("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", icc);
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outPdf, resourceDir + "cidset/cmp_cidFontCheckTest2.pdf", outputDir, "diff_"));
+    }
+
+    @Test
+    public void cidFontCheckTest3() throws DocumentException, IOException, InterruptedException {
+        String outPdf = outputDir + "cidFontCheckTest3.pdf";
+        String resourceDir = "./src/test/resources/com/itextpdf/text/pdf/";
+        Document document = new Document();
+        PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream(outPdf), PdfAConformanceLevel.PDF_A_2B);
+        writer.createXmpMetadata();
+        document.open();
+
+        Font font = FontFactory.getFont(resourceDir + "NotoSansCJKjp-Bold.otf", BaseFont.IDENTITY_H, BaseFont.EMBEDDED, 12);
+        document.add(new Paragraph("Hello World", font));
+        ICC_Profile icc = ICC_Profile.getInstance(new FileInputStream(resourceDir + "sRGB Color Space Profile.icm"));
+        writer.setOutputIntents("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", icc);
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outPdf, resourceDir + "cidset/cmp_cidFontCheckTest3.pdf", outputDir, "diff_"));
     }
 
     @Test
