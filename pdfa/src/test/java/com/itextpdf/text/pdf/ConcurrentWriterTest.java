@@ -60,21 +60,22 @@ public class ConcurrentWriterTest {
 
             public void createPdfA(PdfAConformanceLevel level) throws IOException, DocumentException {
                 final Document doc = new Document();
-                try (OutputStream out = new ByteArrayOutputStream()) {
-                    final PdfAWriter writer = PdfAWriter.getInstance(doc, out, level);
 
-                    doc.open();
+                OutputStream out = new ByteArrayOutputStream();
+                final PdfAWriter writer = PdfAWriter.getInstance(doc, out, level);
 
-                    final ICC_Profile icc = ICC_Profile.getInstance(new FileInputStream("./src/test/resources/com/itextpdf/text/pdf/sRGB Color Space Profile.icm"));
-                    writer.setOutputIntents("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", icc);
-                    writer.createXmpMetadata();
+                doc.open();
 
-                    final Font font = FontFactory.getFont("FreeSans", BaseFont.IDENTITY_H, true, 12);
-                    doc.add(new Phrase("Hello, " + level + " world!", font));
-                    doc.add(new Phrase(UUID.randomUUID().toString(), font));
+                final ICC_Profile icc = ICC_Profile.getInstance(new FileInputStream("./src/test/resources/com/itextpdf/text/pdf/sRGB Color Space Profile.icm"));
+                writer.setOutputIntents("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", icc);
+                writer.createXmpMetadata();
 
-                    doc.close();
-                }
+                final Font font = FontFactory.getFont("FreeSans", BaseFont.IDENTITY_H, true, 12);
+                doc.add(new Phrase("Hello, " + level + " world!", font));
+                doc.add(new Phrase(UUID.randomUUID().toString(), font));
+
+                doc.close();
+
 
             }
         }
@@ -82,8 +83,9 @@ public class ConcurrentWriterTest {
         class Normal implements Runnable {
 
             public void run() {
-                final Document doc = new Document();
-                try (OutputStream out = new ByteArrayOutputStream()) {
+                try {
+                    final Document doc = new Document();
+                    OutputStream out = new ByteArrayOutputStream();
                     final PdfWriter writer = PdfWriter.getInstance(doc, out);
 
                     doc.open();
@@ -93,8 +95,8 @@ public class ConcurrentWriterTest {
                     doc.add(new Phrase(UUID.randomUUID().toString(), font));
 
                     doc.close();
+
                 } catch (Exception e) {
-                    e.printStackTrace();
                     throw new RuntimeException(e);
                 }
             }
