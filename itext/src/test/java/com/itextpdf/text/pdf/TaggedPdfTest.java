@@ -1011,6 +1011,57 @@ public class TaggedPdfTest {
         }
     }
 
+    @Test
+    public void createTaggedPdf26() throws DocumentException, IOException, ParserConfigurationException, SAXException, InterruptedException {
+        Document doc = new Document(PageSize.LETTER, 72, 72, 72, 72);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        PdfWriter writer = PdfWriter.getInstance(doc, baos);
+        writer.setTagged();
+
+        doc.open();
+
+        ColumnText ct = new ColumnText(writer.getDirectContent());
+        ct.setUseAscender(true);
+        ct.setAdjustFirstLine(true);
+        ct.setSimpleColumn(doc.left(), doc.bottom(), doc.right(), doc.top());
+
+        Paragraph p = new Paragraph("before");
+        ct.addElement(p);
+
+        List list = new List(List.ORDERED, List.NUMERICAL);
+        list.setAutoindent(false);
+        list.setIndentationLeft(14);
+        list.setSymbolIndent(14);
+
+        list.add("Item 1");
+
+        List nested = new List(List.ORDERED, List.NUMERICAL);
+        nested.setAutoindent(false);
+        nested.setIndentationLeft(14);
+        nested.setSymbolIndent(14);
+        nested.add("Nested 1");
+
+        list.add(nested);
+        ct.addElement(list);
+
+        p = new Paragraph("after");
+        ct.addElement(p);
+
+        ct.go();
+
+        doc.close();
+
+
+        String outPath = "./target/com/itextpdf/test/pdf/TaggedPdfTest/";
+        new File(outPath).mkdirs();
+        String outFile = outPath + "out26.pdf";
+        FileOutputStream fos = new FileOutputStream(new File(outFile));
+        fos.write(baos.toByteArray());
+        fos.flush();
+        fos.close();
+        compareResults("26");
+    }
+
     private boolean compareXmls(String xml1, String xml2) throws ParserConfigurationException, SAXException, IOException {
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         dbf.setNamespaceAware(true);
