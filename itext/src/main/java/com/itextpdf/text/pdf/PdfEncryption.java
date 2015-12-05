@@ -44,20 +44,18 @@
  */
 package com.itextpdf.text.pdf;
 
-import com.itextpdf.text.pdf.crypto.ARCFOUREncryption;
-import com.itextpdf.text.error_messages.MessageLocalization;
-
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.ByteArrayOutputStream;
-import java.security.MessageDigest;
-import java.security.cert.Certificate;
-
-
 import com.itextpdf.text.ExceptionConverter;
+import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.exceptions.BadPasswordException;
 import com.itextpdf.text.pdf.crypto.AESCipherCBCnoPad;
+import com.itextpdf.text.pdf.crypto.ARCFOUREncryption;
 import com.itextpdf.text.pdf.crypto.IVGenerator;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.security.MessageDigest;
+import java.security.cert.Certificate;
 
 /**
  * 
@@ -554,15 +552,15 @@ public class PdfEncryption {
 
 	public static PdfObject createInfoId(byte id[], boolean modified) throws IOException {
 		ByteBuffer buf = new ByteBuffer(90);
-		buf.append('[').append('<');
-		if (id.length != 16)
+		if (id.length == 0)
 			id = createDocumentId();
-		for (int k = 0; k < 16; ++k)
+		buf.append('[').append('<');
+		for (int k = 0; k < id.length; ++k)
 			buf.appendHex(id[k]);
 		buf.append('>').append('<');
 		if (modified)
 			id = createDocumentId();
-		for (int k = 0; k < 16; ++k)
+		for (int k = 0; k < id.length; ++k)
 			buf.appendHex(id[k]);
 		buf.append('>').append(']');
 		buf.close();
