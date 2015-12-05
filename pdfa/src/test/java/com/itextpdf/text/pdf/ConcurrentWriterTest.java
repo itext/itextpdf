@@ -116,7 +116,7 @@ public class ConcurrentWriterTest {
             }
 
             service.shutdown();
-            service.awaitTermination(1, TimeUnit.HOURS);
+            service.awaitTermination(3600, TimeUnit.SECONDS);
         }
 
     }
