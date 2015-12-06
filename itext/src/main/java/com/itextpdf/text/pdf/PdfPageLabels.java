@@ -298,5 +298,10 @@ public class PdfPageLabels {
             this.prefix = prefix;
             this.logicalPage = logicalPage;
         }
+        
+        @Override
+        public String toString() {
+            return String.format("Physical page %s: style: %s; prefix '%s'; logical page: %s", physicalPage, numberStyle, prefix, logicalPage);
+        }
     }
 }
