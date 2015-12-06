@@ -59,10 +59,9 @@ public class PdfA1Checker extends PdfAChecker {
     static public final PdfName noOp = new PdfName("NoOp");
 
     static private HashSet<PdfName> allowedAnnotTypes = new HashSet<PdfName>(Arrays.asList(PdfName.TEXT, PdfName.LINK,
-            PdfName.FREETEXT, PdfName.LINE, PdfName.SQUARE, PdfName.CIRCLE, PdfName.POLYGON, PdfName.POLYLINE,
-            PdfName.HIGHLIGHT, PdfName.UNDERLINE, PdfName.SQUIGGLY, PdfName.STRIKEOUT, PdfName.STAMP, PdfName.CARET,
-            PdfName.INK, PdfName.POPUP, PdfName.FILEATTACHMENT, PdfName.WIDGET, PdfName.PRINTERMARK, PdfName.TRAPNET,
-            PdfName.WATERMARK));
+            PdfName.FREETEXT, PdfName.LINE, PdfName.SQUARE, PdfName.CIRCLE, PdfName.HIGHLIGHT, PdfName.UNDERLINE,
+            PdfName.SQUIGGLY, PdfName.STRIKEOUT, PdfName.STAMP, PdfName.INK, PdfName.POPUP, PdfName.WIDGET,
+            PdfName.PRINTERMARK, PdfName.TRAPNET));
 
     static public final HashSet<PdfName> allowedNamedActions = new HashSet<PdfName>(Arrays.asList(PdfName.NEXTPAGE,
             PdfName.PREVPAGE, PdfName.FIRSTPAGE, PdfName.LASTPAGE));

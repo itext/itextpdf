@@ -48,16 +48,12 @@ import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.ExceptionConverter;
 import com.itextpdf.text.Jpeg2000;
 import com.itextpdf.text.error_messages.MessageLocalization;
-import com.itextpdf.text.log.Logger;
-import com.itextpdf.text.log.LoggerFactory;
-import com.itextpdf.text.log.SysoLogger;
 import com.itextpdf.text.pdf.*;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.logging.Level;
 
 public class PdfA2Checker extends PdfAChecker {
 
@@ -71,9 +67,10 @@ public class PdfA2Checker extends PdfAChecker {
             PdfName.RENDITION, PdfName.TRANS, PdfName.GOTO3DVIEW, PdfName.JAVASCRIPT));
 
     static private HashSet<PdfName> allowedAnnotTypes = new HashSet<PdfName>(Arrays.asList(PdfName.TEXT, PdfName.LINK,
-            PdfName.FREETEXT, PdfName.LINE, PdfName.SQUARE, PdfName.CIRCLE, PdfName.HIGHLIGHT, PdfName.UNDERLINE,
-            PdfName.SQUIGGLY, PdfName.STRIKEOUT, PdfName.STAMP, PdfName.INK, PdfName.POPUP, PdfName.WIDGET,
-            PdfName.PRINTERMARK, PdfName.TRAPNET));
+            PdfName.FREETEXT, PdfName.LINE, PdfName.SQUARE, PdfName.CIRCLE, PdfName.POLYGON, PdfName.POLYLINE,
+            PdfName.HIGHLIGHT, PdfName.UNDERLINE, PdfName.SQUIGGLY, PdfName.STRIKEOUT, PdfName.STAMP, PdfName.CARET,
+            PdfName.INK, PdfName.POPUP, PdfName.FILEATTACHMENT, PdfName.WIDGET, PdfName.PRINTERMARK, PdfName.TRAPNET,
+            PdfName.WATERMARK, PdfName.REDACT));
 
     static public final HashSet<PdfName> contentAnnotations = new HashSet<PdfName>(Arrays.asList(PdfName.TEXT,
             PdfName.FREETEXT, PdfName.LINE, PdfName.SQUARE, PdfName.CIRCLE, PdfName.STAMP, PdfName.INK, PdfName.POPUP));
