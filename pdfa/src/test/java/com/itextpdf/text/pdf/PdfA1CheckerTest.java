@@ -982,6 +982,151 @@ public class PdfA1CheckerTest {
     }
 
     @Test
+    public void annotationCheckTest10() throws DocumentException, IOException {
+        Document document = new Document();
+        PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream(outputDir + "annotationCheckTest10.pdf"), PdfAConformanceLevel.PDF_A_1B);
+        writer.createXmpMetadata();
+        document.open();
+
+        Font font = FontFactory.getFont("./src/test/resources/com/itextpdf/text/pdf/FreeMonoBold.ttf", BaseFont.WINANSI, BaseFont.EMBEDDED, 12);
+        document.add(new Paragraph("Hello World", font));
+        ICC_Profile icc = ICC_Profile.getInstance(new FileInputStream("./src/test/resources/com/itextpdf/text/pdf/sRGB Color Space Profile.icm"));
+        writer.setOutputIntents("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", icc);
+
+        PdfAnnotation annot = new PdfAnnotation(writer, new Rectangle(100, 100, 200, 200));
+        annot.put(PdfName.SUBTYPE, PdfName.POLYGON);
+        PdfContentByte canvas = writer.getDirectContent();
+        canvas.addAnnotation(annot);
+        boolean exceptionThrown = false;
+        try {
+            document.close();
+        } catch (PdfAConformanceException e) {
+            if (e.getObject() == annot && e.getMessage()
+                    .equals("Annotation type /Polygon not allowed.")) {
+                exceptionThrown = true;
+            }
+        }
+        if (!exceptionThrown)
+            Assert.fail("PdfAConformanceException with correct message should be thrown.");
+    }
+
+    @Test
+    public void annotationCheckTest11() throws DocumentException, IOException {
+        Document document = new Document();
+        PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream(outputDir + "annotationCheckTest11.pdf"), PdfAConformanceLevel.PDF_A_1B);
+        writer.createXmpMetadata();
+        document.open();
+
+        Font font = FontFactory.getFont("./src/test/resources/com/itextpdf/text/pdf/FreeMonoBold.ttf", BaseFont.WINANSI, BaseFont.EMBEDDED, 12);
+        document.add(new Paragraph("Hello World", font));
+        ICC_Profile icc = ICC_Profile.getInstance(new FileInputStream("./src/test/resources/com/itextpdf/text/pdf/sRGB Color Space Profile.icm"));
+        writer.setOutputIntents("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", icc);
+
+        PdfAnnotation annot = new PdfAnnotation(writer, new Rectangle(100, 100, 200, 200));
+        annot.put(PdfName.SUBTYPE, PdfName.POLYLINE);
+        PdfContentByte canvas = writer.getDirectContent();
+        canvas.addAnnotation(annot);
+        boolean exceptionThrown = false;
+        try {
+            document.close();
+        } catch (PdfAConformanceException e) {
+            if (e.getObject() == annot && e.getMessage()
+                    .equals("Annotation type /PolyLine not allowed.")) {
+                exceptionThrown = true;
+            }
+        }
+        if (!exceptionThrown)
+            Assert.fail("PdfAConformanceException with correct message should be thrown.");
+    }
+
+    @Test
+    public void annotationCheckTest12() throws DocumentException, IOException {
+        Document document = new Document();
+        PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream(outputDir + "annotationCheckTest12.pdf"), PdfAConformanceLevel.PDF_A_1B);
+        writer.createXmpMetadata();
+        document.open();
+
+        Font font = FontFactory.getFont("./src/test/resources/com/itextpdf/text/pdf/FreeMonoBold.ttf", BaseFont.WINANSI, BaseFont.EMBEDDED, 12);
+        document.add(new Paragraph("Hello World", font));
+        ICC_Profile icc = ICC_Profile.getInstance(new FileInputStream("./src/test/resources/com/itextpdf/text/pdf/sRGB Color Space Profile.icm"));
+        writer.setOutputIntents("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", icc);
+
+        PdfAnnotation annot = new PdfAnnotation(writer, new Rectangle(100, 100, 200, 200));
+        annot.put(PdfName.SUBTYPE, PdfName.CARET);
+        PdfContentByte canvas = writer.getDirectContent();
+        canvas.addAnnotation(annot);
+        boolean exceptionThrown = false;
+        try {
+            document.close();
+        } catch (PdfAConformanceException e) {
+            if (e.getObject() == annot && e.getMessage()
+                    .equals("Annotation type /Caret not allowed.")) {
+                exceptionThrown = true;
+            }
+        }
+        if (!exceptionThrown)
+            Assert.fail("PdfAConformanceException with correct message should be thrown.");
+    }
+
+    @Test
+    public void annotationCheckTest13() throws DocumentException, IOException {
+        Document document = new Document();
+        PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream(outputDir + "annotationCheckTest13.pdf"), PdfAConformanceLevel.PDF_A_1B);
+        writer.createXmpMetadata();
+        document.open();
+
+        Font font = FontFactory.getFont("./src/test/resources/com/itextpdf/text/pdf/FreeMonoBold.ttf", BaseFont.WINANSI, BaseFont.EMBEDDED, 12);
+        document.add(new Paragraph("Hello World", font));
+        ICC_Profile icc = ICC_Profile.getInstance(new FileInputStream("./src/test/resources/com/itextpdf/text/pdf/sRGB Color Space Profile.icm"));
+        writer.setOutputIntents("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", icc);
+
+        PdfAnnotation annot = new PdfAnnotation(writer, new Rectangle(100, 100, 200, 200));
+        annot.put(PdfName.SUBTYPE, PdfName.WATERMARK);
+        PdfContentByte canvas = writer.getDirectContent();
+        canvas.addAnnotation(annot);
+        boolean exceptionThrown = false;
+        try {
+            document.close();
+        } catch (PdfAConformanceException e) {
+            if (e.getObject() == annot && e.getMessage()
+                    .equals("Annotation type /Watermark not allowed.")) {
+                exceptionThrown = true;
+            }
+        }
+        if (!exceptionThrown)
+            Assert.fail("PdfAConformanceException with correct message should be thrown.");
+    }
+
+    @Test
+    public void annotationCheckTest14() throws DocumentException, IOException {
+        Document document = new Document();
+        PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream(outputDir + "annotationCheckTest14.pdf"), PdfAConformanceLevel.PDF_A_1B);
+        writer.createXmpMetadata();
+        document.open();
+
+        Font font = FontFactory.getFont("./src/test/resources/com/itextpdf/text/pdf/FreeMonoBold.ttf", BaseFont.WINANSI, BaseFont.EMBEDDED, 12);
+        document.add(new Paragraph("Hello World", font));
+        ICC_Profile icc = ICC_Profile.getInstance(new FileInputStream("./src/test/resources/com/itextpdf/text/pdf/sRGB Color Space Profile.icm"));
+        writer.setOutputIntents("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", icc);
+
+        PdfAnnotation annot = new PdfAnnotation(writer, new Rectangle(100, 100, 200, 200));
+        annot.put(PdfName.SUBTYPE, PdfName.FILEATTACHMENT);
+        PdfContentByte canvas = writer.getDirectContent();
+        canvas.addAnnotation(annot);
+        boolean exceptionThrown = false;
+        try {
+            document.close();
+        } catch (PdfAConformanceException e) {
+            if (e.getObject() == annot && e.getMessage()
+                    .equals("Annotation type /FileAttachment not allowed.")) {
+                exceptionThrown = true;
+            }
+        }
+        if (!exceptionThrown)
+            Assert.fail("PdfAConformanceException with correct message should be thrown.");
+    }
+
+    @Test
     public void fieldCheckTest1() throws DocumentException, IOException {
         String LANGUAGES[] = new String[] {"Russian", "English", "Dutch", "French", "Spanish", "German"};
         Document document = new Document();

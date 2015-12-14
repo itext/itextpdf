@@ -1047,6 +1047,56 @@ public class PdfA2CheckerTest {
     }
 
     @Test
+    public void annotationCheckTest12() throws DocumentException, IOException {
+        Document document = new Document();
+        PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream(outputDir + "annotationCheckTest12.pdf"), PdfAConformanceLevel.PDF_A_2B);
+        writer.createXmpMetadata();
+        document.open();
+
+        Font font = FontFactory.getFont("./src/test/resources/com/itextpdf/text/pdf/FreeMonoBold.ttf", BaseFont.WINANSI, BaseFont.EMBEDDED, 12);
+        document.add(new Paragraph("Hello World", font));
+        ICC_Profile icc = ICC_Profile.getInstance(new FileInputStream("./src/test/resources/com/itextpdf/text/pdf/sRGB Color Space Profile.icm"));
+        writer.setOutputIntents("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", icc);
+
+        PdfDictionary ap = new PdfDictionary();
+        PdfStream s = new PdfStream("Hello World".getBytes());
+        ap.put(PdfName.N, writer.addToBody(s).getIndirectReference());
+
+        PdfAnnotation annot = new PdfAnnotation(writer, new Rectangle(100, 100, 120, 120));
+        annot.put(PdfName.AP, ap);
+        annot.put(PdfName.SUBTYPE, PdfName.POLYGON);
+        annot.put(PdfName.F, new PdfNumber(PdfAnnotation.FLAGS_PRINT));
+        PdfContentByte canvas = writer.getDirectContent();
+        canvas.addAnnotation(annot);
+        annot = new PdfAnnotation(writer, new Rectangle(130, 130, 150, 150));
+        annot.put(PdfName.SUBTYPE, PdfName.POLYLINE);
+        annot.put(PdfName.AP, ap);
+        annot.put(PdfName.F, new PdfNumber(PdfAnnotation.FLAGS_PRINT));
+        canvas.addAnnotation(annot);
+        annot = new PdfAnnotation(writer, new Rectangle(160, 160, 180, 180));
+        annot.put(PdfName.SUBTYPE, PdfName.CARET);
+        annot.put(PdfName.AP, ap);
+        annot.put(PdfName.F, new PdfNumber(PdfAnnotation.FLAGS_PRINT));
+        canvas.addAnnotation(annot);
+        annot = new PdfAnnotation(writer, new Rectangle(190, 190, 210, 210));
+        annot.put(PdfName.SUBTYPE, PdfName.WATERMARK);
+        annot.put(PdfName.AP, ap);
+        annot.put(PdfName.F, new PdfNumber(PdfAnnotation.FLAGS_PRINT));
+        annot = new PdfAnnotation(writer, new Rectangle(220, 220, 240, 240));
+        annot.put(PdfName.SUBTYPE, PdfName.FILEATTACHMENT);
+        annot.put(PdfName.AP, ap);
+        annot.put(PdfName.F, new PdfNumber(PdfAnnotation.FLAGS_PRINT));
+        canvas.addAnnotation(annot);
+        boolean exceptionThrown = false;
+        try {
+            document.close();
+        } catch (PdfAConformanceException e) {
+            exceptionThrown = true;
+        }
+        Assert.assertFalse(exceptionThrown);
+    }
+
+    @Test
     public void colorCheckTest1() throws DocumentException, IOException {
         Document document = new Document();
         PdfAWriter writer = PdfAWriter.getInstance(document, new FileOutputStream(outputDir + "pdfa2ColorCheckTest1.pdf"), PdfAConformanceLevel.PDF_A_2B);
