@@ -1651,7 +1651,7 @@ public class PdfContentByte {
                 }
                 float w = template.getWidth();
                 float h = template.getHeight();
-                addTemplate(template, a / w, b / w, c / h, d / h, e, f, isMCBlockOpened);
+                addTemplate(template, a / w, b / w, c / h, d / h, e, f, false, false);
             }
             else {
                 content.append("q ");
@@ -2845,13 +2845,31 @@ public class PdfContentByte {
      *                   taken into account only if <code>isTagged()</code> - <code>true</code>.
      */
     public void addTemplate(final PdfTemplate template, final double a, final double b, final double c, final double d, final double e, final double f, boolean tagContent) {
+        addTemplate(template, a, b, c, d, e, f, true, tagContent);
+    }
+
+    /**
+     * Adds a template to this content.
+     *
+     * @param template the template
+     * @param a an element of the transformation matrix
+     * @param b an element of the transformation matrix
+     * @param c an element of the transformation matrix
+     * @param d an element of the transformation matrix
+     * @param e an element of the transformation matrix
+     * @param f an element of the transformation matrix
+     * @param tagTemplate defines if template is to be tagged; <code>true</code> by default, <code>false</code> used when template is a part of <code>ImgTemplate</code>.
+     * @param tagContent <code>true</code> - template content will be tagged(all that will be added after), <code>false</code> - only a Do operator will be tagged.
+     *                   taken into account only if <code>isTagged()</code> and <code>tagTemplate</code> parameter - both <code>true</code>.
+     */
+    private void addTemplate(final PdfTemplate template, final double a, final double b, final double c, final double d, final double e, final double f, boolean tagTemplate, boolean tagContent) {
         checkWriter();
         checkNoPattern(template);
         PdfWriter.checkPdfIsoConformance(writer, PdfIsoKeys.PDFISOKEY_FORM_XOBJ, template);
         PdfName name = writer.addDirectTemplateSimple(template, null);
         PageResources prs = getPageResources();
         name = prs.addXObject(name, template.getIndirectReference());
-        if (isTagged()) {
+        if (isTagged() && tagTemplate) {
             if (inText)
                 endText();
             if (template.isContentTagged() || (template.getPageReference() != null && tagContent)) {
@@ -2880,7 +2898,7 @@ public class PdfContentByte {
         content.append(f).append(" cm ");
         content.append(name.getBytes()).append(" Do Q").append_i(separator);
 
-        if (isTagged() && !tagContent) {
+        if (isTagged() && tagTemplate && !tagContent) {
             closeMCBlock(template);
             template.setId(null);
         }
