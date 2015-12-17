@@ -1071,7 +1071,7 @@ public class TaggedPdfTest {
 
         doc.open();
 
-        String imagePath = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfTest/desert.jpg";
+        String imagePath = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfTest/Desert.jpg";
         Image img = Image.getInstance(imagePath);
         img.setAbsolutePosition(0, 0);
         img.setAccessibleAttribute(PdfName.E, new PdfString("expansion"));
