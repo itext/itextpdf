@@ -1062,6 +1062,42 @@ public class TaggedPdfTest {
         compareResults("26");
     }
 
+    @Test
+    public void createTaggedPdf27() throws DocumentException, IOException, ParserConfigurationException, SAXException, InterruptedException {
+        Document doc = new Document();
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        PdfWriter writer = PdfWriter.getInstance(doc, baos);
+        writer.setTagged();
+
+        doc.open();
+
+        String imagePath = "./src/test/resources/com/itextpdf/text/pdf/TaggedPdfTest/desert.jpg";
+        Image img = Image.getInstance(imagePath);
+        img.setAbsolutePosition(0, 0);
+        img.setAccessibleAttribute(PdfName.E, new PdfString("expansion"));
+        img.setAccessibleAttribute(PdfName.ALT, new PdfString("alt"));
+
+        PdfTemplate template = writer.getDirectContent().createTemplate(img.getWidth(), img.getHeight());
+        writer.getDirectContent().addTemplate(template, 100, 300, true);
+
+        ColumnText ct = new ColumnText(template);
+        ct.setSimpleColumn(0, 0, 250, 300);
+        ct.addElement(img);
+        ct.go();
+
+        doc.close();
+
+
+        String outPath = "./target/com/itextpdf/test/pdf/TaggedPdfTest/";
+        new File(outPath).mkdirs();
+        String outFile = outPath + "out27.pdf";
+        FileOutputStream fos = new FileOutputStream(new File(outFile));
+        fos.write(baos.toByteArray());
+        fos.flush();
+        fos.close();
+        compareResults("27");
+    }
+
     private boolean compareXmls(String xml1, String xml2) throws ParserConfigurationException, SAXException, IOException {
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         dbf.setNamespaceAware(true);

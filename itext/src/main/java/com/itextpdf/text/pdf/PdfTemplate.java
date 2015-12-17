@@ -283,6 +283,8 @@ public class PdfTemplate extends PdfContentByte implements IAccessibleElement {
         }
         tpl.separator = separator;
         tpl.additional = additional;
+        tpl.contentTagged = contentTagged;
+        tpl.duplicatedFrom = this;
         return tpl;
     }
     

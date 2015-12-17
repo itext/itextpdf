@@ -2862,6 +2862,7 @@ public class PdfContentByte {
 
             if (tagContent) {
                 template.setContentTagged(true);
+                ensureDocumentTagIsOpen();
                 ArrayList<IAccessibleElement> allMcElements = getMcElements();
                 if (allMcElements != null && allMcElements.size() > 0)
                     template.getMcElements().add(allMcElements.get(allMcElements.size() - 1));
@@ -4158,10 +4159,7 @@ public class PdfContentByte {
 
     public void openMCBlock(IAccessibleElement element) {
         if (isTagged()) {
-            if (pdf.openMCDocument) {
-                pdf.openMCDocument = false;
-                writer.getDirectContentUnder().openMCBlock(pdf);
-            }
+            ensureDocumentTagIsOpen();
             if (element != null/* && element.getRole() != null*/) {
                 if (!getMcElements().contains(element)) {
                     PdfStructureElement structureElement = openMCBlockInt(element);
@@ -4201,8 +4199,7 @@ public class PdfContentByte {
                 if (PdfName.ARTIFACT.equals(element.getRole())) {
                     HashMap<PdfName, PdfObject> properties = element.getAccessibleAttributes();
                     PdfDictionary propertiesDict = null;
-                    if (properties == null || properties.isEmpty()) {
-                    } else {
+                    if (properties != null && !properties.isEmpty()) {
                         propertiesDict = new PdfDictionary();
                         for (Map.Entry<PdfName, PdfObject> entry : properties.entrySet()) {
                             propertiesDict.put(entry.getKey(), entry.getValue());
@@ -4257,6 +4254,13 @@ public class PdfContentByte {
                 if (inTextLocal)
                     beginText(true);
             }
+        }
+    }
+
+    private void ensureDocumentTagIsOpen() {
+        if (pdf.openMCDocument) {
+            pdf.openMCDocument = false;
+            writer.getDirectContentUnder().openMCBlock(pdf);
         }
     }
 
