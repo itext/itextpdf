@@ -87,6 +87,7 @@ public class PdfDestination extends PdfArray {
     
     public PdfDestination(PdfDestination d) {
         super(d);
+        this.status = d.status;
     }
     
 /**
