@@ -38,7 +38,7 @@ public class ChunkTest {
     public static final String SOURCE15 = "./src/test/resources/com/itextpdf/text/Chunk/source15.pdf";
     public static final String SOURCE16 = "./src/test/resources/com/itextpdf/text/Chunk/source16.pdf";
     public static final String SOURCE17 = "./src/test/resources/com/itextpdf/text/Chunk/source17.pdf";
-    public static final String SOURCE_FOLDER = "./target/com/itextpdf/test/Chunk";
+    public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/text/Chunk/";
     public static final String OUTFOLDER = "./target/com/itextpdf/test/Chunk";
     public static final String OUTTABSPACED = OUTFOLDER + "/tabspaceDocument.pdf";
     public static final String OUTABSPACEC = OUTFOLDER + "/tabspaceColumnText.pdf";
