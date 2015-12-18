@@ -3,6 +3,7 @@
  */
 package com.itextpdf.text;
 
+import com.itextpdf.testutils.CompareTool;
 import com.itextpdf.text.io.RandomAccessSourceFactory;
 import com.itextpdf.text.pdf.*;
 import com.itextpdf.text.pdf.draw.DottedLineSeparator;
@@ -13,6 +14,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -36,6 +38,7 @@ public class ChunkTest {
     public static final String SOURCE15 = "./src/test/resources/com/itextpdf/text/Chunk/source15.pdf";
     public static final String SOURCE16 = "./src/test/resources/com/itextpdf/text/Chunk/source16.pdf";
     public static final String SOURCE17 = "./src/test/resources/com/itextpdf/text/Chunk/source17.pdf";
+    public static final String SOURCE_FOLDER = "./target/com/itextpdf/test/Chunk";
     public static final String OUTFOLDER = "./target/com/itextpdf/test/Chunk";
     public static final String OUTTABSPACED = OUTFOLDER + "/tabspaceDocument.pdf";
     public static final String OUTABSPACEC = OUTFOLDER + "/tabspaceColumnText.pdf";
@@ -508,6 +511,48 @@ public class ChunkTest {
         } finally {
         	reader1.close();
         	reader2.close();
+        }
+    }
+
+    @Test
+    public void testImageChunkOnGenericTag() throws IOException, DocumentException, InterruptedException {
+        String fileName = "testImageChunkOnGenericTag.pdf";
+        FileOutputStream fos = new FileOutputStream(OUTFOLDER + fileName);
+        Document doc = new Document(PageSize.LETTER);
+        PdfWriter writer = PdfWriter.getInstance(doc, fos);
+        writer.setPageEvent(new EventHandler());
+        doc.open();
+
+        Image img = Image.getInstance(writer.getDirectContent().createTemplate(100f, 25f));
+        System.out.println(img.getHeight());
+        Chunk c = new Chunk(img, 0, 0);
+        c.setGenericTag("foobar");
+
+        doc.add(c);
+        doc.close();
+
+        CompareTool compareTool = new CompareTool();
+        String error = compareTool.compareByContent(OUTFOLDER + fileName, SOURCE_FOLDER + "cmp_" + fileName, OUTFOLDER, "diff_");
+        if (error != null) {
+            Assert.fail(error);
+        }
+    }
+
+    class EventHandler extends PdfPageEventHelper {
+
+        public  void onGenericTag(PdfWriter writer, Document document, Rectangle rect, String text) {
+            PdfContentByte cb = writer.getDirectContent();
+            cb.saveState();
+            cb.setColorStroke(BaseColor.BLACK);
+            cb.rectangle(rect.getLeft(), rect.getBottom(), rect.getWidth(), rect.getHeight());
+            cb.stroke();
+            cb.restoreState();
+
+            writer.getDirectContent().beginText();
+            Font f = FontFactory.getFont(BaseFont.COURIER, 8f);
+            writer.getDirectContent().setFontAndSize(f.getBaseFont(), 8f);
+            writer.getDirectContent().showTextAligned(Element.ALIGN_LEFT, String.valueOf(rect.getHeight()), rect.getLeft(), rect.getBottom(), 0);
+            writer.getDirectContent().endText();
         }
     }
 

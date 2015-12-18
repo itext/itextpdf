@@ -1501,6 +1501,7 @@ public class PdfDocument extends Document {
             float descender;
             if (chunk.isImage()) {
                 ascender = chunk.height();
+                fontSize = chunk.height();
                 descender = 0;
             } else {
                 ascender = chunk.font().getFont().getFontDescriptor(BaseFont.ASCENT, fontSize);
