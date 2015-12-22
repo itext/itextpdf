@@ -76,11 +76,30 @@ public class LocationTextExtractionStrategy implements TextExtractionStrategy {
     
     /** a summary of all found text */
     private final List<TextChunk> locationalResult = new ArrayList<TextChunk>();
+    
+    private final TextChunkLocationStrategy tclStrat;
+    
 
     /**
      * Creates a new text extraction renderer.
      */
     public LocationTextExtractionStrategy() {
+        this(new TextChunkLocationStrategy() {
+            @Override
+            public TextChunkLocation createLocation(TextRenderInfo renderInfo, LineSegment baseline) {
+                return new TextChunkLocationDefaultImp(baseline.getStartPoint(), baseline.getEndPoint(), renderInfo.getSingleSpaceWidth());
+            }
+        });
+    }
+    
+    /**
+     * Creates a new text extraction renderer, with a custom strategy for
+     * creating new TextChunkLocation objects based on the input of the
+     * TextRenderInfo.
+     * @param strat the custom strategy
+     */
+    public LocationTextExtractionStrategy(TextChunkLocationStrategy strat) {
+        tclStrat = strat;
     }
 
     /**
@@ -143,24 +162,7 @@ public class LocationTextExtractionStrategy implements TextExtractionStrategy {
      * @return true if the two chunks represent different words (i.e. should have a space between them).  False otherwise.
      */
     protected boolean isChunkAtWordBoundary(TextChunk chunk, TextChunk previousChunk){
-
-        /**
-         * Here we handle a very specific case which in PDF may look like:
-         * -.232 Tc [( P)-226.2(r)-231.8(e)-230.8(f)-238(a)-238.9(c)-228.9(e)]TJ
-         * The font's charSpace width is 0.232 and it's compensated with charSpacing of 0.232.
-         * And a resultant TextChunk.charSpaceWidth comes to TextChunk constructor as 0.
-         * In this case every chunk is considered as a word boundary and space is added.
-         * We should consider charSpaceWidth equal (or close) to zero as a no-space.
-         */
-        if (chunk.getCharSpaceWidth() < 0.1f)
-            return false;
-
-        float dist = chunk.distanceFromEndOf(previousChunk);
-        
-        if (dist < -chunk.getCharSpaceWidth() || dist > chunk.getCharSpaceWidth()/2.0f)
-            return true;
-        
-        return false;
+        return chunk.getLocation().isAtWordBoundary(previousChunk.getLocation());
     }
     
     /**
@@ -233,18 +235,39 @@ public class LocationTextExtractionStrategy implements TextExtractionStrategy {
 	    	Matrix riseOffsetTransform = new Matrix(0, -renderInfo.getRise());
 	    	segment = segment.transformBy(riseOffsetTransform);
     	}
-        TextChunk location = new TextChunk(renderInfo.getText(), segment.getStartPoint(), segment.getEndPoint(), renderInfo.getSingleSpaceWidth());
-        locationalResult.add(location);        
+        TextChunk tc = new TextChunk(renderInfo.getText(), tclStrat.createLocation(renderInfo, segment));
+        locationalResult.add(tc);        
     }
     
+    public static interface TextChunkLocationStrategy {
+        TextChunkLocation createLocation(TextRenderInfo renderInfo, LineSegment baseline);
+    }
+    
+    public static interface TextChunkLocation {
 
+        float distParallelEnd();
 
-    /**
-     * Represents a chunk of text, it's orientation, and location relative to the orientation vector
-     */
-    public static class TextChunk implements Comparable<TextChunk>{
-        /** the text of the chunk */
-        private final String text;
+        float distParallelStart();
+
+        int distPerpendicular();
+
+        float getCharSpaceWidth();
+
+        Vector getEndLocation();
+
+        Vector getStartLocation();
+
+        int orientationMagnitude();
+        
+        boolean sameLine(TextChunkLocation as);
+
+        float distanceFromEndOf(TextChunkLocation other);
+        
+        boolean isAtWordBoundary(TextChunkLocation previous);
+    }
+    
+    private static class TextChunkLocationDefaultImp implements TextChunkLocation {
+        
         /** the starting location of the chunk */
         private final Vector startLocation;
         /** the ending location of the chunk */
@@ -263,8 +286,7 @@ public class LocationTextExtractionStrategy implements TextExtractionStrategy {
         /** the width of a single space character in the font of the chunk */
         private final float charSpaceWidth;
         
-        public TextChunk(String string, Vector startLocation, Vector endLocation, float charSpaceWidth) {
-            this.text = string;
+        public TextChunkLocationDefaultImp(Vector startLocation, Vector endLocation, float charSpaceWidth) {
             this.startLocation = startLocation;
             this.endLocation = endLocation;
             this.charSpaceWidth = charSpaceWidth;
@@ -285,48 +307,50 @@ public class LocationTextExtractionStrategy implements TextExtractionStrategy {
             distParallelStart = orientationVector.dot(startLocation);
             distParallelEnd = orientationVector.dot(endLocation);
         }
+        
+        
+        @Override
+        public int orientationMagnitude() {return orientationMagnitude;}
+        @Override
+        public int distPerpendicular() {return distPerpendicular;}
+        @Override
+        public float distParallelStart() {return distParallelStart; }
+        @Override
+        public float distParallelEnd() { return distParallelEnd;}
+        
 
         /**
          * @return the start location of the text
          */
+        @Override
         public Vector getStartLocation(){
-        	return startLocation;
-        }
-        /**
-         * @return the end location of the text
-         */
-        public Vector getEndLocation(){
-        	return endLocation;
+            return startLocation;
         }
         
         /**
-         * @return the text captured by this chunk
+         * @return the end location of the text
          */
-        public String getText(){
-        	return text;
+        @Override
+        public Vector getEndLocation(){
+            return endLocation;
         }
         
         /**
          * @return the width of a single space character as rendered by this chunk
          */
+        @Override
         public float getCharSpaceWidth() {
-			return charSpaceWidth;
-		}
-        
-        private void printDiagnostics(){
-            System.out.println("Text (@" + startLocation + " -> " + endLocation + "): " + text);
-            System.out.println("orientationMagnitude: " + orientationMagnitude);
-            System.out.println("distPerpendicular: " + distPerpendicular);
-            System.out.println("distParallel: " + distParallelStart);
+            return charSpaceWidth;
         }
+        
         
         /**
          * @param as the location to compare to
          * @return true is this location is on the the same line as the other
          */
-        public boolean sameLine(TextChunk as){
-            if (orientationMagnitude != as.orientationMagnitude) return false;
-            if (distPerpendicular != as.distPerpendicular) return false;
+        public boolean sameLine(TextChunkLocation as){
+            if (orientationMagnitude() != as.orientationMagnitude()) return false;
+            if (distPerpendicular() != as.distPerpendicular()) return false;
             return true;
         }
 
@@ -338,9 +362,61 @@ public class LocationTextExtractionStrategy implements TextExtractionStrategy {
          * @param other
          * @return the number of spaces between the end of 'other' and the beginning of this chunk
          */
-        public float distanceFromEndOf(TextChunk other){
-            float distance = distParallelStart - other.distParallelEnd;
+        public float distanceFromEndOf(TextChunkLocation other){
+            float distance = distParallelStart() - other.distParallelEnd();
             return distance;
+        }
+        
+    public boolean isAtWordBoundary(TextChunkLocation previous){
+        /**
+         * Here we handle a very specific case which in PDF may look like:
+         * -.232 Tc [( P)-226.2(r)-231.8(e)-230.8(f)-238(a)-238.9(c)-228.9(e)]TJ
+         * The font's charSpace width is 0.232 and it's compensated with charSpacing of 0.232.
+         * And a resultant TextChunk.charSpaceWidth comes to TextChunk constructor as 0.
+         * In this case every chunk is considered as a word boundary and space is added.
+         * We should consider charSpaceWidth equal (or close) to zero as a no-space.
+         */
+        if (getCharSpaceWidth() < 0.1f)
+            return false;
+
+        float dist = distanceFromEndOf(previous);
+        
+        if (dist < -getCharSpaceWidth() || dist > getCharSpaceWidth()/2.0f)
+            return true;
+        
+        return false;
+    }
+    }
+    /**
+     * Represents a chunk of text, it's orientation, and location relative to the orientation vector
+     */
+    public static class TextChunk implements Comparable<TextChunk>{
+        /** the text of the chunk */
+        private final String text;
+        private final TextChunkLocation location;
+        
+        public TextChunk(String string, TextChunkLocation loc) {
+            this.text = string;
+            this.location = loc;
+        }
+        
+        /**
+         * @return the text captured by this chunk
+         */
+        public String getText(){
+        	return text;
+        }
+        
+        public TextChunkLocation getLocation() {
+            return location;
+        }
+        
+        
+        private void printDiagnostics(){
+            System.out.println("Text (@" + location.getStartLocation() + " -> " + location.getEndLocation() + "): " + text);
+            System.out.println("orientationMagnitude: " + location.orientationMagnitude());
+            System.out.println("distPerpendicular: " + location.distPerpendicular());
+            System.out.println("distParallel: " + location.distParallelStart());
         }
         
         /**
@@ -351,13 +427,13 @@ public class LocationTextExtractionStrategy implements TextExtractionStrategy {
             if (this == rhs) return 0; // not really needed, but just in case
             
             int rslt;
-            rslt = compareInts(orientationMagnitude, rhs.orientationMagnitude);
+            rslt = compareInts(location.orientationMagnitude(), rhs.location.orientationMagnitude());
             if (rslt != 0) return rslt;
 
-            rslt = compareInts(distPerpendicular, rhs.distPerpendicular);
+            rslt = compareInts(location.distPerpendicular(), rhs.location.distPerpendicular());
             if (rslt != 0) return rslt;
 
-            return Float.compare(distParallelStart, rhs.distParallelStart);
+            return Float.compare(location.distParallelStart(), rhs.location.distParallelStart());
         }
 
         /**
@@ -370,7 +446,9 @@ public class LocationTextExtractionStrategy implements TextExtractionStrategy {
             return int1 == int2 ? 0 : int1 < int2 ? -1 : 1;
         }
 
-        
+        private boolean sameLine(TextChunk lastChunk) {
+            return getLocation().sameLine(lastChunk.getLocation());
+        }
     }
 
     /**
