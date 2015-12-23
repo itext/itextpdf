@@ -443,6 +443,15 @@ public class PdfContentStreamProcessor {
         ImageRenderInfo renderInfo = ImageRenderInfo.createForEmbeddedImage(gs(), info, colorSpaceDic);
         renderListener.renderImage(renderInfo);
     }
+    
+    /**
+     * Accessor method for the RenderListener object maintained in this class.
+     * Necessary for implementing custom ContentOperator implementations.
+     * @return the renderListener
+     */
+    public RenderListener getRenderListener() {
+        return renderListener;
+    }
 
     /**
      * A resource dictionary that allows stack-like behavior to support resource dictionary inheritance
