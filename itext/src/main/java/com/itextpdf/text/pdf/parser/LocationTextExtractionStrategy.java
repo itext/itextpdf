@@ -46,7 +46,6 @@ package com.itextpdf.text.pdf.parser;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 
 
@@ -179,7 +178,7 @@ public class LocationTextExtractionStrategy implements TextExtractionStrategy {
         List<TextChunk> filteredTextChunks = filterTextChunks(locationalResult, chunkFilter);
     	Collections.sort(filteredTextChunks);
 
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         TextChunk lastChunk = null;
         for (TextChunk chunk : filteredTextChunks) {
 
@@ -215,9 +214,7 @@ public class LocationTextExtractionStrategy implements TextExtractionStrategy {
     
     /** Used for debugging only */
     private void dumpState(){
-        for (Iterator<TextChunk> iterator = locationalResult.iterator(); iterator.hasNext(); ) {
-            TextChunk location = (TextChunk) iterator.next();
-            
+        for (TextChunk location : locationalResult) {
             location.printDiagnostics();
             
             System.out.println();
@@ -349,9 +346,7 @@ public class LocationTextExtractionStrategy implements TextExtractionStrategy {
          * @return true is this location is on the the same line as the other
          */
         public boolean sameLine(TextChunkLocation as){
-            if (orientationMagnitude() != as.orientationMagnitude()) return false;
-            if (distPerpendicular() != as.distPerpendicular()) return false;
-            return true;
+            return orientationMagnitude() == as.orientationMagnitude() && distPerpendicular() != as.distPerpendicular();
         }
 
         /**
@@ -381,10 +376,7 @@ public class LocationTextExtractionStrategy implements TextExtractionStrategy {
 
         float dist = distanceFromEndOf(previous);
         
-        if (dist < -getCharSpaceWidth() || dist > getCharSpaceWidth()/2.0f)
-            return true;
-        
-        return false;
+        return dist < -getCharSpaceWidth() || dist > getCharSpaceWidth()/2.0f;
     }
     }
     /**
@@ -421,6 +413,7 @@ public class LocationTextExtractionStrategy implements TextExtractionStrategy {
         
         /**
          * Compares based on orientation, perpendicular distance, then parallel distance
+         * @param rhs the other object
          * @see java.lang.Comparable#compareTo(java.lang.Object)
          */
         public int compareTo(TextChunk rhs) {
