@@ -93,8 +93,6 @@ public class PdfA2Checker extends PdfAChecker {
     protected boolean grayUsed = false;
     protected boolean transparencyWithoutPageGroupDetected = false;
     protected boolean transparencyDetectedOnThePage = false;
-    protected String pdfaOutputIntentColorSpace = null;
-    protected PdfObject pdfaDestOutputIntent = null;
     static public final int maxStringLength = 32767;
 
 
@@ -135,7 +133,7 @@ public class PdfA2Checker extends PdfAChecker {
     @Override
     protected void checkGState(PdfWriter writer, int key, Object obj1) {
         if (obj1 instanceof PdfObject) {
-            PdfDictionary gs = getDirectDictionary((PdfObject)obj1);
+            PdfDictionary gs = getDirectDictionary((PdfObject) obj1);
             PdfObject obj = gs.get(PdfName.BM);
             if (obj != null) {
                 if (!allowedBlendModes.contains(obj))
@@ -144,7 +142,7 @@ public class PdfA2Checker extends PdfAChecker {
                     transparencyDetectedOnThePage = true;
             }
 
-            PdfNumber ca  = gs.getAsNumber(PdfName.ca);
+            PdfNumber ca = gs.getAsNumber(PdfName.ca);
             if (ca != null && ca.floatValue() < 1f) {
                 transparencyDetectedOnThePage = true;
             }
@@ -194,7 +192,7 @@ public class PdfA2Checker extends PdfAChecker {
         if (getDirectStream(pdfImage.get(PdfName.SMASK)) != null) {
             transparencyDetectedOnThePage = true;
         }
-        PdfNumber smaskInData = pdfImage.getAsNumber(PdfName.SMASKINDATA) ;
+        PdfNumber smaskInData = pdfImage.getAsNumber(PdfName.SMASKINDATA);
         if (smaskInData != null && smaskInData.floatValue() > 0) {
             transparencyDetectedOnThePage = true;
         }
@@ -251,7 +249,7 @@ public class PdfA2Checker extends PdfAChecker {
     @Override
     protected void checkFormXObj(PdfWriter writer, int key, Object obj1) {
         if (obj1 instanceof PdfTemplate) {
-            if (((PdfTemplate)obj1).getGroup() != null) {
+            if (((PdfTemplate) obj1).getGroup() != null) {
                 transparencyDetectedOnThePage = true;
             }
         }
@@ -405,7 +403,7 @@ public class PdfA2Checker extends PdfAChecker {
     @Override
     protected void checkFileSpec(PdfWriter writer, int key, Object obj1) {
         if (obj1 instanceof PdfFileSpecification) {
-            PdfDictionary fileSpec = (PdfFileSpecification)obj1;
+            PdfDictionary fileSpec = (PdfFileSpecification) obj1;
             if (!fileSpec.contains(PdfName.UF) || !fileSpec.contains(PdfName.F) || !fileSpec.contains(PdfName.DESC)) {
                 throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("file.specification.dictionary.shall.contain.f.uf.and.desc.entries"));
             }
@@ -447,7 +445,7 @@ public class PdfA2Checker extends PdfAChecker {
             if (string.getBytes().length > maxStringLength) {
                 throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("pdf.string.is.too.long"));
             }
-        }  else if (obj1 instanceof PdfDictionary) {
+        } else if (obj1 instanceof PdfDictionary) {
             PdfDictionary dictionary = (PdfDictionary) obj1;
             PdfName type = dictionary.getAsName(PdfName.TYPE);
             if (PdfName.CATALOG.equals(type)) {
@@ -493,14 +491,14 @@ public class PdfA2Checker extends PdfAChecker {
                                         PdfDictionary referenceDict = getDirectDictionary(references.getPdfObject(i));
                                         if (referenceDict.contains(DIGESTLOCATION)
                                                 || referenceDict.contains(DIGESTMETHOD)
-                                                    || referenceDict.contains(DIGESTVALUE)) {
+                                                || referenceDict.contains(DIGESTVALUE)) {
                                             throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("signature.references.dictionary.shall.not.contain.digestlocation.digestmethod.digestvalue"));
                                         }
                                     }
                                 }
                             }
-                        } else if (PdfName.UR3.equals(dictKey)){}
-                        else {
+                        } else if (PdfName.UR3.equals(dictKey)) {
+                        } else {
                             throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("no.keys.other.than.UR3.and.DocMDP.shall.be.present.in.a.permissions.dictionary"));
                         }
                     }
@@ -516,12 +514,12 @@ public class PdfA2Checker extends PdfAChecker {
                     }
                 }
             } else if (PdfName.PAGE.equals(type)) {
-                PdfName[] boxNames = new PdfName[] {PdfName.MEDIABOX, PdfName.CROPBOX, PdfName.TRIMBOX, PdfName.ARTBOX, PdfName.BLEEDBOX};
-                for (PdfName boxName: boxNames) {
+                PdfName[] boxNames = new PdfName[]{PdfName.MEDIABOX, PdfName.CROPBOX, PdfName.TRIMBOX, PdfName.ARTBOX, PdfName.BLEEDBOX};
+                for (PdfName boxName : boxNames) {
                     PdfObject box = dictionary.getDirectObject(boxName);
                     if (box instanceof PdfRectangle) {
-                        float width = ((PdfRectangle)box).width();
-                        float height = ((PdfRectangle)box).height();
+                        float width = ((PdfRectangle) box).width();
+                        float height = ((PdfRectangle) box).height();
                         if (width < minPageSize || width > maxPageSize || height < minPageSize || height > maxPageSize)
                             throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("the.page.less.3.units.nor.greater.14400.in.either.direction"));
                     }
@@ -551,6 +549,7 @@ public class PdfA2Checker extends PdfAChecker {
                 transparencyDetectedOnThePage = false;
 
             } else if (PdfName.OUTPUTINTENT.equals(type)) {
+                isCheckOutputIntent = true;
                 PdfObject destOutputIntent = dictionary.get(PdfName.DESTOUTPUTPROFILE);
                 if (destOutputIntent != null && pdfaDestOutputIntent != null) {
                     if (pdfaDestOutputIntent.getIndRef() != destOutputIntent.getIndRef())
@@ -587,7 +586,7 @@ public class PdfA2Checker extends PdfAChecker {
             }
             PdfObject obj2 = dictionary.get(PdfName.HALFTONETYPE);
             if (obj2 != null && obj2.isNumber()) {
-                PdfNumber number = (PdfNumber)obj2;
+                PdfNumber number = (PdfNumber) obj2;
                 if (number.intValue() != 1 || number.intValue() != 5) {
                     throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("an.extgstate.dictionary.shall.contain.the.halftonetype.key.of.value.1.or.5"));
                 }
@@ -727,7 +726,7 @@ public class PdfA2Checker extends PdfAChecker {
                     PdfNumber index2 = rect.getAsNumber(2);
                     PdfNumber index3 = rect.getAsNumber(3);
                     if (index0 != null && index1 != null && index2 != null && index3 != null &&
-                        index0.doubleValue() == index2.doubleValue() && index1.doubleValue() == index3.doubleValue())
+                            index0.doubleValue() == index2.doubleValue() && index1.doubleValue() == index3.doubleValue())
                         isCorrectRect = true;
                 }
                 if (!PdfName.POPUP.equals(annot.getAsName(PdfName.SUBTYPE)) &&
@@ -787,8 +786,8 @@ public class PdfA2Checker extends PdfAChecker {
 
     @Override
     protected void checkOutputIntent(PdfWriter writer, int key, Object obj1) {
-       if (writer instanceof PdfAStamperImp && writer.getColorProfile() != null)
-           throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("outputintent.shall.not.be.updated"));
+        if (writer instanceof PdfAStamperImp && writer.getColorProfile() != null)
+            throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("outputintent.shall.not.be.updated"));
     }
 
     private void fillOrderRecursively(PdfArray orderArray, HashSet<PdfObject> order) {
@@ -804,6 +803,7 @@ public class PdfA2Checker extends PdfAChecker {
 
     @Override
     public void close(PdfWriter writer) {
+        checkOutputIntentsInStamperMode(writer);
         if (pdfaOutputIntentColorSpace != null) {
             if ("RGB ".equals(pdfaOutputIntentColorSpace)) {
                 if (cmykUsed && writer.getDefaultColorspace().get(PdfName.DEFAULTCMYK) == null)

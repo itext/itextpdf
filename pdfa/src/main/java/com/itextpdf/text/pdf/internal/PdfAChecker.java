@@ -45,6 +45,7 @@
 package com.itextpdf.text.pdf.internal;
 
 import com.itextpdf.text.ExceptionConverter;
+import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.io.TempFileCache;
 import com.itextpdf.text.pdf.*;
 
@@ -63,6 +64,9 @@ abstract public class PdfAChecker {
     TempFileCache fileCache;
     private boolean isToUseExternalCache = false;
     private HashMap<RefKey, TempFileCache.ObjectPosition> externallyCachedObjects = new HashMap<RefKey, TempFileCache.ObjectPosition>();
+    protected String pdfaOutputIntentColorSpace = null;
+    protected PdfObject pdfaDestOutputIntent = null;
+    protected boolean isCheckOutputIntent = false;
 
     PdfAChecker(PdfAConformanceLevel conformanceLevel) {
         this.conformanceLevel = conformanceLevel;
@@ -75,7 +79,7 @@ abstract public class PdfAChecker {
             putObjectToCache(new RefKey(iref), obj);
         } else if (obj instanceof PdfDictionary) {
             putObjectToCache(new RefKey(iref), cleverPdfDictionaryClone((PdfDictionary) obj));
-        } else if (obj.isArray()){
+        } else if (obj.isArray()) {
             putObjectToCache(new RefKey(iref), cleverPdfArrayClone((PdfArray) obj));
         }
     }
@@ -97,7 +101,7 @@ abstract public class PdfAChecker {
         for (int i = 0; i < array.size(); i++) {
             PdfObject obj = array.getPdfObject(i);
             if (obj instanceof PdfDictionary)
-                newArray.add(cleverPdfDictionaryClone((PdfDictionary)obj));
+                newArray.add(cleverPdfDictionaryClone((PdfDictionary) obj));
             else
                 newArray.add(obj);
         }
@@ -144,21 +148,21 @@ abstract public class PdfAChecker {
     protected PdfDictionary getDirectDictionary(PdfObject obj) {
         obj = getDirectObject(obj);
         if (obj != null && obj instanceof PdfDictionary)
-            return (PdfDictionary)obj;
+            return (PdfDictionary) obj;
         return null;
     }
 
     protected PdfStream getDirectStream(PdfObject obj) {
         obj = getDirectObject(obj);
         if (obj != null && obj.isStream())
-            return (PdfStream)obj;
+            return (PdfStream) obj;
         return null;
     }
 
     protected PdfArray getDirectArray(PdfObject obj) {
         obj = getDirectObject(obj);
         if (obj != null && obj.isArray())
-            return (PdfArray)obj;
+            return (PdfArray) obj;
         return null;
     }
 
@@ -299,6 +303,23 @@ abstract public class PdfAChecker {
             return obj;
         } else {
             return cachedObjects.get(ref);
+        }
+    }
+
+    protected void checkOutputIntentsInStamperMode(PdfWriter writer) {
+        if (writer instanceof PdfAStamperImp && !isCheckOutputIntent) {
+            PdfReader pdfReader = ((PdfAStamperImp) writer).getPdfReader();
+            PdfArray outPutIntentsDic = pdfReader.getCatalog().getAsArray(PdfName.OUTPUTINTENTS);
+            if (outPutIntentsDic != null) {
+                if (outPutIntentsDic.size() > 1) {
+                    throw new PdfAConformanceException(outPutIntentsDic, MessageLocalization.getComposedMessage("a.pdfa.file.may.have.only.one.pdfa.outputintent"));
+                } else {
+                    PdfDictionary outPutIntentDic = outPutIntentsDic.getAsDict(0);
+                    if (outPutIntentDic != null) {
+                        checkPdfObject(writer, PdfIsoKeys.PDFISOKEY_OBJECT, outPutIntentDic);
+                    }
+                }
+            }
         }
     }
 }

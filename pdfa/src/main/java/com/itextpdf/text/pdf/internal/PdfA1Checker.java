@@ -86,9 +86,6 @@ public class PdfA1Checker extends PdfAChecker {
     protected boolean cmykUsed = false;
     protected boolean grayUsed = false;
 
-    protected String pdfaOutputIntentColorSpace = null;
-    protected PdfObject pdfaDestOutputIntent = null;
-
     PdfA1Checker(PdfAConformanceLevel conformanceLevel) {
         super(conformanceLevel);
     }
@@ -302,6 +299,7 @@ public class PdfA1Checker extends PdfAChecker {
                     throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("page.dictionary.shall.not.include.aa.entry"));
                 }
             } else if (PdfName.OUTPUTINTENT.equals(type)) {
+                isCheckOutputIntent = true;
                 PdfObject destOutputIntent = dictionary.get(PdfName.DESTOUTPUTPROFILE);
                 if (destOutputIntent != null && pdfaDestOutputIntent != null) {
                     if (pdfaDestOutputIntent.getIndRef() != destOutputIntent.getIndRef())
@@ -518,6 +516,7 @@ public class PdfA1Checker extends PdfAChecker {
 
     @Override
     public void close(PdfWriter writer) {
+        checkOutputIntentsInStamperMode(writer);
         if ((rgbUsed || cmykUsed || grayUsed) && pdfaOutputIntentColorSpace == null) {
             throw new PdfAConformanceException(null, MessageLocalization.getComposedMessage("if.device.rgb.cmyk.gray.used.in.file.that.file.shall.contain.pdfa.outputintent"));
         }
