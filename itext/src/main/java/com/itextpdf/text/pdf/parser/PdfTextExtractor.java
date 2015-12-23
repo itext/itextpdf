@@ -48,6 +48,8 @@ import java.io.IOException;
 
 import com.itextpdf.text.pdf.PdfReader;
 
+import java.util.Map;
+
 /**
  * Extracts text from a PDF file.
  * @since	2.1.4
@@ -59,6 +61,22 @@ public final class PdfTextExtractor {
 	 */
 	private PdfTextExtractor()  {
 	}
+        
+    /**
+     * Extract text from a specified page using an extraction strategy.
+     * Also allows registration of custom ContentOperators
+     * @param reader the reader to extract text from
+     * @param pageNumber the page to extract text from
+     * @param strategy the strategy to use for extracting text
+     * @param map an optional map of custom ContentOperators for rendering instructions
+     * @return the extracted text
+     * @throws IOException if any operation fails while reading from the provided PdfReader
+     * @since 5.0.2
+     */
+    public static String getTextFromPage(PdfReader reader, int pageNumber, TextExtractionStrategy strategy, Map<String, ContentOperator> map) throws IOException{
+        PdfReaderContentParser parser = new PdfReaderContentParser(reader);
+        return parser.processContent(pageNumber, strategy, map).getResultantText();
+    }
 	
     /**
      * Extract text from a specified page using an extraction strategy.
@@ -70,9 +88,7 @@ public final class PdfTextExtractor {
      * @since 5.0.2
      */
     public static String getTextFromPage(PdfReader reader, int pageNumber, TextExtractionStrategy strategy) throws IOException{
-        PdfReaderContentParser parser = new PdfReaderContentParser(reader);
-        return parser.processContent(pageNumber, strategy).getResultantText();
-        
+        return getTextFromPage(reader, pageNumber, strategy, null);
     }
     
     /**
