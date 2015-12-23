@@ -148,3 +148,6 @@ target/
 nbactions*.xml
 *.patch
 *.md.html
+.pmd
+.pmdruleset.xml
+.checkstyle
