@@ -161,32 +161,13 @@
     ]]></footer>
 						</configuration>
 					</plugin>
-					<!--<plugin>
-						<groupId>com.itextpdf.maven</groupId>
-						<artifactId>itextdoc</artifactId>
-						<version>2.0.0</version>
-						<executions>
-							<execution>
-								<phase>package</phase>
-								<goals>
-									<goal>create</goal>
-								</goals>
-								<inherited>false</inherited>
-								<configuration>
-									<flatsite>true</flatsite>
-									<site>true</site>
-									<src>src/doc</src>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>-->
 				</plugins>
 			</build>
 		</profile>
 		<profile>
 			<id>snapshot</id>
 			<build>
-				<finalName>${artifactId}-${version}-rev${buildNumber}</finalName>
+				<finalName>${project.artifactId}-${project.version}-rev${buildNumber}</finalName>
 			</build>
 		</profile>
 	</profiles>
@@ -194,7 +175,7 @@
 		<dependency>
 			<groupId>com.itextpdf</groupId>
 			<artifactId>itextpdf</artifactId>
-			<version>5.5.9-SNAPSHOT</version>
+			<version>${project.version}</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
