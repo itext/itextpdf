@@ -537,11 +537,11 @@ public class PdfCopyTest {
         pdfDocument.close();
 
         PdfReader reader = new PdfReader("./target/com/itextpdf/test/pdf/PdfCopyTest/CopySignedDocuments.pdf");
-        PdfDictionary sig = (PdfDictionary)reader.getPdfObject(5);
+        PdfDictionary sig = (PdfDictionary)reader.getPdfObject(9);
         PdfDictionary sigRef = sig.getAsArray(PdfName.REFERENCE).getAsDict(0);
         Assert.assertTrue(PdfName.SIGREF.equals(sigRef.getAsName(PdfName.TYPE)));
         Assert.assertFalse(sigRef.contains(PdfName.DATA));
-        sig = (PdfDictionary)reader.getPdfObject(17);
+        sig = (PdfDictionary)reader.getPdfObject(21);
         sigRef = sig.getAsArray(PdfName.REFERENCE).getAsDict(0);
         Assert.assertTrue(PdfName.SIGREF.equals(sigRef.getAsName(PdfName.TYPE)));
         Assert.assertFalse(sigRef.contains(PdfName.DATA));
@@ -566,7 +566,7 @@ public class PdfCopyTest {
         pdfDocument.close();
 
         PdfReader reader = new PdfReader("./target/com/itextpdf/test/pdf/PdfCopyTest/SmartCopySignedDocuments.pdf");
-        PdfDictionary sig = (PdfDictionary)reader.getPdfObject(5);
+        PdfDictionary sig = (PdfDictionary)reader.getPdfObject(8);
         PdfDictionary sigRef = sig.getAsArray(PdfName.REFERENCE).getAsDict(0);
         Assert.assertTrue(PdfName.SIGREF.equals(sigRef.getAsName(PdfName.TYPE)));
         Assert.assertFalse(sigRef.contains(PdfName.DATA));

@@ -48,7 +48,7 @@ import com.itextpdf.text.pdf.internal.PdfIsoKeys;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map.Entry;
 import java.util.Set;
 
@@ -99,7 +99,7 @@ public class PdfDictionary extends PdfObject {
     private PdfName dictionaryType = null;
 
     /** This is the hashmap that contains all the values and keys of the dictionary */
-    protected HashMap<PdfName, PdfObject> hashMap;
+    protected LinkedHashMap<PdfName, PdfObject> hashMap;
 
     // CONSTRUCTORS
 
@@ -108,12 +108,12 @@ public class PdfDictionary extends PdfObject {
      */
     public PdfDictionary() {
         super(DICTIONARY);
-        hashMap = new HashMap<PdfName, PdfObject>();
+        hashMap = new LinkedHashMap<PdfName, PdfObject>();
     }
 
     public PdfDictionary(int capacity) {
         super(DICTIONARY);
-        hashMap = new HashMap<PdfName, PdfObject>(capacity);
+        hashMap = new LinkedHashMap<PdfName, PdfObject>(capacity);
     }
 
     /**

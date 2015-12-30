@@ -119,7 +119,7 @@ public class PdfCopy extends PdfWriter {
     //remember to avoid coping
     protected PRIndirectReference structTreeRootReference;
     //to remove unused objects
-    protected HashMap<RefKey, PdfIndirectObject> indirectObjects;
+    protected LinkedHashMap<RefKey, PdfIndirectObject> indirectObjects;
     //PdfIndirectObjects, that generate PdfWriter.addToBody(PdfObject) method, already saved to PdfBody
     protected ArrayList<PdfIndirectObject> savedObjects;
     //imported pages from getImportedPage(PdfReader, int, boolean)
@@ -191,7 +191,7 @@ public class PdfCopy extends PdfWriter {
         parentObjects = new HashMap<PdfObject, PdfObject>();
         disableIndirects = new HashSet<PdfObject>();
 
-        indirectObjects = new HashMap<RefKey, PdfIndirectObject>();
+        indirectObjects = new LinkedHashMap<RefKey, PdfIndirectObject>();
         savedObjects = new ArrayList<PdfIndirectObject>();
         importedPages = new ArrayList<ImportedPage>();
     }
