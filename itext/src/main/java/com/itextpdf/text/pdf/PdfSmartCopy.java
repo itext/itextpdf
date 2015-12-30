@@ -44,17 +44,20 @@
  */
 package com.itextpdf.text.pdf;
 
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.ExceptionConverter;
+import com.itextpdf.text.error_messages.MessageLocalization;
+import com.itextpdf.text.log.Counter;
+import com.itextpdf.text.log.CounterFactory;
+import com.itextpdf.text.log.Logger;
+import com.itextpdf.text.log.LoggerFactory;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.security.MessageDigest;
 import java.util.Arrays;
 import java.util.HashMap;
-
-import com.itextpdf.text.Document;
-import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.ExceptionConverter;
-import com.itextpdf.text.log.Counter;
-import com.itextpdf.text.log.CounterFactory;
 
 /**
  * PdfSmartCopy has the same functionality as PdfCopy,
@@ -66,6 +69,8 @@ import com.itextpdf.text.log.CounterFactory;
  */
 
 public class PdfSmartCopy extends PdfCopy {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(PdfSmartCopy.class);
 
 	/** the cache with the streams and references. */
     private HashMap<ByteStore, PdfIndirectReference> streamMap = null;
@@ -130,8 +135,14 @@ public class PdfSmartCopy extends PdfCopy {
         }
         if (srcObj.isDictionary()) {
             PdfObject type = PdfReader.getPdfObjectRelease(((PdfDictionary)srcObj).get(PdfName.TYPE));
-            if (type != null && PdfName.PAGE.equals(type)) {
-                return theRef;
+            if (type != null) {
+                if ((PdfName.PAGE.equals(type))) {
+                    return theRef;
+                }
+                if ((PdfName.CATALOG.equals(type))) {
+                    LOGGER.warn(MessageLocalization.getComposedMessage("make.copy.of.catalog.dictionary.is.forbidden"));
+                    return null;
+                }
             }
         }
         iRef.setCopied();

@@ -287,6 +287,7 @@ lzw.flavour.not.supported=LZW variant niet ondersteund.
 macrosegmentid.must.be.gt.eq.0=macroSegmentId moet groter zijn dan 0
 macrosegmentid.must.be.lt.macrosemgentcount=macroSegmentId moet kleiner zijn dan macroSemgentCount
 macrosemgentcount.must.be.gt.0=macroSemgentCount moet groter zijn dan 0
+make.copy.of.catalog.dictionary.is.forbidden=Make copy of Catalog dictionary is forbidden.
 mapping.code.should.be.1.or.two.bytes.and.not.1=Mapping code moet uit 1 of 2 bytes bestaan, en niet uit {1}
 missing.end.tag=Ontbrekende end tag
 missing.endcharmetrics.in.1=Ontbrekende EndCharMetrics in {1}

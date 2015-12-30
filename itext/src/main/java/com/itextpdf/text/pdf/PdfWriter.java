@@ -1993,7 +1993,7 @@ public class PdfWriter extends DocWriter implements
         return true;
     }
 
-    private static String getNameString(final PdfDictionary dic, final PdfName key) {
+    protected static String getNameString(final PdfDictionary dic, final PdfName key) {
         PdfObject obj = PdfReader.getPdfObject(dic.get(key));
         if (obj == null || !obj.isString())
             return null;
