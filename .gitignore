@@ -151,3 +151,4 @@ nbactions*.xml
 .pmd
 .pmdruleset.xml
 .checkstyle
+.vagrant/
