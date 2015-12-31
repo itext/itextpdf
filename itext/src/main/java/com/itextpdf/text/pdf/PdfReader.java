@@ -1252,8 +1252,10 @@ public class PdfReader implements PdfViewerPreferences {
         }
         rootPages = catalog.getAsDict(PdfName.PAGES);
         if (rootPages == null || !PdfName.PAGES.equals(rootPages.get(PdfName.TYPE))) {
-            if (debugmode && LOGGER.isLogging(Level.ERROR)) {
-                LOGGER.error(MessageLocalization.getComposedMessage("the.document.has.no.page.root"));
+            if (debugmode) {
+                if ( LOGGER.isLogging(Level.ERROR) ) {
+                    LOGGER.error(MessageLocalization.getComposedMessage("the.document.has.no.page.root"));
+                }
             }
             else {
                 throw new InvalidPdfException(MessageLocalization.getComposedMessage("the.document.has.no.page.root"));
