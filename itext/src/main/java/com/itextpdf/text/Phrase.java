@@ -405,7 +405,7 @@ public class Phrase extends ArrayList<Element> implements TextElementArray {
         if (size() > 0 && !chunk.hasAttributes()) {
             try {
                 Chunk previous = (Chunk) get(size() - 1);
-                if (!previous.hasAttributes() && !chunk.hasAccessibleAttributes()
+                if (!previous.hasAttributes() && !chunk.hasAccessibleAttributes() && !previous.hasAccessibleAttributes()
                 		&& (f == null
                 		|| f.compareTo(previous.getFont()) == 0)
                 		&& !"".equals(previous.getContent().trim())
