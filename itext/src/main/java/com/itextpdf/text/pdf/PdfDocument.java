@@ -588,9 +588,12 @@ public class PdfDocument extends Document {
                     }
                     else {
                         line.setExtraIndent(paragraph.getFirstLineIndent());
+                        float oldHeight = currentHeight;
                         element.process(this);
                         carriageReturn();
-                        addSpacing(paragraph.getSpacingAfter(), paragraph.getTotalLeading(), paragraph.getFont(), true);
+                        if (oldHeight != currentHeight || lines.size() > 0) {
+                            addSpacing(paragraph.getSpacingAfter(), paragraph.getTotalLeading(), paragraph.getFont(), true);
+                        }
                     }
 
                     if (pageEvent != null && !isSectionTitle)
@@ -1946,12 +1949,6 @@ public class PdfDocument extends Document {
 
         if (pageEmpty) {
             return;
-        }
-
-        if ( spacingAfter && !pageEmpty ) {
-            if ( lines.size() == 0 && line.size() == 0 ) {
-                return;
-            }
         }
 
         float height = spacingAfter ? extraspace : calculateLineHeight();
