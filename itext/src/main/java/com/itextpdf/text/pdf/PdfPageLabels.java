@@ -109,7 +109,7 @@ public class PdfPageLabels {
             dic.put(PdfName.S, numberingStyle[numberStyle]);
         if (text != null)
             dic.put(PdfName.P, new PdfString(text, PdfObject.TEXT_UNICODE));
-        if (firstPage != 1)
+        //Putting page labels on every page since LiveCycle fails to read the page without it
             dic.put(PdfName.ST, new PdfNumber(firstPage));
         map.put(Integer.valueOf(page - 1), dic);
     }
