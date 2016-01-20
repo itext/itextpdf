@@ -84,7 +84,6 @@ public class LocationTextExtractionStrategy implements TextExtractionStrategy {
      */
     public LocationTextExtractionStrategy() {
         this(new TextChunkLocationStrategy() {
-            @Override
             public TextChunkLocation createLocation(TextRenderInfo renderInfo, LineSegment baseline) {
                 return new TextChunkLocationDefaultImp(baseline.getStartPoint(), baseline.getEndPoint(), renderInfo.getSingleSpaceWidth());
             }
@@ -306,20 +305,15 @@ public class LocationTextExtractionStrategy implements TextExtractionStrategy {
         }
         
         
-        @Override
         public int orientationMagnitude() {return orientationMagnitude;}
-        @Override
         public int distPerpendicular() {return distPerpendicular;}
-        @Override
         public float distParallelStart() {return distParallelStart; }
-        @Override
         public float distParallelEnd() { return distParallelEnd;}
         
 
         /**
          * @return the start location of the text
          */
-        @Override
         public Vector getStartLocation(){
             return startLocation;
         }
@@ -327,7 +321,6 @@ public class LocationTextExtractionStrategy implements TextExtractionStrategy {
         /**
          * @return the end location of the text
          */
-        @Override
         public Vector getEndLocation(){
             return endLocation;
         }
@@ -335,7 +328,6 @@ public class LocationTextExtractionStrategy implements TextExtractionStrategy {
         /**
          * @return the width of a single space character as rendered by this chunk
          */
-        @Override
         public float getCharSpaceWidth() {
             return charSpaceWidth;
         }
