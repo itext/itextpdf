@@ -72,7 +72,6 @@ public final class PdfTextExtractor {
      * @param additionalContentOperators an optional map of custom ContentOperators for rendering instructions
      * @return the extracted text
      * @throws IOException if any operation fails while reading from the provided PdfReader
-     * @since 5.0.2
      */
     public static String getTextFromPage(PdfReader reader, int pageNumber, TextExtractionStrategy strategy, Map<String, ContentOperator> additionalContentOperators) throws IOException{
         PdfReaderContentParser parser = new PdfReaderContentParser(reader);
