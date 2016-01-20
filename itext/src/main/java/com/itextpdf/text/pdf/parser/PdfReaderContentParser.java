@@ -50,6 +50,7 @@ import com.itextpdf.text.pdf.PdfDictionary;
 import com.itextpdf.text.pdf.PdfName;
 import com.itextpdf.text.pdf.PdfReader;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -71,20 +72,18 @@ public class PdfReaderContentParser {
      * @param <E> the type of the renderListener - this makes it easy to chain calls
      * @param pageNumber the page number to process
      * @param renderListener the listener that will receive render callbacks
-     * @param map an optional map of custom ContentOperators for rendering instructions
+     * @param additionalContentOperators an optional map of custom ContentOperators for rendering instructions
      * @return the provided renderListener
      * @throws IOException if operations on the reader fail
      */
     
-    public <E extends RenderListener> E processContent(int pageNumber, E renderListener, Map<String, ContentOperator> map) throws IOException{
+    public <E extends RenderListener> E processContent(int pageNumber, E renderListener, Map<String, ContentOperator> additionalContentOperators) throws IOException{
         PdfDictionary pageDic = reader.getPageN(pageNumber);
         PdfDictionary resourcesDic = pageDic.getAsDict(PdfName.RESOURCES);
         
         PdfContentStreamProcessor processor = new PdfContentStreamProcessor(renderListener);
-        if (map != null) {
-            for(Map.Entry<String, ContentOperator> entry : map.entrySet()) {
-                processor.registerContentOperator(entry.getKey(), entry.getValue());
-            }
+        for(Map.Entry<String, ContentOperator> entry : additionalContentOperators.entrySet()) {
+            processor.registerContentOperator(entry.getKey(), entry.getValue());
         }
         processor.processContent(ContentByteUtils.getContentBytesForPage(reader, pageNumber), resourcesDic);        
         return renderListener;
@@ -103,6 +102,6 @@ public class PdfReaderContentParser {
      * {@code map} defaults to null.
      */
     public <E extends RenderListener> E processContent(int pageNumber, E renderListener) throws IOException{
-        return processContent(pageNumber, renderListener, null);
+        return processContent(pageNumber, renderListener, new HashMap<String, ContentOperator>());
     }
 }

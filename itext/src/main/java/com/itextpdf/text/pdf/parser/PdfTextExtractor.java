@@ -48,6 +48,7 @@ import java.io.IOException;
 
 import com.itextpdf.text.pdf.PdfReader;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -68,14 +69,14 @@ public final class PdfTextExtractor {
      * @param reader the reader to extract text from
      * @param pageNumber the page to extract text from
      * @param strategy the strategy to use for extracting text
-     * @param map an optional map of custom ContentOperators for rendering instructions
+     * @param additionalContentOperators an optional map of custom ContentOperators for rendering instructions
      * @return the extracted text
      * @throws IOException if any operation fails while reading from the provided PdfReader
      * @since 5.0.2
      */
-    public static String getTextFromPage(PdfReader reader, int pageNumber, TextExtractionStrategy strategy, Map<String, ContentOperator> map) throws IOException{
+    public static String getTextFromPage(PdfReader reader, int pageNumber, TextExtractionStrategy strategy, Map<String, ContentOperator> additionalContentOperators) throws IOException{
         PdfReaderContentParser parser = new PdfReaderContentParser(reader);
-        return parser.processContent(pageNumber, strategy, map).getResultantText();
+        return parser.processContent(pageNumber, strategy, additionalContentOperators).getResultantText();
     }
 	
     /**
@@ -88,7 +89,7 @@ public final class PdfTextExtractor {
      * @since 5.0.2
      */
     public static String getTextFromPage(PdfReader reader, int pageNumber, TextExtractionStrategy strategy) throws IOException{
-        return getTextFromPage(reader, pageNumber, strategy, null);
+        return getTextFromPage(reader, pageNumber, strategy, new HashMap<String, ContentOperator>());
     }
     
     /**
