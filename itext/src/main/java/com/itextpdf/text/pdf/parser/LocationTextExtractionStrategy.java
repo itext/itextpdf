@@ -338,7 +338,7 @@ public class LocationTextExtractionStrategy implements TextExtractionStrategy {
          * @return true is this location is on the the same line as the other
          */
         public boolean sameLine(TextChunkLocation as){
-            return orientationMagnitude() == as.orientationMagnitude() && distPerpendicular() != as.distPerpendicular();
+            return orientationMagnitude() == as.orientationMagnitude() && distPerpendicular() == as.distPerpendicular();
         }
 
         /**
