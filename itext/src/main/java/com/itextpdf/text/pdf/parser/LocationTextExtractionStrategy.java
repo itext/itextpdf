@@ -239,7 +239,7 @@ public class LocationTextExtractionStrategy implements TextExtractionStrategy {
         TextChunkLocation createLocation(TextRenderInfo renderInfo, LineSegment baseline);
     }
     
-    public static interface TextChunkLocation {
+    public static interface TextChunkLocation extends Comparable<TextChunkLocation> {
 
         float distParallelEnd();
 
@@ -354,22 +354,35 @@ public class LocationTextExtractionStrategy implements TextExtractionStrategy {
             return distance;
         }
         
-    public boolean isAtWordBoundary(TextChunkLocation previous){
-        /**
-         * Here we handle a very specific case which in PDF may look like:
-         * -.232 Tc [( P)-226.2(r)-231.8(e)-230.8(f)-238(a)-238.9(c)-228.9(e)]TJ
-         * The font's charSpace width is 0.232 and it's compensated with charSpacing of 0.232.
-         * And a resultant TextChunk.charSpaceWidth comes to TextChunk constructor as 0.
-         * In this case every chunk is considered as a word boundary and space is added.
-         * We should consider charSpaceWidth equal (or close) to zero as a no-space.
-         */
-        if (getCharSpaceWidth() < 0.1f)
-            return false;
+        public boolean isAtWordBoundary(TextChunkLocation previous){
+            /**
+             * Here we handle a very specific case which in PDF may look like:
+             * -.232 Tc [( P)-226.2(r)-231.8(e)-230.8(f)-238(a)-238.9(c)-228.9(e)]TJ
+             * The font's charSpace width is 0.232 and it's compensated with charSpacing of 0.232.
+             * And a resultant TextChunk.charSpaceWidth comes to TextChunk constructor as 0.
+             * In this case every chunk is considered as a word boundary and space is added.
+             * We should consider charSpaceWidth equal (or close) to zero as a no-space.
+             */
+            if (getCharSpaceWidth() < 0.1f)
+                return false;
 
-        float dist = distanceFromEndOf(previous);
-        
-        return dist < -getCharSpaceWidth() || dist > getCharSpaceWidth()/2.0f;
-    }
+            float dist = distanceFromEndOf(previous);
+
+            return dist < -getCharSpaceWidth() || dist > getCharSpaceWidth()/2.0f;
+        }
+
+        public int compareTo(TextChunkLocation other) {
+            if (this == other) return 0; // not really needed, but just in case
+            
+            int rslt;
+            rslt = compareInts(orientationMagnitude(), other.orientationMagnitude());
+            if (rslt != 0) return rslt;
+
+            rslt = compareInts(distPerpendicular(), other.distPerpendicular());
+            if (rslt != 0) return rslt;
+
+            return Float.compare(distParallelStart(), other.distParallelStart());
+        }
     }
     /**
      * Represents a chunk of text, it's orientation, and location relative to the orientation vector
@@ -447,31 +460,23 @@ public class LocationTextExtractionStrategy implements TextExtractionStrategy {
          * @see java.lang.Comparable#compareTo(java.lang.Object)
          */
         public int compareTo(TextChunk rhs) {
-            if (this == rhs) return 0; // not really needed, but just in case
-            
-            int rslt;
-            rslt = compareInts(location.orientationMagnitude(), rhs.location.orientationMagnitude());
-            if (rslt != 0) return rslt;
-
-            rslt = compareInts(location.distPerpendicular(), rhs.location.distPerpendicular());
-            if (rslt != 0) return rslt;
-
-            return Float.compare(location.distParallelStart(), rhs.location.distParallelStart());
-        }
-
-        /**
-         *
-         * @param int1
-         * @param int2
-         * @return comparison of the two integers
-         */
-        private static int compareInts(int int1, int int2){
-            return int1 == int2 ? 0 : int1 < int2 ? -1 : 1;
+            return location.compareTo(rhs.location);
         }
 
         private boolean sameLine(TextChunk lastChunk) {
             return getLocation().sameLine(lastChunk.getLocation());
         }
+    }
+    
+
+    /**
+     *
+     * @param int1
+     * @param int2
+     * @return comparison of the two integers
+     */
+    private static int compareInts(int int1, int int2){
+        return int1 == int2 ? 0 : int1 < int2 ? -1 : 1;
     }
 
     /**
