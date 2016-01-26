@@ -1607,8 +1607,8 @@ public class PdfDocument extends Document {
                                 scolor = color;
                             if (scolor != null)
                                 graphics.setColorStroke(scolor);
-                            graphics.setLineWidth(ps[0] + fontSize * ps[1]);
-                            float shift = ps[2] + fontSize * ps[3];
+                            graphics.setLineWidth(ps[0] + chunk.font().size() * ps[1]);
+                            float shift = ps[2] + chunk.font().size() * ps[3];
                             int cap2 = (int)ps[4];
                             if (cap2 != 0)
                                 graphics.setLineCap(cap2);
