@@ -29,9 +29,7 @@ You can use the `Vagrantfile` to get a [Vagrant][4] VM ([Ubuntu][5] 14.04 LTS - 
 ```bash
 $ vagrant box add ubuntu/trusty64
 $ vagrant up
-$ vagrant ssh
-$ cd /vagrant
-$ mvn clean install -Dmaven.test.skip=true | tee mvn.log
+$ vagrant ssh -- 'cd /vagrant ; mvn clean install -Dmaven.test.skip=true' | tee mvn.log
 ```
 
 [1]: http://maven.apache.org/
