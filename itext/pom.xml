@@ -1,37 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+         <modelVersion>4.0.0</modelVersion>
+
     <parent>
-        <artifactId>itext-parent</artifactId>
         <groupId>com.itextpdf</groupId>
+        <artifactId>itext-parent</artifactId>
         <version>1.0.0</version>
     </parent>
-    <modelVersion>4.0.0</modelVersion>
+
     <artifactId>itextpdf</artifactId>
-    <packaging>jar</packaging>
-    <name>iText, a Free Java-PDF library</name>
     <version>5.5.9-SNAPSHOT</version>
-    <description>iText, a free Java-PDF library</description>
-    <!-- General Info -->
+    <packaging>jar</packaging>
+
+    <name>iText</name>
+    <description>A Free Java-PDF library</description>
     <url>http://itextpdf.com</url>
-    <mailingLists>
-        <mailingList>
-            <name>iText Questions</name>
-            <subscribe>
-                http://lists.sourceforge.net/lists/listinfo/itext-questions
-            </subscribe>
-            <post>itext-questions@lists.sourceforge.net</post>
-            <archive>
-                http://news.gmane.org/gmane.comp.java.lib.itext.general
-            </archive>
-            <otherArchives>
-                <otherArchive>http://itext-general.2136553.n4.nabble.com/</otherArchive>
-                <otherArchive>http://www.junlu.com/2.html</otherArchive>
-                <otherArchive>http://sourceforge.net/mailarchive/forum.php?forum_id=3273</otherArchive>
-                <otherArchive>http://www.mail-archive.com/itext-questions%40lists.sourceforge.net/</otherArchive>
-            </otherArchives>
-        </mailingList>
-    </mailingLists>
+
+    <licenses>
+        <license>
+            <name>GNU Affero General Public License v3</name>
+            <url>http://www.fsf.org/licensing/licenses/agpl-3.0.html</url>
+        </license>
+    </licenses>
+
     <developers>
         <developer>
             <id>blowagie</id>
@@ -67,19 +59,87 @@
             <url>http://www.redlab.be/</url>
         </developer>
     </developers>
-    <licenses>
-        <license>
-            <name>GNU Affero General Public License v3</name>
-            <url>http://www.fsf.org/licensing/licenses/agpl-3.0.html</url>
-        </license>
-    </licenses>
+
+    <mailingLists>
+        <mailingList>
+            <name>iText on StackOverflow</name>
+            <subscribe>
+                http://stackoverflow.com/questions/tagged/itext
+            </subscribe>
+            <archive>
+                http://stackoverflow.com/questions/tagged/itext
+            </archive>
+            <otherArchives>
+                <otherArchive>http://news.gmane.org/gmane.comp.java.lib.itext.general</otherArchive>
+                <otherArchive>http://itext-general.2136553.n4.nabble.com/</otherArchive>
+                <otherArchive>http://www.junlu.com/2.html</otherArchive>
+                <otherArchive>http://sourceforge.net/mailarchive/forum.php?forum_id=3273</otherArchive>
+                <otherArchive>http://www.mail-archive.com/itext-questions%40lists.sourceforge.net/</otherArchive>
+            </otherArchives>
+        </mailingList>
+    </mailingLists>
+
     <scm>
-        <connection>scm:svn:http://svn.code.sf.net/p/itext/code/trunk/itext</connection>
-        <url>http://sourceforge.net/p/itext/code</url>
+        <connection>scm:git:git@github.com:itext/itextpdf.git</connection>
+        <url>https://github.com/itext/itextpdf</url>
     </scm>
 
-    <!-- Build -->
+    <issueManagement>
+        <system>jira</system>
+        <url>https://jira.itextsupport.com/</url>
+    </issueManagement>
+
+    <ciManagement>
+        <system>jenkins-ci</system>
+        <url>http://ci.itextsupport.com/</url>
+    </ciManagement>
+
+    <properties>
+        <java.version>1.5</java.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <argLine>-Xms512m -Xmx1024m</argLine>
+        <checkstyle.header.file>license.txt</checkstyle.header.file>
+        <sonar.language>java</sonar.language>
+        <sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
+        <sonar.jacoco.reportPath>${project.basedir}/target/jacoco.exec</sonar.jacoco.reportPath>
+    </properties>
+
+    <!-- Dependencies -->
+    <dependencies>
+        <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcprov-jdk15on</artifactId>
+            <version>1.49</version>
+            <type>jar</type>
+            <scope>compile</scope>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcpkix-jdk15on</artifactId>
+            <version>1.49</version>
+            <type>jar</type>
+            <scope>compile</scope>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.8.2</version>
+            <type>jar</type>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.santuario</groupId>
+            <artifactId>xmlsec</artifactId>
+            <version>1.5.1</version>
+            <scope>compile</scope>
+            <optional>true</optional>
+        </dependency>
+    </dependencies>
+
     <build>
+
         <resources>
             <resource>
                 <directory>src/main/resources</directory>
@@ -91,6 +151,7 @@
                 </includes>
             </resource>
         </resources>
+
         <testResources>
             <testResource>
                 <directory>src/main/resources</directory>
@@ -106,7 +167,16 @@
                 </includes>
             </testResource>
         </testResources>
+
         <plugins>
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.3</version>
+                <configuration>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>buildnumber-maven-plugin</artifactId>
@@ -177,6 +247,20 @@
             </plugin>
         </plugins>
     </build>
+
+    <reporting>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <version>2.6</version>
+                <configuration>
+                    <configLocation>checkstyle-config.xml</configLocation>
+                </configuration>
+            </plugin>
+        </plugins>
+    </reporting>
+
     <profiles>
         <profile>
             <id>snapshot</id>
@@ -254,57 +338,5 @@
         </profile>
         <!-- END: Specific to mapping unit tests and covered code -->
     </profiles>
-    <!-- Dependencies -->
-    <dependencies>
-        <dependency>
-            <groupId>org.bouncycastle</groupId>
-            <artifactId>bcprov-jdk15on</artifactId>
-            <version>1.49</version>
-            <type>jar</type>
-            <scope>compile</scope>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.bouncycastle</groupId>
-            <artifactId>bcpkix-jdk15on</artifactId>
-            <version>1.49</version>
-            <type>jar</type>
-            <scope>compile</scope>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.8.2</version>
-            <type>jar</type>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.santuario</groupId>
-            <artifactId>xmlsec</artifactId>
-            <version>1.5.1</version>
-            <scope>compile</scope>
-            <optional>true</optional>
-        </dependency>
-    </dependencies>
-    <reporting>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-checkstyle-plugin</artifactId>
-                <version>2.6</version>
-                <configuration>
-                    <configLocation>checkstyle-config.xml</configLocation>
-                </configuration>
-            </plugin>
-        </plugins>
-    </reporting>
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <argLine>-Xms512m -Xmx1024m</argLine>
-        <checkstyle.header.file>license.txt</checkstyle.header.file>
-        <sonar.language>java</sonar.language>
-        <sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
-        <sonar.jacoco.reportPath>${project.basedir}/target/jacoco.exec</sonar.jacoco.reportPath>
-    </properties>
+
 </project>

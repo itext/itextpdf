@@ -1,56 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<parent>
-		<artifactId>itext-parent</artifactId>
-		<groupId>com.itextpdf</groupId>
-		<version>1.0.0</version>
-	</parent>
-	<modelVersion>4.0.0</modelVersion>
-	<groupId>com.itextpdf.tool</groupId>
-	<artifactId>xmlworker</artifactId>
-	<name>iText XML Worker</name>
-	<version>5.5.9-SNAPSHOT</version>
-	<description>Parses XML to PDF, with CSS support, using iText</description>
-	<licenses>
-		<license>
-			<name>GNU Affero General Public License v3</name>
-			<url>http://www.fsf.org/licensing/licenses/agpl-3.0.html</url>
-		</license>
-	</licenses>
-	<url>http://www.itextpdf.com/</url>
-	<issueManagement>
-		<url>https://sourceforge.net/tracker/?group_id=541147</url>
-	</issueManagement>
-	<ciManagement>
-		<system>jenkins-ci</system>
-		<url>http://ci.itextsupport.com/</url>
-	</ciManagement>
-	<mailingLists>
-		<mailingList>
-			<name>iText Questions</name>
-			<subscribe>
-				http://lists.sourceforge.net/lists/listinfo/itext-questions
-			</subscribe>
-			<post>itext-questions@lists.sourceforge.net</post>
-			<archive>
-				http://news.gmane.org/gmane.comp.java.lib.itext.general
-			</archive>
-			<otherArchives>
-				<otherArchive>http://itext-general.2136553.n4.nabble.com/</otherArchive>
-				<otherArchive>http://www.junlu.com/2.html</otherArchive>
-				<otherArchive>http://sourceforge.net/mailarchive/forum.php?forum_id=3273</otherArchive>
-				<otherArchive>http://www.mail-archive.com/itext-questions%40lists.sourceforge.net/</otherArchive>
-			</otherArchives>
-		</mailingList>
-	</mailingLists>
-	<developers>
-	</developers>
-	<scm>
-		<connection>scm:svn:https://xmlworker.svn.sourceforge.net/svnroot/xmlworker/trunk</connection>
-		<url>http://xmlworker.svn.sourceforge.net/viewvc/xmlworker</url>
-	</scm>
+        xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+        <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.itextpdf</groupId>
+        <artifactId>itext-parent</artifactId>
+        <version>1.0.0</version>
+    </parent>
+
+    <groupId>com.itextpdf.tool</groupId>
+    <artifactId>xmlworker</artifactId>
+    <version>5.5.9-SNAPSHOT</version>
+    <packaging>jar</packaging>
+
+    <name>iText XML Worker</name>
+    <description>Parses XML to PDF, with CSS support, using iText</description>
+    <url>http://www.itextpdf.com/</url>
+
+    <licenses>
+        <license>
+            <name>GNU Affero General Public License v3</name>
+            <url>http://www.fsf.org/licensing/licenses/agpl-3.0.html</url>
+        </license>
+    </licenses>
+
+    <developers>
+    </developers>
+
+    <mailingLists>
+        <mailingList>
+            <name>iText on StackOverflow</name>
+            <subscribe>
+                http://stackoverflow.com/questions/tagged/itext
+            </subscribe>
+            <archive>
+                http://stackoverflow.com/questions/tagged/itext
+            </archive>
+            <otherArchives>
+                <otherArchive>http://news.gmane.org/gmane.comp.java.lib.itext.general</otherArchive>
+                <otherArchive>http://itext-general.2136553.n4.nabble.com/</otherArchive>
+                <otherArchive>http://www.junlu.com/2.html</otherArchive>
+                <otherArchive>http://sourceforge.net/mailarchive/forum.php?forum_id=3273</otherArchive>
+                <otherArchive>http://www.mail-archive.com/itext-questions%40lists.sourceforge.net/</otherArchive>
+            </otherArchives>
+        </mailingList>
+    </mailingLists>
+
+    <scm>
+        <connection>scm:git:git@github.com:itext/itextpdf.git</connection>
+        <url>https://github.com/itext/itextpdf</url>
+    </scm>
+
+    <issueManagement>
+        <system>jira</system>
+        <url>https://jira.itextsupport.com/</url>
+    </issueManagement>
+
+    <ciManagement>
+        <system>jenkins-ci</system>
+        <url>http://ci.itextsupport.com/</url>
+    </ciManagement>
+
+    <properties>
+		<java.version>1.5</java.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <sonar.language>java</sonar.language>
+    </properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>com.itextpdf</groupId>
+			<artifactId>itextpdf</artifactId>
+			<version>${project.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.8.2</version>
+			<type>jar</type>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>2.0.1</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+
 	<build>
 		<plugins>
+			<plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.3</version>
+                <configuration>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                </configuration>
+            </plugin>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>buildnumber-maven-plugin</artifactId>
@@ -125,6 +174,7 @@
 			</plugin>
 		</plugins>
 	</build>
+
 	<profiles>
 		<profile>
 			<id>all</id>
@@ -171,28 +221,5 @@
 			</build>
 		</profile>
 	</profiles>
-	<dependencies>
-		<dependency>
-			<groupId>com.itextpdf</groupId>
-			<artifactId>itextpdf</artifactId>
-			<version>${project.version}</version>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.8.2</version>
-			<type>jar</type>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>commons-io</groupId>
-			<artifactId>commons-io</artifactId>
-			<version>2.0.1</version>
-			<scope>test</scope>
-		</dependency>
-	</dependencies>
-	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-	</properties>
+
 </project>

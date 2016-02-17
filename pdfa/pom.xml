@@ -1,23 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
+        xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+        <modelVersion>4.0.0</modelVersion>
+
     <parent>
-        <artifactId>itext-parent</artifactId>
         <groupId>com.itextpdf</groupId>
+        <artifactId>itext-parent</artifactId>
         <version>1.0.0</version>
     </parent>
+
     <artifactId>itext-pdfa</artifactId>
     <version>5.5.9-SNAPSHOT</version>
+    <packaging>jar</packaging>
+
     <name>iText PDF/A</name>
     <description>iText ISO-19005 Module</description>
     <url>http://itextpdf.com</url>
-    <organization>
-        <url>http://itextpdf.com</url>
-    </organization>
+
+    <licenses>
+        <license>
+            <name>GNU Affero General Public License v3</name>
+            <url>http://www.fsf.org/licensing/licenses/agpl-3.0.html</url>
+        </license>
+    </licenses>
+
+    <developers>
+    </developers>
+
+    <mailingLists>
+        <mailingList>
+            <name>iText on StackOverflow</name>
+            <subscribe>
+                http://stackoverflow.com/questions/tagged/itext
+            </subscribe>
+            <archive>
+                http://stackoverflow.com/questions/tagged/itext
+            </archive>
+            <otherArchives>
+                <otherArchive>http://news.gmane.org/gmane.comp.java.lib.itext.general</otherArchive>
+                <otherArchive>http://itext-general.2136553.n4.nabble.com/</otherArchive>
+                <otherArchive>http://www.junlu.com/2.html</otherArchive>
+                <otherArchive>http://sourceforge.net/mailarchive/forum.php?forum_id=3273</otherArchive>
+                <otherArchive>http://www.mail-archive.com/itext-questions%40lists.sourceforge.net/</otherArchive>
+            </otherArchives>
+        </mailingList>
+    </mailingLists>
+
     <scm>
-        <connection>scm:svn:http://svn.code.sf.net/p/itext/code/trunk/pdfa</connection>
-        <url>http://sourceforge.net/p/itext/code</url>
+        <connection>scm:git:git@github.com:itext/itextpdf.git</connection>
+        <url>https://github.com/itext/itextpdf</url>
     </scm>
+
+    <issueManagement>
+        <system>jira</system>
+        <url>https://jira.itextsupport.com/</url>
+    </issueManagement>
+
+    <ciManagement>
+        <system>jenkins-ci</system>
+        <url>http://ci.itextsupport.com/</url>
+    </ciManagement>
+
+    <properties>
+        <java.version>1.5</java.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <argLine>-Xmx128m</argLine>
+        <sonar.language>java</sonar.language>
+        <sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
+        <sonar.jacoco.reportPath>${project.basedir}/target/jacoco.exec</sonar.jacoco.reportPath>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcprov-jdk15on</artifactId>
+            <version>1.48</version>
+            <type>jar</type>
+            <scope>compile</scope>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.8.2</version>
+            <type>jar</type>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-all</artifactId>
+            <version>1.8.5</version>
+            <type>jar</type>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.itextpdf</groupId>
+            <artifactId>itextpdf</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.3</version>
+                <configuration>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
     <profiles>
         <profile>
             <id>all</id>
@@ -109,40 +204,5 @@
         <!-- END: Specific to mapping unit tests and covered code -->
 
     </profiles>
-    <dependencies>
-        <dependency>
-            <groupId>org.bouncycastle</groupId>
-            <artifactId>bcprov-jdk15on</artifactId>
-            <version>1.48</version>
-            <type>jar</type>
-            <scope>compile</scope>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.8.2</version>
-            <type>jar</type>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-all</artifactId>
-            <version>1.8.5</version>
-            <type>jar</type>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.itextpdf</groupId>
-            <artifactId>itextpdf</artifactId>
-            <version>5.5.9-SNAPSHOT</version>
-        </dependency>
-    </dependencies>
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <argLine>-Xmx128m</argLine>
-        <sonar.language>java</sonar.language>
-        <sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
-        <sonar.jacoco.reportPath>${project.basedir}/target/jacoco.exec</sonar.jacoco.reportPath>
-    </properties>
+
 </project>
