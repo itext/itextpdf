@@ -266,6 +266,9 @@ public class HtmlPipelineContext implements CustomContext, Cloneable, MarginMemo
 		if (this.imageProvider != null) {
                     newCtx.setImageProvider(imageProvider);
 		}
+		if (this.resourcesRootPath != null) {
+			newCtx.setResourcesRootPath(resourcesRootPath);
+		}
 		if (null != this.charset) {
 			newCtx.charSet(Charset.forName(this.charset.name()));
 		}
