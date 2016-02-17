@@ -291,7 +291,7 @@ public class PdfA1Checker extends PdfAChecker {
                         throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("document.catalog.dictionary.shall.include.a.markinfo.dictionary.whose.entry.marked.shall.have.a.value.of.true"));
                     }
                     if (!dictionary.contains(PdfName.LANG)) {
-                        throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("document.catalog.dictionary.should.contain.lang.entry"));
+                        LOGGER.warning(MessageLocalization.getComposedMessage("document.catalog.dictionary.should.contain.lang.entry"));
                     }
                 }
             } else if (PdfName.PAGE.equals(type)) {

@@ -47,14 +47,28 @@ package com.itextpdf.text.pdf.internal;
 import com.itextpdf.text.ExceptionConverter;
 import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.io.TempFileCache;
-import com.itextpdf.text.pdf.*;
+import com.itextpdf.text.pdf.PdfAConformanceException;
+import com.itextpdf.text.pdf.PdfAConformanceLevel;
+import com.itextpdf.text.pdf.PdfAStamperImp;
+import com.itextpdf.text.pdf.PdfArray;
+import com.itextpdf.text.pdf.PdfDictionary;
+import com.itextpdf.text.pdf.PdfIndirectReference;
+import com.itextpdf.text.pdf.PdfName;
+import com.itextpdf.text.pdf.PdfObject;
+import com.itextpdf.text.pdf.PdfReader;
+import com.itextpdf.text.pdf.PdfStream;
+import com.itextpdf.text.pdf.PdfWriter;
+import com.itextpdf.text.pdf.RefKey;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.logging.Logger;
 
 abstract public class PdfAChecker {
+
+    protected final Logger LOGGER = Logger.getLogger(getClass().getName());
 
     protected PdfAConformanceLevel conformanceLevel;
     private HashMap<RefKey, PdfObject> cachedObjects = new HashMap<RefKey, PdfObject>();
