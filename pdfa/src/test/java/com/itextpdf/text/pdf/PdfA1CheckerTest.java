@@ -1431,7 +1431,7 @@ public class PdfA1CheckerTest {
                 exceptionThrown = true;
             }
         }
-        if (!exceptionThrown) {
+        if (exceptionThrown) {
             Assert.fail("PdfAConformanceException should be thrown");
         }
 
