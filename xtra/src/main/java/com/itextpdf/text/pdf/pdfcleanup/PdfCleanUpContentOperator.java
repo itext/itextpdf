@@ -284,8 +284,14 @@ class PdfCleanUpContentOperator implements ContentOperator {
      */
     private void writeTextChunks(Map<Integer, Float> structuredTJoperands, List<PdfCleanUpContentChunk> chunks, PdfContentByte canvas,
                                  float characterSpacing, float wordSpacing, float fontSize, float horizontalScaling) throws IOException {
-        canvas.setCharacterSpacing(0);
-        canvas.setWordSpacing(0);
+        if (Float.compare(characterSpacing, 0.0f) != 0 && Float.compare(characterSpacing, -0.0f) != 0) {
+            new PdfNumber(0).toPdf(canvas.getPdfWriter(), canvas.getInternalBuffer());
+            canvas.getInternalBuffer().append(Tc);
+        }
+        if (Float.compare(wordSpacing, 0.0f) != 0 && Float.compare(wordSpacing, -0.0f) != 0) {
+            new PdfNumber(0).toPdf(canvas.getPdfWriter(), canvas.getInternalBuffer());
+            canvas.getInternalBuffer().append(Tw);
+        }
         canvas.getInternalBuffer().append((byte) '[');
 
         float convertedCharacterSpacing = -characterSpacing * 1000f / fontSize;
