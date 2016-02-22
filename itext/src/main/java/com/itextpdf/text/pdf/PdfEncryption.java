@@ -165,9 +165,15 @@ public class PdfEncryption {
 		embeddedFilesOnly = enc.embeddedFilesOnly;
 		publicKeyHandler = enc.publicKeyHandler;
 
-        ueKey = enc.ueKey.clone();
-        oeKey = enc.oeKey.clone();
-        perms = enc.perms.clone();
+		if (enc.ueKey != null) {
+            ueKey = enc.ueKey.clone();
+        }
+        if (enc.oeKey != null) {
+            oeKey = enc.oeKey.clone();
+        }
+        if (enc.perms != null) {
+            perms = enc.perms.clone();
+        }
 	}
 
 	public void setCryptoMode(int mode, int kl) {
