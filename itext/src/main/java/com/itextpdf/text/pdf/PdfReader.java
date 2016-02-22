@@ -1027,6 +1027,7 @@ public class PdfReader implements PdfViewerPreferences {
         if (filter.equals(PdfName.STANDARD)) {
             if (rValue == 5) {
                 ownerPasswordUsed = decrypt.readKey(enc, password);
+                decrypt.documentID = documentID;
                 pValue = decrypt.getPermissions();
             }
             else {

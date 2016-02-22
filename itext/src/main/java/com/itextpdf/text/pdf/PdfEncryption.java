@@ -95,12 +95,6 @@ public class PdfEncryption {
 	/** The global encryption key */
 	byte mkey[] = new byte[0];
 
-	/** Work area to prepare the object/generation bytes */
-	byte extra[] = new byte[5];
-
-	/** The message digest algorithm MD5 */
-	MessageDigest md5;
-
 	/** The encryption key for the owner */
 	byte ownerKey[] = new byte[32];
 
@@ -111,24 +105,31 @@ public class PdfEncryption {
     byte[] ueKey;
     byte[] perms;
 
-	/** The public key security handler for certificate encryption */
-	protected PdfPublicKeySecurityHandler publicKeyHandler = null;
-
 	long permissions;
 
 	byte documentID[];
 
-	static long seq = System.currentTimeMillis();
-
 	private int revision;
-    
+
+    /** The generic key length. It may be 40 or 128. */
+    private int keyLength;
+
+
+
+    /** The public key security handler for certificate encryption */
+    protected PdfPublicKeySecurityHandler publicKeyHandler = null;
+
+	/** Work area to prepare the object/generation bytes */
+	byte extra[] = new byte[5];
+
+	/** The message digest algorithm MD5 */
+	MessageDigest md5;
 
 	private ARCFOUREncryption arcfour = new ARCFOUREncryption();
 
-	/** The generic key length. It may be 40 or 128. */
-	private int keyLength;
-
 	private boolean encryptMetadata;
+
+    static long seq = System.currentTimeMillis();
 	
 	/**
 	 * Indicates if the encryption is only necessary for embedded files.
@@ -163,6 +164,10 @@ public class PdfEncryption {
 		encryptMetadata = enc.encryptMetadata;
 		embeddedFilesOnly = enc.embeddedFilesOnly;
 		publicKeyHandler = enc.publicKeyHandler;
+
+        ueKey = enc.ueKey.clone();
+        oeKey = enc.oeKey.clone();
+        perms = enc.perms.clone();
 	}
 
 	public void setCryptoMode(int mode, int kl) {
@@ -421,6 +426,17 @@ public class PdfEncryption {
             byte[] oeValue = com.itextpdf.text.DocWriter.getISOBytes(enc.get(PdfName.OE).toString());
             byte[] ueValue = com.itextpdf.text.DocWriter.getISOBytes(enc.get(PdfName.UE).toString());
             byte[] perms = com.itextpdf.text.DocWriter.getISOBytes(enc.get(PdfName.PERMS).toString());
+            PdfNumber pValue = (PdfNumber) enc.get(PdfName.P);
+
+            this.oeKey = oeValue;
+            this.ueKey = ueValue;
+			this.perms = perms;
+
+            this.ownerKey = oValue;
+            this.userKey = uValue;
+
+            this.permissions = pValue.longValue();
+
             boolean isUserPass = false;
             MessageDigest md = MessageDigest.getInstance("SHA-256");
             md.update(password, 0, Math.min(password.length, 127));
