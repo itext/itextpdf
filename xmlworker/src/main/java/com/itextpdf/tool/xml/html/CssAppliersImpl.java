@@ -134,7 +134,7 @@ public class CssAppliersImpl implements CssAppliers {
     }
 
     public CssAppliers clone() {
-        CssAppliersImpl clone = new CssAppliersImpl();
+        CssAppliersImpl clone = getClonedObject();
         clone.chunk = chunk;
 
 	    clone.paragraph = paragraph;
@@ -146,5 +146,9 @@ public class CssAppliersImpl implements CssAppliers {
         clone.div = div;
 
         return clone;
+    }
+    
+    protected CssAppliersImpl getClonedObject() {
+        return new CssAppliersImpl();
     }
 }
