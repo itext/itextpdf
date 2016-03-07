@@ -143,6 +143,9 @@
                         <configuration>
                             <links>
                                 <link>http://api.itextpdf.com/itext/</link>
+                                <link>http://api.itextpdf.com/pdfa/</link>
+                                <link>http://api.itextpdf.com/xtra/</link>
+                                <link>http://api.itextpdf.com/xml/</link>
                             </links>
                             <footer><![CDATA[
 <script>
