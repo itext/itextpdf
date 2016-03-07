@@ -72,6 +72,12 @@
 
     <dependencies>
         <dependency>
+            <groupId>com.itextpdf</groupId>
+            <artifactId>itextpdf</artifactId>
+            <version>${project.version}</version>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
             <groupId>org.bouncycastle</groupId>
             <artifactId>bcprov-jdk15on</artifactId>
             <version>1.48</version>
@@ -92,11 +98,6 @@
             <version>1.8.5</version>
             <type>jar</type>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.itextpdf</groupId>
-            <artifactId>itextpdf</artifactId>
-            <version>${project.version}</version>
         </dependency>
     </dependencies>
 
