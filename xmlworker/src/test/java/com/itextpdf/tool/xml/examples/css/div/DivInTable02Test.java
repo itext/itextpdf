@@ -21,7 +21,7 @@ public class DivInTable02Test extends SampleTest {
         doc.open();
 
         xmlHelper.parseXHtml(writer, doc, new FileInputStream(inputHtml),
-                null, null, new XMLWorkerFontProvider(), String.format("./target/test-classes/%s/%s/", testPath, getTestName()));
+                null, null, new XMLWorkerFontProvider(), String.format("./src/test/resources/%s/%s/", testPath, getTestName()));
 
         doc.close();
     }
