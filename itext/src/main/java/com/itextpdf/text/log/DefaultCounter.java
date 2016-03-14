@@ -52,7 +52,8 @@ public class DefaultCounter implements Counter {
 
     private int count = 0;
     private int level = 0;
-    private final int[] repeat = {10000, 5000, 5000, 5000, 5000, 1000};
+    private final int[] repeat = {10000, 5000, 1000};
+    private int repeat_level = 10000;
 
     /**
      * @param klass
@@ -78,10 +79,13 @@ public class DefaultCounter implements Counter {
     }
 
     private void plusOne() {
-        if (count++ > repeat[level]) {
+        if (count++ > repeat_level) {
             if (Version.isAGPLVersion()) {
-                if (level < repeat.length - 1) {
-                    level++;
+                level++;
+                if (level == 1) {
+                    repeat_level = repeat[1];
+                } else {
+                    repeat_level = repeat[2];
                 }
                 System.out.println(new String(message));
             }
