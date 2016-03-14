@@ -1,4 +1,4 @@
-iText consists of several jars.
+[iText][itext] consists of several jars.
 
 The main iText release contains:
 - ```itextpdf-x.y.z.jar```: the core library
@@ -40,3 +40,4 @@ Contact sales for more info: http://itextpdf.com/sales
 [building]: BUILDING.md
 [contributing]: CONTRIBUTING.md
 [extrajars]: EXTRAJARS.md
+[itext]: http://itextpdf.com/
