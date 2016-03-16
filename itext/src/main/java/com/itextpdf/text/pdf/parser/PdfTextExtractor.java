@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2015 iText Group NV
+ * Copyright (c) 1998-2016 iText Group NV
  * Authors: Kevin Day, Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -48,6 +48,9 @@ import java.io.IOException;
 
 import com.itextpdf.text.pdf.PdfReader;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Extracts text from a PDF file.
  * @since	2.1.4
@@ -59,6 +62,21 @@ public final class PdfTextExtractor {
 	 */
 	private PdfTextExtractor()  {
 	}
+        
+    /**
+     * Extract text from a specified page using an extraction strategy.
+     * Also allows registration of custom ContentOperators
+     * @param reader the reader to extract text from
+     * @param pageNumber the page to extract text from
+     * @param strategy the strategy to use for extracting text
+     * @param additionalContentOperators an optional map of custom ContentOperators for rendering instructions
+     * @return the extracted text
+     * @throws IOException if any operation fails while reading from the provided PdfReader
+     */
+    public static String getTextFromPage(PdfReader reader, int pageNumber, TextExtractionStrategy strategy, Map<String, ContentOperator> additionalContentOperators) throws IOException{
+        PdfReaderContentParser parser = new PdfReaderContentParser(reader);
+        return parser.processContent(pageNumber, strategy, additionalContentOperators).getResultantText();
+    }
 	
     /**
      * Extract text from a specified page using an extraction strategy.
@@ -70,9 +88,7 @@ public final class PdfTextExtractor {
      * @since 5.0.2
      */
     public static String getTextFromPage(PdfReader reader, int pageNumber, TextExtractionStrategy strategy) throws IOException{
-        PdfReaderContentParser parser = new PdfReaderContentParser(reader);
-        return parser.processContent(pageNumber, strategy).getResultantText();
-        
+        return getTextFromPage(reader, pageNumber, strategy, new HashMap<String, ContentOperator>());
     }
     
     /**

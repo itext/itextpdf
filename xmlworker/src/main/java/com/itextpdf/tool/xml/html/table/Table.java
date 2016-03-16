@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2015 iText Group NV
+ * Copyright (c) 1998-2016 iText Group NV
  * Authors: Balder Van Camp, Emiel Ackermann, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -788,7 +788,17 @@ public class Table extends AbstractTagProcessor {
 					}
 					rulesWidth.add(cellWidth);
 				} else if (baseLevel instanceof PdfDiv) {
-                    cellWidth = startWidth + widthDeviation + ((PdfDiv) baseLevel).getActualWidth();
+                    PdfDiv div = (PdfDiv) baseLevel;
+
+                    float divActualWidth;
+                    if (div.getWidth() != null) {
+                        divActualWidth = div.getWidth();
+                    } else {
+                        ArrayList<Element> divContent = div.getContent();
+                        divActualWidth = calculateDivWidestElementWidth(divContent);
+                    }
+
+                    cellWidth = startWidth + widthDeviation + divActualWidth;
                     rulesWidth.add(cellWidth);
                 }
 			}
@@ -802,7 +812,57 @@ public class Table extends AbstractTagProcessor {
 		return new float[] { cellWidth, widestWordOfCell };
 	}
 
-	/**
+    /**
+     * An attempt to calculate a valid div width in case it is not fixed. It is used as alternative to
+     * div.getActualWidth, which doesn't work here in case of not fixed div's width (it returns 0).
+     *
+     * This method is probably has to be improved in future.
+     *
+     * The main idea of this method is to return the widest element's width, so the created cell will be able to contain it.
+     */
+    private float calculateDivWidestElementWidth(ArrayList<Element> divContent) {
+        float maxWidth = 0;
+        for (Element element : divContent) {
+            float width = 0;
+            // judging by the com.itextpdf.tool.xml.html.Div end() method, the div in XmlWorker can
+            // contain only paragraph, table and another div
+            if (element instanceof PdfDiv) {
+                width = calculateDivWidestElementWidth(((PdfDiv) element).getContent());
+            } else if (element instanceof PdfPTable) {
+                width = ((PdfPTable) element).getTotalWidth();
+            } else if (element instanceof Paragraph) {
+                Paragraph p = (Paragraph) element;
+                float widestWordOfParagraph = 0;
+
+                for (Element inner : p) {
+                    float widestWord = 0;
+                    if (inner instanceof Chunk) {
+                        HashMap<String, Object> chunkAttributes = ((Chunk) inner).getAttributes();
+                        if (chunkAttributes != null && chunkAttributes.containsKey(Chunk.IMAGE)) {
+                            Object o = chunkAttributes.get(Chunk.IMAGE);
+                            if (o instanceof Object[] && ((Object[]) o)[0] instanceof Image)
+                                widestWord = ((Image) ((Object[]) o)[0]).getWidth();
+                        } else {
+                            widestWord = getCssAppliers().getChunkCssAplier().getWidestWord((Chunk) inner);
+                        }
+                    }
+                    // TODO may be paragraph here could contain not only chunks?
+
+                    if (widestWord > widestWordOfParagraph) {
+                        widestWordOfParagraph = widestWord;
+                    }
+                }
+                width = widestWordOfParagraph;
+            }
+
+            if (width > maxWidth) {
+                maxWidth = width;
+            }
+        }
+        return maxWidth;
+    }
+
+    /**
 	 * Calculates the total width based on the given widths array and the given
 	 * outer width.
 	 *

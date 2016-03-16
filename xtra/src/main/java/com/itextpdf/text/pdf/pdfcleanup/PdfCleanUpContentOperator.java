@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2015 iText Group NV
+ * Copyright (c) 1998-2016 iText Group NV
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -388,9 +388,22 @@ class PdfCleanUpContentOperator implements ContentOperator {
             writeStroke(canvas, cleanUpStrategy.getCurrentStrokePath(), strokeColorSpace);
         }
 
-        if (cleanUpStrategy.isClipped() && !cleanUpStrategy.getNewClipPath().isEmpty()) {
-            byte[] clippingOperator = (cleanUpStrategy.getClippingRule() == PathPaintingRenderInfo.NONZERO_WINDING_RULE) ? W : eoW;
-            writePath(cleanUpStrategy.getNewClipPath(), clippingOperator, canvas);
+        if (cleanUpStrategy.isClipped()) {
+            if (!cleanUpStrategy.getNewClipPath().isEmpty()) {
+                byte[] clippingOperator = (cleanUpStrategy.getClippingRule() == PathPaintingRenderInfo.NONZERO_WINDING_RULE) ? W : eoW;
+                writePath(cleanUpStrategy.getNewClipPath(), clippingOperator, canvas);
+            } else {
+                // If the clipping path from the source document is cleaned (it happens when reduction
+                // area covers the path completely), then you should treat it as an empty set (no points
+                // are included in the path). Then the current clipping path (which is the intersection
+                // between previous clipping path and the new one) is also empty set, which means that
+                // there is no visible content at all. But at the same time as we removed the clipping
+                // path, the invisible content would become visible. So, to emulate the correct result,
+                // we would simply put a degenerate clipping path which consists of a single point at (0, 0).
+                Path degeneratePath = new Path();
+                degeneratePath.moveTo(0, 0);
+                writePath(degeneratePath, W, canvas);
+            }
             canvas.getInternalBuffer().append(n);
             cleanUpStrategy.setClipped(false);
         }

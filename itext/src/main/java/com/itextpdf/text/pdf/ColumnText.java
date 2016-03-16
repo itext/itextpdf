@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2015 iText Group NV
+ * Copyright (c) 1998-2016 iText Group NV
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -1495,7 +1495,6 @@ public class ColumnText {
         descender = 0;
         boolean firstPass = true;
         boolean isRTL = runDirection == PdfWriter.RUN_DIRECTION_RTL;
-        main_loop:
         while (true) {
             if (compositeElements.isEmpty()) {
                 return NO_MORE_TEXT;
@@ -1606,6 +1605,7 @@ public class ColumnText {
                     }
                 }
                 int status = 0;
+                boolean keepTogetherAndDontFit = false;
                 for (int keep = 0; keep < 2; ++keep) {
                     float lastY = yLine;
                     boolean createHere = false;
@@ -1613,7 +1613,7 @@ public class ColumnText {
                         if (item == null) {
                             listIdx = 0;
                             compositeElements.removeFirst();
-                            continue main_loop;
+                            break;
                         }
                         compositeColumn = new ColumnText(canvas);
                         compositeColumn.setUseAscender((firstPass || descender == 0) && adjustFirstLine ? useAscender : false);
@@ -1649,22 +1649,19 @@ public class ColumnText {
                         }
                         canvas.openMCBlock(item);
                     }
-                    status = compositeColumn.go(simulate || keepCandidate && keep == 0, item);
+                    status = compositeColumn.go(s, item);
                     if (isTagged(canvas) && !s) {
                         canvas.closeMCBlock(item.getListBody());
                         canvas.closeMCBlock(item);
-                        if ((list.getLastItem() == item && (status & NO_MORE_TEXT) != 0) || (status & NO_MORE_COLUMN) != 0) {
-                            canvas.closeMCBlock(list);
-                        }
                     }
                     lastX = compositeColumn.getLastX();
                     updateFilledWidth(compositeColumn.filledWidth);
                     if ((status & NO_MORE_TEXT) == 0 && keepCandidate) {
+                        keepTogetherAndDontFit = true;
                         compositeColumn = null;
                         yLine = lastY;
-                        return NO_MORE_COLUMN;
                     }
-                    if (simulate || !keepCandidate) {
+                    if (simulate || !keepCandidate || keepTogetherAndDontFit) {
                         break;
                     }
                     if (keep == 0) {
@@ -1672,6 +1669,19 @@ public class ColumnText {
                         yLine = lastY;
                     }
                 }
+
+                if (isTagged(canvas) && !simulate) {
+                    if (item == null || (list.getLastItem() == item && (status & NO_MORE_TEXT) != 0) || (status & NO_MORE_COLUMN) != 0) {
+                        canvas.closeMCBlock(list);
+                    }
+                }
+                if (keepTogetherAndDontFit) {
+                    return NO_MORE_COLUMN;
+                }
+                if (item == null) {
+                    continue;
+                }
+
                 firstPass = false;
                 yLine = compositeColumn.yLine;
                 linesWritten += compositeColumn.linesWritten;

@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2015 iText Group NV
+ * Copyright (c) 1998-2016 iText Group NV
  * Authors: Balder Van Camp, Emiel Ackermann, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -208,6 +208,19 @@ public class XMLWorkerHelper {
 	 * @throws IOException if the {@link InputStream} could not be read.
 	 */
 	public void parseXHtml(final PdfWriter writer, final Document doc, final InputStream in, final InputStream inCssFile, final Charset charset, final FontProvider fontProvider) throws IOException {
+		parseXHtml(writer, doc, in, inCssFile, charset, fontProvider, null);
+	}
+
+	/**
+	 * @param writer the writer to use
+	 * @param doc the document to use
+	 * @param in the {@link InputStream} of the XHTML source.
+	 * @param in the {@link CssFiles} of the css files.
+	 * @param charset the charset to use
+	 * @param resourcesRootPath defines the root path to find resources in case they are defined in html with relative paths (e.g. images)
+	 * @throws IOException if the {@link InputStream} could not be read.
+	 */
+	public void parseXHtml(final PdfWriter writer, final Document doc, final InputStream in, final InputStream inCssFile, final Charset charset, final FontProvider fontProvider, final String resourcesRootPath) throws IOException {
         CssFilesImpl cssFiles = new CssFilesImpl();
         if (inCssFile != null)
             cssFiles.add(getCSS(inCssFile));
@@ -215,7 +228,7 @@ public class XMLWorkerHelper {
             cssFiles.add(getDefaultCSS());
         StyleAttrCSSResolver cssResolver = new StyleAttrCSSResolver(cssFiles);
         HtmlPipelineContext hpc = new HtmlPipelineContext(new CssAppliersImpl(fontProvider));
-        hpc.setAcceptUnknown(true).autoBookmark(true).setTagFactory(getDefaultTagProcessorFactory());
+        hpc.setAcceptUnknown(true).autoBookmark(true).setTagFactory(getDefaultTagProcessorFactory()).setResourcesRootPath(resourcesRootPath);
         HtmlPipeline htmlPipeline = new HtmlPipeline(hpc, new PdfWriterPipeline(doc, writer));
         Pipeline<?> pipeline = new CssResolverPipeline(cssResolver, htmlPipeline);
         XMLWorker worker = new XMLWorker(pipeline, true);

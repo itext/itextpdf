@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2015 iText Group NV
+ * Copyright (c) 1998-2016 iText Group NV
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -44,20 +44,18 @@
  */
 package com.itextpdf.text.pdf;
 
-import com.itextpdf.text.pdf.crypto.ARCFOUREncryption;
-import com.itextpdf.text.error_messages.MessageLocalization;
-
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.ByteArrayOutputStream;
-import java.security.MessageDigest;
-import java.security.cert.Certificate;
-
-
 import com.itextpdf.text.ExceptionConverter;
+import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.exceptions.BadPasswordException;
 import com.itextpdf.text.pdf.crypto.AESCipherCBCnoPad;
+import com.itextpdf.text.pdf.crypto.ARCFOUREncryption;
 import com.itextpdf.text.pdf.crypto.IVGenerator;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.security.MessageDigest;
+import java.security.cert.Certificate;
 
 /**
  * 
@@ -97,12 +95,6 @@ public class PdfEncryption {
 	/** The global encryption key */
 	byte mkey[] = new byte[0];
 
-	/** Work area to prepare the object/generation bytes */
-	byte extra[] = new byte[5];
-
-	/** The message digest algorithm MD5 */
-	MessageDigest md5;
-
 	/** The encryption key for the owner */
 	byte ownerKey[] = new byte[32];
 
@@ -113,24 +105,31 @@ public class PdfEncryption {
     byte[] ueKey;
     byte[] perms;
 
-	/** The public key security handler for certificate encryption */
-	protected PdfPublicKeySecurityHandler publicKeyHandler = null;
-
 	long permissions;
 
 	byte documentID[];
 
-	static long seq = System.currentTimeMillis();
-
 	private int revision;
-    
+
+    /** The generic key length. It may be 40 or 128. */
+    private int keyLength;
+
+
+
+    /** The public key security handler for certificate encryption */
+    protected PdfPublicKeySecurityHandler publicKeyHandler = null;
+
+	/** Work area to prepare the object/generation bytes */
+	byte extra[] = new byte[5];
+
+	/** The message digest algorithm MD5 */
+	MessageDigest md5;
 
 	private ARCFOUREncryption arcfour = new ARCFOUREncryption();
 
-	/** The generic key length. It may be 40 or 128. */
-	private int keyLength;
-
 	private boolean encryptMetadata;
+
+    static long seq = System.currentTimeMillis();
 	
 	/**
 	 * Indicates if the encryption is only necessary for embedded files.
@@ -165,6 +164,16 @@ public class PdfEncryption {
 		encryptMetadata = enc.encryptMetadata;
 		embeddedFilesOnly = enc.embeddedFilesOnly;
 		publicKeyHandler = enc.publicKeyHandler;
+
+		if (enc.ueKey != null) {
+            ueKey = enc.ueKey.clone();
+        }
+        if (enc.oeKey != null) {
+            oeKey = enc.oeKey.clone();
+        }
+        if (enc.perms != null) {
+            perms = enc.perms.clone();
+        }
 	}
 
 	public void setCryptoMode(int mode, int kl) {
@@ -423,6 +432,17 @@ public class PdfEncryption {
             byte[] oeValue = com.itextpdf.text.DocWriter.getISOBytes(enc.get(PdfName.OE).toString());
             byte[] ueValue = com.itextpdf.text.DocWriter.getISOBytes(enc.get(PdfName.UE).toString());
             byte[] perms = com.itextpdf.text.DocWriter.getISOBytes(enc.get(PdfName.PERMS).toString());
+            PdfNumber pValue = (PdfNumber) enc.get(PdfName.P);
+
+            this.oeKey = oeValue;
+            this.ueKey = ueValue;
+			this.perms = perms;
+
+            this.ownerKey = oValue;
+            this.userKey = uValue;
+
+            this.permissions = pValue.longValue();
+
             boolean isUserPass = false;
             MessageDigest md = MessageDigest.getInstance("SHA-256");
             md.update(password, 0, Math.min(password.length, 127));
@@ -554,15 +574,15 @@ public class PdfEncryption {
 
 	public static PdfObject createInfoId(byte id[], boolean modified) throws IOException {
 		ByteBuffer buf = new ByteBuffer(90);
-		buf.append('[').append('<');
-		if (id.length != 16)
+		if (id.length == 0)
 			id = createDocumentId();
-		for (int k = 0; k < 16; ++k)
+		buf.append('[').append('<');
+		for (int k = 0; k < id.length; ++k)
 			buf.appendHex(id[k]);
 		buf.append('>').append('<');
 		if (modified)
 			id = createDocumentId();
-		for (int k = 0; k < 16; ++k)
+		for (int k = 0; k < id.length; ++k)
 			buf.appendHex(id[k]);
 		buf.append('>').append(']');
 		buf.close();

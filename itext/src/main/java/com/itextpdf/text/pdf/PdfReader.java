@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2015 iText Group NV
+ * Copyright (c) 1998-2016 iText Group NV
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -1027,6 +1027,7 @@ public class PdfReader implements PdfViewerPreferences {
         if (filter.equals(PdfName.STANDARD)) {
             if (rValue == 5) {
                 ownerPasswordUsed = decrypt.readKey(enc, password);
+                decrypt.documentID = documentID;
                 pValue = decrypt.getPermissions();
             }
             else {
@@ -1252,8 +1253,10 @@ public class PdfReader implements PdfViewerPreferences {
         }
         rootPages = catalog.getAsDict(PdfName.PAGES);
         if (rootPages == null || !PdfName.PAGES.equals(rootPages.get(PdfName.TYPE))) {
-            if (debugmode && LOGGER.isLogging(Level.ERROR)) {
-                LOGGER.error(MessageLocalization.getComposedMessage("the.document.has.no.page.root"));
+            if (debugmode) {
+                if ( LOGGER.isLogging(Level.ERROR) ) {
+                    LOGGER.error(MessageLocalization.getComposedMessage("the.document.has.no.page.root"));
+                }
             }
             else {
                 throw new InvalidPdfException(MessageLocalization.getComposedMessage("the.document.has.no.page.root"));

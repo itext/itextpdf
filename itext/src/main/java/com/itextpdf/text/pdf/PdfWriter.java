@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2015 iText Group NV
+ * Copyright (c) 1998-2016 iText Group NV
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -1993,7 +1993,7 @@ public class PdfWriter extends DocWriter implements
         return true;
     }
 
-    private static String getNameString(final PdfDictionary dic, final PdfName key) {
+    protected static String getNameString(final PdfDictionary dic, final PdfName key) {
         PdfObject obj = PdfReader.getPdfObject(dic.get(key));
         if (obj == null || !obj.isString())
             return null;

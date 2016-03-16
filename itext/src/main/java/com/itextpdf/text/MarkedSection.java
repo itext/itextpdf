@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2015 iText Group NV
+ * Copyright (c) 1998-2016 iText Group NV
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -44,10 +44,10 @@
  */
 package com.itextpdf.text;
 
+import com.itextpdf.text.api.Indentable;
+
 import java.util.Collection;
 import java.util.Iterator;
-
-import com.itextpdf.text.api.Indentable;
 
 /**
  * Wrapper that allows to add properties to a Chapter/Section object.
@@ -55,8 +55,11 @@ import com.itextpdf.text.api.Indentable;
  * By setting attributes, you could add markup to the corresponding XML and/or HTML tag.
  * This functionality was hardly used by anyone, so it was removed, and replaced by
  * the MarkedObject functionality.
+ *
+ * @deprecated since 5.5.9. This class is no longer used.
  */
 
+@Deprecated
 public class MarkedSection extends MarkedObject implements Indentable {
 
 	/** This is the title of this section. */

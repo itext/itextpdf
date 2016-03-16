@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2015 iText Group NV
+ * Copyright (c) 1998-2016 iText Group NV
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -283,6 +283,8 @@ public class PdfTemplate extends PdfContentByte implements IAccessibleElement {
         }
         tpl.separator = separator;
         tpl.additional = additional;
+        tpl.contentTagged = contentTagged;
+        tpl.duplicatedFrom = this;
         return tpl;
     }
     

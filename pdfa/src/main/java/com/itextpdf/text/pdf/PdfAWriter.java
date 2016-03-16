@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2015 iText Group NV
+ * Copyright (c) 1998-2016 iText Group NV
  * Authors: Alexander Chingarev, Bruno Lowagie, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -148,6 +148,39 @@ public class PdfAWriter extends PdfWriter {
                 d.put(PdfName.S, PdfName.GTS_PDFA1);
             }
         }
+    }
+
+    /**
+     * Copies the output intent dictionary from other document to this one.
+     * @param reader the other document
+     * @param checkExistence <CODE>true</CODE> to just check for the existence of a valid output intent
+     * dictionary, <CODE>false</CODE> to insert the dictionary if it exists
+     * @throws IOException on error
+     * @return <CODE>true</CODE> if the output intent dictionary exists, <CODE>false</CODE>
+     * otherwise
+     */
+    @Override
+    public boolean setOutputIntents(PdfReader reader, boolean checkExistence) throws IOException {
+        PdfDictionary catalog = reader.catalog;
+        PdfArray outs = catalog.getAsArray(PdfName.OUTPUTINTENTS);
+        if (outs == null)
+            return false;
+        if (outs.size() == 0)
+            return false;
+        PdfDictionary outa = outs.getAsDict(0);
+        PdfObject obj = PdfReader.getPdfObject(outa.get(PdfName.S));
+        if (obj == null || !PdfName.GTS_PDFA1.equals(obj))
+            return false;
+        if (checkExistence)
+            return true;
+        PRStream stream = (PRStream) PdfReader.getPdfObject(outa.get(PdfName.DESTOUTPUTPROFILE));
+        byte[] destProfile = null;
+        if (stream != null) {
+            destProfile = PdfReader.getStreamBytes(stream);
+        }
+        setOutputIntents(getNameString(outa, PdfName.OUTPUTCONDITIONIDENTIFIER), getNameString(outa, PdfName.OUTPUTCONDITION),
+                getNameString(outa, PdfName.REGISTRYNAME), getNameString(outa, PdfName.INFO), destProfile);
+        return true;
     }
 
     /**

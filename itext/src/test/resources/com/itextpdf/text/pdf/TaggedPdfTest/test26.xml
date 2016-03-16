@@ -1,0 +1,15 @@
+<Document><P o="/Layout"><Span>before</Span>
+</P>
+<L o="/List" startIndent="14"><LI startIndent="14"><Lbl startIndent="14">1.</Lbl>
+<LBody><Span>Item 1</Span>
+</LBody>
+</LI>
+<L o="/List" startIndent="28"><LI startIndent="14"><Lbl startIndent="42">1.</Lbl>
+<LBody><Span>Nested 1</Span>
+</LBody>
+</LI>
+</L>
+</L>
+<P o="/Layout"><Span>after</Span>
+</P>
+</Document>

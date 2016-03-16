@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2015 iText Group NV
+ * Copyright (c) 1998-2016 iText Group NV
  * Authors: Kevin Day, Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -442,6 +442,15 @@ public class PdfContentStreamProcessor {
     protected void handleInlineImage(InlineImageInfo info, PdfDictionary colorSpaceDic){
         ImageRenderInfo renderInfo = ImageRenderInfo.createForEmbeddedImage(gs(), info, colorSpaceDic);
         renderListener.renderImage(renderInfo);
+    }
+    
+    /**
+     * Accessor method for the RenderListener object maintained in this class.
+     * Necessary for implementing custom ContentOperator implementations.
+     * @return the renderListener
+     */
+    public RenderListener getRenderListener() {
+        return renderListener;
     }
 
     /**

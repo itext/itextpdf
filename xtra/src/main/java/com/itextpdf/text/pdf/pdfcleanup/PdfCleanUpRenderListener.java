@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2015 iText Group NV
+ * Copyright (c) 1998-2016 iText Group NV
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -86,11 +86,7 @@ class PdfCleanUpRenderListener implements ExtRenderListener {
     // Represents actual current path to be filled.
     private Path currentFillPath = new Path();
 
-    // Represents the latest path used as a new clipping path. If the new path from the source document
-    // is cleaned, then you should treat it as an empty set. Then the intersection (current clipping path)
-    // between previous clipping path and the new one is also empty set, which means that there is no visible
-    // content at all. But we also can't write invisible content, which wasn't cleaned, to the resultant document,
-    // because in this case it will become visible. The latter case is incorrect from user's point of view.
+    // Represents the latest path used as a clipping path in the new content stream.
     private Path newClippingPath;
 
     private boolean clipPath;
@@ -99,7 +95,6 @@ class PdfCleanUpRenderListener implements ExtRenderListener {
     public PdfCleanUpRenderListener(PdfStamper pdfStamper, PdfCleanUpRegionFilter filter) {
         this.pdfStamper = pdfStamper;
         this.filter = filter;
-        initClippingPath();
     }
 
     public void renderText(TextRenderInfo renderInfo) {
@@ -107,19 +102,12 @@ class PdfCleanUpRenderListener implements ExtRenderListener {
             return;
         }
 
-        // if true, than clipping path was completely cleaned
-        if (newClippingPath.isEmpty()) {
-            LineSegment baseline = renderInfo.getUnscaledBaseline();
-            chunks.add(new PdfCleanUpContentChunk.Text(renderInfo.getPdfString(), baseline.getStartPoint(),
-                    baseline.getEndPoint(), false, strNumber));
-        } else {
-            for (TextRenderInfo ri : renderInfo.getCharacterRenderInfos()) {
-                boolean isAllowed = filter.allowText(ri);
-                LineSegment baseline = ri.getUnscaledBaseline();
+        for (TextRenderInfo ri : renderInfo.getCharacterRenderInfos()) {
+            boolean isAllowed = filter.allowText(ri);
+            LineSegment baseline = ri.getUnscaledBaseline();
 
-                chunks.add(new PdfCleanUpContentChunk.Text(ri.getPdfString(), baseline.getStartPoint(),
-                        baseline.getEndPoint(), isAllowed, strNumber));
-            }
+            chunks.add(new PdfCleanUpContentChunk.Text(ri.getPdfString(), baseline.getStartPoint(),
+                    baseline.getEndPoint(), isAllowed, strNumber));
         }
 
         ++strNumber;
@@ -128,7 +116,7 @@ class PdfCleanUpRenderListener implements ExtRenderListener {
     public void renderImage(ImageRenderInfo renderInfo) {
         List<Rectangle> areasToBeCleaned = getImageAreasToBeCleaned(renderInfo);
 
-        if (areasToBeCleaned == null || newClippingPath.isEmpty()) {
+        if (areasToBeCleaned == null) {
             chunks.add(new PdfCleanUpContentChunk.Image(false, null));
         } else {
             try {
@@ -166,11 +154,6 @@ class PdfCleanUpRenderListener implements ExtRenderListener {
     }
 
     public void modifyPath(PathConstructionRenderInfo renderInfo) {
-        // See the comment on the newClippingPath field.
-        if (newClippingPath.isEmpty()) {
-            return;
-        }
-
         List<Float> segmentData = renderInfo.getSegmentData();
 
         switch (renderInfo.getOperation()) {
@@ -206,14 +189,6 @@ class PdfCleanUpRenderListener implements ExtRenderListener {
     }
 
     public Path renderPath(PathPaintingRenderInfo renderInfo) {
-        // If previous clipping is empty, then we shouldn't compute the new one
-        // because their intersection is empty.
-        if (newClippingPath.isEmpty()) {
-            currentStrokePath = new Path();
-            currentFillPath = currentStrokePath;
-            return newClippingPath;
-        }
-
         boolean stroke = (renderInfo.getOperation() & PathPaintingRenderInfo.STROKE) != 0;
         boolean fill = (renderInfo.getOperation() & PathPaintingRenderInfo.FILL) != 0;
 
@@ -295,14 +270,6 @@ class PdfCleanUpRenderListener implements ExtRenderListener {
     public void clearChunks() {
         chunks.clear();
         strNumber = 1;
-    }
-
-    private void initClippingPath() {
-        /* For our purposes it is enough to initialize clipping path as arbitrary !non-empty! path.
-           In other cases, initially, it shall include the entire page as it stated in PDF spec. */
-        newClippingPath = new Path();
-        newClippingPath.moveTo(30, 30);
-        newClippingPath.lineTo(30, 40);
     }
 
     /**

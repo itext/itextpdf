@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.itextpdf</groupId>
+        <artifactId>itext-parent</artifactId>
+        <version>1.0.0</version>
+    </parent>
+
+    <artifactId>root</artifactId>
+    <version>5.5.9-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+    <modules>
+        <module>itext</module>
+        <module>pdfa</module>
+        <module>xtra</module>
+        <module>xmlworker</module>
+    </modules>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>external.atlassian.jgitflow</groupId>
+                <artifactId>jgitflow-maven-plugin</artifactId>
+                <version>1.0-m5.1</version>
+                <configuration>
+                    <flowInitContext>
+                        <masterBranchName>master</masterBranchName>
+                        <developBranchName>develop</developBranchName>
+                        <featureBranchPrefix>feature/</featureBranchPrefix>
+                        <releaseBranchPrefix>release/</releaseBranchPrefix>
+                        <hotfixBranchPrefix>hotfix/</hotfixBranchPrefix>
+                        <versionTagPrefix />
+                    </flowInitContext>
+                    <allowUntracked>true</allowUntracked>
+                    <autoVersionSubmodules>true</autoVersionSubmodules>
+                    <updateDependencies>true</updateDependencies>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <reporting>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>2.10.3</version>
+                <configuration>
+                    <additionalparam>${javadoc.doclint.none}</additionalparam>
+                    <quiet>true</quiet>
+                </configuration>
+            </plugin>
+        </plugins>
+    </reporting>
+
+    <profiles>
+        <profile>
+            <id>java8-disable-strict-javadoc</id>
+            <activation>
+                <jdk>[1.8,)</jdk>
+            </activation>
+            <properties>
+                <javadoc.doclint.none>-Xdoclint:none</javadoc.doclint.none>
+            </properties>
+        </profile>
+    </profiles>
+
+</project>

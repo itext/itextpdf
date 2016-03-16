@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2015 iText Group NV
+ * Copyright (c) 1998-2016 iText Group NV
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -137,10 +137,23 @@ public class PdfDiv implements Element, Spaceable, IAccessibleElement {
         this.contentHeight = contentHeight;
     }
 
+    /**
+     * IMPROTANT NOTE: be careful with this method because it would return correct result
+     * only in case if {@link PdfDiv#layout(PdfContentByte, boolean, boolean, float, float, float, float)}
+     * was already called.
+     * @return the actual height the div would require to layout it's content
+     */
+
     public float getActualHeight() {
         return height != null && height >= contentHeight ? height : contentHeight;
     }
 
+    /**
+     * IMPROTANT NOTE: be careful with this method because it would return correct result
+     * only in case if {@link PdfDiv#layout(PdfContentByte, boolean, boolean, float, float, float, float)}
+     * was already called.
+     * @return the actual width the div would require to layout it's content
+     */
     public float getActualWidth() {
         return width != null && width >= contentWidth ? width : contentWidth;
     }
