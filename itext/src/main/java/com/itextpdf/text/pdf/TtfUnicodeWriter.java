@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2015 iText Group NV
+ * Copyright (c) 1998-2016 iText Group NV
  * Authors: Bruno Lowagie, Alexander Chingarev, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -91,7 +91,10 @@ public class TtfUnicodeWriter {
         } else {
             byte[] b;
             if (font.subset || font.directoryOffset != 0) {
-                b = font.getSubSet(new HashSet<Integer>(longTag.keySet()), true);
+                synchronized (font.rf) {
+                    TrueTypeFontSubSet sb = new TrueTypeFontSubSet(font.fileName, new RandomAccessFileOrArray(font.rf), new HashSet<Integer>(longTag.keySet()), font.directoryOffset, true, false);
+                    b = sb.process();
+                }
             }
             else {
                 b = font.getFullFont();

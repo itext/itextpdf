@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2015 iText Group NV
+ * Copyright (c) 1998-2016 iText Group NV
  * Authors: Balder Van Camp, Emiel Ackermann, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -48,6 +48,7 @@ import com.itextpdf.text.*;
 import com.itextpdf.text.Font;
 import com.itextpdf.text.html.HtmlUtilities;
 import com.itextpdf.text.pdf.BaseFont;
+import com.itextpdf.text.pdf.PdfContentByte;
 import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.css.CSS;
 import com.itextpdf.tool.xml.css.CssUtils;
@@ -134,10 +135,10 @@ public class ChunkCssApplier {
             String[] splitValues = rules.get(CSS.Property.TEXT_DECORATION).split("\\s+");
             for (String value : splitValues) {
                 if (CSS.Value.UNDERLINE.equalsIgnoreCase(value)) {
-                    c.setUnderline(0.75f, -size / 8f);
+                    c.setUnderline(null, 0.75f, 0, 0, -0.125f, PdfContentByte.LINE_CAP_BUTT);
                 }
                 if (CSS.Value.LINE_THROUGH.equalsIgnoreCase(value)) {
-                    c.setUnderline(0.75f, size / 4f);
+                    c.setUnderline(null, 0.75f, 0, 0, 0.25f, PdfContentByte.LINE_CAP_BUTT);
                 }
             }
         }

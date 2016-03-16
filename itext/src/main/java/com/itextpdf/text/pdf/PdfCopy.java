@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2015 iText Group NV
+ * Copyright (c) 1998-2016 iText Group NV
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -52,10 +52,19 @@ import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.exceptions.BadPasswordException;
 import com.itextpdf.text.log.Counter;
 import com.itextpdf.text.log.CounterFactory;
+import com.itextpdf.text.log.Logger;
+import com.itextpdf.text.log.LoggerFactory;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.StringTokenizer;
 
 /**
  * Make copies of PDF documents. Documents can be edited after reading and
@@ -64,6 +73,9 @@ import java.util.*;
  */
 
 public class PdfCopy extends PdfWriter {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(PdfCopy.class);
+
     /**
      * This class holds information about indirect references, since they are
      * renumbered by iText.
@@ -107,7 +119,7 @@ public class PdfCopy extends PdfWriter {
     //remember to avoid coping
     protected PRIndirectReference structTreeRootReference;
     //to remove unused objects
-    protected HashMap<RefKey, PdfIndirectObject> indirectObjects;
+    protected LinkedHashMap<RefKey, PdfIndirectObject> indirectObjects;
     //PdfIndirectObjects, that generate PdfWriter.addToBody(PdfObject) method, already saved to PdfBody
     protected ArrayList<PdfIndirectObject> savedObjects;
     //imported pages from getImportedPage(PdfReader, int, boolean)
@@ -179,7 +191,7 @@ public class PdfCopy extends PdfWriter {
         parentObjects = new HashMap<PdfObject, PdfObject>();
         disableIndirects = new HashSet<PdfObject>();
 
-        indirectObjects = new HashMap<RefKey, PdfIndirectObject>();
+        indirectObjects = new LinkedHashMap<RefKey, PdfIndirectObject>();
         savedObjects = new ArrayList<PdfIndirectObject>();
         importedPages = new ArrayList<ImportedPage>();
     }
@@ -412,8 +424,14 @@ public class PdfCopy extends PdfWriter {
 
         if (obj != null && obj.isDictionary()) {
             PdfObject type = PdfReader.getPdfObjectRelease(((PdfDictionary)obj).get(PdfName.TYPE));
-            if (type != null && PdfName.PAGE.equals(type)) {
-                return theRef;
+            if (type != null) {
+                if ((PdfName.PAGE.equals(type))) {
+                    return theRef;
+                }
+                if ((PdfName.CATALOG.equals(type))) {
+                    LOGGER.warn(MessageLocalization.getComposedMessage("make.copy.of.catalog.dictionary.is.forbidden"));
+                    return null;
+                }
             }
         }
         iRef.setCopied();

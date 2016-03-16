@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2015 iText Group NV
+ * Copyright (c) 1998-2016 iText Group NV
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -50,15 +50,48 @@ import com.itextpdf.text.Meta;
 import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.io.RandomAccessSourceFactory;
 import com.itextpdf.text.pdf.*;
-import com.itextpdf.text.pdf.parser.*;
+import com.itextpdf.text.pdf.parser.ContentByteUtils;
+import com.itextpdf.text.pdf.parser.ImageRenderInfo;
+import com.itextpdf.text.pdf.parser.InlineImageInfo;
+import com.itextpdf.text.pdf.parser.InlineImageUtils;
+import com.itextpdf.text.pdf.parser.PdfContentStreamProcessor;
+import com.itextpdf.text.pdf.parser.RenderListener;
+import com.itextpdf.text.pdf.parser.SimpleTextExtractionStrategy;
+import com.itextpdf.text.pdf.parser.TaggedPdfReaderTool;
+import com.itextpdf.text.pdf.parser.TextExtractionStrategy;
+import com.itextpdf.text.pdf.parser.TextRenderInfo;
 import com.itextpdf.text.xml.XMLUtil;
 import com.itextpdf.text.xml.xmp.PdfProperties;
 import com.itextpdf.text.xml.xmp.XmpBasicProperties;
-import com.itextpdf.xmp.*;
+import com.itextpdf.xmp.XMPConst;
+import com.itextpdf.xmp.XMPException;
+import com.itextpdf.xmp.XMPMeta;
+import com.itextpdf.xmp.XMPMetaFactory;
+import com.itextpdf.xmp.XMPUtils;
 import com.itextpdf.xmp.options.SerializeOptions;
 
-import java.io.*;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileFilter;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.Stack;
+import java.util.StringTokenizer;
+import java.util.TreeSet;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -1084,38 +1117,32 @@ public class CompareTool {
         }
     }
 
-    public String compareXmp(String outPdf, String cmpPdf){
-        return compareXmp(outPdf, cmpPdf, false);
+    public String compareXmp(byte[] xmp1, byte[] xmp2) {
+        return compareXmp(xmp1, xmp2, false);
     }
 
-    public String compareXmp(String outPdf, String cmpPdf, boolean ignoreDateAndProducerProperties){
-        init(outPdf, cmpPdf);
-        PdfReader cmpReader = null;
-        PdfReader outReader = null;
+    public String compareXmp(byte[] xmp1, byte[] xmp2, boolean ignoreDateAndProducerProperties) {
         try {
-            cmpReader = new PdfReader(this.cmpPdf);
-            outReader = new PdfReader(this.outPdf);
-            byte[] cmpBytes = cmpReader.getMetadata(), outBytes = outReader.getMetadata();
             if (ignoreDateAndProducerProperties) {
-                XMPMeta xmpMeta = XMPMetaFactory.parseFromBuffer(cmpBytes);
+                XMPMeta xmpMeta = XMPMetaFactory.parseFromBuffer(xmp1);
 
                 XMPUtils.removeProperties(xmpMeta, XMPConst.NS_XMP, XmpBasicProperties.CREATEDATE, true, true);
                 XMPUtils.removeProperties(xmpMeta, XMPConst.NS_XMP, XmpBasicProperties.MODIFYDATE, true, true);
                 XMPUtils.removeProperties(xmpMeta, XMPConst.NS_XMP, XmpBasicProperties.METADATADATE, true, true);
                 XMPUtils.removeProperties(xmpMeta, XMPConst.NS_PDF, PdfProperties.PRODUCER, true, true);
 
-                cmpBytes = XMPMetaFactory.serializeToBuffer(xmpMeta, new SerializeOptions(SerializeOptions.SORT));
+                xmp1 = XMPMetaFactory.serializeToBuffer(xmpMeta, new SerializeOptions(SerializeOptions.SORT));
 
-                xmpMeta = XMPMetaFactory.parseFromBuffer(outBytes);
+                xmpMeta = XMPMetaFactory.parseFromBuffer(xmp2);
                 XMPUtils.removeProperties(xmpMeta, XMPConst.NS_XMP, XmpBasicProperties.CREATEDATE, true, true);
                 XMPUtils.removeProperties(xmpMeta, XMPConst.NS_XMP, XmpBasicProperties.MODIFYDATE, true, true);
                 XMPUtils.removeProperties(xmpMeta, XMPConst.NS_XMP, XmpBasicProperties.METADATADATE, true, true);
                 XMPUtils.removeProperties(xmpMeta, XMPConst.NS_PDF, PdfProperties.PRODUCER, true, true);
 
-                outBytes = XMPMetaFactory.serializeToBuffer(xmpMeta, new SerializeOptions(SerializeOptions.SORT));
+                xmp2 = XMPMetaFactory.serializeToBuffer(xmpMeta, new SerializeOptions(SerializeOptions.SORT));
             }
 
-            if (!compareXmls(cmpBytes, outBytes)) {
+            if (!compareXmls(xmp1, xmp2)) {
                 return "The XMP packages different!";
             }
         } catch (XMPException xmpExc) {
@@ -1127,13 +1154,31 @@ public class CompareTool {
         } catch (SAXException parseExc)  {
             return "XMP parsing failure!";
         }
+        return null;
+    }
+
+    public String compareXmp(String outPdf, String cmpPdf) {
+        return compareXmp(outPdf, cmpPdf, false);
+    }
+
+    public String compareXmp(String outPdf, String cmpPdf, boolean ignoreDateAndProducerProperties) {
+        init(outPdf, cmpPdf);
+        PdfReader cmpReader = null;
+        PdfReader outReader = null;
+        try {
+        	cmpReader = new PdfReader(this.cmpPdf);
+        	outReader = new PdfReader(this.outPdf);
+        	byte[] cmpBytes = cmpReader.getMetadata(), outBytes = outReader.getMetadata();
+        	return compareXmp(cmpBytes, outBytes, ignoreDateAndProducerProperties);
+		} catch (IOException e) {
+            return "XMP parsing failure!";
+		}
         finally {
             if (cmpReader != null)
-                cmpReader.close();
+            	cmpReader.close();
             if (outReader != null)
-                outReader.close();
+            	outReader.close();
         }
-        return null;
     }
 
     public boolean compareXmls(byte[] xml1, byte[] xml2) throws ParserConfigurationException, SAXException, IOException {

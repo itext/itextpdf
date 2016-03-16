@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2015 iText Group NV
+ * Copyright (c) 1998-2016 iText Group NV
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -370,9 +370,6 @@ public class RadioCheckField extends BaseField {
             field = PdfFormField.createCheckBox(writer);
         field.setWidget(box, PdfAnnotation.HIGHLIGHT_INVERT);
         if (!isRadio) {
-        	if (!"Yes".equals(onValue)) {
-        		throw new DocumentException(MessageLocalization.getComposedMessage("1.is.not.a.valid.name.for.checkbox.appearance", onValue));
-        	}
             field.setFieldName(fieldName);
             if ((options & READ_ONLY) != 0)
                 field.setFieldFlags(PdfFormField.FF_READ_ONLY);

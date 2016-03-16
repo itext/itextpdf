@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2015 iText Group NV
+ * Copyright (c) 1998-2016 iText Group NV
  * Authors: Balder Van Camp, Emiel Ackermann, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -44,18 +44,21 @@
  */
 package com.itextpdf.tool.xml.html;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.itextpdf.text.Element;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.pdf.draw.LineSeparator;
 import com.itextpdf.tool.xml.NoCustomContextException;
 import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.WorkerContext;
+import com.itextpdf.tool.xml.css.CSS;
+import com.itextpdf.tool.xml.css.CssUtils;
 import com.itextpdf.tool.xml.exceptions.LocaleMessages;
 import com.itextpdf.tool.xml.exceptions.RuntimeWorkerException;
 import com.itextpdf.tool.xml.pipeline.html.HtmlPipelineContext;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author redlab_b
@@ -63,23 +66,36 @@ import com.itextpdf.tool.xml.pipeline.html.HtmlPipelineContext;
  */
 public class HorizontalRule extends AbstractTagProcessor {
 
-	/* (non-Javadoc)
-	 * @see com.itextpdf.tool.xml.TagProcessor#endElement(com.itextpdf.tool.xml.Tag, java.util.List, com.itextpdf.text.Document)
-	 */
-    @Override
-	public List<Element> end(final WorkerContext ctx, final Tag tag, final List<Element> currentContent) {
+	@Override
+	public List<Element> start(WorkerContext ctx, Tag tag) {
 		try {
 			List<Element> list = new ArrayList<Element>();
 			HtmlPipelineContext htmlPipelineContext = getHtmlPipelineContext(ctx);
 			LineSeparator lineSeparator = (LineSeparator) getCssAppliers().apply(new LineSeparator(), tag, htmlPipelineContext);
 			Paragraph p = new Paragraph();
-            p.setMultipliedLeading(1.2f);
+            Map<String, String> css = tag.getCSS();
+            float fontSize = 12;
+            if (css.get(CSS.Property.FONT_SIZE) != null) {
+                fontSize = CssUtils.getInstance().parsePxInCmMmPcToPt(css.get(CSS.Property.FONT_SIZE));
+            }
+            String marginTop = css.get(CSS.Property.MARGIN_TOP);
+            if (marginTop == null) {
+                marginTop = "0.5em";
+            }
+            String marginBottom = css.get(CSS.Property.MARGIN_BOTTOM);
+            if (marginBottom == null) {
+                marginBottom = "0.5em";
+            }
+            p.setSpacingBefore(p.getSpacingBefore() + CssUtils.getInstance().parseValueToPt(marginTop, fontSize));
+            p.setSpacingAfter(p.getSpacingAfter() + CssUtils.getInstance().parseValueToPt(marginBottom, fontSize));
+            p.setLeading(0);
 			p.add(lineSeparator);
-			list.add(lineSeparator);
+			list.add(p);
 			return list;
 		} catch (NoCustomContextException e) {
 			throw new RuntimeWorkerException(LocaleMessages.getInstance().getMessage(LocaleMessages.NO_CUSTOM_CONTEXT), e);
 		}
 	}
+
 
 }

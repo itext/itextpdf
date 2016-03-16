@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2015 iText Group NV
+ * Copyright (c) 1998-2016 iText Group NV
  * Authors: Alexander Chingarev, Bruno Lowagie, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -59,10 +59,9 @@ public class PdfA1Checker extends PdfAChecker {
     static public final PdfName noOp = new PdfName("NoOp");
 
     static private HashSet<PdfName> allowedAnnotTypes = new HashSet<PdfName>(Arrays.asList(PdfName.TEXT, PdfName.LINK,
-            PdfName.FREETEXT, PdfName.LINE, PdfName.SQUARE, PdfName.CIRCLE, PdfName.POLYGON, PdfName.POLYLINE,
-            PdfName.HIGHLIGHT, PdfName.UNDERLINE, PdfName.SQUIGGLY, PdfName.STRIKEOUT, PdfName.STAMP, PdfName.CARET,
-            PdfName.INK, PdfName.POPUP, PdfName.FILEATTACHMENT, PdfName.WIDGET, PdfName.PRINTERMARK, PdfName.TRAPNET,
-            PdfName.WATERMARK));
+            PdfName.FREETEXT, PdfName.LINE, PdfName.SQUARE, PdfName.CIRCLE, PdfName.HIGHLIGHT, PdfName.UNDERLINE,
+            PdfName.SQUIGGLY, PdfName.STRIKEOUT, PdfName.STAMP, PdfName.INK, PdfName.POPUP, PdfName.WIDGET,
+            PdfName.PRINTERMARK, PdfName.TRAPNET));
 
     static public final HashSet<PdfName> allowedNamedActions = new HashSet<PdfName>(Arrays.asList(PdfName.NEXTPAGE,
             PdfName.PREVPAGE, PdfName.FIRSTPAGE, PdfName.LASTPAGE));
@@ -86,9 +85,6 @@ public class PdfA1Checker extends PdfAChecker {
     protected boolean rgbUsed = false;
     protected boolean cmykUsed = false;
     protected boolean grayUsed = false;
-
-    protected String pdfaOutputIntentColorSpace = null;
-    protected PdfObject pdfaDestOutputIntent = null;
 
     PdfA1Checker(PdfAConformanceLevel conformanceLevel) {
         super(conformanceLevel);
@@ -295,7 +291,7 @@ public class PdfA1Checker extends PdfAChecker {
                         throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("document.catalog.dictionary.shall.include.a.markinfo.dictionary.whose.entry.marked.shall.have.a.value.of.true"));
                     }
                     if (!dictionary.contains(PdfName.LANG)) {
-                        throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("document.catalog.dictionary.should.contain.lang.entry"));
+                        LOGGER.warning(MessageLocalization.getComposedMessage("document.catalog.dictionary.should.contain.lang.entry"));
                     }
                 }
             } else if (PdfName.PAGE.equals(type)) {
@@ -303,6 +299,7 @@ public class PdfA1Checker extends PdfAChecker {
                     throw new PdfAConformanceException(obj1, MessageLocalization.getComposedMessage("page.dictionary.shall.not.include.aa.entry"));
                 }
             } else if (PdfName.OUTPUTINTENT.equals(type)) {
+                isCheckOutputIntent = true;
                 PdfObject destOutputIntent = dictionary.get(PdfName.DESTOUTPUTPROFILE);
                 if (destOutputIntent != null && pdfaDestOutputIntent != null) {
                     if (pdfaDestOutputIntent.getIndRef() != destOutputIntent.getIndRef())
@@ -519,6 +516,7 @@ public class PdfA1Checker extends PdfAChecker {
 
     @Override
     public void close(PdfWriter writer) {
+        checkOutputIntentsInStamperMode(writer);
         if ((rgbUsed || cmykUsed || grayUsed) && pdfaOutputIntentColorSpace == null) {
             throw new PdfAConformanceException(null, MessageLocalization.getComposedMessage("if.device.rgb.cmyk.gray.used.in.file.that.file.shall.contain.pdfa.outputintent"));
         }

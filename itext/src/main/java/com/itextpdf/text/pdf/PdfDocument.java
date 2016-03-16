@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2015 iText Group NV
+ * Copyright (c) 1998-2016 iText Group NV
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -588,9 +588,12 @@ public class PdfDocument extends Document {
                     }
                     else {
                         line.setExtraIndent(paragraph.getFirstLineIndent());
+                        float oldHeight = currentHeight;
                         element.process(this);
                         carriageReturn();
-                        addSpacing(paragraph.getSpacingAfter(), paragraph.getTotalLeading(), paragraph.getFont(), true);
+                        if (oldHeight != currentHeight || lines.size() > 0) {
+                            addSpacing(paragraph.getSpacingAfter(), paragraph.getTotalLeading(), paragraph.getFont(), true);
+                        }
                     }
 
                     if (pageEvent != null && !isSectionTitle)
@@ -1501,6 +1504,7 @@ public class PdfDocument extends Document {
             float descender;
             if (chunk.isImage()) {
                 ascender = chunk.height();
+                fontSize = chunk.height();
                 descender = 0;
             } else {
                 ascender = chunk.font().getFont().getFontDescriptor(BaseFont.ASCENT, fontSize);
@@ -1603,8 +1607,8 @@ public class PdfDocument extends Document {
                                 scolor = color;
                             if (scolor != null)
                                 graphics.setColorStroke(scolor);
-                            graphics.setLineWidth(ps[0] + fontSize * ps[1]);
-                            float shift = ps[2] + fontSize * ps[3];
+                            graphics.setLineWidth(ps[0] + chunk.font().size() * ps[1]);
+                            float shift = ps[2] + chunk.font().size() * ps[3];
                             int cap2 = (int)ps[4];
                             if (cap2 != 0)
                                 graphics.setLineCap(cap2);
@@ -1945,12 +1949,6 @@ public class PdfDocument extends Document {
 
         if (pageEmpty) {
             return;
-        }
-
-        if ( spacingAfter && !pageEmpty ) {
-            if ( lines.size() == 0 && line.size() == 0 ) {
-                return;
-            }
         }
 
         float height = spacingAfter ? extraspace : calculateLineHeight();

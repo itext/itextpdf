@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2015 iText Group NV
+ * Copyright (c) 1998-2016 iText Group NV
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -1651,7 +1651,7 @@ public class PdfContentByte {
                 }
                 float w = template.getWidth();
                 float h = template.getHeight();
-                addTemplate(template, a / w, b / w, c / h, d / h, e, f, isMCBlockOpened);
+                addTemplate(template, a / w, b / w, c / h, d / h, e, f, false, false);
             }
             else {
                 content.append("q ");
@@ -2845,13 +2845,31 @@ public class PdfContentByte {
      *                   taken into account only if <code>isTagged()</code> - <code>true</code>.
      */
     public void addTemplate(final PdfTemplate template, final double a, final double b, final double c, final double d, final double e, final double f, boolean tagContent) {
+        addTemplate(template, a, b, c, d, e, f, true, tagContent);
+    }
+
+    /**
+     * Adds a template to this content.
+     *
+     * @param template the template
+     * @param a an element of the transformation matrix
+     * @param b an element of the transformation matrix
+     * @param c an element of the transformation matrix
+     * @param d an element of the transformation matrix
+     * @param e an element of the transformation matrix
+     * @param f an element of the transformation matrix
+     * @param tagTemplate defines if template is to be tagged; <code>true</code> by default, <code>false</code> used when template is a part of <code>ImgTemplate</code>.
+     * @param tagContent <code>true</code> - template content will be tagged(all that will be added after), <code>false</code> - only a Do operator will be tagged.
+     *                   taken into account only if <code>isTagged()</code> and <code>tagTemplate</code> parameter - both <code>true</code>.
+     */
+    private void addTemplate(final PdfTemplate template, final double a, final double b, final double c, final double d, final double e, final double f, boolean tagTemplate, boolean tagContent) {
         checkWriter();
         checkNoPattern(template);
         PdfWriter.checkPdfIsoConformance(writer, PdfIsoKeys.PDFISOKEY_FORM_XOBJ, template);
         PdfName name = writer.addDirectTemplateSimple(template, null);
         PageResources prs = getPageResources();
         name = prs.addXObject(name, template.getIndirectReference());
-        if (isTagged()) {
+        if (isTagged() && tagTemplate) {
             if (inText)
                 endText();
             if (template.isContentTagged() || (template.getPageReference() != null && tagContent)) {
@@ -2862,6 +2880,7 @@ public class PdfContentByte {
 
             if (tagContent) {
                 template.setContentTagged(true);
+                ensureDocumentTagIsOpen();
                 ArrayList<IAccessibleElement> allMcElements = getMcElements();
                 if (allMcElements != null && allMcElements.size() > 0)
                     template.getMcElements().add(allMcElements.get(allMcElements.size() - 1));
@@ -2879,7 +2898,7 @@ public class PdfContentByte {
         content.append(f).append(" cm ");
         content.append(name.getBytes()).append(" Do Q").append_i(separator);
 
-        if (isTagged() && !tagContent) {
+        if (isTagged() && tagTemplate && !tagContent) {
             closeMCBlock(template);
             template.setId(null);
         }
@@ -4158,10 +4177,7 @@ public class PdfContentByte {
 
     public void openMCBlock(IAccessibleElement element) {
         if (isTagged()) {
-            if (pdf.openMCDocument) {
-                pdf.openMCDocument = false;
-                writer.getDirectContentUnder().openMCBlock(pdf);
-            }
+            ensureDocumentTagIsOpen();
             if (element != null/* && element.getRole() != null*/) {
                 if (!getMcElements().contains(element)) {
                     PdfStructureElement structureElement = openMCBlockInt(element);
@@ -4201,8 +4217,7 @@ public class PdfContentByte {
                 if (PdfName.ARTIFACT.equals(element.getRole())) {
                     HashMap<PdfName, PdfObject> properties = element.getAccessibleAttributes();
                     PdfDictionary propertiesDict = null;
-                    if (properties == null || properties.isEmpty()) {
-                    } else {
+                    if (properties != null && !properties.isEmpty()) {
                         propertiesDict = new PdfDictionary();
                         for (Map.Entry<PdfName, PdfObject> entry : properties.entrySet()) {
                             propertiesDict.put(entry.getKey(), entry.getValue());
@@ -4257,6 +4272,13 @@ public class PdfContentByte {
                 if (inTextLocal)
                     beginText(true);
             }
+        }
+    }
+
+    private void ensureDocumentTagIsOpen() {
+        if (pdf.openMCDocument) {
+            pdf.openMCDocument = false;
+            writer.getDirectContentUnder().openMCBlock(pdf);
         }
     }
 

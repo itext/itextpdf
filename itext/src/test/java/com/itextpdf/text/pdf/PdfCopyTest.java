@@ -47,16 +47,29 @@ package com.itextpdf.text.pdf;
 
 import com.itextpdf.testutils.CompareTool;
 import com.itextpdf.testutils.TestResourceUtils;
-import com.itextpdf.text.*;
+import com.itextpdf.text.Chunk;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.PageSize;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.Phrase;
 import com.itextpdf.text.Rectangle;
-import junit.framework.Assert;
+
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.*;
+import junit.framework.Assert;
 
 
 /**
@@ -505,9 +518,59 @@ public class PdfCopyTest {
         }
     }
 
+    @Test
+    public void copySignedDocuments() throws IOException, DocumentException {
+        String file = "./src/test/resources/com/itextpdf/text/pdf/PdfCopyTest/hello_signed1.pdf";
+        new File("./target/com/itextpdf/test/pdf/PdfCopyTest/").mkdirs();
+        Document pdfDocument = new Document();
+        PdfCopy copier = new PdfCopy(pdfDocument, new FileOutputStream("./target/com/itextpdf/test/pdf/PdfCopyTest/CopySignedDocuments.pdf"));
+        pdfDocument.open();
 
+        PdfReader reader1 = new PdfReader(file);
+        copier.addPage(copier.getImportedPage(reader1, 1));
+        copier.freeReader(reader1);
 
+        reader1 = new PdfReader(file);
+        copier.addPage(copier.getImportedPage(reader1, 1));
+        copier.freeReader(reader1);
 
+        pdfDocument.close();
+
+        PdfReader reader = new PdfReader("./target/com/itextpdf/test/pdf/PdfCopyTest/CopySignedDocuments.pdf");
+        PdfDictionary sig = (PdfDictionary)reader.getPdfObject(9);
+        PdfDictionary sigRef = sig.getAsArray(PdfName.REFERENCE).getAsDict(0);
+        Assert.assertTrue(PdfName.SIGREF.equals(sigRef.getAsName(PdfName.TYPE)));
+        Assert.assertFalse(sigRef.contains(PdfName.DATA));
+        sig = (PdfDictionary)reader.getPdfObject(21);
+        sigRef = sig.getAsArray(PdfName.REFERENCE).getAsDict(0);
+        Assert.assertTrue(PdfName.SIGREF.equals(sigRef.getAsName(PdfName.TYPE)));
+        Assert.assertFalse(sigRef.contains(PdfName.DATA));
+    }
+
+    @Test
+    public void smartCopySignedDocuments() throws IOException, DocumentException {
+        String file = "./src/test/resources/com/itextpdf/text/pdf/PdfCopyTest/hello_signed1.pdf";
+        new File("./target/com/itextpdf/test/pdf/PdfCopyTest/").mkdirs();
+        Document pdfDocument = new Document();
+        PdfSmartCopy copier = new PdfSmartCopy(pdfDocument, new FileOutputStream("./target/com/itextpdf/test/pdf/PdfCopyTest/SmartCopySignedDocuments.pdf"));
+        pdfDocument.open();
+
+        PdfReader reader1 = new PdfReader(file);
+        copier.addPage(copier.getImportedPage(reader1, 1));
+        copier.freeReader(reader1);
+
+        reader1 = new PdfReader(file);
+        copier.addPage(copier.getImportedPage(reader1, 1));
+        copier.freeReader(reader1);
+
+        pdfDocument.close();
+
+        PdfReader reader = new PdfReader("./target/com/itextpdf/test/pdf/PdfCopyTest/SmartCopySignedDocuments.pdf");
+        PdfDictionary sig = (PdfDictionary)reader.getPdfObject(8);
+        PdfDictionary sigRef = sig.getAsArray(PdfName.REFERENCE).getAsDict(0);
+        Assert.assertTrue(PdfName.SIGREF.equals(sigRef.getAsName(PdfName.TYPE)));
+        Assert.assertFalse(sigRef.contains(PdfName.DATA));
+    }
 
     public static byte[] Merge(File[] documentPaths) throws IOException, DocumentException
     {

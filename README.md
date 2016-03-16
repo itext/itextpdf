@@ -1,30 +1,21 @@
-iText consists of several jars.
+[iText][itext] consists of several jars.
 
 The main iText release contains:
 - ```itextpdf-x.y.z.jar```: the core library
 - ```itext-xtra-x.y.z.jar```: extra functionality (PDF 2!)
 - ```itext-pdfa-x.y.z.jar```: PDF/A-related functionality
+- ```xmlworker-x.y.z.jar```: XML (and HTML) functionality
 
-This project is hosted on https://github.com/itext
+iText is hosted on https://github.com/itext/itextpdf
 
 You can find the latest releases here:
-- https://github.com/itext/itextpdf
-- https://github.com/itext/xtra
-- https://github.com/itext/pdfa
+- http://github.com/itext/itextpdf/releases/latest
 
 You can also [build iText from source][building].
 
-In some cases, you'll need [extra jars][extrajars].
-These jars are bundled in a zip file here:
-http://sourceforge.net/projects/itext/files/extrajars/
-
-For XML (and HTML) functionality, you need this jar:
-- ```xmlworker-x.y.z.jar```
-This project is hosted on https://github.com/itext/xmlworker
-
-Finally, we also have a tool that can help you debug PDFs:
+We also have a tool that can help you debug PDFs:
 - ```itext-rups-x.y.z.jar```
-This project is hosted on https://github.com/itext/rups
+RUPS is hosted on http://github.com/itext/rups
 
 If you have an idea on how to improve iText and you want to submit code,
 please read our [Contribution Guidelines][contributing].
@@ -49,3 +40,4 @@ Contact sales for more info: http://itextpdf.com/sales
 [building]: BUILDING.md
 [contributing]: CONTRIBUTING.md
 [extrajars]: EXTRAJARS.md
+[itext]: http://itextpdf.com/
