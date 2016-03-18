@@ -53,6 +53,7 @@ import com.itextpdf.text.pdf.draw.LineSeparator;
 import com.itextpdf.text.pdf.languages.ArabicLigaturizer;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /** Does all the line bidirectional processing with PdfChunk assembly.
  *
@@ -355,6 +356,7 @@ public class BidiLine {
         float charWidth = 0;
         PdfChunk lastValidChunk = null;
         TabStop tabStop = null;
+        List<TabStop> rtlTabsToBeAligned = new ArrayList<TabStop>();
         float tabStopAnchorPosition = Float.NaN;
         float tabPosition = Float.NaN;
         boolean surrogate = false;
@@ -401,13 +403,7 @@ public class BidiLine {
                 if (ck.isAttribute(Chunk.TABSETTINGS)) {
                     lastSplit = currentChar;
                     if (tabStop != null) {
-                        float tabStopPosition = tabStop.getPosition(tabPosition, originalWidth - width, tabStopAnchorPosition);
-                        width = originalWidth - (tabStopPosition + (originalWidth - width - tabPosition));
-                        if (width < 0) {
-                            tabStopPosition += width;
-                            width = 0;
-                        }
-                        tabStop.setPosition(tabStopPosition);
+                        width = processTabStop(tabStop, tabPosition, originalWidth, width, tabStopAnchorPosition, isRTL, rtlTabsToBeAligned);
                     }
 
                     tabStop = PdfChunk.getTabStop(ck, originalWidth - width);
@@ -474,16 +470,12 @@ public class BidiLine {
         }
 
         if (tabStop != null) {
-            float tabStopPosition = tabStop.getPosition(tabPosition, originalWidth - width, tabStopAnchorPosition);
-            width -= tabStopPosition - tabPosition;
-            if (width < 0) {
-                tabStopPosition += width;
-                width = 0;
+            width = processTabStop(tabStop, tabPosition, originalWidth, width, tabStopAnchorPosition, isRTL, rtlTabsToBeAligned);
+        }
+        if (rtlTabsToBeAligned != null) {
+            for (TabStop rtlTabStop : rtlTabsToBeAligned) {
+                rtlTabStop.setPosition(originalWidth - width - rtlTabStop.getPosition());
             }
-            if (!isRTL)
-                tabStop.setPosition(tabStopPosition);
-            else
-                tabStop.setPosition(originalWidth - width - tabPosition);
         }
 
         if (currentChar >= totalTextLength) {
@@ -525,6 +517,22 @@ public class BidiLine {
             newCurrentChar = currentChar - 1;
         }
         return new PdfLine(0, originalWidth, originalWidth - getWidth(oldCurrentChar, newCurrentChar, originalWidth), alignment, false, createArrayOfPdfChunks(oldCurrentChar, newCurrentChar), isRTL);
+    }
+
+    private float processTabStop(TabStop tabStop, float tabPosition, float originalWidth, float width, float tabStopAnchorPosition, boolean isRTL, List<TabStop> rtlTabsToBeAligned) {
+        float tabStopPosition = tabStop.getPosition(tabPosition, originalWidth - width, tabStopAnchorPosition);
+        width -= tabStopPosition - tabPosition;
+        if (width < 0) {
+            tabStopPosition += width;
+            width = 0;
+        }
+        if (!isRTL) {
+            tabStop.setPosition(tabStopPosition);
+        } else {
+            tabStop.setPosition(tabPosition); // This will be mirrored when we know exact line width
+            rtlTabsToBeAligned.add(tabStop);
+        }
+        return width;
     }
 
     /**
