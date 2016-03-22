@@ -51,6 +51,9 @@ import com.itextpdf.tool.xml.pipeline.html.ImageProvider;
 import com.itextpdf.tool.xml.pipeline.html.NoImageProviderException;
 import com.itextpdf.tool.xml.pipeline.html.UrlLinkResolver;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Applies CSS to an Element using the appliers from the <code>com.itextpdf.tool.xml.css.apply</code>.
  *
@@ -65,57 +68,51 @@ public class CssAppliersImpl implements CssAppliers {
 	 *
 	 * public static CssAppliersImpl getInstance() { return myself; }
 	 */
-	protected ChunkCssApplier chunk;
-	protected ParagraphCssApplier paragraph;
-	private NoNewLineParagraphCssApplier nonewlineparagraph;
-	private HtmlCellCssApplier htmlcell;
-	private ListStyleTypeCssApplier list;
-	private LineSeparatorCssApplier lineseparator;
-	private ImageCssApplier image;
-    private DivCssApplier div;
+    private Map<Class<?>, CssApplier> map;
 	/**
 	 *
 	 */
 	public CssAppliersImpl() {
-		chunk = new ChunkCssApplier(null);
-		paragraph = new ParagraphCssApplier(this);
-		nonewlineparagraph = new NoNewLineParagraphCssApplier();
-		htmlcell = new HtmlCellCssApplier();
-		list = new ListStyleTypeCssApplier();
-		lineseparator = new LineSeparatorCssApplier();
-		image = new ImageCssApplier();
-        div = new DivCssApplier();
+            map = new HashMap<Class<?>, CssApplier>();
+            map.put(Chunk.class, new ChunkCssApplier(null));
+            map.put(Paragraph.class, new ParagraphCssApplier(this));
+            map.put(NoNewLineParagraph.class, new NoNewLineParagraphCssApplier());
+            map.put(HtmlCell.class, new HtmlCellCssApplier());
+            map.put(List.class, new ListStyleTypeCssApplier());
+            map.put(LineSeparator.class, new LineSeparatorCssApplier());
+            map.put(Image.class, new ImageCssApplier());
+            map.put(PdfDiv.class, new DivCssApplier());
 	}
+        
+        protected void putCssApplier(Class<?> s, CssApplier c) {
+            map.put(s, c);
+        }
+        
+        protected CssApplier getCssApplier(Class<?> s) {
+            return map.get(s);
+        }
 
     public CssAppliersImpl(FontProvider fontProvider) {
         this();
-        chunk.setFontProvider(fontProvider);
+        ((ChunkCssApplier) map.get(Chunk.class)).setFontProvider(fontProvider);
 	}
 
 	/* (non-Javadoc)
 	 * @see com.itextpdf.tool.xml.html.CssAppliers#apply(com.itextpdf.text.Element, com.itextpdf.tool.xml.Tag, com.itextpdf.tool.xml.css.apply.MarginMemory, com.itextpdf.tool.xml.css.apply.PageSizeContainable, com.itextpdf.tool.xml.pipeline.html.ImageProvider)
 	 */
 	public Element apply(Element e, final Tag t, final MarginMemory mm, final PageSizeContainable psc, final HtmlPipelineContext ctx) {
-		// warning, mapping is done by instance of, make sure to add things in the right order when adding more.
-		if (e instanceof Chunk) { // covers TabbedChunk & Chunk
-			e = chunk.apply((Chunk) e, t);
-		} else if (e instanceof Paragraph) {
-			e = paragraph.apply((Paragraph) e, t, mm);
-		} else if (e instanceof NoNewLineParagraph) {
-			e = nonewlineparagraph.apply((NoNewLineParagraph) e, t, mm);
-		} else if (e instanceof HtmlCell) {
-			e = htmlcell.apply((HtmlCell) e, t, mm, psc);
-		} else if (e instanceof List) {
-			e = list.apply((List) e, t, ctx);
-		} else if (e instanceof LineSeparator) {
-			e = lineseparator.apply((LineSeparator) e, t, psc);
-		} else if (e instanceof Image) {
-			e = image.apply((Image) e, t);
-		} else if (e instanceof PdfDiv) {
-            e = div.apply((PdfDiv)e, t, mm, psc, ctx);
-        }
-		return e;
-
+            CssApplier c = null;
+            for (Map.Entry<Class<?>, CssApplier> entry : map.entrySet()) {
+                if (entry.getKey().isInstance(e)) {
+                    c = entry.getValue();
+                    break;
+                }
+            }
+            if (c == null) {
+                throw new RuntimeException();
+            }
+            e = c.apply(e, t, mm, psc, ctx);
+            return e;
 	}
 
 	/* (non-Javadoc)
@@ -126,25 +123,16 @@ public class CssAppliersImpl implements CssAppliers {
 	}
 
 	public ChunkCssApplier getChunkCssAplier() {
-        return  chunk;
+        return (ChunkCssApplier) map.get(Chunk.class);
     }
 
     public void setChunkCssAplier(final ChunkCssApplier chunkCssAplier) {
-        this.chunk = chunkCssAplier;
+        map.put(Chunk.class, chunkCssAplier);
     }
 
     public CssAppliers clone() {
         CssAppliersImpl clone = getClonedObject();
-        clone.chunk = chunk;
-
-	    clone.paragraph = paragraph;
-	    clone.nonewlineparagraph = nonewlineparagraph;
-	    clone.htmlcell = htmlcell;
-	    clone.list = list;
-	    clone.lineseparator = lineseparator;
-	    clone.image = image;
-        clone.div = div;
-
+        clone.map = new HashMap<Class<?>, CssApplier>(this.map);
         return clone;
     }
     

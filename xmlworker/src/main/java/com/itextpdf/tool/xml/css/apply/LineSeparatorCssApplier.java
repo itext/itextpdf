@@ -50,7 +50,9 @@ import com.itextpdf.text.pdf.draw.LineSeparator;
 import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.css.CSS;
 import com.itextpdf.tool.xml.css.CssUtils;
+import com.itextpdf.tool.xml.html.CssApplier;
 import com.itextpdf.tool.xml.html.HTML;
+import com.itextpdf.tool.xml.pipeline.html.HtmlPipelineContext;
 
 import java.util.Map;
 
@@ -58,7 +60,7 @@ import java.util.Map;
  * @author Emiel Ackermann
  *
  */
-public class LineSeparatorCssApplier {
+public class LineSeparatorCssApplier implements CssApplier<LineSeparator> {
 
 	/**
 	 * Applies CSS to LineSeparators
@@ -68,7 +70,10 @@ public class LineSeparatorCssApplier {
 	 * @param psc the {@link PageSize} container
 	 * @return the styled {@link LineSeparator}
 	 */
-	public LineSeparator apply(final LineSeparator ls, final Tag t, final PageSizeContainable psc) {
+    public LineSeparator apply(final LineSeparator ls, final Tag t, final PageSizeContainable psc) {
+        return apply(ls, t, null, psc, null);
+    }
+	public LineSeparator apply(final LineSeparator ls, final Tag t, final MarginMemory mm, final PageSizeContainable psc, final HtmlPipelineContext ctx) {
     	float lineWidth = 1;
     	Map<String, String> css = t.getCSS();
         if (t.getAttributes().get(HTML.Attribute.SIZE) != null) {

@@ -49,7 +49,9 @@ import com.itextpdf.text.html.HtmlUtilities;
 import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.css.CSS;
 import com.itextpdf.tool.xml.css.CssUtils;
+import com.itextpdf.tool.xml.html.CssApplier;
 import com.itextpdf.tool.xml.html.HTML;
+import com.itextpdf.tool.xml.pipeline.html.HtmlPipelineContext;
 
 import java.util.Map;
 
@@ -58,7 +60,7 @@ import java.util.Map;
  *
  * @author redlab_b
  */
-public class ImageCssApplier {
+public class ImageCssApplier implements CssApplier<Image> {
 
     /**
      * Applies CSS to an Image. Currently supported:
@@ -72,6 +74,10 @@ public class ImageCssApplier {
      * @return a styled Image
      */
     public Image apply(final Image img, final Tag tag) {
+        return apply(img, tag, null, null, null);
+    }
+    
+    public Image apply(final Image img, final Tag tag, final MarginMemory mm, final PageSizeContainable psc, final HtmlPipelineContext ctx) {
         Map<String, String> cssMap = tag.getCSS();
 
         String widthValue = cssMap.get(HTML.Attribute.WIDTH);
