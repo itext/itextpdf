@@ -83,19 +83,19 @@ public class CssAppliersImpl implements CssAppliers {
             map.put(Image.class, new ImageCssApplier());
             map.put(PdfDiv.class, new DivCssApplier());
 	}
+
+        public CssAppliersImpl(FontProvider fontProvider) {
+            this();
+            ((ChunkCssApplier) map.get(Chunk.class)).setFontProvider(fontProvider);
+	}
         
-        protected void putCssApplier(Class<?> s, CssApplier c) {
+        public void putCssApplier(Class<?> s, CssApplier c) {
             map.put(s, c);
         }
         
-        protected CssApplier getCssApplier(Class<?> s) {
+        public CssApplier getCssApplier(Class<?> s) {
             return map.get(s);
         }
-
-    public CssAppliersImpl(FontProvider fontProvider) {
-        this();
-        ((ChunkCssApplier) map.get(Chunk.class)).setFontProvider(fontProvider);
-	}
 
 	/* (non-Javadoc)
 	 * @see com.itextpdf.tool.xml.html.CssAppliers#apply(com.itextpdf.text.Element, com.itextpdf.tool.xml.Tag, com.itextpdf.tool.xml.css.apply.MarginMemory, com.itextpdf.tool.xml.css.apply.PageSizeContainable, com.itextpdf.tool.xml.pipeline.html.ImageProvider)
