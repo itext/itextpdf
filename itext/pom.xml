@@ -14,7 +14,7 @@
   <version>5.5.10-SNAPSHOT</version>
   <packaging>jar</packaging>
 
-  <name>iText</name>
+  <name>iText Core</name>
   <description>A Free Java-PDF library</description>
   <url>http://itextpdf.com</url>
 
