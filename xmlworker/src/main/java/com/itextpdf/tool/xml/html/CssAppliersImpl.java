@@ -68,12 +68,12 @@ public class CssAppliersImpl implements CssAppliers {
 	 *
 	 * public static CssAppliersImpl getInstance() { return myself; }
 	 */
-    private Map<Class<?>, CssApplier> map;
+    private Map<Class<?>, CssApplier<? extends Element>> map;
 	/**
 	 *
 	 */
 	public CssAppliersImpl() {
-            map = new HashMap<Class<?>, CssApplier>();
+            map = new HashMap<Class<?>, CssApplier<? extends Element>>();
             map.put(Chunk.class, new ChunkCssApplier(null));
             map.put(Paragraph.class, new ParagraphCssApplier(this));
             map.put(NoNewLineParagraph.class, new NoNewLineParagraphCssApplier());
@@ -102,7 +102,7 @@ public class CssAppliersImpl implements CssAppliers {
 	 */
 	public Element apply(Element e, final Tag t, final MarginMemory mm, final PageSizeContainable psc, final HtmlPipelineContext ctx) {
             CssApplier c = null;
-            for (Map.Entry<Class<?>, CssApplier> entry : map.entrySet()) {
+            for (Map.Entry<Class<?>, CssApplier<? extends Element>> entry : map.entrySet()) {
                 if (entry.getKey().isInstance(e)) {
                     c = entry.getValue();
                     break;
@@ -132,7 +132,7 @@ public class CssAppliersImpl implements CssAppliers {
 
     public CssAppliers clone() {
         CssAppliersImpl clone = getClonedObject();
-        clone.map = new HashMap<Class<?>, CssApplier>(this.map);
+        clone.map = new HashMap<Class<?>, CssApplier<? extends Element>>(this.map);
         return clone;
     }
     
