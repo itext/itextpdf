@@ -72,6 +72,14 @@ public class HtmlPipeline extends AbstractPipeline<HtmlPipelineContext> {
 		this.hpc = hpc;
 	}
 
+    /**
+     * This allows the descendant classes to be fetched from the context.
+     */
+	@Override
+	public String getContextKey() {
+		return HtmlPipeline.class.getName();
+	}
+
 	@Override
 	public Pipeline<?> init(final WorkerContext context) throws PipelineException {
 		try {
