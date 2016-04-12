@@ -1,15 +1,24 @@
 package com.itextpdf.text.pdf;
 
 import com.itextpdf.testutils.CompareTool;
-import com.itextpdf.text.*;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Font;
+import com.itextpdf.text.FontFactory;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.Phrase;
 import com.itextpdf.text.io.TempFileCache;
-import org.junit.Assert;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.xml.sax.SAXException;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 import javax.xml.parsers.ParserConfigurationException;
-import java.io.*;
+
+import org.junit.Assert;
+import org.junit.Test;
+import org.xml.sax.SAXException;
 
 public class PdfAWriterTest {
 
@@ -126,7 +135,6 @@ public class PdfAWriterTest {
             Assert.fail("PdfAConformance exception should be thrown");
     }
 
-    @Ignore("This test causes an OutOfMemory error on Jenkins. To investigate after 5.5.7 release.")
     @Test
     public void taggedPdfADocumentUsingExternalCacheTest() throws IOException, DocumentException, InterruptedException, ParserConfigurationException, SAXException {
         int NUMBER_OF_ITERATIONS = 1000;
