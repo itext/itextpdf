@@ -44,15 +44,6 @@
  */
 package com.itextpdf.text.pdf;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.security.cert.Certificate;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import com.itextpdf.text.DocWriter;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.ExceptionConverter;
@@ -64,6 +55,15 @@ import com.itextpdf.text.pdf.interfaces.PdfEncryptionSettings;
 import com.itextpdf.text.pdf.interfaces.PdfViewerPreferences;
 import com.itextpdf.text.pdf.security.LtvVerification;
 import com.itextpdf.text.xml.xmp.XmpWriter;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.security.cert.Certificate;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /** Applies extra content to the pages of a PDF document.
  * This extra content can be all the objects allowed in PdfContentByte
@@ -814,7 +814,14 @@ public class PdfStamper
     public Map<String, PdfLayer> getPdfLayers() {
     	return stamper.getPdfLayers();
     }
-    
+
+    /**
+     * Marks the specified object as used or changed. Used objects will be written to a new revision when using PdfStamper
+     * in append mode. The specified PdfObject needs to be an Indirect Reference or its getIndRef() method should not
+     * return null.
+     *
+     * @param obj the used PDF object
+     */
     public void markUsed(PdfObject obj) {
         stamper.markUsed(obj);
     }
