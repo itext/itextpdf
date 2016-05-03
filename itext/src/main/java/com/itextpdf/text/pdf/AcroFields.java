@@ -293,20 +293,21 @@ public class AcroFields {
                         // the input controls.
 
                         PdfDictionary parent = annot.getAsDict(PdfName.PARENT);
-                        PdfArray kids = parent.getAsArray(PdfName.KIDS);
-                        if (kids != null) {
-                            int i = 0;
-                            for (; i < kids.size(); ++i) {
-                                PdfIndirectReference kidRef = kids.getAsIndirectObject(i);
-                                if (annotRef != null && kidRef != null) {
-                                    if (kidRef.toString().equals(annotRef.toString())) {
-                                        break;
+                        if (parent != null) {
+                            PdfArray kids = parent.getAsArray(PdfName.KIDS);
+                            if (kids != null) {
+                                int i = 0;
+                                for (; i < kids.size(); ++i) {
+                                    PdfIndirectReference kidRef = kids.getAsIndirectObject(i);
+                                    if (annotRef != null && kidRef != null) {
+                                        if (kidRef.toString().equals(annotRef.toString())) {
+                                            break;
+                                        }
                                     }
                                 }
+                                name = "`" + i + "." + name;
                             }
-                            name = "`" + i + "." + name;
                         }
-
                         // Notable end
                     }
                     if (lastV == null && annot.get(PdfName.V) != null)
