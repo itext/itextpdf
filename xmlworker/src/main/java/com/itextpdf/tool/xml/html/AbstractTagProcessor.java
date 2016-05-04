@@ -54,7 +54,9 @@ import com.itextpdf.tool.xml.pipeline.html.HtmlPipelineContext;
 import com.itextpdf.tool.xml.util.ParentTreeUtil;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Abstract TagProcessor that allows setting the configuration object to a
@@ -150,43 +152,62 @@ public abstract class AbstractTagProcessor implements TagProcessor, CssAppliersA
 	public List<Element> content(final WorkerContext ctx, final Tag tag, final String content) {
 		return new ArrayList<Element>(0);
 	}
-        
-        private String getParentDirection() {
-            String result = null;
-            for (Tag tag : tree) {
+
+    /**
+     * For some tags, if they have their own not inherited DIR attribute, this attribute will definitely not be applied
+     * for itext layout. For the most common such tags we use this set to ignore DIR attribute, in order to avoid
+     * unnecessary adjustments in XmlWorker.
+     *
+     * However if parent of these tags have DIR attribute, it may be applied to these tags.
+     */
+    private Set<String> ignoreDirAttribute = new HashSet<String>() {{
+        add(HTML.Tag.P);
+        add(HTML.Tag.SPAN);
+    }};
+
+    private List<Tag> tree;
+    private String getParentDirection() {
+        String result = null;
+        for (Tag tag : tree) {
+            if (!ignoreDirAttribute.contains(tag.getName().toLowerCase())) {
                 result = tag.getAttributes().get(HTML.Attribute.DIR);
                 if (result != null) break;
                 // Nested tables need this check
                 result = tag.getCSS().get(CSS.Property.DIRECTION);
                 if (result != null) break;
             }
-            return result;
         }
-        
-        private List<Tag> tree;
-        
-        protected int getRunDirection(Tag tag) {
-            /* CSS should get precedence, but a dir attribute defined on the tag
-               itself should take precedence over an inherited style tag
-            */
-            String dirValue = tag.getAttributes().get(HTML.Attribute.DIR);
-            if (dirValue == null) {
+        return result;
+    }
+    protected int getRunDirection(Tag tag) {
+        /* CSS should get precedence, but a dir attribute defined on the tag
+           itself should take precedence over an inherited style tag
+        */
+        String dirValue = null;
+        boolean toFetchRunDirFromThisTag = tag.getName() != null &&
+                                            !ignoreDirAttribute.contains(tag.getName().toLowerCase());
+        if (toFetchRunDirFromThisTag) {
+            dirValue = tag.getAttributes().get(HTML.Attribute.DIR);
+        }
+        if (dirValue == null) {
+            if (toFetchRunDirFromThisTag) {
                 // using CSS is actually discouraged, but still supported
                 dirValue = tag.getCSS().get(CSS.Property.DIRECTION);
-                if (dirValue == null) {
-                    // dir attribute is inheritable in HTML but gets trumped by CSS
-                    tree = new ParentTreeUtil().getParentTagTree(tag, tree);
-                    dirValue = getParentDirection();
-                }// */
             }
-            if (CSS.Value.RTL.equalsIgnoreCase(dirValue)) {
-                return PdfWriter.RUN_DIRECTION_RTL;
+            if (dirValue == null) {
+                // dir attribute is inheritable in HTML but gets trumped by CSS
+                tree = new ParentTreeUtil().getParentTagTree(tag, tree);
+                dirValue = getParentDirection();
             }
-            if (CSS.Value.LTR.equalsIgnoreCase(dirValue)) {
-                return PdfWriter.RUN_DIRECTION_LTR;
-            }
-            return PdfWriter.RUN_DIRECTION_DEFAULT;
         }
+        if (CSS.Value.RTL.equalsIgnoreCase(dirValue)) {
+            return PdfWriter.RUN_DIRECTION_RTL;
+        }
+        if (CSS.Value.LTR.equalsIgnoreCase(dirValue)) {
+            return PdfWriter.RUN_DIRECTION_LTR;
+        }
+        return PdfWriter.RUN_DIRECTION_DEFAULT;
+    }
 
     protected List<Element> textContent(final WorkerContext ctx, final Tag tag, final String content) {
 		List<Chunk> sanitizedChunks = HTMLUtils.sanitize(content, false);
@@ -301,6 +322,7 @@ public abstract class AbstractTagProcessor implements TagProcessor, CssAppliersA
                         }
                         if (direction == PdfWriter.RUN_DIRECTION_RTL) {
                             doRtlIndentCorrections(p);
+							invertTextAlignForParagraph(p);
                         }
                         list.add(p);
                     }
@@ -313,6 +335,7 @@ public abstract class AbstractTagProcessor implements TagProcessor, CssAppliersA
 					p = (NoNewLineParagraph) getCssAppliers().apply(p, tag, getHtmlPipelineContext(ctx));
                     if (direction == PdfWriter.RUN_DIRECTION_RTL) {
                         doRtlIndentCorrections(p);
+                        invertTextAlignForParagraph(p);
                     }
 					list.add(p);
 				}
@@ -363,4 +386,38 @@ public abstract class AbstractTagProcessor implements TagProcessor, CssAppliersA
         p.setIndentationRight(p.getIndentationLeft());
         p.setIndentationLeft(right);
     }
+
+	protected void invertTextAlignForParagraph(Paragraph p) {
+        switch (p.getAlignment()) {
+            case Element.ALIGN_UNDEFINED:
+            case Element.ALIGN_CENTER:
+            case Element.ALIGN_JUSTIFIED:
+            case Element.ALIGN_JUSTIFIED_ALL:
+                break;
+            case Element.ALIGN_RIGHT:
+                p.setAlignment(Element.ALIGN_LEFT);
+                break;
+            case Element.ALIGN_LEFT:
+            default:
+                p.setAlignment(Element.ALIGN_RIGHT);
+                break;
+        }
+	}
+
+	protected void invertTextAlignForParagraph(NoNewLineParagraph p) {
+        switch (p.getAlignment()) {
+            case Element.ALIGN_UNDEFINED:
+            case Element.ALIGN_CENTER:
+            case Element.ALIGN_JUSTIFIED:
+            case Element.ALIGN_JUSTIFIED_ALL:
+                break;
+            case Element.ALIGN_RIGHT:
+                p.setAlignment(Element.ALIGN_LEFT);
+                break;
+            case Element.ALIGN_LEFT:
+            default:
+                p.setAlignment(Element.ALIGN_RIGHT);
+                break;
+        }
+	}
 }
