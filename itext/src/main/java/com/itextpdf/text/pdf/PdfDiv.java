@@ -110,7 +110,7 @@ public class PdfDiv implements Element, Spaceable, IAccessibleElement {
 
     private float yLine;
 
-    protected int runDirection = PdfWriter.RUN_DIRECTION_DEFAULT;
+    protected int runDirection = PdfWriter.RUN_DIRECTION_NO_BIDI;
 
     /**
      * Defines if the div should be kept on one page if possible

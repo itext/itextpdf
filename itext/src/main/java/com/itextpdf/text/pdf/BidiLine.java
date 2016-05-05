@@ -185,13 +185,26 @@ public class BidiLine {
         	return true;
         }
 
-        if (runDirection == PdfWriter.RUN_DIRECTION_LTR || runDirection == PdfWriter.RUN_DIRECTION_RTL) {
+        if (runDirection != PdfWriter.RUN_DIRECTION_NO_BIDI) {
             if (orderLevels.length < totalTextLength) {
                 orderLevels = new byte[pieceSize];
                 indexChars = new int[pieceSize];
             }
             ArabicLigaturizer.processNumbers(text, 0, totalTextLength, arabicOptions);
-            BidiOrder order = new BidiOrder(text, 0, totalTextLength, (byte)(runDirection == PdfWriter.RUN_DIRECTION_RTL ? 1 : 0));
+            byte paragraphEmbeddingLevel;
+            switch (runDirection) {
+                case PdfWriter.RUN_DIRECTION_LTR:
+                    paragraphEmbeddingLevel = 0;
+                    break;
+                case PdfWriter.RUN_DIRECTION_RTL:
+                    paragraphEmbeddingLevel = 1;
+                    break;
+                case PdfWriter.RUN_DIRECTION_DEFAULT:
+                default:
+                    paragraphEmbeddingLevel = -1;
+                    break;
+            }
+            BidiOrder order = new BidiOrder(text, 0, totalTextLength, paragraphEmbeddingLevel);
             byte od[] = order.getLevels();
             for (int k = 0; k < totalTextLength; ++k) {
                 orderLevels[k] = od[k];
@@ -251,7 +264,7 @@ public class BidiLine {
             System.arraycopy(text, 0, storedText, 0, totalTextLength);
             System.arraycopy(detailChunks, 0, storedDetailChunks, 0, totalTextLength);
         }
-        if (runDirection == PdfWriter.RUN_DIRECTION_LTR || runDirection == PdfWriter.RUN_DIRECTION_RTL) {
+        if (runDirection != PdfWriter.RUN_DIRECTION_NO_BIDI) {
             if (storedOrderLevels.length < totalTextLength) {
                 storedOrderLevels = new byte[totalTextLength];
                 storedIndexChars = new int[totalTextLength];
@@ -272,7 +285,7 @@ public class BidiLine {
             System.arraycopy(storedText, 0, text, 0, totalTextLength);
             System.arraycopy(storedDetailChunks, 0, detailChunks, 0, totalTextLength);
         }
-        if (runDirection == PdfWriter.RUN_DIRECTION_LTR || runDirection == PdfWriter.RUN_DIRECTION_RTL) {
+        if (runDirection != PdfWriter.RUN_DIRECTION_NO_BIDI) {
             System.arraycopy(storedOrderLevels, currentChar, orderLevels, currentChar, totalTextLength - currentChar);
             System.arraycopy(storedIndexChars, currentChar, indexChars, currentChar, totalTextLength - currentChar);
         }
@@ -618,7 +631,7 @@ public class BidiLine {
     }
 
     public ArrayList<PdfChunk> createArrayOfPdfChunks(int startIdx, int endIdx, PdfChunk extraPdfChunk) {
-        boolean bidi = runDirection == PdfWriter.RUN_DIRECTION_LTR || runDirection == PdfWriter.RUN_DIRECTION_RTL;
+        boolean bidi = runDirection != PdfWriter.RUN_DIRECTION_NO_BIDI;
         if (bidi)
             reorder(startIdx, endIdx);
 

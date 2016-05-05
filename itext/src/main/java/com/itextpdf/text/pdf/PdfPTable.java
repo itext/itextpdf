@@ -143,7 +143,7 @@ public class PdfPTable implements LargeElement, Spaceable, IAccessibleElement {
 
     protected boolean isColspan = false;
 
-    protected int runDirection = PdfWriter.RUN_DIRECTION_DEFAULT;
+    protected int runDirection = PdfWriter.RUN_DIRECTION_NO_BIDI;
 
     /**
      * Holds value of property lockedWidth.
@@ -538,7 +538,7 @@ public class PdfPTable implements LargeElement, Spaceable, IAccessibleElement {
             isColspan = true;
         }
         int rdir = ncell.getRunDirection();
-        if (rdir == PdfWriter.RUN_DIRECTION_DEFAULT) {
+        if (rdir == PdfWriter.RUN_DIRECTION_NO_BIDI) {
             ncell.setRunDirection(runDirection);
         }
 

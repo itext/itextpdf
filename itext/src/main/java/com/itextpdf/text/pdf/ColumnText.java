@@ -142,7 +142,7 @@ public class ColumnText {
      */
     public static final int DIGIT_TYPE_AN_EXTENDED = ArabicLigaturizer.DIGIT_TYPE_AN_EXTENDED;
 
-    protected int runDirection = PdfWriter.RUN_DIRECTION_DEFAULT;
+    protected int runDirection = PdfWriter.RUN_DIRECTION_NO_BIDI;
 
     /**
      * the space char ratio
@@ -1022,10 +1022,7 @@ public class ColumnText {
         PdfContentByte graphics = null;
         PdfContentByte text = null;
         firstLineY = Float.NaN;
-        int localRunDirection = PdfWriter.RUN_DIRECTION_NO_BIDI;
-        if (runDirection != PdfWriter.RUN_DIRECTION_DEFAULT) {
-            localRunDirection = runDirection;
-        }
+        int localRunDirection = runDirection;
         if (canvas != null) {
             graphics = canvas;
             pdf = canvas.getPdfDocument();
@@ -1089,6 +1086,7 @@ public class ColumnText {
                 }
                 yLine -= currentLeading;
                 if (!simulate && !dirty) {
+                    // TODO this is not quite right. Currently, reversed chars may appear whenever bidi algorithm was applied, which is run direction is not NO_BIDI
                     if (line.isRTL && canvas.isTagged())
                     {
                         canvas.beginMarkedContentSequence(PdfName.REVERSEDCHARS);
@@ -1125,6 +1123,7 @@ public class ColumnText {
                 }
                 line = bidiLine.processLine(x1, x2 - x1 - firstIndent - rightIndent, alignment, localRunDirection, arabicOptions, minY, yLine, descender);
                 if (!simulate && !dirty) {
+                    // TODO this is not quite right. Currently, reversed chars may appear whenever bidi algorithm was applied, which is run direction is not NO_BIDI
                     if (line.isRTL && canvas.isTagged())
                     {
                         canvas.beginMarkedContentSequence(PdfName.REVERSEDCHARS);
@@ -1714,6 +1713,10 @@ public class ColumnText {
                 // get the PdfPTable element
                 PdfPTable table = (PdfPTable) element;
 
+                int backedUpRunDir = runDirection; // storing original run direction just in case
+                runDirection = table.getRunDirection(); // using table run direction
+                isRTL = runDirection == PdfWriter.RUN_DIRECTION_RTL;
+
                 // tables without a body are dismissed
                 if (table.size() <= table.getHeaderRows()) {
                     compositeElements.removeFirst();
@@ -2054,6 +2057,10 @@ public class ColumnText {
                     rowIdx = k;
                     return NO_MORE_COLUMN;
                 }
+
+                // restoring original run direction
+                runDirection = backedUpRunDir;
+                isRTL = runDirection == PdfWriter.RUN_DIRECTION_RTL;
             } else if (element.type() == Element.YMARK) {
                 if (!simulate) {
                     DrawInterface zh = (DrawInterface) element;

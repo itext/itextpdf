@@ -206,7 +206,10 @@ public abstract class AbstractTagProcessor implements TagProcessor, CssAppliersA
         if (CSS.Value.LTR.equalsIgnoreCase(dirValue)) {
             return PdfWriter.RUN_DIRECTION_LTR;
         }
-        return PdfWriter.RUN_DIRECTION_DEFAULT;
+        if (CSS.Value.AUTO.equalsIgnoreCase(dirValue)) {
+            return PdfWriter.RUN_DIRECTION_DEFAULT;
+        }
+        return PdfWriter.RUN_DIRECTION_NO_BIDI;
     }
 
     protected List<Element> textContent(final WorkerContext ctx, final Tag tag, final String content) {

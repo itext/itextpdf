@@ -104,7 +104,7 @@ public class Div extends AbstractTagProcessor {
 			Paragraph p = null;
 			PdfDiv div = (PdfDiv)getCssAppliers().apply(new PdfDiv(), tag, getHtmlPipelineContext(ctx));
             int direction = getRunDirection(tag);
-            if (direction != PdfWriter.RUN_DIRECTION_DEFAULT) {
+            if (direction != PdfWriter.RUN_DIRECTION_NO_BIDI) {
                 div.setRunDirection(direction);
             }
 			for (Element e : currentContent) {
