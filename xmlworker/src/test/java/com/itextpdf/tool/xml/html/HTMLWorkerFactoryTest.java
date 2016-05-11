@@ -43,12 +43,6 @@
  * address: sales@itextpdf.com
  */
 package com.itextpdf.tool.xml.html;
-import java.io.BufferedInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-
-import org.junit.Test;
 
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
@@ -68,15 +62,21 @@ import com.itextpdf.tool.xml.pipeline.end.PdfWriterPipeline;
 import com.itextpdf.tool.xml.pipeline.html.HtmlPipeline;
 import com.itextpdf.tool.xml.pipeline.html.HtmlPipelineContext;
 
+import java.io.BufferedInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+
+import org.junit.Test;
+
 
 /**
  * @author Balder
- *
  */
 public class HTMLWorkerFactoryTest {
     public static final String OUT = "./target/test-classes/com/itextpdf/tool/xml/html/";
-//	public static final String SNIPPETS = "/snippets/";
-	public static final String SNIPPETS = "/bugs/";
+    //	public static final String SNIPPETS = "/snippets/";
+    public static final String SNIPPETS = "/bugs/";
 
 //	private static final String TEST = "doc_";
 //    private static final String TEST = "xfa-support_";
@@ -115,40 +115,40 @@ public class HTMLWorkerFactoryTest {
 //	  private static final String TEST ="test-table-d_";
 //	  private static final String TEST = "pagebreaks_";
 
-	// Bug snippets
+    // Bug snippets
 
-	  private static final String TEST = "colored_lists_";
+    private static final String TEST = "colored_lists_";
 
     static {
-    	//FontFactory.registerDirectories();
-    	Document.compress = false;
-    	LoggerFactory.getInstance().setLogger(new SysoLogger(3));
+        //FontFactory.registerDirectories();
+        LoggerFactory.getInstance().setLogger(new SysoLogger(3));
     }
+
     private final CssUtils utils = CssUtils.getInstance();
 
-	@Test
-	public void parseXfaOnlyXML() throws IOException {
-		BufferedInputStream bis = new BufferedInputStream(HTMLWorkerFactoryTest.class.getResourceAsStream(String.format("%s%ssnippet.html", SNIPPETS, TEST)));
-		final Document doc = new Document(PageSize.A4);
-		float margin = utils.parseRelativeValue("10%", PageSize.A4.getWidth());
-		doc.setMargins(margin, margin, margin, margin);
-		PdfWriter writer = null;
-		try {
+    @Test
+    public void parseXfaOnlyXML() throws IOException {
+        BufferedInputStream bis = new BufferedInputStream(HTMLWorkerFactoryTest.class.getResourceAsStream(String.format("%s%ssnippet.html", SNIPPETS, TEST)));
+        final Document doc = new Document(PageSize.A4);
+        float margin = utils.parseRelativeValue("10%", PageSize.A4.getWidth());
+        doc.setMargins(margin, margin, margin, margin);
+        PdfWriter writer = null;
+        try {
             writer = PdfWriter.getInstance(doc, new FileOutputStream(
                     String.format("%s%sTest.pdf", OUT, TEST)));
-		} catch (DocumentException e) {
-			e.printStackTrace();
-		}
-		CssFilesImpl cssFiles = new CssFilesImpl();
-		cssFiles.add(XMLWorkerHelper.getInstance().getDefaultCSS());
-		StyleAttrCSSResolver cssResolver = new StyleAttrCSSResolver(cssFiles);
-		HtmlPipelineContext hpc = new HtmlPipelineContext(null);
-		hpc.setAcceptUnknown(true).autoBookmark(true).setTagFactory(Tags.getHtmlTagProcessorFactory());
-		Pipeline pipeline = new CssResolverPipeline(cssResolver, new HtmlPipeline(hpc, new PdfWriterPipeline(doc, writer)));
-		XMLWorker worker = new XMLWorker(pipeline, true);
-		doc.open();
-		XMLParser p = new XMLParser(true, worker);
-		p.parse(new InputStreamReader(bis));
+        } catch (DocumentException e) {
+            e.printStackTrace();
+        }
+        CssFilesImpl cssFiles = new CssFilesImpl();
+        cssFiles.add(XMLWorkerHelper.getInstance().getDefaultCSS());
+        StyleAttrCSSResolver cssResolver = new StyleAttrCSSResolver(cssFiles);
+        HtmlPipelineContext hpc = new HtmlPipelineContext(null);
+        hpc.setAcceptUnknown(true).autoBookmark(true).setTagFactory(Tags.getHtmlTagProcessorFactory());
+        Pipeline pipeline = new CssResolverPipeline(cssResolver, new HtmlPipeline(hpc, new PdfWriterPipeline(doc, writer)));
+        XMLWorker worker = new XMLWorker(pipeline, true);
+        doc.open();
+        XMLParser p = new XMLParser(true, worker);
+        p.parse(new InputStreamReader(bis));
         doc.close();
-	}
+    }
 }
