@@ -262,7 +262,7 @@ public class LocationTextExtractionStrategy implements TextExtractionStrategy {
         boolean isAtWordBoundary(TextChunkLocation previous);
     }
     
-    private static class TextChunkLocationDefaultImp implements TextChunkLocation {
+    public static class TextChunkLocationDefaultImp implements TextChunkLocation {
         
         /** the starting location of the chunk */
         private final Vector startLocation;
