@@ -70,6 +70,8 @@ public class DoubleQuotedAttrValueState implements State {
 			this.parser.memory().putCurrentAttrValue(this.parser.bufferToString());
 			this.parser.flush();
 			this.parser.selectState().tagAttributes();
+		} else if (character == '&') {
+			this.parser.selectState().specialChar();
 		} else {
 			this.parser.append(character);
 		}

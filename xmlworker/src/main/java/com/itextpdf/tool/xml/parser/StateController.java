@@ -118,11 +118,14 @@ public class StateController {
 	}
 
 	/**
-	 * Returns to the previous state.
+	 * Changes the state to the previous one.
 	 * @return Parser
 	 */
 	public XMLParser previousState() {
 		parser.setState(previousState);
+		State temp = currentState;
+		currentState = previousState;
+		previousState = temp;
 		return parser;
 	}
 

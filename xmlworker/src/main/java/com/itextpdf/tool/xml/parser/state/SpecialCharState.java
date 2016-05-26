@@ -83,12 +83,14 @@ public class SpecialCharState implements State {
 					parser.memory().lastChar(decoded);
 				}
 //			}
-            parser.selectState().inTag();
+            //parser.selectState().inTag();
+			parser.selectState().previousState();
             this.parser.memory().currentEntity().setLength(0);
 		 } else if (character != '#' && (character < '0' || character > '9') && (character < 'a' || character > 'z')
                 && (character < 'A' || character > 'Z') || entity.length() >= 7) {
 			 parser.append('&').append(entity.toString());
-			 parser.selectState().inTag();
+			 //parser.selectState().inTag();
+			 parser.selectState().previousState();
 			 this.parser.memory().currentEntity().setLength(0);
         } else {
         	entity.append(character);
