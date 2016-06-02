@@ -73,10 +73,15 @@ public class OCGParser {
     public static final String DEFAULTOPERATOR = "DefaultOperator";
     
 	/** A map with all supported operators operators (PDF syntax). */
-    protected static Map<String, PdfOperator> operators = null;
+    protected static final Map<String, PdfOperator> operators;
+
+	static {
+		operators = new HashMap<String, PdfOperator>();
+		populateOperators();
+	}
     
     /** The OutputStream of this worker object. */
-    protected static ByteArrayOutputStream baos;
+    protected ByteArrayOutputStream baos;
    
     /** Keeps track of BMC/EMC balance. */
     protected int mc_balance = 0;
@@ -95,7 +100,6 @@ public class OCGParser {
      * @param ocgs	a set of String values with the names of the OCGs that need to be removed.
      */
     public OCGParser(Set<String> ocgs) {
-    	populateOperators();
     	this.ocgs = ocgs;
     }
     
@@ -191,10 +195,7 @@ public class OCGParser {
     /**
      * Populates the operators variable.
      */
-    protected void populateOperators() {
-    	if (operators != null)
-    		return;
-    	operators = new HashMap<String, PdfOperator>();
+    protected static void populateOperators() {
     	operators.put(DEFAULTOPERATOR, new CopyContentOperator());
     	PathConstructionOrPaintingOperator opConstructionPainting = new PathConstructionOrPaintingOperator();
     	operators.put("m", opConstructionPainting);
