@@ -1727,7 +1727,15 @@ public class PdfDocument extends Document {
                         float matrix[] = image.matrix(chunk.getImageScalePercentage());
                         matrix[Image.CX] = xMarker + chunk.getImageOffsetX() - matrix[Image.CX];
                         matrix[Image.CY] = yMarker + chunk.getImageOffsetY() - matrix[Image.CY];
+                        boolean wasIntext = false;
+                        if ( graphics.getInText() && !(image instanceof ImgTemplate)) {
+                            wasIntext = true;
+                            graphics.endText();
+                        }
                         graphics.addImage(image, matrix[0], matrix[1], matrix[2], matrix[3], matrix[4], matrix[5], false, isMCBlockOpened);
+                        if ( wasIntext ) {
+                            graphics.beginText();
+                        }
                         text.moveText(xMarker + lastBaseFactor + chunk.getImageWidth() - text.getXTLM(), 0);
                     }
                 }
