@@ -1734,7 +1734,7 @@ public class PdfDocument extends Document {
                         }
                         graphics.addImage(image, matrix[0], matrix[1], matrix[2], matrix[3], matrix[4], matrix[5], false, isMCBlockOpened);
                         if ( wasIntext ) {
-                            graphics.beginText();
+                            graphics.beginText(true);
                         }
                         text.moveText(xMarker + lastBaseFactor + chunk.getImageWidth() - text.getXTLM(), 0);
                     }
