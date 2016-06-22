@@ -417,7 +417,13 @@ public class CompareTool {
 
     public CompareTool() {
         gsExec = System.getProperty("gsExec");
+        if (gsExec == null) {
+            gsExec = System.getenv("gsExec");
+        }
         compareExec = System.getProperty("compareExec");
+        if (compareExec == null) {
+            compareExec = System.getenv("compareExec");
+        }
     }
 
     private String compare(String outPath, String differenceImagePrefix, Map<Integer, List<Rectangle>> ignoredAreas) throws IOException, InterruptedException, DocumentException {
