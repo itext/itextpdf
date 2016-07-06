@@ -332,6 +332,7 @@ public abstract class AbstractTagProcessor implements TagProcessor, CssAppliersA
 					NoNewLineParagraph p = new NoNewLineParagraph(Float.NaN);
                     p.setMultipliedLeading(1.2f);
 					for (Element e : currentContent) {
+						updateParagraphFontIfNeeded(p, e);
 						p.add(e);
 					}
 					p = (NoNewLineParagraph) getCssAppliers().apply(p, tag, getHtmlPipelineContext(ctx));
@@ -422,4 +423,21 @@ public abstract class AbstractTagProcessor implements TagProcessor, CssAppliersA
                 break;
         }
 	}
+
+    /**
+     * In case child font is of bigger size than paragraph font, text overlapping may occur.
+     * This happens because leading of the lines in paragraph is set based on paragraph font.
+     */
+    protected void updateParagraphFontIfNeeded(Phrase p, Element child) {
+        Font childFont = null;
+        if (child instanceof Chunk) {
+            childFont = ((Chunk) child).getFont();
+        } else if (child instanceof Phrase) {
+            childFont = ((Phrase) child).getFont();
+        }
+        float pFontSize = p.getFont() != null ? p.getFont().getSize() : Font.DEFAULTSIZE;
+        if (childFont != null && childFont.getSize() > pFontSize) {
+            p.setFont(childFont);
+        }
+    }
 }

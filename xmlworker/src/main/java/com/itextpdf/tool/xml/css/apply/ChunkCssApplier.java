@@ -174,7 +174,7 @@ public class ChunkCssApplier implements CssApplier<Chunk> {
     public Font applyFontStyles(final Tag t) {
         String fontName = null;
         String encoding = BaseFont.CP1252;
-        float size = new FontSizeTranslator().getFontSize(t);
+        float size = FontSizeTranslator.getInstance().getFontSize(t);
         if (size == Font.UNDEFINED)
             size = Font.DEFAULTSIZE;
         int style = Font.UNDEFINED;
