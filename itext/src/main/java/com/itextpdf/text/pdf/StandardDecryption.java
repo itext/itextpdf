@@ -97,7 +97,7 @@ public class StandardDecryption {
     }
     
     public byte[] finish() {
-        if (aes) {
+        if (cipher != null && aes) {
             return cipher.doFinal();
         }
         else
