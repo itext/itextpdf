@@ -63,7 +63,7 @@
     </ciManagement>
 
     <properties>
-        <java.version>1.5</java.version>
+        <java.version>1.7</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <argLine>-Xmx128m</argLine>
         <sonar.language>java</sonar.language>
