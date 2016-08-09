@@ -43,15 +43,6 @@
  */
 package com.itextpdf.text.pdf.ocg;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import com.itextpdf.text.ExceptionConverter;
 import com.itextpdf.text.pdf.PRStream;
 import com.itextpdf.text.pdf.PRTokeniser;
@@ -63,6 +54,15 @@ import com.itextpdf.text.pdf.PdfObject;
 import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.PdfString;
 import com.itextpdf.text.pdf.RandomAccessFileOrArray;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * A helper class for OCGRemover.
@@ -136,7 +136,34 @@ public class OCGParser {
             ArrayList<PdfObject> operands = new ArrayList<PdfObject>();
             while (ps.parse(operands).size() > 0){
                 PdfLiteral operator = (PdfLiteral)operands.get(operands.size() - 1);
-                processOperator(this, operator, operands);
+				processOperator(this, operator, operands);
+				if ("BI".equals(operator.toString())) {
+					int found = 0;
+					int ch;
+					boolean immediateAfterBI = true;
+					while ((ch = tokeniser.read()) != -1) {
+						if (!immediateAfterBI || !PRTokeniser.isWhitespace(ch)) {
+							baos.write(ch);
+						}
+						immediateAfterBI = false;
+						if (found == 0 && PRTokeniser.isWhitespace(ch)){
+							found++;
+						} else if (found == 1 && ch == 'E'){
+							found++;
+						} else if (found == 1 && PRTokeniser.isWhitespace(ch)){
+							// this clause is needed if we have a white space character that is part of the image data
+							// followed by a whitespace character that precedes the EI operator.  In this case, we need
+							// to flush the first whitespace, then treat the current whitespace as the first potential
+							// character for the end of stream check. Note that we don't increment 'found' here.
+						} else if (found == 2 && ch == 'I'){
+							found++;
+						} else if (found == 3 && PRTokeniser.isWhitespace(ch)){
+							break;
+						} else {
+							found = 0;
+						}
+					}
+				}
             }
         }
         catch (Exception e) {
