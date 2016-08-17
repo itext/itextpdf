@@ -796,7 +796,23 @@ public class PdfReader implements PdfViewerPreferences {
         byte[] encryptionKey = null;
         encrypted = true;
         PdfDictionary enc = (PdfDictionary)getPdfObject(encDic);
-
+        //This string of condidions is to determine whether or not the authevent for this PDF is EFOPEN
+        //If it is, we return since the attachments of the PDF are what are encrypted, not the PDF itself.  
+        //Without this check we run into a bad password exception when trying to open documents that have an
+        //auth event type of EFOPEN.  
+        PdfDictionary cfDict = enc.getAsDict(PdfName.CF);
+        if(cfDict != null){
+        	PdfDictionary stdCFDict = cfDict.getAsDict(PdfName.STDCF);
+        	if(stdCFDict != null){
+        		PdfName authEvent = stdCFDict.getAsName(PdfName.AUTHEVENT);
+        		if(authEvent != null){
+        			//Return only if the event is EFOPEN and there is no password so that 
+        			//attachments that are encrypted can still be opened.
+        			if(authEvent.compareTo(PdfName.EFOPEN) == 0 && !this.ownerPasswordUsed)
+        				return;
+        		}
+        	}
+        }
         String s;
         PdfObject o;
 
