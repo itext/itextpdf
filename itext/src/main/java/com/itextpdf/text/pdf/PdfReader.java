@@ -54,23 +54,41 @@ import com.itextpdf.text.exceptions.UnsupportedPdfException;
 import com.itextpdf.text.io.RandomAccessSource;
 import com.itextpdf.text.io.RandomAccessSourceFactory;
 import com.itextpdf.text.io.WindowRandomAccessSource;
-import com.itextpdf.text.log.*;
+import com.itextpdf.text.log.Counter;
+import com.itextpdf.text.log.CounterFactory;
+import com.itextpdf.text.log.Level;
+import com.itextpdf.text.log.Logger;
+import com.itextpdf.text.log.LoggerFactory;
 import com.itextpdf.text.pdf.PRTokeniser.TokenType;
 import com.itextpdf.text.pdf.interfaces.PdfViewerPreferences;
 import com.itextpdf.text.pdf.internal.PdfViewerPreferencesImp;
 import com.itextpdf.text.pdf.security.ExternalDecryptionProcess;
-import org.bouncycastle.cert.X509CertificateHolder;
-import org.bouncycastle.cms.CMSEnvelopedData;
-import org.bouncycastle.cms.RecipientInformation;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.security.Key;
 import java.security.MessageDigest;
 import java.security.PrivateKey;
 import java.security.cert.Certificate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.Stack;
 import java.util.zip.InflaterInputStream;
+
+import org.bouncycastle.cert.X509CertificateHolder;
+import org.bouncycastle.cms.CMSEnvelopedData;
+import org.bouncycastle.cms.RecipientInformation;
 
 /**
  * Reads a PDF document.
@@ -1267,7 +1285,7 @@ public class PdfReader implements PdfViewerPreferences {
             throw new InvalidPdfException(MessageLocalization.getComposedMessage("the.document.has.no.catalog.object"));
         }
         rootPages = catalog.getAsDict(PdfName.PAGES);
-        if (rootPages == null || !PdfName.PAGES.equals(rootPages.get(PdfName.TYPE))) {
+        if (rootPages == null || (!PdfName.PAGES.equals(rootPages.get(PdfName.TYPE)) && !PdfName.PAGES.equals(rootPages.get(new PdfName("Types"))))) {
             if (debugmode) {
                 if ( LOGGER.isLogging(Level.ERROR) ) {
                     LOGGER.error(MessageLocalization.getComposedMessage("the.document.has.no.page.root"));
