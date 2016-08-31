@@ -532,6 +532,7 @@ public class PdfReader implements PdfViewerPreferences {
     }
 
     /** Gets the number of pages in the document.
+     * If the reader is open in partial mode, this value is not guaranteed to be the actual number of pages.
      * @return the number of pages in the document
      */
     public int getNumberOfPages() {
