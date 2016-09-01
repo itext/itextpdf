@@ -532,7 +532,8 @@ public class PdfReader implements PdfViewerPreferences {
     }
 
     /** Gets the number of pages in the document.
-     * If the reader is open in partial mode, this value is not guaranteed to be the actual number of pages.
+     * Partial mode: return the value stored in the COUNT field of the pageref
+     * Full mode: return the total number of pages found while loading in the entire document.
      * @return the number of pages in the document
      */
     public int getNumberOfPages() {
@@ -770,6 +771,10 @@ public class PdfReader implements PdfViewerPreferences {
         removeUnusedObjects();
 
     }
+    /**
+     * Partially parses the pdf
+     *
+     * */
 
     protected void readPdfPartial() throws IOException {
         fileLength = tokens.getFile().length();
