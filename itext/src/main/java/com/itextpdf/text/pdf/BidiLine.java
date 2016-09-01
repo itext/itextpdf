@@ -679,14 +679,14 @@ public class BidiLine {
         int first = idx;
         // forward
         for (; last < totalTextLength; ++last) {
-            if (!Character.isLetter(text[last]) && !Character.isDigit(text[last]))
+            if (!Character.isLetter(text[last]) && !Character.isDigit(text[last]) && text[last] != '\u00AD')
                 break;
         }
         if (last == idx)
             return null;
         // backward
         for (; first >= startIdx; --first) {
-            if (!Character.isLetter(text[first]) && !Character.isDigit(text[first]))
+            if (!Character.isLetter(text[first]) && !Character.isDigit(text[first]) && text[first] != '\u00AD')
                 break;
         }
         ++first;
