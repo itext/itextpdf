@@ -4121,7 +4121,11 @@ public class PdfReader implements PdfViewerPreferences {
     }
 
     /**
-     * @return byte array of computed user password, or null if not encrypted or no ownerPassword is used.
+     * Computes user password if standard encryption handler is used with Standard40, Standard128 or AES128 encryption algorithm.
+     *
+     * @return user password, or null if not a standard encryption handler was used,
+     *         if standard encryption handler was used with AES256 encryption algorithm,
+     *         or if ownerPasswordUsed wasn't use to open the document.
      */
     public byte[] computeUserPassword() {
     	if (!encrypted || !ownerPasswordUsed) return null;
