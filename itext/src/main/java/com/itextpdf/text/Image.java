@@ -2122,10 +2122,30 @@ public abstract class Image extends Rectangle implements Indentable, Spaceable, 
 								transparency[0] = transparency[1] = transparentPixel >> 16 & 0xff;
 								transparency[2] = transparency[3] = transparentPixel >> 8 & 0xff;
 								transparency[4] = transparency[5] = transparentPixel & 0xff;
+								// vvv--- added by mkl
+						                // Check whether this value for transparent pixels
+						                // has already been used for a non-transparent one
+						                // before this position
+						                for (int jj = 0; jj < j; jj++)
+						                {
+						                    if ((pixels[jj] & 0xffffff) == transparentPixel)
+						                    {
+						                        // found a prior use of the transparentPixel color
+						                        // and, therefore, cannot make use of this color
+						                        // for transparency; we could still use an image
+						                        // mask but for simplicity let's use a soft mask
+						                        // which already is implemented here
+						                        shades = true;
+						                        break;
+						                    }
+						                }
+						                // ^^^--- added by mkl
 							}
-						} else if ((pixels[j] & 0xffffff) != transparentPixel) {
-							shades = true;
-						}
+						} else if (((pixels[j] & 0xffffff) != transparentPixel) && (alpha==0)) {
+					            shades = true;
+					        } else if (((pixels[j] & 0xffffff) == transparentPixel) && (alpha!=0)) {
+					            shades = true;
+					        }  	
 					}
 					pixelsByte[index++] = (byte) (pixels[j] >> 16 & 0xff);
 					pixelsByte[index++] = (byte) (pixels[j] >> 8 & 0xff);
