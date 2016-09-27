@@ -87,7 +87,7 @@ public class SpecialCharState implements State {
             this.parser.memory().currentEntity().setLength(0);
 		 } else if (character != '#' && (character < '0' || character > '9') && (character < 'a' || character > 'z')
                 && (character < 'A' || character > 'Z') || entity.length() >= 7) {
-			 parser.append('&').append(entity.toString());
+			 parser.append('&').append(entity.toString()).append(character);
 			 //parser.selectState().inTag();
 			 parser.selectState().previousState();
 			 this.parser.memory().currentEntity().setLength(0);
