@@ -1809,8 +1809,8 @@ public class AcroFields {
                 continue;
             PdfIndirectReference ref = item.getWidgetRef(k);
             PdfDictionary wd = item.getWidget( k );
-            PdfDictionary pageDic = reader.getPageN(pageV);
-            PdfArray annots = pageDic.getAsArray(PdfName.ANNOTS);
+            PdfDictionary pageDic = reader.getPageN(pageV); //Returns null for floating, orphaned fields
+            PdfArray annots = pageDic != null ? pageDic.getAsArray(PdfName.ANNOTS): null; //Account for floating, orphaned fields
             if (annots != null) {
                 if (removeRefFromArray(annots, ref) == 0) {
                     pageDic.remove(PdfName.ANNOTS);
