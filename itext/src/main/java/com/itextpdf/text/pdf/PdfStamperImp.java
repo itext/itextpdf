@@ -1817,6 +1817,10 @@ class PdfStamperImp extends PdfWriter {
             return;
         }
         PdfArray ocgs = dict.getAsArray(PdfName.OCGS);
+        if (ocgs == null) {
+            ocgs = new PdfArray();
+            dict.put(PdfName.OCGS, ocgs);
+        }
         PdfIndirectReference ref;
         PdfLayer layer;
         HashMap<String, PdfLayer> ocgmap = new HashMap<String, PdfLayer>();
