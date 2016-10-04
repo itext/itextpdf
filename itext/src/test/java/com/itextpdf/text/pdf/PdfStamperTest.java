@@ -78,5 +78,18 @@ public class PdfStamperTest {
 
         Assert.assertNull(new CompareTool().compareByContent(outPdf, getClass().getResource("PdfStamperTest/cmp_House_Plan_Final.pdf").getPath(), DEST_FOLDER, "diff_"));
     }
+    
+    @Test
+    public void fixEmptyOCGsTest() throws IOException, DocumentException, InterruptedException {
+        String outPdf = DEST_FOLDER + "out4.pdf";
+        String testFile = RESOURCE_FOLDER + "EmptyOCGs.pdf";
+        PdfReader reader = new PdfReader(testFile);
+        PdfStamper stamper = new PdfStamper(reader, new FileOutputStream(outPdf));
+        stamper.getPdfLayers();
+        stamper.close();
+        
+        Assert.assertNull(new CompareTool().compareByContent(outPdf, getClass().getResource("PdfStamperTest/cmp_EmptyOCGs.pdf").getPath(), DEST_FOLDER, "diff_"));
+
+    }
 
 }
