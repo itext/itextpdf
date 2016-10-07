@@ -10,7 +10,7 @@
   </parent>
 
   <artifactId>itext-pdfa</artifactId>
-  <version>5.5.10</version>
+  <version>5.5.11-SNAPSHOT</version>
   <packaging>jar</packaging>
 
   <name>iText PDF/A</name>
