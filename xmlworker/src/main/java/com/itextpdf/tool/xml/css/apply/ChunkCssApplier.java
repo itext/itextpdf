@@ -1,5 +1,4 @@
 /*
- * $Id$
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2016 iText Group NV
@@ -53,6 +52,8 @@ import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.css.CSS;
 import com.itextpdf.tool.xml.css.CssUtils;
 import com.itextpdf.tool.xml.css.FontSizeTranslator;
+import com.itextpdf.tool.xml.html.CssApplier;
+import com.itextpdf.tool.xml.pipeline.html.HtmlPipelineContext;
 
 import java.util.Arrays;
 import java.util.List;
@@ -62,7 +63,7 @@ import java.util.Map.Entry;
 /**
  * Applies CSS Rules to Chunks
  */
-public class ChunkCssApplier {
+public class ChunkCssApplier implements CssApplier<Chunk> {
     /**
      * FF4 and IE8 provide normal text and bold text. All other values are translated to one of these 2 styles <br />
      * 100 - 500 and "lighter" = normal.<br />
@@ -83,13 +84,17 @@ public class ChunkCssApplier {
             this.fontProvider = new FontFactoryImp();
         }
     }
+    
+    public Chunk apply(final Chunk c, final Tag t) {
+        return apply(c, t, null, null, null);
+    }
 	/**
 	 *
 	 * @param c the Chunk to apply CSS to.
 	 * @param t the tag containing the chunk data
 	 * @return the styled chunk
 	 */
-    public Chunk apply(final Chunk c, final Tag t) {
+    public Chunk apply(final Chunk c, final Tag t, final MarginMemory mm, final PageSizeContainable psc, final HtmlPipelineContext ctx) {
         Font f = applyFontStyles(t);
         float size = f.getSize();
         Map<String, String> rules = t.getCSS();
@@ -169,7 +174,7 @@ public class ChunkCssApplier {
     public Font applyFontStyles(final Tag t) {
         String fontName = null;
         String encoding = BaseFont.CP1252;
-        float size = new FontSizeTranslator().getFontSize(t);
+        float size = FontSizeTranslator.getInstance().getFontSize(t);
         if (size == Font.UNDEFINED)
             size = Font.DEFAULTSIZE;
         int style = Font.UNDEFINED;

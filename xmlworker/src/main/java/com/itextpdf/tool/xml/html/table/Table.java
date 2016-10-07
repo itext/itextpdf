@@ -1,5 +1,4 @@
 /*
- * $Id$
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2016 iText Group NV
@@ -167,13 +166,14 @@ public class Table extends AbstractTagProcessor {
             
             if ( tag.getAttributes().containsKey(HTML.Attribute.ALIGN)) {
                 String value = tag.getAttributes().get(HTML.Attribute.ALIGN);
+				// TODO this property is inverted when RTL. so we should counter-invert here, probably.
                 table.setHorizontalAlignment(CSS.getElementAlignment(value));
             }
             
             int direction = getRunDirection(tag);
-            if (direction != PdfWriter.RUN_DIRECTION_DEFAULT) {
+//            if (direction != PdfWriter.RUN_DIRECTION_DEFAULT) {
                 table.setRunDirection(direction);
-            }
+//            }
 			for (Entry<String, String> entry : tag.getCSS().entrySet()) {
 				if (entry.getKey().equalsIgnoreCase(CSS.Property.PAGE_BREAK_INSIDE)) {
 					if (entry.getValue().equalsIgnoreCase(CSS.Value.AVOID)) {

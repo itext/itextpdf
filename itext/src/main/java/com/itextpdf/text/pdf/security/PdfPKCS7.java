@@ -1,5 +1,4 @@
 /*
- * $Id$
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2016 iText Group NV
@@ -44,55 +43,15 @@
  */
 package com.itextpdf.text.pdf.security;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.math.BigInteger;
-import java.security.GeneralSecurityException;
-import java.security.InvalidKeyException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
-import java.security.PrivateKey;
-import java.security.PublicKey;
-import java.security.Signature;
-import java.security.SignatureException;
-import java.security.cert.CRL;
-import java.security.cert.Certificate;
-import java.security.cert.CertificateFactory;
-import java.security.cert.X509CRL;
-import java.security.cert.X509Certificate;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Date;
-import java.util.Enumeration;
-import java.util.GregorianCalendar;
-import java.util.HashSet;
-import java.util.Set;
-
-import org.bouncycastle.asn1.ASN1EncodableVector;
-import org.bouncycastle.asn1.ASN1Encoding;
-import org.bouncycastle.asn1.ASN1Enumerated;
-import org.bouncycastle.asn1.ASN1InputStream;
-import org.bouncycastle.asn1.ASN1Integer;
-import org.bouncycastle.asn1.ASN1ObjectIdentifier;
-import org.bouncycastle.asn1.ASN1OctetString;
-import org.bouncycastle.asn1.ASN1OutputStream;
-import org.bouncycastle.asn1.ASN1Primitive;
-import org.bouncycastle.asn1.ASN1Sequence;
-import org.bouncycastle.asn1.ASN1Set;
-import org.bouncycastle.asn1.ASN1TaggedObject;
-import org.bouncycastle.asn1.DERNull;
-import org.bouncycastle.asn1.DEROctetString;
-import org.bouncycastle.asn1.DERSequence;
-import org.bouncycastle.asn1.DERSet;
-import org.bouncycastle.asn1.DERTaggedObject;
-import org.bouncycastle.asn1.DERUTCTime;
+import com.itextpdf.text.ExceptionConverter;
+import com.itextpdf.text.error_messages.MessageLocalization;
+import com.itextpdf.text.pdf.PdfName;
+import com.itextpdf.text.pdf.security.MakeSignature.CryptoStandard;
+import org.bouncycastle.asn1.*;
 import org.bouncycastle.asn1.cms.Attribute;
 import org.bouncycastle.asn1.cms.AttributeTable;
 import org.bouncycastle.asn1.cms.ContentInfo;
+import org.bouncycastle.asn1.esf.SignaturePolicyIdentifier;
 import org.bouncycastle.asn1.ess.ESSCertID;
 import org.bouncycastle.asn1.ess.ESSCertIDv2;
 import org.bouncycastle.asn1.ess.SigningCertificate;
@@ -113,10 +72,14 @@ import org.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder;
 import org.bouncycastle.tsp.TimeStampToken;
 import org.bouncycastle.tsp.TimeStampTokenInfo;
 
-import com.itextpdf.text.ExceptionConverter;
-import com.itextpdf.text.error_messages.MessageLocalization;
-import com.itextpdf.text.pdf.PdfName;
-import com.itextpdf.text.pdf.security.MakeSignature.CryptoStandard;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.math.BigInteger;
+import java.security.*;
+import java.security.cert.*;
+import java.security.cert.Certificate;
+import java.util.*;
 
 /**
  * This class does all the processing related to signing
@@ -471,6 +434,8 @@ public class PdfPKCS7 {
     
     // Signature info
 
+    private SignaturePolicyIdentifier signaturePolicyIdentifier;
+
     /** Holds value of property signName. */
     private String signName;
 
@@ -482,6 +447,14 @@ public class PdfPKCS7 {
 
     /** Holds value of property signDate. */
     private Calendar signDate;
+
+    public void setSignaturePolicy(SignaturePolicyInfo signaturePolicy) {
+        this.signaturePolicyIdentifier = signaturePolicy.toSignaturePolicyIdentifier();
+    }
+
+    public void setSignaturePolicy(SignaturePolicyIdentifier signaturePolicy) {
+        this.signaturePolicyIdentifier = signaturePolicy;
+    }
 
     /**
      * Getter for property sigName.
@@ -1040,6 +1013,10 @@ public class PdfPKCS7 {
                 
                 v.add(new DERSet(new DERSequence(new DERSequence(new DERSequence(aaV2)))));
                 attribute.add(new DERSequence(v));
+            }
+
+            if (signaturePolicyIdentifier != null) {
+                attribute.add(new Attribute(PKCSObjectIdentifiers.id_aa_ets_sigPolicyId, new DERSet(signaturePolicyIdentifier)));
             }
 
             return new DERSet(attribute);

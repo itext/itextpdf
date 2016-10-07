@@ -1,5 +1,4 @@
 /*
- * $Id$
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2016 iText Group NV
@@ -104,7 +103,7 @@ public class Div extends AbstractTagProcessor {
 			Paragraph p = null;
 			PdfDiv div = (PdfDiv)getCssAppliers().apply(new PdfDiv(), tag, getHtmlPipelineContext(ctx));
             int direction = getRunDirection(tag);
-            if (direction != PdfWriter.RUN_DIRECTION_DEFAULT) {
+            if (direction != PdfWriter.RUN_DIRECTION_NO_BIDI) {
                 div.setRunDirection(direction);
             }
 			for (Element e : currentContent) {
@@ -121,20 +120,7 @@ public class Div extends AbstractTagProcessor {
 						p = new Paragraph();
                         p.setAlignment(div.getTextAlignment());
                         if (direction == PdfWriter.RUN_DIRECTION_RTL) {
-                            switch (p.getAlignment()) {
-                                case Element.ALIGN_UNDEFINED:
-                                case Element.ALIGN_CENTER:
-                                case Element.ALIGN_JUSTIFIED:
-                                case Element.ALIGN_JUSTIFIED_ALL:
-                                    break;
-                                case Element.ALIGN_RIGHT:
-                                    p.setAlignment(Element.ALIGN_LEFT);
-                                    break;
-                                case Element.ALIGN_LEFT:
-                                default:
-                                    p.setAlignment(Element.ALIGN_RIGHT);
-                                    break;
-                            }
+                            invertTextAlignForParagraph(p);
                         }
                         p.setMultipliedLeading(1.2f);
 					}
@@ -145,7 +131,11 @@ public class Div extends AbstractTagProcessor {
                 div.addElement(p);
 			}
 
-			List<Element> l = new ArrayList<Element>(1);
+            if (direction == PdfWriter.RUN_DIRECTION_RTL) {
+                invertTextAlignForDiv(div);
+            }
+
+            List<Element> l = new ArrayList<Element>(1);
             l.add(div);
 			return l;
 		} catch (NoCustomContextException e) {
@@ -153,9 +143,26 @@ public class Div extends AbstractTagProcessor {
 		}
 	}
 
-	 /* (non-Javadoc)
-     * @see com.itextpdf.tool.xml.TagProcessor#isStackOwner()
-     */
+    private void invertTextAlignForDiv(PdfDiv div) {
+        switch (div.getTextAlignment()) {
+            case Element.ALIGN_UNDEFINED:
+            case Element.ALIGN_CENTER:
+            case Element.ALIGN_JUSTIFIED:
+            case Element.ALIGN_JUSTIFIED_ALL:
+                break;
+            case Element.ALIGN_RIGHT:
+                div.setTextAlignment(Element.ALIGN_LEFT);
+                break;
+            case Element.ALIGN_LEFT:
+            default:
+                div.setTextAlignment(Element.ALIGN_RIGHT);
+                break;
+        }
+    }
+
+    /* (non-Javadoc)
+    * @see com.itextpdf.tool.xml.TagProcessor#isStackOwner()
+    */
     @Override
 	public boolean isStackOwner() {
         return true;

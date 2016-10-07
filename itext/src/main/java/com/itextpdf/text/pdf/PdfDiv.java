@@ -1,5 +1,4 @@
 /*
- * $Id$
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2016 iText Group NV
@@ -110,7 +109,7 @@ public class PdfDiv implements Element, Spaceable, IAccessibleElement {
 
     private float yLine;
 
-    protected int runDirection = PdfWriter.RUN_DIRECTION_DEFAULT;
+    protected int runDirection = PdfWriter.RUN_DIRECTION_NO_BIDI;
 
     /**
      * Defines if the div should be kept on one page if possible

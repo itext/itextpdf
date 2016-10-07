@@ -1,5 +1,4 @@
 /*
- * $Id$
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2016 iText Group NV
@@ -436,7 +435,7 @@ public class PdfStructTreeController {
             roleMap.put(structType, object);
         } else if ((currentRole = roleMap.get(structType)) != null) {
             if (!currentRole.equals(object)) {
-                throw new BadPdfFormatException(MessageLocalization.getComposedMessage("conflict.in.rolemap", object));
+                throw new BadPdfFormatException(MessageLocalization.getComposedMessage("conflict.in.rolemap", structType));
             }
         } else {
             roleMap.put(structType, object);

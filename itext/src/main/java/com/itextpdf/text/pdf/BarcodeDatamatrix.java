@@ -1,5 +1,4 @@
 /*
- * $Id$
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2016 iText Group NV
@@ -156,6 +155,7 @@ public class BarcodeDatamatrix {
     private int width;
     private int ws;
     private int options;
+    private boolean forceSquareSize = false;
 
     /**
      * Creates an instance of this class.
@@ -729,7 +729,7 @@ public class BarcodeDatamatrix {
             }
             e += extCount;
             for (k = 0; k < dmSizes.length; ++k) {
-                if (dmSizes[k].dataSize >= e)
+                if (dmSizes[k].dataSize >= e && (!forceSquareSize || dmSizes[k].width == dmSizes[k].height))
                     break;
             }
             dm = dmSizes[k];
@@ -957,6 +957,10 @@ public class BarcodeDatamatrix {
      */
     public void setOptions(int options) {
         this.options = options;
+    }
+
+    public void setForceSquareSize(boolean forceSquareSize) {
+        this.forceSquareSize = forceSquareSize;
     }
 
     static class Placement {

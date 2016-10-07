@@ -1,5 +1,4 @@
 /*
- * $Id$
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2016 iText Group NV
@@ -55,23 +54,41 @@ import com.itextpdf.text.exceptions.UnsupportedPdfException;
 import com.itextpdf.text.io.RandomAccessSource;
 import com.itextpdf.text.io.RandomAccessSourceFactory;
 import com.itextpdf.text.io.WindowRandomAccessSource;
-import com.itextpdf.text.log.*;
+import com.itextpdf.text.log.Counter;
+import com.itextpdf.text.log.CounterFactory;
+import com.itextpdf.text.log.Level;
+import com.itextpdf.text.log.Logger;
+import com.itextpdf.text.log.LoggerFactory;
 import com.itextpdf.text.pdf.PRTokeniser.TokenType;
 import com.itextpdf.text.pdf.interfaces.PdfViewerPreferences;
 import com.itextpdf.text.pdf.internal.PdfViewerPreferencesImp;
 import com.itextpdf.text.pdf.security.ExternalDecryptionProcess;
-import org.bouncycastle.cert.X509CertificateHolder;
-import org.bouncycastle.cms.CMSEnvelopedData;
-import org.bouncycastle.cms.RecipientInformation;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.security.Key;
 import java.security.MessageDigest;
 import java.security.PrivateKey;
 import java.security.cert.Certificate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.Stack;
 import java.util.zip.InflaterInputStream;
+
+import org.bouncycastle.cert.X509CertificateHolder;
+import org.bouncycastle.cms.CMSEnvelopedData;
+import org.bouncycastle.cms.RecipientInformation;
 
 /**
  * Reads a PDF document.
@@ -515,6 +532,8 @@ public class PdfReader implements PdfViewerPreferences {
     }
 
     /** Gets the number of pages in the document.
+     * Partial mode: return the value stored in the COUNT field of the pageref
+     * Full mode: return the total number of pages found while loading in the entire document.
      * @return the number of pages in the document
      */
     public int getNumberOfPages() {
@@ -752,6 +771,10 @@ public class PdfReader implements PdfViewerPreferences {
         removeUnusedObjects();
 
     }
+    /**
+     * Partially parses the pdf
+     *
+     * */
 
     protected void readPdfPartial() throws IOException {
         fileLength = tokens.getFile().length();
@@ -797,7 +820,23 @@ public class PdfReader implements PdfViewerPreferences {
         byte[] encryptionKey = null;
         encrypted = true;
         PdfDictionary enc = (PdfDictionary)getPdfObject(encDic);
-
+        //This string of condidions is to determine whether or not the authevent for this PDF is EFOPEN
+        //If it is, we return since the attachments of the PDF are what are encrypted, not the PDF itself.  
+        //Without this check we run into a bad password exception when trying to open documents that have an
+        //auth event type of EFOPEN.  
+        PdfDictionary cfDict = enc.getAsDict(PdfName.CF);
+        if(cfDict != null){
+        	PdfDictionary stdCFDict = cfDict.getAsDict(PdfName.STDCF);
+        	if(stdCFDict != null){
+        		PdfName authEvent = stdCFDict.getAsName(PdfName.AUTHEVENT);
+        		if(authEvent != null){
+        			//Return only if the event is EFOPEN and there is no password so that 
+        			//attachments that are encrypted can still be opened.
+        			if(authEvent.compareTo(PdfName.EFOPEN) == 0 && !this.ownerPasswordUsed)
+        				return;
+        		}
+        	}
+        }
         String s;
         PdfObject o;
 
@@ -1252,7 +1291,7 @@ public class PdfReader implements PdfViewerPreferences {
             throw new InvalidPdfException(MessageLocalization.getComposedMessage("the.document.has.no.catalog.object"));
         }
         rootPages = catalog.getAsDict(PdfName.PAGES);
-        if (rootPages == null || !PdfName.PAGES.equals(rootPages.get(PdfName.TYPE))) {
+        if (rootPages == null || (!PdfName.PAGES.equals(rootPages.get(PdfName.TYPE)) && !PdfName.PAGES.equals(rootPages.get(new PdfName("Types"))))) {
             if (debugmode) {
                 if ( LOGGER.isLogging(Level.ERROR) ) {
                     LOGGER.error(MessageLocalization.getComposedMessage("the.document.has.no.page.root"));
@@ -4082,7 +4121,11 @@ public class PdfReader implements PdfViewerPreferences {
     }
 
     /**
-     * @return byte array of computed user password, or null if not encrypted or no ownerPassword is used.
+     * Computes user password if standard encryption handler is used with Standard40, Standard128 or AES128 encryption algorithm.
+     *
+     * @return user password, or null if not a standard encryption handler was used,
+     *         if standard encryption handler was used with AES256 encryption algorithm,
+     *         or if ownerPasswordUsed wasn't use to open the document.
      */
     public byte[] computeUserPassword() {
     	if (!encrypted || !ownerPasswordUsed) return null;

@@ -5,6 +5,7 @@ import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Paragraph;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import org.junit.Before;
@@ -65,5 +66,15 @@ public class PdfEncryptionTest {
         pdfStamper.close();
 
         assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DEST_FOLDER, "diff_"));
+    }
+
+    @Test
+    public void computeUserPasswordAES256() throws Exception {
+        String encryptedPdf = SOURCE_FOLDER + "cmp_AES256Encrypted.pdf";
+        PdfReader reader = new PdfReader(encryptedPdf, ownerPassword);
+        byte[] password = reader.computeUserPassword();
+        reader.close();
+
+        assertNull(password);
     }
 }

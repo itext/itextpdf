@@ -1,5 +1,4 @@
 /*
- * $Id$
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2016 iText Group NV
@@ -793,6 +792,7 @@ public class ArabicLigaturizer implements LanguageProcessor {
                     reverseLigatureMapTable.put(c[4], c[3]);
                 case 3:
                     reverseLigatureMapTable.put(c[2], c[1]);
+                    reverseLigatureMapTable.put(c[1], c[0]);
                     break;
             }   
             if (c[0] == 0x0637 || c[0] == 0x0638) {

@@ -35,7 +35,7 @@ public class Hyphenation {
      * rawWord as made of alternating strings and {@link Hyphen Hyphen}
      * instances
      */
-    Hyphenation(String word, int[] points) {
+    public Hyphenation(String word, int[] points) {
         this.word = word;
         hyphenPoints = points;
         len = points.length;

@@ -1,5 +1,4 @@
 /*
- * $Id$
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2016 iText Group NV
@@ -189,17 +188,33 @@ public class StructureItems extends ArrayList<StructureItem> {
 			throws DocumentException {
 		if (ref == null)
 			throw new DocumentException(MessageLocalization.getComposedMessage("can.t.read.document.structure"));
-		PdfObject object = parentTree.get(structParents.intValue());
-		PdfArray array = (PdfArray)PdfReader.getPdfObject(object);
-		for (int i = 0; i < array.size(); i++) {
-			if (array.getAsIndirectObject(i) == null) {
-				array.set(i, ref);
-				return i;
-			}
-		}
+                PdfObject object = parentTree.get(structParents.intValue());
+                PdfArray array = (PdfArray)PdfReader.getPdfObject(object);
+                int i = getNextMCID(structParents);
+                if (i < array.size()) {
+                        array.set(i, ref);
+                        return i;
+                }
 		array.add(ref);
 		return array.size() - 1;
 	}
+        
+        /**
+	 * Finds the next available MCID, which is either the lowest empty ID in
+         * the existing range, or the first available higher number.
+	 * @param structParents	the StructParents entry in the page dictionary
+	 * @return	the first available MCID
+	 */
+        public int getNextMCID(PdfNumber structParents) {
+            PdfObject object = parentTree.get(structParents.intValue());
+            PdfArray array = (PdfArray)PdfReader.getPdfObject(object);
+            for (int i = 0; i < array.size(); i++) {
+                if (array.getAsIndirectObject(i) == null) {
+                    return i;
+                }
+            }
+            return array.size();
+        }
 	
 	/**
 	 * Writes the altered parent tree to a PdfWriter and updates the StructTreeRoot entry.

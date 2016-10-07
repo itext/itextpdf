@@ -1,5 +1,4 @@
 /*
- * $Id$
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2016 iText Group NV
@@ -70,6 +69,8 @@ public class SingleQuotedAttrValueState implements State {
 			this.parser.memory().putCurrentAttrValue(this.parser.bufferToString());
 			this.parser.flush();
 			this.parser.selectState().tagAttributes();
+		} else if (character == '&') {
+			this.parser.selectState().specialChar();
 		} else {
 			this.parser.append(character);
 		}

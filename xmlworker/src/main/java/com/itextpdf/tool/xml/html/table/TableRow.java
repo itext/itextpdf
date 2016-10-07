@@ -1,5 +1,4 @@
 /*
- * $Id$
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2016 iText Group NV
@@ -80,9 +79,9 @@ public class TableRow extends AbstractTagProcessor {
     		row = new TableRowElement(currentContent, Place.BODY);
     	}
         int direction = getRunDirection(tag);
-        if (direction != PdfWriter.RUN_DIRECTION_DEFAULT) {
+        if (direction != PdfWriter.RUN_DIRECTION_NO_BIDI) {
             for (HtmlCell cell : row.getContent()) {
-                if (cell.getRunDirection() == PdfWriter.RUN_DIRECTION_DEFAULT) {
+                if (cell.getRunDirection() == PdfWriter.RUN_DIRECTION_NO_BIDI) {
                     cell.setRunDirection(direction);
                 }
             }

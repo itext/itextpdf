@@ -1,5 +1,4 @@
 /*
- * $Id$
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2016 iText Group NV
@@ -44,14 +43,24 @@
  */
 package com.itextpdf.text.pdf;
 
+import com.itextpdf.text.ExceptionConverter;
+import com.itextpdf.text.xml.XmlDomWriter;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.EmptyStackException;
+import java.util.HashMap;
+import java.util.Map;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import java.io.*;
-import java.util.*;
 
-import com.itextpdf.text.ExceptionConverter;
-import com.itextpdf.text.xml.XmlDomWriter;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -149,10 +158,21 @@ public class XfaForm {
         }
         if (xfaNodes.containsKey("datasets")) {
             datasetsNode = xfaNodes.get("datasets");
-            datasetsSom = new Xml2SomDatasets(datasetsNode.getFirstChild());
+            Node dataNode = findDataNode(datasetsNode);
+            datasetsSom = new Xml2SomDatasets(dataNode != null ? dataNode : datasetsNode.getFirstChild());
         }
         if (datasetsNode == null)
         	createDatasetsNode(domDocument.getFirstChild());
+    }
+
+    private Node findDataNode(Node datasetsNode) {
+        NodeList childNodes = datasetsNode.getChildNodes();
+        for (int i = 0; i < childNodes.getLength(); i++) {
+            if (childNodes.item(i).getNodeName().equals("xfa:data")) {
+                return childNodes.item(i);
+            }
+        }
+        return null;
     }
 
     public static Map<String, Node> extractXFANodes(Document domDocument) {
@@ -274,7 +294,7 @@ public class XfaForm {
     public org.w3c.dom.Document getDomDocument() {
         return domDocument;
     }
-    
+
     /**
      * Finds the complete field name contained in the "classic" forms from a partial
      * name.
@@ -854,23 +874,19 @@ public class XfaForm {
                         String s = escapeSom(n2.getLocalName());
                         Integer i = ss.get(s);
                         if (i == null)
-                            i = Integer.valueOf(0);
+                            i = 0;
                         else
-                            i = Integer.valueOf(i.intValue() + 1);
+                            i = i + 1;
                         ss.put(s, i);
+                        stack.push(s + "[" + i.toString() + "]");
                         if (hasChildren(n2)) {
-                            stack.push(s + "[" + i.toString() + "]");
                             processDatasetsInternal(n2);
-                            stack.pop();
                         }
-                        else {
-                            stack.push(s + "[" + i.toString() + "]");
-                            String unstack = printStack();
-                            order.add(unstack);
-                            inverseSearchAdd(unstack);
-                            name2Node.put(unstack, n2);
-                            stack.pop();
-                        }
+                        String unstack = printStack();
+                        order.add(unstack);
+                        inverseSearchAdd(unstack);
+                        name2Node.put(unstack, n2);
+                        stack.pop();
                     }
                     n2 = n2.getNextSibling();
                 }

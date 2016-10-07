@@ -1,5 +1,4 @@
 /*
- * $Id$
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2016 iText Group NV
@@ -62,6 +61,7 @@ import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.PdfSignature;
 import com.itextpdf.text.pdf.PdfSignatureAppearance;
 import com.itextpdf.text.pdf.PdfString;
+import org.bouncycastle.asn1.esf.SignaturePolicyIdentifier;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -70,10 +70,7 @@ import java.security.GeneralSecurityException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.HashMap;
+import java.util.*;
 
 /**
  * Class that signs your PDF.
@@ -99,6 +96,52 @@ public class MakeSignature {
      * @param externalDigest an implementation that provides the digest
      * @param estimatedSize the reserved size for the signature. It will be estimated if 0
      * @param sigtype Either Signature.CMS or Signature.CADES
+     * @throws DocumentException
+     * @throws IOException
+     * @throws GeneralSecurityException
+     * @throws NoSuchAlgorithmException
+     * @throws Exception
+     */
+    public static void signDetached(PdfSignatureAppearance sap, ExternalDigest externalDigest, ExternalSignature externalSignature, Certificate[] chain, Collection<CrlClient> crlList, OcspClient ocspClient,
+                                    TSAClient tsaClient, int estimatedSize, CryptoStandard sigtype) throws IOException, DocumentException, GeneralSecurityException {
+        signDetached(sap, externalDigest, externalSignature, chain, crlList, ocspClient, tsaClient, estimatedSize, sigtype, (SignaturePolicyIdentifier) null);
+    }
+
+    /**
+     * Signs the document using the detached mode, CMS or CAdES equivalent.
+     * @param sap the PdfSignatureAppearance
+     * @param externalSignature the interface providing the actual signing
+     * @param chain the certificate chain
+     * @param crlList the CRL list
+     * @param ocspClient the OCSP client
+     * @param tsaClient the Timestamp client
+     * @param externalDigest an implementation that provides the digest
+     * @param estimatedSize the reserved size for the signature. It will be estimated if 0
+     * @param sigtype Either Signature.CMS or Signature.CADES
+     * @param signaturePolicy the signature policy (for EPES signatures)
+     * @throws DocumentException
+     * @throws IOException
+     * @throws GeneralSecurityException
+     * @throws NoSuchAlgorithmException
+     * @throws Exception
+     */
+    public static void signDetached(PdfSignatureAppearance sap, ExternalDigest externalDigest, ExternalSignature externalSignature, Certificate[] chain, Collection<CrlClient> crlList, OcspClient ocspClient,
+                                    TSAClient tsaClient, int estimatedSize, CryptoStandard sigtype, SignaturePolicyInfo signaturePolicy) throws IOException, DocumentException, GeneralSecurityException {
+        signDetached(sap, externalDigest, externalSignature, chain, crlList, ocspClient, tsaClient, estimatedSize, sigtype, signaturePolicy.toSignaturePolicyIdentifier());
+    }
+
+    /**
+     * Signs the document using the detached mode, CMS or CAdES equivalent.
+     * @param sap the PdfSignatureAppearance
+     * @param externalSignature the interface providing the actual signing
+     * @param chain the certificate chain
+     * @param crlList the CRL list
+     * @param ocspClient the OCSP client
+     * @param tsaClient the Timestamp client
+     * @param externalDigest an implementation that provides the digest
+     * @param estimatedSize the reserved size for the signature. It will be estimated if 0
+     * @param sigtype Either Signature.CMS or Signature.CADES
+     * @param signaturePolicy the signature policy (for EPES signatures)
      * @throws DocumentException 
      * @throws IOException 
      * @throws GeneralSecurityException 
@@ -106,7 +149,7 @@ public class MakeSignature {
      * @throws Exception 
      */
     public static void signDetached(PdfSignatureAppearance sap, ExternalDigest externalDigest, ExternalSignature externalSignature, Certificate[] chain, Collection<CrlClient> crlList, OcspClient ocspClient,
-            TSAClient tsaClient, int estimatedSize, CryptoStandard sigtype) throws IOException, DocumentException, GeneralSecurityException {
+                                    TSAClient tsaClient, int estimatedSize, CryptoStandard sigtype, SignaturePolicyIdentifier signaturePolicy) throws IOException, DocumentException, GeneralSecurityException {
         Collection<byte[]> crlBytes = null;
         int i = 0;
         while (crlBytes == null && i < chain.length)
@@ -141,6 +184,9 @@ public class MakeSignature {
 
         String hashAlgorithm = externalSignature.getHashAlgorithm();
         PdfPKCS7 sgn = new PdfPKCS7(null, chain, hashAlgorithm, null, externalDigest, false);
+        if (signaturePolicy != null) {
+            sgn.setSignaturePolicy(signaturePolicy);
+        }
         InputStream data = sap.getRangeStream();
         byte hash[] = DigestAlgorithms.digest(data, externalDigest.getMessageDigest(hashAlgorithm));
         byte[] ocsp = null;
