@@ -59,18 +59,18 @@ import com.itextpdf.text.pdf.codec.Base64;
 import java.security.GeneralSecurityException;
 import java.security.MessageDigest;
 
-import org.bouncycastle.asn1.ASN1ObjectIdentifier;
-import org.bouncycastle.asn1.cmp.PKIFailureInfo;
-import org.bouncycastle.tsp.TSPException;
-import org.bouncycastle.tsp.TimeStampRequest;
-import org.bouncycastle.tsp.TimeStampRequestGenerator;
-import org.bouncycastle.tsp.TimeStampResponse;
-import org.bouncycastle.tsp.TimeStampToken;
-import org.bouncycastle.tsp.TimeStampTokenInfo;
+import org.spongycastle.asn1.ASN1ObjectIdentifier;
+import org.spongycastle.asn1.cmp.PKIFailureInfo;
+import org.spongycastle.tsp.TSPException;
+import org.spongycastle.tsp.TimeStampRequest;
+import org.spongycastle.tsp.TimeStampRequestGenerator;
+import org.spongycastle.tsp.TimeStampResponse;
+import org.spongycastle.tsp.TimeStampToken;
+import org.spongycastle.tsp.TimeStampTokenInfo;
 
 /**
  * Time Stamp Authority Client interface implementation using Bouncy Castle
- * org.bouncycastle.tsp package.
+ * org.spongycastle.tsp package.
  * <p>
  * Created by Aiken Sam, 2006-11-15, refactored by Martin Brunecky, 07/15/2007
  * for ease of subclassing.

@@ -1,29 +1,23 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<?xml version="1.0" encoding="UTF-8"?><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-
   <parent>
     <groupId>com.itextpdf</groupId>
     <artifactId>itext-parent</artifactId>
     <version>1.0.0</version>
-    <relativePath />
+    <relativePath/>
   </parent>
-
-  <artifactId>itextpdf</artifactId>
+  <artifactId>itextg</artifactId>
   <version>5.5.10</version>
   <packaging>jar</packaging>
-
-  <name>iText Core</name>
-  <description>A Free Java-PDF library</description>
+  <name>iTextG</name>
+  <description>The Android / GAE port of iText</description>
   <url>http://itextpdf.com</url>
-
   <licenses>
     <license>
       <name>GNU Affero General Public License v3</name>
       <url>http://www.fsf.org/licensing/licenses/agpl-3.0.html</url>
     </license>
   </licenses>
-
   <developers>
     <developer>
       <id>blowagie</id>
@@ -59,7 +53,6 @@
       <url>http://www.redlab.be/</url>
     </developer>
   </developers>
-
   <mailingLists>
     <mailingList>
       <name>iText on StackOverflow</name>
@@ -78,22 +71,18 @@
       </otherArchives>
     </mailingList>
   </mailingLists>
-
   <scm>
     <connection>scm:git:git@github.com:itext/itextpdf.git</connection>
     <url>https://github.com/itext/itextpdf</url>
   </scm>
-
   <issueManagement>
     <system>jira</system>
     <url>https://jira.itextsupport.com/</url>
   </issueManagement>
-
   <ciManagement>
     <system>jenkins-ci</system>
     <url>http://ci.itextsupport.com/</url>
   </ciManagement>
-
   <properties>
     <java.version>1.5</java.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -103,20 +92,19 @@
     <sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
     <sonar.jacoco.reportPath>${project.basedir}/target/jacoco.exec</sonar.jacoco.reportPath>
   </properties>
-
   <dependencies>
     <dependency>
-      <groupId>org.bouncycastle</groupId>
-      <artifactId>bcprov-jdk15on</artifactId>
-      <version>1.49</version>
+      <groupId>com.madgag</groupId>
+      <artifactId>scprov-jdk15on</artifactId>
+      <version>1.47.0.2</version>
       <type>jar</type>
       <scope>compile</scope>
       <optional>true</optional>
     </dependency>
     <dependency>
-      <groupId>org.bouncycastle</groupId>
-      <artifactId>bcpkix-jdk15on</artifactId>
-      <version>1.49</version>
+      <groupId>com.madgag</groupId>
+      <artifactId>scpkix-jdk15on</artifactId>
+      <version>1.47.0.2</version>
       <type>jar</type>
       <scope>compile</scope>
       <optional>true</optional>
@@ -136,9 +124,7 @@
       <optional>true</optional>
     </dependency>
   </dependencies>
-
   <build>
-
     <resources>
       <resource>
         <directory>src/main/resources</directory>
@@ -150,7 +136,6 @@
         </includes>
       </resource>
     </resources>
-
     <testResources>
       <testResource>
         <directory>src/main/resources</directory>
@@ -166,9 +151,7 @@
         </includes>
       </testResource>
     </testResources>
-
     <plugins>
-
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
         <version>3.3</version>
@@ -177,7 +160,6 @@
           <target>${java.version}</target>
         </configuration>
       </plugin>
-
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>buildnumber-maven-plugin</artifactId>
@@ -195,9 +177,7 @@
           <doUpdate>false</doUpdate>
         </configuration>
       </plugin>
-
       <plugin>
-        <!-- Add osgi meta data to manifest file -->
         <groupId>org.apache.felix</groupId>
         <artifactId>maven-bundle-plugin</artifactId>
         <version>2.3.4</version>
@@ -206,30 +186,24 @@
           <execution>
             <id>bundle-manifest</id>
             <phase>process-classes</phase>
-            <!-- bind the manifest.mf generation after the 'compile' phase -->
             <goals>
               <goal>manifest</goal>
             </goals>
           </execution>
         </executions>
         <configuration>
-          <!-- unpack bundle, so human can see the manifest without unpacking 
-            the jar -->
           <unpackBundle>true</unpackBundle>
-          <!-- All com.itextpdf.text.* package are 'public' -->
           <instructions>
             <Export-Package>com.itextpdf.text.*, com.itextpdf.awt.*,
               com.itextpdf.xmp.*</Export-Package>
           </instructions>
         </configuration>
       </plugin>
-
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
         <version>2.3</version>
         <configuration>
-          <!-- Use the Bnd generated MANIFEST.MF in the jar -->
           <archive>
             <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
             <manifest>
@@ -241,7 +215,6 @@
           </archive>
         </configuration>
       </plugin>
-
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
@@ -250,7 +223,6 @@
           <runOrder>random</runOrder>
         </configuration>
       </plugin>
-
       <plugin>
         <groupId>external.atlassian.jgitflow</groupId>
         <artifactId>jgitflow-maven-plugin</artifactId>
@@ -262,18 +234,15 @@
             <featureBranchPrefix>feature/</featureBranchPrefix>
             <releaseBranchPrefix>release/</releaseBranchPrefix>
             <hotfixBranchPrefix>hotfix/</hotfixBranchPrefix>
-            <versionTagPrefix />
+            <versionTagPrefix/>
           </flowInitContext>
           <allowUntracked>true</allowUntracked>
           <autoVersionSubmodules>true</autoVersionSubmodules>
           <updateDependencies>true</updateDependencies>
         </configuration>
       </plugin>
-
     </plugins>
-
   </build>
-
   <reporting>
     <plugins>
       <plugin>
@@ -286,16 +255,13 @@
       </plugin>
     </plugins>
   </reporting>
-
   <profiles>
-
     <profile>
       <id>snapshot</id>
       <build>
         <finalName>${project.artifactId}-${project.version}-rev${buildNumber}</finalName>
       </build>
     </profile>
-
     <profile>
       <id>all</id>
       <build>
@@ -316,8 +282,8 @@
               <links>
                 <link>http://developers.itextpdf.com/reference/classes</link>
               </links>
-              <footer><![CDATA[
-<script>
+              <footer>
+&lt;script&gt;
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
   (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
   m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
@@ -326,14 +292,13 @@
   ga('create', 'UA-11854164-1', 'itextpdf.com');
   ga('send', 'pageview');
 
-</script>
-    ]]></footer>
+&lt;/script&gt;
+    </footer>
             </configuration>
           </plugin>
         </plugins>
       </build>
     </profile>
-
     <profile>
       <id>doclint-java8-disable</id>
       <activation>
@@ -352,8 +317,6 @@
         </plugins>
       </build>
     </profile>
-
-    <!-- BEGIN: Specific to mapping unit tests and covered code -->
     <profile>
       <id>coverage-per-test</id>
       <build>
@@ -361,7 +324,6 @@
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-surefire-plugin</artifactId>
-            <!-- Minimal supported version is 2.4 -->
             <version>2.17</version>
             <configuration>
               <properties>
@@ -383,8 +345,5 @@
         </dependency>
       </dependencies>
     </profile>
-    <!-- END: Specific to mapping unit tests and covered code -->
-
   </profiles>
-
 </project>

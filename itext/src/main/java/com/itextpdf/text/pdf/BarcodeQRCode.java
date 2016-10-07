@@ -110,53 +110,5 @@ public class BarcodeQRCode {
         return Image.getInstance(bm.getWidth(), bm.getHeight(), false, Image.CCITTG4, Image.CCITT_BLACKIS1, g4, null);
     }
 
-    // AWT related methods (remove this if you port to Android / GAE)
 
-    /** Creates a <CODE>java.awt.Image</CODE>.
-     * @param foreground the color of the bars
-     * @param background the color of the background
-     * @return the image
-     */
-    public java.awt.Image createAwtImage(java.awt.Color foreground, java.awt.Color background) {
-        int f = foreground.getRGB();
-        int g = background.getRGB();
-        java.awt.Canvas canvas = new java.awt.Canvas();
-
-        int width = bm.getWidth();
-        int height = bm.getHeight();
-        int pix[] = new int[width * height];
-        byte[][] mt = bm.getArray();
-        for (int y = 0; y < height; ++y) {
-            byte[] line = mt[y];
-            for (int x = 0; x < width; ++x) {
-                pix[y * width + x] = line[x] == 0 ? f : g;
-            }
-        }
-
-        java.awt.Image img = canvas.createImage(new java.awt.image.MemoryImageSource(width, height, pix, 0, width));
-        return img;
-    }
-
-    public void placeBarcode(PdfContentByte cb, BaseColor foreground, float moduleSide) {
-        int width = bm.getWidth();
-        int height = bm.getHeight();
-        byte[][] mt = bm.getArray();
-
-        cb.setColorFill(foreground);
-
-        for (int y = 0; y < height; ++y) {
-            byte[] line = mt[y];
-            for (int x = 0; x < width; ++x) {
-                if (line[x] == 0) {
-                    cb.rectangle(x * moduleSide, (height - y - 1) * moduleSide, moduleSide, moduleSide);
-                }
-            }
-        }
-        cb.fill();
-    }
-
-    /** Gets the size of the barcode grid. */
-    public Rectangle getBarcodeSize() {
-        return new Rectangle(0, 0, bm.getWidth(), bm.getHeight());
-    }
 }
