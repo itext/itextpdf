@@ -10,7 +10,7 @@
   </parent>
 
   <artifactId>itextpdf</artifactId>
-  <version>5.5.11-SNAPSHOT</version>
+  <version>5.5.10</version>
   <packaging>jar</packaging>
 
   <name>iText Core</name>
