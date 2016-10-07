@@ -1,5 +1,4 @@
 /*
- * $Id$
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2016 iText Group NV
@@ -2113,7 +2112,19 @@ public class PdfWriter extends DocWriter implements
         return crypto;
     }
 
-    /** @see com.itextpdf.text.pdf.interfaces.PdfEncryptionSettings#setEncryption(byte[], byte[], int, int) */
+    /**
+     *  Sets the encryption options for this document. The userPassword and the
+     *  ownerPassword can be null or have zero length. In this case the ownerPassword
+     *  is replaced by a random string. The open permissions for the document can be
+     *  AllowPrinting, AllowModifyContents, AllowCopy, AllowModifyAnnotations,
+     *  AllowFillIn, AllowScreenReaders, AllowAssembly and AllowDegradedPrinting.
+     *  The permissions can be combined by ORing them.
+     * @param userPassword the user password. Can be null or empty
+     * @param ownerPassword the owner password. Can be null or empty
+     * @param permissions the user permissions
+     * @param encryptionType can be any of the following: PdfWriter#STANDARD_ENCRYPTION_40, PdfWriter#STANDARD_ENCRYPTION_128, PdfWriter#ENCRYPTION_AES_128 or PdfWriter#ENCRYPTION_AES_256
+     * @throws DocumentException if the document is already open
+     */
     public void setEncryption(final byte userPassword[], final byte ownerPassword[], final int permissions, final int encryptionType) throws DocumentException {
         if (pdf.isOpen())
             throw new DocumentException(MessageLocalization.getComposedMessage("encryption.can.only.be.added.before.opening.the.document"));
@@ -2122,7 +2133,18 @@ public class PdfWriter extends DocWriter implements
         crypto.setupAllKeys(userPassword, ownerPassword, permissions);
     }
 
-    /** @see com.itextpdf.text.pdf.interfaces.PdfEncryptionSettings#setEncryption(java.security.cert.Certificate[], int[], int) */
+    /**
+     *  Sets the encryption options for this document. The userPassword and the
+     *  ownerPassword can be null or have zero length. In this case the ownerPassword
+     *  is replaced by a random string. The open permissions for the document can be
+     *  AllowPrinting, AllowModifyContents, AllowCopy, AllowModifyAnnotations,
+     *  AllowFillIn, AllowScreenReaders, AllowAssembly and AllowDegradedPrinting.
+     *  The permissions can be combined by ORing them.
+     * @param certs Certificates to encrypt the document
+     * @param permissions the user permissions
+     * @param encryptionType can be any of the following: PdfWriter#STANDARD_ENCRYPTION_40, PdfWriter#STANDARD_ENCRYPTION_128, PdfWriter#ENCRYPTION_AES_128 or PdfWriter#ENCRYPTION_AES_256
+     * @throws DocumentException if the document is already open
+     */
     public void setEncryption(final Certificate[] certs, final int[] permissions, final int encryptionType) throws DocumentException {
         if (pdf.isOpen())
             throw new DocumentException(MessageLocalization.getComposedMessage("encryption.can.only.be.added.before.opening.the.document"));

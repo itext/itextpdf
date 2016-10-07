@@ -1,5 +1,4 @@
 /*
- * $Id$
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2015 iText Group NV
@@ -43,13 +42,6 @@
  * address: sales@itextpdf.com
  */
 package com.itextpdf.tool.xml.html;
-import java.io.BufferedInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.nio.charset.Charset;
-
-import org.junit.Test;
 
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
@@ -69,47 +61,54 @@ import com.itextpdf.tool.xml.pipeline.end.PdfWriterPipeline;
 import com.itextpdf.tool.xml.pipeline.html.HtmlPipeline;
 import com.itextpdf.tool.xml.pipeline.html.HtmlPipelineContext;
 
+import java.io.BufferedInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.charset.Charset;
+
+import org.junit.Test;
+
 
 /**
  * @author Balder
- *
  */
 public class SpecialCharInPDFTest {
     public static final String OUT = "./target/test-classes/com/itextpdf/tool/xml/html/";
-	public static final String SNIPPETS = "/snippets/";
+    public static final String SNIPPETS = "/snippets/";
 
-	  private static final String TEST = "index_";
+    private static final String TEST = "index_";
 
     static {
-    	//FontFactory.registerDirectories();
-    	Document.compress = false;
-    	LoggerFactory.getInstance().setLogger(new SysoLogger(3));
+        //FontFactory.registerDirectories();
+        LoggerFactory.getInstance().setLogger(new SysoLogger(3));
     }
+
     private final CssUtils utils = CssUtils.getInstance();
 
-	@Test
-	public void parseXfaOnlyXML() throws IOException {
-		BufferedInputStream bis = new BufferedInputStream(SpecialCharInPDFTest.class.getResourceAsStream(String.format("%s%ssnippet.html", SNIPPETS, TEST)));
-		final Document doc = new Document(PageSize.A4);
-		float margin = utils.parseRelativeValue("10%", PageSize.A4.getWidth());
-		doc.setMargins(margin, margin, margin, margin);
-		PdfWriter writer = null;
-		try {
+    @Test
+    public void parseXfaOnlyXML() throws IOException {
+        BufferedInputStream bis = new BufferedInputStream(SpecialCharInPDFTest.class.getResourceAsStream(String.format("%s%ssnippet.html", SNIPPETS, TEST)));
+        final Document doc = new Document(PageSize.A4);
+        float margin = utils.parseRelativeValue("10%", PageSize.A4.getWidth());
+        doc.setMargins(margin, margin, margin, margin);
+        PdfWriter writer = null;
+        try {
             writer = PdfWriter.getInstance(doc, new FileOutputStream(
                     String.format("%s%s_charset.pdf", OUT, TEST)));
-		} catch (DocumentException e) {
-			e.printStackTrace();
-		}
-		CssFilesImpl cssFiles = new CssFilesImpl();
-		cssFiles.add(XMLWorkerHelper.getInstance().getDefaultCSS());
-		StyleAttrCSSResolver cssResolver = new StyleAttrCSSResolver(cssFiles);
-		HtmlPipelineContext hpc = new HtmlPipelineContext(null);
-		hpc.setAcceptUnknown(true).autoBookmark(true).setTagFactory(Tags.getHtmlTagProcessorFactory()).charSet(Charset.forName("ISO-8859-1"));
-		Pipeline pipeline = new CssResolverPipeline(cssResolver, new HtmlPipeline(hpc, new PdfWriterPipeline(doc, writer)));
-		XMLWorker worker = new XMLWorker(pipeline, true);
-		doc.open();
-		XMLParser p = new XMLParser(true, worker);
-		p.parse(new InputStreamReader(bis));
+        } catch (DocumentException e) {
+            e.printStackTrace();
+        }
+        CssFilesImpl cssFiles = new CssFilesImpl();
+        cssFiles.add(XMLWorkerHelper.getInstance().getDefaultCSS());
+        StyleAttrCSSResolver cssResolver = new StyleAttrCSSResolver(cssFiles);
+        HtmlPipelineContext hpc = new HtmlPipelineContext(null);
+        hpc.setAcceptUnknown(true).autoBookmark(true).setTagFactory(Tags.getHtmlTagProcessorFactory()).charSet(Charset.forName("ISO-8859-1"));
+        Pipeline pipeline = new CssResolverPipeline(cssResolver, new HtmlPipeline(hpc, new PdfWriterPipeline(doc, writer)));
+        XMLWorker worker = new XMLWorker(pipeline, true);
+        doc.open();
+        XMLParser p = new XMLParser(true, worker);
+        p.parse(new InputStreamReader(bis));
         doc.close();
-	}
+    }
 }

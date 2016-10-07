@@ -1,5 +1,4 @@
 /*
- * $Id$
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2016 iText Group NV
@@ -51,8 +50,10 @@ import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.css.CSS;
 import com.itextpdf.tool.xml.css.CssUtils;
 import com.itextpdf.tool.xml.css.FontSizeTranslator;
+import com.itextpdf.tool.xml.html.CssApplier;
 import com.itextpdf.tool.xml.html.CssAppliers;
 import com.itextpdf.tool.xml.html.HTML;
+import com.itextpdf.tool.xml.pipeline.html.HtmlPipelineContext;
 
 import java.util.Map;
 import java.util.Map.Entry;
@@ -62,7 +63,7 @@ import java.util.Map.Entry;
  *
  * @author itextpdf.com
  */
-public class ParagraphCssApplier {
+public class ParagraphCssApplier implements CssApplier<Paragraph> {
 
 
 	private final CssAppliers appliers;
@@ -83,7 +84,10 @@ public class ParagraphCssApplier {
 	 * @param configuration the MarginMemory
 	 * @return a styled {@link Paragraph}
 	 */
-    public Paragraph apply(final Paragraph p, final Tag t, final MarginMemory configuration) {
+        public Paragraph apply(final Paragraph p, final Tag t, final MarginMemory configuration) {
+            return apply(p, t, configuration, null, null);
+        }
+    public Paragraph apply(final Paragraph p, final Tag t, final MarginMemory configuration, final PageSizeContainable psc, final HtmlPipelineContext ctx) {
         /*MaxLeadingAndSize m = new MaxLeadingAndSize();
         if (configuration.getRootTags().contains(t.getName())) {
             m.setLeading(t);

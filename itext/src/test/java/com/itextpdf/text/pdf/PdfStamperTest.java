@@ -3,16 +3,20 @@ package com.itextpdf.text.pdf;
 import com.itextpdf.testutils.CompareTool;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Image;
-import com.itextpdf.text.io.StreamUtil;
-import junit.framework.Assert;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.*;
+import junit.framework.Assert;
 
 public class PdfStamperTest {
 
-    public static final String DEST_FOLDER = "./target/com/itextpdf/test/pdf/PdfStamperTest/";
+    private static final String RESOURCE_FOLDER ="./src/test/resources/com/itextpdf/text/pdf/PdfStamperTest/";
+    private static final String DEST_FOLDER = "./target/com/itextpdf/test/pdf/PdfStamperTest/";
 
     @Before
     public void setUp() {
@@ -22,7 +26,7 @@ public class PdfStamperTest {
     @Test
     public void setPageContentTest01() throws IOException, DocumentException, InterruptedException {
         String outPdf = DEST_FOLDER + "out1.pdf";
-        String testFile = getClass().getResource("PdfStamperTest/in.pdf").getFile();
+        String testFile = RESOURCE_FOLDER + "in.pdf";
         PdfReader reader = new PdfReader(testFile);
         PdfStamper stamper = new PdfStamper(reader, new FileOutputStream(outPdf));
         reader.eliminateSharedStreams();
@@ -33,13 +37,13 @@ public class PdfStamperTest {
         }
         stamper.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, getClass().getResource("PdfStamperTest/cmp_out1.pdf").getPath(), DEST_FOLDER, "diff_"));
+        Assert.assertNull(new CompareTool().compareByContent(outPdf, RESOURCE_FOLDER + "cmp_out1.pdf", DEST_FOLDER, "diff_"));
     }
 
     @Test
     public void setPageContentTest02() throws IOException, DocumentException, InterruptedException {
         String outPdf = DEST_FOLDER + "out2.pdf";
-        String testFile = getClass().getResource("PdfStamperTest/in.pdf").getFile();
+        String testFile = RESOURCE_FOLDER + "in.pdf";
         PdfReader reader = new PdfReader(testFile);
         PdfStamper stamper = new PdfStamper(reader, new FileOutputStream(outPdf));
         int total = reader.getNumberOfPages() + 1;
@@ -50,13 +54,13 @@ public class PdfStamperTest {
         reader.removeUnusedObjects();
         stamper.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, getClass().getResource("PdfStamperTest/cmp_out2.pdf").getPath(), DEST_FOLDER, "diff_"));
+        Assert.assertNull(new CompareTool().compareByContent(outPdf, RESOURCE_FOLDER + "cmp_out2.pdf", DEST_FOLDER, "diff_"));
     }
 
     @Test
     public void layerStampingTest() throws IOException, DocumentException, InterruptedException {
         String outPdf = DEST_FOLDER + "out3.pdf";
-        String testFile = getClass().getResource("PdfStamperTest/House_Plan_Final.pdf").getFile();
+        String testFile = RESOURCE_FOLDER + "House_Plan_Final.pdf";
         PdfReader reader = new PdfReader(testFile);
         PdfStamper stamper = new PdfStamper(reader, new FileOutputStream(outPdf));
 
@@ -64,7 +68,7 @@ public class PdfStamperTest {
         PdfContentByte cb = stamper.getUnderContent(1);
         cb.beginLayer(logoLayer);
 
-        Image iImage = Image.getInstance(getClass().getResource("PdfStamperTest/Willi-1.jpg").getPath());
+        Image iImage = Image.getInstance(RESOURCE_FOLDER + "Willi-1.jpg");
         iImage.scalePercent(24f);
         iImage.setAbsolutePosition(100, 100);
         cb.addImage(iImage);

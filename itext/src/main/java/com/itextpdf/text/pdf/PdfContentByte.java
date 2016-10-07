@@ -1,5 +1,4 @@
 /*
- * $Id$
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2016 iText Group NV
@@ -222,6 +221,7 @@ public class PdfContentByte {
 
     private int mcDepth = 0;
     private boolean inText = false;
+    private boolean suppressTagging = false;
 
     private static HashMap<PdfName, String> abrev = new HashMap<PdfName, String>();
 
@@ -271,11 +271,30 @@ public class PdfContentByte {
     }
 
     /**
+     * [SUP-1395] If set, prevents iText from marking content and creating structure tags for items added to this content stream.
+     * (By default, iText automatically marks content using BDC/EMC operators, and adds a structure tag for the new content
+     * at the end of the page.)
+     */
+    public boolean isTaggingSuppressed() {
+        return suppressTagging;
+    }
+
+    /**
+     * [SUP-1395] If set, prevents iText from marking content and creating structure tags for items added to this content stream.
+     * (By default, iText automatically marks content using BDC/EMC operators, and adds a structure tag for the new content
+     * at the end of the page.)
+     */
+    public PdfContentByte setSuppressTagging(boolean suppressTagging) {
+        this.suppressTagging = suppressTagging;
+        return this;
+    }
+
+    /**
      * Checks if the content needs to be tagged.
      * @return false if no tags need to be added
      */
     public boolean isTagged() {
-    	return writer != null && writer.isTagged();
+    	return writer != null && writer.isTagged() && !isTaggingSuppressed();
     }
 
     /**

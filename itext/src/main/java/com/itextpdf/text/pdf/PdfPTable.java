@@ -1,5 +1,4 @@
 /*
- * $Id$
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2016 iText Group NV
@@ -143,7 +142,7 @@ public class PdfPTable implements LargeElement, Spaceable, IAccessibleElement {
 
     protected boolean isColspan = false;
 
-    protected int runDirection = PdfWriter.RUN_DIRECTION_DEFAULT;
+    protected int runDirection = PdfWriter.RUN_DIRECTION_NO_BIDI;
 
     /**
      * Holds value of property lockedWidth.
@@ -538,7 +537,7 @@ public class PdfPTable implements LargeElement, Spaceable, IAccessibleElement {
             isColspan = true;
         }
         int rdir = ncell.getRunDirection();
-        if (rdir == PdfWriter.RUN_DIRECTION_DEFAULT) {
+        if (rdir == PdfWriter.RUN_DIRECTION_NO_BIDI) {
             ncell.setRunDirection(runDirection);
         }
 

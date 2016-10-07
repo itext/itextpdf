@@ -1,5 +1,4 @@
 /*
- * $Id$
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2016 iText Group NV
@@ -808,21 +807,31 @@ public class PdfEncryption {
 				permission));
 	}
 
+    /**
+     * Computes user password if standard encryption handler is used with Standard40, Standard128 or AES128 algorithm (Revision 2 - 4).
+     *
+     * @param ownerPassword owner password of the encrypted document.
+     * @return user password, or null if revision 5 (AES256) or greater of standard encryption handler was used.
+     */
 	public byte[] computeUserPassword(byte[] ownerPassword) {
-		byte[] userPad = computeOwnerKey(ownerKey, padPassword(ownerPassword));
-		for (int i = 0; i < userPad.length; i++) {
-			boolean match = true;
-			for (int j = 0; j < userPad.length - i; j++) {
-				if (userPad[i + j] != pad[j]) {
-					match = false;
-					break;
+        byte[] userPad = null;
+        if (publicKeyHandler.getRecipientsSize() == 0 &&
+                STANDARD_ENCRYPTION_40 <= revision && revision <= AES_128) {
+            userPad = computeOwnerKey(ownerKey, padPassword(ownerPassword));
+            for (int i = 0; i < userPad.length; i++) {
+                boolean match = true;
+                for (int j = 0; j < userPad.length - i; j++) {
+                    if (userPad[i + j] != pad[j]) {
+                        match = false;
+                        break;
+                    }
                 }
-			}
-			if (!match) continue;
-			byte[] userPassword = new byte[i];
-			System.arraycopy(userPad, 0, userPassword, 0, i);
-			return userPassword;
-		}
+                if (!match) continue;
+                byte[] userPassword = new byte[i];
+                System.arraycopy(userPad, 0, userPassword, 0, i);
+                return userPassword;
+            }
+        }
 		return userPad;
 	}
 }

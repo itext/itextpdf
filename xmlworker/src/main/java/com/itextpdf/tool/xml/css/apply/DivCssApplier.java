@@ -1,5 +1,4 @@
 /*
- * $Id$
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2016 iText Group NV
@@ -57,12 +56,13 @@ import com.itextpdf.text.pdf.PdfDiv;
 import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.css.*;
 import com.itextpdf.tool.xml.exceptions.LocaleMessages;
+import com.itextpdf.tool.xml.html.CssApplier;
 import com.itextpdf.tool.xml.html.HTML;
 import com.itextpdf.tool.xml.net.ImageRetrieve;
 import com.itextpdf.tool.xml.net.exc.NoImageException;
 import com.itextpdf.tool.xml.pipeline.html.HtmlPipelineContext;
 
-public class DivCssApplier {
+public class DivCssApplier implements CssApplier<PdfDiv> {
     private final CssUtils utils = CssUtils.getInstance();
     private static final Logger LOG = LoggerFactory.getLogger(ListStyleTypeCssApplier.class);
 

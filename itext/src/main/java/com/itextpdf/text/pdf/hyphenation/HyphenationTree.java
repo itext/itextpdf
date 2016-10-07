@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-/* $Id$ */
 
 package com.itextpdf.text.pdf.hyphenation;
 
