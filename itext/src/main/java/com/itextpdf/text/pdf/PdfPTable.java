@@ -842,7 +842,7 @@ public class PdfPTable implements LargeElement, Spaceable, IAccessibleElement {
             float heights[] = new float[rowEnd - rowStart + 1];
             heights[0] = yPosStart;
             for (k = rowStart; k < rowEnd; ++k) {
-                PdfPRow row = rows.get(k);
+                PdfPRow row = rows.get(k - rowStart);
                 float hr = 0;
                 if (row != null) {
                     hr = row.getMaxHeights();
