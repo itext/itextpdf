@@ -59,7 +59,6 @@ public class TableEventTest {
 
     private static class DummyEvent implements PdfPTableEvent {
 
-        @Override
         public void tableLayout(PdfPTable table, float[][] widths, float[] heights, int headerRows, int rowStart, PdfContentByte[] canvases) {
         }
     }
