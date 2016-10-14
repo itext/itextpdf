@@ -841,13 +841,13 @@ public class PdfPTable implements LargeElement, Spaceable, IAccessibleElement {
         if (tableEvent != null && colStart == 0 && colEnd == totalCols) {
             float heights[] = new float[rowEnd - rowStart + 1];
             heights[0] = yPosStart;
-            for (k = rowStart; k < rowEnd; ++k) {
-                PdfPRow row = rows.get(k - rowStart);
+            for (k = 0; k < rowEnd-rowStart; ++k) {
+                PdfPRow row = rows.get(k);
                 float hr = 0;
                 if (row != null) {
                     hr = row.getMaxHeights();
                 }
-                heights[k - rowStart + 1] = heights[k - rowStart] - hr;
+                heights[k + 1] = heights[k] - hr;
             }
             tableEvent.tableLayout(this, getEventWidths(xPos, rowStart, rowEnd, headersInEvent), heights, headersInEvent ? headerRows : 0, rowStart, canvases);
         }
