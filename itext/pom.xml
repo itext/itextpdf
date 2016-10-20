@@ -26,49 +26,18 @@
 
   <developers>
     <developer>
-      <id>blowagie</id>
-      <name>Bruno Lowagie</name>
-      <email>bruno@lowagie.com</email>
-      <url>http://www.lowagie.com</url>
-    </developer>
-    <developer>
-      <id>psoares33</id>
-      <name>Paulo Soares</name>
-      <email>psoares33@users.sourceforge.net</email>
-    </developer>
-    <developer>
-      <id>mstorer</id>
-      <name>Mark Storer</name>
-      <email>mstorer3772@gmail.com</email>
-    </developer>
-    <developer>
-      <id>trumpetinc</id>
-      <name>Kevin Day</name>
-      <email>kevin@trumpetinc.com</email>
-    </developer>
-    <developer>
-      <id>xlv</id>
-      <name>Xavier Le Vourch</name>
-      <email>xavier.levourch@xlv-labs.com</email>
-      <url>http://www.xlv-labs.com</url>
-    </developer>
-    <developer>
-      <id>redlab_b</id>
-      <name>Balder Van Camp</name>
-      <email>balder@redlab.be</email>
-      <url>http://www.redlab.be/</url>
+      <id>itext</id>
+      <name>iText Software</name>
+      <email>info@itextpdf.com</email>
+      <url>http://www.itextpdf.com</url>
     </developer>
   </developers>
 
   <mailingLists>
     <mailingList>
       <name>iText on StackOverflow</name>
-      <subscribe>
-                http://stackoverflow.com/questions/tagged/itext
-            </subscribe>
-      <archive>
-                http://stackoverflow.com/questions/tagged/itext
-            </archive>
+      <subscribe>http://stackoverflow.com/questions/tagged/itext</subscribe>
+      <archive>http://stackoverflow.com/questions/tagged/itext</archive>
       <otherArchives>
         <otherArchive>http://news.gmane.org/gmane.comp.java.lib.itext.general</otherArchive>
         <otherArchive>http://itext-general.2136553.n4.nabble.com/</otherArchive>
@@ -95,7 +64,6 @@
   </ciManagement>
 
   <properties>
-    <java.version>1.5</java.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <argLine>-Xms512m -Xmx1024m</argLine>
     <checkstyle.header.file>license.txt</checkstyle.header.file>
@@ -109,30 +77,24 @@
       <groupId>org.bouncycastle</groupId>
       <artifactId>bcprov-jdk15on</artifactId>
       <version>1.49</version>
-      <type>jar</type>
-      <scope>compile</scope>
       <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>org.bouncycastle</groupId>
       <artifactId>bcpkix-jdk15on</artifactId>
       <version>1.49</version>
-      <type>jar</type>
-      <scope>compile</scope>
       <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <version>4.8.2</version>
-      <type>jar</type>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.santuario</groupId>
       <artifactId>xmlsec</artifactId>
       <version>1.5.1</version>
-      <scope>compile</scope>
       <optional>true</optional>
     </dependency>
   </dependencies>
@@ -170,15 +132,6 @@
     <plugins>
 
       <plugin>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.3</version>
-        <configuration>
-          <source>${java.version}</source>
-          <target>${java.version}</target>
-        </configuration>
-      </plugin>
-
-      <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>buildnumber-maven-plugin</artifactId>
         <version>1.1</version>
@@ -213,7 +166,7 @@
           </execution>
         </executions>
         <configuration>
-          <!-- unpack bundle, so human can see the manifest without unpacking 
+          <!-- unpack bundle, so human can see the manifest without unpacking
             the jar -->
           <unpackBundle>true</unpackBundle>
           <!-- All com.itextpdf.text.* package are 'public' -->
@@ -384,6 +337,40 @@
       </dependencies>
     </profile>
     <!-- END: Specific to mapping unit tests and covered code -->
+
+    <profile>
+      <id>compileWithLegacyJDK</id>
+      <!--
+        NOTE
+        Make sure to set the environment variable JAVA5_HOME
+        to your JDK 1.5 HOME when using this profile.
+      -->
+      <properties>
+        <java.version>1.5</java.version>
+        <java.home>${env.JAVA5_HOME}</java.home>
+        <java.libs>${java.home}/jre/lib</java.libs>
+        <java.bootclasspath>${java.libs}/rt.jar${path.separator}${java.libs}/jce.jar</java.bootclasspath>
+      </properties>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <version>3.3</version>
+            <configuration>
+              <source>${java.version}</source>
+              <target>${java.version}</target>
+              <compilerArguments>
+                <bootclasspath>${java.bootclasspath}</bootclasspath>
+              </compilerArguments>
+              <compilerVersion>${java.version}</compilerVersion>
+              <fork>true</fork>
+              <executable>${java.home}/bin/javac</executable>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
 
   </profiles>
 
