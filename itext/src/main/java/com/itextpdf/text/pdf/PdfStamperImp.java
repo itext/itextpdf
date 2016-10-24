@@ -43,6 +43,7 @@
  */
 package com.itextpdf.text.pdf;
 
+import com.itextpdf.awt.geom.AffineTransform;
 import com.itextpdf.awt.geom.Point;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.ExceptionConverter;
@@ -952,6 +953,23 @@ class PdfStamperImp extends PdfWriter {
                             float bboxWidth = bbox.getAsNumber(2).floatValue() - bbox.getAsNumber(0).floatValue();
                             float rectHeight = rect.getAsNumber(3).floatValue() - rect.getAsNumber(1).floatValue();
                             float bboxHeight = bbox.getAsNumber(3).floatValue() - bbox.getAsNumber(1).floatValue();
+                            //Take field rotation into account
+                            double fieldRotation = 0;
+                            if(merged.getAsDict(PdfName.MK) != null){
+                                if(merged.getAsDict(PdfName.MK).get(PdfName.R) != null){
+                                    fieldRotation = merged.getAsDict(PdfName.MK).getAsNumber(PdfName.R).floatValue();
+                                }
+                            }
+                            //Cast to radians
+                            fieldRotation = fieldRotation * Math.PI/180;
+                            //Clamp to [-2*Pi, 2*Pi]
+                            fieldRotation = fieldRotation%(2*Math.PI);
+
+                            if(fieldRotation%Math.PI != 0){
+                                float temp = rectWidth;
+                                rectWidth = rectHeight;
+                                rectHeight = temp;
+                            }
                             float widthCoef = Math.abs(bboxWidth != 0 ? rectWidth / bboxWidth : Float.MAX_VALUE);
                             float heightCoef = Math.abs(bboxHeight != 0 ? rectHeight / bboxHeight : Float.MAX_VALUE);
 
@@ -1016,7 +1034,23 @@ class PdfStamperImp extends PdfWriter {
                         Rectangle box = PdfReader.getNormalizedRectangle(merged.getAsArray(PdfName.RECT));
                         PdfContentByte cb = getOverContent(page);
                         cb.setLiteral("Q ");
-                        cb.addTemplate(app, box.getLeft(), box.getBottom());
+                        /*
+                        Apply field rotation
+                         */
+                        AffineTransform tf = new AffineTransform();
+                        double fieldRotation = 0;
+                        if(merged.getAsDict(PdfName.MK) != null){
+                            if(merged.getAsDict(PdfName.MK).get(PdfName.R) != null){
+                                fieldRotation = merged.getAsDict(PdfName.MK).getAsNumber(PdfName.R).floatValue();
+                            }
+                        }
+                        //Cast to radians
+                        fieldRotation = fieldRotation * Math.PI/180;
+                        //Clamp to [-2*Pi, 2*Pi]
+                        fieldRotation = fieldRotation%(2*Math.PI);
+                        //Calculate transformation matrix
+                        tf = calculateTemplateTransformationMatrix(tf,fieldRotation,box);
+                        cb.addTemplate(app, tf);
                         cb.setLiteral("q ");
                     }
                 }
@@ -1115,6 +1149,23 @@ class PdfStamperImp extends PdfWriter {
         acrodic.remove(PdfName.DR);
 //        PdfReader.killIndirect(acro);
 //        reader.getCatalog().remove(PdfName.ACROFORM);
+    }
+
+    private AffineTransform calculateTemplateTransformationMatrix(AffineTransform currentMatrix, double fieldRotation, Rectangle box) {
+        AffineTransform templateTransform = new AffineTransform(currentMatrix);
+        //Move to new origin
+        double x = box.getLeft();
+        double y = box.getBottom();
+        if (fieldRotation % (Math.PI / 2) == 0 && fieldRotation % (3 * Math.PI / 2) != 0 && fieldRotation != 0) {
+            x += box.getWidth();
+        }
+        if((fieldRotation%(3*Math.PI/2)==0 || fieldRotation%(Math.PI)==0) && fieldRotation != 0){
+            y+=box.getHeight();
+        }
+        templateTransform.translate(x,y);
+        //Apply fieldrotation
+        templateTransform.rotate(fieldRotation);
+        return templateTransform;
     }
 
     void sweepKids(PdfObject obj) {
