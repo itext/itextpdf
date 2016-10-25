@@ -456,8 +456,10 @@ public class OCGParser {
     			List<PdfObject> operands) throws IOException {
     		if ("BDC".equals(operator.toString()) && operands.size() > 1 && PdfName.OC.equals(operands.get(0))) {
     			parser.checkMarkedContentStart((PdfName)operands.get(1));
-    		}
-    		else if ("BMC".equals(operator.toString())) {
+    		} else {
+					parser.checkMarkedContentStart(null);
+				}
+    		if ("BMC".equals(operator.toString())) {
     			parser.checkMarkedContentStart(null);
     		}
 			parser.process(operator, operands, true);
