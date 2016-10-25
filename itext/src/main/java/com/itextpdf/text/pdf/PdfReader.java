@@ -3900,12 +3900,11 @@ public class PdfReader implements PdfViewerPreferences {
         }
 
         private void iteratePages(final PRIndirectReference rpage) throws IOException {
-            if (!pagesNodes.add(getPdfObject(rpage)))
-                throw new InvalidPdfException(MessageLocalization.getComposedMessage("illegal.pages.tree"));
-
             PdfDictionary page = (PdfDictionary)getPdfObject(rpage);
             if (page == null)
                 return;
+            if (!pagesNodes.add(getPdfObject(rpage)))
+                throw new InvalidPdfException(MessageLocalization.getComposedMessage("illegal.pages.tree"));
             PdfArray kidsPR = page.getAsArray(PdfName.KIDS);
             // reference to a leaf
             if (kidsPR == null) {
