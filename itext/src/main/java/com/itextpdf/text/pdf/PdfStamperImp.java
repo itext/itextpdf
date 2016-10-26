@@ -973,11 +973,10 @@ class PdfStamperImp extends PdfWriter {
                             float widthCoef = Math.abs(bboxWidth != 0 ? rectWidth / bboxWidth : Float.MAX_VALUE);
                             float heightCoef = Math.abs(bboxHeight != 0 ? rectHeight / bboxHeight : Float.MAX_VALUE);
 
-                            if (widthCoef != 1 || heightCoef != 1) {
-                                NumberArray array = new NumberArray(widthCoef, 0, 0, heightCoef, 0, 0);
-                                stream.put(PdfName.MATRIX, array);
-                                markUsed(stream);
-                            }
+                            //Update matrix entry. Any field rotations present here will be overwritten and handled when adding the template to the canvas?
+                            NumberArray array = new NumberArray(widthCoef, 0, 0, heightCoef, 0, 0);
+                            stream.put(PdfName.MATRIX, array);
+                            markUsed(stream);
                         }
                     }
                 } else if (appDic != null && as_n != null) {
