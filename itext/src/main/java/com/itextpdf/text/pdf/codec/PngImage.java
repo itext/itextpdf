@@ -88,22 +88,15 @@
 
 package com.itextpdf.text.pdf.codec;
 
-import com.itextpdf.text.pdf.ICC_Profile;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.DataInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.util.zip.Inflater;
-import java.util.zip.InflaterInputStream;
-import com.itextpdf.text.error_messages.MessageLocalization;
-
 import com.itextpdf.text.ExceptionConverter;
 import com.itextpdf.text.Image;
 import com.itextpdf.text.ImgRaw;
 import com.itextpdf.text.Utilities;
+import com.itextpdf.text.error_messages.MessageLocalization;
+import com.itextpdf.text.log.Logger;
+import com.itextpdf.text.log.LoggerFactory;
 import com.itextpdf.text.pdf.ByteBuffer;
+import com.itextpdf.text.pdf.ICC_Profile;
 import com.itextpdf.text.pdf.PdfArray;
 import com.itextpdf.text.pdf.PdfDictionary;
 import com.itextpdf.text.pdf.PdfLiteral;
@@ -112,6 +105,15 @@ import com.itextpdf.text.pdf.PdfNumber;
 import com.itextpdf.text.pdf.PdfObject;
 import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.PdfString;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.util.zip.Inflater;
+import java.util.zip.InflaterInputStream;
 
 /** Reads a PNG image. All types of PNG can be read.
  * <p>
@@ -643,7 +645,7 @@ public class PngImage {
             smask = new byte[(width + 7) / 8 * height];
         ByteArrayInputStream bai = new ByteArrayInputStream(idat.getBuf(), 0, idat.size());
         InputStream infStream = new InflaterInputStream(bai, new Inflater());
-        dataStream = new DataInputStream(infStream);
+        this.dataStream = new DataInputStream(infStream);
         
         if (interlaceMethod != 1) {
             decodePass(0, 0, 1, 1, width, height);
@@ -657,7 +659,13 @@ public class PngImage {
             decodePass(1, 0, 2, 2, width/2, (height + 1)/2);
             decodePass(0, 1, 1, 2, width, height/2);
         }
-        
+
+        try {
+            this.dataStream.close();
+        } catch (IOException e) {
+            Logger logger = LoggerFactory.getLogger(this.getClass());
+            logger.warn("Datastream of PngImage#decodeIdat didn't close properly.");
+        }
     }
     
     void decodePass( int xOffset, int yOffset,
