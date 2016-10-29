@@ -1014,7 +1014,7 @@ public class PdfContentStreamProcessor {
     /**
      * A content operator implementation (J).
      */
-    private class SetLineCap implements ContentOperator {
+    private static class SetLineCap implements ContentOperator {
 
         public void invoke(PdfContentStreamProcessor processor, PdfLiteral oper, ArrayList<PdfObject> operands) {
             int lineCap = ((PdfNumber) operands.get(0)).intValue();
@@ -1025,7 +1025,7 @@ public class PdfContentStreamProcessor {
     /**
      * A content operator implementation (j).
      */
-    private class SetLineJoin implements ContentOperator {
+    private static class SetLineJoin implements ContentOperator {
 
         public void invoke(PdfContentStreamProcessor processor, PdfLiteral oper, ArrayList<PdfObject> operands) {
             int lineJoin = ((PdfNumber) operands.get(0)).intValue();
@@ -1036,7 +1036,7 @@ public class PdfContentStreamProcessor {
     /**
      * A content operator implementation (M).
      */
-    private class SetMiterLimit implements ContentOperator {
+    private static class SetMiterLimit implements ContentOperator {
 
         public void invoke(PdfContentStreamProcessor processor, PdfLiteral oper, ArrayList<PdfObject> operands) {
             float miterLimit = ((PdfNumber) operands.get(0)).floatValue();
@@ -1047,7 +1047,7 @@ public class PdfContentStreamProcessor {
     /**
      * A content operator implementation (d).
      */
-    private class SetLineDashPattern implements ContentOperator {
+    private static class SetLineDashPattern implements ContentOperator {
 
         public void invoke(PdfContentStreamProcessor processor, PdfLiteral oper, ArrayList<PdfObject> operands) {
             LineDashPattern pattern = new LineDashPattern(((PdfArray) operands.get(0)),
