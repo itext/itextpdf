@@ -135,7 +135,8 @@ public class PdfContentStreamProcessor {
         CMapAwareDocumentFont font = cachedFonts.get(n);
         if (font == null) {
             font = new CMapAwareDocumentFont(ind);
-            cachedFonts.put(n, font);
+            if (cachedFonts.size() < 10) // PDF files that contain a large number of fonts can cause out of memory errors if we cache too many
+            	cachedFonts.put(n, font);
         }
         return font;
     }
