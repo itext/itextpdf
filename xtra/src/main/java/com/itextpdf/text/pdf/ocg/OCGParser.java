@@ -457,8 +457,8 @@ public class OCGParser {
     		if ("BDC".equals(operator.toString()) && operands.size() > 1 && PdfName.OC.equals(operands.get(0))) {
     			parser.checkMarkedContentStart((PdfName)operands.get(1));
     		} else {
-					parser.checkMarkedContentStart(null);
-				}
+                        parser.checkMarkedContentStart(null);
+                }
     		if ("BMC".equals(operator.toString())) {
     			parser.checkMarkedContentStart(null);
     		}
