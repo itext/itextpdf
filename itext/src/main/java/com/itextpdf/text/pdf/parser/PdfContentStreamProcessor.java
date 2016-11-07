@@ -43,14 +43,37 @@
  */
 package com.itextpdf.text.pdf.parser;
 
+import java.io.IOException;
+import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Stack;
+
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.ExceptionConverter;
 import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.io.RandomAccessSourceFactory;
-import com.itextpdf.text.pdf.*;
-
-import java.io.IOException;
-import java.util.*;
+import com.itextpdf.text.pdf.CMYKColor;
+import com.itextpdf.text.pdf.CMapAwareDocumentFont;
+import com.itextpdf.text.pdf.GrayColor;
+import com.itextpdf.text.pdf.PRIndirectReference;
+import com.itextpdf.text.pdf.PRTokeniser;
+import com.itextpdf.text.pdf.PdfArray;
+import com.itextpdf.text.pdf.PdfContentParser;
+import com.itextpdf.text.pdf.PdfDictionary;
+import com.itextpdf.text.pdf.PdfIndirectReference;
+import com.itextpdf.text.pdf.PdfLiteral;
+import com.itextpdf.text.pdf.PdfName;
+import com.itextpdf.text.pdf.PdfNumber;
+import com.itextpdf.text.pdf.PdfObject;
+import com.itextpdf.text.pdf.PdfStream;
+import com.itextpdf.text.pdf.PdfString;
+import com.itextpdf.text.pdf.RandomAccessFileOrArray;
 
 /**
  * Processor for a PDF content Stream.
@@ -82,7 +105,7 @@ public class PdfContentStreamProcessor {
      * @since 5.0.6
      */
     /**  */
-    final private Map<Integer,CMapAwareDocumentFont> cachedFonts = new HashMap<Integer, CMapAwareDocumentFont>();
+    final private Map<Integer,WeakReference<CMapAwareDocumentFont>> cachedFonts = new HashMap<Integer, WeakReference<CMapAwareDocumentFont>>();
     /**
      * A stack containing marked content info.
      * @since 5.0.2
@@ -132,11 +155,11 @@ public class PdfContentStreamProcessor {
      */
     private CMapAwareDocumentFont getFont(PRIndirectReference ind) {
         Integer n = Integer.valueOf(ind.getNumber());
-        CMapAwareDocumentFont font = cachedFonts.get(n);
+        WeakReference<CMapAwareDocumentFont> fontRef = cachedFonts.get(n);
+        CMapAwareDocumentFont font = fontRef == null ? null : fontRef.get();
         if (font == null) {
             font = new CMapAwareDocumentFont(ind);
-            if (cachedFonts.size() < 10) // PDF files that contain a large number of fonts can cause out of memory errors if we cache too many
-            	cachedFonts.put(n, font);
+           	cachedFonts.put(n, new WeakReference<CMapAwareDocumentFont>(font));
         }
         return font;
     }
