@@ -64,6 +64,7 @@ public class ProcessingInstructionEncounteredState extends TagAttributeState {
 	 */
     public void process(final char character) {
         String tag = this.parser.bufferToString();
+        this.parser.memory().processingInstruction().append(character);
         if (name == null && Character.isWhitespace(character)) {
             if (Character.isWhitespace(character)) {
                 name = tag;
