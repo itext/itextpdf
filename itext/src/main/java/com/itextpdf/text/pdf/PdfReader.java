@@ -2196,6 +2196,16 @@ public class PdfReader implements PdfViewerPreferences {
                 return null;
             return out.toByteArray();
         }
+        finally {
+            try {
+                zip.close();
+            } catch (IOException ex) {
+            }
+            try {
+                out.close();
+            } catch (IOException ex) {
+            }
+        }
     }
 
     /** Decodes a stream that has the ASCIIHexDecode filter.
