@@ -44,19 +44,16 @@
 package com.itextpdf.text.pdf;
 
 import com.itextpdf.text.*;
-import com.itextpdf.text.Version;
 import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.io.TempFileCache;
 import com.itextpdf.text.log.Counter;
 import com.itextpdf.text.log.CounterFactory;
-import com.itextpdf.text.log.LoggerFactory;
 import com.itextpdf.text.pdf.collection.PdfCollection;
 import com.itextpdf.text.pdf.events.PdfPageEventForwarder;
 import com.itextpdf.text.pdf.interfaces.*;
 import com.itextpdf.text.pdf.internal.PdfIsoKeys;
 import com.itextpdf.text.pdf.internal.PdfVersionImp;
 import com.itextpdf.text.pdf.internal.PdfXConformanceImp;
-import com.itextpdf.text.pdf.qrcode.*;
 import com.itextpdf.text.xml.xmp.PdfProperties;
 import com.itextpdf.text.xml.xmp.XmpWriter;
 import com.itextpdf.xmp.XMPConst;
@@ -1275,18 +1272,15 @@ public class PdfWriter extends DocWriter implements
                     }
                 }
                 if (xmpMetadata != null) {
-                	PdfStream xmp = new PdfStream(xmpMetadata);
-                	xmp.put(PdfName.TYPE, PdfName.METADATA);
-                	xmp.put(PdfName.SUBTYPE, PdfName.XML);
+                    PdfStream xmp = new PdfStream(xmpMetadata);
+                    xmp.put(PdfName.TYPE, PdfName.METADATA);
+                    xmp.put(PdfName.SUBTYPE, PdfName.XML);
                     if (crypto != null && !crypto.isMetadataEncrypted()) {
                         PdfArray ar = new PdfArray();
                         ar.add(PdfName.CRYPT);
                         xmp.put(PdfName.FILTER, ar);
                     }
-                	catalog.put(PdfName.METADATA, body.add(xmp).getIndirectReference());
-                }
-                if (!getInfo().getAsString(PdfName.PRODUCER).toUnicodeString().equals(Version.getInstance().getVersion()) && Version.getInstance().getVersion().contains("licensed")) {
-                    LoggerFactory.getLogger(getClass()).warn(MessageLocalization.getMessage("custom.producer.line.was.overridden.with.defaults"));
+                    catalog.put(PdfName.METADATA, body.add(xmp).getIndirectReference());
                 }
                 getInfo().put(PdfName.PRODUCER, new PdfString(Version.getInstance().getVersion()));
                 // [C10] make pdfx conformant
