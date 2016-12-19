@@ -734,6 +734,7 @@ class PdfStamperImp extends PdfWriter {
             ps = new PageStamp(this, reader, pageN);
             pagesToContent.put(pageN, ps);
         }
+        ps.pageN.setIndRef(reader.getPageOrigRef(pageNum));
         return ps;
     }
 

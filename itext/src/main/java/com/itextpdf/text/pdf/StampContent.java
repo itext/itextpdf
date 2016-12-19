@@ -75,4 +75,11 @@ public class StampContent extends PdfContentByte {
     void addAnnotation(PdfAnnotation annot) {
         ((PdfStamperImp)writer).addAnnotation(annot, ps.pageN);
     }
+
+    @Override
+    protected PdfIndirectReference getCurrentPage() {
+        return ps.pageN.getIndRef();
+    }
+
+
 }
