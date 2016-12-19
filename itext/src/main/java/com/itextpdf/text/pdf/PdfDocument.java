@@ -94,6 +94,7 @@ public class PdfDocument extends Document {
 
         PdfInfo() {
             super();
+            addProducer();
             addCreationDate();
         }
 
@@ -463,6 +464,7 @@ public class PdfDocument extends Document {
                     break;
                 case Element.PRODUCER:
                     // you can not change the name of the producer
+                    info.addProducer();
                     break;
                 case Element.CREATIONDATE:
                     // you can not set the creation date, only reset it

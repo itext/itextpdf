@@ -1285,7 +1285,7 @@ public class PdfWriter extends DocWriter implements
                     }
                 	catalog.put(PdfName.METADATA, body.add(xmp).getIndirectReference());
                 }
-                if (getInfo().contains(PdfName.PRODUCER) && Version.getInstance().getVersion().contains("licensed")) {
+                if (!getInfo().getAsString(PdfName.PRODUCER).toUnicodeString().equals(Version.getInstance().getVersion()) && Version.getInstance().getVersion().contains("licensed")) {
                     LoggerFactory.getLogger(getClass()).warn(MessageLocalization.getMessage("custom.producer.line.was.overridden.with.defaults"));
                 }
                 getInfo().put(PdfName.PRODUCER, new PdfString(Version.getInstance().getVersion()));
