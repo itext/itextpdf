@@ -930,7 +930,9 @@ class PdfStamperImp extends PdfWriter {
                 PdfDictionary appDic = merged.getAsDict(PdfName.AP);
                 PdfObject as_n = null;
                 if (appDic != null) {
-                    as_n = appDic.getAsStream(PdfName.N);
+                    as_n = appDic.getDirectObject(PdfName.N);
+                    if (as_n == null)
+                        as_n = appDic.getAsStream(PdfName.N);
                     if (as_n == null)
                         as_n = appDic.getAsDict(PdfName.N);
                 }
