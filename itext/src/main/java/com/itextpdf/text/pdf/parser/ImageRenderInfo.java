@@ -91,11 +91,11 @@ public class ImageRenderInfo {
         this.colorSpaceDictionary = colorSpaceDictionary;
         this.markedContentInfos = new ArrayList<MarkedContentInfo>(markedContentInfo);
     }
-    
     /**
      * Create an ImageRenderInfo object based on an XObject (this is the most common way of including an image in PDF)
-     * @param ctm the coordinate transformation matrix at the time the image is rendered
+     * @param gs graphic state of the XObject
      * @param ref a reference to the image XObject
+     * @param colorSpaceDictionary colourspace of the image
      * @return the ImageRenderInfo representing the rendered XObject
      * @since 5.0.1
      */
@@ -103,23 +103,28 @@ public class ImageRenderInfo {
         return new ImageRenderInfo(gs, ref, colorSpaceDictionary,null);
     }
 
+    /**
+     * Create an ImageRenderInfo object based on an XObject (this is the most common way of including an image in PDF)
+     * @param gs graphic state of the XObject
+     * @param ref a reference to the image XObject
+     * @param colorSpaceDictionary colourspace of the image
+     * @param markedContentInfo marked content information for the XObject
+     * @return the ImageRenderInfo representing the rendered XObject
+     * @since 5.5.11
+     */
     public static ImageRenderInfo createForXObject(GraphicsState gs, PdfIndirectReference ref, PdfDictionary colorSpaceDictionary, Collection<MarkedContentInfo> markedContentInfo){
         return new ImageRenderInfo(gs, ref, colorSpaceDictionary,markedContentInfo);
     }
     
     /**
-     * Create an ImageRenderInfo object based on inline image data.  This is nowhere near completely thought through
-     * and really just acts as a placeholder.
-     * @param ctm the coordinate transformation matrix at the time the image is rendered
-     * @param imageObject the image object representing the inline image
+     * Create an ImageRenderInfo object based on inline image data.
+     * @param gs graphic state of the XObject
+     * @param InlineImageInfo  a reference to the inline image
+     * @param colorSpaceDictionary colourspace of the image
+     * @param markedContentInfo marked content information for the XObject
      * @return the ImageRenderInfo representing the rendered embedded image
      * @since 5.0.1
      */
-    protected static ImageRenderInfo createForEmbeddedImage(GraphicsState gs, InlineImageInfo inlineImageInfo, PdfDictionary colorSpaceDictionary){
-        ImageRenderInfo renderInfo = new ImageRenderInfo(gs, inlineImageInfo, colorSpaceDictionary,null);
-        return renderInfo;
-    }
-
     protected static ImageRenderInfo createForEmbeddedImage(GraphicsState gs, InlineImageInfo inlineImageInfo, PdfDictionary colorSpaceDictionary,Collection<MarkedContentInfo> markedContentInfo){
         ImageRenderInfo renderInfo = new ImageRenderInfo(gs, inlineImageInfo, colorSpaceDictionary,markedContentInfo);
         return renderInfo;

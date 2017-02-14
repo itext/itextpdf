@@ -1253,7 +1253,9 @@ public class PdfContentStreamProcessor {
      * An XObject subtype handler for FORM
      */
     private static class FormXObjectDoHandler implements XObjectDoHandler{
-
+        public void handleXObject(PdfContentStreamProcessor processor, PdfStream stream, PdfIndirectReference ref) {
+            handleXObject(processor,stream,ref,null);
+        }
         public void handleXObject(PdfContentStreamProcessor processor, PdfStream stream, PdfIndirectReference ref, Stack<MarkedContentInfo> markedContentStack) {
 
             final PdfDictionary resources = stream.getAsDict(PdfName.RESOURCES);
@@ -1296,6 +1298,12 @@ public class PdfContentStreamProcessor {
      */
     private static class ImageXObjectDoHandler implements XObjectDoHandler{
 
+        public void handleXObject(PdfContentStreamProcessor processor, PdfStream xobjectStream, PdfIndirectReference ref) {
+            PdfDictionary colorSpaceDic = processor.resources.getAsDict(PdfName.COLORSPACE);
+            ImageRenderInfo renderInfo = ImageRenderInfo.createForXObject(processor.gs(), ref, colorSpaceDic,null);
+            processor.renderListener.renderImage(renderInfo);
+        }
+
         public void handleXObject(PdfContentStreamProcessor processor, PdfStream xobjectStream, PdfIndirectReference ref, Stack<MarkedContentInfo> markedContentStack) {
             PdfDictionary colorSpaceDic = processor.resources.getAsDict(PdfName.COLORSPACE);
             ImageRenderInfo renderInfo = ImageRenderInfo.createForXObject(processor.gs(), ref, colorSpaceDic,markedContentStack);
@@ -1307,6 +1315,10 @@ public class PdfContentStreamProcessor {
      * An XObject subtype handler that does nothing
      */
     private static class IgnoreXObjectDoHandler implements XObjectDoHandler{
+        public void handleXObject(PdfContentStreamProcessor processor, PdfStream xobjectStream, PdfIndirectReference ref) {
+            // ignore XObject subtype
+        }
+
         public void handleXObject(PdfContentStreamProcessor processor, PdfStream xobjectStream, PdfIndirectReference ref, Stack<MarkedContentInfo> markedContentStack) {
             // ignore XObject subtype
         }

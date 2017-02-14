@@ -53,5 +53,7 @@ import java.util.Stack;
  * @since iText 5.0.1
  */
 public interface XObjectDoHandler {
+    public void handleXObject(PdfContentStreamProcessor processor, PdfStream stream, PdfIndirectReference ref);
     public void handleXObject(PdfContentStreamProcessor processor, PdfStream stream, PdfIndirectReference ref,Stack<MarkedContentInfo> markedContentStack);
+
 }
