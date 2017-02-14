@@ -357,7 +357,6 @@ public class PdfContentStreamProcessor {
 
 
 
-
     /**
      * Displays an XObject using the registered handler for this XObject's subtype
      * @param xobjectName the name of the XObject to retrieve from the resource dictionary
@@ -372,7 +371,7 @@ public class PdfContentStreamProcessor {
             XObjectDoHandler handler = xobjectDoHandlers.get(subType);
             if (handler == null)
                 handler = xobjectDoHandlers.get(PdfName.DEFAULT);
-            handler.handleXObject(this, xobjectStream, xobjects.getAsIndirectObject(xobjectName));
+            handler.handleXObject(this, xobjectStream, xobjects.getAsIndirectObject(xobjectName),markedContentStack);
         } else {
             throw new IllegalStateException(MessageLocalization.getComposedMessage("XObject.1.is.not.a.stream", xobjectName));
         }
@@ -463,7 +462,7 @@ public class PdfContentStreamProcessor {
      * @param colorSpaceDic the color space for the inline immage
      */
     protected void handleInlineImage(InlineImageInfo info, PdfDictionary colorSpaceDic){
-        ImageRenderInfo renderInfo = ImageRenderInfo.createForEmbeddedImage(gs(), info, colorSpaceDic);
+        ImageRenderInfo renderInfo = ImageRenderInfo.createForEmbeddedImage(gs(), info, colorSpaceDic,markedContentStack);
         renderListener.renderImage(renderInfo);
     }
     
@@ -1255,7 +1254,7 @@ public class PdfContentStreamProcessor {
      */
     private static class FormXObjectDoHandler implements XObjectDoHandler{
 
-        public void handleXObject(PdfContentStreamProcessor processor, PdfStream stream, PdfIndirectReference ref) {
+        public void handleXObject(PdfContentStreamProcessor processor, PdfStream stream, PdfIndirectReference ref, Stack<MarkedContentInfo> markedContentStack) {
 
             final PdfDictionary resources = stream.getAsDict(PdfName.RESOURCES);
 
@@ -1297,9 +1296,9 @@ public class PdfContentStreamProcessor {
      */
     private static class ImageXObjectDoHandler implements XObjectDoHandler{
 
-        public void handleXObject(PdfContentStreamProcessor processor, PdfStream xobjectStream, PdfIndirectReference ref) {
+        public void handleXObject(PdfContentStreamProcessor processor, PdfStream xobjectStream, PdfIndirectReference ref, Stack<MarkedContentInfo> markedContentStack) {
             PdfDictionary colorSpaceDic = processor.resources.getAsDict(PdfName.COLORSPACE);
-            ImageRenderInfo renderInfo = ImageRenderInfo.createForXObject(processor.gs(), ref, colorSpaceDic);
+            ImageRenderInfo renderInfo = ImageRenderInfo.createForXObject(processor.gs(), ref, colorSpaceDic,markedContentStack);
             processor.renderListener.renderImage(renderInfo);
         }
     }
@@ -1308,7 +1307,7 @@ public class PdfContentStreamProcessor {
      * An XObject subtype handler that does nothing
      */
     private static class IgnoreXObjectDoHandler implements XObjectDoHandler{
-        public void handleXObject(PdfContentStreamProcessor processor, PdfStream xobjectStream, PdfIndirectReference ref) {
+        public void handleXObject(PdfContentStreamProcessor processor, PdfStream xobjectStream, PdfIndirectReference ref, Stack<MarkedContentInfo> markedContentStack) {
             // ignore XObject subtype
         }
     }
