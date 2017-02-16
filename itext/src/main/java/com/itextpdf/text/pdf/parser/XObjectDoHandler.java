@@ -46,10 +46,12 @@ package com.itextpdf.text.pdf.parser;
 import com.itextpdf.text.pdf.PdfIndirectReference;
 import com.itextpdf.text.pdf.PdfStream;
 
+import java.util.Stack;
+
 /**
  * @author Kevin Day
  * @since iText 5.0.1
  */
 public interface XObjectDoHandler {
-    public void handleXObject(PdfContentStreamProcessor processor, PdfStream stream, PdfIndirectReference ref);
+    public void handleXObject(PdfContentStreamProcessor processor, PdfStream stream, PdfIndirectReference ref,Stack<MarkedContentInfo> markedContentStack);
 }
