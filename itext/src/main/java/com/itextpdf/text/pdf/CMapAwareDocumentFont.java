@@ -45,11 +45,14 @@ package com.itextpdf.text.pdf;
 
 import com.itextpdf.text.ExceptionConverter;
 import com.itextpdf.text.Utilities;
+
 import java.io.IOException;
 //import java.util.ArrayList;
 import java.util.Map;
 
 import com.itextpdf.text.error_messages.MessageLocalization;
+import com.itextpdf.text.log.Logger;
+import com.itextpdf.text.log.LoggerFactory;
 
 import com.itextpdf.text.pdf.fonts.cmaps.CMapByteCid;
 import com.itextpdf.text.pdf.fonts.cmaps.CMapCache;
@@ -66,6 +69,8 @@ import com.itextpdf.text.pdf.fonts.cmaps.IdentityToUnicode;
  * @since 2.1.4
  */
 public class CMapAwareDocumentFont extends DocumentFont {
+    
+    private static final Logger LOGGER = LoggerFactory.getLogger(CMapAwareDocumentFont.class);
 
 	/** The font dictionary. */
     private PdfDictionary fontDic;
@@ -189,7 +194,12 @@ public class CMapAwareDocumentFont extends DocumentFont {
         cidbyte2uni = new char[256];
         for (int k = 0; k < e.length; ++k) {
             int key = e[k];
-            cidbyte2uni[key] = (char)byte2uni.get(key);
+            if (key <= 255) {
+                cidbyte2uni[key] = (char)byte2uni.get(key);
+            }
+            else {
+                LOGGER.warn("Font has illegal differences array.");
+            }
         }
         if (toUnicodeCmap != null) {
         	/*

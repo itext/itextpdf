@@ -45,6 +45,13 @@ public class CMapAwareDocumentFontTest {
             pdfReader.close();
         }
     }
+    
+    @Test
+    public void illegalDifference() throws IOException {
+        PdfReader reader = TestResourceUtils.getResourceAsPdfReader(this, "illegalDifference.pdf");
+        // this call will throw an exception and make the test fail if we remove the error-catching code
+        PdfTextExtractor.getTextFromPage(reader, 1);
+    }
 
     @Test
     public void weirdHyphensTest() throws IOException {
