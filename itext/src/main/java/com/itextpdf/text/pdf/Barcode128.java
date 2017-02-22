@@ -409,7 +409,7 @@ public class Barcode128 extends Barcode{
                 throw new RuntimeException(MessageLocalization.getComposedMessage("there.are.illegal.characters.for.barcode.128.in.1", text));
         }
         c = text.charAt(0);
-        char currentCode = START_B;
+        char currentCode = codeSet.getStartSymbol();
         int index = 0;
         if ((codeSet == Barcode128CodeSet.AUTO || codeSet == Barcode128CodeSet.C) && isNextDigits(text, index, 2)) {
             currentCode = START_C;
