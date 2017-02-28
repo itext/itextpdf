@@ -65,7 +65,7 @@ public final class Version {
 	 * iText is a registered trademark by iText Group NV.
 	 * Please don't change this constant.
 	 */
-	private String iText = "iText\u00ae";
+	private String iText = "iText\u00ae pdfXfa";
 	/**
 	 * This String contains the version number of this iText release.
 	 * For debugging purposes, we request you NOT to change this constant.
@@ -93,7 +93,7 @@ public final class Version {
             version = new Version();
             synchronized ( version ) {
                 try {
-                    Class<?> klass = Class.forName("com.itextpdf.license.LicenseKey");
+                    Class<?> klass = Class.forName("com.itextpdf.licensekey.XfaLicenseKey");
                     Method m = klass.getMethod("getLicenseeInfo");
                     String[] info = (String[])m.invoke(klass.newInstance());
                     if (info[3] != null && info[3].trim().length() > 0) {
