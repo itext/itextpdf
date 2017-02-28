@@ -35,10 +35,11 @@ import com.itextpdf.xmp.XMPError;
 import com.itextpdf.xmp.XMPException;
 import com.itextpdf.xmp.XMPMeta;
 
-
 /**
  * @since   11.08.2006
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 class ParameterAsserts implements XMPConst
 {
 	/**

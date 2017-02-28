@@ -47,7 +47,9 @@ package com.itextpdf.text.log;
  * 
  * Implementers may use this method to record actual system usage for licensing purposes
  * (e.g. count the number of documents or the volumne in bytes in the context of a SaaS license).
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public interface Counter {
 	
 	/** Gets a Counter instance for a specific class. */

@@ -43,10 +43,10 @@
  */
 package com.itextpdf.text.pdf;
 
+import com.itextpdf.text.DocWriter;
+
 import java.io.IOException;
 import java.io.OutputStream;
-
-import com.itextpdf.text.DocWriter;
 
 /**
  * <CODE>PdfIndirectObject</CODE> is the Pdf indirect object.
@@ -58,11 +58,11 @@ import com.itextpdf.text.DocWriter;
  * <I>generation number</I>, and the <B>obj</B> keyword.<BR>
  * This object is described in the 'Portable Document Format Reference Manual version 1.7'
  * section 3.2.9 (page 63-65).
- *
  * @see		PdfObject
  * @see		PdfIndirectReference
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
-
+@Deprecated
 public class PdfIndirectObject {
     
     // membervariables

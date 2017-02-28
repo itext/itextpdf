@@ -69,7 +69,9 @@ import java.util.Map;
 /**
  * Extension to PdfStamperImp that will attempt to keep a file
  * in conformance with the PDF/A standard.
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class PdfAStamperImp extends PdfStamperImp {
 
     protected Counter COUNTER = CounterFactory.getCounter(PdfAStamper.class);

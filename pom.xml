@@ -8,11 +8,11 @@
     <version>1.0.0</version>
   </parent>
 
-  <artifactId>root</artifactId>
-  <version>5.5.12</version>
+  <artifactId>xfa-root</artifactId>
+  <version>1.0.2-SNAPSHOT</version>
   <packaging>pom</packaging>
 
-  <name>iText</name>
+  <name>pdfXFA iText</name>
   <description>A Free Java-PDF library</description>
   <url>http://itextpdf.com</url>
   <inceptionYear>1998</inceptionYear>

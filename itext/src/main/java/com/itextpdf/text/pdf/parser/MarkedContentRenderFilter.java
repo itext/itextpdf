@@ -46,7 +46,9 @@ package com.itextpdf.text.pdf.parser;
 /**
  * A {@link RenderFilter} that only allows text within a specified marked content sequence.
  * @since 5.0.2
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class MarkedContentRenderFilter extends RenderFilter {
     
 	/** The MCID to match. */

@@ -44,9 +44,10 @@
 package com.itextpdf.text.pdf.fonts.otf;
 
 /**
- *  
  * @author <a href="mailto:paawak@gmail.com">Palash Ray</a>
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class FontReadingException extends Exception {
     
     private static final long serialVersionUID = 1L;

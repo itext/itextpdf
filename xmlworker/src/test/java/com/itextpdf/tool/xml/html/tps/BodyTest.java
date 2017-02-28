@@ -62,7 +62,9 @@ import com.itextpdf.tool.xml.pipeline.html.HtmlPipelineContext;
 /**
  * @author itextpdf.com
  *
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class BodyTest {
 	final Body b = new Body();
 	private WorkerContextImpl workerContextImpl;

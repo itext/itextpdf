@@ -22,10 +22,11 @@ package com.itextpdf.text.pdf.qrcode;
  *
  * <p>Much credit is due to William Rucklidge since portions of this code are an indirect
  * port of his C++ Reed-Solomon implementation.</p>
- *
  * @author Sean Owen
  * @since 5.0.2
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 final class GF256Poly {
 
   private final GF256 field;

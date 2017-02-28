@@ -51,8 +51,9 @@ import java.util.Iterator;
 /**
  * <CODE>PdfLine</CODE> defines an array with <CODE>PdfChunk</CODE>-objects
  * that fit into 1 line.
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
-
+@Deprecated
 public class PdfLine {
 
     // membervariables

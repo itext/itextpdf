@@ -46,10 +46,10 @@ package com.itextpdf.text;
 import com.itextpdf.text.pdf.PdfChunk;
 
 /** Interface for customizing the split character.
- *
  * @author Paulo Soares
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
-
+@Deprecated
 public interface SplitCharacter {
     
     /**

@@ -44,6 +44,10 @@ package com.itextpdf.tool.xml.examples.css.page_break.before.list;
 
 import com.itextpdf.tool.xml.examples.SampleTest;
 
+/**
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
+ */
+@Deprecated
 public class Before_list01 extends SampleTest {
     protected String getTestName() {
         return  "before_list01";

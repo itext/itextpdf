@@ -47,7 +47,9 @@ import com.itextpdf.text.zugferd.checkers.CodeValidation;
 
 /**
  * Class that can be used to check if a measurement unit code is valid.
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class MeasurementUnitCode extends CodeValidation {
     
     public static final String ITEM = "C62";

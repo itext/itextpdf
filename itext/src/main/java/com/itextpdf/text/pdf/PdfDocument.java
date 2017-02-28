@@ -43,12 +43,34 @@
  */
 package com.itextpdf.text.pdf;
 
-import com.itextpdf.text.*;
+import com.itextpdf.text.AccessibleElementId;
+import com.itextpdf.text.Anchor;
+import com.itextpdf.text.Annotation;
+import com.itextpdf.text.BaseColor;
+import com.itextpdf.text.Chunk;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Element;
+import com.itextpdf.text.ExceptionConverter;
+import com.itextpdf.text.Font;
+import com.itextpdf.text.Image;
+import com.itextpdf.text.ImgTemplate;
 import com.itextpdf.text.List;
+import com.itextpdf.text.ListItem;
+import com.itextpdf.text.ListLabel;
+import com.itextpdf.text.MarkedObject;
+import com.itextpdf.text.MarkedSection;
+import com.itextpdf.text.Meta;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.Phrase;
+import com.itextpdf.text.Rectangle;
+import com.itextpdf.text.Section;
+import com.itextpdf.text.TabSettings;
+import com.itextpdf.text.TabStop;
+import com.itextpdf.text.Version;
 import com.itextpdf.text.api.WriterOperation;
 import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.io.TempFileCache;
-import com.itextpdf.text.log.LoggerFactory;
 import com.itextpdf.text.pdf.collection.PdfCollection;
 import com.itextpdf.text.pdf.draw.DrawInterface;
 import com.itextpdf.text.pdf.interfaces.IAccessibleElement;
@@ -57,7 +79,14 @@ import com.itextpdf.text.pdf.internal.PdfViewerPreferencesImp;
 
 import java.io.IOException;
 import java.text.DecimalFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
+import java.util.Stack;
+import java.util.TreeMap;
 
 /**
  * <CODE>PdfDocument</CODE> is the class that is used by <CODE>PdfWriter</CODE>
@@ -66,13 +95,13 @@ import java.util.*;
  * A <CODE>PdfDocument</CODE> always listens to a <CODE>Document</CODE>
  * and adds the Pdf representation of every <CODE>Element</CODE> that is
  * added to the <CODE>Document</CODE>.
- *
  * @see		com.itextpdf.text.Document
  * @see		com.itextpdf.text.DocListener
  * @see		PdfWriter
  * @since	2.0.8 (class was package-private before)
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
-
+@Deprecated
 public class PdfDocument extends Document {
 
     /**

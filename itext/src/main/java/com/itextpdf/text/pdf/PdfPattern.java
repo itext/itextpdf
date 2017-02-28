@@ -47,10 +47,10 @@ import com.itextpdf.text.ExceptionConverter;
 
 /**
  * A <CODE>PdfPattern</CODE> defines a ColorSpace
- *
  * @see		PdfStream
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
-
+@Deprecated
 public class PdfPattern extends PdfStream {
     
 	/**

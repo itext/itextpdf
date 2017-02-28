@@ -53,7 +53,9 @@ import com.itextpdf.text.pdf.spatial.units.Square;
 /**
  * Geospatial Measure dictionary.
  * @since 5.1.0
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class MeasureGeospatial extends Measure {
 
 	/**

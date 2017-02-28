@@ -9,10 +9,10 @@
     <relativePath />
   </parent>
 
-  <artifactId>itext-xtra</artifactId>
-  <version>5.5.12</version>
+  <artifactId>xfa-itext-xtra</artifactId>
+  <version>1.0.2-SNAPSHOT</version>
 
-  <name>iText Xtra</name>
+  <name>pdfXFA iText Xtra</name>
   <description>iText Xtra, part of iText a Free Java-PDF library</description>
   <url>http://itextpdf.com</url>
 
@@ -73,7 +73,7 @@
   <dependencies>
     <dependency>
       <groupId>com.itextpdf</groupId>
-      <artifactId>itextpdf</artifactId>
+      <artifactId>xfa-itextpdf</artifactId>
       <version>${project.version}</version>
       <optional>true</optional>
     </dependency>

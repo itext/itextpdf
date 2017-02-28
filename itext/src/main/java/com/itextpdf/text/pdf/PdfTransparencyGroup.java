@@ -46,7 +46,9 @@ package com.itextpdf.text.pdf;
 /** The transparency group dictionary.
  *
  * @author Paulo Soares
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class PdfTransparencyGroup extends PdfDictionary {
     
     /**

@@ -51,11 +51,11 @@ import java.util.HashMap;
 /**
  * An <CODE>Annotation</CODE> is a little note that can be added to a page on
  * a document.
- *
  * @see Element
  * @see Anchor
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
-
+@Deprecated
 public class Annotation implements Element {
 
 	// membervariables

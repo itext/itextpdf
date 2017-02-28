@@ -54,13 +54,14 @@ import java.io.IOException;
 import java.io.InputStream;
 
 /**
- *
  * @author psoares
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class CidResource implements CidLocation{
 
     public PRTokeniser getLocation(String location) throws IOException {
-        String fullName = BaseFont.RESOURCE_PATH + "cmaps/" + location;
+        String fullName = BaseFont.ITEXT_7_RESOURCE_PATH + "cmap/" + location;
         InputStream inp = StreamUtil.getResourceStream(fullName);
         if (inp == null)
             throw new IOException(MessageLocalization.getComposedMessage("the.cmap.1.was.not.found", fullName));

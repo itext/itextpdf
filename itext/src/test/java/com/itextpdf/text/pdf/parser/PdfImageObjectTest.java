@@ -62,7 +62,9 @@ import com.itextpdf.text.pdf.PdfReader;
 
 /**
  * @author kevin
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class PdfImageObjectTest {
 
     @Before

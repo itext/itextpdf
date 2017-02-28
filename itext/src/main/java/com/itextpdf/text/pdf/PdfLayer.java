@@ -43,17 +43,18 @@
  */
 package com.itextpdf.text.pdf;
 
+import com.itextpdf.text.error_messages.MessageLocalization;
+
 import java.io.IOException;
 import java.util.ArrayList;
-
-import com.itextpdf.text.error_messages.MessageLocalization;
 /**
  * An optional content group is a dictionary representing a collection of graphics
  * that can be made visible or invisible dynamically by users of viewer applications.
  * In iText they are referenced as layers.
- *
  * @author Paulo Soares
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class PdfLayer extends PdfDictionary implements PdfOCG {
     protected PdfIndirectReference ref;
     protected ArrayList<PdfLayer> children;

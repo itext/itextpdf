@@ -30,20 +30,20 @@
 
 package com.itextpdf.xmp.impl;
 
+import com.itextpdf.xmp.XMPException;
+import com.itextpdf.xmp.options.SerializeOptions;
+
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 
-import com.itextpdf.xmp.XMPException;
-import com.itextpdf.xmp.options.SerializeOptions;
-
-
 /**
  * Serializes the <code>XMPMeta</code>-object to an <code>OutputStream</code> according to the
  * <code>SerializeOptions</code>. 
- * 
  * @since   11.07.2006
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class XMPSerializerHelper
 {
 	/**

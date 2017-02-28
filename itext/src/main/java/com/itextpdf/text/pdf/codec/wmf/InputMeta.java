@@ -44,11 +44,15 @@
 package com.itextpdf.text.pdf.codec.wmf;
 
 import com.itextpdf.text.BaseColor;
+import com.itextpdf.text.Utilities;
+
 import java.io.IOException;
 import java.io.InputStream;
 
-import com.itextpdf.text.Utilities;
-
+/**
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
+ */
+@Deprecated
 public class InputMeta {
     
     InputStream in;

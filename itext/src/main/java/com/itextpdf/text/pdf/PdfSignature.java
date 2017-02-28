@@ -47,9 +47,10 @@ import com.itextpdf.text.pdf.security.PdfSignatureBuildProperties;
 
 /**
  * Implements the signature dictionary.
- * 
  * @author Paulo Soares
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class PdfSignature extends PdfDictionary {
 
 	/** Creates new PdfSignature */

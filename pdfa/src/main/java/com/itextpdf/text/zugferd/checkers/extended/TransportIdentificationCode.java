@@ -48,7 +48,9 @@ import com.itextpdf.text.zugferd.checkers.CodeValidation;
 /**
  * Series of codes that can be used for transport identification.
  * These codes are used only in the context of the Extended profile.
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class TransportIdentificationCode extends CodeValidation {
     
     public static final String SHIPMENT_REFERENCE = "SHIPMENT_REFERENCE";

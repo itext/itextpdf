@@ -18,9 +18,10 @@ package com.itextpdf.text.pdf.hyphenation;
 
 /**
  * This class represents a hyphenated word.
- *
  * @author Carlos Villegas <cav@uniscope.co.jp>
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class Hyphenation {
     
     private int[] hyphenPoints;

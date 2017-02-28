@@ -47,6 +47,10 @@ import org.junit.Ignore;
 
 //issue with border of p element
 @Ignore
+/**
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
+ */
+@Deprecated
 public class Css3Modsel_14Test extends SampleTest {
     protected String getTestName() {
         return  "css3-modsel-14";

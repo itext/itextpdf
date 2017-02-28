@@ -47,7 +47,9 @@ import java.nio.channels.FileChannel;
 /**
  * A RandomAccessSource that is based on an underlying {@link FileChannel}.  The entire channel will be mapped into memory for efficient reads.
  * @since 5.3.5
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class FileChannelRandomAccessSource implements RandomAccessSource {
 
     /**

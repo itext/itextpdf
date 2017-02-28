@@ -62,7 +62,9 @@ import java.util.Map;
  * Identity-V. This is the only way to represent some character sets such
  * as Thai.
  * @author  Paulo Soares
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 class TrueTypeFontUnicode extends TrueTypeFont implements Comparator<int[]>{
 	
 	private static final List<Language> SUPPORTED_LANGUAGES_FOR_OTF = Arrays.asList(Language.BENGALI);  

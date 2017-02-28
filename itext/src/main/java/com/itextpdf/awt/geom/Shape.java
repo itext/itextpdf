@@ -25,8 +25,9 @@ package com.itextpdf.awt.geom;
 
 /**
  * Shape
- *
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public interface Shape {
     public boolean contains(double x, double y);
 

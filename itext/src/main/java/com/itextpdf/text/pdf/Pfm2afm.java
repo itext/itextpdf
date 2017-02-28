@@ -136,16 +136,18 @@
  ********************************************************************/
 package com.itextpdf.text.pdf;
 
-import java.io.FileOutputStream;
+import com.itextpdf.text.error_messages.MessageLocalization;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
-import com.itextpdf.text.error_messages.MessageLocalization;
 
 /**
  * Converts a PFM file into an AFM file.
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public final class Pfm2afm {
     private RandomAccessFileOrArray in;
     private PrintWriter out;

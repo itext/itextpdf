@@ -30,21 +30,21 @@
 
 package com.itextpdf.xmp;
 
-import java.util.Calendar;
-
 import com.itextpdf.xmp.options.IteratorOptions;
 import com.itextpdf.xmp.options.ParseOptions;
 import com.itextpdf.xmp.options.PropertyOptions;
 import com.itextpdf.xmp.properties.XMPProperty;
 
+import java.util.Calendar;
 
 /**
  * This class represents the set of XMP metadata as a DOM representation. It has methods to read and
  * modify all kinds of properties, create an iterator over all properties and serialize the metadata
  * to a String, byte-array or <code>OutputStream</code>.
- * 
  * @since 20.01.2006
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public interface XMPMeta extends Cloneable
 {
 	// ---------------------------------------------------------------------------------------------

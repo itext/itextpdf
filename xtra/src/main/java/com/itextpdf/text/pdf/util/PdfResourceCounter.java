@@ -56,7 +56,9 @@ import java.util.Map;
 /**
  * This class can be used to count the number of bytes needed when copying
  * pages from an existing PDF into a newly created PDF.
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class PdfResourceCounter {
     /** A map of the resources that are already taken into account */
     protected Map<Integer, PdfObject> resources;

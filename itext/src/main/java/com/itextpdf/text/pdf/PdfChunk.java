@@ -55,12 +55,12 @@ import java.util.Map;
  * <P>
  * A <CODE>PdfChunk</CODE> is a <CODE>PdfString</CODE> in a certain
  * <CODE>PdfFont</CODE> and <CODE>BaseColor</CODE>.
- *
  * @see		PdfString
  * @see		com.itextpdf.text.Chunk
  * @see		com.itextpdf.text.Font
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
-
+@Deprecated
 public class PdfChunk {
 
     private static final char singleSpace[] = {' '};

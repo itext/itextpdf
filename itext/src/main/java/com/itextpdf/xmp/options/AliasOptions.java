@@ -32,12 +32,12 @@ package com.itextpdf.xmp.options;
 
 import com.itextpdf.xmp.XMPException;
 
-
 /**
  * Options for XMPSchemaRegistryImpl#registerAlias.
- * 
  * @since 20.02.2006
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public final class AliasOptions extends Options
 {
 	/** This is a direct mapping. The actual data type does not matter. */

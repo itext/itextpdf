@@ -75,7 +75,9 @@ import com.itextpdf.text.log.LoggerFactory;
 /**
  * Class that allows you to verify a certificate against
  * one or more OCSP responses.
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class OCSPVerifier extends RootStoreVerifier {
 	
 	/** The Logger instance */

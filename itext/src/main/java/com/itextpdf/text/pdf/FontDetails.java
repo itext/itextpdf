@@ -56,9 +56,10 @@ import java.util.*;
 /**
  * Each font in the document will have an instance of this class
  * where the characters used will be represented.
- *
  * @author  Paulo Soares
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 class FontDetails {
 
     /**

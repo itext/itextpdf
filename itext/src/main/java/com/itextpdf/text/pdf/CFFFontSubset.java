@@ -58,8 +58,11 @@ import java.util.LinkedList;
  * For Non CID the Lsubroutines are subsetted. On both types the Gsubroutines is subsetted.
  * A font which was not of CID type is transformed into CID as a part of the subset process.
  * The CID synthetic creation was written by Sivan Toledo (sivan@math.tau.ac.il)
- * @author Oren Manor (manorore@post.tau.ac.il) and Ygal Blum (blumygal@post.tau.ac.il)
+ * @author Oren Manor (manorore@post.tau.ac.il)
+ * @author Ygal Blum (blumygal@post.tau.ac.il)
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class CFFFontSubset extends CFFFont {
 
 	/**

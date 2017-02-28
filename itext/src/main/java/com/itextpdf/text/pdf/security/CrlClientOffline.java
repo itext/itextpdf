@@ -54,7 +54,9 @@ import java.util.Collection;
  * An implementation of the CrlClient that handles offline
  * Certificate Revocation Lists.
  * @author Paulo Soares
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class CrlClientOffline implements CrlClient {
 	
 	/** The CRL as a byte array. */

@@ -56,9 +56,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- *
  * @author  psoares
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class DocumentFont extends BaseFont {
     // code, [glyph, width]
     private HashMap<Integer, int[]> metrics = new HashMap<Integer, int[]>();

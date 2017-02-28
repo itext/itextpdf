@@ -47,7 +47,9 @@ package com.itextpdf.text.pdf.languages;
  * Superclass for processors that can convert a String of bytes in an Indic
  * language to a String in the same language of which the bytes are reordered
  * for rendering using a font that contains the necessary glyphs.
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public abstract class IndicLigaturizer implements LanguageProcessor {
 
 	// Hashtable Indexes

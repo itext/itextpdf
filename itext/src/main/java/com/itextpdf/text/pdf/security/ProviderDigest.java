@@ -47,9 +47,10 @@ import java.security.GeneralSecurityException;
 import java.security.MessageDigest;
 
 /**
- *
  * @author psoares
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class ProviderDigest implements ExternalDigest {
     private String provider;
 

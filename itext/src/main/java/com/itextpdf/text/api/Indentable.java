@@ -45,7 +45,9 @@ package com.itextpdf.text.api;
 
 /**
  * Objects implementing Indentable allow to set indentation left and right.
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public interface Indentable {
 
 	/**
