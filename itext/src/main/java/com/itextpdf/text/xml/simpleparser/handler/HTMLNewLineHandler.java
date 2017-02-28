@@ -43,18 +43,18 @@
  */
 package com.itextpdf.text.xml.simpleparser.handler;
 
+import com.itextpdf.text.xml.simpleparser.NewLineHandler;
+
 import java.util.HashSet;
 import java.util.Set;
-
-import com.itextpdf.text.xml.simpleparser.NewLineHandler;
 
 /**
  * This {@link NewLineHandler} returns true on the tags <code>p</code>,
  * <code>blockqoute</code>and <code>br</code>
- *
  * @author Balder
- *
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class HTMLNewLineHandler implements NewLineHandler {
 
 	private final Set<String> newLineTags = new HashSet<String>();

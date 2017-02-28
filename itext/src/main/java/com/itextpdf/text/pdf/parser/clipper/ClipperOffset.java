@@ -55,6 +55,10 @@ import com.itextpdf.text.pdf.parser.clipper.Clipper.PolyType;
 import com.itextpdf.text.pdf.parser.clipper.Point.DoublePoint;
 import com.itextpdf.text.pdf.parser.clipper.Point.LongPoint;
 
+/**
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
+ */
+@Deprecated
 public class ClipperOffset {
     private static boolean nearZero( double val ) {
         return val > -TOLERANCE && val < TOLERANCE;

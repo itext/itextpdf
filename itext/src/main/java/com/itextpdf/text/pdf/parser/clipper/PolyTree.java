@@ -46,6 +46,10 @@ package com.itextpdf.text.pdf.parser.clipper;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
+ */
+@Deprecated
 public class PolyTree extends PolyNode {
     private final List<PolyNode> allPolys = new ArrayList<PolyNode>();
 

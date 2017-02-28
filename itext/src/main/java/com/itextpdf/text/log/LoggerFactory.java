@@ -46,10 +46,10 @@ package com.itextpdf.text.log;
  * implementing {@link Logger}. In the implementation users can choose how they
  * log received messages. Added for developers. For some cases it can be handy
  * to receive logging statements while developing applications with iText
- *
  * @author redlab_b
- *
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class LoggerFactory {
 
 	static {

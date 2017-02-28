@@ -50,9 +50,10 @@ import com.itextpdf.text.pdf.PdfObject;
 import com.itextpdf.text.pdf.PdfString;
 
 /**
- *
  * @author psoares
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class CMapUniCid extends AbstractCMap {
     private IntHashtable map = new IntHashtable(65537);
     

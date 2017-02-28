@@ -45,8 +45,9 @@ package com.itextpdf.text.pdf;
 
 /**
  * a Literal
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
-
+@Deprecated
 public class PdfLiteral extends PdfObject {
     
     /**

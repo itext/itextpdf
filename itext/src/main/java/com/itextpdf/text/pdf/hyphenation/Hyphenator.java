@@ -26,9 +26,10 @@ import java.util.Hashtable;
 /**
  * This class is the main entry point to the hyphenation package.
  * You can use only the static methods or create an instance.
- *
  * @author Carlos Villegas <cav@uniscope.co.jp>
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class Hyphenator {
 
     /** TODO: Don't use statics */
@@ -37,7 +38,7 @@ public class Hyphenator {
     private HyphenationTree hyphenTree = null;
     private int remainCharCount = 2;
     private int pushCharCount = 2;
-    private static final String defaultHyphLocation = "com/itextpdf/text/pdf/hyphenation/hyph/";
+    private static final String defaultHyphLocation = "com/itextpdf/hyph/";
 
     /** Holds value of property hyphenDir. */
     private static String hyphenDir = "";

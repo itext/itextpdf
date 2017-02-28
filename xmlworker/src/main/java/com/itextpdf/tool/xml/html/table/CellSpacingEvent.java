@@ -54,7 +54,9 @@ import com.itextpdf.text.pdf.PdfPTable;
 /**
  * @author Emiel Ackermann
  *
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class CellSpacingEvent implements PdfPCellEvent {
 	private final TableStyleValues styleValues;
 

@@ -66,7 +66,9 @@ import com.itextpdf.tool.xml.pipeline.html.HtmlPipelineContext;
 /**
  * @author itextpdf.com
  *
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class DivTest {
 	final Div d = new Div();
 	List<Element> currentContent = new ArrayList<Element>();

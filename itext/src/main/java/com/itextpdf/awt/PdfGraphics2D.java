@@ -43,27 +43,25 @@
  */
 package com.itextpdf.awt;
 
-import java.awt.AlphaComposite;
-import java.awt.BasicStroke;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Composite;
-import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.GradientPaint;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.GraphicsConfiguration;
-import java.awt.Image;
-import java.awt.MediaTracker;
-import java.awt.Paint;
-import java.awt.Polygon;
-import java.awt.Rectangle;
-import java.awt.RenderingHints;
-import java.awt.Shape;
-import java.awt.Stroke;
-import java.awt.TexturePaint;
-import java.awt.Transparency;
+import com.itextpdf.awt.geom.PolylineShape;
+import com.itextpdf.text.BaseColor;
+import com.itextpdf.text.pdf.BaseFont;
+import com.itextpdf.text.pdf.ByteBuffer;
+import com.itextpdf.text.pdf.CMYKColor;
+import com.itextpdf.text.pdf.PdfAction;
+import com.itextpdf.text.pdf.PdfContentByte;
+import com.itextpdf.text.pdf.PdfGState;
+import com.itextpdf.text.pdf.PdfPatternPainter;
+import com.itextpdf.text.pdf.PdfShading;
+import com.itextpdf.text.pdf.PdfShadingPattern;
+
+import javax.imageio.IIOImage;
+import javax.imageio.ImageIO;
+import javax.imageio.ImageWriteParam;
+import javax.imageio.ImageWriter;
+import javax.imageio.plugins.jpeg.JPEGImageWriteParam;
+import javax.imageio.stream.ImageOutputStream;
+import java.awt.*;
 import java.awt.RenderingHints.Key;
 import java.awt.color.ColorSpace;
 import java.awt.font.FontRenderContext;
@@ -94,25 +92,10 @@ import java.util.Hashtable;
 import java.util.Locale;
 import java.util.Map;
 
-import javax.imageio.IIOImage;
-import javax.imageio.ImageIO;
-import javax.imageio.ImageWriteParam;
-import javax.imageio.ImageWriter;
-import javax.imageio.plugins.jpeg.JPEGImageWriteParam;
-import javax.imageio.stream.ImageOutputStream;
-
-import com.itextpdf.awt.geom.PolylineShape;
-import com.itextpdf.text.BaseColor;
-import com.itextpdf.text.pdf.BaseFont;
-import com.itextpdf.text.pdf.ByteBuffer;
-import com.itextpdf.text.pdf.CMYKColor;
-import com.itextpdf.text.pdf.PdfAction;
-import com.itextpdf.text.pdf.PdfContentByte;
-import com.itextpdf.text.pdf.PdfGState;
-import com.itextpdf.text.pdf.PdfPatternPainter;
-import com.itextpdf.text.pdf.PdfShading;
-import com.itextpdf.text.pdf.PdfShadingPattern;
-
+/**
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
+ */
+@Deprecated
 public class PdfGraphics2D extends Graphics2D {
 
     private static final int FILL = 1;

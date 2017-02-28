@@ -57,6 +57,10 @@ import com.itextpdf.text.pdf.parser.clipper.Point.LongPoint;
 
 import java.util.*;
 
+/**
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
+ */
+@Deprecated
 class PdfCleanUpRegionFilter extends RenderFilter {
 
     private List<Rectangle> rectangles;

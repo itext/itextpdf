@@ -50,7 +50,9 @@ import com.itextpdf.tool.xml.parser.State;
  * Handles CDATA, currently nothing is done with the data.
  * @author redlab_b
  *
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class CdataState implements State {
 
 	private final XMLParser parser;

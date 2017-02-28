@@ -54,6 +54,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 
+/**
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
+ */
+@Deprecated
 public class PdfA2Checker extends PdfAChecker {
 
     static public final HashSet<PdfName> allowedBlendModes = new HashSet<PdfName>(Arrays.asList(PdfGState.BM_NORMAL,

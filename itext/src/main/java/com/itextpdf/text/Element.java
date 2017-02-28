@@ -58,7 +58,6 @@ import java.util.List;
  * classes (I think they're really great). However, if I use the
  * javax.swing.text classes, it will become very difficult to downgrade rugPdf.
  * </OL>
- *
  * @see Anchor
  * @see Chapter
  * @see Chunk
@@ -72,8 +71,9 @@ import java.util.List;
  * @see Phrase
  * @see Rectangle
  * @see Section
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
-
+@Deprecated
 public interface Element {
 
 	// static membervariables (meta information)

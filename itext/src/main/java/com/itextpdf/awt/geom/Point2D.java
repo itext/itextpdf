@@ -25,6 +25,10 @@ package com.itextpdf.awt.geom;
 
 import com.itextpdf.awt.geom.misc.HashCode;
 
+/**
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
+ */
+@Deprecated
 public abstract class Point2D implements Cloneable {
 
     public static class Float extends Point2D {

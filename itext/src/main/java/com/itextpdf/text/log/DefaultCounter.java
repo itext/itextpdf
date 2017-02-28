@@ -46,7 +46,9 @@ import com.itextpdf.text.pdf.codec.Base64;
 
 /**
  * Implementation of the Counter interface that doesn't do anything.
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class DefaultCounter implements Counter {
 
     private int count = 0;

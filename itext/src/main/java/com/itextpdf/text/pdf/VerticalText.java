@@ -55,7 +55,9 @@ import com.itextpdf.text.error_messages.MessageLocalization;
  * to horizontal text although it refers to vertical text.
  * A line with the alignment Element.LEFT_ALIGN will actually
  * be top aligned.
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class VerticalText {
 
 /** Signals that there are no more text available. */

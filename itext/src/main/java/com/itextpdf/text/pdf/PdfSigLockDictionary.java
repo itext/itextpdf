@@ -45,7 +45,9 @@ package com.itextpdf.text.pdf;
 
 /**
  * A signature field lock dictionary.
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class PdfSigLockDictionary extends PdfDictionary  {
 	
 	/**

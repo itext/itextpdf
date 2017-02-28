@@ -48,7 +48,9 @@ import com.itextpdf.text.pdf.parser.Vector;
 
 /**
  * Represents a chunk of a pdf content stream which is under cleanup processing. E.g. image, text.
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 abstract class PdfCleanUpContentChunk {
 
     private boolean visible;

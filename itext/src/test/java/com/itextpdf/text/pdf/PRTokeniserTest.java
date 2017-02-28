@@ -49,6 +49,10 @@ import org.junit.Test;
 import com.itextpdf.text.pdf.PRTokeniser.TokenType;
 import java.io.IOException;
 
+/**
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
+ */
+@Deprecated
 public class PRTokeniserTest {
 
 	@Before

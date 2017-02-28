@@ -56,9 +56,10 @@ import java.util.List;
  * They also support borders that vary in width/color on each side using
  * methods like {@link #setBorderWidthLeft(float)}or
  * {@link #setBorderColorLeft(BaseColor)}.
- *
  * @see Element
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class Rectangle implements Element {
 
 	// CONSTANTS:

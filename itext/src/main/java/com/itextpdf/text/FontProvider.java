@@ -42,13 +42,14 @@
  * address: sales@itextpdf.com
  */
 package com.itextpdf.text;
-import com.itextpdf.text.BaseColor;
 
 /**
  * These two methods are used by FactoryProperties (for HTMLWorker).
  * It's implemented by FontFactoryImp.
  * @since	iText 5.0
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public interface FontProvider {
 	/**
 	 * Checks if a certain font is registered.

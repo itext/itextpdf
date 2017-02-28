@@ -43,16 +43,17 @@
  */
 package com.itextpdf.text.pdf.languages;
 
+import com.itextpdf.text.pdf.Glyph;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import com.itextpdf.text.pdf.Glyph;
-
 /**
- * 
  * @author <a href="mailto:paawak@gmail.com">Palash Ray</a>
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class BanglaGlyphRepositioner extends IndicGlyphRepositioner {
 	
 	private static final String[] CHARCTERS_TO_BE_SHIFTED_LEFT_BY_1 = new String[] {

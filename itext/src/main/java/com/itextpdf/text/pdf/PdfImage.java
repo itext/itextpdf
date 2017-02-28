@@ -43,18 +43,19 @@
  */
 package com.itextpdf.text.pdf;
 
+import com.itextpdf.text.Image;
+import com.itextpdf.text.error_messages.MessageLocalization;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import com.itextpdf.text.error_messages.MessageLocalization;
-
-import com.itextpdf.text.Image;
 
 /**
  * <CODE>PdfImage</CODE> is a <CODE>PdfStream</CODE> containing an image-<CODE>Dictionary</CODE> and -stream.
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
-
+@Deprecated
 public class PdfImage extends PdfStream {
     
     static final int TRANSFERSIZE = 4096;

@@ -43,6 +43,9 @@
  */
 package com.itextpdf.text.pdf.security;
 
+import com.itextpdf.text.log.Logger;
+import com.itextpdf.text.log.LoggerFactory;
+
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.KeyStore;
@@ -52,13 +55,12 @@ import java.util.Date;
 import java.util.Enumeration;
 import java.util.List;
 
-import com.itextpdf.text.log.Logger;
-import com.itextpdf.text.log.LoggerFactory;
-
 /**
  * Verifies a certificate against a <code>KeyStore</code>
  * containing trusted anchors.
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class RootStoreVerifier extends CertificateVerifier {
 	
 	/** The Logger instance */

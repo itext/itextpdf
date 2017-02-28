@@ -62,6 +62,10 @@ import com.itextpdf.text.pdf.ShadingColor;
 import com.itextpdf.text.pdf.SpotColor;
 import com.itextpdf.text.pdf.interfaces.PdfXConformance;
 
+/**
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
+ */
+@Deprecated
 public class PdfXConformanceImp implements PdfXConformance {
 
     /**

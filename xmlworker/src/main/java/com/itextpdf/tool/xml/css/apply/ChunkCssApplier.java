@@ -62,7 +62,9 @@ import java.util.Map.Entry;
 
 /**
  * Applies CSS Rules to Chunks
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class ChunkCssApplier implements CssApplier<Chunk> {
     /**
      * FF4 and IE8 provide normal text and bold text. All other values are translated to one of these 2 styles <br />

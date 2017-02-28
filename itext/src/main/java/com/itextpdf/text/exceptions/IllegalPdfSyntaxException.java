@@ -46,7 +46,9 @@ package com.itextpdf.text.exceptions;
 /**
  * Typed exception used when creating PDF syntax that isn't valid.
  * @since 2.1.6
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class IllegalPdfSyntaxException extends IllegalArgumentException {
 
 	/** Serial version ID */

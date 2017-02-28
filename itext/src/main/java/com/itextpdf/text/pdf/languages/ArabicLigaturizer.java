@@ -52,9 +52,10 @@ import java.util.HashMap;
  * Shape arabic characters. This code was inspired by an LGPL'ed C library:
  * Pango ( see http://www.pango.com/ ). Note that the code of this class is
  * the original work of Paulo Soares.
- *
  * @author Paulo Soares
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class ArabicLigaturizer implements LanguageProcessor {
     
     private static final HashMap<Character,char[]> maptable = new HashMap<Character, char[]>();

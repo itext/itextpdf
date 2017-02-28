@@ -47,7 +47,9 @@ import com.itextpdf.text.Image;
 import com.itextpdf.text.error_messages.MessageLocalization;
 /**
  * The content where Type3 glyphs are written to.
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public final class Type3Glyph extends PdfContentByte {
 
     private PageResources pageResources;

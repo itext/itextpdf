@@ -84,6 +84,10 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.logging.Logger;
 
+/**
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
+ */
+@Deprecated
 public class DefaultClipper extends ClipperBase {
     private class IntersectNode {
         Edge edge1;

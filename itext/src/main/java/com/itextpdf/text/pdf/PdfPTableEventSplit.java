@@ -45,9 +45,10 @@ package com.itextpdf.text.pdf;
 
 /**
  * Signals that a table will continue in the next page.
- * 
  * @since 5.0.6
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public interface PdfPTableEventSplit extends PdfPTableEvent {
     /**
      * This method is called to indicate that table is being split. It's called

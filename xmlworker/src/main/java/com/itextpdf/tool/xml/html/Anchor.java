@@ -57,7 +57,9 @@ import com.itextpdf.tool.xml.html.pdfelement.NoNewLineParagraph;
 /**
  * @author redlab_b
  *
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class Anchor extends AbstractTagProcessor {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(Anchor.class);

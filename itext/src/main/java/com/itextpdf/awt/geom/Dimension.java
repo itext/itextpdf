@@ -23,11 +23,14 @@
  */
 package com.itextpdf.awt.geom;
 
-import java.io.Serializable;
-
 import com.itextpdf.awt.geom.misc.HashCode;
 
+import java.io.Serializable;
 
+/**
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
+ */
+@Deprecated
 public class Dimension extends Dimension2D implements Serializable {
 
     private static final long serialVersionUID = 4723952579491349524L;

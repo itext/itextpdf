@@ -52,7 +52,9 @@ import java.security.PrivilegedAction;
  * A RandomAccessSource that is based on an underlying {@link ByteBuffer}.  This class takes steps to ensure that the byte buffer
  * is completely freed from memory during {@link ByteBufferRandomAccessSource#close()}
  * @since 5.3.5
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 class ByteBufferRandomAccessSource implements RandomAccessSource {
     
     /**

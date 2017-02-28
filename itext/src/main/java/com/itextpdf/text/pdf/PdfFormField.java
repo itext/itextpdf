@@ -42,14 +42,16 @@
  * address: sales@itextpdf.com
  */
 package com.itextpdf.text.pdf;
-import java.util.ArrayList;
 
 import com.itextpdf.text.Rectangle;
 
+import java.util.ArrayList;
+
 /** Implements form fields.
- *
  * @author Paulo Soares
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class PdfFormField extends PdfAnnotation {
 
     public static final int FF_READ_ONLY = 1;

@@ -57,10 +57,10 @@ import java.util.*;
  * If you are using True Type fonts, you can declare the paths of the different ttf- and ttc-files
  * to this class first and then create fonts in your code using one of the getFont method
  * without having to enter a path as parameter.
- *
  * @author  Bruno Lowagie
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
-
+@Deprecated
 public class FontFactoryImp implements FontProvider {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(FontFactoryImp.class);

@@ -68,7 +68,9 @@ import com.itextpdf.text.error_messages.MessageLocalization;
  * codeType = CODE128;
  * </pre>
  * @author Paulo Soares
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class Barcode128 extends Barcode{
 
     /** The bars to generate the code.

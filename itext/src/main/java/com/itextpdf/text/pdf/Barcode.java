@@ -49,9 +49,10 @@ import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.BaseColor;
 /** Base class containing properties and methods common to all
  * barcode types.
- *
  * @author Paulo Soares
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public abstract class Barcode {
     /** A type of barcode */
     public static final int EAN13 = 1;

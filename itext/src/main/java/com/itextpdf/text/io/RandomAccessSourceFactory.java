@@ -54,9 +54,9 @@ import java.nio.channels.FileChannel;
 /**
  * Factory to create {@link RandomAccessSource} objects based on various types of sources
  * @since 5.3.5
- *
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
-
+@Deprecated
 public final class RandomAccessSourceFactory {
 
 	/**

@@ -21,10 +21,11 @@ import java.util.HashMap;
 /**
  * Encapsulates a Character Set ECI, according to "Extended Channel Interpretations" 5.3.1.1
  * of ISO 18004.
- *
  * @author Sean Owen
  * @since 5.0.2
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public final class CharacterSetECI {
 
   private static HashMap<String,CharacterSetECI> NAME_TO_ECI;

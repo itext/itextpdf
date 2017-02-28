@@ -44,9 +44,10 @@
 package com.itextpdf.text.pdf;
 
 /** Each colorSpace in the document will have an instance of this class
- *
  * @author Phillip Pan (phillip@formstar.com)
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 class ColorDetails {
 
     /** The indirect reference to this color

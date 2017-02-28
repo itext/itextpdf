@@ -54,6 +54,10 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+/**
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
+ */
+@Deprecated
 public class FontEmbeddingTest {
 
     private static String srcFolder = "./src/test/resources/com/itextpdf/text/pdf/fonts/";

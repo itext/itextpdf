@@ -49,7 +49,9 @@ import com.itextpdf.tool.xml.Tag;
  * Implementations of this interface determine the inheritance rules of CSS properties on tag basis and on property level.
  * @author redlab_b
  *
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public interface CssInheritanceRules {
 
 	/**

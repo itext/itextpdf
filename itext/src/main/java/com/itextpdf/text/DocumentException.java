@@ -45,12 +45,13 @@ package com.itextpdf.text;
 
 /**
  * Signals that an error has occurred in a <CODE>Document</CODE>.
- *
  * @see BadElementException
  * @see Document
  * @see DocWriter
  * @see DocListener
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class DocumentException extends Exception {
 
 	/** A serial version UID */

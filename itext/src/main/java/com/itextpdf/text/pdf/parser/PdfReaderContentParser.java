@@ -43,12 +43,11 @@
  */
 package com.itextpdf.text.pdf.parser;
 
-import java.io.IOException;
-
 import com.itextpdf.text.pdf.PdfDictionary;
 import com.itextpdf.text.pdf.PdfName;
 import com.itextpdf.text.pdf.PdfReader;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -56,7 +55,9 @@ import java.util.Map;
  * A utility class that makes it cleaner to process content from pages of a PdfReader
  * through a specified RenderListener.
  * @since 5.0.2
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class PdfReaderContentParser {
     /** the reader this parser will process */
     private final PdfReader reader;

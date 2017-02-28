@@ -45,7 +45,9 @@ package com.itextpdf.tool.xml.pipeline.html;
  * Thrown when a StackKeeper was expected but could not be retrieved.
  * @author itextpdf.com
  *
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class NoStackException extends Exception {
 
 	/**

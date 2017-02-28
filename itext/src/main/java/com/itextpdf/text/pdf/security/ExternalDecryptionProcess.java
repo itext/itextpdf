@@ -46,6 +46,10 @@ package com.itextpdf.text.pdf.security;
 import org.bouncycastle.cms.Recipient;
 import org.bouncycastle.cms.RecipientId;
 
+/**
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
+ */
+@Deprecated
 public interface ExternalDecryptionProcess {
 
     RecipientId getCmsRecipientId();

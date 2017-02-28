@@ -30,27 +30,26 @@
 
 package com.itextpdf.xmp.impl;
 
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Iterator;
-
-import org.w3c.dom.Attr;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
-
 import com.itextpdf.xmp.XMPConst;
 import com.itextpdf.xmp.XMPError;
 import com.itextpdf.xmp.XMPException;
 import com.itextpdf.xmp.XMPMetaFactory;
 import com.itextpdf.xmp.XMPSchemaRegistry;
 import com.itextpdf.xmp.options.PropertyOptions;
+import org.w3c.dom.Attr;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Parser for "normal" XML serialisation of RDF.  
- * 
  * @since   14.07.2006
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class ParseRDF implements XMPError, XMPConst
 {
 	/** */

@@ -57,6 +57,10 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+/**
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
+ */
+@Deprecated
 public class PageEventTest {
     private static String CMP_FOLDER = "./src/test/resources/com/itextpdf/text/pdf/PageEventTest/";
     private static String OUTPUT_FOLDER = "./target/com/itextpdf/test/pdf/PageEventTest/";

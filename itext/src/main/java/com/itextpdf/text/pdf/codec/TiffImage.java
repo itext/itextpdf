@@ -64,7 +64,9 @@ import java.util.zip.Inflater;
 
 /** Reads TIFF images
  * @author Paulo Soares
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class TiffImage {
     
     /** Gets the number of pages the TIFF document has.

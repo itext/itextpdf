@@ -47,9 +47,10 @@ import java.util.List;
 
 /**
  * Contains information relating to construction the current path.
- *
  * @since 5.5.6
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class PathConstructionRenderInfo {
 
     /**

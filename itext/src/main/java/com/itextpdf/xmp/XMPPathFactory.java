@@ -76,9 +76,10 @@ import com.itextpdf.xmp.impl.xpath.XMPPathParser;
  * the rest of the path expression.
  * <em>Note:</em> These methods are much simpler than in the C++-API, they don't check the given
  * path or array indices.
- * 
  * @since 25.01.2006
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public final class XMPPathFactory
 {
 	/** Private constructor */

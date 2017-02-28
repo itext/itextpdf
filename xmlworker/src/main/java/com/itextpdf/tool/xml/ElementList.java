@@ -53,7 +53,9 @@ import com.itextpdf.tool.xml.pipeline.WritableElement;
 /**
  * Implementation of the <code>ElementHandler</code> interface that helps
  * you build a list of iText <code>Element</code>s.
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class ElementList extends ArrayList<Element> implements ElementHandler {
 
 	/**

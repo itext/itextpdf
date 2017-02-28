@@ -41,13 +41,14 @@ import com.itextpdf.text.error_messages.MessageLocalization;
  * <p>Note that this class is for internal optimization purposes only, and may
  * not be supported in future releases of Jakarta Commons Lang.  Utilities of
  * this sort may be included in future releases of Jakarta Commons Collections.</p>
- *
  * @author Justin Couch
  * @author Alex Chaffee (alex@apache.org)
  * @author Stephen Colebourne
  * @author Bruno Lowagie (change Objects as keys into int values)
  * @author Paulo Soares (added extra methods)
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class LongHashtable implements Cloneable {
 
     /***
