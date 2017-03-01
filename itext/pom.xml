@@ -9,7 +9,7 @@
     <relativePath />
   </parent>
 
-  <artifactId>itextpdf</artifactId>
+  <artifactId>xfa-itextpdf</artifactId>
   <version>5.5.12-SNAPSHOT</version>
 
   <name>iText Core</name>
