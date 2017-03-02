@@ -43,15 +43,18 @@
  */
 package com.itextpdf.awt.geom;
 
+import com.itextpdf.text.error_messages.MessageLocalization;
+
 import java.awt.geom.AffineTransform;
 import java.awt.geom.PathIterator;
 import java.util.NoSuchElementException;
-import com.itextpdf.text.error_messages.MessageLocalization;
 /**
  * PathIterator for PolylineShape.
  * This class was originally written by wil - amristar.com.au
  * and integrated into iText by Bruno.
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class PolylineShapeIterator implements PathIterator {
 	/** The polyline over which we are going to iterate. */
 	protected PolylineShape poly;

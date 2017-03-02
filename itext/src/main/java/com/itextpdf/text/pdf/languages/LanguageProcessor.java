@@ -47,7 +47,9 @@ package com.itextpdf.text.pdf.languages;
  * Interface that needs to be implemented by classes that process bytes
  * representing text in specific languages. Processing involves changing
  * order to Right to Left and/or applying ligatures.
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public interface LanguageProcessor {
 
 	/**

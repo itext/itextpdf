@@ -49,7 +49,9 @@ package com.itextpdf.text.log;
  * It writes info about files being read and written to the System.out.
  * 
  * This functionality can be used to create metrics in a SaaS context.
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class CounterFactory {
 
 	/** The singleton instance. */

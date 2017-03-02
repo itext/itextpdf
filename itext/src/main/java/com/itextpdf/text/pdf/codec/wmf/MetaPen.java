@@ -45,6 +45,10 @@ package com.itextpdf.text.pdf.codec.wmf;
 import com.itextpdf.text.BaseColor;
 import java.io.IOException;
 
+/**
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
+ */
+@Deprecated
 public class MetaPen extends MetaObject {
 
     public static final int PS_SOLID = 0;

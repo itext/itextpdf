@@ -45,10 +45,10 @@ package com.itextpdf.text.pdf;
 
 /**
  * A <CODE>PdfBorderArray</CODE> defines the border of a <CODE>PdfAnnotation</CODE>.
- *
  * @see		PdfArray
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
-
+@Deprecated
 public class PdfBorderArray extends PdfArray {
     
     // constructors

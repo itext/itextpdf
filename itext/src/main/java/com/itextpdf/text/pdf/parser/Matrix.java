@@ -48,9 +48,10 @@ import java.util.Arrays;
 /**
  * Keeps all the values of a 3 by 3 matrix
  * and allows you to do some math with matrices.
- * 
  * @since	2.1.4
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class Matrix {
     /** the row=1, col=1 position ('a') in the matrix. */
     public static final int I11 = 0; 

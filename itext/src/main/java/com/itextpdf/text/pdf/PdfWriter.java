@@ -73,8 +73,10 @@ import java.util.List;
  * When this <CODE>PdfWriter</CODE> is added
  * to a certain <CODE>PdfDocument</CODE>, the PDF representation of every Element
  * added to this Document will be written to the outputstream.</P>
+ *
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
-
+@Deprecated
 public class PdfWriter extends DocWriter implements
 	PdfViewerPreferences,
 	PdfEncryptionSettings,

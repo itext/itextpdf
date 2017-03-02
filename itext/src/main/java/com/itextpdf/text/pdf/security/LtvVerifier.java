@@ -71,7 +71,9 @@ import com.itextpdf.text.pdf.security.LtvVerification.CertificateOption;
 
 /**
  * Verifies the signatures in an LTV document.
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class LtvVerifier extends RootStoreVerifier {
 	/** The Logger instance */
 	protected final static Logger LOGGER = LoggerFactory.getLogger(LtvVerifier.class);

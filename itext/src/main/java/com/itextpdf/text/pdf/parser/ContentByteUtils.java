@@ -43,10 +43,6 @@
  */
 package com.itextpdf.text.pdf.parser;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.util.ListIterator;
-
 import com.itextpdf.text.pdf.PRIndirectReference;
 import com.itextpdf.text.pdf.PRStream;
 import com.itextpdf.text.pdf.PdfArray;
@@ -55,10 +51,16 @@ import com.itextpdf.text.pdf.PdfName;
 import com.itextpdf.text.pdf.PdfObject;
 import com.itextpdf.text.pdf.PdfReader;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.ListIterator;
+
 /**
  * @author kevin
  * @since 5.0.1
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class ContentByteUtils {
     private ContentByteUtils() {
         // TODO Auto-generated constructor stub

@@ -44,7 +44,6 @@
 package com.itextpdf.text.pdf;
 
 import com.itextpdf.text.ExceptionConverter;
-import com.itextpdf.text.Image;
 
 /**
  * <CODE>PdfFont</CODE> is the Pdf Font object.
@@ -55,12 +54,12 @@ import com.itextpdf.text.Image;
  * standard encoding (standard, MacRoman, (MacExpert,) WinAnsi) are supported.<BR>
  * This object is described in the 'Portable Document Format Reference Manual version 1.3'
  * section 7.7 (page 198-203).
- *
  * @see		PdfName
  * @see		PdfDictionary
  * @see		BadPdfFormatException
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
-
+@Deprecated
 class PdfFont implements Comparable<PdfFont> {
 
 

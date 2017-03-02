@@ -33,12 +33,12 @@ package com.itextpdf.xmp.impl.xpath;
 import java.util.ArrayList;
 import java.util.List;
 
-
 /**
  * Representates an XMP XMPPath with segment accessor methods.
- *
  * @since   28.02.2006
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class XMPPath
 {
 	// Bits for XPathStepInfo options.

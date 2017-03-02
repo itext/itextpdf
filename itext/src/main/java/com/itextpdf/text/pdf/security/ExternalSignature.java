@@ -50,7 +50,9 @@ import java.security.GeneralSecurityException;
  * For instance: you'll have to implement this interface if you want
  * to sign a PDF using a smart card.
  * @author Paulo Soares
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public interface ExternalSignature {
     
     /**

@@ -57,7 +57,9 @@ import java.util.ArrayList;
 /** Reads gif images of all types. All the images in a gif are read in the constructors
  * and can be retrieved with other methods.
  * @author Paulo Soares
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class GifImage {
 
     protected DataInputStream in;

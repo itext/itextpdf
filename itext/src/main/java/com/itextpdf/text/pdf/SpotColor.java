@@ -44,9 +44,10 @@
 package com.itextpdf.text.pdf;
 
 /**
- *
  * @author  psoares
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class SpotColor extends ExtendedColor {
 
     private static final long serialVersionUID = -6257004582113248079L;

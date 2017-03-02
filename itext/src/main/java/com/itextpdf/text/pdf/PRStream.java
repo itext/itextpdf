@@ -43,15 +43,19 @@
  */
 package com.itextpdf.text.pdf;
 
+import com.itextpdf.text.Document;
+import com.itextpdf.text.ExceptionConverter;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.zip.Deflater;
 import java.util.zip.DeflaterOutputStream;
 
-import com.itextpdf.text.Document;
-import com.itextpdf.text.ExceptionConverter;
-
+/**
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
+ */
+@Deprecated
 public class PRStream extends PdfStream {
     
     protected PdfReader reader;

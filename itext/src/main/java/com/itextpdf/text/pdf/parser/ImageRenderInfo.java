@@ -56,7 +56,9 @@ import com.itextpdf.text.pdf.PdfReader;
 /**
  * Represents image data from a PDF
  * @since 5.0.1
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class ImageRenderInfo {
 	/** The graphics state that was in effect when the image was rendered */
 	private final GraphicsState gs;

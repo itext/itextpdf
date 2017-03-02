@@ -49,7 +49,9 @@ import com.itextpdf.text.pdf.PdfString;
 
 /**
  * A dictionary that stores the name of the application that signs the PDF.
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class PdfSignatureAppDictionary extends PdfDictionary {
 
     /**

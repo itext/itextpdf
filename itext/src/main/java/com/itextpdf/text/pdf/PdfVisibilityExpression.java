@@ -49,7 +49,9 @@ import com.itextpdf.text.error_messages.MessageLocalization;
  * An array specifying a visibility expression, used to compute visibility
  * of content based on a set of optional content groups.
  * @since 5.0.2
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class PdfVisibilityExpression extends PdfArray {
 
 	/** A boolean operator. */

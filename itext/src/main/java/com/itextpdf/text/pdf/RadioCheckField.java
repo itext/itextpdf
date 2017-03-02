@@ -46,7 +46,6 @@ package com.itextpdf.text.pdf;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.ExceptionConverter;
 import com.itextpdf.text.Rectangle;
-import com.itextpdf.text.error_messages.MessageLocalization;
 
 import java.io.IOException;
 
@@ -92,7 +91,9 @@ import java.io.IOException;
  * document.close();
  * </PRE>
  * @author Paulo Soares
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class RadioCheckField extends BaseField {
 
     /** A field with the symbol check */

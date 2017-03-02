@@ -43,27 +43,26 @@
  */
 package com.itextpdf.text.xml.xmp;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-
+import com.itextpdf.text.ExceptionConverter;
+import com.itextpdf.text.xml.XmlDomWriter;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import com.itextpdf.text.ExceptionConverter;
-import com.itextpdf.text.xml.XmlDomWriter;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 
 /**
  * Reads an XMP stream into an org.w3c.dom.Document objects.
  * Allows you to replace the contents of a specific tag.
  * @since 2.1.3
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
 @Deprecated
 public class XmpReader {

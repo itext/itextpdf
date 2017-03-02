@@ -54,9 +54,10 @@ import java.util.List;
  * to draw lines, define the shapes of filled areas, and specify boundaries for clipping
  * other graphics. A path shall be composed of straight and curved line segments, which
  * may connect to one another or may be disconnected.
- *
  * @since 5.5.6
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class Path {
 
     private static final String START_PATH_ERR_MSG = "Path shall start with \"re\" or \"m\" operator";

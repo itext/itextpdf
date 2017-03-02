@@ -43,6 +43,10 @@
  */
 package com.itextpdf.text;
 
+import com.itextpdf.text.pdf.ByteBuffer;
+import com.itextpdf.text.pdf.PRTokeniser;
+import com.itextpdf.text.pdf.PdfEncodings;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -54,15 +58,12 @@ import java.util.Hashtable;
 import java.util.Properties;
 import java.util.Set;
 
-import com.itextpdf.text.pdf.ByteBuffer;
-import com.itextpdf.text.pdf.PRTokeniser;
-import com.itextpdf.text.pdf.PdfEncodings;
-
 /**
  * A collection of convenience methods that were present in many different iText
  * classes.
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
-
+@Deprecated
 public class Utilities {
 
 	/**

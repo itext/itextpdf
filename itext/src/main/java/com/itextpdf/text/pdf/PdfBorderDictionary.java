@@ -47,10 +47,10 @@ import com.itextpdf.text.error_messages.MessageLocalization;
 
 /**
  * A <CODE>PdfBorderDictionary</CODE> define the appearance of a Border (Annotations).
- *
  * @see		PdfDictionary
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
-
+@Deprecated
 public class PdfBorderDictionary extends PdfDictionary {
     
     public static final int STYLE_SOLID = 0;

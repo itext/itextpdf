@@ -30,15 +30,13 @@
 
 package com.itextpdf.xmp.impl;
 
-
-
-
 /**
  * A utility class to perform base64 encoding and decoding as specified
  * in RFC-1521. See also RFC 1421.
- *
  * @version     $Revision: 1.4 $
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class  Base64
 {
 	/** marker for invalid bytes */

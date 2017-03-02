@@ -44,7 +44,9 @@
 package com.itextpdf.text.factories;
 /**
  * This class can produce String combinations representing a roman number.
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class RomanNumberFactory {
 	/**
 	 * Helper class for Roman Digits

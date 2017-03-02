@@ -42,6 +42,7 @@
  * address: sales@itextpdf.com
  */
 package com.itextpdf.text.pdf;
+
 import com.itextpdf.text.pdf.internal.PdfIsoKeys;
 
 import java.io.IOException;
@@ -56,7 +57,6 @@ import java.io.Serializable;
  * Objects may be labeled so that they can be referred to by other objects.<BR>
  * All these basic PDF objects are described in the 'Portable Document Format
  * Reference Manual version 1.3' Chapter 4 (pages 37-54).
- *
  * @see		PdfNull
  * @see		PdfBoolean
  * @see		PdfNumber
@@ -66,7 +66,9 @@ import java.io.Serializable;
  * @see		PdfDictionary
  * @see		PdfStream
  * @see		PdfIndirectReference
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public abstract class PdfObject implements Serializable {
 
     // CONSTANTS

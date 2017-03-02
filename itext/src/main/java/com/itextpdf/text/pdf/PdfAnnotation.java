@@ -59,10 +59,10 @@ import java.util.Map;
 
 /**
  * A <CODE>PdfAnnotation</CODE> is a note that is associated with a page.
- *
  * @see		PdfDictionary
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
-
+@Deprecated
 public class PdfAnnotation extends PdfDictionary implements IAccessibleElement {
     /** highlight attributename */
     public static final PdfName HIGHLIGHT_NONE = PdfName.N;

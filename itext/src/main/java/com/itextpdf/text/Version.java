@@ -50,7 +50,9 @@ import java.lang.reflect.Method;
  * DO NOT CHANGE THE VERSION INFORMATION WITHOUT PERMISSION OF THE COPYRIGHT HOLDERS OF ITEXT.
  * Changing the version makes it extremely difficult to debug an application.
  * Also, the nature of open source software is that you honor the copyright of the original creators of the software.
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public final class Version {
 
 	// membervariables

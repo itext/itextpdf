@@ -34,7 +34,9 @@ package com.itextpdf.xmp;
  * This exception wraps all errors that occur in the XMP Toolkit.
  * 
  * @since   16.02.2006
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class XMPException extends Exception
 {
 	/** the errorCode of the XMP toolkit */

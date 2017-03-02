@@ -53,9 +53,10 @@ import com.itextpdf.text.pdf.PdfObject;
  * The values of the different  preferences were originally stored
  * in class PdfWriter, but they have been moved to this separate interface
  * for reasons of convenience.
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
-
-public interface PdfViewerPreferences {	
+@Deprecated
+public interface PdfViewerPreferences {
 		
     /**
      * Sets the page layout and page mode preferences by ORing one or two of these constants.

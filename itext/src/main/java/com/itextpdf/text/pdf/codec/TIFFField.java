@@ -60,9 +60,10 @@ import java.io.Serializable;
  *
  * <p><b> This class is not a committed part of the JAI API.  It may
  * be removed or changed in future releases of JAI.</b>
- *
  * @see TIFFDirectory
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class TIFFField extends Object implements Comparable<TIFFField>, Serializable {
 
     private static final long serialVersionUID = 9088332901412823834L;

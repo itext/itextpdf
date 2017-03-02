@@ -49,6 +49,10 @@ import com.itextpdf.text.log.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 
+/**
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
+ */
+@Deprecated
 public abstract class ITextTest {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(ITextTest.class.getName());

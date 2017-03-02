@@ -50,7 +50,9 @@ package com.itextpdf.text.exceptions;
  * bumped into something that has been added to the PDF specs, but that isn't
  * supported in iText yet).
  * @since 2.1.5
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class UnsupportedPdfException extends InvalidPdfException {
 
 	/** a serial version UID */

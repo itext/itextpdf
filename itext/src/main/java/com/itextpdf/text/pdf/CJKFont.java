@@ -61,10 +61,10 @@ import java.util.Map.Entry;
 
 /**
  * Creates a CJK font compatible with the fonts in the Adobe Asian font Pack.
- *
  * @author  Paulo Soares
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
-
+@Deprecated
 class CJKFont extends BaseFont {
     /** The encoding used in the PDF document for CJK fonts
      */

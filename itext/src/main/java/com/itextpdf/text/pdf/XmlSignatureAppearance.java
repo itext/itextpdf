@@ -44,15 +44,17 @@
 package com.itextpdf.text.pdf;
 
 import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.pdf.security.XpathConstructor;
 import com.itextpdf.text.pdf.security.XmlLocator;
+import com.itextpdf.text.pdf.security.XpathConstructor;
 
 import java.io.IOException;
 import java.security.cert.Certificate;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.TimeZone;
 
+/**
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
+ */
+@Deprecated
 public class XmlSignatureAppearance {
 
     /**

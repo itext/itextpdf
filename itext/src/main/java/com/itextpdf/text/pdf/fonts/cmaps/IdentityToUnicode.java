@@ -46,9 +46,10 @@ package com.itextpdf.text.pdf.fonts.cmaps;
 import java.io.IOException;
 
 /**
- *
  * @author psoares
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class IdentityToUnicode {
     private static CMapToUnicode identityCNS;
     private static CMapToUnicode identityJapan;

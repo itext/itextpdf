@@ -79,9 +79,10 @@ import java.util.Stack;
  * Full bidirectional reordering is supported. If the run direction is
  * <CODE>PdfWriter.RUN_DIRECTION_RTL</CODE> the meaning of the horizontal
  * alignments and margins is mirrored.
- *
  * @author Paulo Soares
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class ColumnText {
 
     private final Logger LOGGER = LoggerFactory.getLogger(ColumnText.class);

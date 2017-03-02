@@ -84,7 +84,9 @@ import java.util.*;
 /**
  * This class does all the processing related to signing
  * and verifying a PKCS#7 signature.
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class PdfPKCS7 {
 
     // Constructors for creating new signatures

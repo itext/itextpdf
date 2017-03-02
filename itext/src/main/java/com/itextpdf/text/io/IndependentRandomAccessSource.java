@@ -47,7 +47,9 @@ import java.io.IOException;
  * A RandomAccessSource that is wraps another RandomAccessSouce but does not propagate close().  This is useful when
  * passing a RandomAccessSource to a method that would normally close the source.
  * @since 5.3.5
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class IndependentRandomAccessSource implements RandomAccessSource {
 	/**
 	 * The source

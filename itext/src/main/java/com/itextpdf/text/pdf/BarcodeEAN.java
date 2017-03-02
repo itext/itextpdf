@@ -43,12 +43,12 @@
  */
 package com.itextpdf.text.pdf;
 
-import java.util.Arrays;
-import com.itextpdf.text.error_messages.MessageLocalization;
-
+import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.ExceptionConverter;
 import com.itextpdf.text.Rectangle;
-import com.itextpdf.text.BaseColor;
+import com.itextpdf.text.error_messages.MessageLocalization;
+
+import java.util.Arrays;
 
 /** Generates barcodes in several formats: EAN13, EAN8, UPCA, UPCE,
  * supplemental 2 and 5. The default parameters are:
@@ -62,9 +62,10 @@ import com.itextpdf.text.BaseColor;
  *codeType = EAN13;
  *code = "";
  * </pre>
- *
  * @author Paulo Soares
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class BarcodeEAN extends Barcode{
         
     /** The bar positions that are guard bars.*/    

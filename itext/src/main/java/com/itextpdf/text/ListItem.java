@@ -86,12 +86,12 @@ import com.itextpdf.text.pdf.PdfName;
  *			This is another item
  *		</LI>
  *	</UL>
- *
  * @see	Element
  * @see List
  * @see	Paragraph
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
-
+@Deprecated
 public class ListItem extends Paragraph {
 
     // constants
