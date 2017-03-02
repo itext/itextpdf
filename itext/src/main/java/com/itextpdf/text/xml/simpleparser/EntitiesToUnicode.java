@@ -48,8 +48,9 @@ import java.util.Map;
 
 /**
  * This class contains entities that can be used in an entity tag.
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
-
+@Deprecated
 public class EntitiesToUnicode {
 
     /**

@@ -47,9 +47,10 @@ import java.io.IOException;
 import java.util.HashMap;
 
 /**
- *
  * @author psoares
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class CMapCache {
     private static final HashMap<String,CMapUniCid> cacheUniCid = new HashMap<String,CMapUniCid>();
     private static final HashMap<String,CMapCidUni> cacheCidUni = new HashMap<String,CMapCidUni>();

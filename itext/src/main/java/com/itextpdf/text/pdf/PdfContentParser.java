@@ -43,15 +43,17 @@
  */
 package com.itextpdf.text.pdf;
 
-import java.io.IOException;
-import java.util.ArrayList;
-
 import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.pdf.PRTokeniser.TokenType;
+
+import java.io.IOException;
+import java.util.ArrayList;
 /**
  * Parses the page or template content.
  * @author Paulo Soares
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class PdfContentParser {
 
     /**

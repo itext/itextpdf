@@ -43,12 +43,16 @@
  */
 package com.itextpdf.text.pdf.codec.wmf;
 
-import java.util.ArrayList;
-import java.util.Stack;
-
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.pdf.PdfContentByte;
 
+import java.util.ArrayList;
+import java.util.Stack;
+
+/**
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
+ */
+@Deprecated
 public class MetaState {
 
     public static final int TA_NOUPDATECP = 0;

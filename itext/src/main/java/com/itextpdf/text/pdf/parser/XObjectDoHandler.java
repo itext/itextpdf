@@ -51,7 +51,9 @@ import java.util.Stack;
 /**
  * @author Kevin Day
  * @since iText 5.0.1
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public interface XObjectDoHandler {
     public void handleXObject(PdfContentStreamProcessor processor, PdfStream stream, PdfIndirectReference ref);
     public void handleXObject(PdfContentStreamProcessor processor, PdfStream stream, PdfIndirectReference ref,Stack<MarkedContentInfo> markedContentStack);

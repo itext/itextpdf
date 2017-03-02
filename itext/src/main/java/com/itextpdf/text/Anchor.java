@@ -61,11 +61,11 @@ import java.util.Iterator;
  * <STRONG>anchor.setName("LINK");</STRONG>
  * <STRONG>anchor.setReference("http://www.lowagie.com");</STRONG>
  * </PRE></BLOCKQUOTE>
- *
  * @see		Element
  * @see		Phrase
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
-
+@Deprecated
 public class Anchor extends Phrase {
 
 	// constant

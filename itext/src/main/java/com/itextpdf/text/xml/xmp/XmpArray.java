@@ -43,12 +43,13 @@
  */
 package com.itextpdf.text.xml.xmp;
 
-import java.util.ArrayList;
-
 import com.itextpdf.text.xml.XMLUtil;
+
+import java.util.ArrayList;
 
 /**
  * StringBuffer to construct an XMP array.
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
 @Deprecated
 public class XmpArray extends ArrayList<String> {

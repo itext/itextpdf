@@ -41,6 +41,10 @@
  */
 package com.itextpdf.text.log;
 
+/**
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
+ */
+@Deprecated
 public class SysoCounter implements Counter {
 
 	/**

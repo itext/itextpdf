@@ -45,7 +45,9 @@ package com.itextpdf.text.pdf.security;
 
 /**
  * A list of IDs that are used by the security classes
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class SecurityIDs {
 
 	public static final String ID_PKCS7_DATA = "1.2.840.113549.1.7.1";

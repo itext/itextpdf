@@ -45,8 +45,9 @@ package com.itextpdf.text.pdf;
 
 /**
  * <CODE>PdfFormObject</CODE> is a type of XObject containing a template-object.
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
-
+@Deprecated
 public class PdfFormXObject extends PdfStream {
     
     // public static final variables

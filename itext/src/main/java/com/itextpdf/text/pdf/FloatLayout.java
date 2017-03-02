@@ -55,7 +55,9 @@ import java.util.List;
 /**
  * Helper class for PdfDiv to put a collection of Element objects
  * at an absolute position.
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class FloatLayout {
     protected float maxY;
 

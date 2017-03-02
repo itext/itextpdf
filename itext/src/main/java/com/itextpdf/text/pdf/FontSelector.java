@@ -58,7 +58,9 @@ import java.util.ArrayList;
  * The built in fonts "Symbol" and "ZapfDingbats", if used, have a special encoding
  * to allow the characters to be referred by Unicode.
  * @author Paulo Soares
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class FontSelector {
 
     protected ArrayList<Font> fonts = new ArrayList<Font>();

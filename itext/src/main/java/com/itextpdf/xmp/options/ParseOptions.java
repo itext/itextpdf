@@ -32,14 +32,12 @@ package com.itextpdf.xmp.options;
 
 import java.io.InputStream;
 
-import com.itextpdf.xmp.XMPMetaFactory;
-
-
 /**
  * Options for {@link XMPMetaFactory#parse(InputStream, ParseOptions)}.
- * 
  * @since 24.01.2006
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public final class ParseOptions extends Options
 {
 	/** Require a surrounding &quot;x:xmpmeta&quot; element in the xml-document. */

@@ -44,12 +44,14 @@
 package com.itextpdf.text.pdf;
 
 import com.itextpdf.text.error_messages.MessageLocalization;
-import com.itextpdf.text.log.LoggerFactory;
-import com.itextpdf.text.log.Logger;
 
 import java.io.IOException;
 import java.util.Map;
 
+/**
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
+ */
+@Deprecated
 public class PdfStructTreeController {
 
     private PdfDictionary structTreeRoot;

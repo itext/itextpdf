@@ -61,7 +61,9 @@ import java.util.HashMap;
 /**
  * PAdES-LTV Timestamp
  * @author Paulo Soares
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class LtvTimestamp {
     /**
      * Signs a document with a PAdES-LTV Timestamp. The document is closed at the end.

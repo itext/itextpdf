@@ -49,9 +49,10 @@ import com.itextpdf.text.io.RandomAccessSourceFactory;
 
 import java.io.IOException;
 /**
- *
  * @author  Paulo Soares
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class PRTokeniser {
 
     private final StringBuilder outBuf = new StringBuilder();

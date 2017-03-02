@@ -51,7 +51,9 @@ import java.security.Signature;
  * Implementation of the ExternalSignature interface that can be used
  * when you have a PrivateKey object.
  * @author Paulo Soares
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class PrivateKeySignature implements ExternalSignature {
 	
 	/** The private key object. */

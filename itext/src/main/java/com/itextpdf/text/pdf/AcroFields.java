@@ -63,9 +63,10 @@ import java.util.List;
 /**
  * Query and change fields in existing documents either by method
  * calls or by FDF merging.
- *
  * @author Paulo Soares
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class AcroFields {
 
     PdfReader reader;

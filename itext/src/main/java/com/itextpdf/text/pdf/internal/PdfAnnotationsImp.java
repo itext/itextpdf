@@ -43,11 +43,6 @@
  */
 package com.itextpdf.text.pdf.internal;
 
-import java.io.IOException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashSet;
-
 import com.itextpdf.text.Annotation;
 import com.itextpdf.text.ExceptionConverter;
 import com.itextpdf.text.Rectangle;
@@ -64,6 +59,15 @@ import com.itextpdf.text.pdf.PdfString;
 import com.itextpdf.text.pdf.PdfTemplate;
 import com.itextpdf.text.pdf.PdfWriter;
 
+import java.io.IOException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashSet;
+
+/**
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
+ */
+@Deprecated
 public class PdfAnnotationsImp {
 
     /**

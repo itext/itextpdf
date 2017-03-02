@@ -62,10 +62,11 @@ import java.io.OutputStream;
  * way to represent characters outside the printable ASCII character set.<BR>
  * This object is described in the 'Portable Document Format Reference Manual
  * version 1.7' section 3.2.3 (page 53-56).
- *
  * @see PdfObject
  * @see BadPdfFormatException
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class PdfString extends PdfObject {
     
     // CLASS VARIABLES

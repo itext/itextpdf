@@ -52,9 +52,10 @@ import com.itextpdf.text.error_messages.MessageLocalization;
 /**
  * Support for JBIG2 Images.
  * This class assumes that we are always embedding into a pdf.
- * 
  * @since 2.1.5
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class JBIG2Image {
 
 	/**

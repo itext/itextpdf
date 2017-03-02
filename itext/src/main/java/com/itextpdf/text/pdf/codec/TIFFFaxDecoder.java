@@ -50,7 +50,9 @@ import com.itextpdf.text.exceptions.InvalidImageException;
 
 /**
  * Class that can decode TIFF files.
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class TIFFFaxDecoder {
     
     private int bitPointer, bytePointer;

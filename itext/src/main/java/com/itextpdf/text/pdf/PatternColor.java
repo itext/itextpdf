@@ -43,8 +43,11 @@
  */
 package com.itextpdf.text.pdf;
 
-/** Represents a pattern. Can be used in high-level constructs (Paragraph, Cell, etc.).
+/**
+ * Represents a pattern. Can be used in high-level constructs (Paragraph, Cell, etc.).
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class PatternColor extends ExtendedColor {
     private static final long serialVersionUID = -1185448552860615964L;
 	/**

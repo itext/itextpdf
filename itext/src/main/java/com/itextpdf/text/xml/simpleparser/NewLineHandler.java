@@ -46,10 +46,11 @@ package com.itextpdf.text.xml.simpleparser;
 /**
  * A NewLineHandler determines if an encountered tag should result in a new line
  * in a document.
- *
  * @author Balder
  * @since 5.0.6
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public interface NewLineHandler {
 
 	/**

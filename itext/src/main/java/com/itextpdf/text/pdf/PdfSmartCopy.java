@@ -65,8 +65,9 @@ import java.util.HashMap;
  * in a cache, so that they can be reused.
  * This requires more memory, but reduces the file size
  * of the resulting PDF document.
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
-
+@Deprecated
 public class PdfSmartCopy extends PdfCopy {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PdfSmartCopy.class);

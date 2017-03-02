@@ -63,9 +63,11 @@ import java.net.URL;
  * 	<li>allows reading of multi-byte data structures (int, long, String) for both Big and Little Endian representations</li>
  * 	<li>allows creation of independent 'views' of the underlying data source</li>
  * </ul>
- *
- * @author Paulo Soares, Kevin Day
+ * @author Paulo Soares
+ * @author Kevin Day
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class RandomAccessFileOrArray implements DataInput {
 	
 	/**

@@ -68,11 +68,12 @@ import java.util.Set;
  * This object is described in the 'Portable Document Format Reference Manual
  * version 1.7' section 3.2.6 (page 59-60).
  * <P>
- *
  * @see		PdfObject
  * @see		PdfName
  * @see		BadPdfFormatException
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class PdfDictionary extends PdfObject {
 
     // CONSTANTS

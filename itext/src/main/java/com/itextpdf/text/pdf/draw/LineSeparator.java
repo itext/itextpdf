@@ -55,7 +55,9 @@ import com.itextpdf.text.pdf.PdfContentByte;
  * Can also be used to create a separator chunk.
  * @author	Paulo Soares
  * @since	2.1.2
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class LineSeparator extends VerticalPositionMark {
 	
     /** The thickness of the line. */

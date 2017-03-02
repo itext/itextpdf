@@ -43,15 +43,18 @@
  */
 package com.itextpdf.text.pdf.security;
 
+import org.bouncycastle.jcajce.provider.digest.*;
+
 import java.security.GeneralSecurityException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import org.bouncycastle.jcajce.provider.digest.*;
 
 /**
  * Implementation for digests accessed directly from the BouncyCastle library bypassing
  * any provider definition.
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class BouncyCastleDigest implements ExternalDigest {
 
     public MessageDigest getMessageDigest(String hashAlgorithm) throws GeneralSecurityException {

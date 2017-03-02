@@ -54,9 +54,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 /**
- *
  * @author psoares
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class CMapParserEx {
     
     private static final PdfName CMAPNAME = new PdfName("CMapName");

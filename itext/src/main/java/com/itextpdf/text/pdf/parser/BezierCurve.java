@@ -50,9 +50,10 @@ import java.util.List;
 
 /**
  * Represents a Bezier curve.
- *
  * @since 5.5.6
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class BezierCurve implements Shape {
 
     /**

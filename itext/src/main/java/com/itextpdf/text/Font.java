@@ -58,8 +58,9 @@ import com.itextpdf.text.pdf.BaseFont;
  * </PRE>
  *
  * </BLOCKQUOTE>
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
-
+@Deprecated
 public class Font implements Comparable<Font> {
 
 	/**

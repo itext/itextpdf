@@ -48,7 +48,9 @@ import com.itextpdf.awt.geom.Rectangle2D;
 /**
  * Represents a line segment in a particular coordinate system.  This class is immutable.
  * @since 5.0.2
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class LineSegment {
 
 	/** Start vector of the segment. */

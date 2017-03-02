@@ -42,6 +42,7 @@
  * address: sales@itextpdf.com
  */
 package com.itextpdf.text.pdf;
+
 import com.itextpdf.text.ExceptionConverter;
 import com.itextpdf.text.pdf.crypto.AESCipher;
 import com.itextpdf.text.pdf.crypto.IVGenerator;
@@ -49,6 +50,10 @@ import com.itextpdf.text.pdf.crypto.ARCFOUREncryption;
 import java.io.IOException;
 import java.io.OutputStream;
 
+/**
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
+ */
+@Deprecated
 public class OutputStreamEncryption extends OutputStream {
     
     protected OutputStream out;

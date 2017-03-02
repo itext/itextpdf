@@ -45,15 +45,15 @@ package com.itextpdf.text;
 
 /**
  * Interface for a text element to which other objects can be added.
- *
  * @see		Phrase
  * @see		Paragraph
  * @see		Section
  * @see		ListItem
  * @see		Chapter
  * @see		Anchor
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
-
+@Deprecated
 public interface TextElementArray extends Element {
 
   /**

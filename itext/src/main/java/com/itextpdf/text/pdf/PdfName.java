@@ -62,12 +62,12 @@ import java.util.Map;
  * This object is described in the 'Portable Document Format Reference Manual
  * version 1.7' section 3.2.4 (page 56-58).
  * <P>
- *
  * @see		PdfObject
  * @see		PdfDictionary
  * @see		BadPdfFormatException
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
-
+@Deprecated
 public class
         PdfName extends PdfObject implements Comparable<PdfName> {
 

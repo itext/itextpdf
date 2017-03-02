@@ -26,9 +26,10 @@ import java.util.Hashtable;
 /**
  * This class is the main entry point to the hyphenation package.
  * You can use only the static methods or create an instance.
- *
  * @author Carlos Villegas <cav@uniscope.co.jp>
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class Hyphenator {
 
     /** TODO: Don't use statics */

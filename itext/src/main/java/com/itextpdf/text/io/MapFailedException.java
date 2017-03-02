@@ -44,6 +44,10 @@ package com.itextpdf.text.io;
 import java.io.IOException;
 
 @SuppressWarnings("serial")
+/**
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
+ */
+@Deprecated
 public class MapFailedException extends IOException {
 	public MapFailedException(IOException e) {
         super(e.getMessage());

@@ -62,7 +62,9 @@ import org.bouncycastle.tsp.TimeStampToken;
 
 /**
  * This class consists of some methods that allow you to verify certificates.
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class CertificateVerification {
 
     /**

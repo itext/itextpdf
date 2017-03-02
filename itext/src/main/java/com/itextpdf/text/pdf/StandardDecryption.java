@@ -46,6 +46,10 @@ package com.itextpdf.text.pdf;
 import com.itextpdf.text.pdf.crypto.AESCipher;
 import com.itextpdf.text.pdf.crypto.ARCFOUREncryption;
 
+/**
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
+ */
+@Deprecated
 public class StandardDecryption {
     protected ARCFOUREncryption arcfour;
     protected AESCipher cipher;

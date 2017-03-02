@@ -56,9 +56,10 @@ import java.util.HashMap;
 import java.util.StringTokenizer;
 
 /** Reads a Type1 font
- *
  * @author Paulo Soares
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 class Type1Font extends BaseFont
 {
     private static FontsResourceAnchor resourceAnchor;

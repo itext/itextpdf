@@ -45,8 +45,9 @@ package com.itextpdf.text.log;
 /**
  * A Simple System.out logger.
  * @author redlab_be
- *
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class SysoLogger implements Logger {
 
 	private String name;

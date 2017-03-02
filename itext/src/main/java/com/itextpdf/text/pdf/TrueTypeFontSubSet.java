@@ -43,21 +43,22 @@
  */
 package com.itextpdf.text.pdf;
 
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.ExceptionConverter;
+import com.itextpdf.text.error_messages.MessageLocalization;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 
-import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.ExceptionConverter;
-import com.itextpdf.text.error_messages.MessageLocalization;
-
 /** Subsets a True Type font by removing the unneeded glyphs from
  * the font.
- *
  * @author  Paulo Soares
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 class TrueTypeFontSubSet {
     static final String tableNamesSimple[] = {"cvt ", "fpgm", "glyf", "head",
         "hhea", "hmtx", "loca", "maxp", "prep"};

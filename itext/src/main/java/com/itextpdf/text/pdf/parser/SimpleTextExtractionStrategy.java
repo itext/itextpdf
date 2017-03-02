@@ -54,9 +54,10 @@ package com.itextpdf.text.pdf.parser;
  * 
  * This renderer also uses a simple strategy based on the font metrics to determine if
  * a blank space should be inserted into the output.
- * 
  * @since	2.1.5
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class SimpleTextExtractionStrategy implements TextExtractionStrategy {
 
     private Vector lastStart;

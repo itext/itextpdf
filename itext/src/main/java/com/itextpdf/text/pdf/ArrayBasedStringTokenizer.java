@@ -51,10 +51,10 @@ import java.util.regex.Pattern;
 /**
  * Tokenizes the given <i>text</i> based on a given array of Strings. On assembling the output array, 
  * you should be able to get back the original text.
- * 
  * @author <a href="mailto:paawak@gmail.com">Palash Ray</a>
- * 
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class ArrayBasedStringTokenizer {
     
     private final Pattern regex;

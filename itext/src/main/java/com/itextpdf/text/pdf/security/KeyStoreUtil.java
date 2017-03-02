@@ -43,15 +43,17 @@
  */
 package com.itextpdf.text.pdf.security;
 
+import com.itextpdf.text.ExceptionConverter;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.security.KeyStore;
 
-import com.itextpdf.text.ExceptionConverter;
-
 /**
  * Utility class with some KeyStore related methods.
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class KeyStoreUtil {
 
 	/**

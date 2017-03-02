@@ -50,7 +50,6 @@ import com.itextpdf.text.pdf.PdfObject;
 import com.itextpdf.text.pdf.PdfString;
 
 /**
- *
  * @author psoares
  */
 public class CMapCidUni extends AbstractCMap {

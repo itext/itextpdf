@@ -50,8 +50,9 @@ package com.itextpdf.text;
  * they will be added partially and the content that was added will be
  * removed until you've invoked setComplete(true);
  * @since	iText 2.0.8
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
-
+@Deprecated
 public interface LargeElement extends Element {
 	
 	/**

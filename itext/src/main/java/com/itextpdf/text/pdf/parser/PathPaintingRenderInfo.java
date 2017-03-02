@@ -45,9 +45,10 @@ package com.itextpdf.text.pdf.parser;
 
 /**
  * Contains information relating to painting current path.
- *
  * @since 5.5.6
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class PathPaintingRenderInfo {
 
     /**

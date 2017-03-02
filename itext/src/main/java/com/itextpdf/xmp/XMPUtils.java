@@ -14,13 +14,13 @@ import com.itextpdf.xmp.impl.ISO8601Converter;
 import com.itextpdf.xmp.impl.XMPUtilsImpl;
 import com.itextpdf.xmp.options.PropertyOptions;
 
-
 /**
  * Utility methods for XMP. I included only those that are different from the
  * Java default conversion utilities.
- * 
  * @since 21.02.2006
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class XMPUtils
 {
 	/** Private constructor */

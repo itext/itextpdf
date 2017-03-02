@@ -43,6 +43,10 @@
  */
 package com.itextpdf.text.pdf.internal;
 
+/**
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
+ */
+@Deprecated
 public class PdfIsoKeys {
     /** A key for an aspect that can be checked for PDF ISO Conformance. */
     public static final int PDFISOKEY_COLOR = 1;

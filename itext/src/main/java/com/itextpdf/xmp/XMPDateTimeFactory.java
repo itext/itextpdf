@@ -30,20 +30,20 @@
 
 package com.itextpdf.xmp;
 
+import com.itextpdf.xmp.impl.XMPDateTimeImpl;
+
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.TimeZone;
 
-import com.itextpdf.xmp.impl.XMPDateTimeImpl;
-
-
 /**
  * A factory to create <code>XMPDateTime</code>-instances from a <code>Calendar</code> or an
  * ISO 8601 string or for the current time.
- * 
  * @since 16.02.2006
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public final class XMPDateTimeFactory
 {
 	/** The UTC TimeZone */

@@ -69,11 +69,12 @@ import org.bouncycastle.asn1.x509.Extension;
 import org.bouncycastle.asn1.x509.GeneralName;
 import org.bouncycastle.asn1.x509.GeneralNames;
 
-
 /**
  * This class contains a series of static methods that
  * allow you to retrieve information from a Certificate.
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class CertificateUtil {
 
 	// Certificate Revocation Lists

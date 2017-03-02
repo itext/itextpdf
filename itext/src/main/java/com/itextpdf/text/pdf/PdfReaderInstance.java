@@ -42,17 +42,18 @@
  * address: sales@itextpdf.com
  */
 package com.itextpdf.text.pdf;
+import com.itextpdf.text.error_messages.MessageLocalization;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-
-import com.itextpdf.text.error_messages.MessageLocalization;
 /**
  * Instance of PdfReader in each output document.
- *
  * @author Paulo Soares
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 class PdfReaderInstance {
     static final PdfLiteral IDENTITYMATRIX = new PdfLiteral("[1 0 0 1 0 0]");
     static final PdfNumber ONE = new PdfNumber(1);

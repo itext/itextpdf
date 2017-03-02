@@ -54,10 +54,10 @@ package com.itextpdf.text.pdf;
  * to the objects used by the marking operations.<BR>
  * This object is described in the 'Portable Document Format Reference Manual version 1.3'
  * section 7.5 (page 195-197).
- *
  * @see		PdfPage
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
-
+@Deprecated
 class PdfResources extends PdfDictionary {
     
     // constructor

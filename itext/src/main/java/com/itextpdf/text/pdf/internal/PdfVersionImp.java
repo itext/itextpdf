@@ -43,8 +43,6 @@
  */
 package com.itextpdf.text.pdf.internal;
 
-import java.io.IOException;
-
 import com.itextpdf.text.DocWriter;
 import com.itextpdf.text.pdf.OutputStreamCounter;
 import com.itextpdf.text.pdf.PdfDeveloperExtension;
@@ -53,12 +51,15 @@ import com.itextpdf.text.pdf.PdfName;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.text.pdf.interfaces.PdfVersion;
 
+import java.io.IOException;
+
 /**
  * Stores the PDF version information,
  * knows how to write a PDF Header,
  * and how to add the version to the catalog (if necessary).
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
-
+@Deprecated
 public class PdfVersionImp implements PdfVersion {
     
     /** Contains different strings that are part of the header. */

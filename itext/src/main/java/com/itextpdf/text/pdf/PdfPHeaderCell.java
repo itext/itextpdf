@@ -44,12 +44,11 @@
 package com.itextpdf.text.pdf;
 
 /**
- * Created by IntelliJ IDEA.
- * User: denis.koleda
- * Date: 12/21/12
- * Time: 9:57 AM
- * To change this template use File | Settings | File Templates.
+ * @author denis.koleda
+ * @since 12/21/12
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class PdfPHeaderCell extends PdfPCell{
 
     // static member variables for the different styles

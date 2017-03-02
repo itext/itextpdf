@@ -43,21 +43,21 @@
  */
 package com.itextpdf.text.pdf;
 
+import com.itextpdf.text.error_messages.MessageLocalization;
+import com.itextpdf.text.pdf.collection.PdfTargetDictionary;
+import com.itextpdf.text.pdf.internal.PdfIsoKeys;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URL;
 import java.util.ArrayList;
 
-import com.itextpdf.text.error_messages.MessageLocalization;
-import com.itextpdf.text.pdf.collection.PdfTargetDictionary;
-import com.itextpdf.text.pdf.internal.PdfIsoKeys;
-
 /**
  * A <CODE>PdfAction</CODE> defines an action that can be triggered from a PDF file.
- *
  * @see		PdfDictionary
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
-
+@Deprecated
 public class PdfAction extends PdfDictionary {
 
     /** A named action to go to the first page.

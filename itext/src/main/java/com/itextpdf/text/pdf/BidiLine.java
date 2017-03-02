@@ -55,9 +55,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 /** Does all the line bidirectional processing with PdfChunk assembly.
- *
  * @author Paulo Soares
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class BidiLine {
 
     protected int runDirection;

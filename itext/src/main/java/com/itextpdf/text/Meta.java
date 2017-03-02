@@ -54,11 +54,11 @@ import java.util.ArrayList;
  * User defined meta information should be placed in a <CODE>Header</CODE>-object.
  * <CODE>Meta</CODE> is reserved for: Subject, Keywords, Author, Title, Producer
  * and Creationdate information.
- *
  * @see		Element
  * @see		Header
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
-
+@Deprecated
 public class Meta implements Element {
 
     // membervariables

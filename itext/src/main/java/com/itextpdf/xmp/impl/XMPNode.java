@@ -30,18 +30,17 @@
 
 package com.itextpdf.xmp.impl;
 
+import com.itextpdf.xmp.XMPConst;
+import com.itextpdf.xmp.XMPError;
+import com.itextpdf.xmp.XMPException;
+import com.itextpdf.xmp.options.PropertyOptions;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
-
-import com.itextpdf.xmp.XMPConst;
-import com.itextpdf.xmp.XMPError;
-import com.itextpdf.xmp.XMPException;
-import com.itextpdf.xmp.options.PropertyOptions;
-
 
 /**
  * A node in the internally XMP tree, which can be a schema node, a property node, an array node,
@@ -53,9 +52,10 @@ import com.itextpdf.xmp.options.PropertyOptions;
  * 2. The array type should be an enum
  * 3. isImplicitNode should be removed completely and replaced by return values of fi.
  * 4. hasLanguage, hasType should be automatically maintained by XMPNode
- * 
  * @since 21.02.2006
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 class XMPNode implements Comparable
 {
 	/** name of the node, contains different information depending of the node kind */

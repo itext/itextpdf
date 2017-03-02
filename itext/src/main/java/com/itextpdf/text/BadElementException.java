@@ -45,10 +45,10 @@ package com.itextpdf.text;
 
 /**
  * Signals an attempt to create an <CODE>Element</CODE> that hasn't got the right form.
- *
  * @see		DocumentException
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
-
+@Deprecated
 public class BadElementException extends DocumentException {
     
     private static final long serialVersionUID = -799006030723822254L;

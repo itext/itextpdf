@@ -43,7 +43,6 @@
  */
 package com.itextpdf.text.pdf.security;
 
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -76,7 +75,9 @@ import org.bouncycastle.tsp.TimeStampTokenInfo;
  * for ease of subclassing.
  * </p>
  * @since	2.1.6
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class TSAClientBouncyCastle implements TSAClient {
 
 	/** The Logger instance. */

@@ -52,13 +52,12 @@ import com.itextpdf.text.Font.FontFamily;
  * this <CODE>String</CODE> can contain special Symbols. These are characters with an int value
  * between 913 and 937 (except 930) and between 945 and 969. With this class the value of the
  * corresponding character of the Font Symbol, can be retrieved.
- *
  * @see		Phrase
- *
  * @author  Bruno Lowagie
  * @author  Evelyne De Cordier
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
-
+@Deprecated
 public class SpecialSymbol {
     
 	/**

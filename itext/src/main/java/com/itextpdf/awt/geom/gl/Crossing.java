@@ -26,6 +26,10 @@ package com.itextpdf.awt.geom.gl;
 import com.itextpdf.awt.geom.PathIterator;
 import com.itextpdf.awt.geom.Shape;
 
+/**
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
+ */
+@Deprecated
 public class Crossing {
 
     /**

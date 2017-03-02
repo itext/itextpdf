@@ -69,8 +69,9 @@ import java.util.StringTokenizer;
  * Make copies of PDF documents. Documents can be edited after reading and
  * before writing them out.
  * @author Mark Thompson
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
-
+@Deprecated
 public class PdfCopy extends PdfWriter {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PdfCopy.class);

@@ -102,6 +102,8 @@
  */
 package com.itextpdf.text.pdf;
 
+import com.itextpdf.text.error_messages.MessageLocalization;
+
 /**
  * Reference implementation of the Unicode 3.0 Bidi algorithm.
  *
@@ -146,12 +148,10 @@ package com.itextpdf.text.pdf;
  * left of their base character in RTL runs) and that it adjust the glyphs
  * used to render mirrored characters that are in RTL runs so that they
  * render appropriately.
- *
  * @author Doug Felt
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
-
-import com.itextpdf.text.error_messages.MessageLocalization;
-
+@Deprecated
 public final class BidiOrder {
     private byte[] initialTypes;
     private byte[] embeddings; // generated from processing format codes

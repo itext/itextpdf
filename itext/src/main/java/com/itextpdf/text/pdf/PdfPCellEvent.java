@@ -47,7 +47,9 @@ import com.itextpdf.text.Rectangle;
 
 /** An event called for a single cell.
  * @author Paulo Soares
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public interface PdfPCellEvent {
     /** This method is called at the end of the cell rendering. The text or graphics are added to
      * one of the 4 <CODE>PdfContentByte</CODE> contained in

@@ -42,20 +42,25 @@
  * address: sales@itextpdf.com
  */
 package com.itextpdf.text.pdf;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.util.HashMap;
 
 import com.itextpdf.text.ExceptionConverter;
+
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.nio.CharBuffer;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetEncoder;
 import java.nio.charset.CodingErrorAction;
-/** Supports fast encodings for winansi and PDFDocEncoding.
+import java.util.HashMap;
+
+/**
+ * Supports fast encodings for winansi and PDFDocEncoding.
  * Supports conversions from CJK encodings to CID.
  * Supports custom encodings.
  * @author Paulo Soares
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class PdfEncodings {
     static final char winansiByteToChar[] = {
         0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,

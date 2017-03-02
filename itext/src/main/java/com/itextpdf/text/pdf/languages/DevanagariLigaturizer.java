@@ -47,7 +47,9 @@ package com.itextpdf.text.pdf.languages;
  * Implementation of the IndicLigaturizer for Devanagari.
  *
  * Warning: this is an incomplete and experimental implementation of Devanagari. This implementation should not be used in production.
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class DevanagariLigaturizer extends IndicLigaturizer {
 
     // Devanagari characters

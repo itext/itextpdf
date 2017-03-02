@@ -94,7 +94,9 @@ import org.bouncycastle.cms.RecipientInformation;
  * Reads a PDF document.
  * @author Paulo Soares
  * @author Kazuya Ujihara
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class PdfReader implements PdfViewerPreferences {
 
 	/**

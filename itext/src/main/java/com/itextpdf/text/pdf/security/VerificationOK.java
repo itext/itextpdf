@@ -50,7 +50,9 @@ import java.security.cert.X509Certificate;
  * Class that informs you that the verification of a Certificate
  * succeeded using a specific CertificateVerifier and for a specific
  * reason.
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class VerificationOK {
 
 	/** The certificate that was verified successfully. */

@@ -43,17 +43,17 @@
  */
 package com.itextpdf.text;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.HashMap;
-import java.util.List;
-
 import com.itextpdf.text.api.Indentable;
 import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.pdf.PdfName;
 import com.itextpdf.text.pdf.PdfObject;
 import com.itextpdf.text.pdf.interfaces.IAccessibleElement;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * A <CODE>Section</CODE> is a part of a <CODE>Document</CODE> containing
@@ -79,8 +79,9 @@ import com.itextpdf.text.pdf.interfaces.IAccessibleElement;
  * <STRONG>Section section11 = section1.addSection(40, title211, 2);</STRONG>
  * <STRONG>section11.add(someSectionText);</STRONG>
  * </PRE></BLOCKQUOTE>
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
-
+@Deprecated
 public class Section extends ArrayList<Element> implements TextElementArray, LargeElement, Indentable, IAccessibleElement {
     // constant
 	/**

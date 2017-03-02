@@ -46,12 +46,11 @@ package com.itextpdf.text;
 import com.itextpdf.text.factories.GreekAlphabetFactory;
 
 /**
- *
  * A special-version of <CODE>LIST</CODE> which use greek-letters.
- *
  * @see com.itextpdf.text.List
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
-
+@Deprecated
 public class GreekList extends List {
 
 // constructors

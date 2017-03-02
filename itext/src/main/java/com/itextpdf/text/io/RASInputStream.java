@@ -48,7 +48,9 @@ import java.io.InputStream;
 /**
  * An input stream that uses a RandomAccessSource as it's underlying source 
  * @since 5.3.5
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class RASInputStream extends InputStream {
 	/**
 	 * The source

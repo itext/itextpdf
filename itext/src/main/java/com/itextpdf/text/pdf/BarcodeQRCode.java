@@ -55,7 +55,9 @@ import java.util.Map;
  * A QRCode implementation based on the zxing code.
  * @author Paulo Soares
  * @since 5.0.2
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class BarcodeQRCode {
     ByteMatrix bm;
 

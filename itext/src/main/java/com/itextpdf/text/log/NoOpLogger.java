@@ -44,10 +44,10 @@ package com.itextpdf.text.log;
 /**
  * The no-operation logger, it does nothing with the received logging
  * statements. And returns false by default for {@link NoOpLogger#isLogging(Level)}
- *
  * @author redlab_b
- *
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public final class NoOpLogger implements Logger {
 
 	/* (non-Javadoc)

@@ -83,6 +83,10 @@ import com.itextpdf.text.pdf.parser.clipper.Clipper.PolyFillType;
 import com.itextpdf.text.pdf.parser.clipper.Clipper.PolyType;
 import com.itextpdf.text.pdf.parser.clipper.Point.LongPoint;
 
+/**
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
+ */
+@Deprecated
 class Edge {
     static enum Side {
         LEFT, RIGHT

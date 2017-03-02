@@ -49,7 +49,9 @@ import java.security.MessageDigest;
 /**
  * Support for JBIG2 images.
  * @since 2.1.5
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class ImgJBIG2 extends Image {
 	
 	/** JBIG2 globals */

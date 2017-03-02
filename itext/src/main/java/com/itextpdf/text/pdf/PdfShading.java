@@ -43,13 +43,15 @@
  */
 package com.itextpdf.text.pdf;
 
-import java.io.IOException;
-import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.BaseColor;
+import com.itextpdf.text.error_messages.MessageLocalization;
+
+import java.io.IOException;
 /** Implements the shading dictionary (or stream).
- *
  * @author Paulo Soares
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class PdfShading {
 
     protected PdfDictionary shading;

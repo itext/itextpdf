@@ -49,8 +49,9 @@ import java.util.Iterator;
 /**
  * List a PDF file in human-readable form (for debugging reasons mostly)
  * @author Mark Thompson
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
-
+@Deprecated
 public class PdfLister {
 
 	/** the printStream you want to write the output to. */

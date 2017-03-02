@@ -52,8 +52,9 @@ import com.itextpdf.text.BaseColor;
 
 /**
  * Implements the pattern.
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
-
+@Deprecated
 public final class PdfPatternPainter extends PdfTemplate {
     
     float xstep, ystep;

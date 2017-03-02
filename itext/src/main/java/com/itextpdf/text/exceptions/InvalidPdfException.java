@@ -49,7 +49,9 @@ import java.io.IOException;
  * Typed exception used when opening an existing PDF document.
  * Gets thrown when the document isn't a valid PDF document.
  * @since 2.1.5
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class InvalidPdfException extends IOException {
 
 	/** a serial version UID */

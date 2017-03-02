@@ -46,9 +46,10 @@ package com.itextpdf.text.pdf;
 import com.itextpdf.text.BaseColor;
 
 /**
- *
  * @author  Paulo Soares
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public abstract class ExtendedColor extends BaseColor{
     
 	private static final long serialVersionUID = 2722660170712380080L;

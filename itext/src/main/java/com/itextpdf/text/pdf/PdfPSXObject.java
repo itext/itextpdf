@@ -47,7 +47,9 @@ import java.io.IOException;
 
 /**
  * Implements the PostScript XObject.
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class PdfPSXObject extends PdfTemplate {
     
     /** Creates a new instance of PdfPSXObject */

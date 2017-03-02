@@ -48,9 +48,10 @@ package com.itextpdf.text.pdf;
  * and holds the optional content properties dictionary, which contains
  * a list of all the optional content groups in the document, as well as information
  * about the default and alternate configurations for optional content.
- *
  * @author Paulo Soares
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class PdfOCProperties extends PdfDictionary {
     
 }

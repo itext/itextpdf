@@ -43,6 +43,10 @@
  */
 package com.itextpdf.text.pdf.fonts.otf;
 
+import com.itextpdf.text.log.Logger;
+import com.itextpdf.text.log.LoggerFactory;
+import com.itextpdf.text.pdf.RandomAccessFileOrArray;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -51,15 +55,11 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.itextpdf.text.io.RandomAccessSourceFactory;
-import com.itextpdf.text.log.Logger;
-import com.itextpdf.text.log.LoggerFactory;
-import com.itextpdf.text.pdf.RandomAccessFileOrArray;
-
 /**
- * 
  * @author <a href="mailto:paawak@gmail.com">Palash Ray</a>
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public abstract class OpenTypeFontTableReader {
 
 	protected static final Logger LOG = LoggerFactory
