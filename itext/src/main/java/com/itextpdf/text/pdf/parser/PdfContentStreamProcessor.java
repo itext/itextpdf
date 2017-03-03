@@ -71,6 +71,7 @@ import com.itextpdf.text.pdf.PdfLiteral;
 import com.itextpdf.text.pdf.PdfName;
 import com.itextpdf.text.pdf.PdfNumber;
 import com.itextpdf.text.pdf.PdfObject;
+import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.PdfStream;
 import com.itextpdf.text.pdf.PdfString;
 import com.itextpdf.text.pdf.RandomAccessFileOrArray;
@@ -363,7 +364,7 @@ public class PdfContentStreamProcessor {
      */
     private void displayXObject(PdfName xobjectName) throws IOException {
         PdfDictionary xobjects = resources.getAsDict(PdfName.XOBJECT);
-        PdfObject xobject = xobjects.getDirectObject(xobjectName);
+        PdfObject xobject = PdfReader.getPdfObjectRelease(xobjects.get(xobjectName));
         PdfStream xobjectStream = (PdfStream)xobject;
 
         PdfName subType = xobjectStream.getAsName(PdfName.SUBTYPE);
