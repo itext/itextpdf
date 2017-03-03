@@ -11,9 +11,9 @@
 
   <groupId>com.itextpdf.tool</groupId>
   <artifactId>xfa-xmlworker</artifactId>
-  <version>5.5.11-SNAPSHOT</version>
+  <version>1.0.0</version>
 
-  <name>iText XML Worker</name>
+  <name>pdfXFA iText XML Worker</name>
   <description>Parses XML to PDF, with CSS support, using iText</description>
   <url>http://www.itextpdf.com/</url>
 

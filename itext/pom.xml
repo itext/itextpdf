@@ -10,9 +10,9 @@
   </parent>
 
   <artifactId>xfa-itextpdf</artifactId>
-  <version>5.5.10.1</version>
+  <version>1.0.0</version>
 
-  <name>iText Core</name>
+  <name>pdfXFA iText Core</name>
   <description>A Free Java-PDF library</description>
   <url>http://itextpdf.com</url>
 
