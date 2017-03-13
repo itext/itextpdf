@@ -2733,6 +2733,7 @@ public class PdfDocument extends Document {
             }
             currentHeight = indentTop() - ct.getYLine();
             newPage();
+            ptable.setSkipFirstHeader(false);
             if (isTagged(writer)) {
                 ct.setCanvas(text);
             }
