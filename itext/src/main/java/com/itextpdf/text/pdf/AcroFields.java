@@ -1823,6 +1823,7 @@ public class AcroFields {
             PdfIndirectReference kid = ref;
             while ((ref = wd.getAsIndirectObject(PdfName.PARENT)) != null) {
                 wd = wd.getAsDict( PdfName.PARENT );
+                if(wd == null) break;
                 PdfArray kids = wd.getAsArray(PdfName.KIDS);
                 if (removeRefFromArray(kids, kid) != 0)
                     break;
