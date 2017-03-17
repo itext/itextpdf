@@ -1,94 +1,94 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
 
-	<parent>
-		<groupId>com.itextpdf</groupId>
-		<artifactId>itext-parent</artifactId>
-		<version>1.0.0</version>
-	</parent>
+  <parent>
+    <groupId>com.itextpdf</groupId>
+    <artifactId>itext-parent</artifactId>
+    <version>1.0.0</version>
+  </parent>
 
-	<artifactId>itext-hyph-xml</artifactId>
-	<version>5.1.3</version>
-	<packaging>jar</packaging>
+  <artifactId>itext-hyph-xml</artifactId>
+  <version>5.1.3</version>
 
-	<name>iText, a Free Java-PDF library</name>
-	<description>XML files that can be used for hyphenation</description>
-	<url>http://www.itextpdf.com/</url>
+  <name>iText, a Free Java-PDF library</name>
+  <description>XML files that can be used for hyphenation</description>
+  <url>http://www.itextpdf.com/</url>
 
-	<licenses>
-		<license>
-			<name>Various licenses (see individual files)</name>
-		</license>
-	</licenses>
+  <licenses>
+    <license>
+      <name>Various licenses (see individual files)</name>
+    </license>
+  </licenses>
 
-	<developers>
-	</developers>
+  <developers>
+    <developer>
+      <id>itext</id>
+      <name>iText Software</name>
+      <email>info@itextpdf.com</email>
+      <url>http://www.itextpdf.com</url>
+    </developer>
+  </developers>
 
-	<mailingLists>
-			<mailingList>
-					<name>iText on StackOverflow</name>
-					<subscribe>
-							http://stackoverflow.com/questions/tagged/itext
-					</subscribe>
-					<archive>
-							http://stackoverflow.com/questions/tagged/itext
-					</archive>
-					<otherArchives>
-							<otherArchive>http://news.gmane.org/gmane.comp.java.lib.itext.general</otherArchive>
-							<otherArchive>http://itext-general.2136553.n4.nabble.com/</otherArchive>
-							<otherArchive>http://www.junlu.com/2.html</otherArchive>
-							<otherArchive>http://sourceforge.net/mailarchive/forum.php?forum_id=3273</otherArchive>
-							<otherArchive>http://www.mail-archive.com/itext-questions%40lists.sourceforge.net/</otherArchive>
-					</otherArchives>
-			</mailingList>
-	</mailingLists>
+  <mailingLists>
+    <mailingList>
+      <name>iText on StackOverflow</name>
+      <subscribe>http://stackoverflow.com/questions/tagged/itext</subscribe>
+      <archive>http://stackoverflow.com/questions/tagged/itext</archive>
+      <otherArchives>
+        <otherArchive>http://news.gmane.org/gmane.comp.java.lib.itext.general</otherArchive>
+        <otherArchive>http://itext-general.2136553.n4.nabble.com/</otherArchive>
+        <otherArchive>http://www.junlu.com/2.html</otherArchive>
+        <otherArchive>http://sourceforge.net/mailarchive/forum.php?forum_id=3273</otherArchive>
+        <otherArchive>http://www.mail-archive.com/itext-questions%40lists.sourceforge.net/</otherArchive>
+      </otherArchives>
+    </mailingList>
+  </mailingLists>
 
-	<scm>
-			<connection>scm:git:git@github.com:itext/itextpdf.git</connection>
-			<url>https://github.com/itext/itextpdf</url>
-	</scm>
+  <scm>
+    <connection>scm:git:git@github.com:itext/itextpdf.git</connection>
+    <url>https://github.com/itext/itextpdf</url>
+  </scm>
 
-	<issueManagement>
-			<system>jira</system>
-			<url>https://jira.itextsupport.com/</url>
-	</issueManagement>
+  <issueManagement>
+    <system>jira</system>
+    <url>https://jira.itextsupport.com/</url>
+  </issueManagement>
 
-	<ciManagement>
-			<system>jenkins-ci</system>
-			<url>http://ci.itextsupport.com/</url>
-	</ciManagement>
+  <ciManagement>
+    <system>jenkins-ci</system>
+    <url>http://ci.itextsupport.com/</url>
+  </ciManagement>
 
-	<properties>
-		<java.version>1.5</java.version>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-	</properties>
+  <properties>
+    <java.version>1.5</java.version>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
 
-	<build>
-		<plugins>
-				<plugin>
-						<artifactId>maven-compiler-plugin</artifactId>
-						<version>3.3</version>
-						<configuration>
-								<source>${java.version}</source>
-								<target>${java.version}</target>
-						</configuration>
-				</plugin>
-		</plugins>
-		<filters>
-		</filters>
-		<resources>
-			<resource>
-				<directory>src/main/resources</directory>
-				<includes>
-					<include>com/itextpdf/text/pdf/hyphenation/hyph/*.txt</include>
-					<include>com/itextpdf/text/pdf/hyphenation/hyph/*.xml</include>
-				</includes>
-			</resource>
-		</resources>
-		<sourceDirectory>src/main/resources</sourceDirectory>
-		<testSourceDirectory>src/main/resources</testSourceDirectory>
-	</build>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.6.1</version>
+        <configuration>
+          <source>${java.version}</source>
+          <target>${java.version}</target>
+        </configuration>
+      </plugin>
+    </plugins>
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+        <includes>
+          <include>com/itextpdf/text/pdf/hyphenation/hyph/*.txt</include>
+          <include>com/itextpdf/text/pdf/hyphenation/hyph/*.xml</include>
+        </includes>
+      </resource>
+    </resources>
+    <sourceDirectory>src/main/resources</sourceDirectory>
+    <testSourceDirectory>src/main/resources</testSourceDirectory>
+  </build>
 
 </project>
