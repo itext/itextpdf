@@ -61,7 +61,7 @@ import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.PdfSignature;
 import com.itextpdf.text.pdf.PdfSignatureAppearance;
 import com.itextpdf.text.pdf.PdfString;
-import org.bouncycastle.asn1.esf.SignaturePolicyIdentifier;
+import org.spongycastle.asn1.esf.SignaturePolicyIdentifier;
 
 import java.io.IOException;
 import java.io.InputStream;

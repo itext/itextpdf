@@ -44,7 +44,7 @@ package com.itextpdf.text.signature;
 
 import com.itextpdf.text.pdf.XfaXpathConstructor;
 import com.itextpdf.text.pdf.security.DigestAlgorithms;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.spongycastle.jce.provider.BouncyCastleProvider;
 import org.junit.Assert;
 import org.junit.Test;
 

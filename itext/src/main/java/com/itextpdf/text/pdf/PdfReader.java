@@ -86,9 +86,9 @@ import java.util.Set;
 import java.util.Stack;
 import java.util.zip.InflaterInputStream;
 
-import org.bouncycastle.cert.X509CertificateHolder;
-import org.bouncycastle.cms.CMSEnvelopedData;
-import org.bouncycastle.cms.RecipientInformation;
+import org.spongycastle.cert.X509CertificateHolder;
+import org.spongycastle.cms.CMSEnvelopedData;
+import org.spongycastle.cms.RecipientInformation;
 
 /**
  * Reads a PDF document.
