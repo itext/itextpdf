@@ -1,7 +1,7 @@
 /*
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -2196,6 +2196,16 @@ public class PdfReader implements PdfViewerPreferences {
                 return null;
             return out.toByteArray();
         }
+        finally {
+            try {
+                zip.close();
+            } catch (IOException ex) {
+            }
+            try {
+                out.close();
+            } catch (IOException ex) {
+            }
+        }
     }
 
     /** Decodes a stream that has the ASCIIHexDecode filter.
@@ -3900,12 +3910,11 @@ public class PdfReader implements PdfViewerPreferences {
         }
 
         private void iteratePages(final PRIndirectReference rpage) throws IOException {
-            if (!pagesNodes.add(getPdfObject(rpage)))
-                throw new InvalidPdfException(MessageLocalization.getComposedMessage("illegal.pages.tree"));
-
             PdfDictionary page = (PdfDictionary)getPdfObject(rpage);
             if (page == null)
                 return;
+            if (!pagesNodes.add(getPdfObject(rpage)))
+                throw new InvalidPdfException(MessageLocalization.getComposedMessage("illegal.pages.tree"));
             PdfArray kidsPR = page.getAsArray(PdfName.KIDS);
             // reference to a leaf
             if (kidsPR == null) {

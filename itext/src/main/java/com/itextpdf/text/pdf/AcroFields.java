@@ -1,7 +1,7 @@
 /*
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -1823,6 +1823,7 @@ public class AcroFields {
             PdfIndirectReference kid = ref;
             while ((ref = wd.getAsIndirectObject(PdfName.PARENT)) != null) {
                 wd = wd.getAsDict( PdfName.PARENT );
+                if(wd == null) break;
                 PdfArray kids = wd.getAsArray(PdfName.KIDS);
                 if (removeRefFromArray(kids, kid) != 0)
                     break;
@@ -2413,10 +2414,20 @@ public class AcroFields {
                 PdfString cert = v.getAsString(PdfName.CERT);
                 if (cert == null)
                     cert = v.getAsArray(PdfName.CERT).getAsString(0);
-                pk = new PdfPKCS7(contents.getOriginalBytes(), cert.getBytes(), provider);
+                if(!reader.isEncrypted()) {
+                    pk = new PdfPKCS7(contents.getOriginalBytes(), cert.getBytes(), provider);
+                }else{
+                    pk = new PdfPKCS7(contents.getBytes(), cert.getBytes(), provider);
+                }
             }
-            else
-                pk = new PdfPKCS7(contents.getOriginalBytes(), sub, provider);
+            else{
+                if(!reader.isEncrypted()){
+                    pk = new PdfPKCS7(contents.getOriginalBytes(), sub, provider);
+                }else{
+                    pk = new PdfPKCS7(contents.getBytes(),sub,provider);
+                }
+            }
+
             updateByteRange(pk, v);
             PdfString str = v.getAsString(PdfName.M);
             if (str != null)

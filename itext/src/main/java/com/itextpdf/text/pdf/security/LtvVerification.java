@@ -1,7 +1,7 @@
 /*
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -295,7 +295,12 @@ public class LtvVerification {
     private PdfName getSignatureHashKey(String signatureName) throws NoSuchAlgorithmException, IOException {
         PdfDictionary dic = acroFields.getSignatureDictionary(signatureName);
         PdfString contents = dic.getAsString(PdfName.CONTENTS);
-        byte[] bc = contents.getOriginalBytes();
+        byte[] bc = null;
+        if(!reader.isEncrypted()) {
+            bc = contents.getOriginalBytes();
+        }else{
+            bc = contents.getBytes();
+        }
         byte[] bt = null;
         if (PdfName.ETSI_RFC3161.equals(PdfReader.getPdfObject(dic.get(PdfName.SUBFILTER)))) {
             ASN1InputStream din = new ASN1InputStream(new ByteArrayInputStream(bc));

@@ -1,6 +1,6 @@
 /*
  *
- * This file is part of the iText (R) project. Copyright (c) 1998-2015 iText Group NV Authors: Balder Van Camp, Emiel
+    Copyright (c) 1998-2017 iText Group NV
  * Ackermann, et al.
  *
  * This program is free software; you can redistribute it and/or modify

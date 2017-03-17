@@ -1,7 +1,7 @@
 /*
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
  * Authors: Kevin Day, Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -44,6 +44,8 @@
 package com.itextpdf.text.pdf.parser;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
 
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.pdf.PRStream;
@@ -66,44 +68,68 @@ public class ImageRenderInfo {
     private final PdfDictionary colorSpaceDictionary;
     /** the image object to be rendered, if it has been parsed already.  Null otherwise. */
     private PdfImageObject imageObject = null;
-    
-    private ImageRenderInfo(GraphicsState gs, PdfIndirectReference ref, PdfDictionary colorSpaceDictionary) {
+
+    /**
+     * Array containing marked content info for the text.
+     * @since 5.0.2
+     */
+    private final Collection<MarkedContentInfo> markedContentInfos;
+
+
+    private ImageRenderInfo(GraphicsState gs, PdfIndirectReference ref, PdfDictionary colorSpaceDictionary,Collection<MarkedContentInfo> markedContentInfo) {
         this.gs = gs;
         this.ref = ref;
         this.inlineImageInfo = null;
         this.colorSpaceDictionary = colorSpaceDictionary;
+        this.markedContentInfos = new ArrayList<MarkedContentInfo>(markedContentInfo);
     }
 
-    private ImageRenderInfo(GraphicsState gs, InlineImageInfo inlineImageInfo, PdfDictionary colorSpaceDictionary) {
+    private ImageRenderInfo(GraphicsState gs, InlineImageInfo inlineImageInfo, PdfDictionary colorSpaceDictionary,Collection<MarkedContentInfo> markedContentInfo) {
         this.gs = gs;
         this.ref = null;
         this.inlineImageInfo = inlineImageInfo;
         this.colorSpaceDictionary = colorSpaceDictionary;
+        this.markedContentInfos = new ArrayList<MarkedContentInfo>(markedContentInfo);
     }
-    
     /**
      * Create an ImageRenderInfo object based on an XObject (this is the most common way of including an image in PDF)
-     * @param ctm the coordinate transformation matrix at the time the image is rendered
+     * @param gs graphic state of the XObject
      * @param ref a reference to the image XObject
+     * @param colorSpaceDictionary colourspace of the image
      * @return the ImageRenderInfo representing the rendered XObject
      * @since 5.0.1
      */
     public static ImageRenderInfo createForXObject(GraphicsState gs, PdfIndirectReference ref, PdfDictionary colorSpaceDictionary){
-        return new ImageRenderInfo(gs, ref, colorSpaceDictionary);
+        return new ImageRenderInfo(gs, ref, colorSpaceDictionary,null);
+    }
+
+    /**
+     * Create an ImageRenderInfo object based on an XObject (this is the most common way of including an image in PDF)
+     * @param gs graphic state of the XObject
+     * @param ref a reference to the image XObject
+     * @param colorSpaceDictionary colourspace of the image
+     * @param markedContentInfo marked content information for the XObject
+     * @return the ImageRenderInfo representing the rendered XObject
+     * @since 5.5.11
+     */
+    public static ImageRenderInfo createForXObject(GraphicsState gs, PdfIndirectReference ref, PdfDictionary colorSpaceDictionary, Collection<MarkedContentInfo> markedContentInfo){
+        return new ImageRenderInfo(gs, ref, colorSpaceDictionary,markedContentInfo);
     }
     
     /**
-     * Create an ImageRenderInfo object based on inline image data.  This is nowhere near completely thought through
-     * and really just acts as a placeholder.
-     * @param ctm the coordinate transformation matrix at the time the image is rendered
-     * @param imageObject the image object representing the inline image
+     * Create an ImageRenderInfo object based on inline image data.
+     * @param gs graphic state of the XObject
+     * @param InlineImageInfo  a reference to the inline image
+     * @param colorSpaceDictionary colourspace of the image
+     * @param markedContentInfo marked content information for the XObject
      * @return the ImageRenderInfo representing the rendered embedded image
      * @since 5.0.1
      */
-    protected static ImageRenderInfo createForEmbeddedImage(GraphicsState gs, InlineImageInfo inlineImageInfo, PdfDictionary colorSpaceDictionary){
-        ImageRenderInfo renderInfo = new ImageRenderInfo(gs, inlineImageInfo, colorSpaceDictionary);
+    protected static ImageRenderInfo createForEmbeddedImage(GraphicsState gs, InlineImageInfo inlineImageInfo, PdfDictionary colorSpaceDictionary,Collection<MarkedContentInfo> markedContentInfo){
+        ImageRenderInfo renderInfo = new ImageRenderInfo(gs, inlineImageInfo, colorSpaceDictionary,markedContentInfo);
         return renderInfo;
     }
+
     
     /**
      * Gets an object containing the image dictionary and bytes.
@@ -166,4 +192,53 @@ public class ImageRenderInfo {
     public BaseColor getCurrentFillColor(){
     	return gs.fillColor;
     }
+
+    /**
+     * Checks if the text belongs to a marked content sequence
+     * with a given mcid.
+     * @param mcid a marked content id
+     * @return true if the text is marked with this id
+     * @since 5.5.11
+     */
+    public boolean hasMcid(int mcid) {
+        return hasMcid(mcid, false);
+    }
+
+    /**
+     * Checks if the text belongs to a marked content sequence
+     * with a given mcid.
+     * @param mcid a marked content id
+     * @param checkTheTopmostLevelOnly indicates whether to check the topmost level of marked content stack only
+     * @return true if the text is marked with this id
+     * @since 5.5.11
+     */
+    public boolean hasMcid(int mcid, boolean checkTheTopmostLevelOnly) {
+        if (checkTheTopmostLevelOnly) {
+            if (markedContentInfos instanceof ArrayList) {
+                Integer infoMcid = getMcid();
+                return (infoMcid != null) ? infoMcid == mcid : false;
+            }
+        } else {
+            for (MarkedContentInfo info : markedContentInfos) {
+                if (info.hasMcid())
+                    if(info.getMcid() == mcid)
+                        return true;
+            }
+        }
+        return false;
+    }
+
+
+    /**
+     * @return the marked content associated with the TextRenderInfo instance.
+     */
+    public Integer getMcid() {
+        if (markedContentInfos instanceof ArrayList) {
+            ArrayList<MarkedContentInfo> mci = (ArrayList<MarkedContentInfo>)markedContentInfos;
+            MarkedContentInfo info = mci.size() > 0 ? mci.get(mci.size() - 1) : null;
+            return (info != null && info.hasMcid()) ? info.getMcid() : null;
+        }
+        return null;
+    }
+
 }

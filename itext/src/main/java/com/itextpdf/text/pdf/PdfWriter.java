@@ -1,7 +1,7 @@
 /*
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -1272,16 +1272,17 @@ public class PdfWriter extends DocWriter implements
                     }
                 }
                 if (xmpMetadata != null) {
-                	PdfStream xmp = new PdfStream(xmpMetadata);
-                	xmp.put(PdfName.TYPE, PdfName.METADATA);
-                	xmp.put(PdfName.SUBTYPE, PdfName.XML);
+                    PdfStream xmp = new PdfStream(xmpMetadata);
+                    xmp.put(PdfName.TYPE, PdfName.METADATA);
+                    xmp.put(PdfName.SUBTYPE, PdfName.XML);
                     if (crypto != null && !crypto.isMetadataEncrypted()) {
                         PdfArray ar = new PdfArray();
                         ar.add(PdfName.CRYPT);
                         xmp.put(PdfName.FILTER, ar);
                     }
-                	catalog.put(PdfName.METADATA, body.add(xmp).getIndirectReference());
+                    catalog.put(PdfName.METADATA, body.add(xmp).getIndirectReference());
                 }
+                getInfo().put(PdfName.PRODUCER, new PdfString(Version.getInstance().getVersion()));
                 // [C10] make pdfx conformant
                 if (isPdfX()) {
                     completeInfoDictionary(getInfo());

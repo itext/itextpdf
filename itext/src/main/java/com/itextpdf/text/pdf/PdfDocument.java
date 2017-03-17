@@ -1,7 +1,7 @@
 /*
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -48,6 +48,7 @@ import com.itextpdf.text.List;
 import com.itextpdf.text.api.WriterOperation;
 import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.io.TempFileCache;
+import com.itextpdf.text.log.LoggerFactory;
 import com.itextpdf.text.pdf.collection.PdfCollection;
 import com.itextpdf.text.pdf.draw.DrawInterface;
 import com.itextpdf.text.pdf.interfaces.IAccessibleElement;
@@ -2732,6 +2733,7 @@ public class PdfDocument extends Document {
             }
             currentHeight = indentTop() - ct.getYLine();
             newPage();
+            ptable.setSkipFirstHeader(false);
             if (isTagged(writer)) {
                 ct.setCanvas(text);
             }

@@ -1,56 +1,58 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
+  <modelVersion>4.0.0</modelVersion>
 
-    <parent>
-        <groupId>com.itextpdf</groupId>
-        <artifactId>itext-parent</artifactId>
-        <version>1.0.0</version>
-    </parent>
+  <parent>
+    <groupId>com.itextpdf</groupId>
+    <artifactId>itext-parent</artifactId>
+    <version>1.0.0</version>
+  </parent>
 
-    <artifactId>root</artifactId>
-    <version>5.5.10</version>
-    <packaging>pom</packaging>
+  <artifactId>root</artifactId>
+  <version>5.5.11</version>
+  <packaging>pom</packaging>
 
-    <name>iText</name>
-    <description>A Free Java-PDF library</description>
-    <url>http://itextpdf.com</url>
-    <inceptionYear>1998</inceptionYear>
+  <name>iText</name>
+  <description>A Free Java-PDF library</description>
+  <url>http://itextpdf.com</url>
+  <inceptionYear>1998</inceptionYear>
 
-    <modules>
-        <module>itext</module>
-        <module>pdfa</module>
-        <module>xtra</module>
-        <module>xmlworker</module>
-    </modules>
+  <modules>
+    <module>itext</module>
+    <module>pdfa</module>
+    <module>xtra</module>
+    <module>xmlworker</module>
+  </modules>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <version>2.10.3</version>
-                <configuration>
-                    <quiet>true</quiet>
-                    <groups>
-                        <group>
-                            <title>iText Core</title>
-                            <packages>com.itextpdf*</packages>
-                        </group>
-                        <group>
-                            <title>iText PDF/A</title>
-                            <packages>com.itextpdf.text.xml.xmp:com.itextpdf.text.zugferd*</packages>
-                        </group>
-                        <group>
-                            <title>iText Xtra</title>
-                            <packages>com.itextpdf.text.pdf.mc:com.itextpdf.text.pdf.ocg:com.itextpdf.text.pdf.pdfcleanup:com.itextpdf.text.pdf.richmedia:com.itextpdf.text.pdf.spatial*:com.itextpdf.text.pdf.util</packages>
-                        </group>
-                        <group>
-                            <title>XML Worker</title>
-                            <packages>com.itextpdf.tool.xml*</packages>
-                        </group>
-                    </groups>
-                    <footer><![CDATA[
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>2.10.4</version>
+        <configuration>
+          <quiet>true</quiet>
+          <groups>
+            <group>
+              <title>iText Core</title>
+              <packages>com.itextpdf*</packages>
+            </group>
+            <group>
+              <title>iText PDF/A</title>
+              <packages>com.itextpdf.text.xml.xmp:com.itextpdf.text.zugferd*</packages>
+            </group>
+            <group>
+              <title>iText Xtra</title>
+              <packages>
+                com.itextpdf.text.pdf.mc:com.itextpdf.text.pdf.ocg:com.itextpdf.text.pdf.pdfcleanup:com.itextpdf.text.pdf.richmedia:com.itextpdf.text.pdf.spatial*:com.itextpdf.text.pdf.util
+              </packages>
+            </group>
+            <group>
+              <title>XML Worker</title>
+              <packages>com.itextpdf.tool.xml*</packages>
+            </group>
+          </groups>
+          <footer><![CDATA[
 <script>
 (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
 (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
@@ -62,56 +64,58 @@ ga('send', 'pageview');
 
 </script>
                     ]]></footer>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>site-javadoc</id>
-                        <phase>site</phase>
-                        <goals>
-                            <goal>aggregate</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>external.atlassian.jgitflow</groupId>
-                <artifactId>jgitflow-maven-plugin</artifactId>
-                <version>1.0-m5.1</version>
-                <configuration>
-                    <flowInitContext>
-                        <masterBranchName>master</masterBranchName>
-                        <developBranchName>develop</developBranchName>
-                        <featureBranchPrefix>feature/</featureBranchPrefix>
-                        <releaseBranchPrefix>release/</releaseBranchPrefix>
-                        <hotfixBranchPrefix>hotfix/</hotfixBranchPrefix>
-                        <versionTagPrefix />
-                    </flowInitContext>
-                    <allowUntracked>true</allowUntracked>
-                    <autoVersionSubmodules>true</autoVersionSubmodules>
-                    <updateDependencies>true</updateDependencies>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
+        </configuration>
+        <executions>
+          <execution>
+            <id>site-javadoc</id>
+            <phase>site</phase>
+            <goals>
+              <goal>aggregate</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>external.atlassian.jgitflow</groupId>
+        <artifactId>jgitflow-maven-plugin</artifactId>
+        <version>1.0-m5.1</version>
+        <configuration>
+          <flowInitContext>
+            <masterBranchName>master</masterBranchName>
+            <developBranchName>develop</developBranchName>
+            <featureBranchPrefix>feature/</featureBranchPrefix>
+            <releaseBranchPrefix>release/</releaseBranchPrefix>
+            <hotfixBranchPrefix>hotfix/</hotfixBranchPrefix>
+            <versionTagPrefix />
+          </flowInitContext>
+          <allowUntracked>true</allowUntracked>
+          <autoVersionSubmodules>true</autoVersionSubmodules>
+          <updateDependencies>true</updateDependencies>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 
-    <profiles>
-        <profile>
-            <id>java8-disable-strict-javadoc</id>
-            <activation>
-                <jdk>[1.8,)</jdk>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-javadoc-plugin</artifactId>
-                        <configuration>
-                            <additionalparam>-Xdoclint:none</additionalparam>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
+  <profiles>
+    <profile>
+      <id>java8-disable-strict-javadoc</id>
+      <activation>
+        <jdk>[1.8,)</jdk>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-javadoc-plugin</artifactId>
+            <version>2.10.4</version>
+            <configuration>
+              <additionalparam>-Xdoclint:none</additionalparam>
+              <additionalparam>--allow-script-in-comments</additionalparam>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 
 </project>

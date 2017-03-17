@@ -121,7 +121,8 @@ public class XMPSerializerRDF
 	{
 		try
 		{
-			outputStream = new CountOutputStream(out); 
+			outputStream = new CountOutputStream(out);
+			//This writer is never used
 			writer = new OutputStreamWriter(outputStream, options.getEncoding());
 			
 			this.xmp = (XMPMetaImpl) xmp;

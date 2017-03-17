@@ -1,7 +1,7 @@
 /*
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2015 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -50,8 +50,6 @@ import com.itextpdf.text.PageSize;
 import com.itextpdf.text.Phrase;
 import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.pdf.events.FieldPositioningEvents;
-import junit.framework.Assert;
-import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -60,6 +58,10 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
+
+import org.junit.Test;
+
+import junit.framework.Assert;
 
 /**
  * @author Michael Demey
@@ -305,6 +307,8 @@ public class FlatteningTest {
 
     @Test
     public void testAnnotationFlatteningWithSkewAndRotation() throws IOException, DocumentException, InterruptedException {
+        new File(OUTPUT_FOLDER).mkdirs();
+        
         String file = "annotationWithTransformMatrix.pdf";
         PdfReader reader = new PdfReader(RESOURCES_FOLDER + file);
         PdfStamper stamper = new PdfStamper(reader, new FileOutputStream(OUTPUT_FOLDER + file));

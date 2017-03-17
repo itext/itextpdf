@@ -1,7 +1,7 @@
 /*
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -454,10 +454,13 @@ public class OCGParser {
 		 */
     	public void process(OCGParser parser, PdfLiteral operator,
     			List<PdfObject> operands) throws IOException {
-    		if ("BDC".equals(operator.toString()) && operands.size() > 1 && PdfName.OC.equals(operands.get(0))) {
-    			parser.checkMarkedContentStart((PdfName)operands.get(1));
-    		}
-    		else if ("BMC".equals(operator.toString())) {
+    		if ("BDC".equals(operator.toString())) {
+                    PdfName operand = null;
+                    if (operands.size() > 1 && PdfName.OC.equals(operands.get(0))) {
+    			operand = (PdfName) operands.get(1);
+                    }
+    			parser.checkMarkedContentStart(operand);
+    		} else if ("BMC".equals(operator.toString())) {
     			parser.checkMarkedContentStart(null);
     		}
 			parser.process(operator, operands, true);

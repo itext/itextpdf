@@ -1,95 +1,94 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
 
-	<parent>
-		<artifactId>itext-parent</artifactId>
-		<groupId>com.itextpdf</groupId>
-		<version>1.0.0</version>
-	</parent>
+  <parent>
+    <artifactId>itext-parent</artifactId>
+    <groupId>com.itextpdf</groupId>
+    <version>1.0.0</version>
+  </parent>
 
-	<artifactId>itext-asian</artifactId>
-	<packaging>jar</packaging>
-	<version>5.2.0</version>
+  <artifactId>itext-asian</artifactId>
+  <version>5.2.0</version>
 
-	<name>iText, a Free Java-PDF library</name>
-	<description>iTextAsian fonts for use in conjunction with iText, a free Java-PDF library</description>
-	<url>http://www.itextpdf.com/</url>
+  <name>iText, a Free Java-PDF library</name>
+  <description>iTextAsian fonts for use in conjunction with iText, a free Java-PDF library</description>
+  <url>http://www.itextpdf.com/</url>
 
-	<licenses>
-			<license>
-					<name>GNU Affero General Public License v3</name>
-					<url>http://www.fsf.org/licensing/licenses/agpl-3.0.html</url>
-			</license>
-	</licenses>
+  <licenses>
+    <license>
+      <name>GNU Affero General Public License v3</name>
+      <url>http://www.fsf.org/licensing/licenses/agpl-3.0.html</url>
+    </license>
+  </licenses>
 
-	<developers>
-	</developers>
+  <developers>
+    <developer>
+      <id>itext</id>
+      <name>iText Software</name>
+      <email>info@itextpdf.com</email>
+      <url>http://www.itextpdf.com</url>
+    </developer>
+  </developers>
 
-	<mailingLists>
-			<mailingList>
-					<name>iText on StackOverflow</name>
-					<subscribe>
-							http://stackoverflow.com/questions/tagged/itext
-					</subscribe>
-					<archive>
-							http://stackoverflow.com/questions/tagged/itext
-					</archive>
-					<otherArchives>
-							<otherArchive>http://news.gmane.org/gmane.comp.java.lib.itext.general</otherArchive>
-							<otherArchive>http://itext-general.2136553.n4.nabble.com/</otherArchive>
-							<otherArchive>http://www.junlu.com/2.html</otherArchive>
-							<otherArchive>http://sourceforge.net/mailarchive/forum.php?forum_id=3273</otherArchive>
-							<otherArchive>http://www.mail-archive.com/itext-questions%40lists.sourceforge.net/</otherArchive>
-					</otherArchives>
-			</mailingList>
-	</mailingLists>
+  <mailingLists>
+    <mailingList>
+      <name>iText on StackOverflow</name>
+      <subscribe>http://stackoverflow.com/questions/tagged/itext</subscribe>
+      <archive>http://stackoverflow.com/questions/tagged/itext</archive>
+      <otherArchives>
+        <otherArchive>http://news.gmane.org/gmane.comp.java.lib.itext.general</otherArchive>
+        <otherArchive>http://itext-general.2136553.n4.nabble.com/</otherArchive>
+        <otherArchive>http://www.junlu.com/2.html</otherArchive>
+        <otherArchive>http://sourceforge.net/mailarchive/forum.php?forum_id=3273</otherArchive>
+        <otherArchive>http://www.mail-archive.com/itext-questions%40lists.sourceforge.net/</otherArchive>
+      </otherArchives>
+    </mailingList>
+  </mailingLists>
 
-	<scm>
-			<connection>scm:git:git@github.com:itext/itextpdf.git</connection>
-			<url>https://github.com/itext/itextpdf</url>
-	</scm>
+  <scm>
+    <connection>scm:git:git@github.com:itext/itextpdf.git</connection>
+    <url>https://github.com/itext/itextpdf</url>
+  </scm>
 
-	<issueManagement>
-			<system>jira</system>
-			<url>https://jira.itextsupport.com/</url>
-	</issueManagement>
+  <issueManagement>
+    <system>jira</system>
+    <url>https://jira.itextsupport.com/</url>
+  </issueManagement>
 
-	<ciManagement>
-			<system>jenkins-ci</system>
-			<url>http://ci.itextsupport.com/</url>
-	</ciManagement>
+  <ciManagement>
+    <system>jenkins-ci</system>
+    <url>http://ci.itextsupport.com/</url>
+  </ciManagement>
 
-	<properties>
-		<java.version>1.5</java.version>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-	</properties>
+  <properties>
+    <java.version>1.5</java.version>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
 
-	<build>
-		<plugins>
-				<plugin>
-						<artifactId>maven-compiler-plugin</artifactId>
-						<version>3.3</version>
-						<configuration>
-								<source>${java.version}</source>
-								<target>${java.version}</target>
-						</configuration>
-				</plugin>
-		</plugins>
-		<filters>
-		</filters>
-		<resources>
-			<resource>
-				<directory>src/main/resources</directory>
-				<includes>
-					<include>com/itextpdf/text/pdf/fonts/cmaps/**</include>
-					<include>**/cmap_info.txt</include>
-				</includes>
-			</resource>
-		</resources>
-		<sourceDirectory>src/main/resources</sourceDirectory>
-		<testSourceDirectory>src/main/resources</testSourceDirectory>
-	</build>
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.6.1</version>
+        <configuration>
+          <source>${java.version}</source>
+          <target>${java.version}</target>
+        </configuration>
+      </plugin>
+    </plugins>
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+        <includes>
+          <include>com/itextpdf/text/pdf/fonts/cmaps/**</include>
+          <include>**/cmap_info.txt</include>
+        </includes>
+      </resource>
+    </resources>
+    <sourceDirectory>src/main/resources</sourceDirectory>
+    <testSourceDirectory>src/main/resources</testSourceDirectory>
+  </build>
 
 </project>

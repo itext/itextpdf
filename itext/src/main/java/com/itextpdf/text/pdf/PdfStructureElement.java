@@ -1,7 +1,7 @@
 /*
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -91,13 +91,14 @@ public class PdfStructureElement extends PdfDictionary implements IPdfStructureE
 
     /**
      * Creates a new instance of PdfStructureElement.
-     * @param parent the parent of this node
+     * @param root the parent of this node
      * @param structureType the type of structure. It may be a standard type or a user type mapped by the role map
      */
-    public PdfStructureElement(PdfStructureTreeRoot parent, PdfName structureType) {
-        top = parent;
-        init(parent, structureType);
-        put(PdfName.P, parent.getReference());
+    public PdfStructureElement(PdfStructureTreeRoot root, PdfName structureType) {
+        top = root;
+
+        init(root, structureType);
+        put(PdfName.P, root.getReference());
         put(PdfName.TYPE, PdfName.STRUCTELEM);
     }
 

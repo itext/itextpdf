@@ -1,7 +1,7 @@
 /*
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -45,26 +45,47 @@ package com.itextpdf.text.pdf.pdfcleanup;
 
 import com.itextpdf.text.Image;
 import com.itextpdf.text.Rectangle;
-import com.itextpdf.text.pdf.*;
-import com.itextpdf.text.pdf.parser.*;
-import org.apache.commons.imaging.ImageFormats;
-import org.apache.commons.imaging.ImageInfo;
-import org.apache.commons.imaging.Imaging;
-import org.apache.commons.imaging.ImagingConstants;
-import org.apache.commons.imaging.formats.tiff.constants.TiffConstants;
+import com.itextpdf.text.exceptions.UnsupportedPdfException;
+import com.itextpdf.text.pdf.PdfBoolean;
+import com.itextpdf.text.pdf.PdfContentByte;
+import com.itextpdf.text.pdf.PdfDictionary;
+import com.itextpdf.text.pdf.PdfName;
+import com.itextpdf.text.pdf.PdfObject;
+import com.itextpdf.text.pdf.PdfStamper;
+import com.itextpdf.text.pdf.parser.ExtRenderListener;
+import com.itextpdf.text.pdf.parser.ImageRenderInfo;
+import com.itextpdf.text.pdf.parser.LineDashPattern;
+import com.itextpdf.text.pdf.parser.LineSegment;
+import com.itextpdf.text.pdf.parser.Matrix;
+import com.itextpdf.text.pdf.parser.Path;
+import com.itextpdf.text.pdf.parser.PathConstructionRenderInfo;
+import com.itextpdf.text.pdf.parser.PathPaintingRenderInfo;
+import com.itextpdf.text.pdf.parser.PdfImageObject;
+import com.itextpdf.text.pdf.parser.TextRenderInfo;
 
 import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
 import javax.imageio.stream.MemoryCacheImageOutputStream;
-import java.awt.*;
+
+import java.awt.Color;
+import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Stack;
+
+import org.apache.commons.imaging.ImageFormats;
+import org.apache.commons.imaging.ImageInfo;
+import org.apache.commons.imaging.Imaging;
+import org.apache.commons.imaging.ImagingConstants;
+import org.apache.commons.imaging.formats.tiff.constants.TiffConstants;
 
 class PdfCleanUpRenderListener implements ExtRenderListener {
 
@@ -117,7 +138,7 @@ class PdfCleanUpRenderListener implements ExtRenderListener {
 
         if (areasToBeCleaned == null) {
             chunks.add(new PdfCleanUpContentChunk.Image(false, null));
-        } else {
+        } else if ( areasToBeCleaned.size() > 0) {
             try {
                 PdfImageObject pdfImage = renderInfo.getImage();
                 byte[] imageBytes = processImage(pdfImage.getImageAsBytes(), areasToBeCleaned);
@@ -140,6 +161,8 @@ class PdfCleanUpRenderListener implements ExtRenderListener {
                 } else if (pdfImage != null && imageBytes != pdfImage.getImageAsBytes()) {
                     chunks.add(new PdfCleanUpContentChunk.Image(true, imageBytes));
                 }
+            } catch (UnsupportedPdfException pdfException) {
+                chunks.add(new PdfCleanUpContentChunk.Image(false, null));
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
