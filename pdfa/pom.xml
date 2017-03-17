@@ -10,7 +10,7 @@
   </parent>
 
   <artifactId>itext-pdfa</artifactId>
-  <version>5.5.11-SNAPSHOT</version>
+  <version>5.5.12-SNAPSHOT</version>
 
   <name>iText PDF/A</name>
   <description>iText ISO-19005 Module</description>
@@ -192,7 +192,7 @@
             <version>2.10.4</version>
             <configuration>
               <additionalparam>-Xdoclint:none</additionalparam>
-              <additionalparam>&#45;&#45;allow-script-in-comments</additionalparam>
+              <additionalparam>--allow-script-in-comments</additionalparam>
             </configuration>
           </plugin>
         </plugins>

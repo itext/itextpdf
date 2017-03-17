@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
@@ -10,7 +9,7 @@
   </parent>
 
   <artifactId>root</artifactId>
-  <version>5.5.11-SNAPSHOT</version>
+  <version>5.5.12-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>iText</name>
@@ -87,7 +86,7 @@ ga('send', 'pageview');
             <featureBranchPrefix>feature/</featureBranchPrefix>
             <releaseBranchPrefix>release/</releaseBranchPrefix>
             <hotfixBranchPrefix>hotfix/</hotfixBranchPrefix>
-            <versionTagPrefix/>
+            <versionTagPrefix />
           </flowInitContext>
           <allowUntracked>true</allowUntracked>
           <autoVersionSubmodules>true</autoVersionSubmodules>
@@ -111,7 +110,7 @@ ga('send', 'pageview');
             <version>2.10.4</version>
             <configuration>
               <additionalparam>-Xdoclint:none</additionalparam>
-              <additionalparam>&#45;&#45;allow-script-in-comments</additionalparam>
+              <additionalparam>--allow-script-in-comments</additionalparam>
             </configuration>
           </plugin>
         </plugins>

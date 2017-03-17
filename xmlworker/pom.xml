@@ -11,7 +11,7 @@
 
   <groupId>com.itextpdf.tool</groupId>
   <artifactId>xmlworker</artifactId>
-  <version>5.5.11-SNAPSHOT</version>
+  <version>5.5.12-SNAPSHOT</version>
 
   <name>iText XML Worker</name>
   <description>Parses XML to PDF, with CSS support, using iText</description>
@@ -250,7 +250,7 @@
             <version>2.10.4</version>
             <configuration>
               <additionalparam>-Xdoclint:none</additionalparam>
-              <additionalparam>&#45;&#45;allow-script-in-comments</additionalparam>
+              <additionalparam>--allow-script-in-comments</additionalparam>
             </configuration>
           </plugin>
         </plugins>
