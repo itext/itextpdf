@@ -50,6 +50,8 @@ import com.itextpdf.text.PageSize;
 import com.itextpdf.text.Phrase;
 import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.pdf.events.FieldPositioningEvents;
+import junit.framework.Assert;
+import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -58,10 +60,9 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
-
-import org.junit.Test;
-
-import junit.framework.Assert;
+import java.io.OutputStream;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @author Michael Demey
@@ -70,6 +71,38 @@ public class FlatteningTest {
 
     private static final String RESOURCES_FOLDER = "./src/test/resources/com/itextpdf/text/pdf/FlatteningTest/";
     private static final String OUTPUT_FOLDER = "./target/com/itextpdf/test/pdf/FlatteningTest/";
+
+    @Test
+    public void testFlatteningNewAppearances() throws InterruptedException, DocumentException, IOException {
+        new File(OUTPUT_FOLDER).mkdirs();
+
+        final String OUT = "tpl3_flattened.pdf";
+
+        PdfReader reader = new PdfReader(RESOURCES_FOLDER + "tpl3.pdf");
+        AcroFields fields = reader.getAcroFields();
+        if (fields != null && fields.getFields() != null && fields.getFields().size() > 0) {
+            OutputStream out = null;
+            out = new FileOutputStream(OUTPUT_FOLDER + OUT);
+            PdfStamper stamp = new PdfStamper(reader, out);
+            stamp.setFormFlattening(true);
+            AcroFields form = stamp.getAcroFields();
+
+            Set<Map.Entry<String, AcroFields.Item>> map = form.getFields().entrySet();
+            for (Map.Entry<String, AcroFields.Item> e : map) {
+                form.setField(e.getKey(), e.getKey());
+            }
+
+            stamp.close();
+            out.close();
+        }
+        reader.close();
+
+        CompareTool compareTool = new CompareTool();
+        String errorMessage = compareTool.compare(OUTPUT_FOLDER + OUT, RESOURCES_FOLDER + "cmp_" + OUT, OUTPUT_FOLDER, "diff");
+        if (errorMessage != null) {
+            Assert.fail(errorMessage);
+        }
+    }
 
     @Test
     public void testFlattening() throws IOException, DocumentException, InterruptedException {
