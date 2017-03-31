@@ -60,8 +60,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 import java.security.GeneralSecurityException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
@@ -142,7 +140,6 @@ public class PdfEncryptionTest {
 
     @Test
     public void encryptWithCertificateAndSignTest() throws IOException, DocumentException, GeneralSecurityException {
-        removeCryptographyRestrictions();
         Security.addProvider(new BouncyCastleProvider());
         String inPdf = SOURCE_FOLDER + "in.pdf";
         String outPdf = DEST_FOLDER + "encrypt_cert_signed.pdf";
