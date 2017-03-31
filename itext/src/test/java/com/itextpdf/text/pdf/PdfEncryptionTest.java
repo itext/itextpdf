@@ -60,6 +60,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.security.GeneralSecurityException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
@@ -137,9 +139,9 @@ public class PdfEncryptionTest {
         assertNull(password);
     }
 
-
     @Test
     public void encryptWithCertificateAndSignTest() throws IOException, DocumentException, GeneralSecurityException {
+        removeCryptographyRestrictions();
         Security.addProvider(new BouncyCastleProvider());
         String inPdf = SOURCE_FOLDER + "in.pdf";
         String outPdf = DEST_FOLDER + "encrypt_cert_signed.pdf";
@@ -150,6 +152,7 @@ public class PdfEncryptionTest {
         Certificate cert = getPublicCertificate(SOURCE_FOLDER + "test.cer");
         PrivateKey privateKey = getPrivateKey(SOURCE_FOLDER + "test.p12");
         certSign(getPublicCertificate(SOURCE_FOLDER + "test.cer"), privateKey, outPdf, new PdfReader(tmpPdf, cert, privateKey, new BouncyCastleProvider().getName()), "reason", "location");
+        restoreCryptographyRestrictions();
     }
 
     private static void encryptPdfWithCertificate(String sourceDocument, String targetDocument, String certPath) throws IOException, DocumentException, CertificateException {
@@ -193,6 +196,59 @@ public class PdfEncryptionTest {
         MakeSignature.signDetached(appearance, digest, pks, chain, null, null, null, 0,
                 MakeSignature.CryptoStandard.CADES);
         stamper.close();
+    }
+
+    /**
+     * Due to import control restrictions by the governments of a few countries,
+     * the encryption libraries shipped by default with the Java SDK restrict the
+     * length, and as a result the strength, of encryption keys. Be aware that by
+     * using this method we remove cryptography restrictions via reflection for
+     * testing purposes.
+     * <br/>
+     * For more conventional way of solving this problem you need to replace the
+     * default security JARs in your Java installation with the Java Cryptography
+     * Extension (JCE) Unlimited Strength Jurisdiction Policy Files. These JARs
+     * are available for download from http://java.oracle.com/ in eligible countries.
+     */
+    public static void removeCryptographyRestrictions() {
+        try {
+            Field field = Class.forName("javax.crypto.JceSecurity").
+                    getDeclaredField("isRestricted");
+            if (field.isAccessible()) {
+                // unexpected case
+                return;
+            }
+
+            Field modifiersField = Field.class.getDeclaredField("modifiers");
+            modifiersField.setAccessible(true);
+            modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
+            modifiersField.setAccessible(false);
+
+            field.setAccessible(true);
+            if (field.getBoolean(null)) {
+                field.set(null, java.lang.Boolean.FALSE);
+            } else {
+                field.setAccessible(false);
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    /**
+     * By using this method we restore cryptography restrictions via reflection.
+     */
+    public static void restoreCryptographyRestrictions() {
+        try {
+            Field field = Class.forName("javax.crypto.JceSecurity").
+                    getDeclaredField("isRestricted");
+            if (field.isAccessible()) {
+                field.set(null, java.lang.Boolean.TRUE);
+                field.setAccessible(false);
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
     }
 
 }
