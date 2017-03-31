@@ -46,16 +46,35 @@ import com.itextpdf.testutils.CompareTool;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.pdf.security.BouncyCastleDigest;
+import com.itextpdf.text.pdf.security.DigestAlgorithms;
+import com.itextpdf.text.pdf.security.ExternalDigest;
+import com.itextpdf.text.pdf.security.ExternalSignature;
+import com.itextpdf.text.pdf.security.MakeSignature;
+import com.itextpdf.text.pdf.security.PrivateKeySignature;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.junit.Before;
+import org.junit.Test;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import org.junit.Before;
-import org.junit.Test;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.security.GeneralSecurityException;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.PrivateKey;
+import java.security.Security;
+import java.security.UnrecoverableKeyException;
+import java.security.cert.Certificate;
+import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
+import java.security.cert.X509Certificate;
 
-import junit.framework.Assert;
-
-import static junit.framework.Assert.*;
+import static junit.framework.Assert.assertNull;
 
 public class PdfEncryptionTest {
 
@@ -119,4 +138,64 @@ public class PdfEncryptionTest {
 
         assertNull(password);
     }
+
+
+    @Test
+    public void encryptWithCertificateAndSignTest() throws IOException, DocumentException, GeneralSecurityException {
+        removeCryptographyRestrictions();
+        Security.addProvider(new BouncyCastleProvider());
+        String inPdf = SOURCE_FOLDER + "in.pdf";
+        String outPdf = DEST_FOLDER + "encrypt_cert_signed.pdf";
+        String tmpPdf = DEST_FOLDER + "encrypt_cert.pdf";
+
+        encryptPdfWithCertificate(inPdf, tmpPdf, SOURCE_FOLDER + "test.cer");
+
+        Certificate cert = getPublicCertificate(SOURCE_FOLDER + "test.cer");
+        PrivateKey privateKey = getPrivateKey(SOURCE_FOLDER + "test.p12");
+        certSign(getPublicCertificate(SOURCE_FOLDER + "test.cer"), privateKey, outPdf, new PdfReader(tmpPdf, cert, privateKey, new BouncyCastleProvider().getName()), "reason", "location");
+    }
+
+    private static void encryptPdfWithCertificate(String sourceDocument, String targetDocument, String certPath) throws IOException, DocumentException, CertificateException {
+        Certificate cert = getPublicCertificate(certPath);
+        Certificate[] certs = new Certificate[] {cert};
+        PdfReader reader = new PdfReader(sourceDocument);
+        PdfStamper st = new PdfStamper(reader, new FileOutputStream(targetDocument), '\0', false);
+        int[] x = new int[1];
+        x[0] = PdfWriter.ALLOW_SCREENREADERS;
+        st.setEncryption(certs, x, PdfWriter.STANDARD_ENCRYPTION_40);
+        st.close();
+    }
+
+    private static Certificate getPublicCertificate(String path) throws IOException, CertificateException {
+        FileInputStream is = new FileInputStream(path);
+        CertificateFactory cf = CertificateFactory.getInstance("X.509");
+        X509Certificate cert = (X509Certificate) cf.generateCertificate(is);
+        return cert;
+    }
+
+    private static PrivateKey getPrivateKey(String path) throws IOException, KeyStoreException, CertificateException, NoSuchAlgorithmException, UnrecoverableKeyException {
+        KeyStore ks = KeyStore.getInstance("PKCS12");
+        ks.load(new FileInputStream(path), "kspass".toCharArray());
+        String alias = ks.aliases().nextElement();
+        PrivateKey pk = (PrivateKey) ks.getKey(alias, "kspass".toCharArray());
+        return pk;
+    }
+
+    private static void certSign(Certificate cert, PrivateKey privateKey, String destinationPath, PdfReader reader, String reason, String location) throws IOException, DocumentException, GeneralSecurityException {
+        Certificate[] chain = new Certificate[] {cert};
+
+        BouncyCastleProvider provider = new BouncyCastleProvider();
+        ExternalSignature pks = new PrivateKeySignature(privateKey, DigestAlgorithms.SHA1, provider.getName());
+
+        FileOutputStream fout = new FileOutputStream(destinationPath);
+        PdfStamper stamper = PdfStamper.createSignature(reader, fout, '\0', null, true);
+        PdfSignatureAppearance appearance = stamper.getSignatureAppearance();
+        appearance.setReason(reason);
+        appearance.setLocation(location);
+        ExternalDigest digest = new BouncyCastleDigest();
+        MakeSignature.signDetached(appearance, digest, pks, chain, null, null, null, 0,
+                MakeSignature.CryptoStandard.CADES);
+        stamper.close();
+    }
+
 }

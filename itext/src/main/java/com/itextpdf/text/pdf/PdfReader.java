@@ -63,6 +63,9 @@ import com.itextpdf.text.pdf.PRTokeniser.TokenType;
 import com.itextpdf.text.pdf.interfaces.PdfViewerPreferences;
 import com.itextpdf.text.pdf.internal.PdfViewerPreferencesImp;
 import com.itextpdf.text.pdf.security.ExternalDecryptionProcess;
+import org.bouncycastle.cert.X509CertificateHolder;
+import org.bouncycastle.cms.CMSEnvelopedData;
+import org.bouncycastle.cms.RecipientInformation;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -85,10 +88,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
 import java.util.zip.InflaterInputStream;
-
-import org.bouncycastle.cert.X509CertificateHolder;
-import org.bouncycastle.cms.CMSEnvelopedData;
-import org.bouncycastle.cms.RecipientInformation;
 
 /**
  * Reads a PDF document.
@@ -1084,6 +1083,7 @@ public class PdfReader implements PdfViewerPreferences {
             }
         }
         else if (filter.equals(PdfName.PUBSEC)) {
+            decrypt.documentID = documentID;
             if ((cryptoMode & PdfWriter.ENCRYPTION_MASK) == PdfWriter.ENCRYPTION_AES_256)
                 decrypt.setKey(encryptionKey);
             else
