@@ -937,6 +937,8 @@ class PdfStamperImp extends PdfWriter {
                     if (as_n == null)
                         as_n = appDic.getAsDict(PdfName.N);
                 }
+                //The rotation can be already applied if the appearance stream was written to document during setField method
+                boolean applyRotation = false;
                 if (acroFields.isGenerateAppearances()) {
                     if (appDic == null || as_n == null) {
                         try {
@@ -952,6 +954,7 @@ class PdfStamperImp extends PdfWriter {
                         PdfArray bbox = stream.getAsArray(PdfName.BBOX);
                         PdfArray rect = merged.getAsArray(PdfName.RECT);
                         if (bbox != null && rect != null) {
+                            applyRotation = true;
                             float rectWidth = rect.getAsNumber(2).floatValue() - rect.getAsNumber(0).floatValue();
                             float bboxWidth = bbox.getAsNumber(2).floatValue() - bbox.getAsNumber(0).floatValue();
                             float rectHeight = rect.getAsNumber(3).floatValue() - rect.getAsNumber(1).floatValue();
@@ -1036,23 +1039,27 @@ class PdfStamperImp extends PdfWriter {
                         Rectangle box = PdfReader.getNormalizedRectangle(merged.getAsArray(PdfName.RECT));
                         PdfContentByte cb = getOverContent(page);
                         cb.setLiteral("Q ");
-                        /*
-                        Apply field rotation
-                         */
-                        AffineTransform tf = new AffineTransform();
-                        double fieldRotation = 0;
-                        if(merged.getAsDict(PdfName.MK) != null){
-                            if(merged.getAsDict(PdfName.MK).get(PdfName.R) != null){
-                                fieldRotation = merged.getAsDict(PdfName.MK).getAsNumber(PdfName.R).floatValue();
+                        if (applyRotation) {
+                            /*
+                            Apply field rotation
+                             */
+                            AffineTransform tf = new AffineTransform();
+                            double fieldRotation = 0;
+                            if (merged.getAsDict(PdfName.MK) != null) {
+                                if (merged.getAsDict(PdfName.MK).get(PdfName.R) != null) {
+                                    fieldRotation = merged.getAsDict(PdfName.MK).getAsNumber(PdfName.R).floatValue();
+                                }
                             }
+                            //Cast to radians
+                            fieldRotation = fieldRotation * Math.PI / 180;
+                            //Clamp to [-2*Pi, 2*Pi]
+                            fieldRotation = fieldRotation % (2 * Math.PI);
+                            //Calculate transformation matrix
+                            tf = calculateTemplateTransformationMatrix(tf, fieldRotation, box);
+                            cb.addTemplate(app, tf);
+                        } else {
+                            cb.addTemplate(app, box.getLeft(), box.getBottom());
                         }
-                        //Cast to radians
-                        fieldRotation = fieldRotation * Math.PI/180;
-                        //Clamp to [-2*Pi, 2*Pi]
-                        fieldRotation = fieldRotation%(2*Math.PI);
-                        //Calculate transformation matrix
-                        tf = calculateTemplateTransformationMatrix(tf,fieldRotation,box);
-                        cb.addTemplate(app, tf);
                         cb.setLiteral("q ");
                     }
                 }
