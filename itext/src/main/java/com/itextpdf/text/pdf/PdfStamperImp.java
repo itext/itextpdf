@@ -235,7 +235,7 @@ class PdfStamperImp extends PdfWriter {
         addFieldResources();
         PdfDictionary catalog = reader.getCatalog();
         getPdfVersion().addToCatalog(catalog);
-        PdfDictionary acroForm = (PdfDictionary) PdfReader.getPdfObject(catalog.get(PdfName.ACROFORM), reader.getCatalog());
+        PdfObject acroForm = PdfReader.getPdfObject(catalog.get(PdfName.ACROFORM), reader.getCatalog()); // in some lightly malformed PDFs, the AcroForm entry returns PdfNull instead of null
         if (acroFields != null && acroFields.getXfa().isChanged()) {
             markUsed(acroForm);
             if (!flat) {
@@ -243,8 +243,8 @@ class PdfStamperImp extends PdfWriter {
             }
         }
         if (sigFlags != 0) {
-            if (acroForm != null) {
-                acroForm.put(PdfName.SIGFLAGS, new PdfNumber(sigFlags));
+            if (acroForm instanceof PdfDictionary) { // make sure the AcroForm is a dictionary (and not a PdfNull)
+                ((PdfDictionary)acroForm).put(PdfName.SIGFLAGS, new PdfNumber(sigFlags));
                 markUsed(acroForm);
                 markUsed(catalog);
             }
