@@ -95,7 +95,7 @@ public final class Version {
             version = new Version();
             synchronized ( version ) {
                 try {
-                    Class<?> klass = Class.forName("com.itextpdf.licensekey.XfaLicenseKey");
+                    Class<?> klass = Class.forName("com.itextpdf.licensekey.LicenseKey");
                     Method m = klass.getMethod("getLicenseeInfo");
                     String[] info = (String[])m.invoke(klass.newInstance());
                     if (info[3] != null && info[3].trim().length() > 0) {
