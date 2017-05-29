@@ -66,6 +66,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <argLine>-Xms512m -Xmx1024m</argLine>
     <checkstyle.header.file>license.txt</checkstyle.header.file>
+    <itextcore.version>7.0.2</itextcore.version>
     <sonar.language>java</sonar.language>
     <sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
     <sonar.jacoco.reportPath>${project.basedir}/target/jacoco.exec</sonar.jacoco.reportPath>
@@ -96,6 +97,19 @@
       <version>1.5.1</version>
       <optional>true</optional>
     </dependency>
+    <dependency>
+      <groupId>com.itextpdf</groupId>
+      <artifactId>font-asian</artifactId>
+      <version>${itextcore.version}</version>
+      <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>com.itextpdf</groupId>
+          <artifactId>itextpdf</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+
   </dependencies>
 
   <build>
@@ -113,13 +127,6 @@
     </resources>
 
     <testResources>
-      <testResource>
-        <directory>src/main/resources</directory>
-        <includes>
-          <include>com/itextpdf/text/pdf/fonts/cmaps/**</include>
-          <include>**/cmap_info.txt</include>
-        </includes>
-      </testResource>
       <testResource>
         <directory>src/test/resources</directory>
         <includes>

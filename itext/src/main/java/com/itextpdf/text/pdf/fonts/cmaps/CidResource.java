@@ -61,7 +61,7 @@ import java.io.InputStream;
 public class CidResource implements CidLocation{
 
     public PRTokeniser getLocation(String location) throws IOException {
-        String fullName = BaseFont.RESOURCE_PATH + "cmaps/" + location;
+        String fullName = BaseFont.ITEXT_7_RESOURCE_PATH + "cmap/" + location;
         InputStream inp = StreamUtil.getResourceStream(fullName);
         if (inp == null)
             throw new IOException(MessageLocalization.getComposedMessage("the.cmap.1.was.not.found", fullName));

@@ -80,7 +80,7 @@ class CJKFont extends BaseFont {
     private static boolean propertiesLoaded = false;
     
     /** The path to the font resources. */
-    public static final String RESOURCE_PATH_CMAP = RESOURCE_PATH + "cmaps/";
+    public static final String RESOURCE_PATH_CMAP = ITEXT_7_RESOURCE_PATH + "cmap/";
     private static final HashMap<String,Set<String>> registryNames = new HashMap<String,Set<String>>();
     private CMapCidByte cidByte;
     private CMapUniCid uniCid;

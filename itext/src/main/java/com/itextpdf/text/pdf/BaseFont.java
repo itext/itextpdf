@@ -249,6 +249,8 @@ public abstract class BaseFont {
 
     /** The path to the font resources. */
     public static final String RESOURCE_PATH = "com/itextpdf/text/pdf/fonts/";
+    /** The itext7 fonts-asian path to the font resources. */
+    public static final String ITEXT_7_RESOURCE_PATH = "com/itextpdf/io/font/";
     /** The fake CID code that represents a newline. */
     public static final char CID_NEWLINE = '\u7fff';
 
