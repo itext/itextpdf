@@ -19,6 +19,9 @@
 
   <modules>
     <module>itext</module>
+    <module>pdfa</module>
+    <module>xtra</module>
+    <module>xmlworker</module>
   </modules>
 
   <build>

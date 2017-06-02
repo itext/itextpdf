@@ -9,7 +9,7 @@
     <relativePath />
   </parent>
 
-  <artifactId>itext-pdfa</artifactId>
+  <artifactId>xfa-itext-pdfa</artifactId>
   <version>5.5.12-SNAPSHOT</version>
 
   <name>iText PDF/A</name>
@@ -73,7 +73,7 @@
   <dependencies>
     <dependency>
       <groupId>com.itextpdf</groupId>
-      <artifactId>itextpdf</artifactId>
+      <artifactId>xfa-itextpdf</artifactId>
       <version>${project.version}</version>
       <optional>true</optional>
     </dependency>
