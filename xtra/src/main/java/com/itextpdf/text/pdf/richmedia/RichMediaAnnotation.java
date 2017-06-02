@@ -74,7 +74,9 @@ import com.itextpdf.text.pdf.PdfWriter;
  * linking of a Flash application state to a comment or view, which enables
  * video commenting. Finally, actions can be linked to video chapter points.
  * @since	5.0.0
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class RichMediaAnnotation {
 	/** The PdfWriter to which the annotation will be added. */
 	protected PdfWriter writer;

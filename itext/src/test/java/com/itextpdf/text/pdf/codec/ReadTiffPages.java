@@ -54,7 +54,9 @@ import java.io.IOException;
  * Load a TIFF file and read every page. This should not throw an exception.
  *
  * @author Michael Demey
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class ReadTiffPages {
 
     @Test

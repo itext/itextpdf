@@ -51,6 +51,10 @@ import org.junit.Test;
 import java.io.*;
 import java.util.ArrayList;
 
+/**
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
+ */
+@Deprecated
 public class PdfA2CheckerTest {
 
     private static final String outputDir = "./target/test/PdfA2/";

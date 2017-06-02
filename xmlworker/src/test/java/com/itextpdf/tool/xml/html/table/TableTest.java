@@ -67,6 +67,10 @@ import com.itextpdf.tool.xml.pipeline.ctx.WorkerContextImpl;
 import com.itextpdf.tool.xml.pipeline.html.HtmlPipeline;
 import com.itextpdf.tool.xml.pipeline.html.HtmlPipelineContext;
 
+/**
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
+ */
+@Deprecated
 public class TableTest {
 	private final List<Element> cells1 = new ArrayList<Element>();
 	private final List<Element> cells2 = new ArrayList<Element>();

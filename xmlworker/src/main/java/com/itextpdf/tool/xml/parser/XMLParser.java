@@ -63,7 +63,9 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * Reads an XML file. Attach a {@link XMLParserListener} for receiving events.
  *
  * @author redlab_b
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class XMLParser {
 
     private State state;

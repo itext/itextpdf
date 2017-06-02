@@ -67,7 +67,9 @@ import com.itextpdf.text.pdf.PdfWriter;
 /**
  * Creates a list of StructureItem objects extracted from the
  * Structure Tree of a PDF document.
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class StructureItems extends ArrayList<StructureItem> {
 
 	/** The Logger instance */

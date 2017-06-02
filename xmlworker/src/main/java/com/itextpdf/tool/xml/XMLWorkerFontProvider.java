@@ -51,7 +51,9 @@ import java.util.HashMap;
 
 /**
  *
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class XMLWorkerFontProvider extends FontFactoryImp {
 	public static final String DONTLOOKFORFONTS = "\ufffc";
     protected HashMap<String, String> fontSubstitutionMap = new HashMap<String, String>();

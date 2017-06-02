@@ -65,7 +65,9 @@ import com.itextpdf.tool.xml.pipeline.ctx.MapContext;
  * This pipeline writes to a Document.
  * @author redlab_b
  *
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class PdfWriterPipeline extends AbstractPipeline<MapContext> {
 
 	private static final Logger LOG = LoggerFactory.getLogger(PdfWriterPipeline.class);

@@ -46,6 +46,10 @@ import com.itextpdf.tool.xml.examples.SampleTest;
 import org.junit.Ignore;
 
 @Ignore
+/**
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
+ */
+@Deprecated
 public class Margin_table01 extends SampleTest {
     protected String getTestName() {
         return  "margin_table01";

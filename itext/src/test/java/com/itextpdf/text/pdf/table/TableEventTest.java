@@ -61,7 +61,9 @@ import junit.framework.Assert;
 
 /**
  * Test for pull request https://github.com/itext/itextpdf/pull/22
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class TableEventTest {
 
     private static final String CMP_FOLDER = "./src/test/resources/com/itextpdf/text/pdf/table/TableEventTest/";

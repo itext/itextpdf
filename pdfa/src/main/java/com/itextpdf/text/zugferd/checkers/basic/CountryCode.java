@@ -49,7 +49,9 @@ import com.itextpdf.text.zugferd.checkers.CodeValidation;
  * Class that can be used to check if a country code is well-formed.
  * IMPORTANT: this doesn't check if the code is valid in the sense that
  * it doesn't check the code against a list of countries.
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class CountryCode extends CodeValidation {
     /**
      * The code list provided with the ZUGFeRD standard only lists four codes:

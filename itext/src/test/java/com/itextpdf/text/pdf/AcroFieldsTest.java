@@ -55,6 +55,10 @@ import org.w3c.dom.css.RGBColor;
 import java.io.*;
 import java.util.HashMap;
 
+/**
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
+ */
+@Deprecated
 public class AcroFieldsTest {
 
     private String outFolder = "./target/com/itextpdf/test/pdf/AcroFieldsTest/";

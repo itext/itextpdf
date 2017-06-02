@@ -47,7 +47,9 @@ import com.itextpdf.text.zugferd.exceptions.InvalidCodeException;
 
 /**
  * Abstract superclass of a series of code validation classes.
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public abstract class CodeValidation {
     
     /**

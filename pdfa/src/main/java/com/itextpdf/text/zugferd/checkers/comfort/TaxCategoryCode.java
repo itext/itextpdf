@@ -47,7 +47,9 @@ import com.itextpdf.text.zugferd.checkers.CodeValidation;
 
 /**
  * Class that can be used to check if a tax category code is valid.
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class TaxCategoryCode extends CodeValidation {
     
     public static final String VAT_REVERSE_CHARGE = "AE";

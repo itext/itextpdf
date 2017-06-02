@@ -50,7 +50,9 @@ import com.itextpdf.tool.xml.net.ReadingProcessor;
  * A {@link ReadingProcessor} that creates a {@link CssFile} from the given bytes.
  * @author redlab_b
  *
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class CssFileProcessor implements ReadingProcessor {
 
     private final CssFile css;
