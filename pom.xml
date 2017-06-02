@@ -8,7 +8,7 @@
         <version>1.0.0</version>
     </parent>
 
-    <artifactId>root</artifactId>
+    <artifactId>xfa-root</artifactId>
     <version>5.5.10.1</version>
     <packaging>pom</packaging>
 

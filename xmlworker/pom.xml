@@ -10,9 +10,8 @@
   </parent>
 
   <groupId>com.itextpdf.tool</groupId>
-  <artifactId>xmlworker</artifactId>
+  <artifactId>xfa-xmlworker</artifactId>
   <version>5.5.11-SNAPSHOT</version>
-  <packaging>jar</packaging>
 
   <name>iText XML Worker</name>
   <description>Parses XML to PDF, with CSS support, using iText</description>
@@ -72,7 +71,7 @@
   <dependencies>
     <dependency>
       <groupId>com.itextpdf</groupId>
-      <artifactId>itextpdf</artifactId>
+      <artifactId>xfa-itextpdf</artifactId>
       <version>${project.version}</version>
       <optional>true</optional>
     </dependency>

@@ -9,9 +9,8 @@
     <relativePath />
   </parent>
 
-  <artifactId>itext-xtra</artifactId>
+  <artifactId>xfa-itext-xtra</artifactId>
   <version>5.5.11-SNAPSHOT</version>
-  <packaging>jar</packaging>
 
   <name>iText Xtra</name>
   <description>iText Xtra, part of iText a Free Java-PDF library</description>
@@ -74,7 +73,7 @@
   <dependencies>
     <dependency>
       <groupId>com.itextpdf</groupId>
-      <artifactId>itextpdf</artifactId>
+      <artifactId>xfa-itextpdf</artifactId>
       <version>${project.version}</version>
       <optional>true</optional>
     </dependency>

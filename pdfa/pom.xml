@@ -9,9 +9,8 @@
     <relativePath />
   </parent>
 
-  <artifactId>itext-pdfa</artifactId>
+  <artifactId>xfa-itext-pdfa</artifactId>
   <version>5.5.11-SNAPSHOT</version>
-  <packaging>jar</packaging>
 
   <name>iText PDF/A</name>
   <description>iText ISO-19005 Module</description>
@@ -74,7 +73,7 @@
   <dependencies>
     <dependency>
       <groupId>com.itextpdf</groupId>
-      <artifactId>itextpdf</artifactId>
+      <artifactId>xfa-itextpdf</artifactId>
       <version>${project.version}</version>
       <optional>true</optional>
     </dependency>
