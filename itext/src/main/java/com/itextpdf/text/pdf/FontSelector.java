@@ -170,7 +170,7 @@ public class FontSelector {
     private boolean isSupported(Font font) {
         BaseFont bf = font.getBaseFont();
         if (bf instanceof TrueTypeFont && BaseFont.WINANSI.equals(bf.getEncoding()) && !((TrueTypeFont) bf).isWinAnsiSupported()) {
-            LOGGER.warn(MessageFormat.format("TrueType Font {0} has WINANSI encoding but doesn't have WINANSI cmap.", font));
+            LOGGER.warn(MessageFormat.format("cmap(1, 0) not found for TrueType Font {0}, it is required for WinAnsi encoding.", font));
             return false;
         }
         return true;
