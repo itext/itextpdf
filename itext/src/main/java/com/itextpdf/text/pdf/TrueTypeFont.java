@@ -1808,5 +1808,12 @@ class TrueTypeFont extends BaseFont {
         return bboxes[metric[0]];
     }
 
-
+    /**
+     * Checks whether this font may be used with winansi encoding.
+     *
+     * @return <CODE>true</CODE> if the font can be correctly used with winansi encodings
+     */
+    boolean isWinAnsiSupported() {
+        return cmap10 != null;
+    }
 }
