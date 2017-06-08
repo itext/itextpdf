@@ -381,19 +381,46 @@ public class PdfChunk {
                 // the width of every character is added to the currentWidth
                 character = valueArray[currentPosition];
                 // if a newLine or carriageReturn is encountered
-                if (character == '\r' || character == '\n') {
-                    newlineSplit = true;
-                    int inc = 1;
-                    if (character == '\r' && currentPosition + 1 < length && valueArray[currentPosition + 1] == '\n')
-                        inc = 2;
-                    String returnValue = value.substring(currentPosition + inc);
-                    value = value.substring(0, currentPosition);
-                    if (value.length() < 1) {
-                        value = " ";
-                    }
-                    PdfChunk pc = new PdfChunk(returnValue, this);
-                    return pc;
-                }
+                if(character == '\r'){
+//                  newlineSplit = true;
+//                  int inc = 1;
+//                  if (character == '\r' && currentPosition + 1 < length)
+//                      inc = 2;
+//                  String returnValue = value.substring(currentPosition + inc);
+//                  value = value.substring(0, currentPosition);
+//                  if (value.length() < 1) {
+//                      value = " ";
+//                  }
+//                  PdfChunk pc = new PdfChunk(returnValue, this);
+//                  return pc;
+              }
+              if (character == '\n') {
+                  newlineSplit = true;
+                  int inc = 1;
+                  if (currentPosition + 1 < length && valueArray[currentPosition + 1] == '\n')
+                      inc = 1;
+                  String returnValue = value.substring(currentPosition + 1);
+                  value = value.substring(0, currentPosition);
+                  if (value.length() < 1) {
+                      value = " ";
+                  }
+                  char[] orgValue=value.toCharArray();
+                  float orgcurrentwidth=0;
+                  for (int i = 0; i < orgValue.length; i++) {
+                  	orgcurrentwidth+=getCharWidth(orgValue[i]);
+
+					}
+                  float nocurrentwidth=0;
+                  String needadd="";
+                  while(nocurrentwidth<width-orgcurrentwidth){
+                  		needadd=needadd+' ';
+                  		nocurrentwidth+=getCharWidth(' ');
+
+					}
+                  value=value+needadd;
+                  PdfChunk pc = new PdfChunk(returnValue, this);
+                  return pc;
+              }
                 surrogate = Utilities.isSurrogatePair(valueArray, currentPosition);
                 if (surrogate)
                     currentWidth += getCharWidth(Utilities.convertToUtf32(valueArray[currentPosition], valueArray[currentPosition + 1]));
