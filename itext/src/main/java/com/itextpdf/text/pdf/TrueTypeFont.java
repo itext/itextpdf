@@ -854,11 +854,8 @@ class TrueTypeFont extends BaseFont {
                 readBbox();
             }
         } finally {
-            //TODO: For embedded fonts, the underlying data source for the font will be left open until this TrueTypeFont object is collected by the Garbage Collector.  That may not be optimal.
-            if (!embedded) {
                 rf.close();
                 rf = null;
-            }
         }
     }
 
