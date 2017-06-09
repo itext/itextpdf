@@ -63,7 +63,7 @@ public class StructureMCID extends StructureItem {
 	 * @param mcid	an MCID
 	 */
 	public StructureMCID(PdfIndirectReference pg, PdfNumber mcid) {
-		this.pageref = pg.getNumber();
+		this.pageref = pg == null ? -1 : pg.getNumber();
 		this.mcid = mcid.intValue();
 	}
 	
