@@ -1,7 +1,7 @@
 /*
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -1824,20 +1824,23 @@ public class ColumnText {
 
                 // IF ROWS MAY NOT BE SPLIT
                 if (!table.isSplitRows()) {
-                    splittedRow = -1;
-                    if (k == rowIdx) {
-                        // drop the whole table
-                        if (k == table.size()) {
-                            compositeElements.removeFirst();
-                            continue;
-                        } // or drop the row
-                        else {
-                            // don't drop the row if the table is incomplete and if there's only one row (not counting the header rows)
-                            // if there's only one row and this check wasn't here the row would have been deleted and not added at all
-                            if ( !(!table.isComplete() && k == 1 ) ) {
-                                table.getRows().remove(k);
+                    if (splittedRow != -1) {
+                        splittedRow = -1;
+                    } else {
+                        if (k == rowIdx) {
+                            // drop the whole table
+                            if (k == table.size()) {
+                                compositeElements.removeFirst();
+                                continue;
+                            } // or drop the row
+                            else {
+                                // don't drop the row if the table is incomplete and if there's only one row (not counting the header rows)
+                                // if there's only one row and this check wasn't here the row would have been deleted and not added at all
+                                if ( !(!table.isComplete() && k == 1 ) ) {
+                                    table.getRows().remove(k);
+                                }
+                                return NO_MORE_COLUMN;
                             }
-                            return NO_MORE_COLUMN;
                         }
                     }
                 } // IF ROWS SHOULD NOT BE SPLIT
@@ -1948,7 +1951,7 @@ public class ColumnText {
                         footerRows = 0;
                     }
 
-                    if (sub.size() > 0) {
+                    if (sub.size() - footerRows > 0) {
                         // we need a correction if the last row needs to be extended
                         float rowHeight = 0;
                         int lastIdx = sub.size() - 1 - footerRows;

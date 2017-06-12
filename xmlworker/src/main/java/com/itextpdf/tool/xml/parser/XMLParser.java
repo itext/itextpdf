@@ -1,7 +1,7 @@
 /*
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
  * Authors: Balder Van Camp, Emiel Ackermann, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -41,6 +41,12 @@
  */
 package com.itextpdf.tool.xml.parser;
 
+import com.itextpdf.text.xml.XMLUtil;
+import com.itextpdf.text.xml.simpleparser.IanaEncodings;
+import com.itextpdf.tool.xml.parser.io.EncodingUtil;
+import com.itextpdf.tool.xml.parser.io.MonitorInputReader;
+import com.itextpdf.tool.xml.parser.io.ParserMonitor;
+
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -50,19 +56,16 @@ import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
-
-import com.itextpdf.text.xml.XMLUtil;
-import com.itextpdf.text.xml.simpleparser.IanaEncodings;
-import com.itextpdf.tool.xml.parser.io.EncodingUtil;
-import com.itextpdf.tool.xml.parser.io.MonitorInputReader;
-import com.itextpdf.tool.xml.parser.io.ParserMonitor;
 
 /**
  * Reads an XML file. Attach a {@link XMLParserListener} for receiving events.
  *
  * @author redlab_b
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class XMLParser {
 
     private State state;
@@ -73,6 +76,7 @@ public class XMLParser {
     private String text = null;
     private TagState tagState;
     private Charset charset;
+    private boolean decodeSpecialChars = true;
 
     /**
      * Constructs a default XMLParser ready for HTML/XHTML processing.
@@ -217,7 +221,7 @@ public class XMLParser {
     /**
      * The actual parse method
      *
-     * @param r
+     * @param reader
      * @throws IOException
      */
     private void parseWithReader(final Reader reader) throws IOException {
@@ -366,9 +370,14 @@ public class XMLParser {
      */
     public void startElement() {
         currentTagState(TagState.OPEN);
+        String tagName = this.memory.getCurrentTag();
+        Map<String, String> attributes = this.memory.getAttributes();
+        if (tagName.startsWith("?")) {
+            memory().processingInstruction().setLength(0);
+        }
         callText();
         for (XMLParserListener l : listeners) {
-            l.startElement(this.memory.getCurrentTag(), this.memory.getAttributes(), this.memory.getNameSpace());
+            l.startElement(tagName, attributes, this.memory.getNameSpace());
         }
         this.memory().flushNameSpace();
     }
@@ -461,6 +470,18 @@ public class XMLParser {
      */
     public void setMonitor(final ParserMonitor monitor) {
         this.monitor = monitor;
+    }
+
+    /**
+     * Determines whether special chars like &gt; will be decoded
+     * @param decodeSpecialChars true to decode, false to not decode
+     */
+    public void setDecodeSpecialChars(boolean decodeSpecialChars) {
+        this.decodeSpecialChars = decodeSpecialChars;
+    }
+
+    public boolean isDecodeSpecialChars() {
+        return decodeSpecialChars;
     }
 
     /**

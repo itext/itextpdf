@@ -1,7 +1,7 @@
 /*
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
  * Authors: Balder Van Camp, Emiel Ackermann, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -49,7 +49,9 @@ import com.itextpdf.tool.xml.parser.XMLParser;
 /**
  * @author redlab_b
  *
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class SelfClosingTagState implements State {
 
 	private final XMLParser parser;
@@ -72,6 +74,8 @@ public class SelfClosingTagState implements State {
 			this.parser.flush();
 			this.parser.memory().flushNameSpace();
 			this.parser.selectState().inTag();
+		} else if (this.parser.selectState().getPreviousState() instanceof ProcessingInstructionEncounteredState) {
+			this.parser.memory().processingInstruction().append(character);
 		}
 	}
 

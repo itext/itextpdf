@@ -1,7 +1,7 @@
 /*
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2015 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
  * Authors: Balder Van Camp, Emiel Ackermann, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -53,6 +53,10 @@ import java.io.IOException;
 
 import static org.junit.Assert.assertEquals;
 
+/**
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
+ */
+@Deprecated
 public class FontFamilyTest {
 	static {
 		LoggerFactory.getInstance().setLogger(new SysoLogger(3));

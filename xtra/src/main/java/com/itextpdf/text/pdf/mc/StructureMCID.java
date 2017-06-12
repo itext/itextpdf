@@ -1,7 +1,7 @@
 /*
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
  * Authors: Bruno Lowagie, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -52,7 +52,9 @@ import com.itextpdf.text.pdf.PdfNumber;
  * Object that stores an item that is part of the document structure.
  * It can refer to a marked-content sequence in a page or an object
  * reference (in this case the subclass StructureObject is used).
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class StructureMCID extends StructureItem {
 	
 	/** The mcid of the structure element. */

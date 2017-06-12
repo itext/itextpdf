@@ -1,7 +1,7 @@
 /*
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -80,7 +80,7 @@ class CJKFont extends BaseFont {
     private static boolean propertiesLoaded = false;
     
     /** The path to the font resources. */
-    public static final String RESOURCE_PATH_CMAP = RESOURCE_PATH + "cmaps/";
+    public static final String RESOURCE_PATH_CMAP = ITEXT_7_RESOURCE_PATH + "cmap/";
     private static final HashMap<String,Set<String>> registryNames = new HashMap<String,Set<String>>();
     private CMapCidByte cidByte;
     private CMapUniCid uniCid;

@@ -1,7 +1,7 @@
 /*
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
  * Authors: Alexander Chingarev, Bruno Lowagie, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -69,7 +69,9 @@ import java.util.Map;
 /**
  * Extension to PdfStamperImp that will attempt to keep a file
  * in conformance with the PDF/A standard.
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class PdfAStamperImp extends PdfStamperImp {
 
     protected Counter COUNTER = CounterFactory.getCounter(PdfAStamper.class);

@@ -1,7 +1,7 @@
 /*
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
  * Authors: Bruno Lowagie, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -48,7 +48,9 @@ import com.itextpdf.text.zugferd.checkers.CodeValidation;
 /**
  * Series of codes that can be used for quantities.
  * These codes are used only in the context of the Extended profile.
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class QuantityCode extends CodeValidation {
     
     public static final String BARREL = "BA";

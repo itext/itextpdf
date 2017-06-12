@@ -1,7 +1,7 @@
 /*
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
  * Authors: Balder Van Camp, Emiel Ackermann, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -48,7 +48,9 @@ package com.itextpdf.tool.xml.exceptions;
  * Thrown when the XMLWorker throws an Exception that we want to convert to a RuntimeException.
  * @author redlab_b
  *
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class RuntimeWorkerException extends RuntimeException {
 
 	/**

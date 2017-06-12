@@ -1,7 +1,7 @@
 /*
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
  * Authors: Balder Van Camp, Emiel Ackermann, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -50,7 +50,9 @@ import com.itextpdf.tool.xml.net.ReadingProcessor;
  * A {@link ReadingProcessor} that creates a {@link CssFile} from the given bytes.
  * @author redlab_b
  *
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class CssFileProcessor implements ReadingProcessor {
 
     private final CssFile css;

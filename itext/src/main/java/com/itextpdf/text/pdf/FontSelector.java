@@ -1,7 +1,7 @@
 /*
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -48,7 +48,10 @@ import com.itextpdf.text.Font;
 import com.itextpdf.text.Phrase;
 import com.itextpdf.text.Utilities;
 import com.itextpdf.text.error_messages.MessageLocalization;
+import com.itextpdf.text.log.Logger;
+import com.itextpdf.text.log.LoggerFactory;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 
 /** Selects the appropriate fonts that contain the glyphs needed to
@@ -63,7 +66,10 @@ import java.util.ArrayList;
 @Deprecated
 public class FontSelector {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(PdfSmartCopy.class);
+
     protected ArrayList<Font> fonts = new ArrayList<Font>();
+    protected ArrayList<Font> unsupportedFonts = new ArrayList<Font>();
     protected Font currentFont = null;
 
     /**
@@ -71,6 +77,10 @@ public class FontSelector {
      * @param font the <CODE>Font</CODE>
      */
     public void addFont(Font font) {
+        if (!isSupported(font)) {
+            unsupportedFonts.add(font);
+            return;
+        }
         if (font.getBaseFont() != null) {
             fonts.add(font);
             return;
@@ -87,7 +97,7 @@ public class FontSelector {
      * @return a <CODE>Phrase</CODE> with one or more chunks
      */
     public Phrase process(String text) {
-        if (fonts.size() == 0)
+        if (getSize() == 0)
             throw new IndexOutOfBoundsException(MessageLocalization.getComposedMessage("no.font.is.defined"));
         char cc[] = text.toCharArray();
         int len = cc.length;
@@ -101,7 +111,7 @@ public class FontSelector {
             }
         }
         if (sb.length() > 0) {
-            Chunk ck = new Chunk(sb.toString(), currentFont != null ? currentFont : fonts.get(0));
+            Chunk ck = new Chunk(sb.toString(), currentFont != null ? currentFont : getFont(0));
             ret.add(ck);
         }
         return ret;
@@ -116,8 +126,8 @@ public class FontSelector {
             Font font = null;
             if (Utilities.isSurrogatePair(cc, k)) {
                 int u = Utilities.convertToUtf32(cc, k);
-                for (int f = 0; f < fonts.size(); ++f) {
-                    font = fonts.get(f);
+                for (int f = 0; f < getSize(); ++f) {
+                    font = getFont(f);
                     if (font.getBaseFont().charExists(u) || Character.getType(u) == Character.FORMAT) {
                         if (currentFont != font) {
                             if (sb.length() > 0 && currentFont != null) {
@@ -132,8 +142,8 @@ public class FontSelector {
                     }
                 }
             } else {
-                for (int f = 0; f < fonts.size(); ++f) {
-                    font = fonts.get(f);
+                for (int f = 0; f < getSize(); ++f) {
+                    font = getFont(f);
                     if (font.getBaseFont().charExists(c) || Character.getType(c) == Character.FORMAT) {
                         if (currentFont != font) {
                             if (sb.length() > 0 && currentFont != null) {
@@ -149,5 +159,22 @@ public class FontSelector {
             }
         }
         return newChunk;
+    }
+
+    protected int getSize() {
+        return fonts.size() + unsupportedFonts.size();
+    }
+
+    protected Font getFont(int i) {
+        return i < fonts.size() ? fonts.get(i) : unsupportedFonts.get(i);
+    }
+
+    private boolean isSupported(Font font) {
+        BaseFont bf = font.getBaseFont();
+        if (bf instanceof TrueTypeFont && BaseFont.WINANSI.equals(bf.getEncoding()) && !((TrueTypeFont) bf).isWinAnsiSupported()) {
+            LOGGER.warn(MessageFormat.format("cmap(1, 0) not found for TrueType Font {0}, it is required for WinAnsi encoding.", font));
+            return false;
+        }
+        return true;
     }
 }

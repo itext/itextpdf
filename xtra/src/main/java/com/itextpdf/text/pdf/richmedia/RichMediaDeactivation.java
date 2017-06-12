@@ -1,7 +1,7 @@
 /*
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -51,7 +51,9 @@ import com.itextpdf.text.pdf.PdfName;
  * that causes deactivation of the annotation.
  * See ExtensionLevel 3 p80
  * @since	5.0.0
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class RichMediaDeactivation extends PdfDictionary {
 	
 	/**

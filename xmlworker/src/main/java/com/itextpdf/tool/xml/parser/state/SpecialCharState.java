@@ -1,7 +1,7 @@
 /*
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
  * Authors: Balder Van Camp, Emiel Ackermann, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -50,7 +50,9 @@ import com.itextpdf.tool.xml.parser.XMLParser;
 /**
  * @author redlab_b
  *
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class SpecialCharState implements State {
 
 	private final XMLParser parser;
@@ -59,7 +61,7 @@ public class SpecialCharState implements State {
 	 * @param parser the XMLParser
 	 */
 	public SpecialCharState(final XMLParser parser) {
-		this.parser =parser;
+		this.parser = parser;
 	}
 
 	/* (non-Javadoc)
@@ -71,7 +73,7 @@ public class SpecialCharState implements State {
 //			if ("nbsp".equals(entity.toString())) {
 //				parser.append(' '); // TODO check yes or no if it's good idea to transform &nbsp into a space ?
 //			} else {
-				char decoded = EntitiesToUnicode.decodeEntity(entity.toString());
+				char decoded = parser.isDecodeSpecialChars() ? EntitiesToUnicode.decodeEntity(entity.toString()) : 0;
 				if (decoded == '\0') {
 					parser.append('&').append(entity.toString()).append(';');
 					parser.memory().lastChar(';');

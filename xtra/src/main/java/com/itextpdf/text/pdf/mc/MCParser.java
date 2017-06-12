@@ -1,7 +1,7 @@
 /*
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
  * Authors: Bruno Lowagie, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -77,7 +77,9 @@ import com.itextpdf.text.pdf.RandomAccessFileOrArray;
  * This class will parse page content streams and add Do operators
  * in a marked-content sequence for every field that needs to be
  * flattened.
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class MCParser {
 	
 	// static final constants

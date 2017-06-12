@@ -1,7 +1,7 @@
 /*
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -61,7 +61,7 @@ import java.io.InputStream;
 public class CidResource implements CidLocation{
 
     public PRTokeniser getLocation(String location) throws IOException {
-        String fullName = BaseFont.RESOURCE_PATH + "cmaps/" + location;
+        String fullName = BaseFont.ITEXT_7_RESOURCE_PATH + "cmap/" + location;
         InputStream inp = StreamUtil.getResourceStream(fullName);
         if (inp == null)
             throw new IOException(MessageLocalization.getComposedMessage("the.cmap.1.was.not.found", fullName));

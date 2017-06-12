@@ -1,7 +1,7 @@
 /*
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -43,21 +43,10 @@
  */
 package com.itextpdf.text.pdf.security;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.math.BigInteger;
-import java.net.URL;
-import java.net.URLConnection;
-
 import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.log.Logger;
 import com.itextpdf.text.log.LoggerFactory;
 import com.itextpdf.text.pdf.codec.Base64;
-import java.security.GeneralSecurityException;
-import java.security.MessageDigest;
-
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.cmp.PKIFailureInfo;
 import org.bouncycastle.tsp.TSPException;
@@ -66,6 +55,16 @@ import org.bouncycastle.tsp.TimeStampRequestGenerator;
 import org.bouncycastle.tsp.TimeStampResponse;
 import org.bouncycastle.tsp.TimeStampToken;
 import org.bouncycastle.tsp.TimeStampTokenInfo;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.math.BigInteger;
+import java.net.URL;
+import java.net.URLConnection;
+import java.security.GeneralSecurityException;
+import java.security.MessageDigest;
 
 /**
  * Time Stamp Authority Client interface implementation using Bouncy Castle
@@ -106,7 +105,10 @@ public class TSAClientBouncyCastle implements TSAClient {
     
     /** Hash algorithm */
     protected String digestAlgorithm;
-    
+
+    /** TSA request policy */
+    private String tsaReqPolicy = null;
+
     /**
      * Creates an instance of a TSAClient that will use BouncyCastle.
      * @param url String - Time Stamp Authority URL (i.e. "http://tsatest1.digistamp.com/TSA")
@@ -159,6 +161,14 @@ public class TSAClientBouncyCastle implements TSAClient {
         return tokenSizeEstimate;
     }
 
+    public String getTSAReqPolicy() {
+        return tsaReqPolicy;
+    }
+
+    public void setTSAReqPolicy(String tsaReqPolicy) {
+        this.tsaReqPolicy = tsaReqPolicy;
+    }
+
     /**
      * Gets the MessageDigest to digest the data imprint
      * @return the digest algorithm name
@@ -180,6 +190,9 @@ public class TSAClientBouncyCastle implements TSAClient {
             // Setup the time stamp request
             TimeStampRequestGenerator tsqGenerator = new TimeStampRequestGenerator();
             tsqGenerator.setCertReq(true);
+            if (tsaReqPolicy != null && tsaReqPolicy.length() > 0) {
+                tsqGenerator.setReqPolicy(new ASN1ObjectIdentifier(tsaReqPolicy));
+            }
             // tsqGenerator.setReqPolicy("1.3.6.1.4.1.601.10.3.1");
             BigInteger nonce = BigInteger.valueOf(System.currentTimeMillis());
             TimeStampRequest request = tsqGenerator.generate(new ASN1ObjectIdentifier(DigestAlgorithms.getAllowedDigests(digestAlgorithm)), imprint, nonce);

@@ -1,7 +1,7 @@
 /*
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
  * Authors: Bruno Lowagie, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -50,6 +50,7 @@ import java.util.HashMap;
 
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.error_messages.MessageLocalization;
+import com.itextpdf.text.exceptions.InvalidPdfException;
 import com.itextpdf.text.log.Logger;
 import com.itextpdf.text.log.LoggerFactory;
 import com.itextpdf.text.pdf.PdfArray;
@@ -66,7 +67,9 @@ import com.itextpdf.text.pdf.PdfWriter;
 /**
  * Creates a list of StructureItem objects extracted from the
  * Structure Tree of a PDF document.
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class StructureItems extends ArrayList<StructureItem> {
 
 	/** The Logger instance */
@@ -83,7 +86,7 @@ public class StructureItems extends ArrayList<StructureItem> {
 	 * @param reader the reader holding the PDF to examine
 	 */
 	public StructureItems(PdfReader reader)
-		throws DocumentException {
+			throws DocumentException, InvalidPdfException {
 		super();
 		PdfDictionary catalog = reader.getCatalog();
 		structTreeRoot = catalog.getAsDict(PdfName.STRUCTTREEROOT);
@@ -117,7 +120,7 @@ public class StructureItems extends ArrayList<StructureItem> {
 	 * @param ref	the reference to the StructElem dictionary
 	 * @throws DocumentException
 	 */
-	protected void processStructElems(PdfDictionary structElem, PdfIndirectReference ref) {
+	protected void processStructElems(PdfDictionary structElem, PdfIndirectReference ref) throws InvalidPdfException {
 		LOGGER.info(String.format("addStructureItems(%s, %s)", structElem, ref));
 		if (structElem == null)
 			return;
@@ -132,7 +135,7 @@ public class StructureItems extends ArrayList<StructureItem> {
 	 * @param ref			the reference to the StructElem dictionary
 	 * @param object		the kids object
 	 */
-	protected void processStructElemKids(PdfDictionary structElem, PdfIndirectReference ref, PdfObject object) {
+	protected void processStructElemKids(PdfDictionary structElem, PdfIndirectReference ref, PdfObject object) throws InvalidPdfException {
 		LOGGER.info(String.format("addStructureItem(%s, %s, %s)", structElem, ref, object));
 		if (object == null)
 			return;

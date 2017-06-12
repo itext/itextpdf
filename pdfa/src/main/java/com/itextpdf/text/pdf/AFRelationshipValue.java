@@ -1,7 +1,7 @@
 /*
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
  * Authors: Bruno Lowagie, Pavel Alay, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -46,7 +46,9 @@ package com.itextpdf.text.pdf;
 /**
  * @see PdfName constants for AFRelationship key of Filespec dictionary.
  * An AFRelationship value represents the relationship of this object to the source that points to it. Predefined values are Source, Data, Alternative, Supplement or Unspecified. Other values may be used to represent other types of relationships, but should follow the rules for second-class names (ISO 32000‑1, Annex E).
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public final class AFRelationshipValue {
     /**
      * Source shall be used if this file specification is the original source material for the associated content.

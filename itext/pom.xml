@@ -10,7 +10,7 @@
   </parent>
 
   <artifactId>xfa-itextpdf</artifactId>
-  <version>1.0.0</version>
+  <version>1.0.1</version>
 
   <name>pdfXFA iText Core</name>
   <description>A Free Java-PDF library</description>
@@ -66,6 +66,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <argLine>-Xms512m -Xmx1024m</argLine>
     <checkstyle.header.file>license.txt</checkstyle.header.file>
+    <itextcore.version>7.0.3</itextcore.version>
     <sonar.language>java</sonar.language>
     <sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
     <sonar.jacoco.reportPath>${project.basedir}/target/jacoco.exec</sonar.jacoco.reportPath>
@@ -96,6 +97,19 @@
       <version>1.5.1</version>
       <optional>true</optional>
     </dependency>
+    <dependency>
+      <groupId>com.itextpdf</groupId>
+      <artifactId>font-asian</artifactId>
+      <version>${itextcore.version}</version>
+      <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>com.itextpdf</groupId>
+          <artifactId>itextpdf</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+
   </dependencies>
 
   <build>
@@ -114,13 +128,6 @@
 
     <testResources>
       <testResource>
-        <directory>src/main/resources</directory>
-        <includes>
-          <include>com/itextpdf/text/pdf/fonts/cmaps/**</include>
-          <include>**/cmap_info.txt</include>
-        </includes>
-      </testResource>
-      <testResource>
         <directory>src/test/resources</directory>
         <includes>
           <include>**/*.*</include>
@@ -133,7 +140,7 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>buildnumber-maven-plugin</artifactId>
-        <version>1.1</version>
+        <version>1.4</version>
         <executions>
           <execution>
             <phase>validate</phase>
@@ -152,7 +159,7 @@
         <!-- Add osgi meta data to manifest file -->
         <groupId>org.apache.felix</groupId>
         <artifactId>maven-bundle-plugin</artifactId>
-        <version>2.3.4</version>
+        <version>3.2.0</version>
         <extensions>true</extensions>
         <executions>
           <execution>
@@ -179,7 +186,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
-        <version>2.3</version>
+        <version>3.0.2</version>
         <configuration>
           <!-- Use the Bnd generated MANIFEST.MF in the jar -->
           <archive>
@@ -197,7 +204,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
-        <version>2.9</version>
+        <version>2.19.1</version>
         <configuration>
           <runOrder>random</runOrder>
         </configuration>
@@ -231,7 +238,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-checkstyle-plugin</artifactId>
-        <version>2.6</version>
+        <version>2.17</version>
         <configuration>
           <configLocation>checkstyle-config.xml</configLocation>
         </configuration>
@@ -255,7 +262,7 @@
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-javadoc-plugin</artifactId>
-            <version>2.10.3</version>
+            <version>2.10.4</version>
             <executions>
               <execution>
                 <id>attach-sources</id>
@@ -296,9 +303,10 @@
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-javadoc-plugin</artifactId>
-            <version>2.10.3</version>
+            <version>2.10.4</version>
             <configuration>
               <additionalparam>-Xdoclint:none</additionalparam>
+              <additionalparam>--allow-script-in-comments</additionalparam>
             </configuration>
           </plugin>
         </plugins>
@@ -314,7 +322,7 @@
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-surefire-plugin</artifactId>
             <!-- Minimal supported version is 2.4 -->
-            <version>2.17</version>
+            <version>2.19.1</version>
             <configuration>
               <properties>
                 <property>
@@ -330,7 +338,7 @@
         <dependency>
           <groupId>org.codehaus.sonar-plugins.java</groupId>
           <artifactId>sonar-jacoco-listeners</artifactId>
-          <version>1.2</version>
+          <version>3.2</version>
           <scope>test</scope>
         </dependency>
       </dependencies>
@@ -355,7 +363,7 @@
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-compiler-plugin</artifactId>
-            <version>3.3</version>
+            <version>3.6.1</version>
             <configuration>
               <source>${java.version}</source>
               <target>${java.version}</target>

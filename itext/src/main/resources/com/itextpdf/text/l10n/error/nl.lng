@@ -392,6 +392,7 @@ stdcf.not.found.encryption=/StdCF niet gevonden (encryption)
 stream.could.not.be.compressed.filter.is.not.a.name.or.array=Stream kon niet gecomprimeerd worden: de filter is geen naam of array.
 stream.object.dictionary.shall.not.contain.the.f.ffilter.or.fdecodeparams.keys=Stream object dictionary mag geen F, FFilter of FDecodeParams sleutels bevatten.
 structparent.not.found=StructParent niet gevonden.
+structparentid.not.found=StructParent ID niet gevonden.
 support.only.sha1.hash.algorithm=Enkel ondersteuning voor SHA1 hash algoritme.
 support.only.rsa.and.dsa.algorithms=Enkel ondersteuning voor RSA en DSA algoritmes.
 invalid.structparent=Ongeldige StructParent.

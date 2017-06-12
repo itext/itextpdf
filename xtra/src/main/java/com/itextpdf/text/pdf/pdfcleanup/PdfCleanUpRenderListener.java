@@ -1,7 +1,7 @@
 /*
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -87,6 +87,10 @@ import org.apache.commons.imaging.Imaging;
 import org.apache.commons.imaging.ImagingConstants;
 import org.apache.commons.imaging.formats.tiff.constants.TiffConstants;
 
+/**
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
+ */
+@Deprecated
 class PdfCleanUpRenderListener implements ExtRenderListener {
 
     private static final Color CLEANED_AREA_FILL_COLOR = Color.WHITE;

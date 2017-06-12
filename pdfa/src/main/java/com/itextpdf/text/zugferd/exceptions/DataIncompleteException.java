@@ -1,7 +1,7 @@
 /*
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
  * Authors: Bruno Lowagie, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -46,7 +46,9 @@ package com.itextpdf.text.zugferd.exceptions;
 /*
  * This exception is thrown when you try to create a ZUGFeRD XML file
  * that doesn't contain all the required data.
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class DataIncompleteException extends Exception {
     public DataIncompleteException(String tag) {
         super(String.format("The data is missing: %s", tag));

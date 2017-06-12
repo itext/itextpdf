@@ -1,7 +1,7 @@
 /*
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
  * Authors: Bruno Lowagie, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -49,7 +49,9 @@ import java.util.Date;
  * If you implement this interface correctly, you provide all the data that
  * is necessary for iText to create an XML that can be used in a ZUGFeRD
  * invoice that conforms with the Comfort profile.
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public interface ComfortProfile extends BasicProfile {
     public String[] getNotesCodes();
     public String getBuyerReference();

@@ -1,7 +1,7 @@
 /*
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
  * Authors: Balder Van Camp, Emiel Ackermann, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -45,7 +45,6 @@ package com.itextpdf.tool.xml.parser;
 
 import com.itextpdf.tool.xml.parser.state.InsideTagHTMLState;
 
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -54,7 +53,9 @@ import java.util.Map;
  *
  * @author redlab_b
  *
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class XMLParserMemory {
 
 	private String currentTag;
@@ -62,6 +63,7 @@ public class XMLParserMemory {
 	private final StringBuilder currentEntity = new StringBuilder();
 	private final StringBuilder comment = new StringBuilder();
 	private final StringBuilder baos = new StringBuilder();
+	private final StringBuilder processingInstruction = new StringBuilder();
 	private final Map<String, String> attr;
 	private String wsTag = "";
 	private String currentNameSpace = "";
@@ -102,6 +104,7 @@ public class XMLParserMemory {
 	public boolean hasCurrentAttribute() {
 		return null != this.currentAttr;
 	}
+
 	/**
 	 * Sets the current attribute value and adds the attribute (if it's not
 	 * null) to the attribute map.
@@ -159,6 +162,14 @@ public class XMLParserMemory {
 	 */
 	public StringBuilder comment() {
 		return this.comment;
+	}
+
+	/**
+	 * Returns the xml processing instruction buffer
+	 * @return processing instruction buffer
+	 */
+	public StringBuilder processingInstruction() {
+		return this.processingInstruction;
 	}
 
 	/**

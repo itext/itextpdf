@@ -1,7 +1,7 @@
 /*
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
  * Authors: Alexander Chingarev, Bruno Lowagie, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -54,6 +54,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 
+/**
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
+ */
+@Deprecated
 public class PdfA2Checker extends PdfAChecker {
 
     static public final HashSet<PdfName> allowedBlendModes = new HashSet<PdfName>(Arrays.asList(PdfGState.BM_NORMAL,

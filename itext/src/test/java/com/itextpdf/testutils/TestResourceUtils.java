@@ -1,7 +1,7 @@
 /*
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2015 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
  * Authors: Bruno Lowagie, Paulo Soares, Kevin Day, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -62,7 +62,9 @@ import com.itextpdf.text.pdf.PdfReader;
  * 
  * This class is abstract to prevent old Surefire versions from
  * running it as a test and failing because it contains no tests.
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public abstract class TestResourceUtils {
 
     private static final String TESTPREFIX = "itexttest_";
