@@ -45,6 +45,7 @@ package com.itextpdf.text.pdf;
 
 import com.itextpdf.awt.geom.AffineTransform;
 import com.itextpdf.awt.geom.Point;
+import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.ExceptionConverter;
 import com.itextpdf.text.Image;
@@ -1233,12 +1234,13 @@ class PdfStamperImp extends PdfWriter {
                 if (!(annoto instanceof PdfDictionary))
                     continue;
                 PdfDictionary annDic = (PdfDictionary) annoto;
+                final PdfObject subType = annDic.get(PdfName.SUBTYPE);
                 if (flattenFreeTextAnnotations) {
-                    if (!(annDic.get(PdfName.SUBTYPE)).equals(PdfName.FREETEXT)) {
+                    if (! PdfName.FREETEXT.equals(subType)) {
                         continue;
                     }
                 } else {
-                    if ((annDic.get(PdfName.SUBTYPE)).equals(PdfName.WIDGET)) {
+                    if (PdfName.WIDGET.equals(subType)) {
                         // skip widgets
                         continue;
                     }
@@ -1264,15 +1266,17 @@ class PdfStamperImp extends PdfWriter {
                         ((PdfDictionary) objReal).put(PdfName.SUBTYPE, PdfName.FORM);
                         app = new PdfAppearance((PdfIndirectReference) obj);
                     } else {
-                        if (objReal.isDictionary()) {
-                            PdfName as_p = appDic.getAsName(PdfName.AS);
-                            if (as_p != null) {
-                                PdfIndirectReference iref = (PdfIndirectReference) ((PdfDictionary) objReal).get(as_p);
-                                if (iref != null) {
-                                    app = new PdfAppearance(iref);
-                                    if (iref.isIndirect()) {
-                                        objReal = PdfReader.getPdfObject(iref);
-                                        ((PdfDictionary) objReal).put(PdfName.SUBTYPE, PdfName.FORM);
+                        if (objReal != null ) {
+                            if (objReal.isDictionary()) {
+                                PdfName as_p = appDic.getAsName(PdfName.AS);
+                                if (as_p != null) {
+                                    PdfIndirectReference iref = (PdfIndirectReference) ( (PdfDictionary) objReal ).get(as_p);
+                                    if (iref != null) {
+                                        app = new PdfAppearance(iref);
+                                        if (iref.isIndirect()) {
+                                            objReal = PdfReader.getPdfObject(iref);
+                                            ( (PdfDictionary) objReal ).put(PdfName.SUBTYPE, PdfName.FORM);
+                                        }
                                     }
                                 }
                             }
@@ -1280,10 +1284,17 @@ class PdfStamperImp extends PdfWriter {
                     }
                     if (app != null) {
                         Rectangle rect = PdfReader.getNormalizedRectangle(annDic.getAsArray(PdfName.RECT));
-                        Rectangle bBox = PdfReader.getNormalizedRectangle((objDict.getAsArray(PdfName.BBOX)));
+                        Rectangle bBox = null;
+
+                        if ( objDict != null ) {
+                            bBox = PdfReader.getNormalizedRectangle((objDict.getAsArray(PdfName.BBOX)));
+                        } else {
+                            bBox = rect;
+                        }
+
                         PdfContentByte cb = getOverContent(page);
                         cb.setLiteral("Q ");
-                        if (objDict.getAsArray(PdfName.MATRIX) != null &&
+                        if (objDict != null && objDict.getAsArray(PdfName.MATRIX) != null &&
                                 !Arrays.equals(DEFAULT_MATRIX, objDict.getAsArray(PdfName.MATRIX).asDoubleArray())) {
                             double[] matrix = objDict.getAsArray(PdfName.MATRIX).asDoubleArray();
                             Rectangle transformBBox = transformBBoxByMatrix(bBox, matrix);
