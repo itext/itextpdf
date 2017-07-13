@@ -45,7 +45,6 @@ package com.itextpdf.text.pdf;
 
 import com.itextpdf.awt.geom.AffineTransform;
 import com.itextpdf.awt.geom.Point;
-import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.ExceptionConverter;
 import com.itextpdf.text.Image;
@@ -55,6 +54,8 @@ import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.exceptions.BadPasswordException;
 import com.itextpdf.text.log.Counter;
 import com.itextpdf.text.log.CounterFactory;
+import com.itextpdf.text.log.Logger;
+import com.itextpdf.text.log.LoggerFactory;
 import com.itextpdf.text.pdf.AcroFields.Item;
 import com.itextpdf.text.pdf.collection.PdfCollection;
 import com.itextpdf.text.pdf.interfaces.PdfViewerPreferences;
@@ -113,6 +114,7 @@ class PdfStamperImp extends PdfWriter {
     protected HashMap<Object, PdfObject> namedDestinations = new HashMap<Object, PdfObject>();
 
     protected Counter COUNTER = CounterFactory.getCounter(PdfStamper.class);
+    private Logger logger;
 
     protected Counter getCounter() {
         return COUNTER;
@@ -138,6 +140,7 @@ class PdfStamperImp extends PdfWriter {
      */
     protected PdfStamperImp(PdfReader reader, OutputStream os, char pdfVersion, boolean append) throws DocumentException, IOException {
         super(new PdfDocument(), os);
+        this.logger = LoggerFactory.getLogger(PdfStamperImp.class);
         if (!reader.isOpenedWithFullPermissions())
             throw new BadPasswordException(MessageLocalization.getComposedMessage("pdfreader.not.opened.with.owner.password"));
         if (reader.isTampered())
@@ -1280,6 +1283,30 @@ class PdfStamperImp extends PdfWriter {
                                     }
                                 }
                             }
+                        } else {
+                            if ( PdfName.FREETEXT.equals(subType) ) {
+                                final PdfString defaultAppearancePdfString = annDic.getAsString(PdfName.DA);
+                                if (defaultAppearancePdfString != null) {
+                                    final PdfString freeTextContent = annDic.getAsString(PdfName.CONTENTS);
+                                    final String defaultAppearanceString = defaultAppearancePdfString.toString();
+
+                                    app = new PdfAppearance(this);
+
+                                    // quickly and naively flattening the freetext annotation
+                                    app.saveState();
+                                    app.beginText();
+                                    app.setLiteral(defaultAppearanceString);
+                                    app.setLiteral("(" + freeTextContent.toString() + ") Tj\n");
+                                    app.endText();
+                                    app.restoreState();
+                                } else {
+                                    // The DA entry is required for free text annotations
+                                    // Not throwing an exception as we don't want to stop the flow, result is that this annotation won't be flattened.
+                                    this.logger.warn(MessageLocalization.getComposedMessage("freetext.annotation.doesnt.contain.da"));
+                                }
+                            } else {
+                                this.logger.warn(MessageLocalization.getComposedMessage("annotation.type.not.supported.flattening"));
+                            }
                         }
                     }
                     if (app != null) {
@@ -1289,7 +1316,8 @@ class PdfStamperImp extends PdfWriter {
                         if ( objDict != null ) {
                             bBox = PdfReader.getNormalizedRectangle((objDict.getAsArray(PdfName.BBOX)));
                         } else {
-                            bBox = rect;
+                            bBox = new Rectangle(0,0, rect.getWidth(), rect.getHeight());
+                            app.setBoundingBox(bBox);
                         }
 
                         PdfContentByte cb = getOverContent(page);
