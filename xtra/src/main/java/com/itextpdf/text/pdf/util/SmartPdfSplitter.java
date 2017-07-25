@@ -45,6 +45,7 @@ package com.itextpdf.text.pdf.util;
 
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.log.Level;
 import com.itextpdf.text.log.Logger;
 import com.itextpdf.text.log.LoggerFactory;
 import com.itextpdf.text.pdf.PdfCopy;
@@ -71,7 +72,9 @@ public class SmartPdfSplitter {
         this.reader = reader;
         reader.setAppendable(true);
         numberOfPages = reader.getNumberOfPages();
-        LOGGER.info(String.format("Creating a splitter for a document with %s pages", numberOfPages));
+        if (LOGGER.isLogging(Level.INFO)) {
+            LOGGER.info(String.format("Creating a splitter for a document with %s pages", numberOfPages));
+        }
     }
     
     public boolean hasMorePages() {
@@ -102,13 +105,17 @@ public class SmartPdfSplitter {
             page = counter.getLength(resources);
             resources = counter.getResources();
             length += page + trailer + xrefLength(resources.size());
-            LOGGER.info(String.format("Page %s: Comparing %s with %s", currentPage, length, sizeInBytes));
-            LOGGER.info(String.format("   page %s trailer %s xref %s", page, trailer, xrefLength(resources.size())));
+            if (LOGGER.isLogging(Level.INFO)) {
+                LOGGER.info(String.format("Page %s: Comparing %s with %s", currentPage, length, sizeInBytes));
+                LOGGER.info(String.format("   page %s trailer %s xref %s", page, trailer, xrefLength(resources.size())));
+            }
             if (!hasPage || length < sizeInBytes) {
                 hasPage = true;
                 copy.addPage(copy.getImportedPage(reader, currentPage));
                 length = copy.getOs().getCounter();
-                LOGGER.info(String.format("Size after adding page: %s", length));
+                if (LOGGER.isLogging(Level.INFO)) {
+                    LOGGER.info(String.format("Size after adding page: %s", length));
+                }
                 if (length > sizeInBytes) overSized = true;
                 currentPage++;
             }

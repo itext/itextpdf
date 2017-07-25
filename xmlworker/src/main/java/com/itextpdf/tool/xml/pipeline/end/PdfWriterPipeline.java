@@ -46,6 +46,7 @@ package com.itextpdf.tool.xml.pipeline.end;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Element;
+import com.itextpdf.text.log.Level;
 import com.itextpdf.text.log.Logger;
 import com.itextpdf.text.log.LoggerFactory;
 import com.itextpdf.text.pdf.PdfWriter;
@@ -141,7 +142,7 @@ public class PdfWriterPipeline extends AbstractPipeline<MapContext> {
 				if (writable instanceof WritableElement) {
 					for (Element e : ((WritableElement) writable).elements()) {
 						try {
-							if (!doc.add(e)) {
+							if (!doc.add(e) && LOG.isLogging(Level.TRACE)) {
 								LOG.trace(String.format(
 										LocaleMessages.getInstance().getMessage(LocaleMessages.ELEMENT_NOT_ADDED),
 										e.toString()));

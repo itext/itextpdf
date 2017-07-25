@@ -54,6 +54,7 @@ import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.io.RandomAccessSourceFactory;
+import com.itextpdf.text.log.Level;
 import com.itextpdf.text.log.Logger;
 import com.itextpdf.text.log.LoggerFactory;
 import com.itextpdf.text.pdf.ByteBuffer;
@@ -240,8 +241,10 @@ public class MCParser {
         baos.close();
         stream.setData(baos.toByteArray());
         // showing how many items are left
-        LOGGER.info(String.format("There are %d items left for processing", items.size()));
-    }
+		if (LOGGER.isLogging(Level.INFO)) {
+			LOGGER.info(String.format("There are %d items left for processing", items.size()));
+		}
+	}
     
     /**
      * When an XObject with a StructParent is encountered,
@@ -251,8 +254,10 @@ public class MCParser {
     protected void dealWithXObj(PdfName xobj) {
     	PdfDictionary dict = xobjects.getAsStream(xobj);
     	PdfNumber structParent = dict.getAsNumber(PdfName.STRUCTPARENT);
-    	LOGGER.info(String.format("Encountered StructParent %s in content", structParent));
-    	if (structParent == null)
+    	if (LOGGER.isLogging(Level.INFO)) {
+			LOGGER.info(String.format("Encountered StructParent %s in content", structParent));
+		}
+		if (structParent == null)
     		return;
     	StructureItem item = items.get(0);
     	if (item.checkStructParent(pageref.getNumber(), structParent.intValue()) == 1)
@@ -271,8 +276,10 @@ public class MCParser {
     	if (mcid == null)
     		return;
     	StructureItem item = items.get(0);
-    	LOGGER.info(String.format("Encountered MCID %s in content, comparing with %s", mcid, item));
-    	switch (item.checkMCID(pageref.getNumber(), mcid.intValue())) {
+    	if (LOGGER.isLogging(Level.INFO)) {
+			LOGGER.info(String.format("Encountered MCID %s in content, comparing with %s", mcid, item));
+		}
+		switch (item.checkMCID(pageref.getNumber(), mcid.intValue())) {
     	case 0 :
     		StructureObject obj = (StructureObject)item;
     		convertToXObject(obj);
