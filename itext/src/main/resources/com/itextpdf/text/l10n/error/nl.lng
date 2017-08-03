@@ -274,6 +274,7 @@ it.is.not.possible.to.free.reader.in.merge.fields.mode=freeReader is niet mogeli
 java.awt.image.fetch.aborted.or.errored=Ophalen van java.awt.Image afgebroken of misgelopen.
 java.awt.image.interrupted.waiting.for.pixels=java.awt.Image onderbroken; aan het wachten op pixels!
 jpeg2000.enumerated.colour.space.19.(CIEJab).shall.not.be.used=JPEG2000 enumerated colour space 19 (CIEJab) mag niet gebruikt worden.
+key.is.null=sleutel is nul.
 keyword.encrypt.shall.not.be.used.in.the.trailer.dictionary=Keyword Encrypt mag niet gebruikt worden in de trailer dictionary.
 lab.cs.black.point=De BlackPoint entry in Lab color space mag enkel een array zijn van drie getallen [XB YB ZB]. Al deze getallen moeten niet-negatief zijn. Standaardwaarde: [0.0 0.0 0.0].
 lab.cs.range=De Range entry in Lab color space mag enkel een array zijn van vier getallen [amin amax bmin bmax]. Standaardwaarde: [-100 100 -100 100].

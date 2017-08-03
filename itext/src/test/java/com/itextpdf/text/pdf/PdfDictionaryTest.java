@@ -63,4 +63,35 @@ public class PdfDictionaryTest {
 
         Assert.assertFalse(contained);
     }
+
+    @Test
+    public void pdfDictionaryRemoveDoesNothingIfKeyIsNull() {
+        PdfDictionary dictionary = new PdfDictionary();
+
+        dictionary.remove(null);
+    }
+
+    @Test
+    public void pdfDictionaryPutThrowsExceptionIfKeyIsNull() {
+        PdfDictionary dictionary = new PdfDictionary();
+
+        try {
+            dictionary.put(null, new PdfName("null"));
+            Assert.fail("IllegalArgumentException expected");
+        } catch (IllegalArgumentException e) {
+            Assert.assertEquals(e.getMessage(), "key is null.");
+        }
+    }
+
+    @Test
+    public void pdfDictionaryPutExThrowsExceptionIfKeyIsNull() {
+        PdfDictionary dictionary = new PdfDictionary();
+
+        try {
+            dictionary.putEx(null, new PdfName("null"));
+            Assert.fail("IllegalArgumentException expected");
+        } catch (IllegalArgumentException e) {
+            Assert.assertEquals(e.getMessage(), "key is null.");
+        }
+    }
 }

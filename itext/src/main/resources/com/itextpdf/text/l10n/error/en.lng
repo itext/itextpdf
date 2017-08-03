@@ -274,6 +274,7 @@ it.is.not.possible.to.free.reader.in.merge.fields.mode=It is not possible to fre
 java.awt.image.fetch.aborted.or.errored=java.awt.Image fetch aborted or errored
 java.awt.image.interrupted.waiting.for.pixels=java.awt.Image Interrupted waiting for pixels!
 jpeg2000.enumerated.colour.space.19.(CIEJab).shall.not.be.used=JPEG2000 enumerated colour space 19 (CIEJab) shall not be used.
+key.is.null=key is null.
 keyword.encrypt.shall.not.be.used.in.the.trailer.dictionary=Keyword Encrypt shall not be used in the trailer dictionary.
 lab.cs.black.point=The BlackPoint entry in Lab color space could be only an array of three numbers [XB YB ZB]. All three of these numbers shall be non-negative. Default value: [0.0 0.0 0.0].
 lab.cs.range=The Range entry in Lab color space could be only an array of four numbers [amin amax bmin bmax]. Default value: [-100 100 -100 100].
