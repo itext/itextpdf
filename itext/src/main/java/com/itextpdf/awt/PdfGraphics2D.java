@@ -507,21 +507,32 @@ public class PdfGraphics2D extends Graphics2D {
 
             double width = 0;
             if (font.getSize2D() > 0) {
-                float scale = 1000 / font.getSize2D();
-                Font derivedFont = font.deriveFont(AffineTransform.getScaleInstance(scale, scale));
-                width = derivedFont.getStringBounds(s, getFontRenderContext()).getWidth();
-                if (derivedFont.isTransformed())
-                    width /= scale;
+                if (RenderingHints.VALUE_FRACTIONALMETRICS_OFF.equals(getRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS))) {
+                    width = font.getStringBounds(s, getFontRenderContext()).getWidth();
+                } else {
+                    float scale = 1000 / font.getSize2D();
+                    Font derivedFont = font.deriveFont(AffineTransform.getScaleInstance(scale, scale));
+                    width = derivedFont.getStringBounds(s, getFontRenderContext()).getWidth();
+                    if (derivedFont.isTransformed())
+                        width /= scale;
+                }
             }
             // if the hyperlink flag is set add an action to the text
             Object url = getRenderingHint(HyperLinkKey.KEY_INSTANCE);
             if (url != null && !url.equals(HyperLinkKey.VALUE_HYPERLINKKEY_OFF))
             {
-                float scale = 1000 / font.getSize2D();
-                Font derivedFont = font.deriveFont(AffineTransform.getScaleInstance(scale, scale));
-                double height = derivedFont.getStringBounds(s, getFontRenderContext()).getHeight();
-                if (derivedFont.isTransformed())
-                    height /= scale;
+                double height = 0;
+                if (font.getSize2D() > 0) {
+                    if (RenderingHints.VALUE_FRACTIONALMETRICS_OFF.equals(getRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS))) {
+                        height = font.getStringBounds(s, getFontRenderContext()).getHeight();
+                    } else {
+                        float scale = 1000 / font.getSize2D();
+                        Font derivedFont = font.deriveFont(AffineTransform.getScaleInstance(scale, scale));
+                        height = derivedFont.getStringBounds(s, getFontRenderContext()).getHeight();
+                        if (derivedFont.isTransformed())
+                            height /= scale;
+                    }
+                }
                 double leftX = cb.getXTLM();
                 double leftY = cb.getYTLM();
                 PdfAction action = new  PdfAction(url.toString());
