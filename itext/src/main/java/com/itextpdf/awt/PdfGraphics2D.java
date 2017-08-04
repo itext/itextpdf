@@ -202,14 +202,15 @@ public class PdfGraphics2D extends Graphics2D {
 	private Graphics2D getDG2() {
 		if (dg2 == null) {
 			dg2 = new BufferedImage(2, 2, BufferedImage.TYPE_INT_RGB).createGraphics();		
-			dg2.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
-			setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
-			setRenderingHint(HyperLinkKey.KEY_INSTANCE, HyperLinkKey.VALUE_HYPERLINKKEY_OFF);
+			dg2.setRenderingHints(rhints);
 		}
 		return dg2;
 	}
 	
-	private PdfGraphics2D() {}
+	private PdfGraphics2D() {
+        setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
+        setRenderingHint(HyperLinkKey.KEY_INSTANCE, HyperLinkKey.VALUE_HYPERLINKKEY_OFF);
+    }
 	
     public PdfGraphics2D(PdfContentByte cb, final float width, final float height) {
     	this(cb, width, height, null, false, false, 0);
@@ -828,32 +829,33 @@ public class PdfGraphics2D extends Graphics2D {
 
     /**
      * Sets a rendering hint
-     * @param arg0
-     * @param arg1
+     * @param hintKey
+     * @param hintValue
      */
     @Override
-    public void setRenderingHint(Key arg0, Object arg1) {
-    	 if (arg1 != null) {
-         	rhints.put(arg0, arg1);
+    public void setRenderingHint(Key hintKey, Object hintValue) {
+    	 if (hintValue != null) {
+         	rhints.put(hintKey, hintValue);
          } else {
-        	 if (arg0 instanceof HyperLinkKey)
-        	 {
-        		 rhints.put(arg0, HyperLinkKey.VALUE_HYPERLINKKEY_OFF);
+        	 if (hintKey instanceof HyperLinkKey) {
+        		 rhints.put(hintKey, HyperLinkKey.VALUE_HYPERLINKKEY_OFF);
         	 }
-        	 else
-        	 {
-        		 rhints.remove(arg0);
+        	 else {
+        		 rhints.remove(hintKey);
         	 }
+         }
+         if (dg2 != null) {
+    	     dg2.setRenderingHint(hintKey, hintValue);
          }
     }
 
     /**
-     * @param arg0 a key
+     * @param hintKey a key
      * @return the rendering hint
      */
     @Override
-    public Object getRenderingHint(Key arg0) {
-        return rhints.get(arg0);
+    public Object getRenderingHint(Key hintKey) {
+        return rhints.get(hintKey);
     }
 
     /**
@@ -863,6 +865,9 @@ public class PdfGraphics2D extends Graphics2D {
     public void setRenderingHints(Map<?,?> hints) {
         rhints.clear();
         rhints.putAll(hints);
+        if (dg2 != null) {
+            dg2.setRenderingHints(hints);
+        }
     }
 
     /**
@@ -871,6 +876,9 @@ public class PdfGraphics2D extends Graphics2D {
     @Override
     public void addRenderingHints(Map<?,?> hints) {
         rhints.putAll(hints);
+        if (dg2 != null) {
+            dg2.addRenderingHints(hints);
+        }
     }
 
     /**
