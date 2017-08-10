@@ -168,6 +168,7 @@ error.in.base64.code.reading.stream=Error in Base64 code reading stream.
 error.parsing.cmap.beginbfchar.expected.cosstring.or.cosname.and.not.1=Error parsing CMap beginbfchar, expected {COSString or COSName} and not {1}
 error.reading.objstm=Error reading ObjStm
 error.reading.string=Error reading string
+error.resolving.freetext.font=Cannot resolve annotation's font. It won't be flattened
 error.with.jp.marker=Error with JP Marker
 every.annotation.shall.have.at.least.one.appearance.dictionary=Every annotation shall have at least one appearance dictionary
 exactly.one.colour.space.specification.shall.have.the.value.0x01.in.the.approx.field=Exactly one colour space specification shall have the value 0x01 in the APPROX field.

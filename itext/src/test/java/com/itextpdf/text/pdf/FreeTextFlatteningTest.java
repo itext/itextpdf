@@ -45,8 +45,6 @@ package com.itextpdf.text.pdf;
 import com.itextpdf.testutils.CompareTool;
 import com.itextpdf.text.DocumentException;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -54,42 +52,95 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import com.itextpdf.text.pdf.parser.ContentByteUtils;
+import com.itextpdf.text.pdf.parser.ImageRenderInfo;
+import com.itextpdf.text.pdf.parser.PdfContentStreamProcessor;
+import com.itextpdf.text.pdf.parser.RenderListener;
+import com.itextpdf.text.pdf.parser.TextRenderInfo;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class FreeTextFlatteningTest {
 
-    private final String FOLDER = "./src/test/resources/com/itextpdf/text/pdf/FreeTextFlatteningTest/";
+    private final static String FOLDER = "./src/test/resources/com/itextpdf/text/pdf/FreeTextFlatteningTest/";
+    private final static String TARGET = "./target/com/itextpdf/test/pdf/FreeTextFlattening/";
 
+    @BeforeClass
+    public static void setUp() {
+        new File(TARGET).mkdirs();
+    }
 
     @Test
     public void flattenCorrectlyTest() throws IOException, DocumentException, InterruptedException {
-        String target = "./target/com/itextpdf/test/pdf/FreeTextFlattening/";
-        new File(target).mkdirs();
-        String outputFile = target + "freetext-flattened.pdf";
+        String outputFile = TARGET + "freetext-flattened.pdf";
 
-        flattenFreeText(new FileInputStream(FOLDER + "freetext.pdf"), new FileOutputStream(outputFile));
-        checkFlattenedPdf(new FileInputStream(outputFile), 0);
+        flattenFreeText(FOLDER + "freetext.pdf", outputFile);
+        checkAnnotationSize(outputFile, 0);
 
-        String errorMessage = new CompareTool().compare(outputFile, FOLDER + "flattened.pdf", target, "diff");
+        String errorMessage = new CompareTool().compareByContent(outputFile, FOLDER + "flattened.pdf", TARGET, "diff");
         if ( errorMessage != null ) {
             Assert.fail(errorMessage);
         }
     }
 
     @Test
-    public void flattenWithoutDA() throws IOException, DocumentException {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        flattenFreeText(new FileInputStream(FOLDER + "freetext-no-da.pdf"), baos);
-        checkFlattenedPdf(new ByteArrayInputStream(baos.toByteArray()), 1);
+    public void checkPageContentTest() throws IOException, DocumentException, InterruptedException {
+        checkPageContent(FOLDER + "flattened.pdf");
     }
 
-    private void checkFlattenedPdf(InputStream inputStream, int expectedAnnotationsSize) throws IOException, DocumentException {
+    @Test
+    public void flattenWithoutDA() throws IOException, DocumentException {
+        String outputFile = TARGET + "freetext-flattened-no-da.pdf";
+
+        flattenFreeText(FOLDER + "freetext-no-da.pdf", outputFile);
+        checkAnnotationSize(outputFile, 1);
+    }
+
+    @Test
+    public void flattenAndCheckCourier() throws IOException, DocumentException, InterruptedException {
+        String inputFile = FOLDER + "freetext-courier.pdf";
+        String outputFile = TARGET + "freetext-courier-flattened.pdf";
+
+        flattenFreeText(inputFile, outputFile);
+        checkPageContent(outputFile);
+    }
+
+    private void checkAnnotationSize(String path, int expectedAnnotationsSize) throws IOException, DocumentException {
+        FileInputStream fin = null;
+        try {
+            fin = new FileInputStream(path);
+            checkAnnotationSize(fin, expectedAnnotationsSize);
+        } finally {
+            if (fin != null) {
+                fin.close();
+            }
+        }
+    }
+
+    private void checkAnnotationSize(InputStream inputStream, int expectedAnnotationsSize) throws IOException, DocumentException {
         PdfReader reader = new PdfReader(inputStream);
         PdfDictionary pageDictionary = reader.getPageN(1);
         if ( pageDictionary.contains(PdfName.ANNOTS )) {
             PdfArray annotations = pageDictionary.getAsArray(PdfName.ANNOTS);
             Assert.assertTrue(annotations.size() == expectedAnnotationsSize);
+        }
+    }
+
+    private void flattenFreeText(String inputPath, String outputPath) throws IOException, DocumentException {
+        FileInputStream fin = null;
+        FileOutputStream fout = null;
+        try {
+            fin = new FileInputStream(inputPath);
+            fout = new FileOutputStream(outputPath);
+            flattenFreeText(fin, fout);
+        } finally {
+            if (fin != null) {
+                fin.close();
+            }
+            if (fout != null) {
+                fout.close();
+            }
         }
     }
 
@@ -102,5 +153,32 @@ public class FreeTextFlatteningTest {
         stamper.setAnnotationFlattening(true);
 
         stamper.close();
+    }
+
+    private void checkPageContent(String path) throws IOException, DocumentException {
+        PdfReader pdfReader = new PdfReader(path);
+        try {
+            PdfDictionary pageDic = pdfReader.getPageN(1);
+
+            RenderListener dummy = new RenderListener() {
+                public void beginTextBlock() {
+                }
+
+                public void renderText(TextRenderInfo renderInfo) {
+                }
+
+                public void endTextBlock() {
+                }
+
+                public void renderImage(ImageRenderInfo renderInfo) {
+                }
+            };
+            PdfContentStreamProcessor processor = new PdfContentStreamProcessor(dummy);
+
+            PdfDictionary resourcesDic = pageDic.getAsDict(PdfName.RESOURCES);
+            processor.processContent(ContentByteUtils.getContentBytesForPage(pdfReader, 1), resourcesDic);
+        } finally {
+            pdfReader.close();
+        }
     }
 }

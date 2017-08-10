@@ -52,6 +52,8 @@ import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.Version;
 import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.exceptions.BadPasswordException;
+import com.itextpdf.text.io.RandomAccessSource;
+import com.itextpdf.text.io.RandomAccessSourceFactory;
 import com.itextpdf.text.log.Counter;
 import com.itextpdf.text.log.CounterFactory;
 import com.itextpdf.text.log.Logger;
@@ -80,6 +82,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.RandomAccess;
 
 class PdfStamperImp extends PdfWriter {
     HashMap<PdfReader, IntHashtable> readers2intrefs = new HashMap<PdfReader, IntHashtable>();
@@ -124,6 +127,9 @@ class PdfStamperImp extends PdfWriter {
      * If no new layers were registered and user didn't fetched layers explicitly via getPdfLayers() method
      * then original layers are never read - they are simply copied to the new document with whole original catalog. */
     private boolean originalLayersAreRead = false;
+
+    //Hash map of standard fonts used in flattening of annotations to prevent fonts duplication
+    private HashMap<String, PdfIndirectReference> builtInAnnotationFonts = new HashMap<String, PdfIndirectReference>();
 
     private double[] DEFAULT_MATRIX = {1, 0, 0, 1, 0, 0};
 
@@ -1290,9 +1296,40 @@ class PdfStamperImp extends PdfWriter {
                                     final PdfString freeTextContent = annDic.getAsString(PdfName.CONTENTS);
                                     final String defaultAppearanceString = defaultAppearancePdfString.toString();
 
-                                    app = new PdfAppearance(this);
+                                    //It is not stated in spec, but acrobat seems to support standard font names in DA
+                                    //So we need to check if the font is built-in and specify it explicitly.
+                                    PdfIndirectReference fontReference = null;
+                                    PdfName pdfFontName = null;
+                                    try {
+                                        RandomAccessSource source = new RandomAccessSourceFactory().createSource(defaultAppearancePdfString.getBytes());
+                                        PdfContentParser ps = new PdfContentParser(new PRTokeniser(new RandomAccessFileOrArray(source)));
+                                        ArrayList<PdfObject> operands = new ArrayList<PdfObject>();
+                                        while (ps.parse(operands).size() > 0) {
+                                            PdfLiteral operator = (PdfLiteral)operands.get(operands.size()-1);
+                                            if (operator.toString().equals("Tf")) {
+                                                pdfFontName = (PdfName) operands.get(0);
+                                                String fontName = pdfFontName.toString().substring(1);
+                                                fontReference = builtInAnnotationFonts.get(fontName);
+                                                if (fontReference == null) {
+                                                    PdfDictionary dic = BaseFont.createBuiltInFontDictionary(fontName);
+                                                    if (dic != null) {
+                                                        fontReference = addToBody(dic).getIndirectReference();
+                                                        builtInAnnotationFonts.put(fontName, fontReference);
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    } catch (Exception any) {
+                                        logger.warn(MessageLocalization.getComposedMessage("error.resolving.freetext.font"));
+                                        break;
+                                    }
 
+                                    app = new PdfAppearance(this);
+                                    // it is unclear from spec were referenced from DA font should be (since annotations doesn't have DR), so in case it not built-in
                                     // quickly and naively flattening the freetext annotation
+                                    if (fontReference != null) {
+                                        app.getPageResources().addFont(pdfFontName, fontReference);
+                                    }
                                     app.saveState();
                                     app.beginText();
                                     app.setLiteral(defaultAppearanceString);

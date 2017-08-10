@@ -1496,6 +1496,21 @@ public abstract class BaseFont {
         return fonts;
     }
 
+    static PdfDictionary createBuiltInFontDictionary(String name) {
+        return createBuiltInFontDictionary(BuiltinFonts14.get(name));
+    }
+
+    private static PdfDictionary createBuiltInFontDictionary(PdfName name) {
+        if (name == null) {
+            return null;
+        }
+        PdfDictionary dictionary = new PdfDictionary();
+        dictionary.put(PdfName.TYPE, PdfName.FONT);
+        dictionary.put(PdfName.BASEFONT, name);
+        dictionary.put(PdfName.SUBTYPE, PdfName.TYPE1);
+        return dictionary;
+    }
+
     /**
      * Gets the smallest box enclosing the character contours. It will return
      * <CODE>null</CODE> if the font has not the information or the character has no

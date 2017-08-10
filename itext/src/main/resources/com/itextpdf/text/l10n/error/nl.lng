@@ -168,6 +168,7 @@ error.in.base64.code.reading.stream=Fout in de Base64 code reading stream.
 error.parsing.cmap.beginbfchar.expected.cosstring.or.cosname.and.not.1=Fout bij het parsen van CMap beginbfchar, {COSString or COSName} verwacht in plaats van {1}
 error.reading.objstm=Fout tijdens het lezen van ObjStm
 error.reading.string=Fout bij het lezen van een string
+error.resolving.freetext.font=Kan het lettertype van annotatie niet oplossen. Het wordt niet afgedrukt
 error.with.jp.marker=Foute JP Marker
 every.annotation.shall.have.at.least.one.appearance.dictionary=Elke annotation moet ten minste 1 appearance dictionary hebben
 exactly.one.colour.space.specification.shall.have.the.value.0x01.in.the.approx.field=Exact 1 colour space specificatie moet de waarde 0x01 in het APPROX veld hebben.
