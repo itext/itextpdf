@@ -60,7 +60,7 @@ public class BarcodeDatamatrixTest extends ITextTest {
     @Test
     public void barcode02Test() throws IOException, DocumentException, InterruptedException {
         String filename = "barcodeDataMatrix02.pdf";
-        String code = "дима";
+        String code = "\u0434\u0438\u043C\u0430";// дима
         String encoding = "UTF-8";
 
         Document document = new Document(PageSize.A4);
