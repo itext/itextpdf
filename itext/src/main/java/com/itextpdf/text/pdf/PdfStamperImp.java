@@ -82,7 +82,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.RandomAccess;
 
 class PdfStamperImp extends PdfWriter {
     HashMap<PdfReader, IntHashtable> readers2intrefs = new HashMap<PdfReader, IntHashtable>();
@@ -130,6 +129,24 @@ class PdfStamperImp extends PdfWriter {
 
     //Hash map of standard fonts used in flattening of annotations to prevent fonts duplication
     private HashMap<String, PdfIndirectReference> builtInAnnotationFonts = new HashMap<String, PdfIndirectReference>();
+    private static HashMap<String, String> fromShortToFullAnnotationFontNames = new HashMap<String, String>();
+
+    static {
+        fromShortToFullAnnotationFontNames.put("CoBO", BaseFont.COURIER_BOLDOBLIQUE);
+        fromShortToFullAnnotationFontNames.put("CoBo", BaseFont.COURIER_BOLD);
+        fromShortToFullAnnotationFontNames.put("CoOb", BaseFont.COURIER_OBLIQUE);
+        fromShortToFullAnnotationFontNames.put("Cour", BaseFont.COURIER);
+        fromShortToFullAnnotationFontNames.put("HeBO", BaseFont.HELVETICA_BOLDOBLIQUE);
+        fromShortToFullAnnotationFontNames.put("HeBo", BaseFont.HELVETICA_BOLD);
+        fromShortToFullAnnotationFontNames.put("HeOb", BaseFont.HELVETICA_OBLIQUE);
+        fromShortToFullAnnotationFontNames.put("Helv", BaseFont.HELVETICA);
+        fromShortToFullAnnotationFontNames.put("Symb", BaseFont.SYMBOL);
+        fromShortToFullAnnotationFontNames.put("TiBI", BaseFont.TIMES_BOLDITALIC);
+        fromShortToFullAnnotationFontNames.put("TiBo", BaseFont.TIMES_BOLD);
+        fromShortToFullAnnotationFontNames.put("TiIt", BaseFont.TIMES_ITALIC);
+        fromShortToFullAnnotationFontNames.put("TiRo", BaseFont.TIMES_ROMAN);
+        fromShortToFullAnnotationFontNames.put("ZaDb", BaseFont.ZAPFDINGBATS);
+    }
 
     private double[] DEFAULT_MATRIX = {1, 0, 0, 1, 0, 0};
 
@@ -1309,12 +1326,16 @@ class PdfStamperImp extends PdfWriter {
                                             if (operator.toString().equals("Tf")) {
                                                 pdfFontName = (PdfName) operands.get(0);
                                                 String fontName = pdfFontName.toString().substring(1);
-                                                fontReference = builtInAnnotationFonts.get(fontName);
+                                                String fullName = fromShortToFullAnnotationFontNames.get(fontName);
+                                                if (fullName == null) {
+                                                    fullName = fontName;
+                                                }
+                                                fontReference = builtInAnnotationFonts.get(fullName);
                                                 if (fontReference == null) {
-                                                    PdfDictionary dic = BaseFont.createBuiltInFontDictionary(fontName);
+                                                    PdfDictionary dic = BaseFont.createBuiltInFontDictionary(fullName);
                                                     if (dic != null) {
                                                         fontReference = addToBody(dic).getIndirectReference();
-                                                        builtInAnnotationFonts.put(fontName, fontReference);
+                                                        builtInAnnotationFonts.put(fullName, fontReference);
                                                     }
                                                 }
                                             }

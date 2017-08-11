@@ -106,6 +106,20 @@ public class FreeTextFlatteningTest {
         checkPageContent(outputFile);
     }
 
+    @Test
+    public void flattenAndCheckShortFontName() throws IOException, DocumentException, InterruptedException {
+        String inputFile = FOLDER + "freetext-times-short.pdf";
+        String outputFile = TARGET + "freetext-times-short-flattened.pdf";
+
+        flattenFreeText(inputFile, outputFile);
+        checkPageContent(outputFile);
+
+        String errorMessage = new CompareTool().compareByContent(outputFile, FOLDER + "cmp_freetext-times-short-flattened.pdf", TARGET, "diff_short");
+        if ( errorMessage != null ) {
+            Assert.fail(errorMessage);
+        }
+    }
+
     private void checkAnnotationSize(String path, int expectedAnnotationsSize) throws IOException, DocumentException {
         FileInputStream fin = null;
         try {
