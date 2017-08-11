@@ -361,7 +361,7 @@ public class BarcodeDatamatrix {
     }
 
     private static int X12Encodation(byte[] text, int textOffset, int textLength, byte[] data, int dataOffset, int dataLength, int symbolIndex, int prevEnc, int origDataOffset) {
-        int ptrIn, ptrOut, count, k, n, ci;
+        int ptrIn, ptrOut, count, k, n;
         boolean latch = true;
         byte c;
         if (textLength == 0)
