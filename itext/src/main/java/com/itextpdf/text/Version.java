@@ -72,7 +72,7 @@ public final class Version {
 	 * This String contains the version number of this iText release.
 	 * For debugging purposes, we request you NOT to change this constant.
 	 */
-    private String release = "1.0.1";
+    private String release = "1.0.2";
 	/**
 	 * This String contains the iText version as shown in the producer line.
 	 * iText is a product developed by iText Group NV.

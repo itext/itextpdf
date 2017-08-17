@@ -49,6 +49,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.EntityResolver;
+import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -57,6 +59,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.StringReader;
 
 /**
  * Reads an XMP stream into an org.w3c.dom.Document objects.
@@ -95,6 +98,7 @@ public class XmpReader {
 	        DocumentBuilderFactory fact = DocumentBuilderFactory.newInstance();
 	        fact.setNamespaceAware(true);
 			DocumentBuilder db = fact.newDocumentBuilder();
+			db.setEntityResolver(new SafeEmptyEntityResolver());
 	        ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
 	        domDocument = db.parse(bais);
 		} catch (ParserConfigurationException e) {
@@ -217,5 +221,11 @@ public class XmpReader {
         fout.write(XPACKET_PI_END_W.getBytes());
         fout.close();
         return fout.toByteArray();
+	}
+
+	private static class SafeEmptyEntityResolver implements EntityResolver {
+		public InputSource resolveEntity(String publicId, String systemId) throws SAXException, IOException {
+			return new InputSource(new StringReader(""));
+		}
 	}
 }

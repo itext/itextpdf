@@ -51,6 +51,7 @@ import java.util.HashMap;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.exceptions.InvalidPdfException;
+import com.itextpdf.text.log.Level;
 import com.itextpdf.text.log.Logger;
 import com.itextpdf.text.log.LoggerFactory;
 import com.itextpdf.text.pdf.PdfArray;
@@ -121,7 +122,9 @@ public class StructureItems extends ArrayList<StructureItem> {
 	 * @throws DocumentException
 	 */
 	protected void processStructElems(PdfDictionary structElem, PdfIndirectReference ref) throws InvalidPdfException {
-		LOGGER.info(String.format("addStructureItems(%s, %s)", structElem, ref));
+		if (LOGGER.isLogging(Level.INFO)) {
+			LOGGER.info(String.format("addStructureItems(%s, %s)", structElem, ref));
+		}
 		if (structElem == null)
 			return;
 		processStructElemKids(structElem, ref, structElem.getDirectObject(PdfName.K));
@@ -136,7 +139,9 @@ public class StructureItems extends ArrayList<StructureItem> {
 	 * @param object		the kids object
 	 */
 	protected void processStructElemKids(PdfDictionary structElem, PdfIndirectReference ref, PdfObject object) throws InvalidPdfException {
-		LOGGER.info(String.format("addStructureItem(%s, %s, %s)", structElem, ref, object));
+		if (LOGGER.isLogging(Level.INFO)) {
+			LOGGER.info(String.format("addStructureItem(%s, %s, %s)", structElem, ref, object));
+		}
 		if (object == null)
 			return;
 		StructureItem item;

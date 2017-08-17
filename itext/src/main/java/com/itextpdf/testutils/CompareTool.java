@@ -89,8 +89,11 @@ import com.itextpdf.xmp.options.SerializeOptions;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.xml.sax.EntityResolver;
+import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
+import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -110,6 +113,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -393,6 +397,9 @@ public class CompareTool {
             xmlReport.appendChild(root);
 
             TransformerFactory tFactory = TransformerFactory.newInstance();
+            try {
+                tFactory.setAttribute(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+            } catch (Exception exc) {}
             Transformer transformer = tFactory.newTransformer();
             transformer.setOutputProperty(OutputKeys.INDENT, "yes");
             DOMSource source = new DOMSource(xmlReport);
@@ -1211,6 +1218,7 @@ public class CompareTool {
         dbf.setIgnoringElementContentWhitespace(true);
         dbf.setIgnoringComments(true);
         DocumentBuilder db = dbf.newDocumentBuilder();
+        db.setEntityResolver(new SafeEmptyEntityResolver());
 
         org.w3c.dom.Document doc1 = db.parse(new ByteArrayInputStream(xml1));
         doc1.normalizeDocument();
@@ -1361,6 +1369,7 @@ public class CompareTool {
         dbf.setIgnoringElementContentWhitespace(true);
         dbf.setIgnoringComments(true);
         DocumentBuilder db = dbf.newDocumentBuilder();
+        db.setEntityResolver(new SafeEmptyEntityResolver());
 
         org.w3c.dom.Document doc1 = db.parse(new File(xml1));
         doc1.normalizeDocument();
@@ -1502,6 +1511,12 @@ public class CompareTool {
         }
 
 
+    }
+
+    private static class SafeEmptyEntityResolver implements EntityResolver {
+        public InputSource resolveEntity(String publicId, String systemId) throws SAXException, IOException {
+            return new InputSource(new StringReader(""));
+        }
     }
 
 

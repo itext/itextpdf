@@ -161,8 +161,6 @@ class PdfCleanUpContentOperator implements ContentOperator {
                     disableOutput = true;
                 }
             }
-        } else if (lineStyleOperators.contains(operatorStr)) {
-            disableOutput = true;
         } else if (textShowingOperators.contains(operatorStr) && !allChunksAreVisible(cleanUpStrategy.getChunks())) {
             disableOutput = true;
 

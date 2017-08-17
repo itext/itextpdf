@@ -52,8 +52,12 @@ import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.Version;
 import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.exceptions.BadPasswordException;
+import com.itextpdf.text.io.RandomAccessSource;
+import com.itextpdf.text.io.RandomAccessSourceFactory;
 import com.itextpdf.text.log.Counter;
 import com.itextpdf.text.log.CounterFactory;
+import com.itextpdf.text.log.Logger;
+import com.itextpdf.text.log.LoggerFactory;
 import com.itextpdf.text.pdf.AcroFields.Item;
 import com.itextpdf.text.pdf.collection.PdfCollection;
 import com.itextpdf.text.pdf.interfaces.PdfViewerPreferences;
@@ -116,6 +120,7 @@ class PdfStamperImp extends PdfWriter {
     protected HashMap<Object, PdfObject> namedDestinations = new HashMap<Object, PdfObject>();
 
     protected Counter COUNTER = CounterFactory.getCounter(PdfStamper.class);
+    private Logger logger;
 
     protected Counter getCounter() {
         return COUNTER;
@@ -125,6 +130,27 @@ class PdfStamperImp extends PdfWriter {
      * If no new layers were registered and user didn't fetched layers explicitly via getPdfLayers() method
      * then original layers are never read - they are simply copied to the new document with whole original catalog. */
     private boolean originalLayersAreRead = false;
+
+    //Hash map of standard fonts used in flattening of annotations to prevent fonts duplication
+    private HashMap<String, PdfIndirectReference> builtInAnnotationFonts = new HashMap<String, PdfIndirectReference>();
+    private static HashMap<String, String> fromShortToFullAnnotationFontNames = new HashMap<String, String>();
+
+    static {
+        fromShortToFullAnnotationFontNames.put("CoBO", BaseFont.COURIER_BOLDOBLIQUE);
+        fromShortToFullAnnotationFontNames.put("CoBo", BaseFont.COURIER_BOLD);
+        fromShortToFullAnnotationFontNames.put("CoOb", BaseFont.COURIER_OBLIQUE);
+        fromShortToFullAnnotationFontNames.put("Cour", BaseFont.COURIER);
+        fromShortToFullAnnotationFontNames.put("HeBO", BaseFont.HELVETICA_BOLDOBLIQUE);
+        fromShortToFullAnnotationFontNames.put("HeBo", BaseFont.HELVETICA_BOLD);
+        fromShortToFullAnnotationFontNames.put("HeOb", BaseFont.HELVETICA_OBLIQUE);
+        fromShortToFullAnnotationFontNames.put("Helv", BaseFont.HELVETICA);
+        fromShortToFullAnnotationFontNames.put("Symb", BaseFont.SYMBOL);
+        fromShortToFullAnnotationFontNames.put("TiBI", BaseFont.TIMES_BOLDITALIC);
+        fromShortToFullAnnotationFontNames.put("TiBo", BaseFont.TIMES_BOLD);
+        fromShortToFullAnnotationFontNames.put("TiIt", BaseFont.TIMES_ITALIC);
+        fromShortToFullAnnotationFontNames.put("TiRo", BaseFont.TIMES_ROMAN);
+        fromShortToFullAnnotationFontNames.put("ZaDb", BaseFont.ZAPFDINGBATS);
+    }
 
     private double[] DEFAULT_MATRIX = {1, 0, 0, 1, 0, 0};
 
@@ -141,6 +167,7 @@ class PdfStamperImp extends PdfWriter {
      */
     protected PdfStamperImp(PdfReader reader, OutputStream os, char pdfVersion, boolean append) throws DocumentException, IOException {
         super(new PdfDocument(), os);
+        this.logger = LoggerFactory.getLogger(PdfStamperImp.class);
         if (!reader.isOpenedWithFullPermissions())
             throw new BadPasswordException(MessageLocalization.getComposedMessage("pdfreader.not.opened.with.owner.password"));
         if (reader.isTampered())
@@ -1237,12 +1264,13 @@ class PdfStamperImp extends PdfWriter {
                 if (!(annoto instanceof PdfDictionary))
                     continue;
                 PdfDictionary annDic = (PdfDictionary) annoto;
+                final PdfObject subType = annDic.get(PdfName.SUBTYPE);
                 if (flattenFreeTextAnnotations) {
-                    if (!(annDic.get(PdfName.SUBTYPE)).equals(PdfName.FREETEXT)) {
+                    if (! PdfName.FREETEXT.equals(subType)) {
                         continue;
                     }
                 } else {
-                    if ((annDic.get(PdfName.SUBTYPE)).equals(PdfName.WIDGET)) {
+                    if (PdfName.WIDGET.equals(subType)) {
                         // skip widgets
                         continue;
                     }
@@ -1268,26 +1296,95 @@ class PdfStamperImp extends PdfWriter {
                         ((PdfDictionary) objReal).put(PdfName.SUBTYPE, PdfName.FORM);
                         app = new PdfAppearance((PdfIndirectReference) obj);
                     } else {
-                        if (objReal.isDictionary()) {
-                            PdfName as_p = appDic.getAsName(PdfName.AS);
-                            if (as_p != null) {
-                                PdfIndirectReference iref = (PdfIndirectReference) ((PdfDictionary) objReal).get(as_p);
-                                if (iref != null) {
-                                    app = new PdfAppearance(iref);
-                                    if (iref.isIndirect()) {
-                                        objReal = PdfReader.getPdfObject(iref);
-                                        ((PdfDictionary) objReal).put(PdfName.SUBTYPE, PdfName.FORM);
+                        if (objReal != null ) {
+                            if (objReal.isDictionary()) {
+                                PdfName as_p = appDic.getAsName(PdfName.AS);
+                                if (as_p != null) {
+                                    PdfIndirectReference iref = (PdfIndirectReference) ( (PdfDictionary) objReal ).get(as_p);
+                                    if (iref != null) {
+                                        app = new PdfAppearance(iref);
+                                        if (iref.isIndirect()) {
+                                            objReal = PdfReader.getPdfObject(iref);
+                                            ( (PdfDictionary) objReal ).put(PdfName.SUBTYPE, PdfName.FORM);
+                                        }
                                     }
                                 }
+                            }
+                        } else {
+                            if ( PdfName.FREETEXT.equals(subType) ) {
+                                final PdfString defaultAppearancePdfString = annDic.getAsString(PdfName.DA);
+                                if (defaultAppearancePdfString != null) {
+                                    final PdfString freeTextContent = annDic.getAsString(PdfName.CONTENTS);
+                                    final String defaultAppearanceString = defaultAppearancePdfString.toString();
+
+                                    //It is not stated in spec, but acrobat seems to support standard font names in DA
+                                    //So we need to check if the font is built-in and specify it explicitly.
+                                    PdfIndirectReference fontReference = null;
+                                    PdfName pdfFontName = null;
+                                    try {
+                                        RandomAccessSource source = new RandomAccessSourceFactory().createSource(defaultAppearancePdfString.getBytes());
+                                        PdfContentParser ps = new PdfContentParser(new PRTokeniser(new RandomAccessFileOrArray(source)));
+                                        ArrayList<PdfObject> operands = new ArrayList<PdfObject>();
+                                        while (ps.parse(operands).size() > 0) {
+                                            PdfLiteral operator = (PdfLiteral)operands.get(operands.size()-1);
+                                            if (operator.toString().equals("Tf")) {
+                                                pdfFontName = (PdfName) operands.get(0);
+                                                String fontName = pdfFontName.toString().substring(1);
+                                                String fullName = fromShortToFullAnnotationFontNames.get(fontName);
+                                                if (fullName == null) {
+                                                    fullName = fontName;
+                                                }
+                                                fontReference = builtInAnnotationFonts.get(fullName);
+                                                if (fontReference == null) {
+                                                    PdfDictionary dic = BaseFont.createBuiltInFontDictionary(fullName);
+                                                    if (dic != null) {
+                                                        fontReference = addToBody(dic).getIndirectReference();
+                                                        builtInAnnotationFonts.put(fullName, fontReference);
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    } catch (Exception any) {
+                                        logger.warn(MessageLocalization.getComposedMessage("error.resolving.freetext.font"));
+                                        break;
+                                    }
+
+                                    app = new PdfAppearance(this);
+                                    // it is unclear from spec were referenced from DA font should be (since annotations doesn't have DR), so in case it not built-in
+                                    // quickly and naively flattening the freetext annotation
+                                    if (fontReference != null) {
+                                        app.getPageResources().addFont(pdfFontName, fontReference);
+                                    }
+                                    app.saveState();
+                                    app.beginText();
+                                    app.setLiteral(defaultAppearanceString);
+                                    app.setLiteral("(" + freeTextContent.toString() + ") Tj\n");
+                                    app.endText();
+                                    app.restoreState();
+                                } else {
+                                    // The DA entry is required for free text annotations
+                                    // Not throwing an exception as we don't want to stop the flow, result is that this annotation won't be flattened.
+                                    this.logger.warn(MessageLocalization.getComposedMessage("freetext.annotation.doesnt.contain.da"));
+                                }
+                            } else {
+                                this.logger.warn(MessageLocalization.getComposedMessage("annotation.type.not.supported.flattening"));
                             }
                         }
                     }
                     if (app != null) {
                         Rectangle rect = PdfReader.getNormalizedRectangle(annDic.getAsArray(PdfName.RECT));
-                        Rectangle bBox = PdfReader.getNormalizedRectangle((objDict.getAsArray(PdfName.BBOX)));
+                        Rectangle bBox = null;
+
+                        if ( objDict != null ) {
+                            bBox = PdfReader.getNormalizedRectangle((objDict.getAsArray(PdfName.BBOX)));
+                        } else {
+                            bBox = new Rectangle(0,0, rect.getWidth(), rect.getHeight());
+                            app.setBoundingBox(bBox);
+                        }
+
                         PdfContentByte cb = getOverContent(page);
                         cb.setLiteral("Q ");
-                        if (objDict.getAsArray(PdfName.MATRIX) != null &&
+                        if (objDict != null && objDict.getAsArray(PdfName.MATRIX) != null &&
                                 !Arrays.equals(DEFAULT_MATRIX, objDict.getAsArray(PdfName.MATRIX).asDoubleArray())) {
                             double[] matrix = objDict.getAsArray(PdfName.MATRIX).asDoubleArray();
                             Rectangle transformBBox = transformBBoxByMatrix(bBox, matrix);
