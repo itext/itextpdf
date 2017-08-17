@@ -1,28 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-
   <parent>
     <groupId>com.itextpdf</groupId>
     <artifactId>itext-parent</artifactId>
     <version>1.0.0</version>
     <relativePath />
   </parent>
-
   <artifactId>itextpdf</artifactId>
   <version>5.5.12</version>
-
   <name>iText Core</name>
   <description>A Free Java-PDF library</description>
   <url>http://itextpdf.com</url>
-
   <licenses>
     <license>
       <name>GNU Affero General Public License v3</name>
       <url>http://www.fsf.org/licensing/licenses/agpl-3.0.html</url>
     </license>
   </licenses>
-
   <developers>
     <developer>
       <id>itext</id>
@@ -31,7 +26,6 @@
       <url>http://www.itextpdf.com</url>
     </developer>
   </developers>
-
   <mailingLists>
     <mailingList>
       <name>iText on StackOverflow</name>
@@ -46,38 +40,24 @@
       </otherArchives>
     </mailingList>
   </mailingLists>
-
   <scm>
     <connection>scm:git:git@github.com:itext/itextpdf.git</connection>
     <url>https://github.com/itext/itextpdf</url>
   </scm>
-
   <issueManagement>
     <system>jira</system>
     <url>https://jira.itextsupport.com/</url>
   </issueManagement>
-
   <ciManagement>
     <system>jenkins-ci</system>
     <url>http://ci.itextsupport.com/</url>
   </ciManagement>
-
   <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <argLine>-Xms512m -Xmx1024m</argLine>
-    <checkstyle.header.file>license.txt</checkstyle.header.file>
-    <sonar.language>java</sonar.language>
-    <sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
-    <sonar.jacoco.reportPath>${project.basedir}/target/jacoco.exec</sonar.jacoco.reportPath>
+    <java.version>1.6</java.version>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
-
   <dependencies>
-    <dependency>
-      <groupId>org.bouncycastle</groupId>
-      <artifactId>bcprov-jdk15on</artifactId>
-      <version>1.49</version>
-      <optional>true</optional>
-    </dependency>
     <dependency>
       <groupId>org.bouncycastle</groupId>
       <artifactId>bcpkix-jdk15on</artifactId>
@@ -85,10 +65,10 @@
       <optional>true</optional>
     </dependency>
     <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>4.8.2</version>
-      <scope>test</scope>
+      <groupId>org.bouncycastle</groupId>
+      <artifactId>bcprov-jdk15on</artifactId>
+      <version>1.49</version>
+      <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>org.apache.santuario</groupId>
@@ -96,10 +76,14 @@
       <version>1.5.1</version>
       <optional>true</optional>
     </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.12</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
-
   <build>
-
     <resources>
       <resource>
         <directory>src/main/resources</directory>
@@ -111,7 +95,6 @@
         </includes>
       </resource>
     </resources>
-
     <testResources>
       <testResource>
         <directory>src/main/resources</directory>
@@ -127,43 +110,13 @@
         </includes>
       </testResource>
     </testResources>
-
     <plugins>
-
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>buildnumber-maven-plugin</artifactId>
-        <version>1.4</version>
-        <executions>
-          <execution>
-            <phase>validate</phase>
-            <goals>
-              <goal>create</goal>
-            </goals>
-          </execution>
-        </executions>
-        <configuration>
-          <doCheck>false</doCheck>
-          <doUpdate>false</doUpdate>
-        </configuration>
-      </plugin>
-
       <plugin>
         <!-- Add osgi meta data to manifest file -->
         <groupId>org.apache.felix</groupId>
         <artifactId>maven-bundle-plugin</artifactId>
-        <version>3.2.0</version>
+        <version>3.4.0</version>
         <extensions>true</extensions>
-        <executions>
-          <execution>
-            <id>bundle-manifest</id>
-            <phase>process-classes</phase>
-            <!-- bind the manifest.mf generation after the 'compile' phase -->
-            <goals>
-              <goal>manifest</goal>
-            </goals>
-          </execution>
-        </executions>
         <configuration>
           <!-- unpack bundle, so human can see the manifest without unpacking
             the jar -->
@@ -174,14 +127,31 @@
               com.itextpdf.xmp.*</Export-Package>
           </instructions>
         </configuration>
+        <executions>
+          <execution>
+            <id>bundle-manifest</id>
+            <!-- bind the manifest.mf generation after the 'compile' phase -->
+            <goals>
+              <goal>manifest</goal>
+            </goals>
+            <phase>process-classes</phase>
+          </execution>
+        </executions>
       </plugin>
-
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.8.0</version>
+        <configuration>
+          <source>${java.version}</source>
+          <target>${java.version}</target>
+        </configuration>
+      </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
-        <version>3.0.2</version>
+        <version>3.1.0</version>
         <configuration>
-          <!-- Use the Bnd generated MANIFEST.MF in the jar -->
           <archive>
             <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
             <manifest>
@@ -193,139 +163,66 @@
           </archive>
         </configuration>
       </plugin>
-
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <version>2.19.1</version>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>3.0.0</version>
         <configuration>
-          <runOrder>random</runOrder>
+          <links>
+            <link>http://developers.itextpdf.com/reference/classes</link>
+          </links>
+          <additionalOptions>-Xdoclint:none</additionalOptions>
+          <additionalOptions>--allow-script-in-comments</additionalOptions>
+          <failOnError>false</failOnError>
+          <additionalJOptions>
+            <additionalJOption>-html5</additionalJOption>
+          </additionalJOptions>
+          <quiet>false</quiet>
         </configuration>
+        <executions>
+          <execution>
+            <id>attach-sources</id>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+            <phase>package</phase>
+          </execution>
+        </executions>
       </plugin>
-
       <plugin>
-        <groupId>external.atlassian.jgitflow</groupId>
-        <artifactId>jgitflow-maven-plugin</artifactId>
-        <version>1.0-m5.1</version>
-        <configuration>
-          <flowInitContext>
-            <masterBranchName>master</masterBranchName>
-            <developBranchName>develop</developBranchName>
-            <featureBranchPrefix>feature/</featureBranchPrefix>
-            <releaseBranchPrefix>release/</releaseBranchPrefix>
-            <hotfixBranchPrefix>hotfix/</hotfixBranchPrefix>
-            <versionTagPrefix />
-          </flowInitContext>
-          <allowUntracked>true</allowUntracked>
-          <autoVersionSubmodules>true</autoVersionSubmodules>
-          <updateDependencies>true</updateDependencies>
-        </configuration>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-source-plugin</artifactId>
+        <version>3.0.1</version>
+        <executions>
+          <execution>
+            <id>attach-sources</id>
+            <goals>
+              <goal>jar-no-fork</goal>
+            </goals>
+            <phase>package</phase>
+          </execution>
+        </executions>
       </plugin>
-
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>buildnumber-maven-plugin</artifactId>
+        <version>1.4</version>
+        <configuration>
+          <doCheck>true</doCheck>
+          <doUpdate>false</doUpdate>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>create</goal>
+            </goals>
+            <phase>validate</phase>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
-
   </build>
-
-  <reporting>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-checkstyle-plugin</artifactId>
-        <version>2.17</version>
-        <configuration>
-          <configLocation>checkstyle-config.xml</configLocation>
-        </configuration>
-      </plugin>
-    </plugins>
-  </reporting>
-
   <profiles>
-
-    <profile>
-      <id>snapshot</id>
-      <build>
-        <finalName>${project.artifactId}-${project.version}-rev${buildNumber}</finalName>
-      </build>
-    </profile>
-
-    <profile>
-      <id>all</id>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-javadoc-plugin</artifactId>
-            <version>2.10.4</version>
-            <executions>
-              <execution>
-                <id>attach-sources</id>
-                <goals>
-                  <goal>jar</goal>
-                </goals>
-              </execution>
-            </executions>
-            <configuration>
-              <links>
-                <link>http://developers.itextpdf.com/reference/classes</link>
-              </links>
-            </configuration>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-
-    <profile>
-      <id>doclint-java8-disable</id>
-      <activation>
-        <jdk>[1.8,)</jdk>
-      </activation>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-javadoc-plugin</artifactId>
-            <version>2.10.4</version>
-            <configuration>
-              <additionalparam>-Xdoclint:none</additionalparam>
-              <additionalparam>--allow-script-in-comments</additionalparam>
-            </configuration>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-
-    <!-- BEGIN: Specific to mapping unit tests and covered code -->
-    <profile>
-      <id>coverage-per-test</id>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-surefire-plugin</artifactId>
-            <!-- Minimal supported version is 2.4 -->
-            <version>2.19.1</version>
-            <configuration>
-              <properties>
-                <property>
-                  <name>listener</name>
-                  <value>org.sonar.java.jacoco.JUnitListener</value>
-                </property>
-              </properties>
-            </configuration>
-          </plugin>
-        </plugins>
-      </build>
-      <dependencies>
-        <dependency>
-          <groupId>org.codehaus.sonar-plugins.java</groupId>
-          <artifactId>sonar-jacoco-listeners</artifactId>
-          <version>3.2</version>
-          <scope>test</scope>
-        </dependency>
-      </dependencies>
-    </profile>
-    <!-- END: Specific to mapping unit tests and covered code -->
-
     <profile>
       <id>compileWithLegacyJDK</id>
       <!--
@@ -334,17 +231,17 @@
         to your JDK 1.5 HOME when using this profile.
       -->
       <properties>
-        <java.version>1.5</java.version>
+        <java.bootclasspath>${java.libs}/rt.jar${path.separator}${java.libs}/jce.jar</java.bootclasspath>
         <java.home>${env.JAVA5_HOME}</java.home>
         <java.libs>${java.home}/jre/lib</java.libs>
-        <java.bootclasspath>${java.libs}/rt.jar${path.separator}${java.libs}/jce.jar</java.bootclasspath>
+        <java.version>1.5</java.version>
       </properties>
       <build>
         <plugins>
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-compiler-plugin</artifactId>
-            <version>3.6.1</version>
+            <version>3.8.0</version>
             <configuration>
               <source>${java.version}</source>
               <target>${java.version}</target>
@@ -359,7 +256,5 @@
         </plugins>
       </build>
     </profile>
-
   </profiles>
-
 </project>
