@@ -89,6 +89,7 @@ public class PdfCleanUpProcessorTest {
         List<PdfCleanUpLocation> cleanUpLocations2 = Arrays.asList(new PdfCleanUpLocation(1, new Rectangle(97f, 405f, 480f, 445f), BaseColor.GRAY));
         List<PdfCleanUpLocation> cleanUpLocations3 = Arrays.asList(new PdfCleanUpLocation(1, new Rectangle(97f, 605f, 480f, 645f), BaseColor.GRAY));
         List<PdfCleanUpLocation> cleanUpLocations4 = Arrays.asList(new PdfCleanUpLocation(1, new Rectangle(212, 394, 212 + 186, 394 + 170), null));
+        List<PdfCleanUpLocation> cleanUpLocations5= Arrays.asList(new PdfCleanUpLocation(1, new Rectangle(0f, 0f, 595f, 680f), BaseColor.GRAY));
 
         return Arrays.asList(new Object[][] {{"page229.pdf", "page229_01.pdf", "cmp_page229_01.pdf", cleanUpLocations1},
                                              {"page229-modified-Tc-Tw.pdf", "page229-modified-Tc-Tw.pdf", "cmp_page229-modified-Tc-Tw.pdf", cleanUpLocations1},
@@ -118,6 +119,8 @@ public class PdfCleanUpProcessorTest {
                                              {"absentICentry.pdf", "absentICentry.pdf", "cmp_absentICentry.pdf", null},
                                              {"lotOfDashes.pdf", "lotOfDashes.pdf", "cmp_lotOfDashes.pdf", null},
                                              {"clipPathReduction.pdf", "clipPathReduction.pdf", "cmp_clipPathReduction.pdf", cleanUpLocations4},
+                                             {"helloHelvetica.pdf", "helloHelvetica.pdf", "cmp_helloHelvetica.pdf", cleanUpLocations5},
+
         });
     }
 

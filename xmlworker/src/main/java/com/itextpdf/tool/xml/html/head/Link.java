@@ -47,6 +47,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.itextpdf.text.Element;
+import com.itextpdf.text.log.Level;
 import com.itextpdf.text.log.Logger;
 import com.itextpdf.text.log.LoggerFactory;
 import com.itextpdf.tool.xml.NoCustomContextException;
@@ -78,9 +79,13 @@ public class Link extends AbstractTagProcessor {
 				try {
 					getCSSResolver(ctx).addCssFile(href, false);
 				} catch (CssResolverException e) {
-					LOG.error(String.format(LocaleMessages.getInstance().getMessage(LocaleMessages.LINK_404), href), e);
+					if (LOG.isLogging(Level.ERROR)) {
+						LOG.error(String.format(LocaleMessages.getInstance().getMessage(LocaleMessages.LINK_404), href), e);
+					}
 				} catch (NoCustomContextException e) {
-					LOG.warn(String.format(LocaleMessages.getInstance().getMessage(LocaleMessages.CUSTOMCONTEXT_404_CONTINUE), CssResolverPipeline.class.getName()));
+					if (LOG.isLogging(Level.WARN)) {
+						LOG.warn(String.format(LocaleMessages.getInstance().getMessage(LocaleMessages.CUSTOMCONTEXT_404_CONTINUE), CssResolverPipeline.class.getName()));
+					}
 				}
 			}
 		}

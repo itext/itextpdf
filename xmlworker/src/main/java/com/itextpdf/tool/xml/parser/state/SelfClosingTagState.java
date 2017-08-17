@@ -72,6 +72,8 @@ public class SelfClosingTagState implements State {
 			this.parser.flush();
 			this.parser.memory().flushNameSpace();
 			this.parser.selectState().inTag();
+		} else if (this.parser.selectState().getPreviousState() instanceof ProcessingInstructionEncounteredState) {
+			this.parser.memory().processingInstruction().append(character);
 		}
 	}
 

@@ -54,6 +54,7 @@ import com.itextpdf.text.Phrase;
 import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.api.Spaceable;
 import com.itextpdf.text.error_messages.MessageLocalization;
+import com.itextpdf.text.log.Level;
 import com.itextpdf.text.log.Logger;
 import com.itextpdf.text.log.LoggerFactory;
 import com.itextpdf.text.pdf.events.PdfPTableEventForwarder;
@@ -806,7 +807,9 @@ public class PdfPTable implements LargeElement, Spaceable, IAccessibleElement {
             colEnd = Math.min(colEnd, totalCols);
         }
 
-        LOGGER.info(String.format("Writing row %s to %s; column %s to %s", rowStart, rowEnd, colStart, colEnd));
+        if (LOGGER.isLogging(Level.INFO)) {
+            LOGGER.info(String.format("Writing row %s to %s; column %s to %s", rowStart, rowEnd, colStart, colEnd));
+        }
 
         float yPosStart = yPos;
 
@@ -2107,7 +2110,9 @@ public class PdfPTable implements LargeElement, Spaceable, IAccessibleElement {
      * @since iText 5.4.3
      */
     public FittingRows getFittingRows(float availableHeight, int startIdx) {
-        LOGGER.info(String.format("getFittingRows(%s, %s)", availableHeight, startIdx));
+        if (LOGGER.isLogging(Level.INFO)) {
+            LOGGER.info(String.format("getFittingRows(%s, %s)", availableHeight, startIdx));
+        }
         if ( startIdx > 0 && startIdx < rows.size() ) {
             assert (getRow(startIdx).getCells()[0] != null); // top left cell of current page may not be null
         }
@@ -2133,7 +2138,9 @@ public class PdfPTable implements LargeElement, Spaceable, IAccessibleElement {
                     state.consumeRowspan(completedRowsHeight, rowHeight);
                 } else {
                     state.beginCell(cell, completedRowsHeight, rowHeight);
-                    LOGGER.info(String.format("Height after beginCell: %s (cell: %s)", state.height, cell.getCachedMaxHeight()));
+                    if (LOGGER.isLogging(Level.INFO)) {
+                        LOGGER.info(String.format("Height after beginCell: %s (cell: %s)", state.height, cell.getCachedMaxHeight()));
+                    }
                 }
                 if (state.cellEnds() && state.height > maxCompletedRowsHeight) {
                     maxCompletedRowsHeight = state.height;

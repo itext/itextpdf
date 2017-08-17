@@ -64,8 +64,10 @@ import com.itextpdf.text.zugferd.profiles.ComfortProfile;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringReader;
 import java.util.Date;
 
+import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -82,6 +84,8 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.EntityResolver;
+import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 /**
@@ -121,8 +125,9 @@ public class InvoiceDOM {
         // loading the XML template
         DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+        docBuilder.setEntityResolver(new SafeEmptyEntityResolver());
         InputStream is = StreamUtil.getResourceStream("com/itextpdf/text/zugferd/zugferd-template.xml");
-	doc = docBuilder.parse(is);
+	    doc = docBuilder.parse(is);
         // importing the data
         importData(doc, data);
     }
@@ -1161,11 +1166,14 @@ public class InvoiceDOM {
     public byte[] toXML() throws TransformerException {
         removeEmptyNodes(doc);
         TransformerFactory transformerFactory = TransformerFactory.newInstance();
+        try {
+            transformerFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+        } catch (Exception exc) {}
         Transformer transformer = transformerFactory.newTransformer();
         transformer.setOutputProperty(OutputKeys.METHOD, "xml");
         transformer.setOutputProperty(OutputKeys.INDENT, "yes");
         transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
-	DOMSource source = new DOMSource(doc);
+	    DOMSource source = new DOMSource(doc);
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         Result result = new StreamResult(out);
         transformer.transform(source, result);
@@ -1202,5 +1210,11 @@ public class InvoiceDOM {
     protected void check(String s, String message) throws DataIncompleteException {
         if (s == null || s.trim().length() == 0)
             throw new DataIncompleteException(message);
+    }
+
+    private static class SafeEmptyEntityResolver implements EntityResolver {
+        public InputSource resolveEntity(String publicId, String systemId) throws SAXException, IOException {
+            return new InputSource(new StringReader(""));
+        }
     }
 }

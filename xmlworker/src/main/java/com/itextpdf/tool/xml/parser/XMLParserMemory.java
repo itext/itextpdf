@@ -45,7 +45,6 @@ package com.itextpdf.tool.xml.parser;
 
 import com.itextpdf.tool.xml.parser.state.InsideTagHTMLState;
 
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -62,6 +61,7 @@ public class XMLParserMemory {
 	private final StringBuilder currentEntity = new StringBuilder();
 	private final StringBuilder comment = new StringBuilder();
 	private final StringBuilder baos = new StringBuilder();
+	private final StringBuilder processingInstruction = new StringBuilder();
 	private final Map<String, String> attr;
 	private String wsTag = "";
 	private String currentNameSpace = "";
@@ -102,6 +102,7 @@ public class XMLParserMemory {
 	public boolean hasCurrentAttribute() {
 		return null != this.currentAttr;
 	}
+
 	/**
 	 * Sets the current attribute value and adds the attribute (if it's not
 	 * null) to the attribute map.
@@ -159,6 +160,14 @@ public class XMLParserMemory {
 	 */
 	public StringBuilder comment() {
 		return this.comment;
+	}
+
+	/**
+	 * Returns the xml processing instruction buffer
+	 * @return processing instruction buffer
+	 */
+	public StringBuilder processingInstruction() {
+		return this.processingInstruction;
 	}
 
 	/**

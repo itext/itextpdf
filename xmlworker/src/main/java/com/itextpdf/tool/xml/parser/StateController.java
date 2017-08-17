@@ -272,4 +272,8 @@ public class StateController {
 	public XMLParser closeStarComment() {
 		return setState(this.closeStarComment);
 	}
+
+	public State getPreviousState() {
+		return previousState;
+	}
 }

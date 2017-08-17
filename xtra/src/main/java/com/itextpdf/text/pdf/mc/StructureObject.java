@@ -43,10 +43,8 @@
  */
 package com.itextpdf.text.pdf.mc;
 
-import com.itextpdf.text.pdf.PdfDictionary;
-import com.itextpdf.text.pdf.PdfIndirectReference;
-import com.itextpdf.text.pdf.PdfName;
-import com.itextpdf.text.pdf.PdfObject;
+import com.itextpdf.text.exceptions.InvalidPdfException;
+import com.itextpdf.text.pdf.*;
 
 /**
  * A StructureItem that refers to an object from an OBJR dictionary.
@@ -70,12 +68,15 @@ public class StructureObject extends StructureItem {
 	 * @param ref			the reference of the parent structure element
 	 * @param dict			the object reference dictionary
 	 */
-	public StructureObject(PdfDictionary structElem, PdfIndirectReference ref, PdfDictionary dict) {
+	public StructureObject(PdfDictionary structElem, PdfIndirectReference ref, PdfDictionary dict) throws InvalidPdfException {
 		this.structElem = structElem;
 		this.ref = ref;
 		this.obj = dict.getDirectObject(PdfName.OBJ);
 		this.objref = dict.getAsIndirectObject(PdfName.OBJ);
-		this.structParent = ((PdfDictionary)obj).getAsNumber(PdfName.STRUCTPARENT).intValue();
+		PdfNumber sp = ((PdfDictionary)obj).getAsNumber(PdfName.STRUCTPARENT);
+		if(sp == null)
+			throw new InvalidPdfException("");
+		this.structParent = sp.intValue();
 		PdfIndirectReference pg = dict.getAsIndirectObject(PdfName.PG);
 		if (pg == null)
 			pg = structElem.getAsIndirectObject(PdfName.PG);

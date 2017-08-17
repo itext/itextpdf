@@ -50,6 +50,8 @@ import java.util.HashMap;
 
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.error_messages.MessageLocalization;
+import com.itextpdf.text.exceptions.InvalidPdfException;
+import com.itextpdf.text.log.Level;
 import com.itextpdf.text.log.Logger;
 import com.itextpdf.text.log.LoggerFactory;
 import com.itextpdf.text.pdf.PdfArray;
@@ -83,7 +85,7 @@ public class StructureItems extends ArrayList<StructureItem> {
 	 * @param reader the reader holding the PDF to examine
 	 */
 	public StructureItems(PdfReader reader)
-		throws DocumentException {
+			throws DocumentException, InvalidPdfException {
 		super();
 		PdfDictionary catalog = reader.getCatalog();
 		structTreeRoot = catalog.getAsDict(PdfName.STRUCTTREEROOT);
@@ -117,8 +119,10 @@ public class StructureItems extends ArrayList<StructureItem> {
 	 * @param ref	the reference to the StructElem dictionary
 	 * @throws DocumentException
 	 */
-	protected void processStructElems(PdfDictionary structElem, PdfIndirectReference ref) {
-		LOGGER.info(String.format("addStructureItems(%s, %s)", structElem, ref));
+	protected void processStructElems(PdfDictionary structElem, PdfIndirectReference ref) throws InvalidPdfException {
+		if (LOGGER.isLogging(Level.INFO)) {
+			LOGGER.info(String.format("addStructureItems(%s, %s)", structElem, ref));
+		}
 		if (structElem == null)
 			return;
 		processStructElemKids(structElem, ref, structElem.getDirectObject(PdfName.K));
@@ -132,8 +136,10 @@ public class StructureItems extends ArrayList<StructureItem> {
 	 * @param ref			the reference to the StructElem dictionary
 	 * @param object		the kids object
 	 */
-	protected void processStructElemKids(PdfDictionary structElem, PdfIndirectReference ref, PdfObject object) {
-		LOGGER.info(String.format("addStructureItem(%s, %s, %s)", structElem, ref, object));
+	protected void processStructElemKids(PdfDictionary structElem, PdfIndirectReference ref, PdfObject object) throws InvalidPdfException {
+		if (LOGGER.isLogging(Level.INFO)) {
+			LOGGER.info(String.format("addStructureItem(%s, %s, %s)", structElem, ref, object));
+		}
 		if (object == null)
 			return;
 		StructureItem item;

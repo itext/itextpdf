@@ -56,6 +56,7 @@ import java.util.Date;
 import java.util.Enumeration;
 import java.util.List;
 
+import com.itextpdf.text.log.Level;
 import org.bouncycastle.asn1.ocsp.OCSPObjectIdentifiers;
 import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
@@ -170,10 +171,14 @@ public class OCSPVerifier extends RootStoreVerifier {
 			Date nextUpdate = resp[i].getNextUpdate();
 			if (nextUpdate == null) {
 				nextUpdate = new Date(resp[i].getThisUpdate().getTime() + 180000l);
-				LOGGER.info(String.format("No 'next update' for OCSP Response; assuming %s", nextUpdate));
+				if (LOGGER.isLogging(Level.INFO)) {
+					LOGGER.info(String.format("No 'next update' for OCSP Response; assuming %s", nextUpdate));
+				}
 			}
 			if (signDate.after(nextUpdate)) {
-				LOGGER.info(String.format("OCSP no longer valid: %s after %s", signDate, nextUpdate));
+				if (LOGGER.isLogging(Level.INFO)) {
+					LOGGER.info(String.format("OCSP no longer valid: %s after %s", signDate, nextUpdate));
+				}
 				continue;
 			}
 			// check the status of the certificate

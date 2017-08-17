@@ -79,6 +79,7 @@ public class PdfCopyTest {
     @Before
     public void setUp() throws Exception {
         TestResourceUtils.purgeTempFiles();
+        new File("./target/com/itextpdf/test/pdf/PdfCopyTest").mkdirs();
     }
 
     @After

@@ -100,7 +100,7 @@ public class InsideTagHTMLState implements State {
 		} else if (character == '&') {
 			this.parser.selectState().specialChar();
 		} else  {
-			if (character == '*' && this.parser.memory().lastChar() == '/') {
+			if (HTML.Tag.STYLE.equals(this.parser.currentTag()) && character == '*' && this.parser.memory().lastChar() == '/' && parser.memory().current().length() > 0) {
 				this.parser.selectState().starComment();
 				this.parser.memory().current().deleteCharAt(this.parser.memory().current().lastIndexOf("/"));
 				if (this.parser.bufferSize() > 0) {
