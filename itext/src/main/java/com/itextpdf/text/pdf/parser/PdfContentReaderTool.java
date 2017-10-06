@@ -100,7 +100,7 @@ public class PdfContentReaderTool {
         for (PdfName pdfSubDictionaryName: subDictionaries) {
             builder.append('\n');
             for(int i = 0; i < depth+1; i++){
-                builder.append('\t');
+                builder.append("  ");
             }
             builder.append("Subdictionary ");
             builder.append(pdfSubDictionaryName);
@@ -122,14 +122,17 @@ public class PdfContentReaderTool {
         
         PdfDictionary xobjects = resourceDic.getAsDict(PdfName.XOBJECT);
         if (xobjects == null)
-        	return "No XObjects";
+            return "No XObjects";
         for (PdfName entryName : xobjects.getKeys()) {
             PdfStream xobjectStream = xobjects.getAsStream(entryName);
             
-            sb.append("------ " + entryName + " - subtype = " + xobjectStream.get(PdfName.SUBTYPE) + " = " + xobjectStream.getAsNumber(PdfName.LENGTH) + " bytes ------\n");
+            PdfObject subType = xobjectStream.get(PdfName.SUBTYPE);
+            sb.append("------ ").append(entryName).append(" - subtype = ").append(subType).append(", length = ").append(xobjectStream.getAsNumber(PdfName.LENGTH))
+                        .append(" bytes, class = ").append(xobjectStream.getClass().getName()).append(" ------\n");
             
-            if (!xobjectStream.get(PdfName.SUBTYPE).equals(PdfName.IMAGE)){
-            
+            if (subType.equals(PdfName.IMAGE)) {
+                sb.append(getDictionaryDetail(xobjectStream, 1));
+            } else {
                 byte[] contentBytes = ContentByteUtils.getContentBytesFromContentObject(xobjectStream);
                 
                 InputStream is = new ByteArrayInputStream(contentBytes);
@@ -138,7 +141,7 @@ public class PdfContentReaderTool {
                     sb.append((char)ch);
                 }
     
-                sb.append("------ " + entryName + " - subtype = " + xobjectStream.get(PdfName.SUBTYPE) + "End of Content" + "------\n");
+                sb.append("------ ").append(entryName).append(" - subtype = ").append(subType).append(" End of Content ------");
             }
         }
        
