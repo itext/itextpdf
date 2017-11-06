@@ -48,6 +48,7 @@ import com.itextpdf.text.pdf.security.XmlLocator;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
+import javax.xml.XMLConstants;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
@@ -100,6 +101,10 @@ public class XfaXmlLocator implements XmlLocator {
         try {
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
             TransformerFactory tf = TransformerFactory.newInstance();
+
+            try {
+                tf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+            } catch (Exception exc) {}
 
             Transformer trans = tf.newTransformer();
 

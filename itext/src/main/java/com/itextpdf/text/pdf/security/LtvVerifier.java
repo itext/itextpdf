@@ -55,6 +55,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import com.itextpdf.text.log.Level;
 import org.bouncycastle.cert.ocsp.BasicOCSPResp;
 import org.bouncycastle.cert.ocsp.OCSPException;
 import org.bouncycastle.cert.ocsp.OCSPResp;
@@ -109,7 +110,9 @@ public class LtvVerifier extends RootStoreVerifier {
 		signatureName = names.get(names.size() - 1);
 		this.signDate = new Date();
 		pkcs7 = coversWholeDocument();
-		LOGGER.info(String.format("Checking %ssignature %s", pkcs7.isTsp() ? "document-level timestamp " : "", signatureName));
+		if (LOGGER.isLogging(Level.INFO)) {
+			LOGGER.info(String.format("Checking %ssignature %s", pkcs7.isTsp() ? "document-level timestamp " : "", signatureName));
+		}
 	}
 	
 	/**
@@ -292,7 +295,9 @@ public class LtvVerifier extends RootStoreVerifier {
 			names = fields.getSignatureNames();
 			signatureName = names.get(names.size() - 1);
 			pkcs7 = coversWholeDocument();
-			LOGGER.info(String.format("Checking %ssignature %s", pkcs7.isTsp() ? "document-level timestamp " : "", signatureName));
+			if (LOGGER.isLogging(Level.INFO)) {
+				LOGGER.info(String.format("Checking %ssignature %s", pkcs7.isTsp() ? "document-level timestamp " : "", signatureName));
+			}
 		}
 		else {
 			LOGGER.info("No signatures in revision");

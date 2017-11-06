@@ -43,6 +43,7 @@
  */
 package com.itextpdf.text.pdf;
 
+import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.pdf.internal.PdfIsoKeys;
 
 import java.io.IOException;
@@ -188,6 +189,8 @@ public class PdfDictionary extends PdfObject {
      *   <VAR>key</VAR>
      */
     public void put(final PdfName key, final PdfObject object) {
+        if (key == null)
+            throw new IllegalArgumentException(MessageLocalization.getComposedMessage("key.is.null"));
         if (object == null || object.isNull())
             hashMap.remove(key);
         else
@@ -207,6 +210,8 @@ public class PdfDictionary extends PdfObject {
      * <VAR>key</VAR>
      */
     public void putEx(final PdfName key, final PdfObject value) {
+        if (key == null)
+            throw new IllegalArgumentException(MessageLocalization.getComposedMessage("key.is.null"));
         if (value == null)
             return;
         put(key, value);

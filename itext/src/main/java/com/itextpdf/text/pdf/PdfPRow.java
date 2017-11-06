@@ -46,6 +46,7 @@ package com.itextpdf.text.pdf;
 import java.util.HashMap;
 
 import com.itextpdf.text.*;
+import com.itextpdf.text.log.Level;
 import com.itextpdf.text.log.Logger;
 import com.itextpdf.text.log.LoggerFactory;
 import com.itextpdf.text.pdf.interfaces.IAccessibleElement;
@@ -709,7 +710,9 @@ public class PdfPRow implements IAccessibleElement {
      * an empty row would result
      */
     public PdfPRow splitRow(PdfPTable table, int rowIndex, float new_height) {
-        LOGGER.info(String.format("Splitting row %s available height: %s", rowIndex, new_height));
+        if (LOGGER.isLogging(Level.INFO)) {
+            LOGGER.info(String.format("Splitting row %s available height: %s", rowIndex, new_height));
+        }
         // second part of the row
         PdfPCell newCells[] = new PdfPCell[cells.length];
         float calHs[] = new float[cells.length];
