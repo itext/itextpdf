@@ -42,16 +42,17 @@
  */
 package com.itextpdf.text.pdf;
 
-import com.itextpdf.testutils.CompareTool;
-import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.Image;
-
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
 import org.junit.Before;
 import org.junit.Test;
+
+import com.itextpdf.testutils.CompareTool;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Image;
 
 import junit.framework.Assert;
 
@@ -134,4 +135,20 @@ public class PdfStamperTest {
 
     }
 
+    /**
+     * Some slightly malformed PDF files have PdfNull for the AcroForm catalog entry (this isn't allowed by the spec, but it's a small thing, so best to handle it properly).
+     * Prior to the fix, this test used to throw a ClassCastException 
+     */
+    @Test
+    public void nullAcroFormWorkaroundTest() throws Exception{
+        String testFile = RESOURCE_FOLDER + "EmptyOCGs.pdf";
+        PdfReader reader = new PdfReader(testFile);
+        
+        // recreating the problem requires low-level direct access to the catalog dictionary hashmap (attempting to do this via the PdfDictionary interface does not result in PdfNull being put into the dictionary)
+        reader.catalog.hashMap.put(PdfName.ACROFORM, PdfNull.PDFNULL);
+        PdfStamper stamper = new PdfStamper(reader, new ByteArrayOutputStream());
+        stamper.getPdfLayers();
+        stamper.close();
+    	
+    }
 }
