@@ -1307,7 +1307,7 @@ class PdfStamperImp extends PdfWriter {
                                 }
                             }
                         } else {
-                            if ( PdfName.FREETEXT.equals(subType) ) {
+                            if ( PdfName.FREETEXT.equals(subType)) {
                                 final PdfString defaultAppearancePdfString = annDic.getAsString(PdfName.DA);
                                 if (defaultAppearancePdfString != null) {
                                     final PdfString freeTextContent = annDic.getAsString(PdfName.CONTENTS);
@@ -1384,11 +1384,11 @@ class PdfStamperImp extends PdfWriter {
                                 !Arrays.equals(DEFAULT_MATRIX, objDict.getAsArray(PdfName.MATRIX).asDoubleArray())) {
                             double[] matrix = objDict.getAsArray(PdfName.MATRIX).asDoubleArray();
                             Rectangle transformBBox = transformBBoxByMatrix(bBox, matrix);
-                            cb.addTemplate(app, (rect.getWidth() / transformBBox.getWidth()), 0, 0, (rect.getHeight() / transformBBox.getHeight()), rect.getLeft(), rect.getBottom());
+                            cb.addTemplate(app, (rect.getWidth() / transformBBox.getWidth()), 0, 0, (rect.getHeight() / transformBBox.getHeight()), rect.getLeft() - transformBBox.getLeft(), rect.getBottom() - transformBBox.getBottom());
                         } else {
                             //Changed so that when the annotation has a difference scale than the xObject in the appearance dictionary, the image is consistent between
                             //the input and the flattened document.  When the annotation is rotated or skewed, it will still be flattened incorrectly.
-                            cb.addTemplate(app, (rect.getWidth() / bBox.getWidth()), 0, 0, (rect.getHeight() / bBox.getHeight()), rect.getLeft(), rect.getBottom());
+                            cb.addTemplate(app, (rect.getWidth() / bBox.getWidth()), 0, 0, (rect.getHeight() / bBox.getHeight()), rect.getLeft() - bBox.getLeft(), rect.getBottom() - bBox.getBottom());
                         }
                         cb.setLiteral("q ");
 
