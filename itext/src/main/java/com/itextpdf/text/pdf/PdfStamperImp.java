@@ -1012,7 +1012,7 @@ class PdfStamperImp extends PdfWriter {
                             markUsed(stream);
                         }
                     }
-                } else if (appDic != null && as_n != null) {
+                } else if (appDic != null && as_n != null && (as_n.isStream() || as_n.isDictionary())) {
                     PdfArray bbox = ((PdfDictionary) as_n).getAsArray(PdfName.BBOX);
                     PdfArray rect = merged.getAsArray(PdfName.RECT);
                     if (bbox != null && rect != null) {

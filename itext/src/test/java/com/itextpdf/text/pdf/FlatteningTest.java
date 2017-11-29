@@ -56,6 +56,7 @@ import org.junit.Test;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
@@ -101,6 +102,33 @@ public class FlatteningTest {
         String errorMessage = compareTool.compare(OUTPUT_FOLDER + OUT, RESOURCES_FOLDER + "cmp_" + OUT, OUTPUT_FOLDER, "diff");
         if (errorMessage != null) {
             Assert.fail(errorMessage);
+        }
+    }
+
+    @Test
+    public void flattenGenerateAppearanceFalse01() throws IOException, DocumentException, InterruptedException {
+
+        String outFile = OUTPUT_FOLDER + "flattenGenerateAppearanceFalse01.pdf";
+        FileOutputStream file = new FileOutputStream(outFile);
+        PdfReader reader = new PdfReader(new FileInputStream(RESOURCES_FOLDER + "not_filled_form.pdf"));
+        PdfStamper stamper = new PdfStamper(reader, file);
+
+        AcroFields form = stamper.getAcroFields();
+
+        // Fill out the form with arbitrary data
+        int x = 1;
+        for (Map.Entry<String, AcroFields.Item> entry : form.getFields().entrySet()) {
+            form.setField(entry.getKey(), "Test " + x++);
+        }
+
+        form.setGenerateAppearances(false);
+        stamper.setFormFlattening(true);
+        stamper.close();
+
+        CompareTool compareTool = new CompareTool();
+        String errorMessage = compareTool.compareByContent(outFile, RESOURCES_FOLDER + "cmp_flattenGenerateAppearanceFalse01.pdf", OUTPUT_FOLDER, "diff_");
+        if (errorMessage != null) {
+            org.junit.Assert.fail(errorMessage);
         }
     }
 
@@ -341,7 +369,7 @@ public class FlatteningTest {
     @Test
     public void testAnnotationFlatteningWithSkewAndRotation() throws IOException, DocumentException, InterruptedException {
         new File(OUTPUT_FOLDER).mkdirs();
-        
+
         String file = "annotationWithTransformMatrix.pdf";
         PdfReader reader = new PdfReader(RESOURCES_FOLDER + file);
         PdfStamper stamper = new PdfStamper(reader, new FileOutputStream(OUTPUT_FOLDER + file));
