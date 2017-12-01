@@ -515,6 +515,7 @@ public class PngImage {
     
     Image getImage() throws IOException {
         readPng();
+        checkIccProfile();
         try {
             int pal0 = 0;
             int palIdx = 0;
@@ -873,6 +874,21 @@ public class PngImage {
                 }
                 return out;
             }
+        }
+    }
+
+    private int getExpectedIccNumberOfComponents() {
+        if (colorType == 0 || colorType == 4) {
+            return 1;
+        } else {
+            return 3;
+        }
+    }
+
+    private void checkIccProfile() {
+        if (icc_profile != null && icc_profile.getNumComponents() != getExpectedIccNumberOfComponents()) {
+            LoggerFactory.getLogger(getClass()).warn(MessageLocalization.getComposedMessage("unexpected.color.space.in.embedded.icc.profile"));
+            icc_profile = null;
         }
     }
     
