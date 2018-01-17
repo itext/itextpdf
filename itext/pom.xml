@@ -7,10 +7,10 @@
     <version>1.0.0</version>
     <relativePath />
   </parent>
-  <artifactId>itextpdf</artifactId>
+  <artifactId>itextg</artifactId>
   <version>5.5.13</version>
-  <name>iText Core</name>
-  <description>A Free Java-PDF library</description>
+  <name>iTextG</name>
+  <description>The Android / GAE port of iText</description>
   <url>http://itextpdf.com</url>
   <licenses>
     <license>
@@ -59,15 +59,15 @@
   </properties>
   <dependencies>
     <dependency>
-      <groupId>org.bouncycastle</groupId>
-      <artifactId>bcpkix-jdk15on</artifactId>
-      <version>1.49</version>
+      <groupId>com.madgag</groupId>
+      <artifactId>scpkix-jdk15on</artifactId>
+      <version>1.47.0.2</version>
       <optional>true</optional>
     </dependency>
     <dependency>
-      <groupId>org.bouncycastle</groupId>
-      <artifactId>bcprov-jdk15on</artifactId>
-      <version>1.49</version>
+      <groupId>com.madgag</groupId>
+      <artifactId>scprov-jdk15on</artifactId>
+      <version>1.47.0.2</version>
       <optional>true</optional>
     </dependency>
     <dependency>

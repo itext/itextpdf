@@ -43,7 +43,7 @@
  */
 package com.itextpdf.text.pdf.security;
 
-import org.bouncycastle.tsp.TimeStampTokenInfo;
+import org.spongycastle.tsp.TimeStampTokenInfo;
 
 /**
  * Interface you can implement and pass to TSAClientBouncyCastle in case
