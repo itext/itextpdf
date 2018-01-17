@@ -152,3 +152,6 @@ nbactions*.xml
 .pmdruleset.xml
 .checkstyle
 .vagrant/
+androidport.groovy
+*.log
+
