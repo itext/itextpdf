@@ -10,7 +10,7 @@
   </parent>
 
   <artifactId>itext-xtra</artifactId>
-  <version>5.5.13-SNAPSHOT</version>
+  <version>5.5.14-SNAPSHOT</version>
 
   <name>iText Xtra</name>
   <description>iText Xtra, part of iText a Free Java-PDF library</description>
