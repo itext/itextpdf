@@ -11,7 +11,7 @@
 
   <groupId>com.itextpdf.tool</groupId>
   <artifactId>xmlworker</artifactId>
-  <version>5.5.12</version>
+  <version>5.5.13</version>
 
   <name>iText XML Worker</name>
   <description>Parses XML to PDF, with CSS support, using iText</description>

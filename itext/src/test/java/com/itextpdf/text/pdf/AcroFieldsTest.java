@@ -50,7 +50,6 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.w3c.dom.css.RGBColor;
 
 import java.io.*;
 import java.util.HashMap;
@@ -79,7 +78,7 @@ public class AcroFieldsTest {
     public void testListInSetFields() throws Exception {
         singleTest("list_register.xfdf");
     }
-    
+
     private void singleTest(String xfdfResourceName) throws Exception {
         // merging the FDF file
         PdfReader pdfreader = TestResourceUtils.getResourceAsPdfReader(this, "SimpleRegistrationForm.pdf");
@@ -93,15 +92,15 @@ public class AcroFieldsTest {
 
     private final String PDF_COMBO = "./src/test/resources/com/itextpdf/text/pdf/AcroFieldsTest/choice_field_order.pdf";
     private final String PDF_COMBO_EXPORT = "./src/test/resources/com/itextpdf/text/pdf/AcroFieldsTest/choice_field_order_export.pdf";
-    
+
     private final String PDF_COMBO_FIELD_NAME = "choice_field";
-    
+
     private final String[] PDF_COMBO_VALUES = {
             "Option 1",
             "Option 2",
             "Option 3"
     };
-    
+
     private final String[] PDF_COMBO_EXPORT_VALUES = {
             "Export 1",
             "Export 2",
@@ -150,7 +149,7 @@ public class AcroFieldsTest {
             Assert.fail(e.getMessage());
         }
     }
-    
+
     private void checkOrderOfAppearanceStates(String pdf, String fieldName, String[] expected) throws IOException {
         PdfReader reader = new PdfReader(pdf);
         AcroFields acroFields = reader.getAcroFields();

@@ -514,6 +514,7 @@ path.construction.operator.inside.text.object=Pad constructie of drawing operato
 unbalanced.layer.operators=Ongebalanceerde operatoren voor layers.
 unbalanced.marked.content.operators=Ongebalanceerde marked content operatoren.
 unbalanced.save.restore.state.operators=Ongebalanceerde save/restore state operatoren.
+unexpected.color.space.in.embedded.icc.profile=Onverwachte kleurenruimte in ingesloten ICC-profiel. Het zal worden genegeerd.
 unexpected.end.of.file=Onverwacht einde van het bestand.
 unexpected.eof=Onverwachte EOF
 unexpected.gt.gt=Onverwachte '>>'
