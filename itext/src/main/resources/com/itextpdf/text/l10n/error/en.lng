@@ -514,6 +514,7 @@ path.construction.operator.inside.text.object=Path construction or drawing opera
 unbalanced.layer.operators=Unbalanced layer operators.
 unbalanced.marked.content.operators=Unbalanced marked content operators.
 unbalanced.save.restore.state.operators=Unbalanced save/restore state operators.
+unexpected.color.space.in.embedded.icc.profile=Unexpected color space in embedded ICC Profile. It will be ignored.
 unexpected.end.of.file=Unexpected end of file.
 unexpected.eof=Unexpected EOF
 unexpected.gt.gt=Unexpected '>>'

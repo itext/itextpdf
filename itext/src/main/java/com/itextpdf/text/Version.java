@@ -72,14 +72,14 @@ public final class Version {
 	 * This String contains the version number of this iText release.
 	 * For debugging purposes, we request you NOT to change this constant.
 	 */
-    private String release = "1.0.2";
+    private String release = "1.0.3";
 	/**
 	 * This String contains the iText version as shown in the producer line.
 	 * iText is a product developed by iText Group NV.
 	 * iText Group requests that you retain the iText producer line
 	 * in every PDF that is created or manipulated using iText.
 	 */
-	private String iTextVersion = iText + " " + release + " \u00a92000-2017 iText Group NV";
+	private String iTextVersion = iText + " " + release + " \u00a92000-2018 iText Group NV";
 	/**
 	 * The license key.
 	 */
@@ -96,45 +96,51 @@ public final class Version {
             synchronized ( version ) {
                 try {
                     Class<?> klass = Class.forName("com.itextpdf.licensekey.LicenseKey");
-                    Method m = klass.getMethod("getLicenseeInfo");
-                    String[] info = (String[])m.invoke(klass.newInstance());
-                    if (info[3] != null && info[3].trim().length() > 0) {
-                        version.key = info[3];
-                    } else {
-                        version.key = "Trial version ";
-                        if (info[5] == null) {
-                            version.key += "unauthorised";
+                    if(klass != null) {
+                        Class[] cArg  = {String.class};
+                        Method m = klass.getMethod("getLicenseeInfoForVersion",cArg);
+                        //Actual iText7 version is used here to get correct license info
+                        Object[] args = {"7.0"};
+                        String[] info = (String[]) m.invoke(klass.newInstance(),args);
+                        if (info[3] != null && info[3].trim().length() > 0) {
+                            version.key = info[3];
                         } else {
-                            version.key += info[5];
+                            version.key = "Trial version ";
+                            if (info[5] == null) {
+                                version.key += "unauthorised";
+                            } else {
+                                version.key += info[5];
+                            }
                         }
-                    }
 
-                    if (info[4] != null && info[4].trim().length() > 0) {
-                        version.iTextVersion = info[4];
-                    }  else if (info[2] != null && info[2].trim().length() > 0) {
-                        version.iTextVersion += " (" + info[2];
-                        if (!version.key.toLowerCase().startsWith("trial")) {
-                            version.iTextVersion += "; licensed version)";
+                        if (info[4] != null && info[4].trim().length() > 0) {
+                            version.iTextVersion = info[4];
+                        } else if (info[2] != null && info[2].trim().length() > 0) {
+                            version.iTextVersion += " (" + info[2];
+                            if (!version.key.toLowerCase().startsWith("trial")) {
+                                version.iTextVersion += "; licensed version)";
+                            } else {
+                                version.iTextVersion += "; " + version.key + ")";
+                            }
+                        } else if (info[0] != null && info[0].trim().length() > 0) {
+                            // fall back to contact name, if company name is unavailable
+                            version.iTextVersion += " (" + info[0];
+                            if (!version.key.toLowerCase().startsWith("trial")) {
+                                // we shouldn't have a licensed version without company name,
+                                // but let's account for it anyway
+                                version.iTextVersion += "; licensed version)";
+                            } else {
+                                version.iTextVersion += "; " + version.key + ")";
+                            }
                         } else {
-                            version.iTextVersion += "; " + version.key + ")";
+                            throw new Exception();
                         }
-                    } else if (info[0] != null && info[0].trim().length() > 0) {
-                        // fall back to contact name, if company name is unavailable
-                        version.iTextVersion += " (" + info[0];
-                        if (!version.key.toLowerCase().startsWith("trial")) {
-                            // we shouldn't have a licensed version without company name,
-                            // but let's account for it anyway
-                            version.iTextVersion += "; licensed version)";
-                        } else {
-                            version.iTextVersion += "; " + version.key + ")";
-                        }
-                    } else {
-                        throw new Exception();
                     }
                 } catch (Exception e) {
                     version.iTextVersion += AGPL;
                 }
             }
+
 		}
 		return version;
 	}
