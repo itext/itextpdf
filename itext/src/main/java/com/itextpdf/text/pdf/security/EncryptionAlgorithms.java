@@ -43,6 +43,7 @@
  */
 package com.itextpdf.text.pdf.security;
 
+import java.security.GeneralSecurityException;
 import java.util.HashMap;
 
 /**
@@ -85,4 +86,19 @@ public class EncryptionAlgorithms {
 	    else
 	        return ret;
 	}
+	
+	/**
+	 * Allows new oid to be added.
+	 * @param oid
+	 * @param name
+	 */
+	public static void addAlgorithm(String oid, String name) throws GeneralSecurityException{
+		if(oid!=null && oid.trim().length() > 0){
+			if(!algorithmNames.containsKey(oid)){
+				algorithmNames.put(oid, name);
+			}else{
+				throw new GeneralSecurityException("already registered oid="+oid+", with name="+algorithmNames.get(oid));
+			}
+		}
+	}     
 }
