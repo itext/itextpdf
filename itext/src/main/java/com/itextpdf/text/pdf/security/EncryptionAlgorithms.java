@@ -92,13 +92,22 @@ public class EncryptionAlgorithms {
 	 * @param oid
 	 * @param name
 	 */
-	public static void addAlgorithm(String oid, String name) throws GeneralSecurityException{
-		if(oid!=null && oid.trim().length() > 0){
+	public static boolean addAlgorithm(String oid, String name) throws GeneralSecurityException{
+		boolean status = false;
+		if(oid!=null && !oid.equals("")){
 			if(!algorithmNames.containsKey(oid)){
 				algorithmNames.put(oid, name);
-			}else{
+				status = true;
+			}else if(algorithmNames.get(oid).equals(name)){
+				status = false;
+			} else{
 				throw new GeneralSecurityException("already registered oid="+oid+", with name="+algorithmNames.get(oid));
 			}
+		} else{
+			throw new GeneralSecurityException("Can not register oid's with null or empty");
 		}
+		return status;
 	}     
 }
+
+
