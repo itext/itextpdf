@@ -53,24 +53,26 @@ import java.lang.reflect.Method;
  */
 public final class Version {
 
+    private static final Object staticLock = new Object();
+
 	// membervariables
     
-        /** String that will indicate if the AGPL version is used. */
-        public static String AGPL = " (AGPL-version)";
+    /** String that will indicate if the AGPL version is used. */
+    public static String AGPL = " (AGPL-version)";
     
 	/** The iText version instance. */
-	private static Version version = null;
+	private static volatile Version version = null;
 	/**
 	 * This String contains the name of the product.
 	 * iText is a registered trademark by iText Group NV.
 	 * Please don't change this constant.
 	 */
-	private String iText = "iText\u00ae";
+	private final String iText = "iText\u00ae";
 	/**
 	 * This String contains the version number of this iText release.
 	 * For debugging purposes, we request you NOT to change this constant.
 	 */
-	private String release = "5.5.14-SNAPSHOT";
+	private final String release = "5.5.14-SNAPSHOT";
 	/**
 	 * This String contains the iText version as shown in the producer line.
 	 * iText is a product developed by iText Group NV.
@@ -89,57 +91,57 @@ public final class Version {
 	 * in every PDF that is created or manipulated using iText.
 	 */
 	public static Version getInstance() {
-		if (version == null) {
-            version = new Version();
-            synchronized ( version ) {
-                try {
-                    Class<?> klass = Class.forName("com.itextpdf.licensekey.LicenseKey");
-                    if(klass != null) {
-                        Class[] cArg  = {String.class};
-                        Method m = klass.getMethod("getLicenseeInfoForVersion",cArg);
-                        Object[] args = {version.release};
-                        String[] info = (String[]) m.invoke(klass.newInstance(),args);
-                        if (info[3] != null && info[3].trim().length() > 0) {
-                            version.key = info[3];
-                        } else {
-                            version.key = "Trial version ";
-                            if (info[5] == null) {
-                                version.key += "unauthorised";
-                            } else {
-                                version.key += info[5];
-                            }
-                        }
-
-                        if (info[4] != null && info[4].trim().length() > 0) {
-                            version.iTextVersion = info[4];
-                        } else if (info[2] != null && info[2].trim().length() > 0) {
-                            version.iTextVersion += " (" + info[2];
-                            if (!version.key.toLowerCase().startsWith("trial")) {
-                                version.iTextVersion += "; licensed version)";
-                            } else {
-                                version.iTextVersion += "; " + version.key + ")";
-                            }
-                        } else if (info[0] != null && info[0].trim().length() > 0) {
-                            // fall back to contact name, if company name is unavailable
-                            version.iTextVersion += " (" + info[0];
-                            if (!version.key.toLowerCase().startsWith("trial")) {
-                                // we shouldn't have a licensed version without company name,
-                                // but let's account for it anyway
-                                version.iTextVersion += "; licensed version)";
-                            } else {
-                                version.iTextVersion += "; " + version.key + ")";
-                            }
-                        } else {
-                            throw new Exception();
-                        }
+	    synchronized (staticLock) {
+	        if (version != null) {
+	            return version;
+            }
+        }
+        Version localVersion = new Version();
+        try {
+            Class<?> klass = Class.forName("com.itextpdf.licensekey.LicenseKey");
+            if(klass != null) {
+                Class[] cArg  = {String.class};
+                Method m = klass.getMethod("getLicenseeInfoForVersion",cArg);
+                Object[] args = {localVersion.release};
+                String[] info = (String[]) m.invoke(klass.newInstance(),args);
+                if (info[3] != null && info[3].trim().length() > 0) {
+                    localVersion.key = info[3];
+                } else {
+                    localVersion.key = "Trial version ";
+                    if (info[5] == null) {
+                        localVersion.key += "unauthorised";
+                    } else {
+                        localVersion.key += info[5];
                     }
-                } catch (Exception e) {
-                    version.iTextVersion += AGPL;
+                }
+
+                if (info[4] != null && info[4].trim().length() > 0) {
+                    localVersion.iTextVersion = info[4];
+                } else if (info[2] != null && info[2].trim().length() > 0) {
+                    localVersion.iTextVersion += " (" + info[2];
+                    if (!localVersion.key.toLowerCase().startsWith("trial")) {
+                        localVersion.iTextVersion += "; licensed version)";
+                    } else {
+                        localVersion.iTextVersion += "; " + localVersion.key + ")";
+                    }
+                } else if (info[0] != null && info[0].trim().length() > 0) {
+                    // fall back to contact name, if company name is unavailable
+                    localVersion.iTextVersion += " (" + info[0];
+                    if (!localVersion.key.toLowerCase().startsWith("trial")) {
+                        // we shouldn't have a licensed version without company name,
+                        // but let's account for it anyway
+                        localVersion.iTextVersion += "; licensed version)";
+                    } else {
+                        localVersion.iTextVersion += "; " + localVersion.key + ")";
+                    }
+                } else {
+                    throw new Exception();
                 }
             }
-
-		}
-		return version;
+        } catch (Exception e) {
+            localVersion.iTextVersion += AGPL;
+        }
+		return atomicSetVersion(localVersion);
 	}
 
 	/**
@@ -187,5 +189,12 @@ public final class Version {
      */
     public static boolean isAGPLVersion() {
         return getInstance().getVersion().indexOf(AGPL) > 0;
+    }
+
+    private static Version atomicSetVersion(Version newVersion) {
+        synchronized (staticLock) {
+            version = newVersion;
+            return version;
+        }
     }
 }
