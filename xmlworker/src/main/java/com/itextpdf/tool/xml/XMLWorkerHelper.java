@@ -41,12 +41,25 @@
  */
 package com.itextpdf.tool.xml;
 
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.nio.charset.Charset;
+
 import com.itextpdf.text.Document;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.FontFactory;
 import com.itextpdf.text.FontProvider;
 import com.itextpdf.text.pdf.PdfWriter;
-import com.itextpdf.tool.xml.css.*;
+import com.itextpdf.tool.xml.css.CSSFileWrapper;
+import com.itextpdf.tool.xml.css.CssFile;
+import com.itextpdf.tool.xml.css.CssFileProcessor;
+import com.itextpdf.tool.xml.css.CssFiles;
+import com.itextpdf.tool.xml.css.CssFilesImpl;
+import com.itextpdf.tool.xml.css.StyleAttrCSSResolver;
 import com.itextpdf.tool.xml.exceptions.RuntimeWorkerException;
 import com.itextpdf.tool.xml.html.CssAppliers;
 import com.itextpdf.tool.xml.html.CssAppliersImpl;
@@ -60,9 +73,7 @@ import com.itextpdf.tool.xml.pipeline.end.ElementHandlerPipeline;
 import com.itextpdf.tool.xml.pipeline.end.PdfWriterPipeline;
 import com.itextpdf.tool.xml.pipeline.html.HtmlPipeline;
 import com.itextpdf.tool.xml.pipeline.html.HtmlPipelineContext;
-
-import java.io.*;
-import java.nio.charset.Charset;
+import com.itextpdf.tool.xml.pipeline.html.ImageProvider;
 
 /**
  * A helper class for parsing XHTML/CSS or XML flow to PDF.
@@ -207,7 +218,7 @@ public class XMLWorkerHelper {
 	 * @throws IOException if the {@link InputStream} could not be read.
 	 */
 	public void parseXHtml(final PdfWriter writer, final Document doc, final InputStream in, final InputStream inCssFile, final Charset charset, final FontProvider fontProvider) throws IOException {
-		parseXHtml(writer, doc, in, inCssFile, charset, fontProvider, null);
+		parseXHtml(writer, doc, in, inCssFile, charset, fontProvider, (String)null);
 	}
 
 	/**
@@ -228,6 +239,39 @@ public class XMLWorkerHelper {
         StyleAttrCSSResolver cssResolver = new StyleAttrCSSResolver(cssFiles);
         HtmlPipelineContext hpc = new HtmlPipelineContext(new CssAppliersImpl(fontProvider));
         hpc.setAcceptUnknown(true).autoBookmark(true).setTagFactory(getDefaultTagProcessorFactory()).setResourcesRootPath(resourcesRootPath);
+        HtmlPipeline htmlPipeline = new HtmlPipeline(hpc, new PdfWriterPipeline(doc, writer));
+        Pipeline<?> pipeline = new CssResolverPipeline(cssResolver, htmlPipeline);
+        XMLWorker worker = new XMLWorker(pipeline, true);
+        XMLParser p = new XMLParser(true, worker, charset);
+		if (charset != null)
+			p.parse(in, charset);
+		else
+			p.parse(in);
+	}
+
+	/**
+	 * Images may be included in jar files(xx.jar/resources/logo.png).
+	 * Your ImageProvider can extends
+	 *    {@link com.itextpdf.tool.xml.pipeline.html.AbstractImageProvider},
+	 *    override retrieve(String src) to get image(byte[]) from jar files.
+	 *
+	 * @param writer the writer to use
+	 * @param doc the document to use
+	 * @param in the {@link InputStream} of the XHTML source.
+	 * @param in the {@link CssFiles} of the css files.
+	 * @param charset the charset to use
+	 * @param imageProvider {@link ImageProvider} of the image files.
+	 * @throws IOException if the {@link InputStream} could not be read.
+	 */
+	public void parseXHtml(final PdfWriter writer, final Document doc, final InputStream in, final InputStream inCssFile, final Charset charset, final FontProvider fontProvider, final ImageProvider imageProvider) throws IOException {
+        CssFilesImpl cssFiles = new CssFilesImpl();
+        if (inCssFile != null)
+            cssFiles.add(getCSS(inCssFile));
+        else
+            cssFiles.add(getDefaultCSS());
+        StyleAttrCSSResolver cssResolver = new StyleAttrCSSResolver(cssFiles);
+        HtmlPipelineContext hpc = new HtmlPipelineContext(new CssAppliersImpl(fontProvider)).setImageProvider(imageProvider);
+        hpc.setAcceptUnknown(true).autoBookmark(true).setTagFactory(getDefaultTagProcessorFactory());
         HtmlPipeline htmlPipeline = new HtmlPipeline(hpc, new PdfWriterPipeline(doc, writer));
         Pipeline<?> pipeline = new CssResolverPipeline(cssResolver, htmlPipeline);
         XMLWorker worker = new XMLWorker(pipeline, true);
@@ -300,11 +344,11 @@ public class XMLWorkerHelper {
 		}
 		return tpf;
 	}
-        
+
     /**
      * Parses an HTML string and a string containing CSS into a list of Element objects.
      * The FontProvider will be obtained from iText's FontFactory object.
-     * 
+     *
      * @param   html    a String containing an XHTML snippet
      * @param   css     a String containing CSS
      * @return  an ElementList instance
@@ -316,24 +360,24 @@ public class XMLWorkerHelper {
             CssFile cssFile = XMLWorkerHelper.getCSS(new ByteArrayInputStream(css.getBytes()));
             cssResolver.addCss(cssFile);
         }
-        
+
         // HTML
         CssAppliers cssAppliers = new CssAppliersImpl(FontFactory.getFontImp());
         HtmlPipelineContext htmlContext = new HtmlPipelineContext(cssAppliers);
         htmlContext.setTagFactory(Tags.getHtmlTagProcessorFactory());
         htmlContext.autoBookmark(false);
-        
+
         // Pipelines
         ElementList elements = new ElementList();
         ElementHandlerPipeline end = new ElementHandlerPipeline(elements, null);
         HtmlPipeline htmlPipeline = new HtmlPipeline(htmlContext, end);
         CssResolverPipeline cssPipeline = new CssResolverPipeline(cssResolver, htmlPipeline);
-        
+
         // XML Worker
         XMLWorker worker = new XMLWorker(cssPipeline, true);
         XMLParser p = new XMLParser(worker);
         p.parse(new ByteArrayInputStream(html.getBytes()));
-        
+
         return elements;
     }
 }
