@@ -91,7 +91,7 @@ public class BouncyCastleDigest implements ExternalDigest {
         else if (oid.equals("1.2.643.2.2.9")) { //GOST3411
             return new GOST3411.Digest();
         }else if(oid.equals("1.2.156.10197.1.401")){//SM3
-            return  new SM3.Digest();
+            return new SM3.Digest();
         }
 
         throw new NoSuchAlgorithmException(hashAlgorithm); //shouldn't get here
