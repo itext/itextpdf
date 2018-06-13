@@ -72,7 +72,7 @@ public class EncryptionAlgorithms {
         algorithmNames.put("1.3.36.3.3.1.3", "RSA");
         algorithmNames.put("1.3.36.3.3.1.4", "RSA");
         algorithmNames.put("1.2.643.2.2.19", "ECGOST3410");
-		algorithmNames.put("1.2.156.10197.1.301","SM2");
+	algorithmNames.put("1.2.156.10197.1.301","SM2");
 	}
 
 	/**
