@@ -78,7 +78,7 @@ public class PrivateKeySignature implements ExternalSignature {
         if(encryptionAlgorithm.startsWith("EC")&&hashAlgorithm.equals("SM3")){
             encryptionAlgorithm="SM2";
         }else if (encryptionAlgorithm.startsWith("EC")) {
-        	encryptionAlgorithm = "ECDSA";
+            encryptionAlgorithm = "ECDSA";
         }
     }
 
