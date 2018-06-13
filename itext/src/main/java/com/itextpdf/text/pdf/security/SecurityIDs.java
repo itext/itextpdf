@@ -61,4 +61,5 @@ public class SecurityIDs {
 	public static final String ID_OCSP = "1.3.6.1.5.5.7.48.1";
 	public static final String ID_AA_SIGNING_CERTIFICATE_V1 = "1.2.840.113549.1.9.16.2.12";
 	public static final String ID_AA_SIGNING_CERTIFICATE_V2 = "1.2.840.113549.1.9.16.2.47";
+	public static final String ID_SM2="1.2.156.10197.1.301";
 }

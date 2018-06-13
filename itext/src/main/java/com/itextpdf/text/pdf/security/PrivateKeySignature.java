@@ -74,7 +74,10 @@ public class PrivateKeySignature implements ExternalSignature {
         this.provider = provider;
         this.hashAlgorithm = DigestAlgorithms.getDigest(DigestAlgorithms.getAllowedDigests(hashAlgorithm));
         encryptionAlgorithm = pk.getAlgorithm();
-        if (encryptionAlgorithm.startsWith("EC")) {
+
+        if(encryptionAlgorithm.startsWith("EC")&&hashAlgorithm.equals("SM3")){
+            encryptionAlgorithm="SM2";
+        }else if (encryptionAlgorithm.startsWith("EC")) {
         	encryptionAlgorithm = "ECDSA";
         }
     }
