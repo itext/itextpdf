@@ -173,7 +173,7 @@ public class CrlClientOnline implements CrlClient {
         			throw new IOException(MessageLocalization.getComposedMessage("invalid.http.response.1", con.getResponseCode()));
         		}
         		//Get Response
-        		InputStream inp = (InputStream) con.getContent();
+        		InputStream inp = con.getInputStream();
         		byte[] buf = new byte[1024];
         		ByteArrayOutputStream bout = new ByteArrayOutputStream();
         		while (true) {
