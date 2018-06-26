@@ -500,6 +500,13 @@ public class PdfA2CheckerTest {
         document.close();
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void layer_fixNPEOnAddChildThatAlreadyHasAParent() {
+        PdfLayer child = new PdfLayer("child");
+        new PdfLayer("parent").addChild(child);
+        new PdfLayer("new parent").addChild(child);
+    }
+
     @Test
     public void egsCheckTest1() throws DocumentException, IOException {
         Document document = new Document();
