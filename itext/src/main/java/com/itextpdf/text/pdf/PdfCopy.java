@@ -1229,7 +1229,7 @@ public class PdfCopy extends PdfWriter {
             PdfArray array = (PdfArray)obj;
             for (int i = 0; i < array.size(); i++) {
                 PdfObject o = array.getPdfObject(i);
-                if (o != null && o.type() == 0) {
+                if (o != null && o.type() == 0 && o instanceof PdfIndirectReference) {
                     PdfIndirectObject entry = unmergedIndirectRefsMap.get(new RefKey((PdfIndirectReference)o));
                     if (entry != null) {
                         if (entry.object.isDictionary()) {
