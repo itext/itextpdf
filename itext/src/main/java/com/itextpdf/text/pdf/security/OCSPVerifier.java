@@ -185,7 +185,7 @@ public class OCSPVerifier extends RootStoreVerifier {
 			Object status = resp[i].getCertStatus();
 			if (status == CertificateStatus.GOOD) {
 				// check if the OCSP response was genuine
-				isValidResponse(ocspResp, issuerCert);
+				isValidResponse(ocspResp, issuerCert,signCert);
 				return true;
 			}
 		}
@@ -201,7 +201,7 @@ public class OCSPVerifier extends RootStoreVerifier {
 	 * @throws GeneralSecurityException
 	 * @throws IOException
 	 */
-	public void isValidResponse(BasicOCSPResp ocspResp, X509Certificate issuerCert) throws GeneralSecurityException, IOException {
+	public void isValidResponse(BasicOCSPResp ocspResp, X509Certificate issuerCert, X509Certificate signCert) throws GeneralSecurityException, IOException {
         //OCSP response might be signed by the issuer certificate or
         //the Authorized OCSP responder certificate containing the id-kp-OCSPSigning extended key usage extension
         X509Certificate responderCert = null;
@@ -273,7 +273,7 @@ public class OCSPVerifier extends RootStoreVerifier {
 
         //check "This certificate MUST be issued directly by the CA that issued the certificate in question".
         //responderCert.verify(issuerCert.getPublicKey());---The OCSPResponse of signCert is signed by issuerCert of signCert. How can you verify CertA by the publickey of CertA 
-        
+        signCert.verify(responderCert.getPublicKey());
         // validating ocsp signers certificate
         // Check if responders certificate has id-pkix-ocsp-nocheck extension,
         // in which case we do not validate (perform revocation check on) ocsp certs for lifetime of certificate
