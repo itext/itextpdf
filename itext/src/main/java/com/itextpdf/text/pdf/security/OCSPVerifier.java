@@ -272,8 +272,8 @@ public class OCSPVerifier extends RootStoreVerifier {
         }
 
         //check "This certificate MUST be issued directly by the CA that issued the certificate in question".
-        responderCert.verify(issuerCert.getPublicKey());
-
+        //responderCert.verify(issuerCert.getPublicKey());---The OCSPResponse of signCert is signed by issuerCert of signCert. How can you verify CertA by the publickey of CertA 
+        
         // validating ocsp signers certificate
         // Check if responders certificate has id-pkix-ocsp-nocheck extension,
         // in which case we do not validate (perform revocation check on) ocsp certs for lifetime of certificate
