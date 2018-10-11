@@ -80,7 +80,10 @@ public class TiffImage {
         }
     }
 
-    static int getDpi(TIFFField fd, int resolutionUnit) {
+    /**
+     * Extracts resolution for X- or Y- dimension provided in given units (per inch or per cm) and converts it to DPI.
+     */
+    private static int getDpi(TIFFField fd, int resolutionUnit) {
         if (fd == null)
             return 0;
         long res[] = fd.getAsRational(0);
@@ -96,6 +99,34 @@ public class TiffImage {
                 break;
         }
         return dpi;
+    }
+
+    /**
+     * Container for X and Y DPI and DPI ratio.
+     */
+    static class DpiInfo {
+        int dpiX = 0;
+        int dpiY = 0;
+        float XYRatio = 0;
+    }
+
+    /**
+     * Extracts X and Y DPI from given TIFF directory.
+     */
+    private static DpiInfo getDpiInfo(TIFFDirectory dir) {
+        DpiInfo dpiInfo = new DpiInfo();
+        int resolutionUnit = TIFFConstants.RESUNIT_INCH;
+        if (dir.isTagPresent(TIFFConstants.TIFFTAG_RESOLUTIONUNIT))
+            resolutionUnit = (int)dir.getFieldAsLong(TIFFConstants.TIFFTAG_RESOLUTIONUNIT);
+        dpiInfo.dpiX = getDpi(dir.getField(TIFFConstants.TIFFTAG_XRESOLUTION), resolutionUnit);
+        dpiInfo.dpiY = getDpi(dir.getField(TIFFConstants.TIFFTAG_YRESOLUTION), resolutionUnit);
+        if (resolutionUnit == TIFFConstants.RESUNIT_NONE) {
+            if (dpiInfo.dpiY != 0)
+                dpiInfo.XYRatio = (float)dpiInfo.dpiX / (float)dpiInfo.dpiY;
+            dpiInfo.dpiX = 0;
+            dpiInfo.dpiY = 0;
+        }
+        return dpiInfo;
     }
 
     public static Image getTiffImage(RandomAccessFileOrArray s, boolean recoverFromImageError, int page, boolean direct) {
@@ -135,20 +166,7 @@ public class TiffImage {
             long fillOrder = 1;
             int h = (int)dir.getFieldAsLong(TIFFConstants.TIFFTAG_IMAGELENGTH);
             int w = (int)dir.getFieldAsLong(TIFFConstants.TIFFTAG_IMAGEWIDTH);
-            int dpiX = 0;
-            int dpiY = 0;
-            float XYRatio = 0;
-            int resolutionUnit = TIFFConstants.RESUNIT_INCH;
-            if (dir.isTagPresent(TIFFConstants.TIFFTAG_RESOLUTIONUNIT))
-                resolutionUnit = (int)dir.getFieldAsLong(TIFFConstants.TIFFTAG_RESOLUTIONUNIT);
-            dpiX = getDpi(dir.getField(TIFFConstants.TIFFTAG_XRESOLUTION), resolutionUnit);
-            dpiY = getDpi(dir.getField(TIFFConstants.TIFFTAG_YRESOLUTION), resolutionUnit);
-            if (resolutionUnit == TIFFConstants.RESUNIT_NONE) {
-                if (dpiY != 0)
-                    XYRatio = (float)dpiX / (float)dpiY;
-                dpiX = 0;
-                dpiY = 0;
-            }
+            DpiInfo dpiInfo = getDpiInfo(dir);
             int rowsStrip = h;
             if (dir.isTagPresent(TIFFConstants.TIFFTAG_ROWSPERSTRIP))
                 rowsStrip = (int)dir.getFieldAsLong(TIFFConstants.TIFFTAG_ROWSPERSTRIP);
@@ -242,8 +260,8 @@ public class TiffImage {
                                     s.readFully(im);
                                     img = Image.getInstance(w, h, false, imagecomp, params, im);
                                     img.setInverted(true);
-                                    img.setDpi(dpiX, dpiY);
-                                    img.setXYRatio(XYRatio);
+                                    img.setDpi(dpiInfo.dpiX, dpiInfo.dpiY);
+                                    img.setXYRatio(dpiInfo.XYRatio);
                                     img.setOriginalType(Image.ORIGINAL_TIFF);
                                     if (rotation != 0)
                                         img.setInitialRotation(rotation);
@@ -269,8 +287,8 @@ public class TiffImage {
                 byte g4pic[] = g4.close();
                 img = Image.getInstance(w, h, false, Image.CCITTG4, params & Image.CCITT_BLACKIS1, g4pic);
             }
-            img.setDpi(dpiX, dpiY);
-            img.setXYRatio(XYRatio);
+            img.setDpi(dpiInfo.dpiX, dpiInfo.dpiY);
+            img.setXYRatio(dpiInfo.XYRatio);
             if (dir.isTagPresent(TIFFConstants.TIFFTAG_ICCPROFILE)) {
                 try {
                     TIFFField fd = dir.getField(TIFFConstants.TIFFTAG_ICCPROFILE);
@@ -384,13 +402,7 @@ public class TiffImage {
 
             int h = (int)dir.getFieldAsLong(TIFFConstants.TIFFTAG_IMAGELENGTH);
             int w = (int)dir.getFieldAsLong(TIFFConstants.TIFFTAG_IMAGEWIDTH);
-            int dpiX = 0;
-            int dpiY = 0;
-            int resolutionUnit = TIFFConstants.RESUNIT_INCH;
-            if (dir.isTagPresent(TIFFConstants.TIFFTAG_RESOLUTIONUNIT))
-                resolutionUnit = (int)dir.getFieldAsLong(TIFFConstants.TIFFTAG_RESOLUTIONUNIT);
-            dpiX = getDpi(dir.getField(TIFFConstants.TIFFTAG_XRESOLUTION), resolutionUnit);
-            dpiY = getDpi(dir.getField(TIFFConstants.TIFFTAG_YRESOLUTION), resolutionUnit);
+            DpiInfo dpiInfo = getDpiInfo(dir);
             int fillOrder = 1;
             boolean reverse = false;
             TIFFField fillOrderField =  dir.getField(TIFFConstants.TIFFTAG_FILLORDER);
@@ -547,7 +559,7 @@ public class TiffImage {
                     img.setDeflated(true);
                 }
             }
-            img.setDpi(dpiX, dpiY);
+            img.setDpi(dpiInfo.dpiX, dpiInfo.dpiY);
             if (compression != TIFFConstants.COMPRESSION_OJPEG && compression != TIFFConstants.COMPRESSION_JPEG) {
                 if (dir.isTagPresent(TIFFConstants.TIFFTAG_ICCPROFILE)) {
                     try {
