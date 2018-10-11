@@ -52,6 +52,10 @@ import java.util.Set;
  *
  */
 @SuppressWarnings("javadoc")
+/**
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
+ */
+@Deprecated
 public final class HTML {
 
 	/**

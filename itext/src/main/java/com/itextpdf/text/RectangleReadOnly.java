@@ -44,7 +44,6 @@
 package com.itextpdf.text;
 
 import com.itextpdf.text.error_messages.MessageLocalization;
-import com.itextpdf.text.BaseColor;
 
 /**
  * A <CODE>RectangleReadOnly</CODE> is the representation of a geometric figure.
@@ -54,11 +53,11 @@ import com.itextpdf.text.BaseColor;
  * They also support borders that vary in width/color on each side using
  * methods like {@link #setBorderWidthLeft(float)}or
  * {@link #setBorderColorLeft(BaseColor)}.
- *
  * @see Element
  * @since 2.1.2
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
-
+@Deprecated
 public class RectangleReadOnly extends Rectangle {
 
 	// CONSTRUCTORS

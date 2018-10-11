@@ -32,20 +32,21 @@ package com.itextpdf.text.pdf.fonts.cmaps;
 
 import com.itextpdf.text.ExceptionConverter;
 import com.itextpdf.text.Utilities;
+import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.pdf.PdfObject;
 import com.itextpdf.text.pdf.PdfString;
+
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.itextpdf.text.error_messages.MessageLocalization;
-
 /**
  * This class represents a CMap file.
- *
  * @author Ben Litchfield (ben@benlitchfield.com)
  * @since	2.1.4
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class CMapToUnicode extends AbstractCMap {
 
     private Map<Integer, String> singleByteMappings = new HashMap<Integer, String>();

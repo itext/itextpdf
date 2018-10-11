@@ -23,10 +23,11 @@ package com.itextpdf.text.pdf.qrcode;
  * <p>Throughout this package, elements of GF(256) are represented as an <code>int</code>
  * for convenience and speed (but at the cost of memory).
  * Only the bottom 8 bits are really used.</p>
- *
  * @author Sean Owen
  * @since 5.0.2
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public final class GF256 {
 
   public static final GF256 QR_CODE_FIELD = new GF256(0x011D); // x^8 + x^4 + x^3 + x^2 + 1

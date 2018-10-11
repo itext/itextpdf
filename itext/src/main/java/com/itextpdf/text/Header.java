@@ -51,11 +51,11 @@ package com.itextpdf.text;
  * <BLOCKQUOTE><PRE>
  * <STRONG>Header header = new Header("inspired by", "William Shakespeare");</STRONG>
  * </PRE></BLOCKQUOTE>
- *
  * @see		Element
  * @see		Meta
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
-
+@Deprecated
 public class Header extends Meta {
     
     // membervariables

@@ -67,6 +67,10 @@ import com.itextpdf.tool.xml.html.AbstractTagProcessor;
  *
  */
 @Experimental
+/**
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
+ */
+@Deprecated
 public class Meta extends AbstractTagProcessor {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(Meta.class);

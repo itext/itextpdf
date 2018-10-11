@@ -21,10 +21,11 @@ import java.util.Map;
 
 /**
  * This object renders a QR Code as a ByteMatrix 2D array of greyscale values.
- *
  * @author dswitkin@google.com (Daniel Switkin)
  * @since 5.0.2
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public final class QRCodeWriter {
 
   private static final int QUIET_ZONE_SIZE = 4;

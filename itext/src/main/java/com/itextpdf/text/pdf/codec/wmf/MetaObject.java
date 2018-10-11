@@ -43,6 +43,10 @@
  */
 package com.itextpdf.text.pdf.codec.wmf;
 
+/**
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
+ */
+@Deprecated
 public class MetaObject {
     public static final int META_NOT_SUPPORTED = 0;
     public static final int META_PEN = 1;

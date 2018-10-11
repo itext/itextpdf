@@ -55,11 +55,11 @@ import com.itextpdf.text.Rectangle;
  * and upper right <I>y</I> coordinates of the rectangle, in that order.<BR>
  * This object is described in the 'Portable Document Format Reference Manual version 1.3'
  * section 7.1 (page 183).
- *
  * @see		com.itextpdf.text.Rectangle
  * @see		PdfArray
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
-
+@Deprecated
 public class PdfRectangle extends NumberArray {
 
     // membervariables

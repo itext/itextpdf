@@ -41,11 +41,15 @@
  * For more information, please contact iText Software Corp. at this
  * address: sales@itextpdf.com
  */
- package com.itextpdf.text;
+package com.itextpdf.text;
 
 import java.util.*;
 import java.util.List;
 
+/**
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
+ */
+@Deprecated
 public class TabSettings {
     static public final float DEFAULT_TAB_INTERVAL = 36;
 

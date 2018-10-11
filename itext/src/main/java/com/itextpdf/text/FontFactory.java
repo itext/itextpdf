@@ -43,19 +43,19 @@
  */
 package com.itextpdf.text;
 
-import java.util.Set;
-
 import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.pdf.BaseFont;
+
+import java.util.Set;
 
 /**
  * If you are using True Type fonts, you can declare the paths of the different ttf- and ttc-files
  * to this static class first and then create fonts in your code using one of the static getFont-method
  * without having to enter a path as parameter.
- *
  * @author  Bruno Lowagie
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
-
+@Deprecated
 public final class FontFactory {
 
 /** This is a possible value of a base 14 type 1 font */

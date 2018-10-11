@@ -49,7 +49,9 @@ import com.itextpdf.text.pdf.PdfName;
 /**
  * Dictionary that stores signature build properties.
  * @author Kwinten Pisman
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class PdfSignatureBuildProperties extends PdfDictionary {
 
 	/** Creates new PdfSignatureBuildProperties */

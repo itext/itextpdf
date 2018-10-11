@@ -48,7 +48,9 @@ import org.bouncycastle.tsp.TimeStampTokenInfo;
 /**
  * Interface you can implement and pass to TSAClientBouncyCastle in case
  * you want to do something with the information returned
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public interface TSAInfoBouncyCastle {
 
 	/**

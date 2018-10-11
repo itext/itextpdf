@@ -45,6 +45,10 @@ package com.itextpdf.text.pdf.parser.clipper;
 
 import com.itextpdf.text.pdf.parser.clipper.Point.LongPoint;
 
+/**
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
+ */
+@Deprecated
 public interface Clipper {
     public enum ClipType {
         INTERSECTION, UNION, DIFFERENCE, XOR

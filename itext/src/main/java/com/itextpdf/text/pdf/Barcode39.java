@@ -64,9 +64,10 @@ import com.itextpdf.text.BaseColor;
  *startStopText = true;
  *extended = false;
  * </pre>
- *
  * @author Paulo Soares
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class Barcode39 extends Barcode{
 
     /** The bars to generate the code.

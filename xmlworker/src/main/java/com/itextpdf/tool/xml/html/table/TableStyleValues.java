@@ -50,7 +50,9 @@ import com.itextpdf.text.BaseColor;
  *
  * @author Emiel Ackermann
  *
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class TableStyleValues {
 	 	private float horBorderSpacing;
 	 	private float verBorderSpacing;

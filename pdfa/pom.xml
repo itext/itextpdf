@@ -9,10 +9,10 @@
     <relativePath />
   </parent>
 
-  <artifactId>itext-pdfa</artifactId>
-  <version>5.5.14-SNAPSHOT</version>
+  <artifactId>xfa-itext-pdfa</artifactId>
+  <version>2.0.5-SNAPSHOT</version>
 
-  <name>iText PDF/A</name>
+  <name>pdfXFA iText PDF/A</name>
   <description>iText ISO-19005 Module</description>
   <url>http://itextpdf.com</url>
 
@@ -73,14 +73,14 @@
   <dependencies>
     <dependency>
       <groupId>com.itextpdf</groupId>
-      <artifactId>itextpdf</artifactId>
+      <artifactId>xfa-itextpdf</artifactId>
       <version>${project.version}</version>
       <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>org.bouncycastle</groupId>
       <artifactId>bcprov-jdk15on</artifactId>
-      <version>1.48</version>
+      <version>1.64</version>
       <optional>true</optional>
     </dependency>
     <dependency>
@@ -223,12 +223,12 @@
       <id>compileWithLegacyJDK</id>
       <!--
         NOTE
-        Make sure to set the environment variable JAVA5_HOME
-        to your JDK 1.5 HOME when using this profile.
+        Make sure to set the environment variable JAVA7_HOME
+        to your JDK 1.7 HOME when using this profile.
       -->
       <properties>
-        <java.version>1.5</java.version>
-        <java.home>${env.JAVA5_HOME}</java.home>
+        <java.version>1.7</java.version>
+        <java.home>${env.JAVA7_HOME}</java.home>
         <java.libs>${java.home}/jre/lib</java.libs>
         <java.bootclasspath>${java.libs}/rt.jar${path.separator}${java.libs}/jce.jar</java.bootclasspath>
       </properties>

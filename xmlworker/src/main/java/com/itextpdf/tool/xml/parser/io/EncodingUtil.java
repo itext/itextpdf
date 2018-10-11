@@ -46,7 +46,9 @@ package com.itextpdf.tool.xml.parser.io;
 /**
  * Copied from itextpdf.
  *
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class EncodingUtil {
 	/**
 	 * 

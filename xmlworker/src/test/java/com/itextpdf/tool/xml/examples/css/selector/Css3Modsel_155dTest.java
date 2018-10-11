@@ -47,6 +47,10 @@ import org.junit.Ignore;
 
 //escaped symbols
 @Ignore
+/**
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
+ */
+@Deprecated
 public class Css3Modsel_155dTest extends SampleTest {
     protected String getTestName() {
         return  "css3-modsel-155d";

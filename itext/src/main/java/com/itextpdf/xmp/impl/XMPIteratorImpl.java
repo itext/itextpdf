@@ -28,12 +28,7 @@
 //
 //        http://www.adobe.com/devnet/xmp/library/eula-xmp-library-java.html
 
-
 package com.itextpdf.xmp.impl;
-
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.NoSuchElementException;
 
 import com.itextpdf.xmp.XMPError;
 import com.itextpdf.xmp.XMPException;
@@ -45,15 +40,19 @@ import com.itextpdf.xmp.options.IteratorOptions;
 import com.itextpdf.xmp.options.PropertyOptions;
 import com.itextpdf.xmp.properties.XMPPropertyInfo;
 
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 /**
  * The <code>XMPIterator</code> implementation.
  * Iterates the XMP Tree according to a set of options.
  * During the iteration the XMPMeta-object must not be changed.
  * Calls to <code>skipSubtree()</code> / <code>skipSiblings()</code> will affect the iteration.
- *  
  * @since   29.06.2006
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class XMPIteratorImpl implements XMPIterator
 {
 	/** stores the iterator options */

@@ -48,6 +48,10 @@ import com.itextpdf.text.pdf.PdfObject;
 import com.itextpdf.text.pdf.PdfString;
 import java.util.HashMap;
 
+/**
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
+ */
+@Deprecated
 public class CMapCidByte extends AbstractCMap {
     private HashMap<Integer,byte[]> map = new HashMap<Integer,byte[]>();
     private final byte[] EMPTY = {};

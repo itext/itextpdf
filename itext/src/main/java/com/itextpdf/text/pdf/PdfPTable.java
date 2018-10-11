@@ -71,9 +71,10 @@ import java.util.Map;
  * <p/>
  * A PdfPTableEvent can be associated to the table to do custom drawing when the
  * table is rendered.
- *
  * @author Paulo Soares
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class PdfPTable implements LargeElement, Spaceable, IAccessibleElement {
 
     private final Logger LOGGER = LoggerFactory.getLogger(PdfPTable.class);
