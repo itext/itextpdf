@@ -43,6 +43,10 @@
  */
 package com.itextpdf.text.pdf;
 
+import com.itextpdf.text.error_messages.MessageLocalization;
+import com.itextpdf.text.xml.simpleparser.SimpleXMLDocHandler;
+import com.itextpdf.text.xml.simpleparser.SimpleXMLParser;
+
 import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -53,14 +57,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 
-import com.itextpdf.text.error_messages.MessageLocalization;
-import com.itextpdf.text.xml.simpleparser.SimpleXMLDocHandler;
-import com.itextpdf.text.xml.simpleparser.SimpleXMLParser;
-
 /**
  * Reads a XFDF.
  * @author Leonard Rosenthol (leonardr@pdfsages.com)
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class XfdfReader implements SimpleXMLDocHandler {
 	// stuff used during parsing to handle state
 	private boolean foundRoot = false;

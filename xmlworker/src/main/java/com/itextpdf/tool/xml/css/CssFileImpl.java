@@ -54,7 +54,9 @@ import java.util.Map;
  * Implementation of CssFile, the CSS is stored in a map.
  * @author redlab_b
  *
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class CssFileImpl implements CssFile {
 
     private final List<CssRule> rules;

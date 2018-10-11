@@ -48,7 +48,9 @@ import com.itextpdf.text.pdf.PdfDictionary;
 /**
  * Represents an inline image from a PDF
  * @since 5.1.4
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class InlineImageInfo {
     private final byte[] samples;
     private final PdfDictionary imageDictionary;

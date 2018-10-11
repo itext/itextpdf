@@ -45,6 +45,10 @@ package com.itextpdf.text.pdf;
 
 import java.security.cert.Certificate;
 
+/**
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
+ */
+@Deprecated
 public class PdfPublicKeyRecipient {
 
   private Certificate certificate = null;

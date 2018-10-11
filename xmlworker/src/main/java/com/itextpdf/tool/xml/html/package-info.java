@@ -45,6 +45,9 @@
  * Everything to parse HTML tags to pdf used by the {@link com.itextpdf.tool.xml.pipeline.html.HtmlPipeline} is in here.
  * For CSS things take a look at com.itextpdf.tool.xml.css
  * <br/>This package is part of iText&reg; XMLWorker.
+ *
+ * For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 package com.itextpdf.tool.xml.html;
 

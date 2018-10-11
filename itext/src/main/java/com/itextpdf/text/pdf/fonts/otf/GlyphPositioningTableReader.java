@@ -54,7 +54,9 @@ import java.util.Set;
  * Not used at present, keeping for sometime future.
  * 
  * @author <a href="mailto:paawak@gmail.com">Palash Ray</a>
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class GlyphPositioningTableReader extends OpenTypeFontTableReader {
     
     public GlyphPositioningTableReader(RandomAccessFileOrArray rf, int gposTableLocation) throws IOException {

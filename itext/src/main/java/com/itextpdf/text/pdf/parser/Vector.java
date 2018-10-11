@@ -53,7 +53,9 @@ import java.util.Arrays;
  * This is to support the coordinate transformation calculations.  If it
  * helps, just think of all PDF drawing operations as occurring in a single plane
  * with z=1.
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class Vector {
     /** index of the X coordinate */
     public static final int I1 = 0;

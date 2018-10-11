@@ -49,7 +49,9 @@ import java.security.cert.X509Certificate;
 
 /**
  * An exception that is thrown when something is wrong with a certificate.
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class VerificationException extends GeneralSecurityException {
 
 	/** A Serial Version UID */

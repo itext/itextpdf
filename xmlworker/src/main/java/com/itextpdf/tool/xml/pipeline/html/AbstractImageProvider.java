@@ -51,7 +51,9 @@ import com.itextpdf.text.Image;
 /**
  * @author itextpdf.com
  *
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public abstract class AbstractImageProvider implements ImageProvider {
 
 	private final Map<String, Image> map;

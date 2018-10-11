@@ -56,7 +56,9 @@ package com.itextpdf.text.pdf;
  * specifications (such as this one) that PDF-consuming applications use to
  * interpret the extensions.
  * @since	2.1.6
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class PdfDeveloperExtension {
 
 	/** An instance of this class for Adobe 1.7 Extension level 3. */

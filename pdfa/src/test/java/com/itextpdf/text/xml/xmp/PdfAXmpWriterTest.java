@@ -52,6 +52,10 @@ import org.junit.Test;
 
 import java.io.*;
 
+/**
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
+ */
+@Deprecated
 public class PdfAXmpWriterTest {
     public static final String OUT_FOLDER = "./target/com/itextpdf/text/xml/xmp/";
     public static final String CMP_FOLDER = "./src/test/resources/com/itextpdf/text/xml/xmp/";

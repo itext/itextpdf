@@ -47,7 +47,9 @@ import java.io.IOException;
  * A RandomAccessSource that wraps another RandomAccessSouce and provides a window of it at a specific offset and over
  * a specific length.  Position 0 becomes the offset position in the underlying source.
  * @since 5.3.5
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class WindowRandomAccessSource implements RandomAccessSource {
 	/**
 	 * The source

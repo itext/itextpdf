@@ -30,11 +30,6 @@
 
 package com.itextpdf.xmp.impl;
 
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-
 import com.itextpdf.xmp.XMPConst;
 import com.itextpdf.xmp.XMPDateTime;
 import com.itextpdf.xmp.XMPError;
@@ -48,9 +43,16 @@ import com.itextpdf.xmp.options.ParseOptions;
 import com.itextpdf.xmp.options.PropertyOptions;
 import com.itextpdf.xmp.properties.XMPAliasInfo;
 
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+
 /**
  * @since   Aug 18, 2006
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class XMPNormalizer
 {
 	/** caches the correct dc-property array forms */

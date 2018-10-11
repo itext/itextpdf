@@ -83,11 +83,11 @@ import java.util.HashMap;
 /**
  * An <CODE>Image</CODE> is the representation of a graphic element (JPEG, PNG
  * or GIF) that has to be inserted into the document
- *
  * @see Element
  * @see Rectangle
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
-
+@Deprecated
 public abstract class Image extends Rectangle implements Indentable, Spaceable, IAccessibleElement, IAlternateDescription {
 
 	// static final membervariables

@@ -53,7 +53,9 @@ import org.bouncycastle.crypto.params.ParametersWithIV;
 /**
  * Creates an AES Cipher with CBC and padding PKCS5/7.
  * @author Paulo Soares
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class AESCipher {
     private PaddedBufferedBlockCipher bp;
     

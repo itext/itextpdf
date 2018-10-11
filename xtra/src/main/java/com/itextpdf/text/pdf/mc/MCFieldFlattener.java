@@ -60,7 +60,9 @@ import com.itextpdf.text.pdf.PdfStamper;
  * - Use this class only if the form is properly tagged.
  * - This class won't work with pages in which the CTM is changed
  * - This class may not work for form fields with more than one widget annotation
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class MCFieldFlattener {
 
 	/**
