@@ -50,8 +50,9 @@ import com.itextpdf.text.pdf.PdfTransition;
 
 /**
  * A PDF page can have an open and/or close action.
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
-
+@Deprecated
 public interface PdfPageActions {
     
     /**

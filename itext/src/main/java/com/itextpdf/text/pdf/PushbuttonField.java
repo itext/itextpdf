@@ -43,12 +43,12 @@
  */
 package com.itextpdf.text.pdf;
 
-import java.io.IOException;
-import com.itextpdf.text.error_messages.MessageLocalization;
-
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Image;
 import com.itextpdf.text.Rectangle;
+import com.itextpdf.text.error_messages.MessageLocalization;
+
+import java.io.IOException;
 /**
  * Creates a pushbutton field. It supports all the text and icon alignments.
  * The icon may be an image or a template.
@@ -77,7 +77,9 @@ import com.itextpdf.text.Rectangle;
  * document.close();
  * </PRE>
  * @author Paulo Soares
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class PushbuttonField extends BaseField {
    
     /** A layout option */    

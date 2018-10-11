@@ -43,21 +43,21 @@
  */
 package com.itextpdf.text;
 
+import com.itextpdf.text.error_messages.MessageLocalization;
+import com.itextpdf.text.pdf.ICC_Profile;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 
-import com.itextpdf.text.error_messages.MessageLocalization;
-import com.itextpdf.text.pdf.ICC_Profile;
-
 /**
  * An <CODE>Jpeg</CODE> is the representation of a graphic element (JPEG)
  * that has to be inserted into the document
- *
  * @see		Element
  * @see		Image
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
-
+@Deprecated
 public class Jpeg extends Image {
     
     // public static final membervariables

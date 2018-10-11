@@ -45,11 +45,11 @@ package com.itextpdf.text.pdf;
 
 /**
  * The <CODE>PdfPageElement</CODE> interface has to be implemented by <CODE>PdfPage</CODE> and <CODE>PdfPages</CODE>.
- *
  * @see		PdfPage
  * @see		PdfPages
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
-
+@Deprecated
 interface PdfPageElement {
     
 /**

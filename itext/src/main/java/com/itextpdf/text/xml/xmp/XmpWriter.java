@@ -43,25 +43,31 @@
  */
 package com.itextpdf.text.xml.xmp;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.Map;
-
 import com.itextpdf.text.Version;
 import com.itextpdf.text.pdf.PdfDate;
 import com.itextpdf.text.pdf.PdfDictionary;
 import com.itextpdf.text.pdf.PdfName;
 import com.itextpdf.text.pdf.PdfObject;
 import com.itextpdf.text.pdf.PdfString;
-import com.itextpdf.xmp.*;
+import com.itextpdf.xmp.XMPConst;
+import com.itextpdf.xmp.XMPException;
+import com.itextpdf.xmp.XMPMeta;
+import com.itextpdf.xmp.XMPMetaFactory;
+import com.itextpdf.xmp.XMPUtils;
 import com.itextpdf.xmp.options.PropertyOptions;
 import com.itextpdf.xmp.options.SerializeOptions;
+
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.Map;
 
 /**
  * With this class you can create an Xmp Stream that can be used for adding
  * Metadata to a PDF Dictionary. Remark that this class doesn't cover the
  * complete XMP specification.
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class XmpWriter {
 
 	/** A possible charset for the XMP. */

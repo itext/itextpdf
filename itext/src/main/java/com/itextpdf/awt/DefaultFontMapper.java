@@ -43,16 +43,18 @@
  */
 package com.itextpdf.awt;
 
-import java.awt.Font;
+import com.itextpdf.text.ExceptionConverter;
+import com.itextpdf.text.pdf.BaseFont;
+
+import java.awt.*;
 import java.io.File;
 import java.util.HashMap;
 
-import com.itextpdf.text.ExceptionConverter;
-import com.itextpdf.text.pdf.BaseFont;
 /** Default class to map awt fonts to BaseFont.
  * @author Paulo Soares
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
-
+@Deprecated
 public class DefaultFontMapper implements FontMapper {
 
     /** A representation of BaseFont parameters.

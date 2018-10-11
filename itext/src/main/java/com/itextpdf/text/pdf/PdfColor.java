@@ -47,10 +47,10 @@ import com.itextpdf.text.BaseColor;
 
 /**
  * A <CODE>PdfColor</CODE> defines a BaseColor (it's a <CODE>PdfArray</CODE> containing 3 values).
- *
  * @see		PdfDictionary
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
-
+@Deprecated
 class PdfColor extends PdfArray {
     
     // constructors

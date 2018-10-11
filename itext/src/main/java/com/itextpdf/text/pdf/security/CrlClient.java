@@ -50,7 +50,9 @@ import java.util.Collection;
  * Interface that needs to be implemented if you want to embed
  * Certificate Revocation Lists into your PDF.
  * @author Paulo Soares
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public interface CrlClient {
 	/**
 	 * Gets an encoded byte array.

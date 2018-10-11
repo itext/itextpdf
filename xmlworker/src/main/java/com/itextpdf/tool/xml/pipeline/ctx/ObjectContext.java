@@ -50,7 +50,9 @@ import com.itextpdf.tool.xml.CustomContext;
  * @author redlab_b
  * @param <T> the type of object.
  *
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class ObjectContext<T> implements CustomContext {
 
 	private T obj;

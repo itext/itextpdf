@@ -45,7 +45,9 @@ package com.itextpdf.text.pdf.mc;
 
 /**
  * The abstract StructureItem class is extended by StructureMCID and StructureObject.
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public abstract class StructureItem {
 	
 	/** The object number of the page to which this structure item belongs. */

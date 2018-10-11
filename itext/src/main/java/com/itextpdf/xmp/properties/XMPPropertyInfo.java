@@ -32,13 +32,13 @@ package com.itextpdf.xmp.properties;
 
 import com.itextpdf.xmp.options.PropertyOptions;
 
-
 /**
  * This interface is used to return a property together with its path and namespace.
  * It is returned when properties are iterated with the <code>XMPIterator</code>.
- * 
  * @since   06.07.2006
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public interface XMPPropertyInfo extends XMPProperty
 {
 	/**

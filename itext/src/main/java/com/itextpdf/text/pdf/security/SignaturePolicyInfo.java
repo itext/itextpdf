@@ -44,6 +44,8 @@ package com.itextpdf.text.pdf.security;
 
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import com.itextpdf.text.pdf.codec.Base64;
+
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.DERIA5String;
 import org.bouncycastle.asn1.DERObjectIdentifier;
 import org.bouncycastle.asn1.DEROctetString;
@@ -53,13 +55,15 @@ import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 
 /**
  * Class that encapsulates the signature policy information
- * @author J. Arturo
  *
  * Sample:
  *
  *      SignaturePolicyInfo spi = new SignaturePolicyInfo("2.16.724.1.3.1.1.2.1.9",
  *      "G7roucf600+f03r/o0bAOQ6WAs0=", "SHA-1", "https://sede.060.gob.es/politica_de_firma_anexo_1.pdf");
+ * @author J. Arturo
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class SignaturePolicyInfo {
     private String policyIdentifier;
     private byte[] policyHash;

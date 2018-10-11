@@ -27,10 +27,10 @@ import java.io.Serializable;
  * scheme allows support for cases in some languages where words change
  * spelling if they're split across lines, like german's 'backen' which
  * hyphenates 'bak-ken'. BTW, this comes from TeX.
- *
  * @author Carlos Villegas <cav@uniscope.co.jp>
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
-
+@Deprecated
 public class Hyphen implements Serializable {
     private static final long serialVersionUID = -7666138517324763063L;
 	public String preBreak;

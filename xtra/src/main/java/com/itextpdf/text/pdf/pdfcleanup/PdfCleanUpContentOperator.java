@@ -54,6 +54,10 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.*;
 
+/**
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
+ */
+@Deprecated
 class PdfCleanUpContentOperator implements ContentOperator {
 
     private static final byte[] TStar = DocWriter.getISOBytes("T*\n");

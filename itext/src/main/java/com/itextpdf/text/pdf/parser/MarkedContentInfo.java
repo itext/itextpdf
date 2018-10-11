@@ -50,7 +50,9 @@ import com.itextpdf.text.pdf.PdfNumber;
 /**
  * Represents a Marked Content block in a PDF
  * @since 5.0.2
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class MarkedContentInfo {
     private final PdfName tag;
     private final PdfDictionary dictionary;

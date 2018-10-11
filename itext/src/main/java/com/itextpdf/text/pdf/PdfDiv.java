@@ -54,7 +54,9 @@ import java.util.List;
 
 /**
  * A special element to put a collection of elements at an absolute position.
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class PdfDiv implements Element, Spaceable, IAccessibleElement {
     public enum FloatType {NONE, LEFT, RIGHT};
 

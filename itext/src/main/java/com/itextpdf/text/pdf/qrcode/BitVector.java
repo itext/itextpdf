@@ -20,11 +20,12 @@ package com.itextpdf.text.pdf.qrcode;
  * JAVAPORT: This should be combined with BitArray in the future, although that class is not yet
  * dynamically resizeable. This implementation is reasonable but there is a lot of function calling
  * in loops I'd like to get rid of.
- *
  * @author satorux@google.com (Satoru Takabayashi) - creator
  * @author dswitkin@google.com (Daniel Switkin) - ported from C++
  * @since 5.0.2
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public final class BitVector {
 
   private int sizeInBits;

@@ -43,17 +43,18 @@
  */
 package com.itextpdf.text.xml.simpleparser;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Font;
 import com.itextpdf.text.Font.FontFamily;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * This class contains entities that can be used in an entity tag.
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
-
+@Deprecated
 public class EntitiesToSymbol {
 
     /**

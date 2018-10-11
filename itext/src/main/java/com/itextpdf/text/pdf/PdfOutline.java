@@ -43,14 +43,14 @@
  */
 package com.itextpdf.text.pdf;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.ArrayList;
-
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Font;
 import com.itextpdf.text.Paragraph;
+
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.ArrayList;
 
 /**
  * <CODE>PdfOutline</CODE> is an object that represents a PDF outline entry.
@@ -58,10 +58,10 @@ import com.itextpdf.text.Paragraph;
  * An outline allows a user to access views of a document by name.<BR>
  * This object is described in the 'Portable Document Format Reference Manual version 1.3'
  * section 6.7 (page 104-106)
- *
  * @see		PdfDictionary
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
-
+@Deprecated
 public class PdfOutline extends PdfDictionary {
 
     // membervariables

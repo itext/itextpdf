@@ -43,20 +43,22 @@
  */
 package com.itextpdf.text.pdf.hyphenation;
 
+import com.itextpdf.text.ExceptionConverter;
+import com.itextpdf.text.xml.simpleparser.SimpleXMLDocHandler;
+import com.itextpdf.text.xml.simpleparser.SimpleXMLParser;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.StringTokenizer;
 
-import com.itextpdf.text.ExceptionConverter;
-import com.itextpdf.text.xml.simpleparser.SimpleXMLDocHandler;
-import com.itextpdf.text.xml.simpleparser.SimpleXMLParser;
-
-/** Parses the xml hyphenation pattern.
- *
+/**
+ * Parses the xml hyphenation pattern.
  * @author Paulo Soares
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class SimplePatternParser implements SimpleXMLDocHandler,
 		PatternConsumer {
 	int currElement;

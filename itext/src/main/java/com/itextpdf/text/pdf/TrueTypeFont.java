@@ -56,9 +56,10 @@ import java.util.Map;
 
 /**
  * Reads a Truetype font
- *
  * @author Paulo Soares
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 class TrueTypeFont extends BaseFont {
 
     /**

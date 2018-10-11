@@ -51,7 +51,9 @@ import java.util.LinkedList;
  * As an implementation detail, we use {@link GroupedRandomAccessSource} functionality, but override to make determination of the underlying
  * mapped page more efficient - and to close each page as another is opened
  * @since 5.3.5
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 class PagedChannelRandomAccessSource extends GroupedRandomAccessSource implements RandomAccessSource {
 	// these values were selected based on parametric testing with extracting text content from a 2.3GB file.  These settings resulted in the best improvement over
 	// the single size MRU case (24% speed improvement)

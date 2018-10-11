@@ -64,7 +64,9 @@ import com.itextpdf.tool.xml.XMLWorkerHelper;
 
 /**
  * Added to visually check all snippets. (see target/text-classes/*.pdf )
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class SamplesTest {
     public static final String OUT = "./target/test-classes/com/itextpdf/tool/xml/html/";
 	private final List<String> list = new ArrayList<String>();
