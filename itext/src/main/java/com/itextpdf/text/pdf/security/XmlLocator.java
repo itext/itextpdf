@@ -45,12 +45,13 @@ package com.itextpdf.text.pdf.security;
 
 import com.itextpdf.text.DocumentException;
 
-import javax.xml.transform.TransformerConfigurationException;
 import java.io.IOException;
 
 /**
  * Helps to locate xml stream
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public interface XmlLocator {
 
     org.w3c.dom.Document getDocument();

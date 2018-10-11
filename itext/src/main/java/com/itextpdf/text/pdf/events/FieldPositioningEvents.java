@@ -43,9 +43,6 @@
  */
 package com.itextpdf.text.pdf.events;
 
-import java.io.IOException;
-import java.util.HashMap;
-
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.ExceptionConverter;
@@ -61,9 +58,14 @@ import com.itextpdf.text.pdf.PdfRectangle;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.text.pdf.TextField;
 
+import java.io.IOException;
+import java.util.HashMap;
+
 /**
  * Class that can be used to position AcroForm fields.
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class FieldPositioningEvents extends PdfPageEventHelper implements PdfPCellEvent {
 
     /**

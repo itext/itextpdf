@@ -50,7 +50,9 @@ import java.util.HashMap;
 /**
  * Creates a name tree.
  * @author Paulo Soares
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class PdfNameTree {
 
     private static final int leafSize = 64;

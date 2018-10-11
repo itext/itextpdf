@@ -43,20 +43,19 @@
  */
 package com.itextpdf.text;
 
-import java.net.URL;
 import com.itextpdf.text.error_messages.MessageLocalization;
-
 import com.itextpdf.text.pdf.PdfTemplate;
+
+import java.net.URL;
 
 /**
  * PdfTemplate that has to be inserted into the document
- *
  * @see		Element
  * @see		Image
- *
  * @author  Paulo Soares
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
-
+@Deprecated
 public class ImgTemplate extends Image {
     
     ImgTemplate(Image image) {

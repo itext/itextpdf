@@ -52,7 +52,9 @@ import com.itextpdf.text.pdf.spatial.objects.XYArray;
 /**
  * Rectilinear Measure dictionary.
  * @since 5.1.0
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class MeasureRectilinear extends Measure {
 	
 	/**

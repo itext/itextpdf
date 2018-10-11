@@ -48,7 +48,9 @@ import java.io.RandomAccessFile;
  * 
  * A RandomAccessSource that uses a {@link RandomAccessFile} as it's source
  * Note: Unlike most of the RandomAccessSource implementations, this class is not thread safe
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 class RAFRandomAccessSource implements RandomAccessSource {
 	/**
 	 * The source

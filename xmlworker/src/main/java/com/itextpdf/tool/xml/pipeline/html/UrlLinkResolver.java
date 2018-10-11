@@ -48,6 +48,10 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+/**
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
+ */
+@Deprecated
 public class UrlLinkResolver {
     private String rootPath;
 

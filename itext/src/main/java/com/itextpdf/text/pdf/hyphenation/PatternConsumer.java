@@ -21,9 +21,10 @@ import java.util.ArrayList;
 /**
  * This interface is used to connect the XML pattern file parser to
  * the hyphenation tree.
- *
  * @author Carlos Villegas <cav@uniscope.co.jp>
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public interface PatternConsumer {
 
     /**

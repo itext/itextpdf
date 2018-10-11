@@ -54,7 +54,9 @@ import java.util.HashSet;
 
 /**
  * @see TtfUnicodeWriter
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class PdfATtfUnicodeWriter extends TtfUnicodeWriter {
     final protected PdfAConformanceLevel pdfAConformanceLevel;
 

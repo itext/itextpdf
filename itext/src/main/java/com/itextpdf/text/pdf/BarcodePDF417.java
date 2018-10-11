@@ -57,7 +57,9 @@ import java.util.ArrayList;
  * codeword size optimization and bitmap inversion. The output can
  * be a CCITT G4 <CODE>Image</CODE> or a raw bitmap.
  * @author Paulo Soares
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class BarcodePDF417 {
 
     /** Auto-size is made based on <CODE>aspectRatio</CODE> and <CODE>yHeight</CODE>. */

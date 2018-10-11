@@ -55,6 +55,10 @@ import java.security.PrivateKey;
 import java.security.Security;
 import java.security.cert.Certificate;
 
+/**
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
+ */
+@Deprecated
 public class XmlDSigKSTest extends XmlDSigTest {
 
     public static final String KEYSTORE = "./src/test/resources/com/itextpdf/text/signature/ds-ks/ks";

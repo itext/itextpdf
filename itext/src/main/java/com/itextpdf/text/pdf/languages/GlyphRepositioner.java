@@ -43,14 +43,15 @@
  */
 package com.itextpdf.text.pdf.languages;
 
-import java.util.List;
-
 import com.itextpdf.text.pdf.Glyph;
 
+import java.util.List;
+
 /**
- *  
  * @author <a href="mailto:paawak@gmail.com">Palash Ray</a>
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public interface GlyphRepositioner {
 	
 	void repositionGlyphs(List<Glyph> glyphList);

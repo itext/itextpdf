@@ -54,7 +54,9 @@ import java.util.Hashtable;
 
 /**
  * A DataMatrix 2D barcode generator.
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class BarcodeDatamatrix {
     /**
      * No error.

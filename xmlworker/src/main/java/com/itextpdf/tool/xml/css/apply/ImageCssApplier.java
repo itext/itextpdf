@@ -58,7 +58,9 @@ import java.util.Map;
  * Class that applies the parsed CSS to an Image object.
  *
  * @author redlab_b
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class ImageCssApplier implements CssApplier<Image> {
 
     /**

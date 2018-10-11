@@ -64,6 +64,10 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
+ */
+@Deprecated
 public class HighlightItemsTest {
 
     static final private String outputPath = "./target/com/itextpdf/text/pdf/parser/HighlightItemsTest/";

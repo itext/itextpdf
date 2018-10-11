@@ -18,7 +18,9 @@ package com.itextpdf.text.pdf.hyphenation;
 
 /**
  * @author Carlos Villegas <cav@uniscope.co.jp>
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class HyphenationException extends Exception {
 
     private static final long serialVersionUID = 4721513606846982325L;

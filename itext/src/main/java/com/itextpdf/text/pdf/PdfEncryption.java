@@ -57,10 +57,11 @@ import java.security.MessageDigest;
 import java.security.cert.Certificate;
 
 /**
- * 
  * @author Paulo Soares
  * @author Kazuya Ujihara
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class PdfEncryption {
 
 	public static final int STANDARD_ENCRYPTION_40 = 2;

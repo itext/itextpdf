@@ -45,7 +45,9 @@ import java.io.IOException;
 
 /**
  * @since 5.3.5
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class GetBufferedRandomAccessSource implements RandomAccessSource {
 	/**
 	 * The source
