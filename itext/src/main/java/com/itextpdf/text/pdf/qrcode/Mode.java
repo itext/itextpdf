@@ -19,10 +19,11 @@ package com.itextpdf.text.pdf.qrcode;
 /**
  * <p>See ISO 18004:2006, 6.4.1, Tables 2 and 3. This enum encapsulates the various modes in which
  * data can be encoded to bits in the QR code standard.</p>
- *
  * @author Sean Owen
  * @since 5.0.2
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public final class Mode {
 
   // No, we can't use an enum here. J2ME doesn't support it.

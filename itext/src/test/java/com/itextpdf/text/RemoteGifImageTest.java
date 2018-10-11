@@ -52,6 +52,10 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
+/**
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
+ */
+@Deprecated
 @Ignore("This test can be flaky depending on remote resources availability.")
 public class RemoteGifImageTest {
 

@@ -22,10 +22,11 @@ package com.itextpdf.text.pdf.qrcode;
  *
  * JAVAPORT: The original code was a 2D array of ints, but since it only ever gets assigned
  * -1, 0, and 1, I'm going to use less memory and go with bytes.
- *
  * @author dswitkin@google.com (Daniel Switkin)
  * @since 5.0.2
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public final class ByteMatrix {
 
   private final byte[][] bytes;

@@ -47,7 +47,9 @@ import java.io.IOException;
 
 /**
  * A Rendition dictionary (pdf spec 1.5)
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class PdfRendition extends PdfDictionary {
      PdfRendition(String file, PdfFileSpecification fs, String mimeType) throws IOException{
          put(PdfName.S, new PdfName("MR"));

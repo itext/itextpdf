@@ -46,6 +46,10 @@ package com.itextpdf.text.pdf;
 import java.util.HashMap;
 import java.util.HashSet;
 
+/**
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
+ */
+@Deprecated
 class PageResources {
 
     protected PdfDictionary fontDictionary = new PdfDictionary();

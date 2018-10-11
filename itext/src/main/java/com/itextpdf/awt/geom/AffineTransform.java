@@ -23,12 +23,16 @@
  */
 package com.itextpdf.awt.geom;
 
-import java.io.IOException;
-import java.io.Serializable;
-
 import com.itextpdf.awt.geom.misc.HashCode;
 import com.itextpdf.awt.geom.misc.Messages;
 
+import java.io.IOException;
+import java.io.Serializable;
+
+/**
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
+ */
+@Deprecated
 public class AffineTransform implements Cloneable, Serializable {
 
     private static final long serialVersionUID = 1330973210523860834L;

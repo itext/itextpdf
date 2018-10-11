@@ -30,21 +30,21 @@
 
 package com.itextpdf.xmp.impl;
 
+import com.itextpdf.xmp.XMPDateTime;
+import com.itextpdf.xmp.XMPError;
+import com.itextpdf.xmp.XMPException;
+
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.Locale;
 import java.util.SimpleTimeZone;
 
-import com.itextpdf.xmp.XMPDateTime;
-import com.itextpdf.xmp.XMPError;
-import com.itextpdf.xmp.XMPException;
-
-
 /**
  * Converts between ISO 8601 Strings and <code>Calendar</code> with millisecond resolution.
- *
  * @since   16.02.2006
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public final class ISO8601Converter
 {
 	/** Hides public constructor */
@@ -407,7 +407,9 @@ public final class ISO8601Converter
 
 /**
  * @since   22.08.2006
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 class ParseState
 {
 	/** */

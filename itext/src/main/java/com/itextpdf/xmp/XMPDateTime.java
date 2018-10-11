@@ -33,7 +33,6 @@ package com.itextpdf.xmp;
 import java.util.Calendar;
 import java.util.TimeZone;
 
-
 /**
  * The <code>XMPDateTime</code>-class represents a point in time up to a resolution of nano
  * seconds. Dates and time in the serialized XMP are ISO 8601 strings. There are utility functions
@@ -52,7 +51,9 @@ import java.util.TimeZone;
  * DateTime values are occasionally used in cases with only a date or only a time component. A date
  * without a time has zeros for all the time fields. A time without a date has zeros for all date
  * fields (year, month, and day).
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public interface XMPDateTime extends Comparable
 {
 	/** @return Returns the year, can be negative. */

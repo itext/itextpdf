@@ -18,10 +18,11 @@ package com.itextpdf.text.pdf.qrcode;
 
 /**
  * See ISO 18004:2006 Annex D
- *
  * @author Sean Owen
  * @since 5.0.2
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public final class Version {
 
   /**

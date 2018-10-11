@@ -71,7 +71,9 @@ import org.junit.Test;
 
 /**
  * @author Balder
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class HTMLWorkerFactoryTest {
     public static final String OUT = "./target/test-classes/com/itextpdf/tool/xml/html/";
     //	public static final String SNIPPETS = "/snippets/";

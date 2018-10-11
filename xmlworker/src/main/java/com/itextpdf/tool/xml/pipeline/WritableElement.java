@@ -54,7 +54,9 @@ import com.itextpdf.tool.xml.Writable;
  * It's used at least in the HTML processing of the XMLWorker.
  * @author redlab_b
  *
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class WritableElement implements Writable {
 
 	private final ArrayList<Element> list;

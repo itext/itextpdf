@@ -18,10 +18,11 @@ package com.itextpdf.text.pdf.qrcode;
 
 /**
  * <p>A simple, fast array of bits, represented compactly by an array of ints internally.</p>
- *
  * @author Sean Owen
  * @since 5.0.2
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public final class BitArray {
 
   // TODO: I have changed these members to be public so ProGuard can inline get() and set(). Ideally

@@ -51,6 +51,10 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.StringTokenizer;
 
+/**
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
+ */
+@Deprecated
 public class GlyphList {
     private static HashMap<Integer, String> unicode2names = new HashMap<Integer, String>();
     private static HashMap<String, int[]> names2unicode = new HashMap<String, int[]>();

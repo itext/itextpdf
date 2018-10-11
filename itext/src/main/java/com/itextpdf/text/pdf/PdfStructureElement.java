@@ -58,7 +58,9 @@ import java.util.HashMap;
  * This is a node in a document logical structure. It may contain a mark point or it may contain
  * other nodes.
  * @author Paulo Soares
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class PdfStructureElement extends PdfDictionary implements IPdfStructureElement{
     
     /**

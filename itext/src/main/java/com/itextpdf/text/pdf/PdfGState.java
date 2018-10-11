@@ -49,9 +49,10 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 /** The graphic state dictionary.
- *
  * @author Paulo Soares
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class PdfGState extends PdfDictionary {
     /** A possible blend mode */
     public static final PdfName BM_NORMAL = new PdfName("Normal");

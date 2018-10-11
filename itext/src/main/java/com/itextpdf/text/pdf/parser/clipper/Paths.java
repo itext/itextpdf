@@ -78,10 +78,10 @@ import java.util.ArrayList;
 
 /**
  * A pure convenience class to avoid writing List<Path> everywhere.
- *
  * @author Tobias Mahlmann
- *
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class Paths extends ArrayList<Path> {
 
     public static Paths closedPathsFromPolyTree( PolyTree polytree ) {

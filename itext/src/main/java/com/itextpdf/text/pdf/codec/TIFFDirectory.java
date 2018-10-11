@@ -44,15 +44,15 @@
  * nuclear facility.
  */
 package com.itextpdf.text.pdf.codec;
+import com.itextpdf.text.error_messages.MessageLocalization;
+import com.itextpdf.text.pdf.RandomAccessFileOrArray;
+
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
-
-import com.itextpdf.text.error_messages.MessageLocalization;
-import com.itextpdf.text.pdf.RandomAccessFileOrArray;
 
 /**
  * A class representing an Image File Directory (IFD) from a TIFF 6.0
@@ -72,9 +72,10 @@ import com.itextpdf.text.pdf.RandomAccessFileOrArray;
  *
  * <p><b> This class is not a committed part of the JAI API.  It may
  * be removed or changed in future releases of JAI.</b>
- *
  * @see TIFFField
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class TIFFDirectory extends Object implements Serializable {
 
     private static final long serialVersionUID = -168636766193675380L;

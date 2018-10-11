@@ -52,10 +52,11 @@ import com.itextpdf.text.error_messages.MessageLocalization;
  * in decimal format.<BR>
  * This object is described in the 'Portable Document Format Reference Manual
  * version 1.7' section 3.3.2 (page 52-53).
- *
  * @see		PdfObject
  * @see		BadPdfFormatException
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class PdfNumber extends PdfObject {
 
     // CLASS VARIABLES

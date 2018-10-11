@@ -49,6 +49,10 @@ import com.itextpdf.xmp.XMPMeta;
 import com.itextpdf.xmp.XMPUtils;
 import com.itextpdf.xmp.options.PropertyOptions;
 
+/**
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
+ */
+@Deprecated
 public class XmpBasicProperties {
     /** An unordered array specifying properties that were edited outside the authoring application. Each item should contain a single namespace and XPath separated by one ASCII space (U+0020). */
     public static final String ADVISORY = "Advisory";

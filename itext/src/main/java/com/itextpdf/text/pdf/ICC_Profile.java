@@ -43,14 +43,18 @@
  */
 package com.itextpdf.text.pdf;
 
+import com.itextpdf.text.ExceptionConverter;
+import com.itextpdf.text.error_messages.MessageLocalization;
+
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 
-import com.itextpdf.text.ExceptionConverter;
-import com.itextpdf.text.error_messages.MessageLocalization;
-
+/**
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
+ */
+@Deprecated
 public class ICC_Profile {
     protected byte[] data;
     protected int numComponents;

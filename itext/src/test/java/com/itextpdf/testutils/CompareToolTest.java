@@ -54,6 +54,10 @@ import org.xml.sax.SAXException;
 
 import junit.framework.Assert;
 
+/**
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
+ */
+@Deprecated
 public class CompareToolTest {
 
     private static final String OUT_PATH = "./target/com/itextpdf/testutils/CompareToolTest/";
