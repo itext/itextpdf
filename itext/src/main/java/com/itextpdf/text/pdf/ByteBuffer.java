@@ -42,22 +42,23 @@
  * address: sales@itextpdf.com
  */
 package com.itextpdf.text.pdf;
+import com.itextpdf.text.DocWriter;
+import com.itextpdf.text.error_messages.MessageLocalization;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.Locale;
-import com.itextpdf.text.error_messages.MessageLocalization;
-
-import com.itextpdf.text.DocWriter;
 
 /**
  * Acts like a <CODE>StringBuffer</CODE> but works with <CODE>byte</CODE> arrays.
  * Floating point is converted to a format suitable to the PDF.
  * @author Paulo Soares
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
-
+@Deprecated
 public class ByteBuffer extends OutputStream {
     /** The count of bytes in the buffer. */
     protected int count;

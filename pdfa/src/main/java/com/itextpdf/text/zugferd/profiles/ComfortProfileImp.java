@@ -51,7 +51,9 @@ import java.util.List;
  * This implementation of the BasicProfile contains member-variables that store
  * all the data needed to create an XML attachment for a ZUGFeRD invoice that
  * conforms with the Comfort profile.
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class ComfortProfileImp extends BasicProfileImp implements ComfortProfile {
     
     protected List<String> notesCodes = new ArrayList<String>();

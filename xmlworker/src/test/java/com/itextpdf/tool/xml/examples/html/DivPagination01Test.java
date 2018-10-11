@@ -63,6 +63,10 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.nio.charset.Charset;
 
+/**
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
+ */
+@Deprecated
 public class DivPagination01Test extends SampleTest {
     protected String getTestName() {
         return "divPagination01";

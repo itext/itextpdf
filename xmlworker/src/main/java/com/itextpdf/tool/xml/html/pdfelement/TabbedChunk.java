@@ -51,7 +51,9 @@ import com.itextpdf.text.pdf.draw.VerticalPositionMark;
  * A TabbedChunk is a Chunk that contains tabcount and alignment
  * data to allow the HTML to PDF conversion to accept tabstop css.
  *
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class TabbedChunk extends Chunk {
 	private int tabCount;
 	private String alignment;

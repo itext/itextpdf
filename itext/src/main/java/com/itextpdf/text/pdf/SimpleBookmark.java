@@ -43,6 +43,12 @@
  */
 package com.itextpdf.text.pdf;
 
+import com.itextpdf.text.error_messages.MessageLocalization;
+import com.itextpdf.text.xml.XMLUtil;
+import com.itextpdf.text.xml.simpleparser.IanaEncodings;
+import com.itextpdf.text.xml.simpleparser.SimpleXMLDocHandler;
+import com.itextpdf.text.xml.simpleparser.SimpleXMLParser;
+
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -57,12 +63,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 import java.util.StringTokenizer;
-
-import com.itextpdf.text.error_messages.MessageLocalization;
-import com.itextpdf.text.xml.XMLUtil;
-import com.itextpdf.text.xml.simpleparser.IanaEncodings;
-import com.itextpdf.text.xml.simpleparser.SimpleXMLDocHandler;
-import com.itextpdf.text.xml.simpleparser.SimpleXMLParser;
 /**
  * Bookmark processing in a simple way. It has some limitations, mainly the only
  * action types supported are GoTo, GoToR, URI and Launch.
@@ -103,7 +103,9 @@ import com.itextpdf.text.xml.simpleparser.SimpleXMLParser;
  * <li>"File" - "the_file_to_open_or_execute"
  * </ul>
  * @author Paulo Soares
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public final class SimpleBookmark implements SimpleXMLDocHandler {
 
     private ArrayList<HashMap<String, Object>> topList;

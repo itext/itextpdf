@@ -66,7 +66,9 @@ import java.util.Set;
 
 /**
  * A helper class for OCGRemover.
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class OCGParser {
 
 	/** Constant used for the default operator. */

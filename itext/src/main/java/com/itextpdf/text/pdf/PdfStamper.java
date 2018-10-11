@@ -72,7 +72,9 @@ import java.util.Map;
  * It is also possible to change the field values and to
  * flatten them. New fields can be added but not flattened.
  * @author Paulo Soares
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class PdfStamper
 	implements PdfViewerPreferences, PdfEncryptionSettings {
     /**

@@ -66,12 +66,12 @@ import java.util.HashMap;
  * <STRONG>Paragraph p = new Paragraph("This is a paragraph",
  *               FontFactory.getFont(FontFactory.HELVETICA, 18, Font.BOLDITALIC, new Color(0, 0, 255)));</STRONG>
  * </PRE></BLOCKQUOTE>
- *
  * @see		Element
  * @see		Phrase
  * @see		ListItem
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
-
+@Deprecated
 public class Paragraph extends Phrase implements Indentable, Spaceable, IAccessibleElement {
 
 	// constants

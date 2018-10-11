@@ -48,10 +48,10 @@ package com.itextpdf.text.pdf;
  * <P>
  * This object is described in the 'Portable Document Format Reference Manual version 1.7'
  * section 3.2.8 (page 63).
- *
  * @see		PdfObject
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
-
+@Deprecated
 public class PdfNull extends PdfObject {
     
     // CLASS CONSTANTS

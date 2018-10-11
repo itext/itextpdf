@@ -34,10 +34,11 @@ import java.io.IOException;
 import java.io.PushbackReader;
 import java.io.Reader;
 
-
 /**
  * @since   22.08.2006
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class FixASCIIControlsReader extends PushbackReader
 {
 	/** */

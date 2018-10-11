@@ -49,6 +49,10 @@ import com.itextpdf.text.pdf.*;
 import java.util.Arrays;
 import java.util.HashSet;
 
+/**
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
+ */
+@Deprecated
 public class PdfA3Checker extends PdfA2Checker {
 
     static private HashSet<PdfName> allowedAFRelationships = new HashSet<PdfName>(Arrays.asList(

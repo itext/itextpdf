@@ -46,7 +46,9 @@ package com.itextpdf.text.pdf.parser;
 /**
  * Defines an interface for {@link RenderListener}s that can return text
  * @since 5.0.2
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public interface TextExtractionStrategy extends RenderListener {
     /**
      * Returns the result so far.

@@ -49,6 +49,10 @@ import com.itextpdf.text.pdf.PdfObject;
 import com.itextpdf.text.pdf.PdfString;
 import java.util.ArrayList;
 
+/**
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
+ */
+@Deprecated
 public class CMapByteCid extends AbstractCMap {
     private ArrayList<char[]> planes = new ArrayList<char[]>();
 

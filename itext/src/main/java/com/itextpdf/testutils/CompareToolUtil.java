@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+@Deprecated
 public class CompareToolUtil {
     static private final  String SPLIT_REGEX = "((\".+?\"|[^'\\s]|'.+?')+)\\s*";
 

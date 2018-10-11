@@ -48,7 +48,9 @@ import java.io.IOException;
  * Implementations do not keep track of a current 'position', but rather provide absolute get methods.  Tracking position
  * should be handled in classes that use RandomAccessSource internally (via composition).
  * @since 5.3.5
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public interface RandomAccessSource {
 	/**
 	 * Gets a byte at the specified position

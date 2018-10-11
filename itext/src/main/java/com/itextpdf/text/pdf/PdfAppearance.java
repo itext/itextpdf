@@ -42,14 +42,16 @@
  * address: sales@itextpdf.com
  */
 package com.itextpdf.text.pdf;
-import java.util.HashMap;
 
 import com.itextpdf.text.Rectangle;
 
+import java.util.HashMap;
+
 /**
  * Implements the appearance stream to be used with form fields..
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
-
+@Deprecated
 public class PdfAppearance extends PdfTemplate {
 
     public static final HashMap<String, PdfName> stdFieldFontNames = new HashMap<String, PdfName>();

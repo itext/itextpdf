@@ -87,7 +87,9 @@ import com.itextpdf.text.pdf.PdfWriter;
 /**
  * Add verification according to PAdES-LTV (part 4)
  * @author Paulo Soares
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class LtvVerification {
 
 	private Logger LOGGER = LoggerFactory.getLogger(LtvVerification.class);

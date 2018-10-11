@@ -43,15 +43,16 @@
  */
 package com.itextpdf.text;
 
-import java.lang.reflect.Field;
 import com.itextpdf.text.error_messages.MessageLocalization;
+
+import java.lang.reflect.Field;
 
 /**
  * The <CODE>PageSize</CODE>-object contains a number of rectangles representing the most common paper sizes.
- *
  * @see		Rectangle
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
-
+@Deprecated
 public class PageSize {
 
     // membervariables

@@ -30,24 +30,24 @@
 
 package com.itextpdf.xmp.impl;
 
+import com.itextpdf.xmp.XMPDateTime;
+import com.itextpdf.xmp.XMPException;
+
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Locale;
 import java.util.TimeZone;
 
-import com.itextpdf.xmp.XMPDateTime;
-import com.itextpdf.xmp.XMPException;
-
-
 /**
  * The implementation of <code>XMPDateTime</code>. Internally a <code>calendar</code> is used
  * plus an additional nano seconds field, because <code>Calendar</code> supports only milli
  * seconds. The <code>nanoSeconds</code> convers only the resolution beyond a milli second.
- * 
  * @since 16.02.2006
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
-public class XMPDateTimeImpl implements XMPDateTime 
+@Deprecated
+public class XMPDateTimeImpl implements XMPDateTime
 {
 	/** */
 	private int year = 0;

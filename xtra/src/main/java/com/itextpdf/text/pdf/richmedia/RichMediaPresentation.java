@@ -53,7 +53,9 @@ import com.itextpdf.text.pdf.PdfName;
  * drawn.
  * See ExtensionLevel 3 p82
  * @since	5.0.0
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class RichMediaPresentation extends PdfDictionary {
 	
 	/**

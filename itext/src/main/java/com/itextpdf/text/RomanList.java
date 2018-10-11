@@ -46,12 +46,11 @@ package com.itextpdf.text;
 import com.itextpdf.text.factories.RomanNumberFactory;
 
 /**
- *
  * A special-version of <CODE>LIST</CODE> which use roman-letters.
- *
  * @see com.itextpdf.text.List
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
-
+@Deprecated
 public class RomanList extends List {
 
 // constructors

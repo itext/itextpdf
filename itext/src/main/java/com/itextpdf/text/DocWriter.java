@@ -62,11 +62,11 @@ import java.util.Properties;
  * Every <CODE>Element</CODE> added to the original <CODE>Document</CODE>
  * will be written to the <CODE>OutputStream</CODE> of the listening
  * <CODE>DocWriter</CODE>.
- *
  * @see   Document
  * @see   DocListener
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
-
+@Deprecated
 public abstract class DocWriter implements DocListener {
 
 /** This is some byte that is often used. */

@@ -78,7 +78,9 @@ import com.itextpdf.text.pdf.RandomAccessFileOrArray;
  * This class will parse page content streams and add Do operators
  * in a marked-content sequence for every field that needs to be
  * flattened.
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class MCParser {
 	
 	// static final constants

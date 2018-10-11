@@ -46,7 +46,9 @@ package com.itextpdf.text.zugferd.checkers;
 /**
  * Provide a means to check if a String consist of characters from 0 to 9
  * and a decimal point in case a decimal is expected.
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class NumberChecker extends CodeValidation {
 
     public final static int INTEGER = 0;

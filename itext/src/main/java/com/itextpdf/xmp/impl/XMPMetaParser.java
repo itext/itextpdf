@@ -30,18 +30,11 @@
 
 package com.itextpdf.xmp.impl;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.io.StringReader;
-import java.io.UnsupportedEncodingException;
-
-import javax.xml.XMLConstants;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-
+import com.itextpdf.xmp.XMPConst;
+import com.itextpdf.xmp.XMPError;
+import com.itextpdf.xmp.XMPException;
+import com.itextpdf.xmp.XMPMeta;
+import com.itextpdf.xmp.options.ParseOptions;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -49,20 +42,25 @@ import org.w3c.dom.ProcessingInstruction;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-import com.itextpdf.xmp.XMPConst;
-import com.itextpdf.xmp.XMPError;
-import com.itextpdf.xmp.XMPException;
-import com.itextpdf.xmp.XMPMeta;
-import com.itextpdf.xmp.options.ParseOptions;
-
+import javax.xml.XMLConstants;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.io.StringReader;
+import java.io.UnsupportedEncodingException;
 
 /**
  * This class replaces the <code>ExpatAdapter.cpp</code> and does the
  * XML-parsing and fixes the prefix. After the parsing several normalisations
  * are applied to the XMPTree.
- *
  * @since 01.02.2006
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class XMPMetaParser
 {
 	/**  */

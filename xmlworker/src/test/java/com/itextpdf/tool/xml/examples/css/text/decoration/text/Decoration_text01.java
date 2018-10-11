@@ -44,6 +44,10 @@ package com.itextpdf.tool.xml.examples.css.text.decoration.text;
 
 import com.itextpdf.tool.xml.examples.SampleTest;
 
+/**
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
+ */
+@Deprecated
 public class Decoration_text01 extends SampleTest {
     protected String getTestName() {
         return  "decoration_text01";

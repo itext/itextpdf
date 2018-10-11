@@ -32,14 +32,13 @@ package com.itextpdf.xmp.options;
 
 import com.itextpdf.xmp.XMPException;
 import com.itextpdf.xmp.XMPMeta;
-import com.itextpdf.xmp.XMPMetaFactory;
-
 
 /**
  * Options for {@link XMPMetaFactory#serializeToBuffer(XMPMeta, SerializeOptions)}.
- * 
  * @since 24.01.2006
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public final class SerializeOptions extends Options
 {
 	/** Omit the XML packet wrapper. */

@@ -43,13 +43,14 @@
  */
 package com.itextpdf.text.xml.xmp;
 
+import com.itextpdf.text.xml.XMLUtil;
+
 import java.util.Enumeration;
 import java.util.Properties;
 
-import com.itextpdf.text.xml.XMLUtil;
-
 /**
  * Abstract superclass of the XmpSchemas supported by iText.
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
 @Deprecated
 public abstract class XmpSchema extends Properties {

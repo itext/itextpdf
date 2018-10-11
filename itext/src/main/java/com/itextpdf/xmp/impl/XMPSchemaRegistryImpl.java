@@ -30,6 +30,13 @@
 
 package com.itextpdf.xmp.impl;
 
+import com.itextpdf.xmp.XMPConst;
+import com.itextpdf.xmp.XMPError;
+import com.itextpdf.xmp.XMPException;
+import com.itextpdf.xmp.XMPSchemaRegistry;
+import com.itextpdf.xmp.options.AliasOptions;
+import com.itextpdf.xmp.properties.XMPAliasInfo;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -39,20 +46,13 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.regex.Pattern;
 
-import com.itextpdf.xmp.XMPConst;
-import com.itextpdf.xmp.XMPError;
-import com.itextpdf.xmp.XMPException;
-import com.itextpdf.xmp.XMPSchemaRegistry;
-import com.itextpdf.xmp.options.AliasOptions;
-import com.itextpdf.xmp.properties.XMPAliasInfo;
-
-
 /**
  * The schema registry handles the namespaces, aliases and global options for the XMP Toolkit. There
  * is only one single instance used by the toolkit.
- * 
  * @since 27.01.2006
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public final class XMPSchemaRegistryImpl implements XMPSchemaRegistry, XMPConst
 {
 	/** a map from a namespace URI to its registered prefix */

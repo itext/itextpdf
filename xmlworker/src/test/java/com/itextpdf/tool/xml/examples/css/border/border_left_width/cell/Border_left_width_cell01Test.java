@@ -44,6 +44,10 @@ package com.itextpdf.tool.xml.examples.css.border.border_left_width.cell;
 
 import com.itextpdf.tool.xml.examples.SampleTest;
 
+/**
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
+ */
+@Deprecated
 public class Border_left_width_cell01Test extends SampleTest {
     protected String getTestName() {
         return  "border_left_width_cell01";

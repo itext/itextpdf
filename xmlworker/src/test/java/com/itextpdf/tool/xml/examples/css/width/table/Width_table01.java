@@ -44,6 +44,10 @@ package com.itextpdf.tool.xml.examples.css.width.table;
 
 import com.itextpdf.tool.xml.examples.SampleTest;
 
+/**
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
+ */
+@Deprecated
 public class Width_table01 extends SampleTest {
     protected String getTestName() {
         return  "width_table01";
