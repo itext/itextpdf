@@ -41,11 +41,14 @@
  * For more information, please contact iText Software Corp. at this
  * address: sales@itextpdf.com
  */
- package com.itextpdf.text;
+package com.itextpdf.text;
 
-import com.itextpdf.text.pdf.DefaultSplitCharacter;
 import com.itextpdf.text.pdf.PdfChunk;
 
+/**
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
+ */
+@Deprecated
 public class TabSplitCharacter implements SplitCharacter {
 
     public static final SplitCharacter TAB = new TabSplitCharacter();

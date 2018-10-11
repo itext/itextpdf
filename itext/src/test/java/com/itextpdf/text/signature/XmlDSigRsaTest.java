@@ -57,6 +57,10 @@ import java.security.PublicKey;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 
+/**
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
+ */
+@Deprecated
 public class XmlDSigRsaTest extends XmlDSigTest {
 
     public static final String KeyPairStore = "./src/test/resources/com/itextpdf/text/signature/ds/";

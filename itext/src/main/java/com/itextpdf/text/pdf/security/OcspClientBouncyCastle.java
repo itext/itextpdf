@@ -68,8 +68,8 @@ import org.bouncycastle.cert.ocsp.OCSPException;
 import org.bouncycastle.cert.ocsp.OCSPReq;
 import org.bouncycastle.cert.ocsp.OCSPReqBuilder;
 import org.bouncycastle.cert.ocsp.OCSPResp;
+import org.bouncycastle.cert.ocsp.RevokedStatus;
 import org.bouncycastle.cert.ocsp.SingleResp;
-import org.bouncycastle.ocsp.OCSPRespStatus;
 import org.bouncycastle.operator.OperatorException;
 import org.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder;
 
@@ -82,9 +82,10 @@ import com.itextpdf.text.pdf.PdfEncryption;
 
 /**
  * OcspClient implementation using BouncyCastle.
- *
  * @author Paulo Soarees
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class OcspClientBouncyCastle implements OcspClient {
 
     /**
@@ -120,7 +121,7 @@ public class OcspClientBouncyCastle implements OcspClient {
             if (ocspResponse == null) {
                 return null;
             }
-            if (ocspResponse.getStatus() != OCSPRespStatus.SUCCESSFUL) {
+            if (ocspResponse.getStatus() != OCSPResp.SUCCESSFUL) {
                 return null;
             }
             BasicOCSPResp basicResponse = (BasicOCSPResp) ocspResponse.getResponseObject();
@@ -154,7 +155,7 @@ public class OcspClientBouncyCastle implements OcspClient {
                     Object status = resp.getCertStatus();
                     if (status == CertificateStatus.GOOD) {
                         return basicResponse.getEncoded();
-                    } else if (status instanceof org.bouncycastle.ocsp.RevokedStatus) {
+                    } else if (status instanceof RevokedStatus) {
                         throw new IOException(MessageLocalization.getComposedMessage("ocsp.status.is.revoked"));
                     } else {
                         throw new IOException(MessageLocalization.getComposedMessage("ocsp.status.is.unknown"));

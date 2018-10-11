@@ -78,6 +78,10 @@ import com.itextpdf.tool.xml.pipeline.end.PdfWriterPipeline;
  */
 @SuppressWarnings("rawtypes")
 @Experimental("Untested for a while, forgot about it's existance - thus, not yet documented")
+/**
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
+ */
+@Deprecated
 public class AutoDocPipeline extends AbstractPipeline {
 
 	private final FileMaker fm;

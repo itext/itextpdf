@@ -55,10 +55,11 @@ import java.security.PrivilegedAction;
 
 /**
  * A {@link java.nio.MappedByteBuffer} wrapped as a {@link java.io.RandomAccessFile}
- *
  * @author Joakim Sandstroem
- * Created on 6.9.2006
+ * @since 6.9.2006
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class MappedRandomAccessFile {
 
     private static final int BUFSIZE = 1 << 30;

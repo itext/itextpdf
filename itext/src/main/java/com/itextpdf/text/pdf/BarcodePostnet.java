@@ -54,9 +54,10 @@ import com.itextpdf.text.BaseColor;
  *size = 0.05f * 72f; // height of the short bars
  *codeType = POSTNET; // type of code
  * </pre>
- *
  * @author Paulo Soares
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class BarcodePostnet extends Barcode{
 
     /** The bars for each character.

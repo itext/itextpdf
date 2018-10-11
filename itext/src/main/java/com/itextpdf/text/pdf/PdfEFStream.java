@@ -53,8 +53,9 @@ import java.util.zip.DeflaterOutputStream;
  * Extends PdfStream and should be used to create Streams for Embedded Files
  * (file attachments).
  * @since	2.1.3
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
-
+@Deprecated
 public class PdfEFStream extends PdfStream {
 
 	/**

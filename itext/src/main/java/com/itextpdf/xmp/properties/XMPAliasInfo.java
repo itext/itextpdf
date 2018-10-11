@@ -32,12 +32,12 @@ package com.itextpdf.xmp.properties;
 
 import com.itextpdf.xmp.options.AliasOptions;
 
-
 /**
  * This interface is used to return info about an alias.
- * 
  * @since   27.01.2006
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public interface XMPAliasInfo
 {
 	/**

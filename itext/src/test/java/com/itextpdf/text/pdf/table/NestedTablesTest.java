@@ -60,6 +60,10 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+/**
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
+ */
+@Deprecated
 public class NestedTablesTest {
     private String cmpFolder = "./src/test/resources/com/itextpdf/text/pdf/table/nestedTablesTest/";
     private String outFolder = "./target/com/itextpdf/text/pdf/table/nestedTablesTest/";

@@ -32,7 +32,9 @@ package com.itextpdf.xmp.impl;
 
 /**
  * @since   09.11.2006
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class QName
 {
 	/** XML namespace prefix */

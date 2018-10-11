@@ -49,7 +49,9 @@ import java.io.OutputStream;
 /**
  * @author redlab_b
  *
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public interface FileMaker {
 
 	/**

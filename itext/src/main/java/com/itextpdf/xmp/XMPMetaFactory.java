@@ -40,12 +40,12 @@ import com.itextpdf.xmp.options.SerializeOptions;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-
 /**
  * Creates <code>XMPMeta</code>-instances from an <code>InputStream</code>
- *
  * @since 30.01.2006
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public final class XMPMetaFactory {
     /**
      * The singleton instance of the <code>XMPSchemaRegistry</code>.

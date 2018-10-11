@@ -48,7 +48,9 @@ import com.itextpdf.text.pdf.PdfOutline;
  * Helper class to keep the PdfOutline structure for Headers.
  * @author redlab_b
  *
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class HeaderNode {
 
 	private int level;

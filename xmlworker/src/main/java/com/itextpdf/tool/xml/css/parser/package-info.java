@@ -39,4 +39,8 @@
  * For more information, please contact iText Software Corp. at this address:
  * sales@itextpdf.com
  */
+/**
+ * For internal use only. If you want to use iText, please use a dependency on iText 7.
+ */
+@Deprecated
 package com.itextpdf.tool.xml.css.parser;

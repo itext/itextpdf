@@ -53,6 +53,10 @@ import org.junit.Test;
 import com.itextpdf.text.io.RandomAccessSourceFactory;
 import com.itextpdf.text.pdf.RandomAccessFileOrArray;
 
+/**
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
+ */
+@Deprecated
 public class RandomAccessFileOrArrayTest {
 	byte[] data;
 	RandomAccessFileOrArray rafoa;

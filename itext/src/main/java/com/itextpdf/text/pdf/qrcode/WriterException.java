@@ -19,10 +19,11 @@ package com.itextpdf.text.pdf.qrcode;
 /**
  * A base class which covers the range of exceptions which may occur when encoding a barcode using
  * the Writer framework.
- *
  * @author dswitkin@google.com (Daniel Switkin)
  * @since 5.0.2
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public final class WriterException extends Exception {
 
 	/**

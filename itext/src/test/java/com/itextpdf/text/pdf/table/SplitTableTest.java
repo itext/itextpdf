@@ -63,6 +63,10 @@ import org.junit.Test;
 
 import junit.framework.Assert;
 
+/**
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
+ */
+@Deprecated
 public class SplitTableTest {
 
     private static final String cmpFolder = "./src/test/resources/com/itextpdf/text/pdf/table/SplitTableTest/";

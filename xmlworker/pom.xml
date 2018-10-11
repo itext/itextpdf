@@ -10,10 +10,10 @@
   </parent>
 
   <groupId>com.itextpdf.tool</groupId>
-  <artifactId>xmlworker</artifactId>
-  <version>5.5.14-SNAPSHOT</version>
+  <artifactId>xfa-xmlworker</artifactId>
+  <version>2.0.7-SNAPSHOT</version>
 
-  <name>iText XML Worker</name>
+  <name>pdfXFA iText XML Worker</name>
   <description>Parses XML to PDF, with CSS support, using iText</description>
   <url>http://www.itextpdf.com/</url>
 
@@ -71,7 +71,7 @@
   <dependencies>
     <dependency>
       <groupId>com.itextpdf</groupId>
-      <artifactId>itextpdf</artifactId>
+      <artifactId>xfa-itextpdf</artifactId>
       <version>${project.version}</version>
       <optional>true</optional>
     </dependency>
@@ -249,12 +249,12 @@
       <id>compileWithLegacyJDK</id>
       <!--
         NOTE
-        Make sure to set the environment variable JAVA5_HOME
-        to your JDK 1.5 HOME when using this profile.
+        Make sure to set the environment variable JAVA7_HOME
+        to your JDK 1.7 HOME when using this profile.
       -->
       <properties>
-        <java.version>1.5</java.version>
-        <java.home>${env.JAVA5_HOME}</java.home>
+        <java.version>1.7</java.version>
+        <java.home>${env.JAVA7_HOME}</java.home>
         <java.libs>${java.home}/jre/lib</java.libs>
         <java.bootclasspath>${java.libs}/rt.jar${path.separator}${java.libs}/jce.jar</java.bootclasspath>
       </properties>

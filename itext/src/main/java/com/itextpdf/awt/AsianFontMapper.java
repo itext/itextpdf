@@ -43,10 +43,14 @@
  */
 package com.itextpdf.awt;
 
-import java.awt.Font;
-
 import com.itextpdf.text.pdf.BaseFont;
 
+import java.awt.*;
+
+/**
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
+ */
+@Deprecated
 public class AsianFontMapper extends DefaultFontMapper {
 	
 	public static final String ChineseSimplifiedFont = "STSong-Light";

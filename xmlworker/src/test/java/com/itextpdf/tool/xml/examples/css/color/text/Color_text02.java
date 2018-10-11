@@ -44,6 +44,10 @@ package com.itextpdf.tool.xml.examples.css.color.text;
 
 import com.itextpdf.tool.xml.examples.SampleTest;
 
+/**
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
+ */
+@Deprecated
 public class Color_text02 extends SampleTest {
     protected String getTestName() {
         return  "color_text02";

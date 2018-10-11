@@ -48,6 +48,10 @@ import com.itextpdf.text.Rectangle;
 
 import java.io.IOException;
 
+/**
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
+ */
+@Deprecated
 public class PdfARadioCheckField extends RadioCheckField {
 
     private static final PdfName off = new PdfName("Off");

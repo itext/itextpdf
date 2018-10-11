@@ -63,9 +63,10 @@ import com.itextpdf.text.BaseColor;
  *checksumText = false;
  *startStopText = false;
  * </pre>
- *
  * @author Paulo Soares
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class BarcodeCodabar extends Barcode{
 
     /** The bars to generate the code.

@@ -48,6 +48,10 @@ import com.itextpdf.text.error_messages.MessageLocalization;
 
 import java.util.Arrays;
 
+/**
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
+ */
+@Deprecated
 public class PdfLabColor implements ICachedColorSpace {
     float[] whitePoint = new float[]{0.9505f, 1.0f, 1.0890f};
     float[] blackPoint = null;

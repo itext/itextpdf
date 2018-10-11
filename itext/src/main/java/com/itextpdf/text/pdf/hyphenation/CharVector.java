@@ -21,9 +21,10 @@ import java.io.Serializable;
 /**
  * This class implements a simple char vector with access to the
  * underlying array.
- *
  * @author Carlos Villegas <cav@uniscope.co.jp>
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class CharVector implements Cloneable, Serializable {
 
     private static final long serialVersionUID = -4875768298308363544L;
