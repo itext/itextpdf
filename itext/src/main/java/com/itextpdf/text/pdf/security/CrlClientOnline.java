@@ -43,6 +43,10 @@
  */
 package com.itextpdf.text.pdf.security;
 
+import com.itextpdf.text.error_messages.MessageLocalization;
+import com.itextpdf.text.log.Logger;
+import com.itextpdf.text.log.LoggerFactory;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -56,15 +60,13 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import com.itextpdf.text.error_messages.MessageLocalization;
-import com.itextpdf.text.log.Logger;
-import com.itextpdf.text.log.LoggerFactory;
-
 /**
  * An implementation of the CrlClient that fetches the CRL bytes
  * from an URL.
  * @author Paulo Soares
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class CrlClientOnline implements CrlClient {
 
 	/** The Logger instance. */

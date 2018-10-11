@@ -43,16 +43,17 @@
  */
 package com.itextpdf.text.pdf.fonts.cmaps;
 
-import java.io.IOException;
-
 import com.itextpdf.text.io.RandomAccessSourceFactory;
 import com.itextpdf.text.pdf.PRTokeniser;
 import com.itextpdf.text.pdf.RandomAccessFileOrArray;
 
+import java.io.IOException;
+
 /**
- *
  * @author psoares
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class CidLocationFromByte implements CidLocation {
     private byte[] data;
 

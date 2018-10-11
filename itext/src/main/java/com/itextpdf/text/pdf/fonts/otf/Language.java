@@ -47,9 +47,10 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * 
  * @author <a href="mailto:paawak@gmail.com">Palash Ray</a>
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public enum Language {
 	
 	BENGALI("beng", "bng2");

@@ -42,10 +42,12 @@
  * address: sales@itextpdf.com
  */
 package com.itextpdf.text.pdf;
-import java.util.HashMap;
 
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.error_messages.MessageLocalization;
+
+import java.util.HashMap;
+
 /**
  * <CODE>PdfPage</CODE> is the PDF Page-object.
  * <P>
@@ -53,10 +55,10 @@ import com.itextpdf.text.error_messages.MessageLocalization;
  * graphics, and images. A Page object is a leaf of the Pages tree.<BR>
  * This object is described in the 'Portable Document Format Reference Manual version 1.3'
  * section 6.4 (page 73-81)
- *
  * @see		PdfPages
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
-
+@Deprecated
 public class PdfPage extends PdfDictionary {
 
     private static final String boxStrings[] = {"crop", "trim", "art", "bleed"};

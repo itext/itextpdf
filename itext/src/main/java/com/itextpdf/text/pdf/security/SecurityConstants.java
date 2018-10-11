@@ -43,6 +43,10 @@
  */
 package com.itextpdf.text.pdf.security;
 
+/**
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
+ */
+@Deprecated
 public final class SecurityConstants {
 
     public static final String XMLNS = "xmlns";

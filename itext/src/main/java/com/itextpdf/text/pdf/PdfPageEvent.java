@@ -50,10 +50,10 @@ import com.itextpdf.text.Rectangle;
  * Allows a class to catch several document events.
  *<p>
  * Note: do not use Document.add() inside a page event.
- *
  * @author  Paulo Soares
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
-
+@Deprecated
 public interface PdfPageEvent {
     
 /**

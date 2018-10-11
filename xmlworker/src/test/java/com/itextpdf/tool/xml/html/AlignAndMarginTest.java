@@ -67,7 +67,9 @@ import static org.junit.Assert.assertEquals;
 /**
  * @author Balder
  *
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class AlignAndMarginTest {
 
 	private List<Element> elementList;

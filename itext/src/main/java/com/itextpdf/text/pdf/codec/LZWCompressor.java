@@ -57,7 +57,9 @@ import java.io.OutputStream;
  * Modified from original LZWCompressor to change interface to passing a
  * buffer of data to be compressed.
  * @since 5.0.2
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class LZWCompressor
 {
     /** base underlying code size of data being compressed 8 for TIFF, 1 to 8 for GIF **/

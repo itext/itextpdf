@@ -71,13 +71,13 @@ import java.util.Collection;
  * <STRONG>Phrase phrase4 = new Phrase(new Chunk("this is a phrase"));</STRONG>
  * <STRONG>Phrase phrase5 = new Phrase(18, new Chunk("this is a phrase", FontFactory.getFont(FontFactory.HELVETICA, 16, Font.BOLD, new Color(255, 0, 0)));</STRONG>
  * </PRE></BLOCKQUOTE>
- *
  * @see		Element
  * @see		Chunk
  * @see		Paragraph
  * @see		Anchor
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
-
+@Deprecated
 public class Phrase extends ArrayList<Element> implements TextElementArray {
 
     // constants

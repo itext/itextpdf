@@ -45,7 +45,9 @@ package com.itextpdf.text.pdf.languages;
 
 /**
  * Implementation of the IndicLigaturizer for Gujarati.
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class GujaratiLigaturizer extends IndicLigaturizer {
     
     // Gujrati constants

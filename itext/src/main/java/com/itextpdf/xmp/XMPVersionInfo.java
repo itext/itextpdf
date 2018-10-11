@@ -36,9 +36,10 @@ package com.itextpdf.xmp;
  * Version information for the XMP toolkit is stored in the jar-library and available through a
  * runtime call, {@link XMPMetaFactory#getVersionInfo()},  addition static version numbers are
  * defined in "version.properties". 
- * 
  * @since 23.01.2006
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public interface XMPVersionInfo
 {
 	/** @return Returns the primary release number, the "1" in version "1.2.3". */

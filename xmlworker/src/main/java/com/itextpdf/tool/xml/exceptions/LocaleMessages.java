@@ -51,6 +51,10 @@ import java.util.ResourceBundle;
  *
  */
 @SuppressWarnings("javadoc")
+/**
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
+ */
+@Deprecated
 public class LocaleMessages {
 
 	public static final String UNSUPPORTED_CHARSET = "unsupported.charset";

@@ -25,6 +25,10 @@ package com.itextpdf.awt.geom;
 
 import java.io.Serializable;
 
+/**
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
+ */
+@Deprecated
 public class Point extends Point2D implements Serializable {
 
     private static final long serialVersionUID = -5276940640259749850L;

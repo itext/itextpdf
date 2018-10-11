@@ -30,14 +30,6 @@
 
 package com.itextpdf.xmp.impl;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
-
 import com.itextpdf.xmp.XMPConst;
 import com.itextpdf.xmp.XMPError;
 import com.itextpdf.xmp.XMPException;
@@ -46,14 +38,23 @@ import com.itextpdf.xmp.XMPMetaFactory;
 import com.itextpdf.xmp.options.PropertyOptions;
 import com.itextpdf.xmp.options.SerializeOptions;
 
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
+
 
 /**
  * Serializes the <code>XMPMeta</code>-object using the standard RDF serialization format. 
  * The output is written to an <code>OutputStream</code> 
  * according to the <code>SerializeOptions</code>. 
- * 
  * @since   11.07.2006
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class XMPSerializerRDF
 {
 	/** default padding */

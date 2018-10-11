@@ -43,19 +43,19 @@
  */
 package com.itextpdf.text;
 
-import com.itextpdf.text.pdf.codec.TIFFFaxDecoder;
-import java.net.URL;
 import com.itextpdf.text.error_messages.MessageLocalization;
+import com.itextpdf.text.pdf.codec.TIFFFaxDecoder;
+
+import java.net.URL;
 
 /**
  * CCITT Image data that has to be inserted into the document
- *
  * @see		Element
  * @see		Image
- *
  * @author  Paulo Soares
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
-
+@Deprecated
 public class ImgCCITT extends Image {
 
     ImgCCITT(Image image) {

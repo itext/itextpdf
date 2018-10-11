@@ -30,8 +30,6 @@
 
 package com.itextpdf.xmp.impl;
 
-import java.util.Iterator;
-
 import com.itextpdf.xmp.XMPConst;
 import com.itextpdf.xmp.XMPError;
 import com.itextpdf.xmp.XMPException;
@@ -43,11 +41,13 @@ import com.itextpdf.xmp.impl.xpath.XMPPathParser;
 import com.itextpdf.xmp.options.PropertyOptions;
 import com.itextpdf.xmp.properties.XMPAliasInfo;
 
-
+import java.util.Iterator;
 
 /**
  * @since 11.08.2006
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class XMPUtilsImpl implements XMPConst
 {
 	/** */

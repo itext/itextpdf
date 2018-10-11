@@ -43,8 +43,6 @@
  */
 package com.itextpdf.text;
 
-import com.itextpdf.text.pdf.interfaces.IAccessibleElement;
-
 import java.util.ArrayList;
 
 /**
@@ -67,8 +65,9 @@ import java.util.ArrayList;
  * Paragraph someSectionText = new Paragraph("This is some silly paragraph in a chapter and/or section. It contains some text to test the functionality of Chapters and Section.");
  * section1.add(someSectionText);
  * </PRE></BLOCKQUOTE>
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
-
+@Deprecated
 public class Chapter extends Section {
 
     // constant

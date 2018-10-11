@@ -23,10 +23,14 @@
  */
 package com.itextpdf.awt.geom;
 
-import java.util.NoSuchElementException;
-
 import com.itextpdf.awt.geom.misc.Messages;
 
+import java.util.NoSuchElementException;
+
+/**
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
+ */
+@Deprecated
 public abstract class Line2D implements Shape, Cloneable {
 
     public static class Float extends Line2D {

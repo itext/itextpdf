@@ -43,17 +43,18 @@
  */
 package com.itextpdf.text.pdf.parser;
 
-import java.io.IOException;
-
 import com.itextpdf.text.pdf.PdfReader;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
  * Extracts text from a PDF file.
  * @since	2.1.4
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public final class PdfTextExtractor {
 
 	/**

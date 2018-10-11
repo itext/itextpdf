@@ -49,7 +49,9 @@ import com.itextpdf.text.pdf.PdfWriter;
 /**
  * Extension of the PdfIsoConformance interface for Pdf/A
  * adding methods regarding the level of conformance.
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public interface PdfAConformance extends PdfIsoConformance  {
 
     /**
