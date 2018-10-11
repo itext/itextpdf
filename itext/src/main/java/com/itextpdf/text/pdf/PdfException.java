@@ -47,10 +47,10 @@ import com.itextpdf.text.DocumentException;
 
 /**
  * Signals that an unspecified problem while constructing a PDF document.
- *
  * @see		BadPdfFormatException
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
-
+@Deprecated
 public class PdfException extends DocumentException {
     
     // constructors

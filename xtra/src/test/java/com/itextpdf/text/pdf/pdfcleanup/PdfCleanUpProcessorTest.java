@@ -60,6 +60,10 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
+/**
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
+ */
+@Deprecated
 @RunWith(Parameterized.class)
 public class PdfCleanUpProcessorTest {
 

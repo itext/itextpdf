@@ -59,7 +59,9 @@ import java.util.Set;
 
 /**
  * Class that knows how to remove OCG layers.
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class OCGRemover {
 	
 	/**

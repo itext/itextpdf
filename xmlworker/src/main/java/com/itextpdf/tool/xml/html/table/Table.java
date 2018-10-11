@@ -66,7 +66,9 @@ import java.util.Map.Entry;
 /**
  * @author Emiel Ackermann
  *
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class Table extends AbstractTagProcessor {
     public static final float DEFAULT_CELL_BORDER_WIDTH = 0.75f;
 

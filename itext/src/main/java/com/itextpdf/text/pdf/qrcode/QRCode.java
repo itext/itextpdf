@@ -21,7 +21,9 @@ package com.itextpdf.text.pdf.qrcode;
  * @author satorux@google.com (Satoru Takabayashi) - creator
  * @author dswitkin@google.com (Daniel Switkin) - ported from C++
  * @since 5.0.2
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public final class QRCode {
 
   public static final int NUM_MASK_PATTERNS = 8;

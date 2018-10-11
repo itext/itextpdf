@@ -28,6 +28,10 @@ import java.util.NoSuchElementException;
 import com.itextpdf.awt.geom.gl.Crossing;
 import com.itextpdf.awt.geom.misc.Messages;
 
+/**
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
+ */
+@Deprecated
 public abstract class CubicCurve2D implements Shape, Cloneable {
 
     public static class Float extends CubicCurve2D {

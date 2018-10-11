@@ -53,7 +53,9 @@ import com.itextpdf.tool.xml.pipeline.end.PdfWriterPipeline;
 /**
  * @author redlab_b
  *
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class Body extends AbstractTagProcessor {
 
 	/*

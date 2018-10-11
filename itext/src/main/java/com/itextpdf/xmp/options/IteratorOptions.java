@@ -30,12 +30,12 @@
 
 package com.itextpdf.xmp.options;
 
-
 /**
  * Options for <code>XMPIterator</code> construction.
- * 
  * @since 24.01.2006
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public final class IteratorOptions extends Options
 {
 	/** Just do the immediate children of the root, default is subtree. */

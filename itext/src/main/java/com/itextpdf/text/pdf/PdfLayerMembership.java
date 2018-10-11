@@ -52,9 +52,10 @@ import java.util.HashSet;
  * complex visibility policies, content should not declare itself to belong to an optional
  * content group directly, but rather to an optional content membership dictionary
  * represented by this class.
- *
  * @author Paulo Soares
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class PdfLayerMembership extends PdfDictionary implements PdfOCG {
 
     /**

@@ -43,24 +43,24 @@
  */
 package com.itextpdf.text;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
 import com.itextpdf.text.error_messages.MessageLocalization;
-
 import com.itextpdf.text.pdf.PdfTemplate;
 import com.itextpdf.text.pdf.codec.wmf.InputMeta;
 import com.itextpdf.text.pdf.codec.wmf.MetaDo;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+
 /**
  * An <CODE>ImgWMF</CODE> is the representation of a windows metafile
  * that has to be inserted into the document
- *
  * @see		Element
  * @see		Image
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
-
+@Deprecated
 public class ImgWMF extends Image {
     
     // Constructors

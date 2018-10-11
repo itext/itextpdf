@@ -41,7 +41,9 @@ import java.util.Map.Entry;
 /**
  * @author itextpdf.com
  *
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class CssFilesImpl implements CssFiles {
 
 	private final List<CssFile> files;

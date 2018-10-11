@@ -53,7 +53,9 @@ import java.util.Date;
  * Class that can be used to check a code for a date format.
  * Additionally, this class also contains some methods that allow you
  * to convert dates to strings and vice-versa based on a given format.
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class DateFormatCode extends CodeValidation {
     public static final String YYYYMMDD = "102";
     public static final String YYYYMM = "610";

@@ -58,10 +58,10 @@ import java.util.Stack;
  * using the string representation of an object and using the
  * char value as an index to an array that contains the object
  * values.</p>
- *
  * @author cav@uniscope.co.jp
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
-
+@Deprecated
 public class TernaryTree implements Cloneable, Serializable {
 
     /**

@@ -24,7 +24,9 @@ import java.util.ArrayList;
  * @author satorux@google.com (Satoru Takabayashi) - creator
  * @author dswitkin@google.com (Daniel Switkin) - ported from C++
  * @since 5.0.2
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public final class Encoder {
 
   // The original table is defined in the table 5 of JISX0510:2004 (p.19).

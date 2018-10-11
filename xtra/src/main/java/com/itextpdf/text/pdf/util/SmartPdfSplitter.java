@@ -58,7 +58,9 @@ import java.util.Map;
 
 /**
  * Splits a PDF based on a given file size.
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class SmartPdfSplitter {
 
     private final Logger LOGGER = LoggerFactory.getLogger(SmartPdfSplitter.class);

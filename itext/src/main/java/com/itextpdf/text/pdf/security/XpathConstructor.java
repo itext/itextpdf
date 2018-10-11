@@ -45,7 +45,9 @@ package com.itextpdf.text.pdf.security;
 
 /**
  * Constructor for XPath2 expression
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public interface XpathConstructor {
 
     /**

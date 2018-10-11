@@ -62,6 +62,10 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.xml.sax.SAXException;
 
+/**
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
+ */
+@Deprecated
 public class PdfAWriterTest {
 
     private static final String outputDir = "./target/test/writer/";

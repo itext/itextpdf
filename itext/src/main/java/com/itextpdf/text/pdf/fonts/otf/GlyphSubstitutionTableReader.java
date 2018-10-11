@@ -43,6 +43,9 @@
  */
 package com.itextpdf.text.pdf.fonts.otf;
 
+import com.itextpdf.text.pdf.Glyph;
+import com.itextpdf.text.pdf.RandomAccessFileOrArray;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -50,9 +53,6 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-
-import com.itextpdf.text.pdf.Glyph;
-import com.itextpdf.text.pdf.RandomAccessFileOrArray;
 
 /**
  * <p>
@@ -62,9 +62,10 @@ import com.itextpdf.text.pdf.RandomAccessFileOrArray;
  * <p>
  * This has been written according to the OPenTypeFont specifications. This may be found <a href="http://www.microsoft.com/typography/otspec/gsub.htm">here</a>.
  * </p>
- * 
  * @author <a href="mailto:paawak@gmail.com">Palash Ray</a>
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class GlyphSubstitutionTableReader extends OpenTypeFontTableReader {
 
     private final int[] glyphWidthsByIndex;

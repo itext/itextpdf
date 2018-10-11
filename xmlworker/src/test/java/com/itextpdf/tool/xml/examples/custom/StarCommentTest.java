@@ -46,7 +46,9 @@ import com.itextpdf.tool.xml.examples.SampleTest;
 
 /**
  * Created by pavel.morozov on 3/2/2015.
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class StarCommentTest extends SampleTest {
     protected String getTestName() {
         return "starComment";

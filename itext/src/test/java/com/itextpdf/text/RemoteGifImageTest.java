@@ -51,6 +51,10 @@ import java.io.IOException;
 import org.junit.Before;
 import org.junit.Test;
 
+/**
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
+ */
+@Deprecated
 public class RemoteGifImageTest {
 
     private final String[] GIF_LOCATION = {

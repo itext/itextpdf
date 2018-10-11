@@ -50,7 +50,9 @@ import java.lang.reflect.Method;
  * DO NOT CHANGE THE VERSION INFORMATION WITHOUT PERMISSION OF THE COPYRIGHT HOLDERS OF ITEXT.
  * Changing the version makes it extremely difficult to debug an application.
  * Also, the nature of open source software is that you honor the copyright of the original creators of the software.
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public final class Version {
 
     private static final Object staticLock = new Object();
@@ -67,12 +69,12 @@ public final class Version {
 	 * iText is a registered trademark by iText Group NV.
 	 * Please don't change this constant.
 	 */
-	private final String iText = "iText\u00ae";
+	private final String iText = "iText\u00ae pdfXFA";
 	/**
 	 * This String contains the version number of this iText release.
 	 * For debugging purposes, we request you NOT to change this constant.
 	 */
-	private final String release = "5.5.14-SNAPSHOT";
+    private final String release = "1.0.4-SNAPSHOT";
 	/**
 	 * This String contains the iText version as shown in the producer line.
 	 * iText is a product developed by iText Group NV.
@@ -102,7 +104,8 @@ public final class Version {
             if(klass != null) {
                 Class[] cArg  = {String.class};
                 Method m = klass.getMethod("getLicenseeInfoForVersion",cArg);
-                Object[] args = {localVersion.release};
+                //Actual iText7 version is used here to get correct license info
+                Object[] args = {"7.0"};
                 String[] info = (String[]) m.invoke(klass.newInstance(),args);
                 if (info[3] != null && info[3].trim().length() > 0) {
                     localVersion.key = info[3];

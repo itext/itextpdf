@@ -46,7 +46,9 @@ import java.io.IOException;
 /**
  * A RandomAccessSource that is based on an underlying byte array 
  * @since 5.3.5
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 class ArrayRandomAccessSource implements RandomAccessSource {
 	private byte[] array;
 	
