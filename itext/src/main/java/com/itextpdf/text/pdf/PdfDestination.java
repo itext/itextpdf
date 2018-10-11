@@ -47,8 +47,9 @@ import java.util.StringTokenizer;
 
 /**
  * A <CODE>PdfDestination</CODE> is a reference to a location in a PDF file.
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
-
+@Deprecated
 public class PdfDestination extends PdfArray {
     
     // public static final member-variables

@@ -45,15 +45,15 @@ package com.itextpdf.text.pdf;
 
 /**
  * Signals that a bad PDF format has been used to construct a <CODE>PdfObject</CODE>.
- *
  * @see		PdfException
  * @see		PdfBoolean
  * @see		PdfNumber
  * @see		PdfString
  * @see		PdfName
  * @see		PdfDictionary
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
-
+@Deprecated
 public class BadPdfFormatException extends PdfException {
     
     // constructors

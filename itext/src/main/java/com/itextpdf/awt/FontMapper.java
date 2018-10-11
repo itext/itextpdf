@@ -43,17 +43,18 @@
  */
 package com.itextpdf.awt;
 
-import java.awt.Font;
-
 import com.itextpdf.text.pdf.BaseFont;
+
+import java.awt.*;
 
 /**
  * A FontMapper implementation handles mappings between AWT Fonts and PDF
  * fonts. An interface is used instead of a fixed class because there isn't
  * an exact correlation between the font types, so each application is free
  * to define a mapping which is appropriate for it.
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
-
+@Deprecated
 public interface FontMapper {
 
     /**

@@ -44,6 +44,10 @@ package com.itextpdf.tool.xml.examples.css.font.font_style.div;
 
 import com.itextpdf.tool.xml.examples.SampleTest;
 
+/**
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
+ */
+@Deprecated
 public class Font_style_div01 extends SampleTest {
     protected String getTestName() {
         return  "font_style_div01";

@@ -42,16 +42,20 @@
  * address: sales@itextpdf.com
  */
 package com.itextpdf.text.pdf;
+
+import com.itextpdf.text.log.Counter;
+import com.itextpdf.text.log.CounterFactory;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.HashMap;
 
-import com.itextpdf.text.log.Counter;
-import com.itextpdf.text.log.CounterFactory;
 /** Reads an FDF form and makes the fields available
  * @author Paulo Soares
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class FdfReader extends PdfReader {
 
     HashMap<String, PdfDictionary> fields;

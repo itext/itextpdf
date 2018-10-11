@@ -49,8 +49,9 @@ import com.itextpdf.text.xml.simpleparser.NewLineHandler;
  * Always returns false.
  * @author Balder
  * @since 5.0.6
- *
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class NeverNewLineHandler implements NewLineHandler {
 
 	/*

@@ -51,8 +51,9 @@ import java.util.Iterator;
  * This class captures an AcroForm on input. Basically, it extends Dictionary
  * by indexing the fields of an AcroForm
  * @author Mark Thompson
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
-
+@Deprecated
 public class PRAcroForm extends PdfDictionary {
 
     /**

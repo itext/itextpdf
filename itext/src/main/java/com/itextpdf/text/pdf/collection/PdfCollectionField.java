@@ -54,8 +54,9 @@ import com.itextpdf.text.error_messages.MessageLocalization;
 
 /**
  * @author blowagie
- *
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class PdfCollectionField extends PdfDictionary {
 	/** A possible type of collection field. */
 	public static final int TEXT = 0;

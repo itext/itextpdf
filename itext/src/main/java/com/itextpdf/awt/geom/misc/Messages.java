@@ -43,8 +43,9 @@ import java.util.ResourceBundle;
  * is looked up, or resource bundle support is not available, the key itself
  * will be returned as the associated message. This means that the <em>KEY</em>
  * should a reasonable human-readable (English) string.
- * 
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class Messages {
 
     // ResourceBundle holding the system messages.

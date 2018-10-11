@@ -67,7 +67,9 @@ import java.util.Map;
 /**
  * @author redlab_b
  *
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class LoadCssThroughLinkStyleTagTest {
 
 	private static final String HTML1 = "<html><head><link type='text/css' rel='stylesheet' href='style.css'/></head><body><p>Import css files test</p></body></html>";

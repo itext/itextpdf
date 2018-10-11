@@ -43,18 +43,18 @@
  */
 package com.itextpdf.text.pdf;
 
+import com.itextpdf.text.DocWriter;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.ExceptionConverter;
+import com.itextpdf.text.error_messages.MessageLocalization;
+import com.itextpdf.text.pdf.internal.PdfIsoKeys;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.zip.Deflater;
 import java.util.zip.DeflaterOutputStream;
-import com.itextpdf.text.error_messages.MessageLocalization;
-
-import com.itextpdf.text.DocWriter;
-import com.itextpdf.text.Document;
-import com.itextpdf.text.ExceptionConverter;
-import com.itextpdf.text.pdf.internal.PdfIsoKeys;
 
 /**
  * <CODE>PdfStream</CODE> is the Pdf stream object.
@@ -72,11 +72,11 @@ import com.itextpdf.text.pdf.internal.PdfIsoKeys;
  * Remark: In this version only the FLATEDECODE-filter is supported.<BR>
  * This object is described in the 'Portable Document Format Reference Manual version 1.7'
  * section 3.2.7 (page 60-63).<BR>
- *
  * @see		PdfObject
  * @see		PdfDictionary
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
-
+@Deprecated
 public class PdfStream extends PdfDictionary {
     
     // membervariables

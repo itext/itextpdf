@@ -49,6 +49,10 @@ import com.itextpdf.xmp.XMPMeta;
 import com.itextpdf.xmp.XMPUtils;
 import com.itextpdf.xmp.options.PropertyOptions;
 
+/**
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
+ */
+@Deprecated
 public class DublinCoreProperties {
     /** External Contributors to the resource (other than the authors). */
     public static final String CONTRIBUTOR = "contributor";

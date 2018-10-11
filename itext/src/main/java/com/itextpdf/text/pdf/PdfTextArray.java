@@ -53,8 +53,9 @@ import java.util.ArrayList;
  * see reference manual version 1.3 section 8.7.5, pages 346-347.
  *       OR
  * see reference manual version 1.6 section 5.3.2, pages 378-379.
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
-
+@Deprecated
 public class PdfTextArray{
     ArrayList<Object> arrayList = new ArrayList<Object>();
 

@@ -53,7 +53,9 @@ import java.util.HashMap;
 
 /**
  * Class that contains a map with the different message digest algorithms.
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class DigestAlgorithms {
 
 	/** Algorithm available for signatures since PDF 1.3 */

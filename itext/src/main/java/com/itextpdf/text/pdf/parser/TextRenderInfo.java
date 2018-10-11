@@ -43,15 +43,15 @@
  */
 package com.itextpdf.text.pdf.parser;
 
-import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.pdf.BaseFont;
 import com.itextpdf.text.pdf.DocumentFont;
 import com.itextpdf.text.pdf.PdfString;
+
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * Provides information and calculations needed by render listeners
@@ -60,7 +60,9 @@ import com.itextpdf.text.pdf.PdfString;
  * This is passed between the {@link PdfContentStreamProcessor} and
  * {@link RenderListener} objects as text rendering operations are
  * discovered
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class TextRenderInfo {
 
     private final PdfString string;

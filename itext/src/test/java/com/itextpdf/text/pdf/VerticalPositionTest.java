@@ -52,6 +52,10 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+/**
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
+ */
+@Deprecated
 public class VerticalPositionTest {
     private static String CMP_FOLDER ="./src/test/resources/com/itextpdf/text/pdf/VerticalPositionTest/";
     private static String OUTPUT_FOLDER = "./target/com/itextpdf/test/pdf/VerticalPositionTest/";

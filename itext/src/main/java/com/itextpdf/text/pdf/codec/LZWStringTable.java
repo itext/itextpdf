@@ -60,7 +60,9 @@ import java.io.PrintStream;
  * The strLen_ table to give quick access to the lenght of an expanded
  * code for use by the <code>expandCode</code> method added by Robin.
  * @since 5.0.2
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class LZWStringTable
 {
     /** codesize + Reserved Codes */

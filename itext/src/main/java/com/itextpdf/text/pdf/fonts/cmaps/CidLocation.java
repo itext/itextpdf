@@ -47,9 +47,10 @@ import com.itextpdf.text.pdf.PRTokeniser;
 import java.io.IOException;
 
 /**
- *
  * @author psoares
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public interface CidLocation {
     public PRTokeniser getLocation(String location) throws IOException ;
 }

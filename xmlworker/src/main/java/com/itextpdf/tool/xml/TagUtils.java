@@ -53,7 +53,9 @@ import com.itextpdf.tool.xml.exceptions.NoSiblingException;
  * Utilities that perform operations on tags.
  * @author Emiel Ackermann
  *
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class TagUtils {
 
 	private static final TagUtils myself = new TagUtils();

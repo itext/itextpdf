@@ -43,6 +43,9 @@
  */
 package com.itextpdf.text.pdf.security;
 
+import com.itextpdf.text.log.Logger;
+import com.itextpdf.text.log.LoggerFactory;
+
 import java.io.IOException;
 import java.net.URL;
 import java.security.GeneralSecurityException;
@@ -54,13 +57,12 @@ import java.util.Date;
 import java.util.Enumeration;
 import java.util.List;
 
-import com.itextpdf.text.log.Logger;
-import com.itextpdf.text.log.LoggerFactory;
-
 /**
  * Class that allows you to verify a certificate against
  * one or more Certificate Revocation Lists.
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class CRLVerifier extends RootStoreVerifier {
 	
 	/** The Logger instance */

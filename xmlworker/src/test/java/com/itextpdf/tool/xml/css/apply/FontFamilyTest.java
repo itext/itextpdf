@@ -53,6 +53,10 @@ import java.io.IOException;
 
 import static org.junit.Assert.assertEquals;
 
+/**
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
+ */
+@Deprecated
 public class FontFamilyTest {
 	static {
 		LoggerFactory.getInstance().setLogger(new SysoLogger(3));

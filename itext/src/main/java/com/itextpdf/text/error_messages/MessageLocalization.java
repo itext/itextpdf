@@ -58,7 +58,9 @@ import java.util.HashMap;
  * The internal file encoding is UTF-8 without any escape chars, it's not a
  * normal property file. See en.lng for more information on the internal format.
  * @author Paulo Soares (psoares@glintt.com)
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public final class MessageLocalization {
     private static HashMap<String, String> defaultLanguage = new HashMap<String, String>();
     private static HashMap<String, String> currentLanguage;

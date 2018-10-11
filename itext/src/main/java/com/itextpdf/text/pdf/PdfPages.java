@@ -43,12 +43,12 @@
  */
 package com.itextpdf.text.pdf;
 
-import java.io.IOException;
-import java.util.ArrayList;
-
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.ExceptionConverter;
 import com.itextpdf.text.error_messages.MessageLocalization;
+
+import java.io.IOException;
+import java.util.ArrayList;
 
 /**
  * <CODE>PdfPages</CODE> is the PDF Pages-object.
@@ -57,10 +57,10 @@ import com.itextpdf.text.error_messages.MessageLocalization;
  * This tree defines the ordering of the pages in the document.<BR>
  * This object is described in the 'Portable Document Format Reference Manual version 1.3'
  * section 6.3 (page 71-73)
- *
  * @see		PdfPage
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
-
+@Deprecated
 public class PdfPages {
 
     private ArrayList<PdfIndirectReference> pages = new ArrayList<PdfIndirectReference>();

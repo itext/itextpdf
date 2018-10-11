@@ -61,7 +61,9 @@ import java.io.IOException;
 
 /**
  * Helps to locate xml stream inside PDF document with Xfa form.
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class XfaXmlLocator implements XmlLocator {
 
     public XfaXmlLocator(PdfStamper stamper) throws DocumentException, IOException {
