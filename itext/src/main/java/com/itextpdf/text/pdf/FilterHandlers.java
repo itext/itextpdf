@@ -58,12 +58,20 @@ import com.itextpdf.text.pdf.codec.TIFFConstants;
 import com.itextpdf.text.pdf.codec.TIFFFaxDecoder;
 import com.itextpdf.text.pdf.codec.TIFFFaxDecompressor;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Encapsulates filter behavior for PDF streams.  Classes generally interace with this
  * using the static getDefaultFilterHandlers() method, then obtain the desired {@link FilterHandler}
  * via a lookup.
  * @since 5.0.4
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 // Dev note:  we eventually want to refactor PdfReader so all of the existing filter functionality is moved into this class
 // it may also be better to split the sub-classes out into a separate package 
 public final class FilterHandlers {

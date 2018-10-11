@@ -33,13 +33,13 @@ package com.itextpdf.xmp.options;
 import com.itextpdf.xmp.XMPError;
 import com.itextpdf.xmp.XMPException;
 
-
 /**
  * The property flags are used when properties are fetched from the <code>XMPMeta</code>-object
  * and provide more detailed information about the property.
- * 
  * @since   03.07.2006
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public final class PropertyOptions extends Options
 {
 	/** */

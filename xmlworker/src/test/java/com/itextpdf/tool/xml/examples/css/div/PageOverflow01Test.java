@@ -68,6 +68,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 
+/**
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
+ */
+@Deprecated
 public class PageOverflow01Test  extends SampleTest {
     protected String getTestName() {
         return  "pageOverflow01";

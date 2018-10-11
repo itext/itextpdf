@@ -34,12 +34,12 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-
 /**
  * Byte buffer container including length of valid data.
- * 
  * @since   11.10.2006
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class ByteBuffer
 {
 	/** */

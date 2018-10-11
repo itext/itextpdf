@@ -9,10 +9,10 @@
     <relativePath />
   </parent>
 
-  <artifactId>itextpdf</artifactId>
-  <version>5.5.14-SNAPSHOT</version>
+  <artifactId>xfa-itextpdf</artifactId>
+  <version>3.0.1-SNAPSHOT</version>
 
-  <name>iText Core</name>
+  <name>pdfXFA iText Core</name>
   <description>A Free Java-PDF library</description>
   <url>http://itextpdf.com</url>
 
@@ -63,24 +63,51 @@
   </ciManagement>
 
   <properties>
+    <java.version>1.8</java.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <argLine>-Xms512m -Xmx1024m</argLine>
     <checkstyle.header.file>license.txt</checkstyle.header.file>
+    <itextcore.version>7.1.14</itextcore.version>
     <sonar.language>java</sonar.language>
     <sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
     <sonar.jacoco.reportPath>${project.basedir}/target/jacoco.exec</sonar.jacoco.reportPath>
   </properties>
 
+  <repositories>
+    <repository>
+      <id>iText Repository</id>
+      <name>iText Repository</name>
+      <url>https://repo.itextsupport.com/releases</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>
+    <repository>
+      <id>Maven Central Repository</id>
+      <name>Maven Central Repository</name>
+      <url>http://repo1.maven.org/maven2/</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>
+  </repositories>
+
   <dependencies>
     <dependency>
       <groupId>org.bouncycastle</groupId>
-      <artifactId>bcprov-jdk15to18</artifactId>
+      <artifactId>bcprov-jdk18on</artifactId>
       <version>1.71</version>
       <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>org.bouncycastle</groupId>
-      <artifactId>bcpkix-jdk15to18</artifactId>
+      <artifactId>bcpkix-jdk18on</artifactId>
       <version>1.71</version>
       <optional>true</optional>
     </dependency>
@@ -96,6 +123,19 @@
       <version>1.5.8</version>
       <optional>true</optional>
     </dependency>
+    <dependency>
+      <groupId>com.itextpdf</groupId>
+      <artifactId>font-asian</artifactId>
+      <version>${itextcore.version}</version>
+      <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>com.itextpdf</groupId>
+          <artifactId>itextpdf</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+
   </dependencies>
 
   <build>
@@ -114,13 +154,6 @@
 
     <testResources>
       <testResource>
-        <directory>src/main/resources</directory>
-        <includes>
-          <include>com/itextpdf/text/pdf/fonts/cmaps/**</include>
-          <include>**/cmap_info.txt</include>
-        </includes>
-      </testResource>
-      <testResource>
         <directory>src/test/resources</directory>
         <includes>
           <include>**/*.*</include>
@@ -129,7 +162,15 @@
     </testResources>
 
     <plugins>
-
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.10.1</version>
+        <configuration>
+          <source>${java.version}</source>
+          <target>${java.version}</target>
+        </configuration>
+      </plugin>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>buildnumber-maven-plugin</artifactId>
@@ -325,41 +366,6 @@
       </dependencies>
     </profile>
     <!-- END: Specific to mapping unit tests and covered code -->
-
-    <profile>
-      <id>compileWithLegacyJDK</id>
-      <!--
-        NOTE
-        Make sure to set the environment variable JAVA5_HOME
-        to your JDK 1.5 HOME when using this profile.
-      -->
-      <properties>
-        <java.version>1.5</java.version>
-        <java.home>${env.JAVA5_HOME}</java.home>
-        <java.libs>${java.home}/jre/lib</java.libs>
-        <java.bootclasspath>${java.libs}/rt.jar${path.separator}${java.libs}/jce.jar</java.bootclasspath>
-      </properties>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-compiler-plugin</artifactId>
-            <version>3.6.1</version>
-            <configuration>
-              <source>${java.version}</source>
-              <target>${java.version}</target>
-              <compilerArguments>
-                <bootclasspath>${java.bootclasspath}</bootclasspath>
-              </compilerArguments>
-              <compilerVersion>${java.version}</compilerVersion>
-              <fork>true</fork>
-              <executable>${java.home}/bin/javac</executable>
-            </configuration>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-
   </profiles>
 
 </project>

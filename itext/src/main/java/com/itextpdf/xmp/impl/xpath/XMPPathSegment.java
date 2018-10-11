@@ -30,12 +30,12 @@
 
 package com.itextpdf.xmp.impl.xpath;
 
-
 /**
  * A segment of a parsed <code>XMPPath</code>.
- *  
  * @since   23.06.2006
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class XMPPathSegment
 {
 	/** name of the path segment */

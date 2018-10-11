@@ -56,6 +56,10 @@ import java.io.IOException;
 
 import org.junit.Assert;
 
+/**
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
+ */
+@Deprecated
 public class OcgRemovalTest {
 
     private static final String INPUT_DIR = "./src/test/resources/com/itextpdf/text/pdf/ocg/";

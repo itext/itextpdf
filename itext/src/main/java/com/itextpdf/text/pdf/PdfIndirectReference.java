@@ -58,8 +58,9 @@ import java.io.OutputStream;
  *
  * @see		PdfObject
  * @see		PdfIndirectObject
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
-
+@Deprecated
 public class PdfIndirectReference extends PdfObject {
     
     // membervariables

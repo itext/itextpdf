@@ -54,6 +54,10 @@ import org.junit.Test;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.Paragraph;
 
+/**
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
+ */
+@Deprecated
 public class BookmarksTest {
 
     private static final String TITLE = "1.\u00a0Paragraph 1";

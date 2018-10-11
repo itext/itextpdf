@@ -30,9 +30,6 @@
 
 package com.itextpdf.xmp.impl;
 
-import java.util.GregorianCalendar;
-import java.util.Iterator;
-
 import com.itextpdf.xmp.XMPConst;
 import com.itextpdf.xmp.XMPDateTime;
 import com.itextpdf.xmp.XMPDateTimeFactory;
@@ -45,12 +42,15 @@ import com.itextpdf.xmp.impl.xpath.XMPPathSegment;
 import com.itextpdf.xmp.options.AliasOptions;
 import com.itextpdf.xmp.options.PropertyOptions;
 
+import java.util.GregorianCalendar;
+import java.util.Iterator;
 
 /**
  * Utilities for <code>XMPNode</code>.
- * 
  * @since   Aug 28, 2006
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class XMPNodeUtils implements XMPConst
 {
 	/** */

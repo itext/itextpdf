@@ -18,10 +18,11 @@ package com.itextpdf.text.pdf.qrcode;
 
 /**
  * These are a set of hints that you may pass to Writers to specify their behavior.
- *
  * @author dswitkin@google.com (Daniel Switkin)
  * @since 5.0.2
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public final class EncodeHintType {
 
   /**

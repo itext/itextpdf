@@ -48,7 +48,9 @@ import com.itextpdf.tool.xml.examples.SampleTest;
  * 5/7/2014 - 10:40 AM
  *
  * @author Michael Demey
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class Small02Test extends SampleTest {
     protected String getTestName() {
         return  "small02";

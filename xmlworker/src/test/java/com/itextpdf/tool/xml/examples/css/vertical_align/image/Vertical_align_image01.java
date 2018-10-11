@@ -44,6 +44,10 @@ package com.itextpdf.tool.xml.examples.css.vertical_align.image;
 
 import com.itextpdf.tool.xml.examples.SampleTest;
 
+/**
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
+ */
+@Deprecated
 public class Vertical_align_image01 extends SampleTest {
     protected String getTestName() {
         return  "vertical_align_image01";

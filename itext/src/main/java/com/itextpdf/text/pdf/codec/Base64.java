@@ -116,7 +116,9 @@ import com.itextpdf.text.error_messages.MessageLocalization;
  * @author Robert Harder
  * @author rob@iharder.net
  * @version 2.2.1
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class Base64 {
     
     /* ********  P U B L I C   F I E L D S  ******** */

@@ -50,7 +50,9 @@ import com.itextpdf.text.pdf.PdfContentByte;
  * vertical position. Trivial implementations are LineSeparator and VerticalPositionMark.
  * It is also used to define what has to be drawn by a separator chunk.
  * @since 2.1.2
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public interface DrawInterface {
 	/**
 	 * Implement this method if you want to draw something at the current Y position

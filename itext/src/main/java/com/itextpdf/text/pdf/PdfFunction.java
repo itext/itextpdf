@@ -43,13 +43,14 @@
  */
 package com.itextpdf.text.pdf;
 
-import java.io.IOException;
-
 import com.itextpdf.text.ExceptionConverter;
+
+import java.io.IOException;
 /** Implements PDF functions.
- *
  * @author Paulo Soares
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class PdfFunction {
     
     protected PdfWriter writer;
