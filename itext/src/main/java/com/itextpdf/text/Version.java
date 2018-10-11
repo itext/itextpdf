@@ -60,10 +60,10 @@ public final class Version {
     private static final Object staticLock = new Object();
 
 	// membervariables
-    
+
     /** String that will indicate if the AGPL version is used. */
     public static String AGPL = " (AGPL-version)";
-    
+
 	/** The iText version instance. */
 	private static volatile Version version = null;
 	/**
@@ -76,7 +76,7 @@ public final class Version {
 	 * This String contains the version number of this iText release.
 	 * For debugging purposes, we request you NOT to change this constant.
 	 */
-    private final String release = "1.0.4-SNAPSHOT";
+    private final String release = "2.0.4-SNAPSHOT";
 	/**
 	 * This String contains the iText version as shown in the producer line.
 	 * iText is a product developed by iText Group NV.
@@ -196,7 +196,7 @@ public final class Version {
     public String getKey() {
     	return key;
     }
-    
+
     /**
      * Checks if the AGPL version is used.
      * @return returns true if the AGPL version is used.
