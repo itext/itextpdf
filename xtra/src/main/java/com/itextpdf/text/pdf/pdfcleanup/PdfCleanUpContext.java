@@ -53,7 +53,9 @@ import java.util.Stack;
 /**
  * Stores parameters related to specific context which is either page or xobject
  * (in other words: which is the object having contents stream)
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 class PdfCleanUpContext {
 
     private PdfDictionary resources;

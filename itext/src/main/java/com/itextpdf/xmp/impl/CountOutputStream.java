@@ -33,12 +33,12 @@ package com.itextpdf.xmp.impl;
 import java.io.IOException;
 import java.io.OutputStream;
 
-
 /**
  * An <code>OutputStream</code> that counts the written bytes.
- * 
  * @since   08.11.2006
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public final class CountOutputStream extends OutputStream
 {
 	/** the decorated output stream */

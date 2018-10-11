@@ -58,11 +58,11 @@ import java.util.SimpleTimeZone;
  * </BLOCKQUOTE><P>
  * This object is described in the 'Portable Document Format Reference Manual version 1.3'
  * section 7.2 (page 183-184)
- *
  * @see		PdfString
  * @see		java.util.GregorianCalendar
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
-
+@Deprecated
 public class PdfDate extends PdfString {
 
     private static final int DATE_SPACE[] = {Calendar.YEAR, 4, 0, Calendar.MONTH, 2, -1, Calendar.DAY_OF_MONTH, 2, 0,

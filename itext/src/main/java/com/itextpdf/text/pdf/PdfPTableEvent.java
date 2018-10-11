@@ -44,9 +44,10 @@
 package com.itextpdf.text.pdf;
 
 /** An interface that can be used to retrieve the position of cells in <CODE>PdfPTable</CODE>.
- *
  * @author Paulo Soares
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public interface PdfPTableEvent {
     
     /** This method is called at the end of the table rendering. The text or graphics are added to

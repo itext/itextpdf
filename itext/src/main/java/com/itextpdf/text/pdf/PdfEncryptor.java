@@ -58,7 +58,9 @@ import com.itextpdf.text.DocumentException;
 /** This class takes any PDF and returns exactly the same but
  * encrypted. All the content, links, outlines, etc, are kept.
  * It is also possible to change the info dictionary.
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public final class PdfEncryptor {
 
     private PdfEncryptor(){

@@ -43,22 +43,23 @@
  */
 package com.itextpdf.text.pdf.draw;
 
-import java.util.List;
-import java.util.ArrayList;
-
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.ElementListener;
 import com.itextpdf.text.pdf.PdfContentByte;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Helper class implementing the DrawInterface. Can be used to add
  * horizontal or vertical separators. Won't draw anything unless
  * you implement the draw method.
  * @since	2.1.2
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
-
+@Deprecated
 public class VerticalPositionMark implements DrawInterface, Element {
 
     /** Another implementation of the DrawInterface; its draw method will overrule LineSeparator.draw(). */

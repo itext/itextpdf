@@ -42,17 +42,17 @@
  * address: sales@itextpdf.com
  */
 package com.itextpdf.text.pdf;
-import java.io.IOException;
-
-import com.itextpdf.text.error_messages.MessageLocalization;
-
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Image;
+import com.itextpdf.text.error_messages.MessageLocalization;
+
+import java.io.IOException;
 
 /** Represents an imported page.
- *
  * @author Paulo Soares
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class PdfImportedPage extends com.itextpdf.text.pdf.PdfTemplate {
 
     PdfReaderInstance readerInstance;

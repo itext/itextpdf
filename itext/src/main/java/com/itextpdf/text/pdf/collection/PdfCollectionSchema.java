@@ -46,6 +46,10 @@ package com.itextpdf.text.pdf.collection;
 import com.itextpdf.text.pdf.PdfDictionary;
 import com.itextpdf.text.pdf.PdfName;
 
+/**
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
+ */
+@Deprecated
 public class PdfCollectionSchema extends PdfDictionary {
 	/**
 	 * Creates a Collection Schema dictionary.

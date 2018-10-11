@@ -51,7 +51,9 @@ import java.nio.channels.FileChannel;
  * This class is an internal implementation detail of the {@link FileChannelRandomAccessSource} class and
  * shouldn't be used by general iText users.
  * @since 5.3.5
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 class MappedChannelRandomAccessSource implements RandomAccessSource {
 	/**
 	 * The underlying channel

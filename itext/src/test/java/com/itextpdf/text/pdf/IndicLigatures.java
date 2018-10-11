@@ -50,6 +50,10 @@ import com.itextpdf.text.pdf.languages.DevanagariLigaturizer;
 import com.itextpdf.text.pdf.languages.GujaratiLigaturizer;
 import com.itextpdf.text.pdf.languages.IndicLigaturizer;
 
+/**
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
+ */
+@Deprecated
 public class IndicLigatures {
 
     @Test

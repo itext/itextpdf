@@ -52,9 +52,10 @@ import java.util.Set;
 
 /**
  * As subpath is a part of a path comprising a sequence of connected segments.
- *
  * @since 5.5.6
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class Subpath {
 
     private Point2D startPoint;

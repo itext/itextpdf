@@ -44,6 +44,10 @@ package com.itextpdf.tool.xml.examples.css.background.background_color.cell;
 
 import com.itextpdf.tool.xml.examples.SampleTest;
 
+/**
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
+ */
+@Deprecated
 public class Background_color_cell01Test extends SampleTest {
     protected String getTestName() {
         return  "background_color_cell01";

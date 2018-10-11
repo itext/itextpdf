@@ -30,18 +30,19 @@
 
 package com.itextpdf.xmp.options;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import com.itextpdf.xmp.XMPError;
 import com.itextpdf.xmp.XMPException;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * The base class for a collection of 32 flag bits. Individual flags are defined as enum value bit
  * masks. Inheriting classes add convenience accessor methods.
- * 
  * @since 24.01.2006
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public abstract class Options
 {
 	/** the internal int containing all options */

@@ -62,7 +62,9 @@ import java.util.Map.Entry;
  * Applies CSS on a {@link Paragraph}
  *
  * @author itextpdf.com
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class ParagraphCssApplier implements CssApplier<Paragraph> {
 
 

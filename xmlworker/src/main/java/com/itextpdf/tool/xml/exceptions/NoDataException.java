@@ -45,7 +45,9 @@ package com.itextpdf.tool.xml.exceptions;
  * Thrown when something that needs data to function does not have that data.
  * @author redlab_b
  *
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class NoDataException extends Exception {
 
 	/**

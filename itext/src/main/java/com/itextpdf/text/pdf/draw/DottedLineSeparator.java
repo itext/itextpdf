@@ -50,7 +50,9 @@ import com.itextpdf.text.pdf.PdfContentByte;
  * Can be added directly to a document or column.
  * Can also be used to create a separator chunk.
  * @since	2.1.2 
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class DottedLineSeparator extends LineSeparator {
 
 	/** the gap between the dots. */

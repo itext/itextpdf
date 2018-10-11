@@ -43,6 +43,9 @@
  */
 package com.itextpdf.text.pdf.codec;
 
+import com.itextpdf.text.error_messages.MessageLocalization;
+import com.itextpdf.text.pdf.RandomAccessFileOrArray;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Iterator;
@@ -50,9 +53,6 @@ import java.util.SortedMap;
 import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
-
-import com.itextpdf.text.error_messages.MessageLocalization;
-import com.itextpdf.text.pdf.RandomAccessFileOrArray;
 
 /**
  * Class to read a JBIG2 file at a basic level: understand all the segments,
@@ -63,10 +63,10 @@ import com.itextpdf.text.pdf.RandomAccessFileOrArray;
  * in a PDF.
  *
  * TODO: the indeterminate-segment-size value of dataLength, else?
- *
  * @since 2.1.5
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
-
+@Deprecated
 public class JBIG2SegmentReader {
 
 	public static final int SYMBOL_DICTIONARY = 0; //see 7.4.2.

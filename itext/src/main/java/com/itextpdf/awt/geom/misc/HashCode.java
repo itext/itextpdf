@@ -62,9 +62,10 @@ package com.itextpdf.awt.geom.misc;
  *     return new HashCode().append(id).append(name).append(weight).hashCode();
  * }
  * </code></pre>
- * 
  * @see java.util.List#hashCode()
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public final class HashCode {
     /**
      * The hashCode value before any data is appended, equals to 1. 

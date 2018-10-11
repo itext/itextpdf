@@ -73,8 +73,10 @@ import java.util.List;
  * When this <CODE>PdfWriter</CODE> is added
  * to a certain <CODE>PdfDocument</CODE>, the PDF representation of every Element
  * added to this Document will be written to the outputstream.</P>
+ *
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
-
+@Deprecated
 public class PdfWriter extends DocWriter implements
 	PdfViewerPreferences,
 	PdfEncryptionSettings,
@@ -618,10 +620,13 @@ public class PdfWriter extends DocWriter implements
      *
      * @throws	DocumentException on error
      */
+    public static PdfWriter getInstance(final Document document, final OutputStream os) throws DocumentException {
+        return getInstance(document, os, Version.getInstance().getVersion());
+    }
 
-    public static PdfWriter getInstance(final Document document, final OutputStream os)
-    throws DocumentException {
-        PdfDocument pdf = new PdfDocument();
+    private static PdfWriter getInstance(final Document document, final OutputStream os, String producer)
+            throws DocumentException {
+        PdfDocument pdf = new PdfDocument(producer);
         document.addDocListener(pdf);
         PdfWriter writer = new PdfWriter(pdf, os);
         pdf.addWriter(writer);
@@ -1282,7 +1287,7 @@ public class PdfWriter extends DocWriter implements
                     }
                     catalog.put(PdfName.METADATA, body.add(xmp).getIndirectReference());
                 }
-                getInfo().put(PdfName.PRODUCER, new PdfString(Version.getInstance().getVersion()));
+                getInfo().put(PdfName.PRODUCER, pdf.getInfo().getAsString(PdfName.PRODUCER));
                 // [C10] make pdfx conformant
                 if (isPdfX()) {
                     completeInfoDictionary(getInfo());

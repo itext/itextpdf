@@ -49,7 +49,9 @@ import com.itextpdf.text.Rectangle;
 /**
  * A {@link RenderFilter} that only allows text within a specified rectangular region
  * @since 5.0.1
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class RegionTextRenderFilter extends RenderFilter {
 
     /** the region to allow text from */

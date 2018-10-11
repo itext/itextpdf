@@ -42,6 +42,7 @@
  * address: sales@itextpdf.com
  */
 package com.itextpdf.text.pdf;
+
 import com.itextpdf.text.error_messages.MessageLocalization;
 
 import com.itextpdf.text.Rectangle;
@@ -56,9 +57,10 @@ import com.itextpdf.text.BaseColor;
  * <pre>
  *n = 8; // horizontal distance between the two barcodes
  * </pre>
- *
  * @author Paulo Soares
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class BarcodeEANSUPP extends Barcode{
     
     /** The barcode with the EAN/UPC.

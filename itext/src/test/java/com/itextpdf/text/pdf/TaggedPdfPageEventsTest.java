@@ -58,6 +58,10 @@ import org.junit.Test;
 
 import junit.framework.Assert;
 
+/**
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
+ */
+@Deprecated
 public class TaggedPdfPageEventsTest extends PdfPageEventHelper {
 
     private static String CMP_FOLDER ="./src/test/resources/com/itextpdf/text/pdf/TaggedPdfPageEventsTest/";

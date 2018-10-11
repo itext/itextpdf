@@ -49,7 +49,9 @@ import com.itextpdf.text.pdf.PdfName;
  * Identifier for use in the Names array that identifies the
  * internal data elements of the individual point arrays in the XPTS array
  * @since 5.1.0
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public enum PtIdentifier {
 	/** Latitude in degrees */
 	LATITUDE("LAT"),

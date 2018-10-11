@@ -56,7 +56,9 @@ import java.util.Map;
  * Subclass of XmpWriter that adds info about the PDF/A level.
  *
  * @see XmpWriter
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class PdfAXmpWriter extends XmpWriter {
 
     private static final String pdfUaExtension =

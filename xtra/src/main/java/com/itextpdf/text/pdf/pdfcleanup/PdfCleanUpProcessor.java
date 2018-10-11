@@ -57,7 +57,9 @@ import java.util.List;
  * Represents the main mechanism for cleaning a PDF document.
  *
  * @since 5.5.4
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class PdfCleanUpProcessor {
 
     /**

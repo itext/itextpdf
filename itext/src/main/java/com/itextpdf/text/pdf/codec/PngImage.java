@@ -118,9 +118,10 @@ import java.util.zip.InflaterInputStream;
 /** Reads a PNG image. All types of PNG can be read.
  * <p>
  * It is based in part in the JAI codec.
- *
  * @author  Paulo Soares
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class PngImage {
 /** Some PNG specific values. */
     public static final int[] PNGID = {137, 80, 78, 71, 13, 10, 26, 10};

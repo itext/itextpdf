@@ -9,10 +9,10 @@
     <relativePath />
   </parent>
 
-  <artifactId>itextpdf</artifactId>
-  <version>5.5.14-SNAPSHOT</version>
+  <artifactId>xfa-itextpdf</artifactId>
+  <version>3.0.0-SNAPSHOT</version>
 
-  <name>iText Core</name>
+  <name>pdfXFA iText Core</name>
   <description>A Free Java-PDF library</description>
   <url>http://itextpdf.com</url>
 
@@ -66,22 +66,48 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <argLine>-Xms512m -Xmx1024m</argLine>
     <checkstyle.header.file>license.txt</checkstyle.header.file>
+    <itextcore.version>7.1.14</itextcore.version>
     <sonar.language>java</sonar.language>
     <sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
     <sonar.jacoco.reportPath>${project.basedir}/target/jacoco.exec</sonar.jacoco.reportPath>
   </properties>
 
+  <repositories>
+    <repository>
+      <id>iText Repository</id>
+      <name>iText Repository</name>
+      <url>https://repo.itextsupport.com/releases</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>
+    <repository>
+      <id>Maven Central Repository</id>
+      <name>Maven Central Repository</name>
+      <url>http://repo1.maven.org/maven2/</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>
+  </repositories>
+
   <dependencies>
     <dependency>
       <groupId>org.bouncycastle</groupId>
-      <artifactId>bcprov-jdk15to18</artifactId>
-      <version>1.66</version>
+      <artifactId>bcprov-jdk15on</artifactId>
+      <version>1.64</version>
       <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>org.bouncycastle</groupId>
       <artifactId>bcpkix-jdk15on</artifactId>
-      <version>1.66</version>
+      <version>1.64</version>
       <optional>true</optional>
     </dependency>
     <dependency>
@@ -96,6 +122,19 @@
       <version>1.5.6</version>
       <optional>true</optional>
     </dependency>
+    <dependency>
+      <groupId>com.itextpdf</groupId>
+      <artifactId>font-asian</artifactId>
+      <version>${itextcore.version}</version>
+      <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>com.itextpdf</groupId>
+          <artifactId>itextpdf</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+
   </dependencies>
 
   <build>
@@ -113,13 +152,6 @@
     </resources>
 
     <testResources>
-      <testResource>
-        <directory>src/main/resources</directory>
-        <includes>
-          <include>com/itextpdf/text/pdf/fonts/cmaps/**</include>
-          <include>**/cmap_info.txt</include>
-        </includes>
-      </testResource>
       <testResource>
         <directory>src/test/resources</directory>
         <includes>
@@ -330,12 +362,12 @@
       <id>compileWithLegacyJDK</id>
       <!--
         NOTE
-        Make sure to set the environment variable JAVA5_HOME
-        to your JDK 1.5 HOME when using this profile.
+        Make sure to set the environment variable JAVA7_HOME
+        to your JDK 1.7 HOME when using this profile.
       -->
       <properties>
-        <java.version>1.5</java.version>
-        <java.home>${env.JAVA5_HOME}</java.home>
+        <java.version>1.7</java.version>
+        <java.home>${env.JAVA7_HOME}</java.home>
         <java.libs>${java.home}/jre/lib</java.libs>
         <java.bootclasspath>${java.libs}/rt.jar${path.separator}${java.libs}/jce.jar</java.bootclasspath>
       </properties>

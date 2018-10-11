@@ -47,7 +47,9 @@ package com.itextpdf.text.exceptions;
  * RuntimeException to indicate that the provided Image is invalid/corrupted.
  * Should only be thrown/not caught when ignoring invalid images.
  * @since 5.4.2
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class InvalidImageException extends RuntimeException {
 
     /** a serial version UID */

@@ -59,7 +59,9 @@ import java.util.StringTokenizer;
 
 /** Writes an FDF form.
  * @author Paulo Soares
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class FdfWriter {
     private static final byte[] HEADER_FDF = DocWriter.getISOBytes("%FDF-1.4\n%\u00e2\u00e3\u00cf\u00d3\n");
     HashMap<String, Object> fields = new HashMap<String, Object>();

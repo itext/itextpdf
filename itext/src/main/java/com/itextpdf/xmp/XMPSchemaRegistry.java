@@ -30,9 +30,9 @@
 
 package com.itextpdf.xmp;
 
-import java.util.Map;
-
 import com.itextpdf.xmp.properties.XMPAliasInfo;
+
+import java.util.Map;
 
 /**
  * The schema registry keeps track of all namespaces and aliases used in the XMP
@@ -59,9 +59,10 @@ import com.itextpdf.xmp.properties.XMPAliasInfo;
  * mean the alias can only be a simple property. It is OK to alias a top level
  * structure or array to an identical top level structure or array, or to the
  * first item of an array of structures.
- * 
  * @since 27.01.2006
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public interface XMPSchemaRegistry
 {
 	// ---------------------------------------------------------------------------------------------

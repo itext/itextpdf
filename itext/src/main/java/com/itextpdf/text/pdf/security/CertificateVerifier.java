@@ -55,7 +55,9 @@ import java.util.List;
  * be used in a chain. It wraps another <code>CertificateVerifier</code>
  * that is the next element in the chain of which the <code>verify()</code>
  * method will be called.
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class CertificateVerifier {
 
 	/** The previous CertificateVerifier in the chain of verifiers. */

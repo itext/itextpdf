@@ -52,7 +52,9 @@ import com.itextpdf.tool.xml.examples.SampleTest;
 /**
  *
  * @author Benoit
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class TableRunDirectionCssTest extends SampleTest {
     @Override
     protected String getTestName() {

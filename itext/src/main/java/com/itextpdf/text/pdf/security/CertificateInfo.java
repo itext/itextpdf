@@ -66,7 +66,9 @@ import com.itextpdf.text.error_messages.MessageLocalization;
 /**
  * Class containing static methods that allow you to get information from
  * an X509 Certificate: the issuer and the subject.
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class CertificateInfo {
 
 	// Inner classes

@@ -43,21 +43,22 @@
  */
 package com.itextpdf.text.pdf.events;
 
-import java.util.ArrayList;
-
 import com.itextpdf.text.Document;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.pdf.PdfPageEvent;
 import com.itextpdf.text.pdf.PdfWriter;
 
+import java.util.ArrayList;
+
 /**
  * If you want to add more than one page event to a PdfWriter,
  * you have to construct a PdfPageEventForwarder, add the
  * different events to this object and add the forwarder to
  * the PdfWriter.
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
-
+@Deprecated
 public class PdfPageEventForwarder implements PdfPageEvent {
 
 	/** ArrayList containing all the PageEvents that have to be executed. */

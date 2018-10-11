@@ -27,11 +27,12 @@ package com.itextpdf.text.pdf.qrcode;
  *
  * <p>The ordering of bits is row-major. Within each int, the least significant bits are used first,
  * meaning they represent lower x values. This is compatible with BitArray's implementation.</p>
- *
  * @author Sean Owen
  * @author dswitkin@google.com (Daniel Switkin)
  * @since 5.0.2
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public final class BitMatrix {
 
   // TODO: Just like BitArray, these need to be public so ProGuard can inline them.

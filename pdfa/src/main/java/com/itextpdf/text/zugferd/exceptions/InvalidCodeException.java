@@ -47,7 +47,9 @@ package com.itextpdf.text.zugferd.exceptions;
  * This exception is thrown when you try to create a ZUGFeRD XML file
  * using data that doesn't have the correct format, e.g. you have entered
  * "S" (which is a Tax Category code) when a Tax Type code is expected.
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class InvalidCodeException extends Exception {
     public InvalidCodeException(String code, String context) {
         super(String.format("%s is an invalid code for %s", code, context));

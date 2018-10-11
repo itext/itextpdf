@@ -85,7 +85,9 @@ import java.util.Collections;
 /**
  * This class is abstract to prevent old Surefire versions from
  * running it as a test and failing because it contains no tests.
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public abstract class XmlDSigTest {
 
 

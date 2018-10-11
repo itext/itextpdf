@@ -66,6 +66,11 @@ import java.io.OutputStream;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * @author Michael Demey
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
+ */
+@Deprecated
 public class FlatteningTest {
 
     private static final String RESOURCES_FOLDER = "./src/test/resources/com/itextpdf/text/pdf/FlatteningTest/";

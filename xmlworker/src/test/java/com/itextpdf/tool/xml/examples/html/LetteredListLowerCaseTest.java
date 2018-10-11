@@ -50,6 +50,10 @@ import com.itextpdf.tool.xml.examples.SampleTest;
 
 import java.io.FileOutputStream;
 
+/**
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
+ */
+@Deprecated
 public class LetteredListLowerCaseTest extends SampleTest {
     protected String getTestName() {
         return  "letteredListLowerCase";

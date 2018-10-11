@@ -52,7 +52,9 @@ import com.itextpdf.tool.xml.CustomContext;
  * A CustomContext that holds data in a Map
  * @author redlab_b
  *
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class MapContext implements CustomContext {
 
 	private final Map<String, Object> map;

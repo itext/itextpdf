@@ -48,7 +48,9 @@ import com.itextpdf.text.pdf.*;
 
 /**
  * A StructureItem that refers to an object from an OBJR dictionary.
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class StructureObject extends StructureItem {
 
 	/** The structure element of which the properties are stored. */
