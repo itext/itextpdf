@@ -59,6 +59,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
 
+/**
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
+ */
+@Deprecated
 public class AcroFieldsTest {
 
     private final String PDF_COMBO = "./src/test/resources/com/itextpdf/text/pdf/AcroFieldsTest/choice_field_order.pdf";

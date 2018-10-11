@@ -45,6 +45,10 @@ package com.itextpdf.text;
 
 import java.io.Serializable;
 
+/**
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
+ */
+@Deprecated
 public class AccessibleElementId implements Comparable<AccessibleElementId>, Serializable {
 
     private static int id_counter = 0;

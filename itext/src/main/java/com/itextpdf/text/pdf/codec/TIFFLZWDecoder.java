@@ -48,9 +48,9 @@ package com.itextpdf.text.pdf.codec;
 import com.itextpdf.text.error_messages.MessageLocalization;
 /**
  * A class for performing LZW decoding.
- *
- *
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class TIFFLZWDecoder {
     
     byte stringTable[][];

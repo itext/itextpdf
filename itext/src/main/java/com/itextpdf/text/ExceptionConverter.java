@@ -56,7 +56,9 @@ package com.itextpdf.text;
 /**
  * The ExceptionConverter changes a checked exception into an
  * unchecked exception.
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class ExceptionConverter extends RuntimeException {
     private static final long serialVersionUID = 8657630363395849399L;
 	/** we keep a handle to the wrapped exception */

@@ -43,22 +43,23 @@
  */
 package com.itextpdf.text.pdf;
 
+import com.itextpdf.text.DocWriter;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.pdf.interfaces.PdfEncryptionSettings;
+import com.itextpdf.text.pdf.interfaces.PdfViewerPreferences;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.security.cert.Certificate;
 import java.util.HashMap;
 import java.util.List;
 
-import com.itextpdf.text.DocWriter;
-import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.pdf.interfaces.PdfEncryptionSettings;
-import com.itextpdf.text.pdf.interfaces.PdfViewerPreferences;
-
 /**
  * Concatenates PDF documents including form fields. The rules for the form field
  * concatenation are the same as in Acrobat. All the documents are kept in memory unlike
  * PdfCopy.
  * @author  Paulo Soares
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
 @Deprecated
 public class PdfCopyFields

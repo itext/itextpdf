@@ -19,12 +19,13 @@ package com.itextpdf.text.pdf.qrcode;
 import java.util.ArrayList;
 
 /**
- * <p>Implements Reed-Solomon enbcoding, as the name implies.</p>
- *
+ * <p>Implements Reed-Solomon encoding, as the name implies.</p>
  * @author Sean Owen
  * @author William Rucklidge
  * @since 5.0.2
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public final class ReedSolomonEncoder {
 
   private final GF256 field;

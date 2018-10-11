@@ -44,9 +44,10 @@
 package com.itextpdf.text.pdf;
 
 /**
- *
  * @author  psoares
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class PdfXConformanceException extends PdfIsoConformanceException {
     
     private static final long serialVersionUID = 9199144538884293397L;

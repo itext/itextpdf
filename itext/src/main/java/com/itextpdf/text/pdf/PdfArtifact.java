@@ -49,6 +49,10 @@ import com.itextpdf.text.pdf.interfaces.IAccessibleElement;
 
 import java.util.*;
 
+/**
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
+ */
+@Deprecated
 public class PdfArtifact implements IAccessibleElement {
 
     private static final HashSet<String> allowedArtifactTypes = new HashSet<String>(Arrays.asList("Pagination", "Layout", "Page", "Background"));

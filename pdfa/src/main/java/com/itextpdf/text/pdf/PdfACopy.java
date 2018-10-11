@@ -68,7 +68,9 @@ import java.util.HashMap;
  * Extension of PdfCopy that will attempt to keep a file
  * in conformance with the PDF/A standard.
  * @see PdfCopy
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class PdfACopy extends PdfCopy {
     /**
      * Constructor

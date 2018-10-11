@@ -42,6 +42,7 @@
  * address: sales@itextpdf.com
  */
 package com.itextpdf.text.pdf;
+
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.ExceptionConverter;
 import com.itextpdf.text.error_messages.MessageLocalization;
@@ -53,10 +54,10 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Base class for the several font types supported
- *
  * @author Paulo Soares
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
-
+@Deprecated
 public abstract class BaseFont {
 
     /** This is a possible value of a base 14 type 1 font */
@@ -248,6 +249,8 @@ public abstract class BaseFont {
 
     /** The path to the font resources. */
     public static final String RESOURCE_PATH = "com/itextpdf/text/pdf/fonts/";
+    /** The itext7 fonts-asian path to the font resources. */
+    public static final String ITEXT_7_RESOURCE_PATH = "com/itextpdf/io/font/";
     /** The fake CID code that represents a newline. */
     public static final char CID_NEWLINE = '\u7fff';
 

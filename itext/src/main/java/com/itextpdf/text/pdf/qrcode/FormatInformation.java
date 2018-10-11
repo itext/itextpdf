@@ -19,11 +19,12 @@ package com.itextpdf.text.pdf.qrcode;
 /**
  * <p>Encapsulates a QR Code's format information, including the data mask used and
  * error correction level.</p>
- *
  * @author Sean Owen
  * @see ErrorCorrectionLevel
  * @since 5.0.2
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 final class FormatInformation {
 
   private static final int FORMAT_INFO_MASK_QR = 0x5412;

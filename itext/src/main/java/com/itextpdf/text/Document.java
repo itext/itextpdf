@@ -43,15 +43,15 @@
  */
 package com.itextpdf.text;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-
 import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.pdf.PdfName;
 import com.itextpdf.text.pdf.PdfObject;
 import com.itextpdf.text.pdf.interfaces.IAccessibleElement;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 
 /**
  * A generic Document class.
@@ -93,8 +93,9 @@ import com.itextpdf.text.pdf.interfaces.IAccessibleElement;
  * </PRE>
  *
  * </BLOCKQUOTE>
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
-
+@Deprecated
 public class Document implements DocListener, IAccessibleElement {
 
     /**

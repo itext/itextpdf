@@ -51,7 +51,9 @@ import org.bouncycastle.crypto.params.KeyParameter;
 /**
  * Creates an AES Cipher with CBC and no padding.
  * @author Paulo Soares
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class AESCipherCBCnoPad {
     private BlockCipher cbc;
     

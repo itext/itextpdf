@@ -43,6 +43,12 @@
  */
 package com.itextpdf.text.pdf;
 
+import com.itextpdf.text.error_messages.MessageLocalization;
+import com.itextpdf.text.xml.XMLUtil;
+import com.itextpdf.text.xml.simpleparser.IanaEncodings;
+import com.itextpdf.text.xml.simpleparser.SimpleXMLDocHandler;
+import com.itextpdf.text.xml.simpleparser.SimpleXMLParser;
+
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -54,16 +60,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.StringTokenizer;
 
-import com.itextpdf.text.error_messages.MessageLocalization;
-import com.itextpdf.text.xml.simpleparser.IanaEncodings;
-import com.itextpdf.text.xml.simpleparser.SimpleXMLDocHandler;
-import com.itextpdf.text.xml.simpleparser.SimpleXMLParser;
-import com.itextpdf.text.xml.XMLUtil;
-
 /**
- *
  * @author Paulo Soares
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public final class SimpleNamedDestination implements SimpleXMLDocHandler {
 
     private HashMap<String, String> xmlNames;

@@ -49,7 +49,9 @@ import com.itextpdf.tool.xml.parser.XMLParser;
 /**
  * @author redlab_b
  *
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class TagAttributeState implements State {
 
 	protected final XMLParser parser;

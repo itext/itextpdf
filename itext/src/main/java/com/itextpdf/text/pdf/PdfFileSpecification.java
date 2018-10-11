@@ -50,10 +50,12 @@ import com.itextpdf.text.pdf.internal.PdfIsoKeys;
 
 import java.io.*;
 import java.net.URL;
+
 /** Specifies a file or an URL. The file can be extern or embedded.
- *
  * @author Paulo Soares
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class PdfFileSpecification extends PdfDictionary {
     protected PdfWriter writer;
     protected PdfIndirectReference ref;

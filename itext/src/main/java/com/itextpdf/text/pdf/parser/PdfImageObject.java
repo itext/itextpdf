@@ -43,14 +43,6 @@
  */
 package com.itextpdf.text.pdf.parser;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.imageio.ImageIO;
-
 import com.itextpdf.text.Version;
 import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.exceptions.UnsupportedPdfException;
@@ -66,10 +58,19 @@ import com.itextpdf.text.pdf.codec.PngWriter;
 import com.itextpdf.text.pdf.codec.TIFFConstants;
 import com.itextpdf.text.pdf.codec.TiffWriter;
 
+import javax.imageio.ImageIO;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * An object that contains an image dictionary and image bytes.
  * @since 5.0.2
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class PdfImageObject {
 
     /**

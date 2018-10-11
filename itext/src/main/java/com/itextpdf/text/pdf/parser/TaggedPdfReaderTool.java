@@ -55,9 +55,10 @@ import java.util.Set;
 
 /**
  * Converts a tagged PDF document into an XML file.
- * 
  * @since 5.0.2
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class TaggedPdfReaderTool {
 
 	/** The reader object from which the content streams are read. */

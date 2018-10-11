@@ -48,7 +48,9 @@ import java.util.HashMap;
 
 /**
  * Class that contains a map with the different encryption algorithms.
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class EncryptionAlgorithms {
 
 	/** Maps IDs of encryption algorithms with its human-readable name. */

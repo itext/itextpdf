@@ -44,6 +44,10 @@ package com.itextpdf.tool.xml.examples.css.page_break.after.img;
 
 import com.itextpdf.tool.xml.examples.SampleTest;
 
+/**
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
+ */
+@Deprecated
 public class After_img01 extends SampleTest {
     protected String getTestName() {
         return  "after_img01";

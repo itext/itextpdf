@@ -60,7 +60,9 @@ import com.itextpdf.text.pdf.PdfString;
  * the cue points declared in the PDF file by the values specified by the
  * Name or Time keys. (See ExtensionLevel 3 p91)
  * @since	5.0.0
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class CuePoint extends PdfDictionary {
 
 	/**

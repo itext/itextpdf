@@ -32,7 +32,6 @@ package com.itextpdf.xmp;
 
 import java.util.Iterator;
 
-
 /**
  * Interface for the <code>XMPMeta</code> iteration services.
  * <code>XMPIterator</code> provides a uniform means to iterate over the
@@ -83,9 +82,10 @@ import java.util.Iterator;
  * <code>next()</code> returns <code>XMPPropertyInfo</code>-objects and throws
  * a <code>NoSuchElementException</code> if there are no more properties to
  * return.
- * 
  * @since 25.01.2006
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public interface XMPIterator extends Iterator
 {
 	/**

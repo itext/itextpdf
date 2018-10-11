@@ -82,10 +82,10 @@ import java.util.Collections;
 
 /**
  * A pure convenience class to avoid writing List<IntPoint> everywhere.
- *
  * @author Tobias Mahlmann
- *
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class Path extends ArrayList<LongPoint> {
     static class Join {
         Path.OutPt outPt1;

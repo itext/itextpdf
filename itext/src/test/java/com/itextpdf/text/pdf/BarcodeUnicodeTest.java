@@ -54,6 +54,10 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.util.HashMap;
 
+/**
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
+ */
+@Deprecated
 public class BarcodeUnicodeTest extends ITextTest {
 
     private static final String OUT_DIR = "./target/com/itextpdf/test/pdf/BarcodeUnicodeTest/";

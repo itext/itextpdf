@@ -31,8 +31,9 @@ import java.util.Set;
 
 /**
  * RenderingHints
- *
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class RenderingHints implements Map<Object, Object>, Cloneable {
     public static final Key KEY_ALPHA_INTERPOLATION = new KeyImpl(1);
     public static final Object VALUE_ALPHA_INTERPOLATION_DEFAULT = new KeyValue(KEY_ALPHA_INTERPOLATION);

@@ -56,8 +56,9 @@ import com.itextpdf.text.pdf.interfaces.PdfViewerPreferences;
 /**
  * Stores the information concerning viewer preferences,
  * and contains the business logic that allows you to set viewer preferences.
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
-
+@Deprecated
 public class PdfViewerPreferencesImp implements PdfViewerPreferences {
 	public static final PdfName[] VIEWER_PREFERENCES = {
 			PdfName.HIDETOOLBAR,			// 0

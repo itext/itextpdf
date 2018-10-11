@@ -73,6 +73,11 @@
  */
 package com.itextpdf.text.xml.simpleparser;
 
+import com.itextpdf.text.error_messages.MessageLocalization;
+import com.itextpdf.text.xml.XMLUtil;
+import com.itextpdf.text.xml.simpleparser.handler.HTMLNewLineHandler;
+import com.itextpdf.text.xml.simpleparser.handler.NeverNewLineHandler;
+
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -81,11 +86,6 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.HashMap;
 import java.util.Stack;
-
-import com.itextpdf.text.error_messages.MessageLocalization;
-import com.itextpdf.text.xml.XMLUtil;
-import com.itextpdf.text.xml.simpleparser.handler.HTMLNewLineHandler;
-import com.itextpdf.text.xml.simpleparser.handler.NeverNewLineHandler;
 
 /**
  * A simple XML.  This parser is, like the SAX parser,
@@ -102,7 +102,9 @@ import com.itextpdf.text.xml.simpleparser.handler.NeverNewLineHandler;
  * <li>It maps lines ending in <code>\r\n</code> and <code>\r</code> to <code>\n</code> on input, in accordance with the XML Specification, Section 2.11
  * </ul>
  * <p>
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public final class SimpleXMLParser {
     /** possible states */
 	private final static int UNKNOWN = 0;

@@ -54,7 +54,9 @@ package com.itextpdf.text.pdf.codec;
 /**
  * Class that can decompress TIFF files.
  * @since 5.0.3
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class TIFFFaxDecompressor {
 
     /**

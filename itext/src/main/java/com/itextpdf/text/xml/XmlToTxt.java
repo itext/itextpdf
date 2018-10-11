@@ -43,17 +43,19 @@
  */
 package com.itextpdf.text.xml;
 
+import com.itextpdf.text.xml.simpleparser.SimpleXMLDocHandler;
+import com.itextpdf.text.xml.simpleparser.SimpleXMLParser;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Map;
 
-import com.itextpdf.text.xml.simpleparser.SimpleXMLDocHandler;
-import com.itextpdf.text.xml.simpleparser.SimpleXMLParser;
-
 /**
  * This class converts XML into plain text stripping all tags.
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class XmlToTxt implements SimpleXMLDocHandler {
 
 	/**

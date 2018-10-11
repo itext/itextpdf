@@ -49,6 +49,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+/**
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
+ */
+@Deprecated
 public class CssRule implements Comparable<CssRule> {
 
     private CssSelector selector;
