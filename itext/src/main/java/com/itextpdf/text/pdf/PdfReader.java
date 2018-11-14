@@ -2005,10 +2005,17 @@ public class PdfReader implements PdfViewerPreferences {
                     return new PdfName(tokens.getStringValue(), false);
                 }
             }
-            case REF:
+            case REF: {
                 int num = tokens.getReference();
-                PRIndirectReference ref = new PRIndirectReference(this, num, tokens.getGeneration());
-                return ref;
+                if (num >= 0) {
+                    return new PRIndirectReference(this, num, tokens.getGeneration());
+                } else {
+                    if (LOGGER.isLogging(Level.ERROR)) {
+                        LOGGER.error(MessageLocalization.getComposedMessage("invalid.reference.number.skip"));
+                    }
+                    return PdfNull.PDFNULL;
+                }
+            }
             case ENDOFFILE:
                 throw new IOException(MessageLocalization.getComposedMessage("unexpected.end.of.file"));
             default:

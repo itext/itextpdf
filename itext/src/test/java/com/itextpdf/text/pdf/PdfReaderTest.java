@@ -93,6 +93,21 @@ public class PdfReaderTest {
     }
 
     @Test
+    public void testPRTokenizer() throws IOException {
+        String obj = "13 0 obj\n" +
+                "<< /Type /StructElem /Pg 111117220777773888836 0 R>>\n" +
+                "endobj";
+        PRTokeniser tokens= new PRTokeniser(new RandomAccessFileOrArray(obj.getBytes()));
+        for (int i = 0; i < 11; i++) {
+            tokens.nextValidToken();
+            if (tokens.getTokenType() == PRTokeniser.TokenType.REF)
+                assertTrue(tokens.getReference() < 0);
+            if (tokens.getTokenType() == PRTokeniser.TokenType.ENDOFFILE)
+                break;
+        }
+    }
+
+    @Test
     public void testGetLink2() throws Exception {
         File testFile = TestResourceUtils.getResourceAsTempFile(this, "getLinkTest2.pdf");
         String filename = testFile.getAbsolutePath();

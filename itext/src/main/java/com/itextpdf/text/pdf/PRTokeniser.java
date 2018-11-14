@@ -201,7 +201,12 @@ public class PRTokeniser {
     public String getStringValue() {
         return stringValue;
     }
-    
+
+    /**
+     * Gets current reference number. If parsing was failed with NumberFormatException -1 will be return.
+     *
+     * @return a positive integer for correct reference, or negative for incorrect.
+     */
     public int getReference() {
         return reference;
     }
@@ -312,8 +317,13 @@ public class PRTokeniser {
                         return;
                     }
                     type = TokenType.REF;
-                    reference = Integer.parseInt(n1);
-                    generation = Integer.parseInt(n2);
+                    try {
+                        reference = Integer.parseInt(n1);
+                        generation = Integer.parseInt(n2);
+                    } catch (NumberFormatException ex) {
+                        reference = -1;
+                        generation = 0;
+                    }
                     return;
                 }
             }
