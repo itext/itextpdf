@@ -437,7 +437,8 @@ public abstract class AbstractTagProcessor implements TagProcessor, CssAppliersA
         }
         float pFontSize = p.getFont() != null ? p.getFont().getSize() : Font.DEFAULTSIZE;
         if (childFont != null && childFont.getSize() > pFontSize) {
-            p.setFont(childFont);
+        	//Create a copy with size only.
+			p.setFont(new Font(Font.FontFamily.UNDEFINED, childFont.getSize()));
         }
     }
 }
