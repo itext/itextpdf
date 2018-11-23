@@ -1593,8 +1593,8 @@ public class AcroFields {
      * Sets different values in a list selection.
      * No appearance is generated yet; nor does the code check if multiple select is allowed.
      *
-     * @param    name    the name of the field
-     * @param    value    an array with values that need to be selected
+     * @param name  the name of the field
+     * @param value an array with values that need to be selected
      * @return true only if the field value was changed
      * @since 2.1.4
      */
@@ -2033,7 +2033,13 @@ public class AcroFields {
         name = getTranslatedFieldName(name);
         if (!sigNames.containsKey(name))
             return false;
-        return sigNames.get(name)[0] == reader.getFileLength();
+        try {
+            ContentsChecker signatureReader = new ContentsChecker(reader.getSafeFile());
+            return signatureReader.checkWhetherSignatureCoversWholeDocument(reader.getAcroFields().getFieldItem(name));
+        } catch (IOException e) {
+            // That's not expected because if the signature is invalid, it should have already failed
+            return false;
+        }
     }
 
     /**
@@ -2786,6 +2792,105 @@ public class AcroFields {
             int n1 = ((int[]) o1[1])[0];
             int n2 = ((int[]) o2[1])[0];
             return n1 - n2;
+        }
+    }
+
+    private static class ContentsChecker extends PdfReader {
+
+        private long contentsStart;
+        private long contentsEnd;
+
+        private int currentLevel = 0;
+        private int contentsLevel = 1;
+        private boolean searchInV = true;
+
+        private boolean rangeIsCorrect = false;
+
+        public ContentsChecker(RandomAccessFileOrArray raf) throws IOException {
+            super(raf, null);
+        }
+
+        public boolean checkWhetherSignatureCoversWholeDocument(Item signatureField) {
+            rangeIsCorrect = false;
+            PdfDictionary signature;
+            int objNum;
+            if (signatureField.getValue(0).get(PdfName.V) instanceof PRIndirectReference) {
+                objNum = ((PdfIndirectReference) signatureField.getValue(0).get(PdfName.V)).number;
+                signature = (PdfDictionary) getPdfObject(objNum);
+                searchInV = true;
+            } else {
+                signature = (PdfDictionary) signatureField.getValue(0).get(PdfName.V);
+                objNum = signatureField.getWidgetRef(0).number;
+                searchInV = false;
+                contentsLevel++;
+            }
+
+            long[] byteRange = ((PdfArray) signature.get(PdfName.BYTERANGE)).asLongArray();
+            if (4 != byteRange.length || 0 != byteRange[0] || getFileLength() != byteRange[2] + byteRange[3]) {
+                return false;
+            }
+
+            contentsStart = byteRange[1];
+            contentsEnd = byteRange[2];
+
+            long signatureOffset = xref[2 * objNum];
+            try {
+                tokens.seek(signatureOffset);
+                tokens.nextValidToken(); // number
+                tokens.nextValidToken(); // revision
+                tokens.nextValidToken(); // obj
+                readPRObject();
+            } catch (Exception e) {
+                // That's not expected because if the signature is invalid, it should have already failed
+                return false;
+            }
+            return rangeIsCorrect;
+        }
+
+        @Override
+        protected PdfDictionary readDictionary() throws IOException {
+            currentLevel++;
+            PdfDictionary dic = new PdfDictionary();
+            while (!rangeIsCorrect) {
+                tokens.nextValidToken();
+                if (tokens.getTokenType() == TokenType.END_DIC) {
+                    currentLevel--;
+                    break;
+                }
+                if (tokens.getTokenType() != TokenType.NAME) {
+                    tokens.throwError(MessageLocalization.getComposedMessage("dictionary.key.1.is.not.a.name", tokens.getStringValue()));
+                }
+                PdfName name = new PdfName(tokens.getStringValue(), false);
+                PdfObject obj;
+                if (PdfName.CONTENTS.equals(name) && searchInV && contentsLevel == currentLevel) {
+                    long startPosition = tokens.getFilePointer();
+                    int ch;
+                    int whiteSpacesCount = -1;
+                    do {
+                        ch = tokens.read();
+                        whiteSpacesCount++;
+                    } while (ch != -1 && PRTokeniser.isWhitespace(ch));
+                    tokens.seek(startPosition);
+                    obj = readPRObject();
+                    long endPosition = tokens.getFilePointer();
+                    if (endPosition == contentsEnd && startPosition + whiteSpacesCount == contentsStart) {
+                        rangeIsCorrect = true;
+                    }
+                } else if (PdfName.V.equals(name) && !searchInV && 1 == currentLevel) {
+                    searchInV = true;
+                    obj = readPRObject();
+                    searchInV = false;
+                } else {
+                    obj = readPRObject();
+                }
+                int type = obj.type();
+                if (-type == TokenType.END_DIC.ordinal())
+                    tokens.throwError(MessageLocalization.getComposedMessage("unexpected.gt.gt"));
+                if (-type == TokenType.END_ARRAY.ordinal())
+                    tokens.throwError(MessageLocalization.getComposedMessage("unexpected.close.bracket"));
+                dic.put(name, obj);
+            }
+            return dic;
         }
     }
 }

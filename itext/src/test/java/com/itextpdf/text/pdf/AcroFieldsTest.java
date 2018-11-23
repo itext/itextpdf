@@ -45,17 +45,36 @@ package com.itextpdf.text.pdf;
 
 import com.itextpdf.testutils.CompareTool;
 import com.itextpdf.testutils.TestResourceUtils;
-import com.itextpdf.text.*;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Image;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.HashMap;
 
 public class AcroFieldsTest {
 
+    private final String PDF_COMBO = "./src/test/resources/com/itextpdf/text/pdf/AcroFieldsTest/choice_field_order.pdf";
+    private final String PDF_COMBO_EXPORT = "./src/test/resources/com/itextpdf/text/pdf/AcroFieldsTest/choice_field_order_export.pdf";
+    private final String PDF_COMBO_FIELD_NAME = "choice_field";
+    private final String[] PDF_COMBO_VALUES = {
+            "Option 1",
+            "Option 2",
+            "Option 3"
+    };
+    private final String[] PDF_COMBO_EXPORT_VALUES = {
+            "Export 1",
+            "Export 2",
+            "Export 3"
+    };
+    private final String sourceFolder = "./src/test/resources/com/itextpdf/text/pdf/AcroFieldsTest/";
     private String outFolder = "./target/com/itextpdf/test/pdf/AcroFieldsTest/";
 
     @Before
@@ -90,25 +109,8 @@ public class AcroFieldsTest {
         stamp.close();
     }
 
-    private final String PDF_COMBO = "./src/test/resources/com/itextpdf/text/pdf/AcroFieldsTest/choice_field_order.pdf";
-    private final String PDF_COMBO_EXPORT = "./src/test/resources/com/itextpdf/text/pdf/AcroFieldsTest/choice_field_order_export.pdf";
-
-    private final String PDF_COMBO_FIELD_NAME = "choice_field";
-
-    private final String[] PDF_COMBO_VALUES = {
-            "Option 1",
-            "Option 2",
-            "Option 3"
-    };
-
-    private final String[] PDF_COMBO_EXPORT_VALUES = {
-            "Export 1",
-            "Export 2",
-            "Export 3"
-    };
-
     @Test
-     public void testComboboxAppearanceStateOrder() {
+    public void testComboboxAppearanceStateOrder() {
         try {
             checkOrderOfAppearanceStates(PDF_COMBO, PDF_COMBO_FIELD_NAME, PDF_COMBO_VALUES);
         } catch (IOException e) {
@@ -125,7 +127,7 @@ public class AcroFieldsTest {
 
             Assert.assertEquals(PDF_COMBO_VALUES.length, actual.length);
 
-            for ( int i = 0; i < PDF_COMBO_VALUES.length; i++ ) {
+            for (int i = 0; i < PDF_COMBO_VALUES.length; i++) {
                 Assert.assertEquals(PDF_COMBO_VALUES[i], actual[i]);
             }
         } catch (IOException e) {
@@ -142,7 +144,7 @@ public class AcroFieldsTest {
 
             Assert.assertEquals(PDF_COMBO_EXPORT_VALUES.length, actual.length);
 
-            for ( int i = 0; i < PDF_COMBO_EXPORT_VALUES.length; i++ ) {
+            for (int i = 0; i < PDF_COMBO_EXPORT_VALUES.length; i++) {
                 Assert.assertEquals(PDF_COMBO_EXPORT_VALUES[i], actual[i]);
             }
         } catch (IOException e) {
@@ -157,9 +159,109 @@ public class AcroFieldsTest {
 
         Assert.assertEquals(expected.length, actual.length);
 
-        for ( int i = 0; i < expected.length; i++ ) {
+        for (int i = 0; i < expected.length; i++) {
             Assert.assertEquals(expected[i], actual[i]);
         }
+    }
+
+    @Test
+    public void bytesAreCoveredTest01() throws IOException {
+        String inPdf = sourceFolder + "bytesAreCoveredTest01.pdf";
+
+        PdfReader reader = new PdfReader(inPdf);
+        AcroFields acroFields = reader.getAcroFields();
+
+        Assert.assertTrue(acroFields.signatureCoversWholeDocument("Signature1"));
+    }
+
+    @Test
+    public void firstBytesNotCoveredTest01() throws IOException {
+        String inPdf = sourceFolder + "firstBytesNotCoveredTest01.pdf";
+
+        PdfReader reader = new PdfReader(inPdf);
+        AcroFields acroFields = reader.getAcroFields();
+
+        Assert.assertFalse(acroFields.signatureCoversWholeDocument("Signature1"));
+    }
+
+    @Test
+    public void lastBytesNotCoveredTest01() throws IOException {
+        String inPdf = sourceFolder + "lastBytesNotCoveredTest01.pdf";
+
+        PdfReader reader = new PdfReader(inPdf);
+        AcroFields acroFields = reader.getAcroFields();
+
+        Assert.assertFalse(acroFields.signatureCoversWholeDocument("Signature1"));
+    }
+
+    @Test
+    public void lastBytesNotCoveredTest02() throws IOException {
+        String inPdf = sourceFolder + "lastBytesNotCoveredTest02.pdf";
+
+        PdfReader reader = new PdfReader(inPdf);
+        AcroFields acroFields = reader.getAcroFields();
+
+        Assert.assertFalse(acroFields.signatureCoversWholeDocument("Signature1"));
+    }
+
+    @Test
+    public void bytesAreNotCoveredTest01() throws IOException {
+        String inPdf = sourceFolder + "bytesAreNotCoveredTest01.pdf";
+
+        PdfReader reader = new PdfReader(inPdf);
+        AcroFields acroFields = reader.getAcroFields();
+
+        Assert.assertFalse(acroFields.signatureCoversWholeDocument("Signature1"));
+    }
+
+    @Test
+    public void bytesAreCoveredTest02() throws IOException {
+        String inPdf = sourceFolder + "bytesAreCoveredTest02.pdf";
+
+        PdfReader reader = new PdfReader(inPdf);
+        AcroFields acroFields = reader.getAcroFields();
+
+        Assert.assertTrue(acroFields.signatureCoversWholeDocument("sig"));
+    }
+
+    @Test
+    public void twoContentsTest01() throws IOException {
+        String inPdf = sourceFolder + "twoContentsTest01.pdf";
+
+        PdfReader reader = new PdfReader(inPdf);
+        AcroFields acroFields = reader.getAcroFields();
+
+        Assert.assertTrue(acroFields.signatureCoversWholeDocument("Signature1"));
+    }
+
+    @Test
+    public void spacesBeforeContentsTest01() throws IOException {
+        String inPdf = sourceFolder + "spacesBeforeContentsTest01.pdf";
+
+        PdfReader reader = new PdfReader(inPdf);
+        AcroFields acroFields = reader.getAcroFields();
+
+        Assert.assertFalse(acroFields.signatureCoversWholeDocument("Signature1"));
+    }
+
+    @Test
+    public void spacesBeforeContentsTest02() throws IOException {
+        String inPdf = sourceFolder + "spacesBeforeContentsTest02.pdf";
+
+        PdfReader reader = new PdfReader(inPdf);
+        AcroFields acroFields = reader.getAcroFields();
+
+        Assert.assertTrue(acroFields.signatureCoversWholeDocument("Signature1"));
+    }
+
+    @Test
+    public void notIndirectSigDictionaryTest() throws IOException {
+        String inPdf = sourceFolder + "notIndirectSigDictionaryTest.pdf";
+
+        PdfReader reader = new PdfReader(inPdf);
+        AcroFields acroFields = reader.getAcroFields();
+
+        Assert.assertTrue(acroFields.signatureCoversWholeDocument("Signature1"));
     }
 
     @Test
@@ -207,15 +309,13 @@ public class AcroFieldsTest {
         fdfReader.close();
     }
 
-    private final String sourceFolder = "./src/test/resources/com/itextpdf/text/pdf/AcroFieldsTest/";
-
     @Test
     public void icelandicLettersInAcroFieldTest() throws IOException, DocumentException, InterruptedException {
 
-        String outFile = outFolder+"icelandicLettersInAcroFieldTest.pdf";
+        String outFile = outFolder + "icelandicLettersInAcroFieldTest.pdf";
         FileOutputStream file = new FileOutputStream(outFile);
 
-        PdfReader reader = new PdfReader(new FileInputStream(sourceFolder+ "HelveticaFont.pdf"));
+        PdfReader reader = new PdfReader(new FileInputStream(sourceFolder + "HelveticaFont.pdf"));
 
         PdfStamper stamper = new PdfStamper(reader, file);
 
@@ -235,10 +335,10 @@ public class AcroFieldsTest {
     @Test
     public void specialCharactersInAcroFieldTest() throws IOException, DocumentException, InterruptedException {
 
-        String outFile = outFolder+"specialCharactersInAcroFieldTest.pdf";
+        String outFile = outFolder + "specialCharactersInAcroFieldTest.pdf";
         FileOutputStream file = new FileOutputStream(outFile);
 
-        PdfReader reader = new PdfReader(new FileInputStream(sourceFolder+"HelveticaFont.pdf"));
+        PdfReader reader = new PdfReader(new FileInputStream(sourceFolder + "HelveticaFont.pdf"));
 
         PdfStamper stamper = new PdfStamper(reader, file);
         AcroFields acroFields = stamper.getAcroFields();
@@ -255,10 +355,10 @@ public class AcroFieldsTest {
     @Test
     public void flatteningRadioButtonFields1() throws IOException, DocumentException, InterruptedException {
 
-        String outFile = outFolder+"flatteningRadioButtonFields1.pdf";
+        String outFile = outFolder + "flatteningRadioButtonFields1.pdf";
         FileOutputStream file = new FileOutputStream(outFile);
 
-        PdfReader reader = new PdfReader(new FileInputStream(sourceFolder+"radios_src1.pdf"));
+        PdfReader reader = new PdfReader(new FileInputStream(sourceFolder + "radios_src1.pdf"));
 
         PdfStamper stamper = new PdfStamper(reader, file);
         AcroFields acroFields = stamper.getAcroFields();
@@ -275,10 +375,10 @@ public class AcroFieldsTest {
     @Test
     public void flatteningRadioButtonFields2() throws IOException, DocumentException, InterruptedException {
 
-        String outFile = outFolder+"flatteningRadioButtonFields2.pdf";
+        String outFile = outFolder + "flatteningRadioButtonFields2.pdf";
         FileOutputStream file = new FileOutputStream(outFile);
 
-        PdfReader reader = new PdfReader(new FileInputStream(sourceFolder+"radios_src2.pdf"));
+        PdfReader reader = new PdfReader(new FileInputStream(sourceFolder + "radios_src2.pdf"));
 
         PdfStamper stamper = new PdfStamper(reader, file);
         AcroFields acroFields = stamper.getAcroFields();
