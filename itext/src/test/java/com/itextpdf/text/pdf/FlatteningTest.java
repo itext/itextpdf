@@ -406,4 +406,26 @@ public class FlatteningTest {
             Assert.fail(errorMessage);
         }
     }
+    @Test
+    public void testFreeTextRectangleBBoxInteraction() throws IOException, DocumentException, InterruptedException {
+        new File(OUTPUT_FOLDER).mkdirs();
+
+        String file = "freeTextRectangleBBoxInteraction.pdf";
+        PdfReader pdfReader = new PdfReader(RESOURCES_FOLDER + file);
+        PdfStamper pdfStamper = new PdfStamper(pdfReader, new FileOutputStream(OUTPUT_FOLDER + file));
+
+
+        pdfStamper.setFormFlattening(true);
+        pdfStamper.setFreeTextFlattening(true);
+        pdfStamper.close();
+        pdfReader.close();
+        // compare
+        CompareTool compareTool = new CompareTool();
+        String errorMessage = compareTool.compareByContent(OUTPUT_FOLDER + file, RESOURCES_FOLDER + "cmp_" + file, OUTPUT_FOLDER, "diff");
+        if (errorMessage != null) {
+            Assert.fail(errorMessage);
+        }
+    }
+
+
 }

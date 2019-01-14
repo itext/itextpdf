@@ -1386,9 +1386,12 @@ class PdfStamperImp extends PdfWriter {
                             Rectangle transformBBox = transformBBoxByMatrix(bBox, matrix);
                             cb.addTemplate(app, (rect.getWidth() / transformBBox.getWidth()), 0, 0, (rect.getHeight() / transformBBox.getHeight()), rect.getLeft(), rect.getBottom());
                         } else {
+                            //Correct for offset origins in the BBox, similar to how Adobe will flatten.
+                            float heightCorrection = - bBox.getBottom();
+                            float widthCorrection = - bBox.getLeft();
                             //Changed so that when the annotation has a difference scale than the xObject in the appearance dictionary, the image is consistent between
                             //the input and the flattened document.  When the annotation is rotated or skewed, it will still be flattened incorrectly.
-                            cb.addTemplate(app, (rect.getWidth() / bBox.getWidth()), 0, 0, (rect.getHeight() / bBox.getHeight()), rect.getLeft(), rect.getBottom());
+                            cb.addTemplate(app, (rect.getWidth() / bBox.getWidth()), 0, 0, (rect.getHeight() / bBox.getHeight()), rect.getLeft() + widthCorrection, rect.getBottom()+heightCorrection);
                         }
                         cb.setLiteral("q ");
 
