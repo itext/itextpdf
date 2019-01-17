@@ -1,7 +1,7 @@
 /*
  *
  * This file is part of the iText (R) project.
-    Copyright (c) 1998-2017 iText Group NV
+    Copyright (c) 1998-2019 iText Group NV
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -43,6 +43,7 @@
  */
 package com.itextpdf.text.pdf.security;
 
+import java.security.GeneralSecurityException;
 import java.util.HashMap;
 
 /**
@@ -87,4 +88,28 @@ public class EncryptionAlgorithms {
 	    else
 	        return ret;
 	}
+	
+	/**
+	 * Allows new oid to be added.
+	 * @param oid
+	 * @param name
+	 */
+	public static boolean addAlgorithm(String oid, String name) throws GeneralSecurityException{
+		boolean status = false;
+		if(oid!=null && !oid.equals("")){
+			if(!algorithmNames.containsKey(oid)){
+				algorithmNames.put(oid, name);
+				status = true;
+			}else if(algorithmNames.get(oid).equals(name)){
+				status = false;
+			} else{
+				throw new GeneralSecurityException("already registered oid="+oid+", with name="+algorithmNames.get(oid));
+			}
+		} else{
+			throw new GeneralSecurityException("Can not register oid's with null or empty");
+		}
+		return status;
+	}     
 }
+
+

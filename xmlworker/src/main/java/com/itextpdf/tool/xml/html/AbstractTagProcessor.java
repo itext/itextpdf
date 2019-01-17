@@ -1,7 +1,7 @@
 /*
  *
  * This file is part of the iText (R) project.
-    Copyright (c) 1998-2017 iText Group NV
+    Copyright (c) 1998-2019 iText Group NV
  * Authors: Balder Van Camp, Emiel Ackermann, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -439,7 +439,8 @@ public abstract class AbstractTagProcessor implements TagProcessor, CssAppliersA
         }
         float pFontSize = p.getFont() != null ? p.getFont().getSize() : Font.DEFAULTSIZE;
         if (childFont != null && childFont.getSize() > pFontSize) {
-            p.setFont(childFont);
+        	//Create a copy with size only.
+			p.setFont(new Font(Font.FontFamily.UNDEFINED, childFont.getSize()));
         }
     }
 }
