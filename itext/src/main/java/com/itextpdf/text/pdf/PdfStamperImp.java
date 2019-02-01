@@ -1039,8 +1039,8 @@ class PdfStamperImp extends PdfWriter {
                 if (appDic != null && (flags & PdfFormField.FLAGS_PRINT) != 0 && (flags & PdfFormField.FLAGS_HIDDEN) == 0) {
                     PdfObject obj = appDic.get(PdfName.N);
                     PdfAppearance app = null;
+                    PdfObject objReal = PdfReader.getPdfObject(obj);
                     if (obj != null) {
-                        PdfObject objReal = PdfReader.getPdfObject(obj);
                         if (obj instanceof PdfIndirectReference && !obj.isIndirect())
                             app = new PdfAppearance((PdfIndirectReference) obj);
                         else if (objReal instanceof PdfStream) {
@@ -1085,7 +1085,12 @@ class PdfStamperImp extends PdfWriter {
                             tf = calculateTemplateTransformationMatrix(tf, fieldRotation, box);
                             cb.addTemplate(app, tf);
                         } else {
-                            cb.addTemplate(app, box.getLeft(), box.getBottom());
+                            if(objReal instanceof PdfDictionary && ((PdfDictionary)objReal).getAsArray(PdfName.BBOX) != null) {
+                                Rectangle bBox = PdfReader.getNormalizedRectangle((((PdfDictionary)objReal).getAsArray(PdfName.BBOX)));
+                                cb.addTemplate(app, (box.getWidth() / bBox.getWidth()), 0, 0, (box.getHeight() / bBox.getHeight()), box.getLeft(), box.getBottom());
+                            } else {
+                                cb.addTemplate(app, box.getLeft(), box.getBottom());
+                            }
                         }
                         cb.setLiteral("q ");
                     }

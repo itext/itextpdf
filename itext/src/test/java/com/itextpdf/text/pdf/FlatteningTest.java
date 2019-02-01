@@ -255,6 +255,21 @@ public class FlatteningTest {
         }
     }
 
+    @Test
+    public void testFlatteningGenerateAppearances7() throws IOException, DocumentException, InterruptedException {
+
+        new File(OUTPUT_FOLDER).mkdirs();
+
+        final String OUT = "test01.pdf";
+        testFlatteningGenerateAppearance(RESOURCES_FOLDER + "test01.pdf", OUTPUT_FOLDER + OUT, true);
+
+        CompareTool compareTool = new CompareTool();
+        String errorMessage = compareTool.compare(OUTPUT_FOLDER + OUT, RESOURCES_FOLDER + "cmp_" + OUT, OUTPUT_FOLDER, "diff");
+        if (errorMessage != null) {
+            Assert.fail(errorMessage);
+        }
+    }
+
     public void testFlatteningGenerateAppearance(String in, String out, Boolean gen) throws FileNotFoundException, DocumentException, IOException {
         PdfReader reader = new PdfReader(in);
         PdfStamper stamper = new PdfStamper(reader, new FileOutputStream(out));
