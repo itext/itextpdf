@@ -44,6 +44,8 @@
 package com.itextpdf.text.pdf;
 
 import com.itextpdf.text.SplitCharacter;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * <p>
@@ -112,7 +114,8 @@ public class DefaultSplitCharacter implements SplitCharacter {
      * @return <CODE>true</CODE> if the character can be used to split a string, <CODE>false</CODE> otherwise
      */
     public boolean isSplitCharacter(int start, int current, int end, char[] cc, PdfChunk[] ck) {
-        char c = getCurrentCharacter(current, cc, ck);
+        char[] ccTmp = checkDatePattern(String.valueOf(cc));
+        char c = getCurrentCharacter(current, ccTmp, ck);
 
         if (characters != null) {
             for (int i = 0; i < characters.length; i++) {
@@ -148,5 +151,15 @@ public class DefaultSplitCharacter implements SplitCharacter {
             return cc[current];
         }
         return (char) ck[Math.min(current, ck.length - 1)].getUnicodeEquivalent(cc[current]);
+    }
+
+    private char[] checkDatePattern(String data) {
+        String regex = "(\\d{2,4}-\\d{2}-\\d{2,4})";
+        Matcher m = Pattern.compile(regex).matcher(data);
+        if (m.find()) {
+            String tmpData = m.group(1).replace('-', '\u2011');
+            data = data.replaceAll(m.group(1), tmpData);
+        }
+        return data.toCharArray();
     }
 }
