@@ -141,24 +141,70 @@ public class PdfWriterPipeline extends AbstractPipeline<MapContext> {
 			while (null != (writable = po.poll())) {
 				if (writable instanceof WritableElement) {
 					for (Element e : ((WritableElement) writable).elements()) {
-						try {
-							if (!doc.add(e) && LOG.isLogging(Level.TRACE)) {
-								LOG.trace(String.format(
-										LocaleMessages.getInstance().getMessage(LocaleMessages.ELEMENT_NOT_ADDED),
-										e.toString()));
-							}
-						} catch (DocumentException e1) {
-							if (!continuousWrite) {
-								throw new PipelineException(e1);
-							} else {
-								LOG.error(
-										LocaleMessages.getInstance().getMessage(LocaleMessages.ELEMENT_NOT_ADDED_EXC),
-										e1);
-							}
-						}
+						applyNested(e, continuousWrite, doc);		
 					}
 				}
 			}
+		}
+	}
+	
+	/**
+	 * @param Element
+	 * @param boolean
+	 * @param Document
+	 * @throws PipelineException
+	 * Method for nested Div especially if you have inside a nested list (ex ol/ul)
+	 */
+	private void applyNested(Element e, boolean continuousWrite, Document doc) throws PipelineException{
+		try {
+			Class<?> noparams[] = {};
+			Class<?> clazz = Class.forName(e.getClass().getName());
+			try{
+				Method method = clazz.getDeclaredMethod("getContent", noparams);
+				Class<?> lista = method.invoke(e).getClass();
+				Class<?> listzz = Class.forName(lista.getName());
+				Method methodSize = listzz.getDeclaredMethod("size", noparams);
+				if (method.invoke(e) != null && (Integer) methodSize.invoke(method.invoke(e)) > 0) {
+					for (Element par : (Iterable<Element>) method.invoke(e)) {
+						try{
+							Class<?> clazzNested = Class.forName(par.getClass().getName());
+							Method methodNested = clazzNested.getDeclaredMethod("getContent", noparams);
+							Class<?> listaNested = methodNested.invoke(par).getClass();
+							Class<?> listzzNested = Class.forName(listaNested.getName());
+							Method methodSizeNested = listzzNested.getDeclaredMethod("size", noparams);
+							if(methodNested.invoke(e) != null && (Integer) methodSizeNested.invoke(methodNested.invoke(par)) > 0){
+								applyNested(par, continuousWrite, doc);
+							}	
+						} catch(NoSuchMethodException err) {
+							//it has'nt method getContent, so it's not a Div
+							doc.add(par);
+						}
+					}
+				} else {
+					doc.add(e);
+				}
+			} catch(NoSuchMethodException err) {
+				//non ha metodo getContent dunque non è un DIV
+				doc.add(e);
+			}
+			
+		} catch (DocumentException e1) {
+			if (!continuousWrite) {
+				throw new PipelineException(e1);
+			} else {
+				LOG.error(LocaleMessages.getInstance().getMessage(LocaleMessages.ELEMENT_NOT_ADDED_EXC),
+						e1);
+			}
+		} catch (ClassNotFoundException e1) {
+			LOG.error(e1.toString());
+		} catch (IllegalAccessException e1) {
+			LOG.error(e1.toString());
+		} catch (SecurityException e1) {
+			LOG.error(e1.toString());
+		} catch (IllegalArgumentException e1) {
+			LOG.error(e1.toString());
+		} catch (InvocationTargetException e1) {
+			LOG.error(e1.toString());
 		}
 	}
 
