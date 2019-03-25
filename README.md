@@ -1,4 +1,20 @@
-[iText][itext] consists of several jars.
+### **PLEASE NOTE: iText5 is EOL, and has been replaced by [iText7][itext7]**
+ 
+We HIGHLY recommend customers use iText7 for new projects, and to consider moving existing projects from iText5 to iText7 to benefit from the many improvements such as:
+ 
+- HTML to PDF (PDF/UA) conversion
+- PDF Redaction
+- SVG support
+- Better language support: Indic, Thai, Khmer, Arabic, Hebrew. (Close-source addon)
+- PDF Debugging for your IDE
+- Data Extraction
+- Better continued support and bugfixes
+- More modular, extensible handling of your document workflow
+- Extra practical add-ons
+- Encryption, hashing & digital signatures
+
+
+### [iText][itext] consists of several jars.
 
 The main iText release contains:
 - ```itextpdf-x.y.z.jar```: the core library
@@ -40,5 +56,6 @@ Contact sales for more info: http://itextpdf.com/sales
 [building]: BUILDING.md
 [contributing]: CONTRIBUTING.md
 [extrajars]: EXTRAJARS.md
-[itext]: http://itextpdf.com/
 [gratis]: https://en.wikipedia.org/wiki/Gratis_versus_libre
+[itext]: http://itextpdf.com/
+[itext7]: https://github.com/itext/itext7
