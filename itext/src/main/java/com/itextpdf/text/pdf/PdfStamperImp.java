@@ -341,7 +341,7 @@ class PdfStamperImp extends PdfWriter {
         if (oldInfo != null) {
             for (Object element : oldInfo.getKeys()) {
                 PdfName key = (PdfName) element;
-                PdfObject value = PdfReader.getPdfObject(oldInfo.get(key));
+                PdfObject value = oldInfo.get(key);
                 newInfo.put(key, value);
             }
         }
