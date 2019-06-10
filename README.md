@@ -1,6 +1,6 @@
-### **PLEASE NOTE: iText5 is EOL, and has been replaced by [iText7][itext7]**
+### **PLEASE NOTE: iText 5 is EOL, and has been replaced by [iText 7][itext7].  Only security fixes will be added**
  
-We HIGHLY recommend customers use iText7 for new projects, and to consider moving existing projects from iText5 to iText7 to benefit from the many improvements such as:
+We HIGHLY recommend customers use iText 7 for new projects, and to consider moving existing projects from iText 5 to iText 7 to benefit from the many improvements such as:
  
 - HTML to PDF (PDF/UA) conversion
 - PDF Redaction
@@ -14,26 +14,24 @@ We HIGHLY recommend customers use iText7 for new projects, and to consider movin
 - Encryption, hashing & digital signatures
 
 
-### [iText][itext] consists of several jars.
+### [iText 5][itext] consists of several jars.
 
-The main iText release contains:
+The main release contains:
 - ```itextpdf-x.y.z.jar```: the core library
 - ```itext-xtra-x.y.z.jar```: extra functionality (PDF 2!)
 - ```itext-pdfa-x.y.z.jar```: PDF/A-related functionality
 - ```xmlworker-x.y.z.jar```: XML (and HTML) functionality
 
-iText is hosted on https://github.com/itext/itextpdf
+iText 5 is hosted on https://github.com/itext/itextpdf
 
 You can find the latest releases here:
 - http://github.com/itext/itextpdf/releases/latest
 
-You can also [build iText from source][building].
+You can also [build iText 5 from source][building].
 
-We also have a tool that can help you debug PDFs:
-- ```itext-rups-x.y.z.jar```
-RUPS is hosted on http://github.com/itext/rups
+We also have RUPS — a tool that can help you debug PDFs. It's hosted on http://github.com/itext/rups
 
-If you have an idea on how to improve iText and you want to submit code,
+If you have an idea on how to improve iText 5 and you want to submit code,
 please read our [Contribution Guidelines][contributing].
 
 iText is licensed as [AGPL][agpl] software.
