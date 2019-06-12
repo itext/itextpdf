@@ -1,7 +1,7 @@
 /*
  *
  * This file is part of the iText (R) project.
-    Copyright (c) 1998-2017 iText Group NV
+    Copyright (c) 1998-2019 iText Group NV
  * Authors: Kevin Day, Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -48,7 +48,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.exceptions.UnsupportedPdfException;
@@ -98,13 +100,35 @@ public final class FilterHandlers {
     public static Map<PdfName, FilterHandler> getDefaultFilterHandlers(){
         return defaults;
     }
-    
+
+    /**
+     * Creates a {@link MemoryLimitsAwareOutputStream} which will be used for decompression of the passed pdf stream.
+     *
+     * @param streamDictionary the pdf stream which is going to be decompressed.
+     * @return the {@link ByteArrayOutputStream} which will be used for decompression of the passed pdf stream
+     */
+    public static ByteArrayOutputStream enableMemoryLimitsAwareHandler(PdfDictionary streamDictionary) {
+        MemoryLimitsAwareOutputStream outputStream = new MemoryLimitsAwareOutputStream();
+        MemoryLimitsAwareHandler memoryLimitsAwareHandler = null;
+        if (streamDictionary instanceof PRStream && null != ((PRStream) streamDictionary).getReader()) {
+            memoryLimitsAwareHandler = ((PRStream) streamDictionary).getReader().getMemoryLimitsAwareHandler();
+        } else {
+            // We do not reuse some static instance because one can process pdfs in different threads.
+            memoryLimitsAwareHandler = new MemoryLimitsAwareHandler();
+        }
+        if (null != memoryLimitsAwareHandler && memoryLimitsAwareHandler.considerCurrentPdfStream) {
+            outputStream.setMaxStreamSize(memoryLimitsAwareHandler.getMaxSizeOfSingleDecompressedPdfStream());
+        }
+        return outputStream;
+    }
+
     /**
      * Handles FLATEDECODE filter
      */
     private static class Filter_FLATEDECODE implements FilterHandler{
         public byte[] decode(byte[] b, PdfName filterName, PdfObject decodeParams, PdfDictionary streamDictionary) throws IOException {
-            b = PdfReader.FlateDecode(b);
+            ByteArrayOutputStream out = enableMemoryLimitsAwareHandler(streamDictionary);
+            b = PdfReader.FlateDecode(b, out);
             b = PdfReader.decodePredictor(b, decodeParams);
             return b;
         }
@@ -115,7 +139,8 @@ public final class FilterHandlers {
      */
     private static class Filter_ASCIIHEXDECODE implements FilterHandler{
         public byte[] decode(byte[] b, PdfName filterName, PdfObject decodeParams, PdfDictionary streamDictionary) throws IOException {
-            b = PdfReader.ASCIIHexDecode(b);
+            ByteArrayOutputStream out = enableMemoryLimitsAwareHandler(streamDictionary);
+            b = PdfReader.ASCIIHexDecode(b, out);
             return b;
         }
     }
@@ -125,7 +150,8 @@ public final class FilterHandlers {
      */
     private static class Filter_ASCII85DECODE implements FilterHandler{
         public byte[] decode(byte[] b, PdfName filterName, PdfObject decodeParams, PdfDictionary streamDictionary) throws IOException {
-            b = PdfReader.ASCII85Decode(b);
+            ByteArrayOutputStream out = enableMemoryLimitsAwareHandler(streamDictionary);
+            b = PdfReader.ASCII85Decode(b, out);
             return b;
         }
     }
@@ -135,7 +161,8 @@ public final class FilterHandlers {
      */
     private static class Filter_LZWDECODE implements FilterHandler{
         public byte[] decode(byte[] b, PdfName filterName, PdfObject decodeParams, PdfDictionary streamDictionary) throws IOException {
-            b = PdfReader.LZWDecode(b);
+            ByteArrayOutputStream out = enableMemoryLimitsAwareHandler(streamDictionary);
+            b = PdfReader.LZWDecode(b, out);
             b = PdfReader.decodePredictor(b, decodeParams);
             return b;
         }
@@ -217,7 +244,7 @@ public final class FilterHandlers {
 
         public byte[] decode(byte[] b, PdfName filterName, PdfObject decodeParams, PdfDictionary streamDictionary) throws IOException {
          // allocate the output buffer
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            ByteArrayOutputStream out = enableMemoryLimitsAwareHandler(streamDictionary);
             byte dupCount = -1;
             for(int i = 0; i < b.length; i++){
                 dupCount = b[i];
@@ -225,18 +252,17 @@ public final class FilterHandlers {
                 
                 if (dupCount >= 0 && dupCount <= 127){
                     int bytesToCopy = dupCount+1;
-                    baos.write(b, i, bytesToCopy);
+                    out.write(b, i, bytesToCopy);
                     i+=bytesToCopy;
                 } else {
                     // make dupcount copies of the next byte
                     i++;
                     for(int j = 0; j < 1-(int)(dupCount);j++){ 
-                        baos.write(b[i]);
+                        out.write(b[i]);
                     }
                 }
             }
-            
-            return baos.toByteArray();
+            return out.toByteArray();
         }
     }
     

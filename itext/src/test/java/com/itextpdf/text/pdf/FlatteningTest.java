@@ -1,7 +1,7 @@
 /*
  *
  * This file is part of the iText (R) project.
-    Copyright (c) 1998-2017 iText Group NV
+    Copyright (c) 1998-2019 iText Group NV
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -255,6 +255,21 @@ public class FlatteningTest {
         }
     }
 
+    @Test
+    public void testFlatteningGenerateAppearances7() throws IOException, DocumentException, InterruptedException {
+
+        new File(OUTPUT_FOLDER).mkdirs();
+
+        final String OUT = "test01.pdf";
+        testFlatteningGenerateAppearance(RESOURCES_FOLDER + "test01.pdf", OUTPUT_FOLDER + OUT, true);
+
+        CompareTool compareTool = new CompareTool();
+        String errorMessage = compareTool.compare(OUTPUT_FOLDER + OUT, RESOURCES_FOLDER + "cmp_" + OUT, OUTPUT_FOLDER, "diff");
+        if (errorMessage != null) {
+            Assert.fail(errorMessage);
+        }
+    }
+
     public void testFlatteningGenerateAppearance(String in, String out, Boolean gen) throws FileNotFoundException, DocumentException, IOException {
         PdfReader reader = new PdfReader(in);
         PdfStamper stamper = new PdfStamper(reader, new FileOutputStream(out));
@@ -406,4 +421,26 @@ public class FlatteningTest {
             Assert.fail(errorMessage);
         }
     }
+    @Test
+    public void testFreeTextRectangleBBoxInteraction() throws IOException, DocumentException, InterruptedException {
+        new File(OUTPUT_FOLDER).mkdirs();
+
+        String file = "freeTextRectangleBBoxInteraction.pdf";
+        PdfReader pdfReader = new PdfReader(RESOURCES_FOLDER + file);
+        PdfStamper pdfStamper = new PdfStamper(pdfReader, new FileOutputStream(OUTPUT_FOLDER + file));
+
+
+        pdfStamper.setFormFlattening(true);
+        pdfStamper.setFreeTextFlattening(true);
+        pdfStamper.close();
+        pdfReader.close();
+        // compare
+        CompareTool compareTool = new CompareTool();
+        String errorMessage = compareTool.compareByContent(OUTPUT_FOLDER + file, RESOURCES_FOLDER + "cmp_" + file, OUTPUT_FOLDER, "diff");
+        if (errorMessage != null) {
+            Assert.fail(errorMessage);
+        }
+    }
+
+
 }

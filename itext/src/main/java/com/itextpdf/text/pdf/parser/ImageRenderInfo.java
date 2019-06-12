@@ -1,7 +1,7 @@
 /*
  *
  * This file is part of the iText (R) project.
-    Copyright (c) 1998-2017 iText Group NV
+    Copyright (c) 1998-2019 iText Group NV
  * Authors: Kevin Day, Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -81,7 +81,10 @@ public class ImageRenderInfo {
         this.ref = ref;
         this.inlineImageInfo = null;
         this.colorSpaceDictionary = colorSpaceDictionary;
-        this.markedContentInfos = new ArrayList<MarkedContentInfo>(markedContentInfo);
+        this.markedContentInfos = new ArrayList<MarkedContentInfo>();
+        if(markedContentInfo != null) {
+            this.markedContentInfos.addAll(markedContentInfo);
+        }
     }
 
     private ImageRenderInfo(GraphicsState gs, InlineImageInfo inlineImageInfo, PdfDictionary colorSpaceDictionary,Collection<MarkedContentInfo> markedContentInfo) {
@@ -89,7 +92,10 @@ public class ImageRenderInfo {
         this.ref = null;
         this.inlineImageInfo = inlineImageInfo;
         this.colorSpaceDictionary = colorSpaceDictionary;
-        this.markedContentInfos = new ArrayList<MarkedContentInfo>(markedContentInfo);
+        this.markedContentInfos = new ArrayList<MarkedContentInfo>();
+        if(markedContentInfo != null) {
+            this.markedContentInfos.addAll(markedContentInfo);
+        }
     }
     /**
      * Create an ImageRenderInfo object based on an XObject (this is the most common way of including an image in PDF)

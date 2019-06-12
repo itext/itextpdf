@@ -1,7 +1,7 @@
 /*
  *
  * This file is part of the iText (R) project.
-    Copyright (c) 1998-2017 iText Group NV
+    Copyright (c) 1998-2019 iText Group NV
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -160,6 +160,11 @@ public class PdfReader implements PdfViewerPreferences {
     private boolean encryptionError;
 
     /**
+     * Handler which will be used for decompression of pdf streams.
+     */
+    MemoryLimitsAwareHandler memoryLimitsAwareHandler = null;
+
+    /**
      * Holds value of property appendable.
      */
     private boolean appendable;
@@ -181,29 +186,41 @@ public class PdfReader implements PdfViewerPreferences {
      * @param closeSourceOnConstructorError if true, the byteSource will be closed if there is an error during construction of this reader
      */
     private PdfReader(RandomAccessSource byteSource, boolean partialRead, byte ownerPassword[], Certificate certificate, Key certificateKey, String certificateKeyProvider, ExternalDecryptionProcess externalDecryptionProcess, boolean closeSourceOnConstructorError) throws IOException {
-        this.certificate = certificate;
-        this.certificateKey = certificateKey;
-        this.certificateKeyProvider = certificateKeyProvider;
-        this.externalDecryptionProcess = externalDecryptionProcess;
-        this.password = ownerPassword;
-        this.partial = partialRead;
-        try{
-        
-	        tokens = getOffsetTokeniser(byteSource);
-	        
-	        if (partialRead){
-	        	readPdfPartial();
-	        } else {
-	        	readPdf();
-	        }
-        } catch (IOException e){
-        	if (closeSourceOnConstructorError)
-        		byteSource.close();
-        	throw e;
-        }
-		getCounter().read(fileLength);
+        this(byteSource, new ReaderProperties().setCertificate(certificate).setCertificateKey(certificateKey).setCertificateKeyProvider(certificateKeyProvider).setExternalDecryptionProcess(externalDecryptionProcess)
+        .setOwnerPassword(ownerPassword).setPartialRead(partialRead).setCloseSourceOnconstructorError(closeSourceOnConstructorError));
     }
-    
+
+
+    /**
+     * Constructs a new PdfReader.  This is the master constructor.
+     * @param byteSource source of bytes for the reader
+     * @param properties the properties which will be used to create the reader
+     */
+    private PdfReader(RandomAccessSource byteSource, ReaderProperties properties) throws IOException {
+        this.certificate = properties.certificate;
+        this.certificateKey = properties.certificateKey;
+        this.certificateKeyProvider = properties.certificateKeyProvider;
+        this.externalDecryptionProcess = properties.externalDecryptionProcess;
+        this.password = properties.ownerPassword;
+        this.partial = properties.partialRead;
+        this.memoryLimitsAwareHandler = properties.memoryLimitsAwareHandler;
+        try{
+
+            tokens = getOffsetTokeniser(byteSource);
+
+            if (partial){
+                readPdfPartial();
+            } else {
+                readPdf();
+            }
+        } catch (IOException e){
+            if (properties.closeSourceOnconstructorError)
+                byteSource.close();
+            throw e;
+        }
+        getCounter().read(fileLength);
+    }
+
     /**
      * Reads and parses a PDF document.
      * @param filename the file name of the document
@@ -215,12 +232,26 @@ public class PdfReader implements PdfViewerPreferences {
 
     /**
      * Reads and parses a PDF document.
+     * @param properties the properties which will be used to create the reader
+     * @param filename the file name of the document
+     * @throws IOException on error
+     */
+    public PdfReader(ReaderProperties properties, final String filename) throws IOException {
+        this(new RandomAccessSourceFactory()
+                        .setForceRead(false)
+                        .setUsePlainRandomAccess(Document.plainRandomAccess)
+                        .createBestSource(filename),
+                properties);
+    }
+
+    /**
+     * Reads and parses a PDF document.
      * @param filename the file name of the document
      * @param ownerPassword the password to read the document
      * @throws IOException on error
      */
     public PdfReader(final String filename, final byte ownerPassword[]) throws IOException {
-        this(filename, ownerPassword, false);   	
+        this(new ReaderProperties().setOwnerPassword(ownerPassword), filename);
     }
 
 
@@ -232,19 +263,10 @@ public class PdfReader implements PdfViewerPreferences {
      * @throws IOException on error
      */
     public PdfReader(final String filename, final byte ownerPassword[], boolean partial) throws IOException {
-        this(
-        		new RandomAccessSourceFactory()
-    			.setForceRead(false)
-    			.setUsePlainRandomAccess(Document.plainRandomAccess)
-    			.createBestSource(filename),
-    			partial,
-    			ownerPassword,
-    			null,
-    			null,
-    			null,
-                null,
-    			true	
-        );
+        this(new RandomAccessSourceFactory()
+                .setForceRead(false)
+                .setUsePlainRandomAccess(Document.plainRandomAccess)
+                .createBestSource(filename), new ReaderProperties().setOwnerPassword(ownerPassword).setPartialRead(partial));
     }
 
     /**
@@ -253,7 +275,7 @@ public class PdfReader implements PdfViewerPreferences {
      * @throws IOException on error
      */
     public PdfReader(final byte pdfIn[]) throws IOException {
-        this(pdfIn, null);
+        this(new RandomAccessSourceFactory().createSource(pdfIn), new ReaderProperties());
     }
 
     /**
@@ -263,17 +285,7 @@ public class PdfReader implements PdfViewerPreferences {
      * @throws IOException on error
      */
     public PdfReader(final byte pdfIn[], final byte ownerPassword[]) throws IOException {
-        this(
-        		new RandomAccessSourceFactory().createSource(pdfIn),
-    			false,
-    			ownerPassword,
-    			null,
-    			null,
-    			null,
-                null,
-    			true
-        );
-
+        this(new RandomAccessSourceFactory().createSource(pdfIn), new ReaderProperties().setOwnerPassword(ownerPassword));
     }
 
     /**
@@ -285,21 +297,11 @@ public class PdfReader implements PdfViewerPreferences {
      * @throws IOException on error
      */
     public PdfReader(final String filename, final Certificate certificate, final Key certificateKey, final String certificateKeyProvider) throws IOException {
-        this(
-        		new RandomAccessSourceFactory()
+        this(new RandomAccessSourceFactory()
     			.setForceRead(false)
     			.setUsePlainRandomAccess(Document.plainRandomAccess)
     			.createBestSource(filename),
-    			false,
-    			null,
-    			certificate,
-    			certificateKey,
-    			certificateKeyProvider,
-                null,
-    			true
-        		
-        );
-
+    			new ReaderProperties().setCertificate(certificate).setCertificateKey(certificateKey).setCertificateKeyProvider(certificateKeyProvider));
     }
 
 
@@ -311,20 +313,11 @@ public class PdfReader implements PdfViewerPreferences {
      * @throws IOException on error
      */
     public PdfReader(final String filename, Certificate certificate, final ExternalDecryptionProcess externalDecryptionProcess) throws IOException {
-        this(
-                new RandomAccessSourceFactory()
+        this(new RandomAccessSourceFactory()
                         .setForceRead(false)
                         .setUsePlainRandomAccess(Document.plainRandomAccess)
                         .createBestSource(filename),
-                false,
-                null,
-                certificate,
-                null,
-                null,
-                externalDecryptionProcess,
-                true
-        );
-
+                new ReaderProperties().setCertificate(certificate).setExternalDecryptionProcess(externalDecryptionProcess));
     }
 
     /**
@@ -336,20 +329,11 @@ public class PdfReader implements PdfViewerPreferences {
      * @throws IOException on error
      */
     public PdfReader(final byte[] pdfIn, Certificate certificate, final ExternalDecryptionProcess externalDecryptionProcess) throws IOException {
-        this(
-                new RandomAccessSourceFactory()
+        this(new RandomAccessSourceFactory()
                         .setForceRead(false)
                         .setUsePlainRandomAccess(Document.plainRandomAccess)
                         .createSource(pdfIn),
-                false,
-                null,
-                certificate,
-                null,
-                null,
-                externalDecryptionProcess,
-                true
-        );
-
+                new ReaderProperties().setCertificate(certificate).setExternalDecryptionProcess(externalDecryptionProcess));
     }
 
     /**
@@ -362,13 +346,7 @@ public class PdfReader implements PdfViewerPreferences {
      */
     public PdfReader(final InputStream inputStream, final Certificate certificate, final ExternalDecryptionProcess externalDecryptionProcess) throws IOException {
         this(new RandomAccessSourceFactory().setForceRead(false).setUsePlainRandomAccess(Document.plainRandomAccess).createSource(inputStream),
-                false,
-                null,
-                certificate,
-                null,
-                null,
-                externalDecryptionProcess,
-                true);
+                new ReaderProperties().setCertificate(certificate).setExternalDecryptionProcess(externalDecryptionProcess));
     }
 
     /**
@@ -377,7 +355,7 @@ public class PdfReader implements PdfViewerPreferences {
      * @throws IOException on error
      */
     public PdfReader(final URL url) throws IOException {
-        this(url, null);
+        this(new RandomAccessSourceFactory().createSource(url), new ReaderProperties());
     }
 
     /**
@@ -387,17 +365,8 @@ public class PdfReader implements PdfViewerPreferences {
      * @throws IOException on error
      */
     public PdfReader(final URL url, final byte ownerPassword[]) throws IOException {
-        this(
-        		new RandomAccessSourceFactory().createSource(url),
-    			false,
-    			ownerPassword,
-    			null,
-    			null,
-    			null,
-                null,
-    			true
-        );
-
+        this(new RandomAccessSourceFactory().createSource(url),
+    			new ReaderProperties().setOwnerPassword(ownerPassword));
     }
 
     /**
@@ -408,16 +377,8 @@ public class PdfReader implements PdfViewerPreferences {
      * @throws IOException on error
      */
     public PdfReader(final InputStream is, final byte ownerPassword[]) throws IOException {
-        this(
-        		new RandomAccessSourceFactory().createSource(is),
-    			false,
-    			ownerPassword,
-    			null,
-    			null,
-    			null,
-                null,
-    			false
-        );
+        this(new RandomAccessSourceFactory().createSource(is),
+    			new ReaderProperties().setOwnerPassword(ownerPassword).setCloseSourceOnconstructorError(false));
     	
     }
 
@@ -428,8 +389,30 @@ public class PdfReader implements PdfViewerPreferences {
      * @throws IOException on error
      */
     public PdfReader(final InputStream is) throws IOException {
-        this(is, null);
+        this(new RandomAccessSourceFactory().createSource(is), new ReaderProperties().setCloseSourceOnconstructorError(false));
     }
+
+    /**
+     * Reads and parses a PDF document.
+     * @param properties the properties which will be used to create the reader
+     * @param is the <CODE>InputStream</CODE> containing the document. The stream is read to the
+     * end but is not closed
+     * @throws IOException on error
+     */
+    public PdfReader(ReaderProperties properties, final InputStream is) throws IOException {
+        this(new RandomAccessSourceFactory().createSource(is), properties);
+    }
+
+    /**
+     * Reads and parses a PDF document.
+     * @param properties the properties which will be used to create the reader
+     * @param raf the document location
+     * @throws IOException on error
+     */
+    public PdfReader(ReaderProperties properties, final RandomAccessFileOrArray raf) throws IOException {
+        this(raf.getByteSource(), properties);
+    }
+
 
     /**
      * Reads and parses a pdf document. Contrary to the other constructors only the xref is read
@@ -440,7 +423,7 @@ public class PdfReader implements PdfViewerPreferences {
      * @throws IOException on error
      */
     public PdfReader(final RandomAccessFileOrArray raf, final byte ownerPassword[]) throws IOException {
-        this(raf, ownerPassword, true);
+        this(new ReaderProperties().setOwnerPassword(ownerPassword).setPartialRead(true).setCloseSourceOnconstructorError(false), raf);
     }
 
     /**
@@ -451,16 +434,7 @@ public class PdfReader implements PdfViewerPreferences {
      * @throws IOException on error
      */
     public PdfReader(final RandomAccessFileOrArray raf, final byte ownerPassword[], boolean partial) throws IOException {
-        this(
-        		raf.getByteSource(),
-    			partial,
-    			ownerPassword,
-    			null,
-    			null,
-    			null,
-                null,
-    			false
-        );
+        this(raf.getByteSource(), new ReaderProperties().setPartialRead(partial).setOwnerPassword(ownerPassword).setCloseSourceOnconstructorError(false));
     }
 
     /** Creates an independent duplicate.
@@ -568,6 +542,11 @@ public class PdfReader implements PdfViewerPreferences {
         }
         return acroForm;
     }
+
+    MemoryLimitsAwareHandler getMemoryLimitsAwareHandler() {
+        return memoryLimitsAwareHandler;
+    }
+
     /**
      * Gets the page rotation. This value can be 0, 90, 180 or 270.
      * @param index the page number. The first page is 1
@@ -733,6 +712,9 @@ public class PdfReader implements PdfViewerPreferences {
     protected void readPdf() throws IOException {
         fileLength = tokens.getFile().length();
         pdfVersion = tokens.checkPdfHeader();
+        if (null == memoryLimitsAwareHandler) {
+            memoryLimitsAwareHandler = new MemoryLimitsAwareHandler(fileLength);
+        }
         try {
             readXref();
         }
@@ -778,6 +760,9 @@ public class PdfReader implements PdfViewerPreferences {
     protected void readPdfPartial() throws IOException {
         fileLength = tokens.getFile().length();
         pdfVersion = tokens.checkPdfHeader();
+        if (null == memoryLimitsAwareHandler) {
+            memoryLimitsAwareHandler = new MemoryLimitsAwareHandler(fileLength);
+        }
         try {
             readXref();
         }
@@ -2005,10 +1990,17 @@ public class PdfReader implements PdfViewerPreferences {
                     return new PdfName(tokens.getStringValue(), false);
                 }
             }
-            case REF:
+            case REF: {
                 int num = tokens.getReference();
-                PRIndirectReference ref = new PRIndirectReference(this, num, tokens.getGeneration());
-                return ref;
+                if (num >= 0) {
+                    return new PRIndirectReference(this, num, tokens.getGeneration());
+                } else {
+                    if (LOGGER.isLogging(Level.ERROR)) {
+                        LOGGER.error(MessageLocalization.getComposedMessage("invalid.reference.number.skip"));
+                    }
+                    return PdfNull.PDFNULL;
+                }
+            }
             case ENDOFFILE:
                 throw new IOException(MessageLocalization.getComposedMessage("unexpected.end.of.file"));
             default:
@@ -2043,6 +2035,17 @@ public class PdfReader implements PdfViewerPreferences {
         byte b[] = FlateDecode(in, true);
         if (b == null)
             return FlateDecode(in, false);
+        return b;
+    }
+
+    /** Decodes a stream that has the FlateDecode filter.
+     * @param in the input data
+     * @return the decoded data
+     */
+    static byte[] FlateDecode(final byte in[], ByteArrayOutputStream out) {
+        byte b[] = FlateDecode(in, true, out);
+        if (b == null)
+            return FlateDecode(in, false, out);
         return b;
     }
 
@@ -2178,9 +2181,12 @@ public class PdfReader implements PdfViewerPreferences {
      * @return the decoded data
      */
     public static byte[] FlateDecode(final byte in[], final boolean strict) {
+        return FlateDecode(in, strict, new ByteArrayOutputStream());
+    }
+
+    private static byte[] FlateDecode(final byte in[], final boolean strict, ByteArrayOutputStream out) {
         ByteArrayInputStream stream = new ByteArrayInputStream(in);
         InflaterInputStream zip = new InflaterInputStream(stream);
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
         byte b[] = new byte[strict ? 4092 : 1];
         try {
             int n;
@@ -2190,8 +2196,9 @@ public class PdfReader implements PdfViewerPreferences {
             zip.close();
             out.close();
             return out.toByteArray();
-        }
-        catch (Exception e) {
+        } catch (MemoryLimitsAwareException e) {
+            throw e;
+        } catch (Exception e) {
             if (strict)
                 return null;
             return out.toByteArray();
@@ -2213,7 +2220,10 @@ public class PdfReader implements PdfViewerPreferences {
      * @return the decoded data
      */
     public static byte[] ASCIIHexDecode(final byte in[]) {
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        return ASCIIHexDecode(in, new ByteArrayOutputStream());
+    }
+
+    static byte[] ASCIIHexDecode(final byte in[], ByteArrayOutputStream out) {
         boolean first = true;
         int n1 = 0;
         for (int k = 0; k < in.length; ++k) {
@@ -2241,7 +2251,10 @@ public class PdfReader implements PdfViewerPreferences {
      * @return the decoded data
      */
     public static byte[] ASCII85Decode(final byte in[]) {
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        return ASCII85Decode(in, new ByteArrayOutputStream());
+    }
+
+    static byte[] ASCII85Decode(final byte in[], ByteArrayOutputStream out) {
         int state = 0;
         int chn[] = new int[5];
         for (int k = 0; k < in.length; ++k) {
@@ -2299,7 +2312,10 @@ public class PdfReader implements PdfViewerPreferences {
      * @return the decoded data
      */
     public static byte[] LZWDecode(final byte in[]) {
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        return LZWDecode(in, new ByteArrayOutputStream());
+    }
+
+    static byte[] LZWDecode(final byte in[], ByteArrayOutputStream out) {
         LZWDecoder lzw = new LZWDecoder();
         lzw.decode(in, out);
         return out.toByteArray();
@@ -2371,18 +2387,24 @@ public class PdfReader implements PdfViewerPreferences {
         PdfObject contents = getPdfObjectRelease(page.get(PdfName.CONTENTS));
         if (contents == null)
             return new byte[0];
-        ByteArrayOutputStream bout = null;
+        MemoryLimitsAwareHandler handler = memoryLimitsAwareHandler;
+        long usedMemory = null == handler ? -1 : handler.getAllMemoryUsedForDecompression();
+
         if (contents.isStream()) {
             return getStreamBytes((PRStream)contents, file);
         }
         else if (contents.isArray()) {
             PdfArray array = (PdfArray)contents;
-            bout = new ByteArrayOutputStream();
+            MemoryLimitsAwareOutputStream bout = new MemoryLimitsAwareOutputStream();
             for (int k = 0; k < array.size(); ++k) {
                 PdfObject item = getPdfObjectRelease(array.getPdfObject(k));
                 if (item == null || !item.isStream())
                     continue;
                 byte[] b = getStreamBytes((PRStream)item, file);
+                // usedMemory has changed, that means that some of currently processed pdf streams are suspicious
+                if (null != handler && usedMemory < handler.getAllMemoryUsedForDecompression()) {
+                    bout.setMaxStreamSize(handler.getMaxSizeOfSingleDecompressedPdfStream());
+                }
                 bout.write(b);
                 if (k != array.size() - 1)
                     bout.write('\n');
@@ -2450,7 +2472,7 @@ public class PdfReader implements PdfViewerPreferences {
      * @since 5.1
      */
     public PdfDictionary getPageResources(final int pageNum) {
-    	return getPageResources(getPageN(pageNum));
+        return getPageResources(getPageN(pageNum));
     }
 
     /**
@@ -2585,6 +2607,26 @@ public class PdfReader implements PdfViewerPreferences {
             else if (filter.isArray())
                 filters = ((PdfArray)filter).getArrayList();
         }
+
+        MemoryLimitsAwareHandler memoryLimitsAwareHandler = null;
+        if (streamDictionary instanceof PRStream && null != ((PRStream) streamDictionary).getReader()) {
+            memoryLimitsAwareHandler = ((PRStream) streamDictionary).getReader().getMemoryLimitsAwareHandler();
+        }
+        if (null != memoryLimitsAwareHandler) {
+            HashSet<PdfName> filterSet = new HashSet<PdfName>();
+            int index;
+            for (index = 0; index < filters.size(); index++) {
+                PdfName filterName = (PdfName) filters.get(index);
+                if (!filterSet.add(filterName)) {
+                    memoryLimitsAwareHandler.beginDecompressedPdfStreamProcessing();
+                    break;
+                }
+            }
+            if (index == filters.size()) { // The stream isn't suspicious. We shouldn't process it.
+                memoryLimitsAwareHandler = null;
+            }
+        }
+
         ArrayList<PdfObject> dp = new ArrayList<PdfObject>();
         PdfObject dpo = getPdfObjectRelease(streamDictionary.get(PdfName.DECODEPARMS));
         if (dpo == null || !dpo.isDictionary() && !dpo.isArray())
@@ -2617,6 +2659,12 @@ public class PdfReader implements PdfViewerPreferences {
                 decodeParams = null;
             }
             b = filterHandler.decode(b, filterName, decodeParams, streamDictionary);
+            if (null != memoryLimitsAwareHandler) {
+                memoryLimitsAwareHandler.considerBytesOccupiedByDecompressedPdfStream(b.length);
+            }
+        }
+        if (null != memoryLimitsAwareHandler) {
+            memoryLimitsAwareHandler.endDecompressedPdfStreamProcessing();
         }
         return b;
     }

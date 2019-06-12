@@ -1,7 +1,7 @@
 /*
  *
  * This file is part of the iText (R) project.
-    Copyright (c) 1998-2017 iText Group NV
+    Copyright (c) 1998-2019 iText Group NV
  * Authors: Balder Van Camp, Emiel Ackermann, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -360,7 +360,7 @@ public class Tag implements Iterable<Tag> {
 	 */
 	private Tag recursiveGetChild(final Tag tag, final String name, final String ns, final boolean recursive) {
 		for (Tag t : tag) {
-			if (t.tag.equals(name) && t.ns.equals(ns)) {
+			if (t != null && t.tag.equals(name) && t.ns.equals(ns)) {
 				return t;
 			} else if (recursive) {
 				Tag rT = null;

@@ -1,7 +1,7 @@
 /*
  *
  * This file is part of the iText (R) project.
-    Copyright (c) 1998-2017 iText Group NV
+    Copyright (c) 1998-2019 iText Group NV
  * Authors: Bruno Lowagie, Paulo Soares, Kevin Day, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -44,7 +44,9 @@
 package com.itextpdf.text.pdf.parser;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 
+import com.itextpdf.text.DocumentException;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -188,7 +190,23 @@ public class LocationTextExtractionStrategyTest extends SimpleTextExtractionStra
     	
 
 	}
-    
+
+    @Test
+    public void testFontSpacingEqualsCharSpacing() throws Exception {
+        byte[] content = createPdfWithFontSpacingEqualsCharSpacing();
+        PdfReader r = new PdfReader(content);
+        String text = PdfTextExtractor.getTextFromPage(r, 1, createRenderListenerForTest());
+        Assert.assertEquals("Preface", text);
+    }
+
+    @Test
+    public void testLittleFontSize() throws Exception {
+        byte[] content = createPdfWithLittleFontSize();
+        PdfReader r = new PdfReader(content);
+        String text = PdfTextExtractor.getTextFromPage(r, 1, createRenderListenerForTest());
+        Assert.assertEquals("Preface Preface ", text);
+    }
+
     private byte[] createPdfWithNegativeCharSpacing(String str1, float charSpacing, String str2) throws Exception {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         Document doc = new Document();
@@ -357,5 +375,80 @@ public class LocationTextExtractionStrategyTest extends SimpleTextExtractionStra
         final byte[] pdfBytes = byteStream.toByteArray();
 
         return pdfBytes;
+    }
+
+    private byte[] createPdfWithFontSpacingEqualsCharSpacing() throws DocumentException, IOException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        Document doc = new Document();
+        PdfWriter writer = PdfWriter.getInstance(doc, baos);
+
+        writer.setCompressionLevel(0);
+        doc.open();
+
+        BaseFont font = BaseFont.createFont();
+        int fontSize = 12;
+        float charSpace = font.getWidth(' ') / 1000.0f;
+
+        PdfContentByte canvas = writer.getDirectContent();
+        canvas.beginText();
+        canvas.setFontAndSize(font, fontSize);
+        canvas.moveText(45, doc.getPageSize().getHeight() - 45);
+        canvas.setCharacterSpacing(-charSpace * fontSize);
+
+        PdfTextArray textArray = new PdfTextArray();
+        textArray.add("P");
+        textArray.add(-226.2f);
+        textArray.add("r");
+        textArray.add(-231.8f);
+        textArray.add("e");
+        textArray.add(-230.8f);
+        textArray.add("f");
+        textArray.add(-238);
+        textArray.add("a");
+        textArray.add(-238.9f);
+        textArray.add("c");
+        textArray.add(-228.9f);
+        textArray.add("e");
+
+        canvas.showText(textArray);
+        canvas.endText();
+
+        doc.close();
+
+        return baos.toByteArray();
+    }
+
+    private byte[] createPdfWithLittleFontSize() throws IOException, DocumentException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        Document doc = new Document();
+        PdfWriter writer = PdfWriter.getInstance(doc, baos);
+        writer.setCompressionLevel(0);
+        doc.open();
+
+        BaseFont font = BaseFont.createFont();
+        PdfContentByte canvas = writer.getDirectContent();
+        canvas.beginText();
+        canvas.setFontAndSize(font, 0.2f);
+        canvas.moveText(45, doc.getPageSize().getHeight() - 45);
+
+        PdfTextArray textArray = new PdfTextArray();
+        textArray.add("P");
+        textArray.add("r");
+        textArray.add("e");
+        textArray.add("f");
+        textArray.add("a");
+        textArray.add("c");
+        textArray.add("e");
+        textArray.add(" ");
+
+        canvas.showText(textArray);
+        canvas.setFontAndSize(font, 10);
+        canvas.showText(textArray);
+
+        canvas.endText();
+
+        doc.close();
+
+        return baos.toByteArray();
     }
 }

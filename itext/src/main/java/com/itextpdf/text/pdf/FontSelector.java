@@ -1,7 +1,7 @@
 /*
  *
  * This file is part of the iText (R) project.
-    Copyright (c) 1998-2017 iText Group NV
+    Copyright (c) 1998-2019 iText Group NV
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -164,7 +164,9 @@ public class FontSelector {
     }
 
     protected Font getFont(int i) {
-        return i < fonts.size() ? fonts.get(i) : unsupportedFonts.get(i);
+        return i < fonts.size()
+                ? fonts.get(i)
+                : unsupportedFonts.get(i - fonts.size());
     }
 
     private boolean isSupported(Font font) {

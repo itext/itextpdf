@@ -571,3 +571,4 @@ the.color.depth.1.is.not.supported=De kleurdiepte {1} is niet ondersteund.
 N.value.1.is.not.supported=N waarde {1} is niet ondersteund
 Decoding.can't.happen.on.this.type.of.stream.(.1.)=Decoderen kan niet gebeuren op dit type stream({1})
 zugferd.xmp.schema.shall.contain.attachment.name=ZUGFeRD XMP schema moet attachmentnaam bevatten.
+invalid.reference.number.skip=Invalid reference was found. Reference will be skipped.

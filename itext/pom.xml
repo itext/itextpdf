@@ -10,7 +10,7 @@
   </parent>
 
   <artifactId>itextpdf</artifactId>
-  <version>5.5.13</version>
+  <version>5.5.13.1</version>
 
   <name>iText Core</name>
   <description>A Free Java-PDF library</description>

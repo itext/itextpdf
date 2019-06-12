@@ -1,7 +1,7 @@
 /*
  *
  * This file is part of the iText (R) project.
-    Copyright (c) 1998-2017 iText Group NV
+    Copyright (c) 1998-2019 iText Group NV
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -341,7 +341,7 @@ class PdfStamperImp extends PdfWriter {
         if (oldInfo != null) {
             for (Object element : oldInfo.getKeys()) {
                 PdfName key = (PdfName) element;
-                PdfObject value = PdfReader.getPdfObject(oldInfo.get(key));
+                PdfObject value = oldInfo.get(key);
                 newInfo.put(key, value);
             }
         }
@@ -1039,8 +1039,8 @@ class PdfStamperImp extends PdfWriter {
                 if (appDic != null && (flags & PdfFormField.FLAGS_PRINT) != 0 && (flags & PdfFormField.FLAGS_HIDDEN) == 0) {
                     PdfObject obj = appDic.get(PdfName.N);
                     PdfAppearance app = null;
+                    PdfObject objReal = PdfReader.getPdfObject(obj);
                     if (obj != null) {
-                        PdfObject objReal = PdfReader.getPdfObject(obj);
                         if (obj instanceof PdfIndirectReference && !obj.isIndirect())
                             app = new PdfAppearance((PdfIndirectReference) obj);
                         else if (objReal instanceof PdfStream) {
@@ -1085,7 +1085,12 @@ class PdfStamperImp extends PdfWriter {
                             tf = calculateTemplateTransformationMatrix(tf, fieldRotation, box);
                             cb.addTemplate(app, tf);
                         } else {
-                            cb.addTemplate(app, box.getLeft(), box.getBottom());
+                            if(objReal instanceof PdfDictionary && ((PdfDictionary)objReal).getAsArray(PdfName.BBOX) != null) {
+                                Rectangle bBox = PdfReader.getNormalizedRectangle((((PdfDictionary)objReal).getAsArray(PdfName.BBOX)));
+                                cb.addTemplate(app, (box.getWidth() / bBox.getWidth()), 0, 0, (box.getHeight() / bBox.getHeight()), box.getLeft(), box.getBottom());
+                            } else {
+                                cb.addTemplate(app, box.getLeft(), box.getBottom());
+                            }
                         }
                         cb.setLiteral("q ");
                     }
@@ -1386,9 +1391,12 @@ class PdfStamperImp extends PdfWriter {
                             Rectangle transformBBox = transformBBoxByMatrix(bBox, matrix);
                             cb.addTemplate(app, (rect.getWidth() / transformBBox.getWidth()), 0, 0, (rect.getHeight() / transformBBox.getHeight()), rect.getLeft(), rect.getBottom());
                         } else {
+                            //Correct for offset origins in the BBox, similar to how Adobe will flatten.
+                            float heightCorrection = - bBox.getBottom();
+                            float widthCorrection = - bBox.getLeft();
                             //Changed so that when the annotation has a difference scale than the xObject in the appearance dictionary, the image is consistent between
                             //the input and the flattened document.  When the annotation is rotated or skewed, it will still be flattened incorrectly.
-                            cb.addTemplate(app, (rect.getWidth() / bBox.getWidth()), 0, 0, (rect.getHeight() / bBox.getHeight()), rect.getLeft(), rect.getBottom());
+                            cb.addTemplate(app, (rect.getWidth() / bBox.getWidth()), 0, 0, (rect.getHeight() / bBox.getHeight()), rect.getLeft() + widthCorrection, rect.getBottom()+heightCorrection);
                         }
                         cb.setLiteral("q ");
 
