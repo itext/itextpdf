@@ -10,7 +10,7 @@
   </parent>
 
   <artifactId>itext-pdfa</artifactId>
-  <version>5.5.14-SNAPSHOT</version>
+  <version>5.5.13.1</version>
 
   <name>iText PDF/A</name>
   <description>iText ISO-19005 Module</description>
