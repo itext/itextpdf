@@ -91,9 +91,9 @@ import com.itextpdf.text.pdf.PdfWriter;
  */
 @Deprecated
 public class LtvVerification {
-	
+
 	private Logger LOGGER = LoggerFactory.getLogger(LtvVerification.class);
-	
+
     private PdfStamper stp;
     private PdfWriter writer;
     private PdfReader reader;
@@ -101,21 +101,21 @@ public class LtvVerification {
     private Map<PdfName,ValidationData> validated = new HashMap<PdfName,ValidationData>();
     private boolean used = false;
     /**
-     * What type of verification to include 
+     * What type of verification to include
      */
     public enum Level {
         /**
          * Include only OCSP
          */
-        OCSP, 
+        OCSP,
         /**
          * Include only CRL
          */
-        CRL, 
+        CRL,
         /**
          * Include both OCSP and CRL
          */
-        OCSP_CRL, 
+        OCSP_CRL,
         /**
          * Include CRL only if OCSP can't be read
          */
@@ -135,7 +135,7 @@ public class LtvVerification {
          */
         WHOLE_CHAIN
     }
-    
+
     /**
      * Certificate inclusion in the DSS and VRI dictionaries in the CERT and CERTS
      * keys
@@ -162,7 +162,7 @@ public class LtvVerification {
         reader = stp.getReader();
         acroFields = stp.getAcroFields();
     }
-    
+
     /**
      * Add verification for a particular signature
      * @param signatureName the signature to validate (it may be a timestamp)
@@ -172,7 +172,7 @@ public class LtvVerification {
      * @param level the validation options to include
      * @param certInclude
      * @return true if a validation was generated, false otherwise
-     * @throws GeneralSecurityException 
+     * @throws GeneralSecurityException
      * @throws IOException
      */
     public boolean addVerification(String signatureName, OcspClient ocsp, CrlClient crl, CertificateOption certOption, Level level, CertificateInclusion certInclude) throws IOException, GeneralSecurityException {
@@ -226,7 +226,7 @@ public class LtvVerification {
         validated.put(getSignatureHashKey(signatureName), vd);
         return true;
     }
-    
+
     /**
      * Returns the issuing certificate for a child certificate.
      * @param cert	the certificate for which we search the parent
@@ -289,11 +289,11 @@ public class LtvVerification {
         ASN1Enumerated den = new ASN1Enumerated(0);
         ASN1EncodableVector v3 = new ASN1EncodableVector();
         v3.add(den);
-        v3.add(new DERTaggedObject(true, 0, new DERSequence(v2)));            
+        v3.add(new DERTaggedObject(true, 0, new DERSequence(v2)));
         DERSequence seq = new DERSequence(v3);
         return seq.getEncoded();
     }
-    
+
     private PdfName getSignatureHashKey(String signatureName) throws NoSuchAlgorithmException, IOException {
         PdfDictionary dic = acroFields.getSignatureDictionary(signatureName);
         PdfString contents = dic.getAsString(PdfName.CONTENTS);
@@ -321,7 +321,7 @@ public class LtvVerification {
     /**
      * Merges the validation with any validation already in the document or creates
      * a new one.
-     * @throws IOException 
+     * @throws IOException
      */
     public void merge() throws IOException {
         if (used || validated.isEmpty())
@@ -334,7 +334,7 @@ public class LtvVerification {
         else
             updateDss();
     }
-    
+
     private void updateDss() throws IOException {
         PdfDictionary catalog = reader.getCatalog();
         stp.markUsed(catalog);
@@ -365,9 +365,12 @@ public class LtvVerification {
             crls = new PdfArray();
         if (certs == null)
             certs = new PdfArray();
+        if (vrim == null) {
+            vrim = new PdfDictionary();
+        }
         outputDss(dss, vrim, ocsps, crls, certs);
     }
-    
+
     private static void deleteOldReferences(PdfArray all, PdfArray toDelete) {
         if (all == null || toDelete == null)
             return;
@@ -387,11 +390,11 @@ public class LtvVerification {
             }
         }
     }
-    
+
     private void createDss() throws IOException {
         outputDss(new PdfDictionary(), new PdfDictionary(), new PdfArray(), new PdfArray(), new PdfArray());
     }
-    
+
     private void outputDss(PdfDictionary dss, PdfDictionary vrim, PdfArray ocsps, PdfArray crls, PdfArray certs) throws IOException {
         writer.addDeveloperExtension(PdfDeveloperExtension.ESIC_1_7_EXTENSIONLEVEL5);
     	PdfDictionary catalog = reader.getCatalog();
@@ -439,7 +442,7 @@ public class LtvVerification {
             dss.put(PdfName.CERTS, writer.addToBody(certs, false).getIndirectReference());
         catalog.put(PdfName.DSS, writer.addToBody(dss, false).getIndirectReference());
     }
-    
+
     private static class ValidationData {
         public List<byte[]> crls = new ArrayList<byte[]>();
         public List<byte[]> ocsps = new ArrayList<byte[]>();

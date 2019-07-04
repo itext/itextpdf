@@ -166,7 +166,9 @@ public class FontSelector {
     }
 
     protected Font getFont(int i) {
-        return i < fonts.size() ? fonts.get(i) : unsupportedFonts.get(i);
+        return i < fonts.size()
+                ? fonts.get(i)
+                : unsupportedFonts.get(i - fonts.size());
     }
 
     private boolean isSupported(Font font) {

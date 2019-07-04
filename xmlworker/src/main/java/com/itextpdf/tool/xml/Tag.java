@@ -362,7 +362,7 @@ public class Tag implements Iterable<Tag> {
 	 */
 	private Tag recursiveGetChild(final Tag tag, final String name, final String ns, final boolean recursive) {
 		for (Tag t : tag) {
-			if (t.tag.equals(name) && t.ns.equals(ns)) {
+			if (t != null && t.tag.equals(name) && t.ns.equals(ns)) {
 				return t;
 			} else if (recursive) {
 				Tag rT = null;

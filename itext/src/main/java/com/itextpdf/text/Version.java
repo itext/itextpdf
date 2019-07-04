@@ -43,6 +43,8 @@
  */
 package com.itextpdf.text;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 /**
@@ -74,14 +76,14 @@ public final class Version {
 	 * This String contains the version number of this iText release.
 	 * For debugging purposes, we request you NOT to change this constant.
 	 */
-    private final String release = "2.0.1";
+    private final String release = "2.0.2";
 	/**
 	 * This String contains the iText version as shown in the producer line.
 	 * iText is a product developed by iText Group NV.
 	 * iText Group requests that you retain the iText producer line
 	 * in every PDF that is created or manipulated using iText.
 	 */
-	private String iTextVersion = iText + " " + release + " \u00a92000-2018 iText Group NV";
+	private String iTextVersion = iText + " " + release + " \u00a92000-2019 iText Group NV";
 	/**
 	 * The license key.
 	 */
@@ -101,51 +103,60 @@ public final class Version {
         Version localVersion = new Version();
         try {
             Class<?> klass = Class.forName("com.itextpdf.licensekey.LicenseKey");
-            if(klass != null) {
-                Class[] cArg  = {String.class};
-                Method m = klass.getMethod("getLicenseeInfoForVersion",cArg);
-                //Actual iText7 version is used here to get correct license info
-                Object[] args = {"7.1"};
-                String[] info = (String[]) m.invoke(klass.newInstance(),args);
-                if (info[3] != null && info[3].trim().length() > 0) {
-                    localVersion.key = info[3];
+            Class[] cArg  = {String.class};
+            Method m = klass.getMethod("getLicenseeInfoForVersion",cArg);
+            Object[] args = {localVersion.release};
+            String[] info = (String[]) m.invoke(klass.newInstance(),args);
+            if (info[3] != null && info[3].trim().length() > 0) {
+                localVersion.key = info[3];
+            } else {
+                localVersion.key = "Trial version ";
+                if (info[5] == null) {
+                    localVersion.key += "unauthorised";
                 } else {
-                    localVersion.key = "Trial version ";
-                    if (info[5] == null) {
-                        localVersion.key += "unauthorised";
-                    } else {
-                        localVersion.key += info[5];
-                    }
-                }
-
-                if (info[4] != null && info[4].trim().length() > 0) {
-                    localVersion.iTextVersion = info[4];
-                } else if (info[2] != null && info[2].trim().length() > 0) {
-                    localVersion.iTextVersion += " (" + info[2];
-                    if (!localVersion.key.toLowerCase().startsWith("trial")) {
-                        localVersion.iTextVersion += "; licensed version)";
-                    } else {
-                        localVersion.iTextVersion += "; " + localVersion.key + ")";
-                    }
-                } else if (info[0] != null && info[0].trim().length() > 0) {
-                    // fall back to contact name, if company name is unavailable
-                    localVersion.iTextVersion += " (" + info[0];
-                    if (!localVersion.key.toLowerCase().startsWith("trial")) {
-                        // we shouldn't have a licensed version without company name,
-                        // but let's account for it anyway
-                        localVersion.iTextVersion += "; licensed version)";
-                    } else {
-                        localVersion.iTextVersion += "; " + localVersion.key + ")";
-                    }
-                } else {
-                    throw new Exception();
+                    localVersion.key += info[5];
                 }
             }
+
+            if (info[4] != null && info[4].trim().length() > 0) {
+                localVersion.iTextVersion = info[4];
+            } else if (info[2] != null && info[2].trim().length() > 0) {
+                localVersion.iTextVersion += " (" + info[2];
+                if (!localVersion.key.toLowerCase().startsWith("trial")) {
+                    localVersion.iTextVersion += "; licensed version)";
+                } else {
+                    localVersion.iTextVersion += "; " + localVersion.key + ")";
+                }
+            } else if (info[0] != null && info[0].trim().length() > 0) {
+                // fall back to contact name, if company name is unavailable
+                localVersion.iTextVersion += " (" + info[0];
+                if (!localVersion.key.toLowerCase().startsWith("trial")) {
+                    // we shouldn't have a licensed version without company name,
+                    // but let's account for it anyway
+                    localVersion.iTextVersion += "; licensed version)";
+                } else {
+                    localVersion.iTextVersion += "; " + localVersion.key + ")";
+                }
+            } else {
+                throw new Exception();
+            }
         } catch (Exception e) {
+            if (dependsOnTheOldLicense()) {
+                throw new RuntimeException("iText License Library 1.0.* has been deprecated. Please, update to the latest version.");
+            }
             localVersion.iTextVersion += AGPL;
         }
 		return atomicSetVersion(localVersion);
 	}
+
+	private static boolean dependsOnTheOldLicense() {
+	    try {
+            Class<?> klass = Class.forName("com.itextpdf.license.LicenseKey");
+            return klass.getField("PRODUCT_NAME") != null;
+        } catch (Exception e) {
+            return false;
+        }
+    }
 
 	/**
 	 * Gets the product name.

@@ -51,6 +51,7 @@ import com.itextpdf.text.Phrase;
 import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.pdf.events.FieldPositioningEvents;
 import junit.framework.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
@@ -75,10 +76,13 @@ public class FlatteningTest {
     private static final String RESOURCES_FOLDER = "./src/test/resources/com/itextpdf/text/pdf/FlatteningTest/";
     private static final String OUTPUT_FOLDER = "./target/com/itextpdf/test/pdf/FlatteningTest/";
 
+    @BeforeClass
+    public static void setUp() {
+        new File(OUTPUT_FOLDER).mkdirs();
+    }
+
     @Test
     public void testFlatteningNewAppearances() throws InterruptedException, DocumentException, IOException {
-        new File(OUTPUT_FOLDER).mkdirs();
-
         final String OUT = "tpl3_flattened.pdf";
 
         PdfReader reader = new PdfReader(RESOURCES_FOLDER + "tpl3.pdf");
@@ -109,7 +113,6 @@ public class FlatteningTest {
 
     @Test
     public void flattenGenerateAppearanceFalse01() throws IOException, DocumentException, InterruptedException {
-
         String outFile = OUTPUT_FOLDER + "flattenGenerateAppearanceFalse01.pdf";
         FileOutputStream file = new FileOutputStream(outFile);
         PdfReader reader = new PdfReader(new FileInputStream(RESOURCES_FOLDER + "not_filled_form.pdf"));
@@ -143,8 +146,6 @@ public class FlatteningTest {
         if (!inputFolder.exists())
             Assert.fail("Input folder can't be found (" + INPUT_FOLDER + ")");
 
-        new File(OUTPUT_FOLDER).mkdirs();
-
         String[] files = inputFolder.list(new FilenameFilter() {
             public boolean accept(File dir, String name) {
                 return name.endsWith(".pdf");
@@ -169,9 +170,6 @@ public class FlatteningTest {
 
     @Test
     public void testFlatteningGenerateAppearances1() throws IOException, DocumentException, InterruptedException {
-
-        new File(OUTPUT_FOLDER).mkdirs();
-
         final String OUT = "noappearances-needapp-false_override-false.pdf";
         testFlatteningGenerateAppearance(RESOURCES_FOLDER + "noappearances-needapp-false.pdf", OUTPUT_FOLDER + OUT, false);
 
@@ -184,9 +182,6 @@ public class FlatteningTest {
 
     @Test
     public void testFlatteningGenerateAppearances2() throws IOException, DocumentException, InterruptedException {
-
-        new File(OUTPUT_FOLDER).mkdirs();
-
         final String OUT = "noappearances-needapp-false_override-true.pdf";
         testFlatteningGenerateAppearance(RESOURCES_FOLDER + "noappearances-needapp-false.pdf", OUTPUT_FOLDER + OUT, true);
 
@@ -199,9 +194,6 @@ public class FlatteningTest {
 
     @Test
     public void testFlatteningGenerateAppearances3() throws IOException, DocumentException, InterruptedException {
-
-        new File(OUTPUT_FOLDER).mkdirs();
-
         final String OUT = "noappearances-needapp-false_override-none.pdf";
         testFlatteningGenerateAppearance(RESOURCES_FOLDER + "noappearances-needapp-false.pdf", OUTPUT_FOLDER + OUT, null);
 
@@ -214,9 +206,6 @@ public class FlatteningTest {
 
     @Test
     public void testFlatteningGenerateAppearances4() throws IOException, DocumentException, InterruptedException {
-
-        new File(OUTPUT_FOLDER).mkdirs();
-
         final String OUT = "noappearances-needapp-true_override-false.pdf";
         testFlatteningGenerateAppearance(RESOURCES_FOLDER + "noappearances-needapp-true.pdf", OUTPUT_FOLDER + OUT, false);
 
@@ -229,9 +218,6 @@ public class FlatteningTest {
 
     @Test
     public void testFlatteningGenerateAppearances5() throws IOException, DocumentException, InterruptedException {
-
-        new File(OUTPUT_FOLDER).mkdirs();
-
         final String OUT = "noappearances-needapp-true_override-true.pdf";
         testFlatteningGenerateAppearance(RESOURCES_FOLDER + "noappearances-needapp-true.pdf", OUTPUT_FOLDER + OUT, true);
 
@@ -244,11 +230,20 @@ public class FlatteningTest {
 
     @Test
     public void testFlatteningGenerateAppearances6() throws IOException, DocumentException, InterruptedException {
-
-        new File(OUTPUT_FOLDER).mkdirs();
-
         final String OUT = "noappearances-needapp-true_override-none.pdf";
         testFlatteningGenerateAppearance(RESOURCES_FOLDER + "noappearances-needapp-true.pdf", OUTPUT_FOLDER + OUT, null);
+
+        CompareTool compareTool = new CompareTool();
+        String errorMessage = compareTool.compare(OUTPUT_FOLDER + OUT, RESOURCES_FOLDER + "cmp_" + OUT, OUTPUT_FOLDER, "diff");
+        if (errorMessage != null) {
+            Assert.fail(errorMessage);
+        }
+    }
+
+    @Test
+    public void testFlatteningGenerateAppearances7() throws IOException, DocumentException, InterruptedException {
+        final String OUT = "test01.pdf";
+        testFlatteningGenerateAppearance(RESOURCES_FOLDER + "test01.pdf", OUTPUT_FOLDER + OUT, true);
 
         CompareTool compareTool = new CompareTool();
         String errorMessage = compareTool.compare(OUTPUT_FOLDER + OUT, RESOURCES_FOLDER + "cmp_" + OUT, OUTPUT_FOLDER, "diff");
@@ -268,9 +263,6 @@ public class FlatteningTest {
 
     @Test
     public void testRegeneratingFieldsFalse() throws IOException, DocumentException, InterruptedException {
-
-        new File(OUTPUT_FOLDER).mkdirs();
-
         String file = "regenerateField_false.pdf";
 
         Document doc = new Document(PageSize.A4);
@@ -319,9 +311,6 @@ public class FlatteningTest {
 
     @Test
     public void testRegeneratingFieldsTrue() throws IOException, DocumentException, InterruptedException {
-
-        new File(OUTPUT_FOLDER).mkdirs();
-
         String file = "regenerateField_true.pdf";
 
         Document doc = new Document(PageSize.A4);
@@ -370,8 +359,6 @@ public class FlatteningTest {
 
     @Test
     public void testAnnotationFlatteningWithSkewAndRotation() throws IOException, DocumentException, InterruptedException {
-        new File(OUTPUT_FOLDER).mkdirs();
-
         String file = "annotationWithTransformMatrix.pdf";
         PdfReader reader = new PdfReader(RESOURCES_FOLDER + file);
         PdfStamper stamper = new PdfStamper(reader, new FileOutputStream(OUTPUT_FOLDER + file));
@@ -388,8 +375,6 @@ public class FlatteningTest {
 
     @Test
     public void testRotatedFilledField() throws IOException, DocumentException, InterruptedException {
-        new File(OUTPUT_FOLDER).mkdirs();
-
         String file = "rotatedField.pdf";
         PdfReader pdfReader = new PdfReader(RESOURCES_FOLDER + file);
         PdfStamper pdfStamper = new PdfStamper(pdfReader, new FileOutputStream(OUTPUT_FOLDER + file));
@@ -408,4 +393,24 @@ public class FlatteningTest {
             Assert.fail(errorMessage);
         }
     }
+    @Test
+    public void testFreeTextRectangleBBoxInteraction() throws IOException, DocumentException, InterruptedException {
+        String file = "freeTextRectangleBBoxInteraction.pdf";
+        PdfReader pdfReader = new PdfReader(RESOURCES_FOLDER + file);
+        PdfStamper pdfStamper = new PdfStamper(pdfReader, new FileOutputStream(OUTPUT_FOLDER + file));
+
+
+        pdfStamper.setFormFlattening(true);
+        pdfStamper.setFreeTextFlattening(true);
+        pdfStamper.close();
+        pdfReader.close();
+        // compare
+        CompareTool compareTool = new CompareTool();
+        String errorMessage = compareTool.compareByContent(OUTPUT_FOLDER + file, RESOURCES_FOLDER + "cmp_" + file, OUTPUT_FOLDER, "diff");
+        if (errorMessage != null) {
+            Assert.fail(errorMessage);
+        }
+    }
+
+
 }
