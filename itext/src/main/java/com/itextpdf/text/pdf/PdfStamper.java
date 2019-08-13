@@ -427,6 +427,15 @@ public class PdfStamper
     }
 
     /**
+     * KAMI: Flatten annotations with an appearance stream on close().
+     *
+     * @param pageNums int array indicates which pages itext should flatten or not
+     */
+    public void setAnnotationFlattening(final int[] pageNums) {
+        stamper.setFlatAnnotations(pageNums);
+    }
+
+    /**
      * Adds an annotation of form field in a specific page. This page number
      * can be overridden with {@link PdfAnnotation#setPlaceInPage(int)}.
      * @param annot the annotation

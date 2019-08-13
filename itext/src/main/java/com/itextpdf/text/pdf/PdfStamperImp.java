@@ -102,6 +102,7 @@ class PdfStamperImp extends PdfWriter {
     protected boolean flat = false;
     protected boolean flatFreeText = false;
     protected boolean flatannotations = false;
+    protected int[] pagesToFlatten = null;
     protected int namePtr[] = {0};
     protected HashSet<String> partialFlattening = new HashSet<String>();
     protected boolean useVp = false;
@@ -257,7 +258,11 @@ class PdfStamperImp extends PdfWriter {
             flatFreeTextFields();
         }
         if (flatannotations) {
-            flattenAnnotations();
+            if (pagesToFlatten == null) {
+              flattenAnnotations();
+            } else {
+              flattenAnnotations(false, pagesToFlatten);
+            }
         }
         addFieldResources();
         PdfDictionary catalog = reader.getCatalog();
@@ -1236,6 +1241,11 @@ class PdfStamperImp extends PdfWriter {
         this.flatannotations = flatAnnotations;
     }
 
+    public void setFlatAnnotations(int[] pageNums) {
+        this.flatannotations = true;
+        this.pagesToFlatten = pageNums;
+    }
+
     /**
      * If setFlatAnnotations is set to true, iText will flatten all annotations with an appearance stream
      *
@@ -1245,176 +1255,122 @@ class PdfStamperImp extends PdfWriter {
         flattenAnnotations(false);
     }
 
-    private void flattenAnnotations(boolean flattenFreeTextAnnotations) {
-        if (append) {
-            if (flattenFreeTextAnnotations) {
-                throw new IllegalArgumentException(MessageLocalization.getComposedMessage("freetext.flattening.is.not.supported.in.append.mode"));
-            } else {
-                throw new IllegalArgumentException(MessageLocalization.getComposedMessage("annotation.flattening.is.not.supported.in.append.mode"));
-            }
-        }
 
+    protected void flattenAnnotations(boolean flattenFreeTextAnnotations) {
+      int[] pageNums = null;
+      flattenAnnotations(flattenFreeTextAnnotations, pageNums);
+    }
+
+    private void flattenAnnotations(boolean flattenFreeTextAnnotations, int[] pageNums) {
+      if (append) {
+          if (flattenFreeTextAnnotations) {
+              throw new IllegalArgumentException(MessageLocalization.getComposedMessage("freetext.flattening.is.not.supported.in.append.mode"));
+          } else {
+              throw new IllegalArgumentException(MessageLocalization.getComposedMessage("annotation.flattening.is.not.supported.in.append.mode"));
+          }
+      }
+
+      // Kami: flatten every page or pick specific pages
+      if(pageNums == null) {
         for (int page = 1; page <= reader.getNumberOfPages(); ++page) {
-            PdfDictionary pageDic = reader.getPageN(page);
-            PdfArray annots = pageDic.getAsArray(PdfName.ANNOTS);
-
-            if (annots == null) {
-                continue;
-            }
-
-            for (int idx = 0; idx < annots.size(); ++idx) {
-                PdfObject annoto = annots.getDirectObject(idx);
-                if (annoto instanceof PdfIndirectReference && !annoto.isIndirect())
-                    continue;
-                if (!(annoto instanceof PdfDictionary))
-                    continue;
-                PdfDictionary annDic = (PdfDictionary) annoto;
-                final PdfObject subType = annDic.get(PdfName.SUBTYPE);
-                if (flattenFreeTextAnnotations) {
-                    if (! PdfName.FREETEXT.equals(subType)) {
-                        continue;
-                    }
-                } else {
-                    if (PdfName.WIDGET.equals(subType)) {
-                        // skip widgets
-                        continue;
-                    }
-                }
-
-                PdfNumber ff = annDic.getAsNumber(PdfName.F);
-                int flags = ff != null ? ff.intValue() : 0;
-
-                if ((flags & PdfFormField.FLAGS_PRINT) != 0 && (flags & PdfFormField.FLAGS_HIDDEN) == 0) {
-                    PdfObject obj1 = annDic.get(PdfName.AP);
-                    if (obj1 == null)
-                        continue;
-                    PdfDictionary appDic = obj1 instanceof PdfIndirectReference ?
-                            (PdfDictionary) PdfReader.getPdfObject(obj1) : (PdfDictionary) obj1;
-                    PdfObject obj = appDic.get(PdfName.N);
-                    PdfDictionary objDict = appDic.getAsStream(PdfName.N);
-                    PdfAppearance app = null;
-                    PdfObject objReal = PdfReader.getPdfObject(obj);
-
-                    if (obj instanceof PdfIndirectReference && !obj.isIndirect()) {
-                        app = new PdfAppearance((PdfIndirectReference) obj);
-                    } else if (objReal instanceof PdfStream) {
-                        ((PdfDictionary) objReal).put(PdfName.SUBTYPE, PdfName.FORM);
-                        app = new PdfAppearance((PdfIndirectReference) obj);
-                    } else {
-                        if (objReal != null ) {
-                            if (objReal.isDictionary()) {
-                                PdfName as_p = appDic.getAsName(PdfName.AS);
-                                if (as_p != null) {
-                                    PdfIndirectReference iref = (PdfIndirectReference) ( (PdfDictionary) objReal ).get(as_p);
-                                    if (iref != null) {
-                                        app = new PdfAppearance(iref);
-                                        if (iref.isIndirect()) {
-                                            objReal = PdfReader.getPdfObject(iref);
-                                            ( (PdfDictionary) objReal ).put(PdfName.SUBTYPE, PdfName.FORM);
-                                        }
-                                    }
-                                }
-                            }
-                        } else {
-                            if ( PdfName.FREETEXT.equals(subType) ) {
-                                final PdfString defaultAppearancePdfString = annDic.getAsString(PdfName.DA);
-                                if (defaultAppearancePdfString != null) {
-                                    final PdfString freeTextContent = annDic.getAsString(PdfName.CONTENTS);
-                                    final String defaultAppearanceString = defaultAppearancePdfString.toString();
-
-                                    //It is not stated in spec, but acrobat seems to support standard font names in DA
-                                    //So we need to check if the font is built-in and specify it explicitly.
-                                    PdfIndirectReference fontReference = null;
-                                    PdfName pdfFontName = null;
-                                    try {
-                                        RandomAccessSource source = new RandomAccessSourceFactory().createSource(defaultAppearancePdfString.getBytes());
-                                        PdfContentParser ps = new PdfContentParser(new PRTokeniser(new RandomAccessFileOrArray(source)));
-                                        ArrayList<PdfObject> operands = new ArrayList<PdfObject>();
-                                        while (ps.parse(operands).size() > 0) {
-                                            PdfLiteral operator = (PdfLiteral)operands.get(operands.size()-1);
-                                            if (operator.toString().equals("Tf")) {
-                                                pdfFontName = (PdfName) operands.get(0);
-                                                String fontName = pdfFontName.toString().substring(1);
-                                                String fullName = fromShortToFullAnnotationFontNames.get(fontName);
-                                                if (fullName == null) {
-                                                    fullName = fontName;
-                                                }
-                                                fontReference = builtInAnnotationFonts.get(fullName);
-                                                if (fontReference == null) {
-                                                    PdfDictionary dic = BaseFont.createBuiltInFontDictionary(fullName);
-                                                    if (dic != null) {
-                                                        fontReference = addToBody(dic).getIndirectReference();
-                                                        builtInAnnotationFonts.put(fullName, fontReference);
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    } catch (Exception any) {
-                                        logger.warn(MessageLocalization.getComposedMessage("error.resolving.freetext.font"));
-                                        break;
-                                    }
-
-                                    app = new PdfAppearance(this);
-                                    // it is unclear from spec were referenced from DA font should be (since annotations doesn't have DR), so in case it not built-in
-                                    // quickly and naively flattening the freetext annotation
-                                    if (fontReference != null) {
-                                        app.getPageResources().addFont(pdfFontName, fontReference);
-                                    }
-                                    app.saveState();
-                                    app.beginText();
-                                    app.setLiteral(defaultAppearanceString);
-                                    app.setLiteral("(" + freeTextContent.toString() + ") Tj\n");
-                                    app.endText();
-                                    app.restoreState();
-                                } else {
-                                    // The DA entry is required for free text annotations
-                                    // Not throwing an exception as we don't want to stop the flow, result is that this annotation won't be flattened.
-                                    this.logger.warn(MessageLocalization.getComposedMessage("freetext.annotation.doesnt.contain.da"));
-                                }
-                            } else {
-                                this.logger.warn(MessageLocalization.getComposedMessage("annotation.type.not.supported.flattening"));
-                            }
-                        }
-                    }
-                    if (app != null) {
-                        Rectangle rect = PdfReader.getNormalizedRectangle(annDic.getAsArray(PdfName.RECT));
-                        Rectangle bBox = null;
-
-                        if ( objDict != null ) {
-                            bBox = PdfReader.getNormalizedRectangle((objDict.getAsArray(PdfName.BBOX)));
-                        } else {
-                            bBox = new Rectangle(0,0, rect.getWidth(), rect.getHeight());
-                            app.setBoundingBox(bBox);
-                        }
-
-                        PdfContentByte cb = getOverContent(page);
-                        cb.setLiteral("Q ");
-                        if (objDict != null && objDict.getAsArray(PdfName.MATRIX) != null &&
-                                !Arrays.equals(DEFAULT_MATRIX, objDict.getAsArray(PdfName.MATRIX).asDoubleArray())) {
-                            double[] matrix = objDict.getAsArray(PdfName.MATRIX).asDoubleArray();
-                            Rectangle transformBBox = transformBBoxByMatrix(bBox, matrix);
-                            cb.addTemplate(app, (rect.getWidth() / transformBBox.getWidth()), 0, 0, (rect.getHeight() / transformBBox.getHeight()), rect.getLeft(), rect.getBottom());
-                        } else {
-                            //Correct for offset origins in the BBox, similar to how Adobe will flatten.
-                            float heightCorrection = - bBox.getBottom();
-                            float widthCorrection = - bBox.getLeft();
-                            //Changed so that when the annotation has a difference scale than the xObject in the appearance dictionary, the image is consistent between
-                            //the input and the flattened document.  When the annotation is rotated or skewed, it will still be flattened incorrectly.
-                            cb.addTemplate(app, (rect.getWidth() / bBox.getWidth()), 0, 0, (rect.getHeight() / bBox.getHeight()), rect.getLeft() + widthCorrection, rect.getBottom()+heightCorrection);
-                        }
-                        cb.setLiteral("q ");
-
-                        annots.remove(idx);
-                        --idx;
-                    }
-                }
-            }
-
-            if (annots.isEmpty()) {
-                PdfReader.killIndirect(pageDic.get(PdfName.ANNOTS));
-                pageDic.remove(PdfName.ANNOTS);
-            }
+          flattenPageAnnotations(page, flattenFreeTextAnnotations);
         }
+      } else {
+        for(int i = 0; i < pageNums.length; i++) {
+          int page = pageNums[i];
+          /* page starts from 1 */
+          flattenPageAnnotations(page, flattenFreeTextAnnotations);
+        }
+      }
+    }
+
+    private void flattenPageAnnotations(int page, boolean flattenFreeTextAnnotations) {
+      PdfDictionary pageDic = reader.getPageN(page);
+      PdfArray annots = pageDic.getAsArray(PdfName.ANNOTS);
+
+      if (annots == null) {
+          return;
+      }
+
+      for (int idx = 0; idx < annots.size(); ++idx) {
+          PdfObject annoto = annots.getDirectObject(idx);
+          if (annoto instanceof PdfIndirectReference && !annoto.isIndirect())
+              continue;
+          if (!(annoto instanceof PdfDictionary))
+              continue;
+          PdfDictionary annDic = (PdfDictionary) annoto;
+          if (flattenFreeTextAnnotations) {
+              if (!(annDic.get(PdfName.SUBTYPE)).equals(PdfName.FREETEXT)) {
+                  continue;
+              }
+          } else {
+              if ((annDic.get(PdfName.SUBTYPE)).equals(PdfName.WIDGET)) {
+                  // skip widgets
+                  continue;
+              }
+          }
+
+          PdfNumber ff = annDic.getAsNumber(PdfName.F);
+          int flags = ff != null ? ff.intValue() : 0;
+
+          if ((flags & PdfFormField.FLAGS_PRINT) != 0 && (flags & PdfFormField.FLAGS_HIDDEN) == 0) {
+              PdfObject obj1 = annDic.get(PdfName.AP);
+              if (obj1 == null)
+                  continue;
+              PdfDictionary appDic = obj1 instanceof PdfIndirectReference ?
+                      (PdfDictionary) PdfReader.getPdfObject(obj1) : (PdfDictionary) obj1;
+              PdfObject obj = appDic.get(PdfName.N);
+              PdfDictionary objDict = appDic.getAsStream(PdfName.N);
+              PdfAppearance app = null;
+              PdfObject objReal = PdfReader.getPdfObject(obj);
+
+              if (obj instanceof PdfIndirectReference && !obj.isIndirect()) {
+                  app = new PdfAppearance((PdfIndirectReference) obj);
+              } else if (objReal instanceof PdfStream) {
+                  ((PdfDictionary) objReal).put(PdfName.SUBTYPE, PdfName.FORM);
+                  app = new PdfAppearance((PdfIndirectReference) obj);
+              } else {
+                  if (objReal.isDictionary()) {
+                      PdfName as_p = appDic.getAsName(PdfName.AS);
+                      if (as_p != null) {
+                          PdfIndirectReference iref = (PdfIndirectReference) ((PdfDictionary) objReal).get(as_p);
+                          if (iref != null) {
+                              app = new PdfAppearance(iref);
+                              if (iref.isIndirect()) {
+                                  objReal = PdfReader.getPdfObject(iref);
+                                  ((PdfDictionary) objReal).put(PdfName.SUBTYPE, PdfName.FORM);
+                              }
+                          }
+                      }
+                  }
+              }
+              if (app != null) {
+                  Rectangle rect = PdfReader.getNormalizedRectangle(annDic.getAsArray(PdfName.RECT));
+                  Rectangle bBox = PdfReader.getNormalizedRectangle((objDict.getAsArray(PdfName.BBOX)));
+                  PdfContentByte cb = getOverContent(page);
+                  cb.setLiteral("Q ");
+                  if (objDict.getAsArray(PdfName.MATRIX) != null &&
+                          !Arrays.equals(DEFAULT_MATRIX, objDict.getAsArray(PdfName.MATRIX).asDoubleArray())) {
+                      double[] matrix = objDict.getAsArray(PdfName.MATRIX).asDoubleArray();
+                      Rectangle transformBBox = transformBBoxByMatrix(bBox, matrix);
+                      cb.addTemplate(app, (rect.getWidth() / transformBBox.getWidth()), 0, 0, (rect.getHeight() / transformBBox.getHeight()), rect.getLeft(), rect.getBottom());
+                  } else {
+                      //Changed so that when the annotation has a difference scale than the xObject in the appearance dictionary, the image is consistent between
+                      //the input and the flattened document.  When the annotation is rotated or skewed, it will still be flattened incorrectly.
+                      cb.addTemplate(app, (rect.getWidth() / bBox.getWidth()), 0, 0, (rect.getHeight() / bBox.getHeight()), rect.getLeft(), rect.getBottom());
+                  }
+                  cb.setLiteral("q ");
+
+                  annots.remove(idx);
+                  --idx;
+              }
+          }
+      }
+
+      if (annots.isEmpty()) {
+          PdfReader.killIndirect(pageDic.get(PdfName.ANNOTS));
+          pageDic.remove(PdfName.ANNOTS);
+      }
     }
 
     /*
