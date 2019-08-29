@@ -607,7 +607,12 @@ public class FontFactoryImp implements FontProvider {
      */
     public int registerDirectories() {
         int count = 0;
-        String windir = System.getenv("windir");
+        String windir = null;
+        try {
+            windir = System.getenv("windir");
+        } catch (SecurityException e) {
+            LOGGER.warn("Can't access System.getenv(\"windir\") to load fonts. Please, add RuntimePermission for getenv.windir.");
+        }
         String fileseparator = System.getProperty("file.separator");
         if (windir != null && fileseparator != null) {
         	count += registerDirectory(windir + fileseparator + "fonts");
