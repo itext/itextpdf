@@ -133,10 +133,25 @@ public class PdfSmartCopy extends PdfCopy {
             indirects.put(key, iRef);
         }
         if (srcObj.isDictionary()) {
+            // KAMI EDIT:
+            // Make sure /Goto actions from link annotations are not smart copied because they lose their reference to the destination page
+            // TODO: There are probably more actions broken by smart copy, we should make a bigger fix to stop any action from being smart copied
+            // Unfortunately there is no clear key indicator that the current dictionary is an action dictionary, 
+            // the TYPE field is optional for action dictionaries
+            PdfObject s = PdfReader.getPdfObjectRelease(((PdfDictionary)srcObj).get(PdfName.S));
+            if (s != null) {
+              if (PdfName.GOTO.equals(s)) {
+                validStream = false;
+              }
+            }
+            
             PdfObject type = PdfReader.getPdfObjectRelease(((PdfDictionary)srcObj).get(PdfName.TYPE));
             if (type != null) {
                 if ((PdfName.PAGE.equals(type))) {
                     return theRef;
+                }
+                if ((PdfName.ACTION.equals(type))) { // KAMI EDIT: if it's clearly an ACTION dictionary then do not smart copy it
+                    validStream = false;
                 }
                 if ((PdfName.CATALOG.equals(type))) {
                     LOGGER.warn(MessageLocalization.getComposedMessage("make.copy.of.catalog.dictionary.is.forbidden"));
