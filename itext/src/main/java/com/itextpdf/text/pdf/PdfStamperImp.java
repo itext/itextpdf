@@ -965,6 +965,14 @@ class PdfStamperImp extends PdfWriter {
                 if (page < 1)
                     continue;
                 PdfDictionary appDic = merged.getAsDict(PdfName.AP);
+                PdfDictionary mk = merged.getAsDict(PdfName.MK);
+                int widgetRotation = 0;
+                if (mk != null) {
+                  PdfNumber mkRotation = mk.getAsNumber(PdfName.R);
+                  if (mkRotation != null) {
+                    widgetRotation = mkRotation.intValue();
+                  }
+                }
                 PdfObject as_n = null;
                 if (appDic != null) {
                     as_n = appDic.getDirectObject(PdfName.N);
@@ -1075,32 +1083,22 @@ class PdfStamperImp extends PdfWriter {
                         Rectangle box = PdfReader.getNormalizedRectangle(merged.getAsArray(PdfName.RECT));
                         PdfContentByte cb = getOverContent(page);
                         cb.setLiteral("Q ");
-                        if (applyRotation) {
-                            /*
-                            Apply field rotation
-                             */
-                            AffineTransform tf = new AffineTransform();
-                            double fieldRotation = 0;
-                            if (merged.getAsDict(PdfName.MK) != null) {
-                                if (merged.getAsDict(PdfName.MK).get(PdfName.R) != null) {
-                                    fieldRotation = merged.getAsDict(PdfName.MK).getAsNumber(PdfName.R).floatValue();
-                                }
-                            }
-                            //Cast to radians
-                            fieldRotation = fieldRotation * Math.PI / 180;
-                            //Clamp to [-2*Pi, 2*Pi]
-                            fieldRotation = fieldRotation % (2 * Math.PI);
-                            //Calculate transformation matrix
-                            tf = calculateTemplateTransformationMatrix(tf, fieldRotation, box);
-                            cb.addTemplate(app, tf);
+                        AffineTransform at = new AffineTransform();
+                        if (widgetRotation == 90) {
+                          at.translate(box.getLeft() + box.getWidth(), box.getBottom());
+                          at.rotate((float)(90 * (Math.PI / 180)));
+                          at.scale(box.getHeight()/box.getWidth() , box.getWidth()/box.getHeight());
+                        } else if (widgetRotation == 180) {
+                          at.translate(box.getLeft() - box.getWidth(), box.getBottom() + box.getHeight());
+                          at.rotate((float)(180 * (Math.PI / 180)));
+                        } else if (widgetRotation == 270) {
+                          at.translate(box.getLeft(), box.getBottom() + box.getHeight());
+                          at.rotate((float)(270 * (Math.PI / 180)));
+                          at.scale(box.getHeight()/box.getWidth() , box.getWidth()/box.getHeight());
                         } else {
-                            if(objReal instanceof PdfDictionary && ((PdfDictionary)objReal).getAsArray(PdfName.BBOX) != null) {
-                                Rectangle bBox = PdfReader.getNormalizedRectangle((((PdfDictionary)objReal).getAsArray(PdfName.BBOX)));
-                                cb.addTemplate(app, (box.getWidth() / bBox.getWidth()), 0, 0, (box.getHeight() / bBox.getHeight()), box.getLeft(), box.getBottom());
-                            } else {
-                                cb.addTemplate(app, box.getLeft(), box.getBottom());
-                            }
+                          at.translate(box.getLeft(), box.getBottom());
                         }
+                        cb.addTemplate(app, at);
                         cb.setLiteral("q ");
                     }
                 }
