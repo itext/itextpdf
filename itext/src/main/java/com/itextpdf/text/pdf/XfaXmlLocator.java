@@ -102,6 +102,15 @@ public class XfaXmlLocator implements XmlLocator {
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
             TransformerFactory tf = TransformerFactory.newInstance();
 
+            // preventing XXE in case of using the iText5 with newer versions of java
+            try {
+                tf.setAttribute("http://javax.xml.XMLConstants/property/accessExternalDTD", "");
+            } catch (Exception e) {
+            }
+            try {
+                tf.setAttribute("http://javax.xml.XMLConstants/property/accessExternalStylesheet", "");
+            } catch (Exception e) {
+            }
             try {
                 tf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
             } catch (Exception exc) {}

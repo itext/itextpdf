@@ -46,6 +46,8 @@ package com.itextpdf.text.pdf.security;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.pdf.XmlSignatureAppearance;
+
+import javax.xml.XMLConstants;
 import org.apache.jcp.xml.dsig.internal.dom.*;
 import org.apache.xml.security.utils.Base64;
 import org.w3c.dom.Document;
@@ -466,7 +468,18 @@ public class MakeXmlSignature {
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         try {
             StreamResult xmlOutput = new StreamResult(new StringWriter());
-            Transformer transformer = TransformerFactory.newInstance().newTransformer();
+            TransformerFactory transformerFactory = TransformerFactory.newInstance();
+            transformerFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+            // preventing XXE in case of using the iText5 with newer versions of java
+            try {
+                transformerFactory.setAttribute("http://javax.xml.XMLConstants/property/accessExternalDTD", "");
+            } catch (Exception e) {
+            }
+            try {
+                transformerFactory.setAttribute("http://javax.xml.XMLConstants/property/accessExternalStylesheet", "");
+            } catch (Exception e) {
+            }
+            Transformer transformer = transformerFactory.newTransformer();
             transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
             transformer.transform(new DOMSource(node), xmlOutput);
             return xmlOutput.getWriter().toString().getBytes();
