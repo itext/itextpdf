@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2019 iText Group NV
+    Copyright (c) 1998-2020 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -48,6 +48,7 @@ import com.itextpdf.text.pdf.parser.*;
 import com.itextpdf.text.xml.XMLUtil;
 import org.junit.After;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.xml.sax.SAXException;
 
@@ -93,6 +94,11 @@ public class TaggedPdfTest {
             "Vestibulum enim urna, vehicula vel dictum in, congue quis sapien. Quisque ac mauris tellus. Nulla cursus pellentesque mauris viverra bibendum. Fusce" +
             "molestie dui id sem blandit in convallis justo euismod. Curabitur velit nisi, adipiscing sed consequat et, dignissim eget dolor. Aenean malesuada quam id mi" +
             "vestibulum pulvinar. Nullam diam quam, lobortis sit amet semper vitae, tempus eget dolor.");
+
+    @Before
+    public void setUp() {
+        new File("./target/com/itextpdf/test/pdf/TaggedPdfTest/").mkdirs();
+    }
 
     private void initializeDocument(String path) throws DocumentException, FileNotFoundException {
         initializeDocument(path, PdfWriter.VERSION_1_7);

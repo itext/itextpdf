@@ -1,7 +1,7 @@
 /*
  *
  * This file is part of the iText (R) project.
-    Copyright (c) 1998-2019 iText Group NV
+    Copyright (c) 1998-2020 iText Group NV
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -607,7 +607,12 @@ public class FontFactoryImp implements FontProvider {
      */
     public int registerDirectories() {
         int count = 0;
-        String windir = System.getenv("windir");
+        String windir = null;
+        try {
+            windir = System.getenv("windir");
+        } catch (SecurityException e) {
+            LOGGER.warn("Can't access System.getenv(\"windir\") to load fonts. Please, add RuntimePermission for getenv.windir.");
+        }
         String fileseparator = System.getProperty("file.separator");
         if (windir != null && fileseparator != null) {
         	count += registerDirectory(windir + fileseparator + "fonts");

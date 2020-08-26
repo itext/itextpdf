@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2019 iText Group NV
+    Copyright (c) 1998-2020 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -42,6 +42,7 @@
  */
 package com.itextpdf.text.pdf.security;
 
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import com.itextpdf.text.pdf.codec.Base64;
 import org.bouncycastle.asn1.DERIA5String;
 import org.bouncycastle.asn1.DERObjectIdentifier;
@@ -118,7 +119,7 @@ public class SignaturePolicyInfo {
         SigPolicyQualifiers qualifiers = new SigPolicyQualifiers(new SigPolicyQualifierInfo[] {spqi});
 
         signaturePolicyIdentifier = new SignaturePolicyIdentifier(new SignaturePolicyId(DERObjectIdentifier.getInstance(new DERObjectIdentifier(this.policyIdentifier.replace("urn:oid:", ""))),
-                new OtherHashAlgAndValue(new AlgorithmIdentifier(algId), new DEROctetString(this.policyHash)), qualifiers));
+                new OtherHashAlgAndValue(new AlgorithmIdentifier(new ASN1ObjectIdentifier(algId)), new DEROctetString(this.policyHash)), qualifiers));
 
         return signaturePolicyIdentifier;
     }

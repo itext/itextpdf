@@ -1,7 +1,7 @@
 /*
  *
  * This file is part of the iText (R) project.
-    Copyright (c) 1998-2019 iText Group NV
+    Copyright (c) 1998-2020 iText Group NV
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -68,8 +68,8 @@ import org.bouncycastle.cert.ocsp.OCSPException;
 import org.bouncycastle.cert.ocsp.OCSPReq;
 import org.bouncycastle.cert.ocsp.OCSPReqBuilder;
 import org.bouncycastle.cert.ocsp.OCSPResp;
+import org.bouncycastle.cert.ocsp.RevokedStatus;
 import org.bouncycastle.cert.ocsp.SingleResp;
-import org.bouncycastle.ocsp.OCSPRespStatus;
 import org.bouncycastle.operator.OperatorException;
 import org.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder;
 
@@ -120,7 +120,7 @@ public class OcspClientBouncyCastle implements OcspClient {
             if (ocspResponse == null) {
                 return null;
             }
-            if (ocspResponse.getStatus() != OCSPRespStatus.SUCCESSFUL) {
+            if (ocspResponse.getStatus() != OCSPResp.SUCCESSFUL) {
                 return null;
             }
             BasicOCSPResp basicResponse = (BasicOCSPResp) ocspResponse.getResponseObject();
@@ -154,7 +154,7 @@ public class OcspClientBouncyCastle implements OcspClient {
                     Object status = resp.getCertStatus();
                     if (status == CertificateStatus.GOOD) {
                         return basicResponse.getEncoded();
-                    } else if (status instanceof org.bouncycastle.ocsp.RevokedStatus) {
+                    } else if (status instanceof RevokedStatus) {
                         throw new IOException(MessageLocalization.getComposedMessage("ocsp.status.is.revoked"));
                     } else {
                         throw new IOException(MessageLocalization.getComposedMessage("ocsp.status.is.unknown"));

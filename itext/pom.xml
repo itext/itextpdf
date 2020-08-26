@@ -10,7 +10,7 @@
   </parent>
 
   <artifactId>itextpdf</artifactId>
-  <version>5.5.13.1</version>
+  <version>5.5.13.2</version>
 
   <name>iText Core</name>
   <description>A Free Java-PDF library</description>
@@ -74,14 +74,14 @@
   <dependencies>
     <dependency>
       <groupId>org.bouncycastle</groupId>
-      <artifactId>bcprov-jdk15on</artifactId>
-      <version>1.49</version>
+      <artifactId>bcprov-jdk15to18</artifactId>
+      <version>1.66</version>
       <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>org.bouncycastle</groupId>
       <artifactId>bcpkix-jdk15on</artifactId>
-      <version>1.49</version>
+      <version>1.66</version>
       <optional>true</optional>
     </dependency>
     <dependency>
@@ -93,7 +93,7 @@
     <dependency>
       <groupId>org.apache.santuario</groupId>
       <artifactId>xmlsec</artifactId>
-      <version>1.5.1</version>
+      <version>1.5.6</version>
       <optional>true</optional>
     </dependency>
   </dependencies>
