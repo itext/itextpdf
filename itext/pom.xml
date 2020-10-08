@@ -10,7 +10,7 @@
   </parent>
 
   <artifactId>xfa-itextpdf</artifactId>
-  <version>2.0.7</version>
+  <version>2.0.8</version>
 
   <name>pdfXFA iText Core</name>
   <description>A Free Java-PDF library</description>
@@ -66,7 +66,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <argLine>-Xms512m -Xmx1024m</argLine>
     <checkstyle.header.file>license.txt</checkstyle.header.file>
-    <itextcore.version>7.1.12</itextcore.version>
+    <itextcore.version>7.1.13</itextcore.version>
     <sonar.language>java</sonar.language>
     <sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
     <sonar.jacoco.reportPath>${project.basedir}/target/jacoco.exec</sonar.jacoco.reportPath>
@@ -119,7 +119,7 @@
     <dependency>
       <groupId>org.apache.santuario</groupId>
       <artifactId>xmlsec</artifactId>
-      <version>1.5.1</version>
+      <version>1.5.6</version>
       <optional>true</optional>
     </dependency>
     <dependency>
