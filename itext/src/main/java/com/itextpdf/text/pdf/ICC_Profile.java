@@ -60,9 +60,6 @@ public class ICC_Profile {
     }
     
     public static ICC_Profile getInstance(byte[] data, int numComponents) {
-        if (data.length < 128 || data[36] != 0x61 || data[37] != 0x63
-                || data[38] != 0x73 || data[39] != 0x70)
-                throw new IllegalArgumentException(MessageLocalization.getComposedMessage("invalid.icc.profile"));
         try {
         	ICC_Profile icc = new ICC_Profile();
         	icc.data = data;
@@ -103,9 +100,6 @@ public class ICC_Profile {
                 remain -= n;
                 ptr += n;
             }
-            if (head[36] != 0x61 || head[37] != 0x63
-                || head[38] != 0x73 || head[39] != 0x70)
-                throw new IllegalArgumentException(MessageLocalization.getComposedMessage("invalid.icc.profile"));
             remain = (head[0] & 0xff) << 24 | (head[1] & 0xff) << 16
                       | (head[2] & 0xff) <<  8 | head[3] & 0xff;
             byte[] icc = new byte[remain];
