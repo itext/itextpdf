@@ -31,9 +31,6 @@ You can also [build iText 5 from source][building].
 
 We also have RUPS — a tool that can help you debug PDFs. It's hosted on http://github.com/itext/rups
 
-If you have an idea on how to improve iText 5 and you want to submit code,
-please read our [Contribution Guidelines][contributing].
-
 iText is licensed as [AGPL][agpl] software.
 
 AGPL is a free / open source software license.
@@ -52,7 +49,6 @@ Contact sales for more info: http://itextpdf.com/sales
 
 [agpl]: LICENSE.md
 [building]: BUILDING.md
-[contributing]: CONTRIBUTING.md
 [extrajars]: EXTRAJARS.md
 [gratis]: https://en.wikipedia.org/wiki/Gratis_versus_libre
 [itext]: http://itextpdf.com/
