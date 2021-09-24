@@ -10,7 +10,7 @@
   </parent>
 
   <artifactId>xfa-itext-pdfa</artifactId>
-  <version>3.0.0-SNAPSHOT</version>
+  <version>3.0.0</version>
 
   <name>pdfXFA iText PDF/A</name>
   <description>iText ISO-19005 Module</description>
