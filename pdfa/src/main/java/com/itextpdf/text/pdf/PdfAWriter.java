@@ -47,6 +47,7 @@ import com.itextpdf.text.DocListener;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Rectangle;
+import com.itextpdf.text.Version;
 import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.io.TempFileCache;
 import com.itextpdf.text.log.Counter;
@@ -84,7 +85,12 @@ public class PdfAWriter extends PdfWriter {
      */
     public static PdfAWriter getInstance(final Document document, final OutputStream os, final PdfAConformanceLevel conformanceLevel)
     throws DocumentException {
-        PdfDocument pdf = new PdfDocument();
+        return getInstance(document, os, conformanceLevel, Version.getInstance().getVersion());
+    }
+
+    private static PdfAWriter getInstance(final Document document, final OutputStream os, final PdfAConformanceLevel conformanceLevel, String producer)
+            throws DocumentException {
+        PdfDocument pdf = new PdfDocument(producer);
         document.addDocListener(pdf);
         PdfAWriter writer = new PdfAWriter(pdf, os, conformanceLevel);
         pdf.addWriter(writer);

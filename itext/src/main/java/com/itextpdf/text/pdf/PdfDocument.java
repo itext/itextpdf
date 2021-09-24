@@ -122,8 +122,12 @@ public class PdfDocument extends Document {
          */
 
         PdfInfo() {
+            this(Version.getInstance().getVersion());
+        }
+
+        PdfInfo(String producer) {
             super();
-            addProducer();
+            addProducer(producer);
             addCreationDate();
         }
 
@@ -196,8 +200,8 @@ public class PdfDocument extends Document {
          * Adds the name of the producer to the document.
          */
 
-        void addProducer() {
-            put(PdfName.PRODUCER, new PdfString(Version.getInstance().getVersion()));
+        void addProducer(String producer) {
+            put(PdfName.PRODUCER, new PdfString(producer));
         }
 
         /**
@@ -317,7 +321,12 @@ public class PdfDocument extends Document {
      * Constructs a new PDF document.
      */
     public PdfDocument() {
+        this(Version.getInstance().getVersion());
+    }
+
+    PdfDocument(String producer) {
         super();
+        info = new PdfInfo(producer);
         addProducer();
         addCreationDate();
     }
@@ -493,7 +502,6 @@ public class PdfDocument extends Document {
                     break;
                 case Element.PRODUCER:
                     // you can not change the name of the producer
-                    info.addProducer();
                     break;
                 case Element.CREATIONDATE:
                     // you can not set the creation date, only reset it
@@ -2017,7 +2025,7 @@ public class PdfDocument extends Document {
 //	Info Dictionary and Catalog
 
     /** some meta information about the Document. */
-    protected PdfInfo info = new PdfInfo();
+    protected PdfInfo info;
 
     /**
      * Gets the <CODE>PdfInfo</CODE>-object.

@@ -10,7 +10,7 @@
   </parent>
 
   <artifactId>xfa-itext-xtra</artifactId>
-  <version>2.0.9</version>
+  <version>3.0.0</version>
 
   <name>pdfXFA iText Xtra</name>
   <description>iText Xtra, part of iText a Free Java-PDF library</description>
@@ -90,7 +90,7 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>4.8.2</version>
+      <version>4.13.2</version>
       <scope>test</scope>
     </dependency>
   </dependencies>

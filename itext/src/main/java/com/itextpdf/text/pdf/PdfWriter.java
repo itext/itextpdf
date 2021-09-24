@@ -620,10 +620,13 @@ public class PdfWriter extends DocWriter implements
      *
      * @throws	DocumentException on error
      */
+    public static PdfWriter getInstance(final Document document, final OutputStream os) throws DocumentException {
+        return getInstance(document, os, Version.getInstance().getVersion());
+    }
 
-    public static PdfWriter getInstance(final Document document, final OutputStream os)
-    throws DocumentException {
-        PdfDocument pdf = new PdfDocument();
+    private static PdfWriter getInstance(final Document document, final OutputStream os, String producer)
+            throws DocumentException {
+        PdfDocument pdf = new PdfDocument(producer);
         document.addDocListener(pdf);
         PdfWriter writer = new PdfWriter(pdf, os);
         pdf.addWriter(writer);
@@ -1284,7 +1287,7 @@ public class PdfWriter extends DocWriter implements
                     }
                     catalog.put(PdfName.METADATA, body.add(xmp).getIndirectReference());
                 }
-                getInfo().put(PdfName.PRODUCER, new PdfString(Version.getInstance().getVersion()));
+                getInfo().put(PdfName.PRODUCER, pdf.getInfo().getAsString(PdfName.PRODUCER));
                 // [C10] make pdfx conformant
                 if (isPdfX()) {
                     completeInfoDictionary(getInfo());
