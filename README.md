@@ -1,5 +1,18 @@
 ### **PLEASE NOTE: iText 5 is EOL, and has been replaced by [iText 7][itext7].  Only security fixes will be added**
- 
+
+### Known Security Issues
+
+#### org.apache.santuario:xmlsec vulnerabilities
+The iText 5 targets Java 5 which means that we can not update `org.apache.santuario:xmlsec` version to 2.x.x or newer as
+it requires Java 8. If you are not using the com.itextpdf.text.pdf.security.MakeXmlSignature class then you can avoid
+adding `org.apache.santuario:xmlsec` dependency into your project. Which means that you would not be affected by
+the related vulnerabilities, for example https://snyk.io/vuln/SNYK-JAVA-ORGAPACHESANTUARIO-1655558. If you are using
+com.itextpdf.text.pdf.security.MakeXmlSignature class, for example for XFA signatures, then you can:
+- either use `org.apache.santuario:xmlsec` 1.5.8 as a dependency which is affected by the vulnerability specified above,
+ but works on Java 5+;
+- or use `org.apache.santuario:xmlsec` 2.1.7 or newer. But this would require java 8+ and affects on the output format
+(see https://issues.apache.org/jira/browse/SANTUARIO-494).
+
 We HIGHLY recommend customers use iText 7 for new projects, and to consider moving existing projects from iText 5 to iText 7 to benefit from the many improvements such as:
  
 - HTML to PDF (PDF/UA) conversion
