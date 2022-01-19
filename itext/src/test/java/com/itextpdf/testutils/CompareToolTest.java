@@ -50,9 +50,8 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.Assert;
 import org.xml.sax.SAXException;
-
-import junit.framework.Assert;
 
 public class CompareToolTest {
 
@@ -116,4 +115,69 @@ public class CompareToolTest {
         Assert.assertTrue("CompareTool report differs from the reference one", compareTool.compareXmls(RESOURCE_PATH + "cmp_report03.xml", OUT_PATH + "report03.xml"));
     }
 
+    @Test
+    public void compareTwoDifferentPdfs()
+            throws DocumentException, IOException, InterruptedException, ParserConfigurationException, SAXException {
+        CompareTool compareTool = new CompareTool();
+        compareTool.setCompareByContentErrorsLimit(10);
+        compareTool.setGenerateCompareByContentXmlReport(true);
+        compareTool.setXmlReportName("TestPdf");
+        String outPdf = RESOURCE_PATH + "TestPdf.pdf";
+        String cmpPdf = RESOURCE_PATH + "cmp_TestPdf.pdf";
+        String result = compareTool.compareByContent(outPdf, cmpPdf, OUT_PATH, "difference");
+        System.out.println(result);
+        Assert.assertNotNull("CompareTool must return differences found between the files", result);
+        // Comparing the report to the reference one.
+        Assert.assertTrue("CompareTool report differs from the reference one", compareTool.compareXmls(RESOURCE_PATH + "cmp_TestPdf.xml", OUT_PATH + "TestPdf.xml"));
+    }
+
+    @Test
+    public void compareTwoEqualPdfs()
+            throws IOException, InterruptedException, DocumentException, ParserConfigurationException, SAXException {
+            CompareTool compareTool = new CompareTool();
+            compareTool.setCompareByContentErrorsLimit(10);
+            compareTool.setGenerateCompareByContentXmlReport(true);
+            compareTool.setXmlReportName("EqualPdfsTest");
+            String outPdf = RESOURCE_PATH + "EqualPdfsTest.pdf";
+            String cmpPdf = RESOURCE_PATH + "cmp_EqualPdfsTest.pdf";
+            String result = compareTool.compareByContent(outPdf, cmpPdf, OUT_PATH, "difference");
+            System.out.println(result);
+            Assert.assertNull(result);
+            // Comparing the report to the reference one.
+            Assert.assertTrue(compareTool.compareXmls(RESOURCE_PATH + "cmp_EqualPdfsTest.xml", OUT_PATH + "EqualPdfsTest.xml"));
+    }
+
+    @Test
+    public void comparePdfsWithOneDifferentPageTest()
+            throws DocumentException, IOException, InterruptedException, ParserConfigurationException, SAXException {
+        CompareTool compareTool = new CompareTool();
+        compareTool.setCompareByContentErrorsLimit(10);
+        compareTool.setGenerateCompareByContentXmlReport(true);
+        compareTool.setXmlReportName("comparePdfsWithOneDifferentPage");
+        String outPdf = RESOURCE_PATH + "comparePdfsWithOneDifferentPage.pdf";
+        String cmpPdf = RESOURCE_PATH + "cmp_comparePdfsWithOneDifferentPage.pdf";
+        String result = compareTool.compareByContent(outPdf, cmpPdf, OUT_PATH, "difference");
+        System.out.println(result);
+        Assert.assertNotNull("CompareTool must return differences found between the files", result);
+        // Comparing the report to the reference one.
+        Assert.assertTrue("CompareTool report differs from the reference one", compareTool.compareXmls(RESOURCE_PATH + "cmp_comparePdfsWithOneDifferentPage.xml",
+                OUT_PATH + "comparePdfsWithOneDifferentPage.xml"));
+    }
+
+    @Test
+        public void comparePdfsWithDifferentPagesExceptOneTest()
+            throws DocumentException, IOException, InterruptedException, ParserConfigurationException, SAXException {
+        CompareTool compareTool = new CompareTool();
+        compareTool.setCompareByContentErrorsLimit(10);
+        compareTool.setGenerateCompareByContentXmlReport(true);
+        compareTool.setXmlReportName("comparePdfsWithDifferentPagesExceptOne");
+        String outPdf = RESOURCE_PATH + "comparePdfsWithDifferentPagesExceptOne.pdf";
+        String cmpPdf = RESOURCE_PATH + "cmp_comparePdfsWithDifferentPagesExceptOne.pdf";
+        String result = compareTool.compareByContent(outPdf, cmpPdf, OUT_PATH, "difference");
+        System.out.println(result);
+        Assert.assertNotNull("CompareTool must return differences found between the files", result);
+        // Comparing the report to the reference one.
+        Assert.assertTrue("CompareTool report differs from the reference one", compareTool.compareXmls(RESOURCE_PATH + "cmp_comparePdfsWithDifferentPagesExceptOne.xml",
+                OUT_PATH + "comparePdfsWithDifferentPagesExceptOne.xml"));
+    }
 }
