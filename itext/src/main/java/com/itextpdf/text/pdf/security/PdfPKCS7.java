@@ -398,12 +398,12 @@ public class PdfPKCS7 {
                 if (ts != null && ts.getAttrValues().size() > 0) {
                     ASN1Set attributeValues = ts.getAttrValues();
                     ASN1Sequence tokenSequence = ASN1Sequence.getInstance(attributeValues.getObjectAt(0));
-                    ContentInfo contentInfo = new ContentInfo(tokenSequence);
+                    ContentInfo contentInfo = ContentInfo.getInstance(tokenSequence);
                     this.timeStampToken = new TimeStampToken(contentInfo);
                 }
             }
             if (isTsp) {
-                ContentInfo contentInfoTsp = new ContentInfo(signedData);
+                ContentInfo contentInfoTsp = ContentInfo.getInstance(signedData);
                 this.timeStampToken = new TimeStampToken(contentInfoTsp);
                 TimeStampTokenInfo info = timeStampToken.getTimeStampInfo();
                 String algOID = info.getMessageImprintAlgOID().getId();
@@ -704,7 +704,7 @@ public class PdfPKCS7 {
                 digest = sig.sign();
             ByteArrayOutputStream   bOut = new ByteArrayOutputStream();
 
-            ASN1OutputStream dout = new ASN1OutputStream(bOut);
+            ASN1OutputStream dout = ASN1OutputStream.create(bOut);
             dout.writeObject(new DEROctetString(digest));
             dout.close();
 
@@ -855,7 +855,7 @@ public class PdfPKCS7 {
 
             ByteArrayOutputStream   bOut = new ByteArrayOutputStream();
 
-            ASN1OutputStream dout = new ASN1OutputStream(bOut);
+            ASN1OutputStream dout = ASN1OutputStream.create(bOut);
             dout.writeObject(new DERSequence(whole));
             dout.close();
 
