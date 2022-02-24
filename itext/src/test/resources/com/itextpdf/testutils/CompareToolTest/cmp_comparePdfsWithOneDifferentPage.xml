@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<report>
+<errors count="5">
+<error>
+<message>PdfNumber. Expected: 0. Found: 500</message>
+<path>
+<base cmp="31 0 obj" out="31 0 obj"/>
+<arrayIndex>19</arrayIndex>
+</path>
+</error>
+<error>
+<message>PRStream. Lengths are different. Expected: 125. Found: 107</message>
+<path>
+<base cmp="8 0 obj" out="8 0 obj"/>
+</path>
+</error>
+<error>
+<message>PRStream. The bytes differ at index 71. Expected: 4 (5.104 318.41 Tm&#13;\n0 g). Found: 5 (5.104 318.53 Tm&#13;\n0 g)</message>
+<path>
+<base cmp="10 0 obj" out="10 0 obj"/>
+<offset>71</offset>
+</path>
+</error>
+<error>
+<message>PRStream. The bytes differ at index 72. Expected: 1 (.104 318.41 Tm&#13;\n0 g&#13;). Found: 3 (.104 318.53 Tm&#13;\n0 g&#13;)</message>
+<path>
+<base cmp="10 0 obj" out="10 0 obj"/>
+<offset>72</offset>
+</path>
+</error>
+<error>
+<message>PRStream. The bytes differ at index 90. Expected:   (g&#13;\n0 G&#13;\n[( )] TJ&#13;\nET). Found: 3 (g&#13;\n0 G&#13;\n[(3)] TJ&#13;\nET)</message>
+<path>
+<base cmp="10 0 obj" out="10 0 obj"/>
+<offset>90</offset>
+</path>
+</error>
+</errors>
+</report>

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<report>
+<errors count="6">
+<error>
+<message>PRStream. Lengths are different. Expected: 168. Found: 150</message>
+<path>
+<base cmp="4 0 obj" out="4 0 obj"/>
+</path>
+</error>
+<error>
+<message>Expected object was not found.</message>
+<path>
+<base cmp="3 0 obj" out="3 0 obj"/>
+<dictKey>/Resources</dictKey>
+<dictKey>/ExtGState</dictKey>
+</path>
+</error>
+<error>
+<message>PRStream. Lengths are different. Expected: 121. Found: 107</message>
+<path>
+<base cmp="10 0 obj" out="8 0 obj"/>
+</path>
+</error>
+<error>
+<message>Expected object was not found.</message>
+<path>
+<base cmp="9 0 obj" out="7 0 obj"/>
+<dictKey>/Resources</dictKey>
+<dictKey>/ExtGState</dictKey>
+</path>
+</error>
+<error>
+<message>PRStream. The bytes differ at index 90. Expected: 2 (g&#13;\n0 G&#13;\n[(2)] TJ&#13;\nET). Found: 4 (g&#13;\n0 G&#13;\n[(4)] TJ&#13;\nET)</message>
+<path>
+<base cmp="14 0 obj" out="12 0 obj"/>
+<offset>90</offset>
+</path>
+</error>
+<error>
+<message>PRStream. The bytes differ at index 90. Expected: 1 (g&#13;\n0 G&#13;\n[(1)] TJ&#13;\nET). Found: 5 (g&#13;\n0 G&#13;\n[(5)] TJ&#13;\nET)</message>
+<path>
+<base cmp="16 0 obj" out="14 0 obj"/>
+<offset>90</offset>
+</path>
+</error>
+</errors>
+</report>

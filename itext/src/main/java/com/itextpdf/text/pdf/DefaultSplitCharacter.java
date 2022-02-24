@@ -1,7 +1,7 @@
 /*
  *
  * This file is part of the iText (R) project.
-    Copyright (c) 1998-2020 iText Group NV
+    Copyright (c) 1998-2022 iText Group NV
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -59,6 +59,8 @@ import java.util.regex.Pattern;
  * @since 2.1.2
  */
 public class DefaultSplitCharacter implements SplitCharacter {
+
+    private static final Pattern DATE_PATTERN = Pattern.compile("(\\d{2,4}-\\d{2}-\\d{2,4})");
 
     /**
      * An instance of the default SplitCharacter.
@@ -154,11 +156,12 @@ public class DefaultSplitCharacter implements SplitCharacter {
     }
 
     private char[] checkDatePattern(String data) {
-        String regex = "(\\d{2,4}-\\d{2}-\\d{2,4})";
-        Matcher m = Pattern.compile(regex).matcher(data);
-        if (m.find()) {
-            String tmpData = m.group(1).replace('-', '\u2011');
-            data = data.replaceAll(m.group(1), tmpData);
+        if (data.contains("-")) {
+            Matcher m = DATE_PATTERN.matcher(data);
+            if (m.find()) {
+                String tmpData = m.group(1).replace('-', '\u2011');
+                data = data.replaceAll(m.group(1), tmpData);
+            }
         }
         return data.toCharArray();
     }

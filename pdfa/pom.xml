@@ -10,7 +10,7 @@
   </parent>
 
   <artifactId>itext-pdfa</artifactId>
-  <version>5.5.13.2</version>
+  <version>5.5.13.3</version>
 
   <name>iText PDF/A</name>
   <description>iText ISO-19005 Module</description>
@@ -80,13 +80,13 @@
     <dependency>
       <groupId>org.bouncycastle</groupId>
       <artifactId>bcprov-jdk15to18</artifactId>
-      <version>1.66</version>
+      <version>1.70</version>
       <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>4.8.2</version>
+      <version>4.13.2</version>
       <scope>test</scope>
     </dependency>
     <dependency>
