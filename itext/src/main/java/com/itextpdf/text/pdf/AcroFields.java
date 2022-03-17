@@ -258,7 +258,9 @@ public class AcroFields {
             return;
         for (int k = 1; k <= reader.getNumberOfPages(); ++k) {
             PdfDictionary page = reader.getPageNRelease(k);
-            PdfArray annots = (PdfArray)PdfReader.getPdfObjectRelease(page.get(PdfName.ANNOTS), page); // Notable
+            PdfObject annotsObj = PdfReader.getPdfObjectRelease(page.get(PdfName.ANNOTS), page);
+            // Notable: getPdfObjectRelease may return a stream that cannot be cast to PdfArray
+            PdfArray annots = annotsObj instanceof PdfArray ? (PdfArray)annotsObj : page.getAsArray(PdfName.ANNOTS);
             if (annots == null)
                 continue;
             for (int j = 0; j < annots.size(); ++j) {
