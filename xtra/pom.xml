@@ -63,6 +63,9 @@
   </ciManagement>
 
   <properties>
+    <!-- itext-xtra depends on java 1.8 because
+         earliest published stable version of common-imaging requires java8 -->
+    <xtra.java.version>1.8</xtra.java.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <argLine>-Xmx128m</argLine>
     <sonar.language>java</sonar.language>
@@ -80,7 +83,7 @@
     <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-imaging</artifactId>
-      <version>1.0-SNAPSHOT</version>
+      <version>1.0-alpha1</version>
     </dependency>
     <dependency>
       <groupId>commons-io</groupId>
@@ -111,6 +114,15 @@
 
   <build>
     <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.10.1</version>
+        <configuration>
+          <source>${xtra.java.version}</source>
+          <target>${xtra.java.version}</target>
+        </configuration>
+      </plugin>
       <plugin>
         <groupId>external.atlassian.jgitflow</groupId>
         <artifactId>jgitflow-maven-plugin</artifactId>
@@ -227,41 +239,6 @@
       </dependencies>
     </profile>
     <!-- END: Specific to mapping unit tests and covered code -->
-
-    <profile>
-      <id>compileWithLegacyJDK</id>
-      <!--
-        NOTE
-        Make sure to set the environment variable JAVA7_HOME
-        to your JDK 1.7 HOME when using this profile.
-      -->
-      <properties>
-        <java.version>1.7</java.version>
-        <java.home>${env.JAVA7_HOME}</java.home>
-        <java.libs>${java.home}/jre/lib</java.libs>
-        <java.bootclasspath>${java.libs}/rt.jar${path.separator}${java.libs}/jce.jar</java.bootclasspath>
-      </properties>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-compiler-plugin</artifactId>
-            <version>3.6.1</version>
-            <configuration>
-              <source>${java.version}</source>
-              <target>${java.version}</target>
-              <compilerArguments>
-                <bootclasspath>${java.bootclasspath}</bootclasspath>
-              </compilerArguments>
-              <compilerVersion>${java.version}</compilerVersion>
-              <fork>true</fork>
-              <executable>${java.home}/bin/javac</executable>
-            </configuration>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-
   </profiles>
 
 </project>
