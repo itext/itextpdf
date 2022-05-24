@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<report>
+<errors count="3">
+<error>
+<message>PRStream. Lengths are different. Expected: 157. Found: 174</message>
+<path>
+<base cmp="4 0 obj" out="4 0 obj"/>
+</path>
+</error>
+<error>
+<message>PdfNumber. Expected: 114. Found: 116</message>
+<path>
+<base cmp="5 0 obj" out="5 0 obj"/>
+<dictKey>/LastChar</dictKey>
+</path>
+</error>
+<error>
+<message>PdfArrays. Lengths are different. Expected: 83. Found: 85.</message>
+<path>
+<base cmp="15 0 obj" out="15 0 obj"/>
+</path>
+</error>
+</errors>
+</report>

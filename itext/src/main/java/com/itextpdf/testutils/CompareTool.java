@@ -1,7 +1,7 @@
 /*
  *
  * This file is part of the iText (R) project.
-    Copyright (c) 1998-2020 iText Group NV
+    Copyright (c) 1998-2022 iText Group NV
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -123,9 +123,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
-import java.util.StringTokenizer;
 import java.util.TreeSet;
-
+import java.util.regex.Pattern;
 /**
  * Helper class for tests: uses ghostscript to compare PDFs at a pixel level.
  * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
@@ -410,8 +409,16 @@ public class CompareTool {
 
     private String gsExec;
     private String compareExec;
-    private final String gsParams = " -dNOPAUSE -dBATCH -sDEVICE=png16m -r150 -sOutputFile=<outputfile> <inputfile>";
+    private static final String renderedImageExtension = "png";
+    private static final String pageNumberPattern = "%03d";
+    private static final Pattern pageListRegexp = Pattern.compile("^(\\d+,)*\\d+$");
+    private static final String tempFilePrefix = "itext_gs_io_temp";
+
+
+    private final String gsParams = " -dNOPAUSE -dBATCH -dSAFER -sDEVICE=" +
+             renderedImageExtension + "16m -r150 -sOutputFile=<outputfile> <inputfile>";
     private final String compareParams = " \"<image1>\" \"<image2>\" \"<difference>\"";
+
 
     static private final String cannotOpenTargetDirectory = "Cannot open target directory for <filename>.";
     static private final String gsFailed = "GhostScript failed for <filename>.";
@@ -480,7 +487,6 @@ public class CompareTool {
                 file.delete();
             }
         }
-
         File diffFile = new File(outPath + differenceImagePrefix);
         if (diffFile.exists()) {
             diffFile.delete();
@@ -517,38 +523,23 @@ public class CompareTool {
             init(outPath + ignoredAreasPrefix + outPdfName, outPath + ignoredAreasPrefix + cmpPdfName);
         }
 
+        String cmpPdfTempCopy = null;
+        String replacementImagesDirectory = null;
+        String outPdfTempCopy = null;
         if (targetDir.exists()) {
-            String gsParams = this.gsParams.replace("<outputfile>", outPath + cmpImage).replace("<inputfile>", cmpPdf);
-            Process p = runProcess(gsExec , gsParams);
-            BufferedReader bri = new BufferedReader(new InputStreamReader(p.getInputStream()));
-            BufferedReader bre = new BufferedReader(new InputStreamReader(p.getErrorStream()));
+            replacementImagesDirectory = CompareToolUtil.createTempDirectory(tempFilePrefix);
+            cmpPdfTempCopy = CompareToolUtil.createTempCopy(cmpPdf, tempFilePrefix, null);
+            outPdfTempCopy = CompareToolUtil.createTempCopy(outPdf, tempFilePrefix, null);
+            int exitValue = runGhostscriptAndGetExitCode(cmpPdfTempCopy, CompareToolUtil.buildPath(replacementImagesDirectory,
+                     new String[]{"cmp_" + tempFilePrefix + pageNumberPattern + "." + renderedImageExtension}));
             String line;
-            while ((line = bri.readLine()) != null) {
-                System.out.println(line);
-            }
-            bri.close();
-            while ((line = bre.readLine()) != null) {
-                System.out.println(line);
-            }
-            bre.close();
-            if (p.waitFor() == 0) {
-                gsParams = this.gsParams.replace("<outputfile>", outPath + outImage).replace("<inputfile>", outPdf);
-                p = runProcess(gsExec , gsParams);
-                bri = new BufferedReader(new InputStreamReader(p.getInputStream()));
-                bre = new BufferedReader(new InputStreamReader(p.getErrorStream()));
-                while ((line = bri.readLine()) != null) {
-                    System.out.println(line);
-                }
-                bri.close();
-                while ((line = bre.readLine()) != null) {
-                    System.out.println(line);
-                }
-                bre.close();
-                int exitValue = p.waitFor();
-
+            if (exitValue == 0) {
+                exitValue = runGhostscriptAndGetExitCode(outPdfTempCopy, CompareToolUtil.buildPath(replacementImagesDirectory,
+                        new String[]{tempFilePrefix + pageNumberPattern + "." + renderedImageExtension}));
                 if (exitValue == 0) {
-                    imageFiles = targetDir.listFiles(new PngFileFilter());
-                    cmpImageFiles = targetDir.listFiles(new CmpPngFileFilter());
+                    File tempTargetDir = new File(replacementImagesDirectory);
+                    imageFiles = tempTargetDir.listFiles(new PngFileFilter());
+                    cmpImageFiles = tempTargetDir.listFiles(new CmpPngFileFilter());
                     boolean bUnexpectedNumberOfPages = false;
                     if (imageFiles.length != cmpImageFiles.length) {
                         bUnexpectedNumberOfPages = true;
@@ -561,6 +552,10 @@ public class CompareTool {
                     Arrays.sort(cmpImageFiles, new ImageNameComparator());
                     String differentPagesFail = null;
                     for (int i = 0; i < cnt; i++) {
+                        CompareToolUtil.copy(imageFiles[i].getAbsolutePath(), CompareToolUtil.buildPath(targetDir.getAbsolutePath(),
+                                new String[]{outPdfName + "-" + (i + 1) + "." + renderedImageExtension}));
+                        CompareToolUtil.copy(cmpImageFiles[i].getAbsolutePath(), CompareToolUtil.buildPath(targetDir.getAbsolutePath(),
+                                new String[]{"cmp_" + outPdfName + "-" + (i + 1) + "." + renderedImageExtension}));
                         if (equalPages != null && equalPages.contains(i))
                             continue;
                         System.out.print("Comparing page " + Integer.toString(i + 1) + " (" + imageFiles[i].getAbsolutePath() + ")...");
@@ -570,15 +565,20 @@ public class CompareTool {
                         is1.close();
                         is2.close();
                         if (!cmpResult) {
-                            if (compareExec != null && new File(compareExec).exists()) {
-                                String compareParams = this.compareParams.replace("<image1>", imageFiles[i].getAbsolutePath()).replace("<image2>", cmpImageFiles[i].getAbsolutePath()).replace("<difference>", outPath + differenceImagePrefix + Integer.toString(i + 1) + ".png");
-                                p = runProcess(compareExec , compareParams);
-                                bre = new BufferedReader(new InputStreamReader(p.getErrorStream()));
+                            if (compareExec != null) {
+                                String compareParams = this.compareParams.replace("<image1>", imageFiles[i].getAbsolutePath()).replace("<image2>",
+                                        cmpImageFiles[i].getAbsolutePath()).replace("<difference>",
+                                        CompareToolUtil.buildPath(replacementImagesDirectory, new String[]{ "diff" +
+                                                (i + 1) + "." + renderedImageExtension}));
+
+                                Process p = CompareToolUtil.runProcess(compareExec , compareParams);
+                                BufferedReader bre = new BufferedReader(new InputStreamReader(p.getErrorStream()));
                                 while ((line = bre.readLine()) != null) {
                                     System.out.println(line);
                                 }
                                 bre.close();
                                 int cmpExitValue = p.waitFor();
+
                                 if (cmpExitValue == 0) {
                                     if (differentPagesFail == null)  {
                                         differentPagesFail = differentPages.replace("<filename>", outPdf).replace("<pagenumber>", Integer.toString(i + 1));
@@ -599,8 +599,17 @@ public class CompareTool {
                         } else {
                             System.out.println("done.");
                         }
+                        CompareToolUtil.removeFiles(new String[] {imageFiles[i].getAbsolutePath(), cmpImageFiles[i].getAbsolutePath()});
                     }
-                    if (differentPagesFail != null) {
+                    File[] diffFiles = tempTargetDir.listFiles();
+                    for (int i = 0; i < diffFiles.length; i++) {
+                        System.out.println(targetDir.getAbsolutePath());
+                        CompareToolUtil.copy(diffFiles[i].getAbsolutePath(), CompareToolUtil.buildPath(targetDir.getAbsolutePath(),
+                                new String[]{differenceImagePrefix + "-" + (i + 1) + "." + renderedImageExtension}));
+                        diffFiles[i].delete();
+                    }
+                    tempTargetDir.delete();
+                if (differentPagesFail != null) {
                         return differentPagesFail;
                     } else {
                         if (bUnexpectedNumberOfPages)
@@ -615,20 +624,27 @@ public class CompareTool {
         } else {
             return cannotOpenTargetDirectory.replace("<filename>", outPdf);
         }
-
         return null;
     }
 
-    private Process runProcess(String execPath, String params) throws IOException, InterruptedException {
-        StringTokenizer st = new StringTokenizer(params);
-        String[] cmdArray = new String[st.countTokens() + 1];
-        cmdArray[0] = execPath;
-        for (int i = 1; st.hasMoreTokens(); ++i)
-            cmdArray[i] = st.nextToken();
-
-        Process p = Runtime.getRuntime().exec(cmdArray);
-
-        return p;
+    private int runGhostscriptAndGetExitCode(String replacementPdf, String replacementImagesDirectory)
+            throws IOException, InterruptedException {
+        String gsParams = this.gsParams.replace("<outputfile>", replacementImagesDirectory).
+                replace("<inputfile>", replacementPdf);
+        Process p = CompareToolUtil.runProcess(gsExec , gsParams);
+        BufferedReader bri = new BufferedReader(new InputStreamReader(p.getInputStream()));
+        BufferedReader bre = new BufferedReader(new InputStreamReader(p.getErrorStream()));
+        String line;
+        while ((line = bri.readLine()) != null) {
+            System.out.println(line);
+        }
+        bri.close();
+        while ((line = bre.readLine()) != null) {
+            System.out.println(line);
+        }
+        bre.close();
+        int exitValue = p.waitFor();
+        return exitValue;
     }
 
     public String compare(String outPdf, String cmpPdf, String outPath, String differenceImagePrefix, Map<Integer, List<Rectangle>> ignoredAreas) throws IOException, InterruptedException, DocumentException {
@@ -1385,9 +1401,12 @@ public class CompareTool {
         this.cmpPdf = cmpPdf;
         outPdfName =  new File(outPdf).getName();
         cmpPdfName = new File(cmpPdf).getName();
-        outImage = outPdfName + "-%03d.png";
-        if (cmpPdfName.startsWith("cmp_")) cmpImage = cmpPdfName + "-%03d.png";
-        else cmpImage = "cmp_" + cmpPdfName + "-%03d.png";
+        outImage = outPdfName + pageNumberPattern + "." + renderedImageExtension;
+        if (cmpPdfName.startsWith("cmp_")) {
+            cmpImage = cmpPdfName + pageNumberPattern + "." + renderedImageExtension ;
+        } else {
+            cmpImage = "cmp_" + cmpPdfName + pageNumberPattern + "." + renderedImageExtension;
+        }
     }
 
     private boolean compareStreams(InputStream is1, InputStream is2) throws IOException {
@@ -1414,7 +1433,7 @@ public class CompareTool {
             String ap = pathname.getAbsolutePath();
             boolean b1 = ap.endsWith(".png");
             boolean b2 = ap.contains("cmp_");
-            return b1 && !b2 && ap.contains(outPdfName);
+            return b1 && !b2;
         }
     }
 
@@ -1423,7 +1442,7 @@ public class CompareTool {
             String ap = pathname.getAbsolutePath();
             boolean b1 = ap.endsWith(".png");
             boolean b2 = ap.contains("cmp_");
-            return b1 && b2 && ap.contains(cmpPdfName);
+            return b1 && b2;
         }
     }
 
@@ -1518,6 +1537,4 @@ public class CompareTool {
             return new InputSource(new StringReader(""));
         }
     }
-
-
 }
