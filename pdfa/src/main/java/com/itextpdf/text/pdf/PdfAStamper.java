@@ -49,6 +49,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.file.Files;
 
 /**
  * Extension of PdfStamper that will attempt to keep a file
@@ -146,7 +147,7 @@ public class PdfAStamper extends PdfStamper {
         }
         else {
             if (tempFile.isDirectory())
-                tempFile = File.createTempFile("pdf", null, tempFile);
+                tempFile = Files.createTempFile(tempFile.toPath(), "pdf", null).toFile();
             FileOutputStream fout = new FileOutputStream(tempFile);
             stp = new PdfAStamper(reader, fout, pdfVersion, append, conformanceLevel);
             stp.sigApp = new PdfSignatureAppearance(stp.stamper);

@@ -54,6 +54,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.nio.file.Files;
 
 import com.itextpdf.text.pdf.PdfReader;
 
@@ -120,7 +121,7 @@ public abstract class TestResourceUtils {
     private static File writeStreamToTempFile(String id, InputStream is) throws IOException{
         if (is == null) throw new NullPointerException("Input stream is null");
         
-        File f = File.createTempFile(TESTPREFIX + id + "-", ".pdf");
+        File f = Files.createTempFile(TESTPREFIX + id + "-", ".pdf").toFile();
         f.deleteOnExit();
 
         final OutputStream os = new BufferedOutputStream(new FileOutputStream(f));
