@@ -15,7 +15,7 @@ public class DefaultSplitCharacterProfilingTest {
 
     private static final String READ_FILE_FAIL_MESSAGE = "Failed to read test file {0}. The test could not be completed.";
 
-    private static final int TIME_LIMIT = 20000;
+    private static final int TIME_LIMIT = 5000;
 
     @Test(timeout = 30000)
     public void checkDatePatternProfilingTest() {
