@@ -116,8 +116,14 @@ public class DefaultSplitCharacter implements SplitCharacter {
      * @return <CODE>true</CODE> if the character can be used to split a string, <CODE>false</CODE> otherwise
      */
     public boolean isSplitCharacter(int start, int current, int end, char[] cc, PdfChunk[] ck) {
-        char[] ccTmp = checkDatePattern(String.valueOf(cc));
-        char c = getCurrentCharacter(current, ccTmp, ck);
+        char c = getCurrentCharacter(current, cc, ck);
+        if (c == '-') {
+            int beginDateidx = Math.max(current - 8, 0);
+            int dateLength = Math.min(16, cc.length - beginDateidx);
+            if (containsDate(String.valueOf(cc, beginDateidx, dateLength))) {
+                return false;
+            }
+        }
 
         if (characters != null) {
             for (int i = 0; i < characters.length; i++) {
@@ -155,14 +161,8 @@ public class DefaultSplitCharacter implements SplitCharacter {
         return (char) ck[Math.min(current, ck.length - 1)].getUnicodeEquivalent(cc[current]);
     }
 
-    private char[] checkDatePattern(String data) {
-        if (data.contains("-")) {
-            Matcher m = DATE_PATTERN.matcher(data);
-            if (m.find()) {
-                String tmpData = m.group(1).replace('-', '\u2011');
-                data = data.replaceAll(m.group(1), tmpData);
-            }
-        }
-        return data.toCharArray();
+    private static boolean containsDate(String data) {
+        Matcher m = DATE_PATTERN.matcher(data);
+        return m.find();
     }
 }
