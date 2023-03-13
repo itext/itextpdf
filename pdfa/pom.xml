@@ -6,7 +6,7 @@
     <groupId>com.itextpdf</groupId>
     <artifactId>itext-parent</artifactId>
     <version>1.0.0</version>
-    <relativePath />
+    <relativePath/>
   </parent>
 
   <artifactId>itext-pdfa</artifactId>
@@ -111,7 +111,7 @@
             <featureBranchPrefix>feature/</featureBranchPrefix>
             <releaseBranchPrefix>release/</releaseBranchPrefix>
             <hotfixBranchPrefix>hotfix/</hotfixBranchPrefix>
-            <versionTagPrefix />
+            <versionTagPrefix/>
           </flowInitContext>
           <allowUntracked>true</allowUntracked>
           <autoVersionSubmodules>true</autoVersionSubmodules>
