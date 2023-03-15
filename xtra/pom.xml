@@ -10,7 +10,7 @@
   </parent>
 
   <artifactId>xfa-itext-xtra</artifactId>
-  <version>3.0.1</version>
+  <version>3.0.2</version>
 
   <name>pdfXFA iText Xtra</name>
   <description>iText Xtra, part of iText a Free Java-PDF library</description>
