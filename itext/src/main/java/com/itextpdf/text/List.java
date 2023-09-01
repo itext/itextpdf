@@ -92,11 +92,11 @@ import java.util.HashMap;
  *			This is another item
  *		</LI>
  *	</UL>
- *
  * @see		Element
  * @see		ListItem
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
-
+@Deprecated
 public class List implements TextElementArray, Indentable, IAccessibleElement {
 
     // constants

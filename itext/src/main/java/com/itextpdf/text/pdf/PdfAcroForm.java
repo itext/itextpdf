@@ -43,19 +43,20 @@
  */
 package com.itextpdf.text.pdf;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.HashSet;
-
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.ExceptionConverter;
 import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.pdf.internal.PdfIsoKeys;
 
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.HashSet;
+
 /**
  * Each PDF document can contain maximum 1 AcroForm.
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
-
+@Deprecated
 public class PdfAcroForm extends PdfDictionary {
 
     private PdfWriter writer;

@@ -43,15 +43,18 @@
  */
 package com.itextpdf.text.pdf;
 
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.error_messages.MessageLocalization;
+
 import java.io.IOException;
 import java.util.HashMap;
 
-import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.error_messages.MessageLocalization;
-/** Enumerates all the fonts inside a True Type Collection.
- *
+/**
+ * Enumerates all the fonts inside a True Type Collection.
  * @author  Paulo Soares
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 class EnumerateTTC extends TrueTypeFont{
 
     protected String[] names;

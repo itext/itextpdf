@@ -36,12 +36,12 @@ import com.itextpdf.xmp.XMPMetaFactory;
 import com.itextpdf.xmp.impl.Utils;
 import com.itextpdf.xmp.properties.XMPAliasInfo;
 
-
 /**
  * Parser for XMP XPaths.
- *
  * @since   01.03.2006
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public final class XMPPathParser
 {
 	/**
@@ -535,13 +535,11 @@ public final class XMPPathParser
 	}
 }
 
-
-
-
-
 /**
  * This objects contains all needed char positions to parse.
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 class PathPosition
 {
 	/** the complete path */

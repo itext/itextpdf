@@ -45,6 +45,7 @@ package com.itextpdf.text.xml.xmp;
 
 /**
  * An implementation of an XmpSchema.
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
 @Deprecated
 public class XmpMMSchema extends XmpSchema {

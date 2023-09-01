@@ -43,18 +43,20 @@
  */
 package com.itextpdf.text.pdf.security;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.itextpdf.text.pdf.PdfArray;
 import com.itextpdf.text.pdf.PdfDictionary;
 import com.itextpdf.text.pdf.PdfName;
 import com.itextpdf.text.pdf.PdfNumber;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * A helper class that tells you more about the type of signature
  * (certification or approval) and the signature's DMP settings.
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class SignaturePermissions {
 
 	/**

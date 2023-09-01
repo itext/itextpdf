@@ -52,6 +52,10 @@ import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 import java.util.HashSet;
 
+/**
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
+ */
+@Deprecated
 public class PdfA1Checker extends PdfAChecker {
 
     static public final PdfName setState = new PdfName("SetState");

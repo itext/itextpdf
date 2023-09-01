@@ -64,6 +64,10 @@ import com.itextpdf.tool.xml.pipeline.end.PdfWriterPipeline;
 import com.itextpdf.tool.xml.pipeline.html.HtmlPipeline;
 import com.itextpdf.tool.xml.pipeline.html.HtmlPipelineContext;
 
+/**
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
+ */
+@Deprecated
 public class DivSampleTest extends SampleTest {
     @Override
     protected void makePdf(String outPdf) throws Exception {

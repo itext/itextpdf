@@ -79,7 +79,9 @@ import java.util.Map;
 /**
  * Class that takes care of the cryptographic options
  * and appearances that form a signature.
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class PdfSignatureAppearance {
 
 	/**

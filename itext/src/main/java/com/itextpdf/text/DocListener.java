@@ -46,12 +46,12 @@ package com.itextpdf.text;
 /**
  * A class that implements <CODE>DocListener</CODE> will perform some
  * actions when some actions are performed on a <CODE>Document</CODE>.
- *
  * @see		ElementListener
  * @see		Document
  * @see		DocWriter
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
-
+@Deprecated
 public interface DocListener extends ElementListener {
     
     // methods

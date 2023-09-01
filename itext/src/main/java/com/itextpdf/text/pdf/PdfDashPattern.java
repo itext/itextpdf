@@ -49,10 +49,10 @@ import java.io.OutputStream;
 /**
  * A <CODE>PdfDashPattern</CODE> defines a dash pattern as described in
  * the PDF Reference Manual version 1.3 p 325 (section 8.4.3).
- *
  * @see		PdfArray
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
-
+@Deprecated
 public class PdfDashPattern extends PdfArray {
     
     // membervariables

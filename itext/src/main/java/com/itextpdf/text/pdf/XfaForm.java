@@ -45,7 +45,17 @@ package com.itextpdf.text.pdf;
 
 import com.itextpdf.text.ExceptionConverter;
 import com.itextpdf.text.xml.XmlDomWriter;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.EntityResolver;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -58,22 +68,13 @@ import java.util.Collection;
 import java.util.EmptyStackException;
 import java.util.HashMap;
 import java.util.Map;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.EntityResolver;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
 
 /**
  * Processes XFA forms.
  * @author Paulo Soares
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class XfaForm {
 
     private Xml2SomTemplate templateSom;

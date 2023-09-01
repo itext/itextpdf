@@ -47,7 +47,9 @@ import com.itextpdf.text.Rectangle;
  * Classes implementing PageSizeContainable have a {@link Rectangle} in possession that defines a PageSize.
  * @author redlab_b
  *
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public interface PageSizeContainable {
 
 	/**

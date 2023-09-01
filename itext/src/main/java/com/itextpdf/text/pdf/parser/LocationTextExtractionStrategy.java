@@ -47,7 +47,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-
 /**
  * <b>Development preview</b> - this class (and all of the parser classes) are still experiencing
  * heavy development, and are subject to change both behavior and interface.
@@ -64,9 +63,10 @@ import java.util.List;
  * <br>
  * This renderer also uses a simple strategy based on the font metrics to determine if
  * a blank space should be inserted into the output.
- *
  * @since   5.0.2
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class LocationTextExtractionStrategy implements TextExtractionStrategy {
 
     /** set to true for debugging */

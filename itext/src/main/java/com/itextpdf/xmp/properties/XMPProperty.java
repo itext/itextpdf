@@ -33,13 +33,13 @@ package com.itextpdf.xmp.properties;
 import com.itextpdf.xmp.XMPMeta;
 import com.itextpdf.xmp.options.PropertyOptions;
 
-
 /**
  * This interface is used to return a text property together with its and options.
- * 
  * @since   23.01.2006
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
-public interface XMPProperty 
+@Deprecated
+public interface XMPProperty
 {
 	/**
 	 * @return Returns the value of the property.

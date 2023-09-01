@@ -53,7 +53,9 @@ import java.security.MessageDigest;
  * Time Stamp Authority providing RFC 3161 compliant time stamp token.
  * @author Martin Brunecky, 07/17/2007
  * @since	2.1.6
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public interface TSAClient {
     /**
      * Get the time stamp token size estimate.

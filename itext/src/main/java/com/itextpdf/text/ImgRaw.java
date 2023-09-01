@@ -43,18 +43,18 @@
  */
 package com.itextpdf.text;
 
-import java.net.URL;
 import com.itextpdf.text.error_messages.MessageLocalization;
+
+import java.net.URL;
 
 /**
  * Raw Image data that has to be inserted into the document
- *
  * @see		Element
  * @see		Image
- *
  * @author  Paulo Soares
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
-
+@Deprecated
 public class ImgRaw extends Image {
 
     ImgRaw(Image image) {

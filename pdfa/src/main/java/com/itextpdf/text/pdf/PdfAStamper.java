@@ -54,7 +54,9 @@ import java.io.OutputStream;
  * Extension of PdfStamper that will attempt to keep a file
  * in conformance with the PDF/A standard.
  * @see PdfStamper
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class PdfAStamper extends PdfStamper {
 
     /**

@@ -47,7 +47,9 @@ package com.itextpdf.text.pdf.parser;
 /**
  * Interface for defining filters for use with {@link FilteredRenderListener}
  * @since 5.0.1
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public abstract class RenderFilter {
 
     /**

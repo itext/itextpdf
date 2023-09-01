@@ -46,8 +46,9 @@ package com.itextpdf.text.pdf.parser;
 /**
  * A text render listener that filters text operations before passing them on to a delegate
  * @since 5.0.1
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
-
+@Deprecated
 public class FilteredRenderListener implements RenderListener {
 
     /** The delegate that will receive the text render operation if the filters all pass */

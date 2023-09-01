@@ -50,7 +50,9 @@ import java.util.HashMap;
 
 /**
  * A class to support Type3 fonts.
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class Type3Font extends BaseFont {
 
 	private boolean[] usedSlot;

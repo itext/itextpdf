@@ -45,7 +45,9 @@ package com.itextpdf.text.pdf.interfaces;
 
 /**
  * Interface providing alternate description for accessible elements.
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public interface IAlternateDescription {
 
     String getAlt();

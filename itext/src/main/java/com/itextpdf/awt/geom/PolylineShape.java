@@ -55,7 +55,9 @@ import java.awt.geom.Rectangle2D;
  * Class that defines a Polyline shape.
  * This class was originally written by wil - amristar.com.au
  * and integrated into iText by Bruno.
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class PolylineShape implements Shape {
 	/** All the X-values of the coordinates in the polyline. */
 	protected int[] x;

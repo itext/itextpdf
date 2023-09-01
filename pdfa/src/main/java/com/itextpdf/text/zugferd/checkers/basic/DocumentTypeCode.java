@@ -48,7 +48,9 @@ import com.itextpdf.text.zugferd.checkers.CodeValidation;
 /**
  * Class that can be used to check if a document type code is valid for
  * use in the context of a specific format.
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class DocumentTypeCode extends CodeValidation {
     public static final String COMMERCIAL_INVOICE = "380";
     public static final String DEBIT_NOTE_FINANCIAL_ADJUSTMENT = "38";

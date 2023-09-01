@@ -55,9 +55,10 @@ import java.util.regex.Pattern;
  * You can add an array of characters or a single character on which iText
  * should split the chunk. If custom characters have been set, iText will ignore
  * the default characters this class uses to split chunks.
- *
  * @since 2.1.2
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class DefaultSplitCharacter implements SplitCharacter {
 
     private static final Pattern DATE_PATTERN = Pattern.compile("(\\d{2,4}-\\d{2}-\\d{2,4})");

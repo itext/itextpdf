@@ -43,8 +43,6 @@
  */
 package com.itextpdf.text.pdf.events;
 
-import java.util.ArrayList;
-
 import com.itextpdf.text.pdf.PdfContentByte;
 import com.itextpdf.text.pdf.PdfPRow;
 import com.itextpdf.text.pdf.PdfPTable;
@@ -52,13 +50,16 @@ import com.itextpdf.text.pdf.PdfPTableEvent;
 import com.itextpdf.text.pdf.PdfPTableEventAfterSplit;
 import com.itextpdf.text.pdf.PdfPTableEventSplit;
 
+import java.util.ArrayList;
+
 /**
  * If you want to add more than one page event to a PdfPTable,
  * you have to construct a PdfPTableEventForwarder, add the
  * different events to this object and add the forwarder to
  * the PdfWriter.
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
-
+@Deprecated
 public class PdfPTableEventForwarder implements PdfPTableEventAfterSplit {
 
 	/** ArrayList containing all the PageEvents that have to be executed. */

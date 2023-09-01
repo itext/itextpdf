@@ -43,19 +43,20 @@
  */
 package com.itextpdf.text.pdf;
 
+import com.itextpdf.text.DocWriter;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.Rectangle;
+
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
 import java.util.zip.Deflater;
 import java.util.zip.DeflaterOutputStream;
 
-import com.itextpdf.text.DocWriter;
-import com.itextpdf.text.Document;
-import com.itextpdf.text.Rectangle;
-
 /**
  * <CODE>PdfContents</CODE> is a <CODE>PdfStream</CODE> containing the contents (text + graphics) of a <CODE>PdfPage</CODE>.
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
-
+@Deprecated
 class PdfContents extends PdfStream {
     
     static final byte SAVESTATE[] = DocWriter.getISOBytes("q\n");

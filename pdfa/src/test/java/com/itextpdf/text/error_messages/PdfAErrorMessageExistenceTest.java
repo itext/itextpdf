@@ -55,6 +55,10 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
+ */
+@Deprecated
 public class PdfAErrorMessageExistenceTest {
     private static String[] LANGUAGES = {"nl", "en"};
     private static String SOURCE_FILES_EXTENSION = ".java";

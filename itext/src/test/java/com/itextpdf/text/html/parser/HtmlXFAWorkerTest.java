@@ -68,7 +68,9 @@ import com.itextpdf.text.pdf.PdfWriter;
 /**
  * @author Balder
  *
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class HtmlXFAWorkerTest {
 
 	private StringBuilder snippet;

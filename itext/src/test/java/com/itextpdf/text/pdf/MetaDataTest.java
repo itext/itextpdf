@@ -53,6 +53,10 @@ import com.itextpdf.text.Document;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.Version;
 
+/**
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
+ */
+@Deprecated
 public class MetaDataTest {
 
     @Test

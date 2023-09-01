@@ -52,7 +52,9 @@ import java.security.GeneralSecurityException;
  * Produces a blank (or empty) signature. Useful for deferred signing with
  * MakeSignature.signExternalContainer().
  * @author Paulo Soares
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class ExternalBlankSignatureContainer implements ExternalSignatureContainer {
     private PdfDictionary sigDic;
     

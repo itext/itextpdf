@@ -65,7 +65,9 @@ import com.itextpdf.tool.xml.pipeline.WritableElement;
 /**
  * @author Balder
  *
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class PandBTest {
 
     private List<Element> elementList;

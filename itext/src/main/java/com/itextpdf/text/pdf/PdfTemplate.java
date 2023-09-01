@@ -42,17 +42,18 @@
  * address: sales@itextpdf.com
  */
 package com.itextpdf.text.pdf;
-import java.io.IOException;
-import java.util.HashMap;
-
 import com.itextpdf.text.AccessibleElementId;
 import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.pdf.interfaces.IAccessibleElement;
 
+import java.io.IOException;
+import java.util.HashMap;
+
 /**
  * Implements the form XObject.
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
-
+@Deprecated
 public class PdfTemplate extends PdfContentByte implements IAccessibleElement {
     public static final int TYPE_TEMPLATE = 1;
     public static final int TYPE_IMPORTED = 2;

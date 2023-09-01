@@ -44,14 +44,9 @@
 package com.itextpdf.text.xml.xmp;
 
 
-import com.itextpdf.xmp.XMPConst;
-import com.itextpdf.xmp.XMPException;
-import com.itextpdf.xmp.XMPMeta;
-import com.itextpdf.xmp.XMPUtils;
-import com.itextpdf.xmp.options.PropertyOptions;
-
 /**
  * An implementation of an XmpSchema.
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
 @Deprecated
 public class DublinCoreSchema extends XmpSchema {

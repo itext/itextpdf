@@ -47,13 +47,14 @@ import com.itextpdf.text.pdf.interfaces.IPdfStructureElement;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
  * The structure tree root corresponds to the highest hierarchy level in a tagged PDF.
  * @author Paulo Soares
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class PdfStructureTreeRoot extends PdfDictionary implements IPdfStructureElement {
 
     private HashMap<Integer, PdfObject> parentTree = new HashMap<Integer, PdfObject>();

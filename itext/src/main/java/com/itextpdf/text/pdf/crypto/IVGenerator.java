@@ -46,7 +46,9 @@ package com.itextpdf.text.pdf.crypto;
 /**
  * An initialization vector generator for a CBC block encryption. It's a random generator based on ARCFOUR.
  * @author Paulo Soares
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public final class IVGenerator {
     
     private static ARCFOUREncryption arcfour;
