@@ -72,8 +72,9 @@ import java.util.Map;
  * <CODE>PdfContentByte</CODE> is an object containing the user positioned
  * text and graphic contents of a page. It knows how to apply the proper
  * font encoding.
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
-
+@Deprecated
 public class PdfContentByte {
 
     /**

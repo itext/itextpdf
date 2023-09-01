@@ -46,9 +46,10 @@ package com.itextpdf.text;
 import com.itextpdf.text.error_messages.MessageLocalization;
 /**
  * Chapter with auto numbering.
- *
  * @author Michael Niedermair
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class ChapterAutoNumber extends Chapter {
 
     // constant

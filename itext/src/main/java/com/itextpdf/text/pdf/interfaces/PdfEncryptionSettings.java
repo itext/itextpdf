@@ -43,9 +43,9 @@
  */
 package com.itextpdf.text.pdf.interfaces;
 
-import java.security.cert.Certificate;
-
 import com.itextpdf.text.DocumentException;
+
+import java.security.cert.Certificate;
 
 /**
  * Encryption settings are described in section 3.5 (more specifically
@@ -54,8 +54,9 @@ import com.itextpdf.text.DocumentException;
  * The values of the different  preferences were originally stored
  * in class PdfWriter, but they have been moved to this separate interface
  * for reasons of convenience.
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
-
+@Deprecated
 public interface PdfEncryptionSettings {
 
     

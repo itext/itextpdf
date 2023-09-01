@@ -43,22 +43,20 @@
  */
 package com.itextpdf.text;
 
+import com.itextpdf.text.api.WriterOperation;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import com.itextpdf.text.api.WriterOperation;
-import com.itextpdf.text.pdf.PdfWriter;
-import com.itextpdf.text.pdf.draw.VerticalPositionMark;
 
 /**
  * An element that is not an element, it holds {@link Element#WRITABLE_DIRECT}
  * as Element type. It implements WriterOperation to do operations on the
  * {@link PdfWriter} and the {@link Document} that must be done at the time of
  * the writing. Much like a {@link VerticalPositionMark} but little different.
- *
  * @author itextpdf.com
- *
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public abstract class WritableDirectElement implements Element, WriterOperation {
 
 	public static final int DIRECT_ELEMENT_TYPE_UNKNOWN = 0;

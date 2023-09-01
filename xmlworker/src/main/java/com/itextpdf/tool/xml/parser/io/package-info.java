@@ -44,5 +44,8 @@
 /**
  * Extra utilities for the {@link com.itextpdf.tool.xml.parser.XMLParser} used for testing or debugging.
  * <br/>This package is part of iText&reg; XMLWorker.
+ *
+ * For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 package com.itextpdf.tool.xml.parser.io;

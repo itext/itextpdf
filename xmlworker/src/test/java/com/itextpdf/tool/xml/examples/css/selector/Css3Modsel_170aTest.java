@@ -44,6 +44,10 @@ package com.itextpdf.tool.xml.examples.css.selector;
 
 import com.itextpdf.tool.xml.examples.SampleTest;
 
+/**
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
+ */
+@Deprecated
 public class Css3Modsel_170aTest extends SampleTest {
     protected String getTestName() {
         return  "css3-modsel-170a";

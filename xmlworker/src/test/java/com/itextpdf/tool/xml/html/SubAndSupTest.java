@@ -67,7 +67,9 @@ import static org.junit.Assert.assertTrue;
 /**
  * @author Balder
  *
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class SubAndSupTest {
 
 	private List<Element> elementList;

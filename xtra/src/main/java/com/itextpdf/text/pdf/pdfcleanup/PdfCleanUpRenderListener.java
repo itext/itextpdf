@@ -87,6 +87,10 @@ import org.apache.commons.imaging.Imaging;
 import org.apache.commons.imaging.ImagingConstants;
 import org.apache.commons.imaging.formats.tiff.constants.TiffConstants;
 
+/**
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
+ */
+@Deprecated
 class PdfCleanUpRenderListener implements ExtRenderListener {
 
     private static final Color CLEANED_AREA_FILL_COLOR = Color.WHITE;

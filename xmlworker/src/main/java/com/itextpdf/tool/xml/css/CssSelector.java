@@ -46,6 +46,10 @@ import com.itextpdf.tool.xml.Tag;
 import java.util.List;
 import java.util.Stack;
 
+/**
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
+ */
+@Deprecated
 public class CssSelector {
     private List<CssSelectorItem> selectorItems;
 

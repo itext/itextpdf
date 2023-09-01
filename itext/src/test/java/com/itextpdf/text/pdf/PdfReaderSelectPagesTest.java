@@ -54,6 +54,10 @@ import com.itextpdf.testutils.TestResourceUtils;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 
+/**
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
+ */
+@Deprecated
 public class PdfReaderSelectPagesTest {
 	byte[] data;
 	File dataFile;

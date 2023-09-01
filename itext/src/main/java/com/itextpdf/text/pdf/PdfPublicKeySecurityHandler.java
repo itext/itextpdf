@@ -122,7 +122,9 @@ import org.bouncycastle.asn1.x509.TBSCertificateStructure;
 
 /**
  * @author Aiken Sam (aikensam@ieee.org)
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class PdfPublicKeySecurityHandler {
 
     static final int SEED_LENGTH = 20;

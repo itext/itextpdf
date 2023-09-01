@@ -25,9 +25,10 @@ import java.util.HashMap;
  * This tree structure stores the hyphenation patterns in an efficient
  * way for fast lookup. It provides the provides the method to
  * hyphenate a word.
- *
  * @author Carlos Villegas <cav@uniscope.co.jp>
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class HyphenationTree extends TernaryTree
             implements PatternConsumer {
 

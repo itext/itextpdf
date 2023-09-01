@@ -43,6 +43,10 @@
  */
 package com.itextpdf.text.pdf.parser;
 
+/**
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
+ */
+@Deprecated
 public class GlyphTextRenderListener extends GlyphRenderListener implements TextExtractionStrategy {
 
     private final TextExtractionStrategy delegate;

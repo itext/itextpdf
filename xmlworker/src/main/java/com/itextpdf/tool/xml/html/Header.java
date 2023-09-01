@@ -71,7 +71,9 @@ import com.itextpdf.tool.xml.util.ParentTreeUtil;
 /**
  * @author Emiel Ackermann, redlab_b
  *
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class Header extends AbstractTagProcessor {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(Header.class);

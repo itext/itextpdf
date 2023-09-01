@@ -50,7 +50,9 @@ import com.itextpdf.text.pdf.PdfName;
  * specifies the algorithms and associated parameters used to transform points
  * between geographic coordinates and a two-dimensional (projected) coordinate system.
  * @since 5.1.0
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class ProjectedCoordinateSystem extends CoordinateSystem {
 
 	/**

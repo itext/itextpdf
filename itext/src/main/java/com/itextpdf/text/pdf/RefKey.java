@@ -45,7 +45,9 @@ package com.itextpdf.text.pdf;
 
 /**
  * A key to allow us to hash indirect references
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class RefKey {
     int num;
     int gen;

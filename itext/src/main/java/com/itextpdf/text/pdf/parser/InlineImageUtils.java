@@ -43,11 +43,6 @@
  */
 package com.itextpdf.text.pdf.parser;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-
 import com.itextpdf.text.exceptions.UnsupportedPdfException;
 import com.itextpdf.text.log.Logger;
 import com.itextpdf.text.log.LoggerFactory;
@@ -61,10 +56,17 @@ import com.itextpdf.text.pdf.PdfNumber;
 import com.itextpdf.text.pdf.PdfObject;
 import com.itextpdf.text.pdf.PdfReader;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Utility methods to help with processing of inline images
  * @since 5.0.4
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public final class InlineImageUtils {
     private final static Logger LOGGER = LoggerFactory.getLogger(InlineImageUtils.class.getName());
     private InlineImageUtils(){}

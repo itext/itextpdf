@@ -23,11 +23,15 @@
  */
 package com.itextpdf.awt.geom;
 
-import java.util.NoSuchElementException;
-
 import com.itextpdf.awt.geom.gl.Crossing;
 import com.itextpdf.awt.geom.misc.Messages;
 
+import java.util.NoSuchElementException;
+
+/**
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
+ */
+@Deprecated
 public final class GeneralPath implements Shape, Cloneable {
 
     public static final int WIND_EVEN_ODD = PathIterator.WIND_EVEN_ODD;

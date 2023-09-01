@@ -61,9 +61,10 @@ import java.util.ListIterator;
  * objects, followed by a right square bracket (]).<BR>
  * This object is described in the 'Portable Document Format Reference Manual
  * version 1.7' section 3.2.5 (page 58).
- *
  * @see		PdfObject
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class PdfArray extends PdfObject implements Iterable<PdfObject> {
 
 	// CLASS VARIABLES

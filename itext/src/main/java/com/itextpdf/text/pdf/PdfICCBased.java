@@ -49,10 +49,10 @@ import com.itextpdf.text.ExceptionConverter;
 
 /**
  * A <CODE>PdfICCBased</CODE> defines a ColorSpace
- *
  * @see		PdfStream
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
-
+@Deprecated
 public class PdfICCBased extends PdfStream {
 
     /**

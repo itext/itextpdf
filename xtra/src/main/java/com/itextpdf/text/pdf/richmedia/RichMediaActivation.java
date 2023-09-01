@@ -54,7 +54,9 @@ import com.itextpdf.text.pdf.PdfName;
  * when the annotation is activated.
  * See ExtensionLevel 3 p78
  * @since	5.0.0
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class RichMediaActivation extends PdfDictionary {
 	
 	/**

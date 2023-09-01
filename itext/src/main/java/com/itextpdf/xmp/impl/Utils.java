@@ -30,15 +30,14 @@
 
 package com.itextpdf.xmp.impl;
 
-
 import com.itextpdf.xmp.XMPConst;
-
 
 /**
  * Utility functions for the XMPToolkit implementation.
- * 
  * @since 06.06.2006
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class Utils implements XMPConst
 {
 	/** segments of a UUID */

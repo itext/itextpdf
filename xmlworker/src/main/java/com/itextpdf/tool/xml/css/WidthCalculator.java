@@ -51,7 +51,9 @@ import com.itextpdf.tool.xml.html.HTML;
 /**
  * @author Emiel Ackermann
  *
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class WidthCalculator {
 
 	private final CssUtils utils = CssUtils.getInstance();

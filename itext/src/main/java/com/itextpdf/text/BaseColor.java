@@ -46,9 +46,10 @@ package com.itextpdf.text;
 import com.itextpdf.text.error_messages.MessageLocalization;
 
 /**
- *
  * @author psoares
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class BaseColor {
     public static final BaseColor WHITE = new BaseColor(255, 255, 255);
     public static final BaseColor LIGHT_GRAY = new BaseColor(192, 192, 192);

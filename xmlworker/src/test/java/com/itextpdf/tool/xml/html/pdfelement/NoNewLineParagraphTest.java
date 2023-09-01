@@ -57,7 +57,9 @@ import com.itextpdf.text.Image;
 /**
  * @author Amedee Van Gasse
  *
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class NoNewLineParagraphTest {
 
     private static final String IMAGE = "src/test/resources/images.jpg";

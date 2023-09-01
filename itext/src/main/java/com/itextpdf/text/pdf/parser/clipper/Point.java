@@ -77,6 +77,10 @@ package com.itextpdf.text.pdf.parser.clipper;
 import java.math.BigInteger;
 import java.util.Comparator;
 
+/**
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
+ */
+@Deprecated
 public abstract class Point<T extends Number & Comparable<T>> {
     public static class DoublePoint extends Point<Double> {
         public DoublePoint() {

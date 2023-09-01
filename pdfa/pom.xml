@@ -9,10 +9,10 @@
     <relativePath />
   </parent>
 
-  <artifactId>itext-pdfa</artifactId>
-  <version>5.5.14-SNAPSHOT</version>
+  <artifactId>xfa-itext-pdfa</artifactId>
+  <version>3.0.3-SNAPSHOT</version>
 
-  <name>iText PDF/A</name>
+  <name>pdfXFA iText PDF/A</name>
   <description>iText ISO-19005 Module</description>
   <url>http://itextpdf.com</url>
 
@@ -63,6 +63,7 @@
   </ciManagement>
 
   <properties>
+    <java.version>1.8</java.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <argLine>-Xmx128m</argLine>
     <sonar.language>java</sonar.language>
@@ -73,13 +74,13 @@
   <dependencies>
     <dependency>
       <groupId>com.itextpdf</groupId>
-      <artifactId>itextpdf</artifactId>
+      <artifactId>xfa-itextpdf</artifactId>
       <version>${project.version}</version>
       <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>org.bouncycastle</groupId>
-      <artifactId>bcprov-jdk15to18</artifactId>
+      <artifactId>bcprov-jdk18on</artifactId>
       <version>1.71</version>
       <optional>true</optional>
     </dependency>
@@ -99,7 +100,15 @@
 
   <build>
     <plugins>
-
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.10.1</version>
+        <configuration>
+          <source>${java.version}</source>
+          <target>${java.version}</target>
+        </configuration>
+      </plugin>
       <plugin>
         <groupId>external.atlassian.jgitflow</groupId>
         <artifactId>jgitflow-maven-plugin</artifactId>
@@ -218,41 +227,6 @@
       </dependencies>
     </profile>
     <!-- END: Specific to mapping unit tests and covered code -->
-
-    <profile>
-      <id>compileWithLegacyJDK</id>
-      <!--
-        NOTE
-        Make sure to set the environment variable JAVA5_HOME
-        to your JDK 1.5 HOME when using this profile.
-      -->
-      <properties>
-        <java.version>1.5</java.version>
-        <java.home>${env.JAVA5_HOME}</java.home>
-        <java.libs>${java.home}/jre/lib</java.libs>
-        <java.bootclasspath>${java.libs}/rt.jar${path.separator}${java.libs}/jce.jar</java.bootclasspath>
-      </properties>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-compiler-plugin</artifactId>
-            <version>3.6.1</version>
-            <configuration>
-              <source>${java.version}</source>
-              <target>${java.version}</target>
-              <compilerArguments>
-                <bootclasspath>${java.bootclasspath}</bootclasspath>
-              </compilerArguments>
-              <compilerVersion>${java.version}</compilerVersion>
-              <fork>true</fork>
-              <executable>${java.home}/bin/javac</executable>
-            </configuration>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-
   </profiles>
 
 </project>

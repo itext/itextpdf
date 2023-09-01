@@ -43,14 +43,18 @@
  */
 package com.itextpdf.text.pdf.codec.wmf;
 import com.itextpdf.text.Document;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-
 import com.itextpdf.text.ExceptionConverter;
 import com.itextpdf.text.Font;
 import com.itextpdf.text.FontFactory;
 import com.itextpdf.text.pdf.BaseFont;
 
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+
+/**
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
+ */
+@Deprecated
 public class MetaFont extends MetaObject {
     static final String fontNames[] = {
         "Courier", "Courier-Bold", "Courier-Oblique", "Courier-BoldOblique",

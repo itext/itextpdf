@@ -53,7 +53,9 @@ import com.itextpdf.text.pdf.PdfName;
  * or as a Well Known Text (WKT) string, which contains a description
  * of algorithms and parameters needed for transformations.
  * @since @5.1.0
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class GeographicCoordinateSystem extends CoordinateSystem {
 	/**
 	 * Creates a GeographicCoordinateSystem.

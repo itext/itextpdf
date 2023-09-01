@@ -49,9 +49,10 @@ import com.itextpdf.text.pdf.hyphenation.Hyphenator;
 /** Hyphenates words automatically accordingly to the language and country.
  * The hyphenator engine was taken from FOP and uses the TEX patterns. If a language
  * is not provided and a TEX pattern for it exists, it can be easily adapted.
- *
  * @author Paulo Soares
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class HyphenationAuto implements HyphenationEvent {
 
     /** The hyphenator engine.

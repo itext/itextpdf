@@ -43,15 +43,17 @@
  */
 package com.itextpdf.awt;
 
+import com.itextpdf.text.pdf.PdfContentByte;
+
 import java.awt.print.PrinterGraphics;
 import java.awt.print.PrinterJob;
-
-import com.itextpdf.text.pdf.PdfContentByte;
 
 /**
  * This is an extension class for the sole purpose of implementing the
  * {@link java.awt.print.PrinterGraphics PrinterGraphics} interface.
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class PdfPrinterGraphics2D extends PdfGraphics2D implements PrinterGraphics
 {
 	private PrinterJob printerJob;

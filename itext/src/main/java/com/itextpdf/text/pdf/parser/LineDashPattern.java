@@ -47,9 +47,10 @@ import com.itextpdf.text.pdf.PdfArray;
  * Represents the line dash pattern. The line dash pattern shall control the pattern
  * of dashes and gaps used to stroke paths. It shall be specified by a dash array and
  * a dash phase.
- *
  * @since 5.5.6
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class LineDashPattern {
 
     private PdfArray dashArray;

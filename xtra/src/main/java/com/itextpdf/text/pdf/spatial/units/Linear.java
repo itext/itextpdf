@@ -48,7 +48,9 @@ import com.itextpdf.text.pdf.PdfName;
 /**
  * Linear display units for use in a Preferred Display Units (PDU) array.
  * @since 5.1.0
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public enum Linear {
 	/** a meter */
 	METER("M"),

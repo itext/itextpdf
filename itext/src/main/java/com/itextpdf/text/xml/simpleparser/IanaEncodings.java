@@ -68,8 +68,9 @@ import java.util.Map;
 
 /**
  * Translates a IANA encoding name to a Java encoding.
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
-
+@Deprecated
 public class IanaEncodings {
 
 	/** The object that maps IANA to Java encodings. */

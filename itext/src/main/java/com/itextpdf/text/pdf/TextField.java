@@ -52,7 +52,9 @@ import java.util.ArrayList;
  * Supports text, combo and list fields generating the correct appearances.
  * All the option in the Acrobat GUI are supported in an easy to use API.
  * @author Paulo Soares
+ * @deprecated For internal use only. If you want to use iText, please use a dependency on iText 7.
  */
+@Deprecated
 public class TextField extends BaseField {
 
     /** Holds value of property defaultText. */

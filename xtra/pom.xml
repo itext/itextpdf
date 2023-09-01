@@ -9,10 +9,10 @@
     <relativePath />
   </parent>
 
-  <artifactId>itext-xtra</artifactId>
-  <version>5.5.14-SNAPSHOT</version>
+  <artifactId>xfa-itext-xtra</artifactId>
+  <version>3.0.3-SNAPSHOT</version>
 
-  <name>iText Xtra</name>
+  <name>pdfXFA iText Xtra</name>
   <description>iText Xtra, part of iText a Free Java-PDF library</description>
   <url>http://itextpdf.com</url>
 
@@ -63,9 +63,7 @@
   </ciManagement>
 
   <properties>
-    <!-- itext-xtra depends on java 1.8 because
-         earliest published stable version of common-imaging requires java8 -->
-    <xtra.java.version>1.8</xtra.java.version>
+    <java.version>1.8</java.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <argLine>-Xmx128m</argLine>
     <sonar.language>java</sonar.language>
@@ -76,7 +74,7 @@
   <dependencies>
     <dependency>
       <groupId>com.itextpdf</groupId>
-      <artifactId>itextpdf</artifactId>
+      <artifactId>xfa-itextpdf</artifactId>
       <version>${project.version}</version>
       <optional>true</optional>
     </dependency>
@@ -119,8 +117,8 @@
         <artifactId>maven-compiler-plugin</artifactId>
         <version>3.10.1</version>
         <configuration>
-          <source>${xtra.java.version}</source>
-          <target>${xtra.java.version}</target>
+          <source>${java.version}</source>
+          <target>${java.version}</target>
         </configuration>
       </plugin>
       <plugin>
