@@ -6,7 +6,7 @@
     <groupId>com.itextpdf</groupId>
     <artifactId>itext-parent</artifactId>
     <version>1.0.0</version>
-    <relativePath />
+    <relativePath/>
   </parent>
 
   <artifactId>itext-pdfa</artifactId>
@@ -80,7 +80,7 @@
     <dependency>
       <groupId>org.bouncycastle</groupId>
       <artifactId>bcprov-jdk15to18</artifactId>
-      <version>1.71</version>
+      <version>1.78</version>
       <optional>true</optional>
     </dependency>
     <dependency>
@@ -111,7 +111,7 @@
             <featureBranchPrefix>feature/</featureBranchPrefix>
             <releaseBranchPrefix>release/</releaseBranchPrefix>
             <hotfixBranchPrefix>hotfix/</hotfixBranchPrefix>
-            <versionTagPrefix />
+            <versionTagPrefix/>
           </flowInitContext>
           <allowUntracked>true</allowUntracked>
           <autoVersionSubmodules>true</autoVersionSubmodules>
