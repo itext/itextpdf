@@ -220,7 +220,7 @@ public class PdfPKCS7 {
             ASN1ObjectIdentifier objId = (ASN1ObjectIdentifier)signedData.getObjectAt(0);
             if (!objId.getId().equals(SecurityIDs.ID_PKCS7_SIGNED_DATA))
                 throw new IllegalArgumentException(MessageLocalization.getComposedMessage("not.a.valid.pkcs.7.object.not.signed.data"));
-            ASN1Sequence content = (ASN1Sequence)((ASN1TaggedObject)signedData.getObjectAt(1)).getObject();
+            ASN1Sequence content = (ASN1Sequence)((ASN1TaggedObject)signedData.getObjectAt(1)).getBaseObject();
             // the positions that we care are:
             //     0 - version
             //     1 - digestAlgorithms
@@ -243,7 +243,7 @@ public class PdfPKCS7 {
             // the possible ID_PKCS7_DATA
             ASN1Sequence rsaData = (ASN1Sequence)content.getObjectAt(2);
             if (rsaData.size() > 1) {
-                ASN1OctetString rsaDataContent = (ASN1OctetString)((ASN1TaggedObject)rsaData.getObjectAt(1)).getObject();
+                ASN1OctetString rsaDataContent = (ASN1OctetString)((ASN1TaggedObject)rsaData.getObjectAt(1)).getBaseObject();
                 RSAdata = rsaDataContent.getOctets();
             }
 
@@ -343,11 +343,11 @@ public class PdfPKCS7 {
                         for (int j = 0; j < seqout.size(); ++j) {
                             ASN1TaggedObject tg = (ASN1TaggedObject)seqout.getObjectAt(j);
                             if (tg.getTagNo() == 0) {
-                                ASN1Sequence seqin = (ASN1Sequence)tg.getObject();
+                                ASN1Sequence seqin = (ASN1Sequence)tg.getBaseObject();
                                 findCRL(seqin);
                             }
                             if (tg.getTagNo() == 1) {
-                                ASN1Sequence seqin = (ASN1Sequence)tg.getObject();
+                                ASN1Sequence seqin = (ASN1Sequence)tg.getBaseObject();
                                 findOcsp(seqin);
                             }
                         }
@@ -1283,8 +1283,8 @@ public class PdfPKCS7 {
                 }
                 if (seq.getObjectAt(k) instanceof ASN1TaggedObject) {
                     ASN1TaggedObject tag = (ASN1TaggedObject)seq.getObjectAt(k);
-                    if (tag.getObject() instanceof ASN1Sequence) {
-                        seq = (ASN1Sequence)tag.getObject();
+                    if (tag.getBaseObject() instanceof ASN1Sequence) {
+                        seq = (ASN1Sequence)tag.getBaseObject();
                         ret = false;
                         break;
                     }
