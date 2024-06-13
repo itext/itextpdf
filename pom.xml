@@ -9,7 +9,7 @@
   </parent>
 
   <artifactId>root</artifactId>
-  <version>5.5.13.3</version>
+  <version>5.5.13.4</version>
   <packaging>pom</packaging>
 
   <name>iText</name>

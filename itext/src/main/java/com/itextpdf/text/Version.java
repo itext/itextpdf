@@ -74,14 +74,14 @@ public final class Version {
 	 * This String contains the version number of this iText release.
 	 * For debugging purposes, we request you NOT to change this constant.
 	 */
-	private final String release = "5.5.13.3";
+	private final String release = "5.5.13.4";
 	/**
 	 * This String contains the iText version as shown in the producer line.
 	 * iText is a product developed by iText Group NV.
 	 * iText Group requests that you retain the iText producer line
 	 * in every PDF that is created or manipulated using iText.
 	 */
-	private String iTextVersion = iText + " " + release + " \u00a92000-2022 iText Group NV";
+	private String iTextVersion = iText + " " + release + " \u00a92000-2024 iText Group NV";
 	/**
 	 * The license key.
 	 */
