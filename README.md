@@ -1,4 +1,4 @@
-### **PLEASE NOTE: iText 5 is EOL, and has been replaced by [iText 7][itext7].  Only security fixes will be added**
+### **PLEASE NOTE: iText 5 is EOL, and has been replaced by [iText][itext].  Only security fixes will be added**
 
 ### Known Security Issues
 
@@ -65,4 +65,4 @@ Contact sales for more info: http://itextpdf.com/sales
 [extrajars]: EXTRAJARS.md
 [gratis]: https://en.wikipedia.org/wiki/Gratis_versus_libre
 [itext]: http://itextpdf.com/
-[itext7]: https://github.com/itext/itext7
+[itext]: https://github.com/itext/itext
