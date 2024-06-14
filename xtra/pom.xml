@@ -6,7 +6,7 @@
     <groupId>com.itextpdf</groupId>
     <artifactId>itext-parent</artifactId>
     <version>1.0.0</version>
-    <relativePath />
+    <relativePath/>
   </parent>
 
   <artifactId>itext-xtra</artifactId>
@@ -88,7 +88,7 @@
     <dependency>
       <groupId>commons-io</groupId>
       <artifactId>commons-io</artifactId>
-      <version>2.4</version>
+      <version>2.7</version>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
@@ -134,7 +134,7 @@
             <featureBranchPrefix>feature/</featureBranchPrefix>
             <releaseBranchPrefix>release/</releaseBranchPrefix>
             <hotfixBranchPrefix>hotfix/</hotfixBranchPrefix>
-            <versionTagPrefix />
+            <versionTagPrefix/>
           </flowInitContext>
           <allowUntracked>true</allowUntracked>
           <autoVersionSubmodules>true</autoVersionSubmodules>
