@@ -122,14 +122,17 @@ class MemoryLimitsAwareOutputStream extends ByteArrayOutputStream {
         }
 
         // calculate new capacity
-        int oldCapacity = buf.length;
-        int newCapacity = oldCapacity << 1;
-        if (newCapacity - minCapacity < 0) {
-            newCapacity = minCapacity;
+        int newCapacity = buf.length;
+        // Here we "predict" how buf is going to grow in ByteArrayOutputStream
+        // to not allow it to grow over maxStreamSize
+        if (newCapacity < minCapacity) {
+            newCapacity = buf.length << 1;
+            if (newCapacity < 0 || newCapacity - minCapacity < 0) {
+                // overflow
+                newCapacity = minCapacity;
+            }
         }
-        if (newCapacity < 0) { // overflow
-            throw new MemoryLimitsAwareException(MemoryLimitsAwareException.DuringDecompressionSingleStreamOccupiedMoreThanMaxIntegerValue);
-        }
+
         if (newCapacity - maxStreamSize > 0) {
             newCapacity = maxStreamSize;
             byte[] copy = new byte[newCapacity];

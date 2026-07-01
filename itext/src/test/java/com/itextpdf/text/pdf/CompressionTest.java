@@ -42,6 +42,8 @@
  */
 package com.itextpdf.text.pdf;
 
+import com.itextpdf.text.pdf.parser.PdfImageObject;
+
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -93,16 +95,41 @@ public class CompressionTest {
         testDecompressionBomb(reader, MemoryLimitsAwareException.DuringDecompressionMultipleStreamsInSumOccupiedMoreMemoryThanAllowed);
     }
 
+    @Test
+    public void flateBombTest() throws IOException {
+        PdfReader reader = new PdfReader(SRC_DIR + "pageStreamFlateBomb.pdf");
+        testDecompressionBomb(reader,
+                MemoryLimitsAwareException.DuringDecompressionSingleStreamOccupiedMoreMemoryThanAllowed);
+    }
+
+    @Test
+    public void pngDecodeStreamTest() throws IOException {
+        // This test demonstrates a possible false positive
+        PdfReader reader = new PdfReader(SRC_DIR + "png5000x5000.pdf");
+        PdfDictionary resources = reader.getPageResources(1);
+        PdfDictionary xobjects = resources.getAsDict(PdfName.XOBJECT);
+        PdfIndirectReference objRef = xobjects.getAsIndirectObject(new PdfName("Im0"));
+        PRStream stream = (PRStream) PdfReader.getPdfObject(objRef);
+        try {
+            PdfImageObject img = new PdfImageObject(stream);
+        } catch (MemoryLimitsAwareException e) {
+            Assert.assertEquals(
+                    MemoryLimitsAwareException.DuringDecompressionSingleStreamOccupiedMoreMemoryThanAllowed,
+                    e.getMessage());
+            return;
+        }
+
+        Assert.fail("Expected MemoryLimitsAwareException was not thrown");
+    }
 
     private static void testDecompressionBomb(PdfReader reader, String expectedExceptionMessage) throws IOException {
-
         String thrownExceptionMessage = null;
         try {
             byte[] bytes = reader.getPageContent(1);
         } catch (MemoryLimitsAwareException e) {
             thrownExceptionMessage = e.getMessage();
         } catch (OutOfMemoryError e) {
-            Assert.assertTrue(false);
+            Assert.fail("Expected MemoryLimitsAwareException was not thrown");
         }
 
         reader.close();
