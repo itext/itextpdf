@@ -52,7 +52,7 @@ public class IText5ProductData {
     private static final String ITEXT5_PRODUCT_NAME = "itext5";
     private static final String ITEXT5_PUBLIC_PRODUCT_NAME = ITEXT5_PRODUCT_NAME;
 
-    private static final String ITEXT5_VERSION = "5.5.13.6-SNAPSHOT";
+    private static final String ITEXT5_VERSION = "5.5.13.7-SNAPSHOT";
     private static final int ITEXT5_COPYRIGHT_SINCE = 1998;
     private static final int ITEXT5_COPYRIGHT_TO = 2026;
 
