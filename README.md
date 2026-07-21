@@ -2,6 +2,11 @@
 
 ### Known Security Issues
 
+#### com.itextpdf:itextpdf vulnerabilities
+There are 2 CVEs that are often attributed to iText 5: [CVE-2022-24196](https://nvd.nist.gov/vuln/detail/CVE-2022-24196)
+and [CVE-2022-24197](https://nvd.nist.gov/vuln/detail/CVE-2022-24197). Both are false positives and do not apply
+to iText 5; they are reported due to an incorrect artifact regex in some CVE databases.
+
 #### org.apache.santuario:xmlsec vulnerabilities
 The iText 5 targets Java 5 which means that we can not update `org.apache.santuario:xmlsec` version to 2.x.x or newer as
 it requires Java 8. If you are not using the com.itextpdf.text.pdf.security.MakeXmlSignature class then you can avoid
@@ -13,9 +18,18 @@ com.itextpdf.text.pdf.security.MakeXmlSignature class, for example for XFA signa
 - or use `org.apache.santuario:xmlsec` 2.1.7 or newer. But this would require java 8+ and affects on the output format
 (see https://issues.apache.org/jira/browse/SANTUARIO-494).
 
-We HIGHLY recommend customers use iText 7 for new projects, and to consider moving existing projects from iText 5 to iText 7 to benefit from the many improvements such as:
+#### commons-io:commons-io vulnerabilities
+The Java 5-compatible modules in iText 5 use a `commons-io:commons-io` version that is vulnerable (for example,
+[CVE-2021-29425](https://nvd.nist.gov/vuln/detail/CVE-2021-29425)). Because these modules target Java 5, they cannot
+upgrade `commons-io:commons-io` to 2.7 or newer (which requires Java 8).
+
+If you are using Java 8 or higher, specify direct dependency to the latest `commons-io:commons-io` version to 
+mitigate CVEs, used version in iText is compatible with latest releases of `commons-io`.
+
+We **HIGHLY** recommend customers use iText 9 for new projects, and to consider moving existing projects from iText 5 to iText 9 to benefit from the many improvements such as:
  
 - HTML to PDF (PDF/UA) conversion
+- Wider PDF standards support f.e. PDF/A-4, PDF/UA-2, WTPDF etc.
 - PDF Redaction
 - SVG support
 - Better language support: Indic, Thai, Khmer, Arabic, Hebrew. (Close-source addon)

@@ -42,10 +42,18 @@
  */
 package com.itextpdf.text.pdf;
 
+import com.itextpdf.text.exceptions.InvalidPdfException;
+import com.itextpdf.text.io.RandomAccessSourceFactory;
+import com.itextpdf.text.pdf.parser.ContentByteUtils;
+import com.itextpdf.text.pdf.parser.PdfImageObject;
+
+import java.io.EOFException;
+import java.util.ArrayList;
 import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.IOException;
+import org.junit.function.ThrowingRunnable;
 
 public class CompressionTest {
 
@@ -93,16 +101,201 @@ public class CompressionTest {
         testDecompressionBomb(reader, MemoryLimitsAwareException.DuringDecompressionMultipleStreamsInSumOccupiedMoreMemoryThanAllowed);
     }
 
+    @Test
+    public void flateBombTest() throws IOException {
+        PdfReader reader = new PdfReader(SRC_DIR + "pageStreamFlateBomb.pdf");
+        testDecompressionBomb(reader,
+                MemoryLimitsAwareException.DuringDecompressionSingleStreamOccupiedMoreMemoryThanAllowed);
+    }
+
+    @Test
+    public void pngDecodeStreamTest() throws IOException {
+        // This test demonstrates a possible false positive
+        PdfReader reader = new PdfReader(SRC_DIR + "png5000x5000.pdf");
+        PdfDictionary resources = reader.getPageResources(1);
+        PdfDictionary xobjects = resources.getAsDict(PdfName.XOBJECT);
+        PdfIndirectReference objRef = xobjects.getAsIndirectObject(new PdfName("Im0"));
+        PRStream stream = (PRStream) PdfReader.getPdfObject(objRef);
+        try {
+            PdfImageObject img = new PdfImageObject(stream);
+        } catch (MemoryLimitsAwareException e) {
+            Assert.assertEquals(
+                    MemoryLimitsAwareException.DuringDecompressionSingleStreamOccupiedMoreMemoryThanAllowed,
+                    e.getMessage());
+            return;
+        }
+
+        Assert.fail("Expected MemoryLimitsAwareException was not thrown");
+    }
+
+    @Test
+    public void streamWithoutEndstreamKeywordTest() throws IOException {
+        final PdfReader reader = new PdfReader(SRC_DIR + "NoEndstreamKeyword.pdf");
+        final PdfStream xmpMetadataStream = reader.getCatalog().getAsStream(PdfName.METADATA);
+        final int xmpMetadataStreamLength = xmpMetadataStream.getAsNumber(PdfName.LENGTH).intValue();
+        Assert.assertEquals(27599, xmpMetadataStreamLength);
+
+        Assert.assertThrows(EOFException.class, new ThrowingRunnable() {
+            public void run() throws Throwable {
+                reader.getMetadata();
+            }
+        });
+    }
+
+    @Test
+    public void endDicInsteadOfArrayClosingBracketTest() throws IOException {
+        Exception e = Assert.assertThrows(InvalidPdfException.class, new ThrowingRunnable() {
+            public void run() throws Throwable {
+                new PdfReader(SRC_DIR + "invalidArrayEndDictToken.pdf");
+            }
+        });
+        Assert.assertEquals("Rebuild failed: Unexpected '>>' at file pointer 532; Original message: Unexpected '>>'"
+                + " at file pointer 532", e.getMessage());
+    }
+
+    @Test
+    public void endArrayClosingBracketInsteadOfEndDicTest() throws IOException {
+        Exception e = Assert.assertThrows(InvalidPdfException.class, new ThrowingRunnable() {
+            public void run() throws Throwable {
+                new PdfReader(SRC_DIR + "endArrayClosingBracketInsteadOfEndDic.pdf");
+            }
+        });
+        Assert.assertEquals("Rebuild failed: Unexpected ']' at file pointer 221; Original message: Unexpected ']'"
+                + " at file pointer 221", e.getMessage());
+    }
+
+    @Test
+    public void endDicClosingBracketInsideTheDicTest() throws IOException {
+        Exception e = Assert.assertThrows(InvalidPdfException.class, new ThrowingRunnable() {
+            public void run() throws Throwable {
+                new PdfReader(SRC_DIR + "endDicClosingBracketInsideTheDic.pdf");
+            }
+        });
+        Assert.assertEquals("Rebuild failed: Unexpected '>>' at file pointer 221; Original message: Unexpected '>>'"
+                + " at file pointer 221", e.getMessage());
+    }
+
+    @Test
+    public void eofInsteadOfArrayClosingBracketTest() throws IOException {
+        Exception e = Assert.assertThrows(InvalidPdfException.class, new ThrowingRunnable() {
+            public void run() throws Throwable {
+                new PdfReader(SRC_DIR + "invalidArrayEOFToken.pdf");
+            }
+        });
+        Assert.assertEquals("Rebuild failed:  is not a valid number - java.lang.NumberFormatException: "
+                + "empty String; Original message:  is not a valid number - java.lang.NumberFormatException:"
+                + " empty String", e.getMessage());
+    }
+
+    @Test
+    public void endObjInsteadOfArrayClosingBracketTest() throws IOException {
+        Exception e = Assert.assertThrows(InvalidPdfException.class, new ThrowingRunnable() {
+            public void run() throws Throwable {
+                new PdfReader(SRC_DIR + "invalidArrayEndObjToken.pdf");
+            }
+        });
+        Assert.assertEquals("Rebuild failed:  is not a valid number - java.lang.NumberFormatException: empty String;"
+                + " Original message:  is not a valid number - java.lang.NumberFormatException: empty String",
+                e.getMessage());
+    }
+
+    @Test
+    public void nameInsteadOfArrayClosingBracketTest() throws IOException {
+        Exception e = Assert.assertThrows(InvalidPdfException.class, new ThrowingRunnable() {
+            public void run() throws Throwable {
+                new PdfReader(SRC_DIR + "invalidArrayNameToken.pdf");
+            }
+        });
+        Assert.assertEquals(" is not a valid number - java.lang.NumberFormatException: empty String", e.getMessage());
+    }
+
+    @Test
+    public void objInsteadOfArrayClosingBracketTest() throws IOException {
+        Exception e = Assert.assertThrows(InvalidPdfException.class, new ThrowingRunnable() {
+            public void run() throws Throwable {
+                new PdfReader(SRC_DIR + "invalidArrayObjToken.pdf");
+            }
+        });
+        Assert.assertEquals("Rebuild failed:  is not a valid number - java.lang.NumberFormatException: empty String; "
+                + "Original message:  is not a valid number - java.lang.NumberFormatException: empty String",
+                e.getMessage());
+    }
+
+    @Test
+    public void refInsteadOfArrayClosingBracketTest() throws IOException {
+        Exception e = Assert.assertThrows(InvalidPdfException.class, new ThrowingRunnable() {
+            public void run() throws Throwable {
+                new PdfReader(SRC_DIR + "invalidArrayRefToken.pdf");
+            }
+        });
+        Assert.assertEquals("Rebuild failed:  is not a valid number - java.lang.NumberFormatException: empty String; "
+                + "Original message:  is not a valid number - java.lang.NumberFormatException: empty String",
+                e.getMessage());
+    }
+
+    @Test
+    public void startArrayInsteadOfArrayClosingBracketTest() throws IOException {
+        Exception e = Assert.assertThrows(InvalidPdfException.class, new ThrowingRunnable() {
+            public void run() throws Throwable {
+                new PdfReader(SRC_DIR + "invalidArrayStartArrayToken.pdf");
+            }
+        });
+        Assert.assertEquals("Rebuild failed:  is not a valid number - java.lang.NumberFormatException: empty String; "
+                + "Original message:  is not a valid number - java.lang.NumberFormatException: empty String",
+                e.getMessage());
+    }
+
+    @Test
+    public void stringInsteadOfArrayClosingBracketTest() throws IOException {
+        final PdfReader reader = new PdfReader(SRC_DIR + "invalidArrayStringToken.pdf");
+        PdfArray actual = (PdfArray) reader.getPdfObject(4);
+        PdfArray expected = new PdfArray(new float[]{5, 10, 15, 20});
+        for (int i = 0; i < expected.size(); i++) {
+            Assert.assertEquals(expected.getAsNumber(i).intValue(), actual.getAsNumber(i).intValue());
+        }
+    }
+
+    @Test
+    public void closingArrayBracketMissingConservativeTest() throws IOException {
+        Exception e = Assert.assertThrows(InvalidPdfException.class, new ThrowingRunnable() {
+            public void run() throws Throwable {
+                new PdfReader(SRC_DIR + "invalidArrayObjToken.pdf");
+            }
+        });
+        Assert.assertEquals("Rebuild failed:  is not a valid number - java.lang.NumberFormatException: empty String; "
+                        + "Original message:  is not a valid number - java.lang.NumberFormatException: empty String",
+                e.getMessage());
+    }
+
+    @Test
+    public void parseArrayTest() throws IOException {
+        final PdfReader reader = new PdfReader(SRC_DIR + "innerArraysInContentStreamWithEndDictToken.pdf");
+        PRTokeniser cmpTokeniser = new PRTokeniser(new RandomAccessFileOrArray(
+                new RandomAccessSourceFactory().createSource(reader.getPageContent(1))));
+        final PdfContentParser parser = new PdfContentParser(cmpTokeniser);
+        Exception e = Assert.assertThrows(IOException.class, new ThrowingRunnable() {
+            public void run() throws Throwable {
+                parseContentStream(parser);
+            }
+        });
+        Assert.assertEquals("Unexpected '>>'", e.getMessage());
+    }
+
+    private static void parseContentStream(PdfContentParser parser) throws IOException {
+        ArrayList<PdfObject> operands = new ArrayList<PdfObject>();
+        while (!parser.parse(operands).isEmpty()) {
+            // do nothign with operands
+        }
+    }
 
     private static void testDecompressionBomb(PdfReader reader, String expectedExceptionMessage) throws IOException {
-
         String thrownExceptionMessage = null;
         try {
             byte[] bytes = reader.getPageContent(1);
         } catch (MemoryLimitsAwareException e) {
             thrownExceptionMessage = e.getMessage();
         } catch (OutOfMemoryError e) {
-            Assert.assertTrue(false);
+            Assert.fail("Expected MemoryLimitsAwareException was not thrown");
         }
 
         reader.close();

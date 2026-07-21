@@ -2617,19 +2617,10 @@ public class PdfReader implements PdfViewerPreferences {
         if (streamDictionary instanceof PRStream && null != ((PRStream) streamDictionary).getReader()) {
             memoryLimitsAwareHandler = ((PRStream) streamDictionary).getReader().getMemoryLimitsAwareHandler();
         }
-        if (null != memoryLimitsAwareHandler) {
-            HashSet<PdfName> filterSet = new HashSet<PdfName>();
-            int index;
-            for (index = 0; index < filters.size(); index++) {
-                PdfName filterName = (PdfName) filters.get(index);
-                if (!filterSet.add(filterName)) {
-                    memoryLimitsAwareHandler.beginDecompressedPdfStreamProcessing();
-                    break;
-                }
-            }
-            if (index == filters.size()) { // The stream isn't suspicious. We shouldn't process it.
-                memoryLimitsAwareHandler = null;
-            }
+        final boolean memoryLimitsAwarenessRequired = null != memoryLimitsAwareHandler &&
+                memoryLimitsAwareHandler.isMemoryLimitsAwarenessRequiredOnDecompression((PRStream) streamDictionary);
+        if (memoryLimitsAwarenessRequired) {
+            memoryLimitsAwareHandler.beginDecompressedPdfStreamProcessing();
         }
 
         ArrayList<PdfObject> dp = new ArrayList<PdfObject>();
@@ -2664,11 +2655,11 @@ public class PdfReader implements PdfViewerPreferences {
                 decodeParams = null;
             }
             b = filterHandler.decode(b, filterName, decodeParams, streamDictionary);
-            if (null != memoryLimitsAwareHandler) {
+            if (memoryLimitsAwarenessRequired) {
                 memoryLimitsAwareHandler.considerBytesOccupiedByDecompressedPdfStream(b.length);
             }
         }
-        if (null != memoryLimitsAwareHandler) {
+        if (memoryLimitsAwarenessRequired) {
             memoryLimitsAwareHandler.endDecompressedPdfStreamProcessing();
         }
         return b;

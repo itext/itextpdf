@@ -131,6 +131,17 @@ public class MemoryLimitsAwareHandler {
     }
 
     /**
+     * Performs a check if the {@link PRStream} dictionary requires memory limits awareness during decompression.
+     *
+     * @param stream the {@link PRStream} to check
+     *
+     * @return {@code true} if the stream is suspicious and {@code false} otherwise
+     */
+    public boolean isMemoryLimitsAwarenessRequiredOnDecompression(PRStream stream) {
+        return true;
+    }
+
+    /**
      * Considers the number of bytes which are occupied by the decompressed pdf stream.
      * If memory limits have not been faced, throws an exception.
      *
