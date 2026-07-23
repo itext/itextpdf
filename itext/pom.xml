@@ -69,7 +69,7 @@
     <sonar.language>java</sonar.language>
     <sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
     <sonar.jacoco.reportPath>${project.basedir}/target/jacoco.exec</sonar.jacoco.reportPath>
-    <itext.commons.version>9.7.0</itext.commons.version>
+    <itext.commons.version>9.8.0-SNAPSHOT</itext.commons.version>
     <bouncycastle.version>1.84</bouncycastle.version>
   </properties>
 
