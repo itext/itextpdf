@@ -48,7 +48,6 @@ import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.exceptions.BadPasswordException;
 import com.itextpdf.text.pdf.crypto.AESCipherCBCnoPad;
 import com.itextpdf.text.pdf.crypto.ARCFOUREncryption;
-import com.itextpdf.text.pdf.crypto.IVGenerator;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -84,6 +83,8 @@ public class PdfEncryption {
 
 	private static final byte[] metadataPad = { (byte) 255, (byte) 255,
 			(byte) 255, (byte) 255 };
+
+	private static final SecureRandomHolder RNG = new SecureRandomHolder();
 
 	/** The encryption key for a particular object/generation */
 	byte key[];
@@ -352,9 +353,14 @@ public class PdfEncryption {
                 if (userPassword == null)
                     userPassword = new byte[0];
                 documentID = createDocumentId();
-                byte[] uvs = IVGenerator.getIV(8);
-                byte[] uks = IVGenerator.getIV(8);
-                key = IVGenerator.getIV(32);
+
+				byte[] uvs = new byte[8];
+				RNG.getSecureRandom().nextBytes(uvs);
+				byte[] uks = new byte[8];
+				RNG.getSecureRandom().nextBytes(uks);
+
+                key = new byte[32];
+				RNG.getSecureRandom().nextBytes(key);
                 // Algorithm 3.8.1
                 MessageDigest md = MessageDigest.getInstance("SHA-256");
                 md.update(userPassword, 0, Math.min(userPassword.length, 127));
@@ -369,8 +375,13 @@ public class PdfEncryption {
                 AESCipherCBCnoPad ac = new AESCipherCBCnoPad(true, md.digest());
                 ueKey = ac.processBlock(key, 0, key.length);
                 // Algorithm 3.9.1
-                byte[] ovs = IVGenerator.getIV(8);
-                byte[] oks = IVGenerator.getIV(8);
+
+				byte[] ovs = new byte[8];
+				RNG.getSecureRandom().nextBytes(ovs);
+
+				byte[] oks = new byte[8];
+				RNG.getSecureRandom().nextBytes(oks);
+
                 md.update(ownerPassword, 0, Math.min(ownerPassword.length, 127));
                 md.update(ovs);
                 md.update(userKey);
@@ -385,7 +396,9 @@ public class PdfEncryption {
                 ac = new AESCipherCBCnoPad(true, md.digest());
                 oeKey = ac.processBlock(key, 0, key.length);
                 // Algorithm 3.10
-                byte[] permsp = IVGenerator.getIV(16);
+				byte[] permsp = new byte[16];
+				RNG.getSecureRandom().nextBytes(permsp);
+
                 permsp[0] = (byte)permissions;
                 permsp[1] = (byte)(permissions >> 8);
                 permsp[2] = (byte)(permissions >> 16);

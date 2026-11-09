@@ -44,13 +44,14 @@
 package com.itextpdf.text.pdf;
 import com.itextpdf.text.ExceptionConverter;
 import com.itextpdf.text.pdf.crypto.AESCipher;
-import com.itextpdf.text.pdf.crypto.IVGenerator;
 import com.itextpdf.text.pdf.crypto.ARCFOUREncryption;
 import java.io.IOException;
 import java.io.OutputStream;
 
 public class OutputStreamEncryption extends OutputStream {
-    
+
+    private static final SecureRandomHolder RNG = new SecureRandomHolder();
+
     protected OutputStream out;
     protected ARCFOUREncryption arcfour;
     protected AESCipher cipher;
@@ -66,7 +67,9 @@ public class OutputStreamEncryption extends OutputStream {
             this.out = out;
             aes = (revision == AES_128 || revision == AES_256);
             if (aes) {
-                byte[] iv = IVGenerator.getIV();
+                byte[] iv = new byte[16];
+                RNG.getSecureRandom().nextBytes(iv);
+
                 byte[] nkey = new byte[len];
                 System.arraycopy(key, off, nkey, 0, len);
                 cipher = new AESCipher(true, nkey, iv);
