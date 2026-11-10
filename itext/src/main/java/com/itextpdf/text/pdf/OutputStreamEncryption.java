@@ -47,10 +47,11 @@ import com.itextpdf.text.pdf.crypto.AESCipher;
 import com.itextpdf.text.pdf.crypto.ARCFOUREncryption;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.security.SecureRandom;
 
 public class OutputStreamEncryption extends OutputStream {
 
-    private static final SecureRandomHolder RNG = new SecureRandomHolder();
+    private static final SecureRandom RNG = new SecureRandom();
 
     protected OutputStream out;
     protected ARCFOUREncryption arcfour;
@@ -68,7 +69,7 @@ public class OutputStreamEncryption extends OutputStream {
             aes = (revision == AES_128 || revision == AES_256);
             if (aes) {
                 byte[] iv = new byte[16];
-                RNG.getSecureRandom().nextBytes(iv);
+                RNG.nextBytes(iv);
 
                 byte[] nkey = new byte[len];
                 System.arraycopy(key, off, nkey, 0, len);

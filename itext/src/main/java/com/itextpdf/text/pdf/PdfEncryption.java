@@ -53,6 +53,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.security.MessageDigest;
+import java.security.SecureRandom;
 import java.security.cert.Certificate;
 
 /**
@@ -84,7 +85,7 @@ public class PdfEncryption {
 	private static final byte[] metadataPad = { (byte) 255, (byte) 255,
 			(byte) 255, (byte) 255 };
 
-	private static final SecureRandomHolder RNG = new SecureRandomHolder();
+	private static final SecureRandom RNG = new SecureRandom();
 
 	/** The encryption key for a particular object/generation */
 	byte key[];
@@ -129,7 +130,6 @@ public class PdfEncryption {
 
 	private boolean encryptMetadata;
 
-    static long seq = System.currentTimeMillis();
 	
 	/**
 	 * Indicates if the encryption is only necessary for embedded files.
@@ -355,12 +355,12 @@ public class PdfEncryption {
                 documentID = createDocumentId();
 
 				byte[] uvs = new byte[8];
-				RNG.getSecureRandom().nextBytes(uvs);
+				RNG.nextBytes(uvs);
 				byte[] uks = new byte[8];
-				RNG.getSecureRandom().nextBytes(uks);
+				RNG.nextBytes(uks);
 
                 key = new byte[32];
-				RNG.getSecureRandom().nextBytes(key);
+				RNG.nextBytes(key);
                 // Algorithm 3.8.1
                 MessageDigest md = MessageDigest.getInstance("SHA-256");
                 md.update(userPassword, 0, Math.min(userPassword.length, 127));
@@ -377,10 +377,10 @@ public class PdfEncryption {
                 // Algorithm 3.9.1
 
 				byte[] ovs = new byte[8];
-				RNG.getSecureRandom().nextBytes(ovs);
+				RNG.nextBytes(ovs);
 
 				byte[] oks = new byte[8];
-				RNG.getSecureRandom().nextBytes(oks);
+				RNG.nextBytes(oks);
 
                 md.update(ownerPassword, 0, Math.min(ownerPassword.length, 127));
                 md.update(ovs);
@@ -397,7 +397,7 @@ public class PdfEncryption {
                 oeKey = ac.processBlock(key, 0, key.length);
                 // Algorithm 3.10
 				byte[] permsp = new byte[16];
-				RNG.getSecureRandom().nextBytes(permsp);
+				RNG.nextBytes(permsp);
 
                 permsp[0] = (byte)permissions;
                 permsp[1] = (byte)(permissions >> 8);
@@ -510,16 +510,9 @@ public class PdfEncryption {
     }
 
 	public static byte[] createDocumentId() {
-		MessageDigest md5;
-		try {
-			md5 = MessageDigest.getInstance("MD5");
-		} catch (Exception e) {
-			throw new ExceptionConverter(e);
-		}
-		long time = System.currentTimeMillis();
-		long mem = Runtime.getRuntime().freeMemory();
-		String s = time + "+" + mem + "+" + (seq++);
-		return md5.digest(s.getBytes());
+		byte[] bytes = new byte[16];
+		RNG.nextBytes(bytes);
+		return bytes;
 	}
 
 	/**

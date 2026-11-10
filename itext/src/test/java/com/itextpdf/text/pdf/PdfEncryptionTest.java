@@ -251,4 +251,13 @@ public class PdfEncryptionTest {
         }
     }
 
+    @Test
+    public void createDocumentIdIsRandomTest() {
+        byte[] first = PdfEncryption.createDocumentId();
+        byte[] second = PdfEncryption.createDocumentId();
+
+        org.junit.Assert.assertEquals(16, first.length);
+        org.junit.Assert.assertEquals(16, second.length);
+        org.junit.Assert.assertFalse(java.util.Arrays.equals(first, second));
+    }
 }
