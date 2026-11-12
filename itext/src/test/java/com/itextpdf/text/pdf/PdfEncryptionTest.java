@@ -46,6 +46,7 @@ import com.itextpdf.testutils.CompareTool;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.pdf.parser.PdfTextExtractor;
 import com.itextpdf.text.pdf.security.BouncyCastleDigest;
 import com.itextpdf.text.pdf.security.DigestAlgorithms;
 import com.itextpdf.text.pdf.security.ExternalDigest;
@@ -74,7 +75,9 @@ import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 
+import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNull;
+import static junit.framework.Assert.assertTrue;
 
 public class PdfEncryptionTest {
 
@@ -153,6 +156,25 @@ public class PdfEncryptionTest {
         PrivateKey privateKey = getPrivateKey(SOURCE_FOLDER + "test.p12");
         certSign(getPublicCertificate(SOURCE_FOLDER + "test.cer"), privateKey, outPdf, new PdfReader(tmpPdf, cert, privateKey, new BouncyCastleProvider().getName()), "reason", "location");
         restoreCryptographyRestrictions();
+    }
+
+    @Test
+    public void decryptPubSecAES256WithRC2EnvelopeTest() throws IOException, GeneralSecurityException {
+        removeCryptographyRestrictions();
+        Security.addProvider(new BouncyCastleProvider());
+        Certificate cert = getPublicCertificate(SOURCE_FOLDER + "test.cer");
+        PrivateKey privateKey = getPrivateKey(SOURCE_FOLDER + "test.p12");
+
+        PdfReader reader = new PdfReader(SOURCE_FOLDER + "PubSecAES256RC2Envelope.pdf", cert, privateKey,
+                new BouncyCastleProvider().getName());
+        try {
+            assertTrue(reader.isEncrypted());
+            assertEquals(1, reader.getNumberOfPages());
+            assertEquals("Text", PdfTextExtractor.getTextFromPage(reader, 1));
+        } finally {
+            reader.close();
+            restoreCryptographyRestrictions();
+        }
     }
 
     private static void encryptPdfWithCertificate(String sourceDocument, String targetDocument, String certPath) throws IOException, DocumentException, CertificateException {
